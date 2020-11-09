@@ -1,4 +1,5 @@
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { Injectable } from '@angular/core';
 import {
     ApplicationInfoDto,
@@ -10,6 +11,7 @@ import {
     TenantHostServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Injectable()
 export class AppSessionService {
@@ -19,6 +21,7 @@ export class AppSessionService {
 
     constructor(
         private sessionService: SessionServiceProxy,
+        private featureService: FeatureCheckerService,
         private tenantHostProxy: TenantHostServiceProxy,
         private abpMultiTenancyService: AbpMultiTenancyService
     ) {
@@ -102,7 +105,7 @@ export class AppSessionService {
 
                 if (AppConsts.isMobile && this.tenant.customLayoutType == LayoutType.BankCode)
                     AppConsts.appMemberPortalUrl = undefined;
-                else
+                else if (this.featureService.isEnabled(AppFeatures.AdminCustomizations))
                     this.tenantHostProxy.getMemberPortalUrl().subscribe(res => {
                         AppConsts.appMemberPortalUrl = res.url;
                     });
