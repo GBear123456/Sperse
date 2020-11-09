@@ -6,7 +6,8 @@ import {
     SessionServiceProxy,
     TenantLoginInfoDto,
     UserGroup,
-    UserLoginInfoDto
+    UserLoginInfoDto,
+    TenantHostServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 
@@ -18,6 +19,7 @@ export class AppSessionService {
 
     constructor(
         private sessionService: SessionServiceProxy,
+        private tenantHostProxy: TenantHostServiceProxy,
         private abpMultiTenancyService: AbpMultiTenancyService
     ) {
         abp.event.on('profilePictureChanged', (thumbnailId) => {
@@ -100,6 +102,10 @@ export class AppSessionService {
 
                 if (AppConsts.isMobile && this.tenant.customLayoutType == LayoutType.BankCode)
                     AppConsts.appMemberPortalUrl = undefined;
+                else
+                    this.tenantHostProxy.getMemberPortalUrl().subscribe(res => {
+                        AppConsts.appMemberPortalUrl = res.url;
+                    });
 
                 resolve(true);
             };
