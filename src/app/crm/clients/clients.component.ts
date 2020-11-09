@@ -122,6 +122,7 @@ import { ClientFields } from '@app/crm/clients/client-fields.enum';
 import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/create-entity-dialog-data.interface';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -899,14 +900,15 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     createClient() {
+        const dialogData: CreateEntityDialogData = {
+            refreshParent: () => this.invalidate(),
+            customerType: ContactGroup.Client
+        };
         this.dialog.open(CreateEntityDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: {
-                refreshParent: () => this.invalidate(),
-                customerType: ContactGroup.Client
-            }
+            data: dialogData
         }).afterClosed().subscribe(() => this.refresh());
     }
 

@@ -55,6 +55,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/create-entity-dialog-data.interface';
 
 @Component({
     selector: 'details-header',
@@ -496,15 +497,15 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         });
         if (selectedMenuItem.type === ContextType.AddContact)
             setTimeout(() => {
+                const dialogData: CreateEntityDialogData = {
+                    parentId: this.data.id,
+                    customerType: this.contactGroup
+                };
                 this.dialog.open(CreateEntityDialogComponent, {
                     panelClass: 'slider',
                     disableClose: true,
                     closeOnNavigation: false,
-                    data: {
-                        refreshParent: () => {},
-                        parentId: this.data.id,
-                        customerType: this.contactGroup
-                    }
+                    data: dialogData
                 }).afterClosed().subscribe(res => {
                     this.contactsService.invalidate('sub-contacts');
                 });

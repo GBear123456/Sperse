@@ -9,9 +9,21 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, concat, forkJoin, from, merge, Observable, of, ReplaySubject } from 'rxjs';
 import {
+    BehaviorSubject,
+    combineLatest,
+    concat,
+    forkJoin,
+    from,
+    merge,
+    Observable,
+    of,
+    ReplaySubject
+} from 'rxjs';
+import {
+    distinctUntilChanged,
     filter,
+    finalize,
     first,
     map,
     mapTo,
@@ -22,8 +34,6 @@ import {
     switchMap,
     takeUntil,
     tap,
-    finalize,
-    distinctUntilChanged,
     withLatestFrom
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
@@ -59,13 +69,13 @@ import { FilterStatesComponent } from '@shared/filters/states/filter-states.comp
 import { FilterStatesModel } from '@shared/filters/states/filter-states.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import {
+    ContactServiceProxy,
     LayoutType,
-    PipelineDto,
     LeadServiceProxy,
     OrganizationUnitDto,
-    ContactServiceProxy,
-    UpdateLeadSourceContactsInput,
-    StageDto
+    PipelineDto,
+    StageDto,
+    UpdateLeadSourceContactsInput
 } from '@shared/service-proxies/service-proxies';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
@@ -118,6 +128,8 @@ import { MessageService } from '@abp/message/message.service';
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { TypeItem } from '@app/crm/shared/types-dropdown/type-item.interface';
+import { LeadType } from '@app/crm/leads/lead-type.enum';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/create-entity-dialog-data.interface';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -313,6 +325,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         map((pipeline: PipelineDto) => pipeline.contactGroupId)
     );
     selectedContactGroup: ContactGroup;
+    selectedLeadType$: Observable<LeadType> = this.selectedPipeline$.pipe(
+        map((pipeline: PipelineDto) => pipeline.defaultLeadTypeId || LeadType.Default)
+    );
+    selectedLeadType: LeadType;
     userGroupText$: Observable<string> = this.selectedPipeline$.pipe(
         map((selectedPipeline: PipelineDto) => this.getUserGroup(selectedPipeline.name))
     );
@@ -636,6 +652,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         super(injector);
         this.setInitialPipelineId();
         this.listenAndUpdateContactGroup();
+        this.listenAndUpdateLeadType();
         this.crmService.updateDateFilter(this._activatedRoute.snapshot.queryParams, this.filterDate);
         this.crmService.updateCountryStateFilter(this._activatedRoute.snapshot.queryParams, this.filterCountryStates);
         this.selectedPipelineId$.pipe(first()).subscribe((selectedPipelineId: number) => {
@@ -756,6 +773,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             takeUntil(this.lifeCycleSubjectsService.destroy$),
         ).subscribe((selectedContactGroup: ContactGroup) => {
             this.selectedContactGroup = selectedContactGroup;
+        });
+    }
+
+    private listenAndUpdateLeadType() {
+        this.selectedLeadType$.pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+        ).subscribe((selectedLeadType: LeadType) => {
+            this.selectedLeadType = selectedLeadType;
         });
     }
 
@@ -1084,14 +1109,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
     }
 
-    refresh(invalidateDashboard = true) {
+    refresh(invalidateDashboard: boolean = true) {
         this._refresh.next(null);
         if (invalidateDashboard) {
             (this.reuseService as CustomReuseStrategy).invalidate('dashboard');
         }
     }
 
-    invalidate(quiet = false, stageId?: number) {
+    invalidate(quiet: boolean = false, stageId?: number) {
         this.activate$.pipe(filter(Boolean), first()).subscribe(() => {
             this.refresh(false);
         });
@@ -1804,16 +1829,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     createLead() {
+        const dialogData: CreateEntityDialogData = {
+            refreshParent: () => this.refresh(),
+            isInLeadMode: true,
+            customerType: this.selectedContactGroup,
+            leadType: this.selectedLeadType,
+        };
         this.dialog.open(CreateEntityDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: {
-                refreshParent: () => this.refresh(),
-                isInLeadMode: true,
-                customerType: this.selectedContactGroup,
-                /** @todo add leadType to check how to show dialog */
-            }
+            data: dialogData
         });
     }
 

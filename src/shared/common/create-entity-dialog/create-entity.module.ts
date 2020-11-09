@@ -19,6 +19,7 @@ import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
+import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
 import { AngularGooglePlaceModule } from 'angular-google-place';
 
@@ -41,6 +42,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppStoreService } from '@app/store/app-store.service';
 import { ListsModule } from '@app/shared/common/lists/lists.module';
 import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module';
+import { AddressFieldsComponent } from '@shared/common/create-entity-dialog/address-fields/address-fields.component';
 
 @NgModule({
     imports: [
@@ -57,6 +59,7 @@ import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module
         DxDropDownBoxModule,
         DxListModule,
         DxScrollViewModule,
+        DxDateBoxModule,
         MatDialogModule,
         MatTabsModule,
         MatSidenavModule,
@@ -76,7 +79,8 @@ import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module
     ],
     declarations: [
         CreateEntityDialogComponent,
-        SimilarEntitiesDialogComponent
+        SimilarEntitiesDialogComponent,
+        AddressFieldsComponent
     ],
     providers: [
         ContactsService,

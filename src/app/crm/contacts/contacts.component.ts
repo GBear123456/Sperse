@@ -57,6 +57,7 @@ import { ContextType } from '@app/crm/contacts/details-header/context-type.enum'
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/create-entity-dialog-data.interface';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -744,17 +745,17 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         let companyInfo = this.contactInfo['organizationContactInfo'];
 
         this.dialog.closeAll();
+        const dialogData: CreateEntityDialogData = {
+            parentId: isSubContact ? this.contactInfo.id : undefined,
+            isInLeadMode: this.contactInfo.statusId == ContactStatus.Prospective,
+            company: isSubContact ? undefined : companyInfo && companyInfo.fullName,
+            customerType: this.contactGroupId.value || ContactGroup.Client
+        };
         this.dialog.open(CreateEntityDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: {
-                parentId: isSubContact ? this.contactInfo.id : undefined,
-                isInLeadMode: this.contactInfo.statusId == ContactStatus.Prospective,
-                company: isSubContact ? undefined : companyInfo && companyInfo.fullName,
-                customerType: this.contactGroupId.value || ContactGroup.Client,
-                refreshParent: () => {}
-            }
+            data: dialogData
         }).afterClosed().subscribe(() => {
             if (isSubContact)
                 this.contactsService.invalidate('sub-contacts');

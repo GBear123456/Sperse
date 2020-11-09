@@ -809,14 +809,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     createPartner() {
+        const dialogData = {
+            refreshParent: () => this.invalidate(),
+            customerType: this.partnerContactGroup
+        };
         this.dialog.open(CreateEntityDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: {
-                refreshParent: () => this.invalidate(),
-                customerType: this.partnerContactGroup
-            }
+            data: dialogData
         }).afterClosed().subscribe(() => this.invalidate());
     }
 
