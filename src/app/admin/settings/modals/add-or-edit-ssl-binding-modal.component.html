@@ -3,23 +3,33 @@
         <div class="content">
             <form #clientForm="ngForm" novalidate>
                 <div class="modal-body">
-                    <div class="dx-field" hidden>
+                    <div class="dx-field">
                         <dx-select-box [(value)]="model.tenantHostType"
                                        [dataSource]="data.hostTypes"
                                        [placeholder]="ls.l('Type')"
                                        [readOnly]="editing"
+                                       (onValueChanged)="onHostTypeChanged()"
                                        valueExpr="id" displayExpr="name">
                         </dx-select-box>
                     </div>
 
                     <div class="dx-field">
-                        <dx-text-box name="DomainName" [placeholder]="ls.l('HostName') + ' (custom.mysite.com)'"
-                                     [maxLength]="256" [readOnly]="editing"
-                                     [(value)]="model.domainName">
+                        <dx-text-box #DomainName 
+                                     [placeholder]="ls.l('HostName') + ' (custom.mysite.com)'"
+                                     [maxLength]="256" 
+                                     [readOnly]="editing"
+                                     [(value)]="model.domainName"
+                                     (onValueChanged)="onDomainNameChanged($event)">
+                                     <dx-validator>
+                                         <dxi-validation-rule type="pattern"
+                                                              [pattern]="regexPatterns.url"
+                                                              [message]="ls.l('LetsEncrypt_FailedToValidateDomain')">
+                                         </dxi-validation-rule>
+                                     </dx-validator>
                         </dx-text-box>
                     </div>
 
-                    <div class="dx-field">
+                    <div class="dx-field" *ngIf="model.tenantHostType == HostType_PlatformApp"> 
                         <dx-select-box [(value)]="model.sslCertificateId"
                                        [dataSource]="sslCertificates"
                                        [placeholder]="ls.l('SSLCertificate')"
