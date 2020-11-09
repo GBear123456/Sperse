@@ -10,8 +10,9 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import { of } from 'rxjs';
 import { ModalDirective } from 'ngx-bootstrap';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
@@ -110,7 +111,7 @@ export class AddOrEditSSLBindingModalComponent {
             });
         } else {
             if (!this.domainComponent.instance.option('isValid'))
-                return this.notify.error(this.ls.l('InvalidField', this.ls.l('HostName')));
+                return this.notify.error(this.ls.l('HostName_NotMapped'));
 
             this.tenantHostService.addSslBinding(new AddSslBindingInput(this.model))
             .pipe(finalize(() => { this.saving = false; }))
@@ -136,16 +137,17 @@ export class AddOrEditSSLBindingModalComponent {
         this.changeDetection.markForCheck();
     }
 
-    onDomainNameChanged(event) {
-        if (this.model.tenantHostType == TenantHostType.PlatformApp)
-            this.tenantHostService.checkHostNameDnsMapping(
-                new CheckHostNameDnsMappingInput({
-                    tenantHostType: TenantHostType.PlatformApp,
-                    hostName: event.value
-                })
-            ).subscribe(res => {
-                event.component.option('isValid', res.hostNameDnsMapped);
-            });
+    checkHostNameDnsMapping = (data) => {
+        return new Promise((approve, reject) => {
+            (data.value && this.model.tenantHostType == TenantHostType.PlatformApp ?
+                this.tenantHostService.checkHostNameDnsMapping(
+                    new CheckHostNameDnsMappingInput({
+                        tenantHostType: TenantHostType.PlatformApp,
+                        hostName: data.value
+                    })
+                ).pipe(map(res => res.hostNameDnsMapped)) : of(true)
+            ).subscribe(approve, reject);
+        });
     }
 
     validate(event): boolean {

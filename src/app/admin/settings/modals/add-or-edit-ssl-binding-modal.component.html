@@ -18,13 +18,22 @@
                                      [placeholder]="ls.l('HostName') + ' (custom.mysite.com)'"
                                      [maxLength]="256" 
                                      [readOnly]="editing"
-                                     [(value)]="model.domainName"
-                                     (onValueChanged)="onDomainNameChanged($event)">
+                                     [(value)]="model.domainName">
                                      <dx-validator>
-                                         <dxi-validation-rule type="pattern"
-                                                              [pattern]="regexPatterns.url"
-                                                              [message]="ls.l('LetsEncrypt_FailedToValidateDomain')">
+                                         <dxi-validation-rule 
+                                             type="required" 
+                                             message="{{ls.l('ThisFieldIsRequired')}}.">
                                          </dxi-validation-rule>
+                                         <dxi-validation-rule 
+                                             type="pattern"
+                                             [pattern]="regexPatterns.url"
+                                             [message]="ls.l('LetsEncrypt_FailedToValidateDomain')">
+                                         </dxi-validation-rule>
+                                         <dxi-validation-rule 
+                                             type="async" 
+                                             [message]="ls.l('HostName_NotMapped')" 
+                                             [validationCallback]="checkHostNameDnsMapping">
+                                          </dxi-validation-rule>
                                      </dx-validator>
                         </dx-text-box>
                     </div>
@@ -41,7 +50,7 @@
                     <div class="dx-field">
                         <dx-select-box [(value)]="model.organizationUnitId"
                                        [dataSource]="data.orgUnits | async"
-                                       [placeholder]="ls.l('OrganizationUnits')"
+                                       [placeholder]="ls.l('OrganizationUnit')"
                                        valueExpr="id"
                                        displayExpr="displayName"
                                        [showClearButton]="true">
