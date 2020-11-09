@@ -8,7 +8,8 @@
         <dx-file-manager
             [itemView]="{mode: layout}"
             [contextMenu]="contextMenu"
-            [fileProvider]="fileProvider" 
+            [fileProvider]="fileProvider"
+            [allowedFileExtensions]="[]"
             [customizeDetailColumns]="customizeDetailColumns"
             [height]="getHeight()">
             <dxo-permissions 
