@@ -57,9 +57,17 @@
                         <a class="add-new-contact">{{l('AddRelatedContact')}}</a>
                     </div>
                 </ng-template>
-                <div class="contact-persons-info" (click)="addNewContact($event, true)" *ngIf="!contactInfo?.parentId; else backToParent">
+                <div class="sub-contacts-info" (click)="addNewContact($event, true)"
+                     *ngIf="!contactInfo?.parentId; else backToParent">
                     <img src="./assets/common/icons/similar-contacts.svg" [alt]="l('SubContact')">
-                    <a class="add-new-contact sub-contact">+ {{l('AddSubContact')}}</a>
+                    <div>
+                        <div *ngIf="contactInfo?.subContactsCount">
+                            {{ contactInfo.subContactsCount + ' ' + (contactInfo.subContactsCount === 1
+                            ? this.l('subContact_single')
+                            : this.l('subContact_plural')) }}
+                        </div>
+                        <a class="add-new-contact sub-contact">+ {{l('AddSubContact')}}</a>
+                    </div>
                 </div>
                 <ng-template #backToParent>
                     <div class="contact-persons-info" (click)="showParent()" [title]="l('Parent Contact')">
