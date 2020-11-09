@@ -211,7 +211,7 @@
         .content-view {
             width: 70%;
             iframe {
-                height: calc(100% - 70px);
+                flex-grow: 2;
                 border-bottom: 1px solid #ddd;
                 padding: 0 0 0 20px;
             }
@@ -252,13 +252,14 @@
                 }
                 .attachments {
                     margin: 15px;
+                    max-height: 130px;
                     align-self: flex-end;
                     .attachment {
                         display: inline-block;
                         padding: 5px;
                         border-radius: 15px;
                         margin: 5px;
-                        border: 1px dashed #dedede;
+                        border: 1px dashed #646464;
                         text-align: right;
                         float: right;
                         i {
