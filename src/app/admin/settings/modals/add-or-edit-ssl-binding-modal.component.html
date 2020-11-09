@@ -3,7 +3,7 @@
         <div class="content">
             <form #clientForm="ngForm" novalidate>
                 <div class="modal-body">
-                    <div class="dx-field" hidden>
+                    <div class="dx-field">
                         <dx-select-box [(value)]="model.tenantHostType"
                                        [dataSource]="data.hostTypes"
                                        [placeholder]="ls.l('Type')"
