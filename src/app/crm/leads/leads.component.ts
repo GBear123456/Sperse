@@ -636,7 +636,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private itemDetailsService: ItemDetailsService,
         private cacheService: CacheService,
         private sessionService: AppSessionService,
-        private http: HttpClient,
         private crmService: CrmService,
         private mapService: MapService,
         private impersonationService: ImpersonationService,
@@ -657,7 +656,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.crmService.updateCountryStateFilter(this._activatedRoute.snapshot.queryParams, this.filterCountryStates);
         this.selectedPipelineId$.pipe(first()).subscribe((selectedPipelineId: number) => {
             this.pipelineFilter.items.PipelineId.value = selectedPipelineId;
-
             this.dataSource = {
                 uri: this.dataSourceURI,
                 requireTotalCount: true,
@@ -1719,7 +1717,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             let importOption = 'all',
                 instance = this.dataGrid.instance,
                 dataSource = instance && instance.getDataSource(),
-                checkExportOption = (dataSource, ignoreFilter = false) => {
+                checkExportOption = (dataSource, ignoreFilter: boolean = false) => {
                     if (options == importOption)
                         ignoreFilter || this.processFilterInternal([this]);
                     else if (!this.exportPipelineSelectedItemsFilter(dataSource))
@@ -1833,7 +1831,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             refreshParent: () => this.refresh(),
             isInLeadMode: true,
             customerType: this.selectedContactGroup,
-            leadType: this.selectedLeadType,
+            leadType: this.selectedLeadType
         };
         this.dialog.open(CreateEntityDialogComponent, {
             panelClass: 'slider',

@@ -203,6 +203,15 @@
                     </div>
                 </div>
             </dx-validation-group>
+            <dx-validation-group *ngIf="showPropertiesDropdown">
+                <div class="field">
+                    <label class="property-label">{{ ls.l('Property') }}</label>
+                    <dx-select-box [dataSource]="properties$ | async"
+                                   [displayExpr]="leadFields.PropertyName"
+                                   [valueExpr]="leadFields.PropertyId">
+                    </dx-select-box>
+                </div>
+            </dx-validation-group>
             <dx-validation-group *ngIf="!hideCompanyField"
                                  (onInitialized)="initValidationGroup($event, 'companyValidators')">
                 <h3 *ngIf="showPropertyFields">{{ ls.l('ContactInfo') }}:</h3>

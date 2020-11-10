@@ -34,4 +34,7 @@ export interface LeadDto {
     ContactGroupId: string;
     AffiliateContactName: string;
     AffiliateContactAffiliateCode: string;
+    PipelineId: number;
+    PropertyId: number;
+    PropertyName: string;
 }

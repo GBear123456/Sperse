@@ -26,7 +26,8 @@ import {
     UpdateBusinessEntityDto,
     BusinessEntityInfoDto,
     BusinessEntityDto,
-    CountryStateDto
+    CountryStateDto,
+    CountryDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -160,8 +161,8 @@ export class BusinessEntityEditDialogComponent implements OnInit {
 
     countriesStateLoad(): void {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
-        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(result => {
-            this.countries = result;
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe((countries: CountryDto[]) => {
+            this.countries = countries;
             this.onCountryChange({ value: this.address['country'] });
             this.changeDetectorRef.detectChanges();
         });

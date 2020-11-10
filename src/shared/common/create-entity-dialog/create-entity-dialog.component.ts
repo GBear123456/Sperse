@@ -20,7 +20,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
 import { Observable, Subscription, of } from 'rxjs';
-import { filter, finalize, first, map, mapTo, switchMap } from 'rxjs/operators';
+import { filter, finalize, first, map, mapTo, switchMap, pluck } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 
 /** Application imports */
@@ -100,6 +100,12 @@ import { Contact } from '@shared/common/create-entity-dialog/models/contact.inte
 import { Phone } from '@shared/common/create-entity-dialog/models/phone.model';
 import { Link } from '@shared/common/create-entity-dialog/models/link.model';
 import { Email } from '@shared/common/create-entity-dialog/models/email.model';
+import { HttpClient } from '@angular/common/http';
+import { ODataService } from '@shared/common/odata/odata.service';
+import { LeadFields } from '@app/crm/leads/lead-fields.enum';
+import { PipelinesStoreSelectors } from '@app/crm/store';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { LeadDto } from '@app/crm/leads/lead-dto.interface';
 
 @Component({
     templateUrl: 'create-entity-dialog.component.html',
@@ -259,7 +265,26 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     dontCheckSimilarEntities: boolean = this.data.dontCheckSimilarEntities;
     bankCode: string;
     showPropertyFields: boolean = this.data.leadType === LeadType.Acquisition;
+    showPropertiesDropdown: boolean = this.data.leadType === LeadType.Management;
     today: Date = new Date();
+    readonly leadFields: KeysEnum<LeadDto> = LeadFields;
+    properties$: Observable<{ PropertyId: number, PropertyName: string }[]> = this.store$.pipe(
+        select(PipelinesStoreSelectors.getPropertiesPipelineId()),
+        switchMap((propertiesPipelineId: any) => {
+            return this.httpClient.get(
+                this.oDataService.getODataUrl('Lead', {[this.leadFields.PipelineId]: propertiesPipelineId }),
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + abp.auth.getToken()
+                    },
+                    params: {
+                        $select: [ this.leadFields.PropertyId, this.leadFields.PropertyName ].join(',')
+                    }
+                }
+            );
+        }),
+        pluck('value')
+    );
 
     constructor(
         public dialog: MatDialog,
@@ -286,6 +311,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         private permissionService: AppPermissionService,
         private userManagementService: UserManagementService,
         private propertyServiceProxy: PropertyServiceProxy,
+        private httpClient: HttpClient,
+        private oDataService: ODataService,
         public ls: AppLocalizationService,
         public toolbarService: ToolbarService,
         @Inject(MAT_DIALOG_DATA) public data: CreateEntityDialogData

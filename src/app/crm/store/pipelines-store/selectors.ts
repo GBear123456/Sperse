@@ -5,6 +5,7 @@ import { StageDto } from '@shared/service-proxies/service-proxies';
 import { ContactGroup } from '@shared/AppEnums';
 import { StageDtoExtended } from '@app/crm/store/pipelines-store/stage-dto-extended.interface';
 import { Stage } from '@app/shared/pipeline/stage.model';
+import { LeadType } from '@app/crm/leads/lead-type.enum';
 
 interface Filter {
     id?: number;
@@ -15,7 +16,7 @@ interface Filter {
 
 export const getPipelinesState = createFeatureSelector<State>('pipelines');
 
-export const getPipelines = (filter: Filter) => createSelector(
+export const getPipelines = (filter?: Filter) => createSelector(
     getPipelinesState,
     (state: State) => {
         return filter && state.pipelines
@@ -101,5 +102,15 @@ export const getStageById = (filter: Filter) => createSelector(
     getPipelinesStages(filter),
     (stages: StageDtoExtended[]) => {
         return stages && stages.find(stage => stage.id === +filter.stageId);
+    }
+);
+
+export const getPropertiesPipelineId = () => createSelector(
+    getPipelines(),
+    (pipelines: PipelineDto[]) => {
+        const acquisitionPipeline = pipelines && pipelines.find((pipeline: PipelineDto) => {
+            return pipeline.defaultLeadTypeId === LeadType.Acquisition;
+        });
+        return acquisitionPipeline && acquisitionPipeline.id;
     }
 );
