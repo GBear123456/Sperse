@@ -157,11 +157,9 @@
                     <p class="char-count" *ngIf="!insertAsHTML">{{charCount}}</p>
                     <i class="insert-html" (click)="showInsertAsHTML()">{{ls.l(insertAsHTML ? 'Apply' : 'Insert as HTML')}}</i>
                     <i class="cancel-html" *ngIf="insertAsHTML" (click)="insertAsHTML = false">{{ls.l('Cancel')}}</i>
-                    <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event, scrollView);" *ngIf="!templateEditMode">
+                    <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)" *ngIf="!templateEditMode">
                         <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
-                            <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()"><img src="assets/common/icons/folder-blue.svg">{{ls.l('Documents')}}</a>
-                            &nbsp;&nbsp;&nbsp;
-                            <a href="javascript:void(0);" class="attach-link" (click)="openFileSelector()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>
+                            <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>
                         </ng-template>
                     </ngx-file-drop>
                 </div>

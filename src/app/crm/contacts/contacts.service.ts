@@ -549,15 +549,31 @@ export class ContactsService {
         }));
     }
 
-    showTemplateDocumentsDialog(showProviders = false) {
-        this.dialog.open(TemplateDocumentsDialogComponent, {
+    showTemplateDocumentsDialog(
+        contactId: number, invalidate: () => void,
+        showDocuments = false, fullHeight = false
+    ) {
+        return this.dialog.open(TemplateDocumentsDialogComponent, {
             panelClass: ['slider'],
             hasBackdrop: false,
             closeOnNavigation: true,
             data: {
-                showProviders: showProviders
+                contactId: contactId,
+                fullHeight: fullHeight,
+                showDocuments: showDocuments,
+                invalidate: invalidate
             }
-        });        
+        });
+    }
+
+    showUploadDocumentsDialog(contactId: number) {
+        this.showTemplateDocumentsDialog(
+            contactId, () => this.invalidate('documents')
+        ).afterClosed().subscribe(files => {
+            if (files && files.length) {
+                //!! files from templates should be saved here
+            }
+        });
     }
 
     deleteContact(customerName, contactGroup, entityId, callback?, isLead = false, userId?) {
