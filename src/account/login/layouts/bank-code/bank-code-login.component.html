@@ -22,7 +22,6 @@
                        autocomplete="off"
                        name="userNameOrEmailAddress" required tabindex="1" id="user-name"/>
             </div>
-
             <label class="label-for-input" for="pass">{{ls.l('Password')}}</label>
             <div class="form-group icon-input icon-input__password clearfix">
                 <input [(ngModel)]="loginService.authenticateModel.password"
@@ -65,8 +64,9 @@
         </div>
     </div>
     <div class="login-terms-and-condition">
-        <span>{{ls.l('ByContinuingYouAgree')}} <br><a
-            (click)="openConditionsDialog(conditions.Terms)">{{ls.l('TermsOfUse')}}</a> {{ls.l('and')}} <a
-            (click)="openConditionsDialog(conditions.Policies)">{{ls.l('PrivacyPolicy')}}</a></span>
+        <span>{{ls.l('ByContinuingYouAgree')}}<br>
+            <a (click)="openConditionsDialog(conditions.Terms)">{{ls.l('TermsOfUse')}}</a> {{ls.l('and')}}&nbsp;
+            <a (click)="openConditionsDialog(conditions.Policies)">{{ls.l('PrivacyPolicy')}}</a>
+        </span>
     </div>
 </div>

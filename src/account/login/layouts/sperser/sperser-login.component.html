@@ -30,8 +30,7 @@
                 class="login-form"
                 method="post"
                 novalidate
-                (ngSubmit)="login()"
-            >
+                (ngSubmit)="login()">
                 <div class="form-group input first clearfix">
                     <input
                         [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress"
@@ -43,8 +42,7 @@
                         placeholder="{{ getLoginPlaceholder() }}"
                         name="userNameOrEmailAddress"
                         required
-                        tabindex="1"
-                    />
+                        tabindex="1"/>
                     <!--<i class="fa fa-check-circle" [hidden]="userNameOrEmailAddress.invalid && userNameOrEmailAddress.touched"></i>
                     <i class="fa fa-exclamation-circle" [hidden]="userNameOrEmailAddress.valid || userNameOrEmailAddress.untouched"></i>-->
                 </div>
@@ -60,8 +58,7 @@
                         name="password"
                         required
                         maxlength="32"
-                        tabindex="2"
-                    />
+                        tabindex="2"/>
                     <a class="show-password" (click)="showHidePass()">
                         <img src="./assets/common/images/rapid/icons/trailing-icon.svg" alt="Show">
                     </a>
@@ -78,8 +75,8 @@
                                     [(ngModel)]="loginService.authenticateModel.rememberClient"
                                     type="checkbox"
                                     name="rememberMe"
-                                    value="true"
-                                />{{ ls.l("RememberMe") }}
+                                    value="true"/>
+                                {{ ls.l("RememberMe") }}
                                 <span></span>
                             </label>
                         </div>
@@ -88,9 +85,9 @@
                         <a
                             routerLink="/account/forgot-password"
                             id="forget-password"
-                            class="forget-password pull-right"
-                            >{{ ls.l("ForgotPassword") }}</a
-                        >
+                            class="forget-password pull-right">
+                            {{ ls.l("ForgotPassword") }}
+                        </a>
                     </div>
                 </div>
 
@@ -98,8 +95,7 @@
                     <button
                         type="submit"
                         class="btn btn-submit"
-                        [disabled]="loginInProgress || !loginForm.form.valid"
-                    >
+                        [disabled]="loginInProgress || !loginForm.form.valid">
                         {{ ls.l("LoginBtn") }}
                     </button>
                 </div>
