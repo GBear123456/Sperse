@@ -205,7 +205,7 @@
             </dx-validation-group>
             <dx-validation-group *ngIf="!hideCompanyField"
                                  (onInitialized)="initValidationGroup($event, 'companyValidators')">
-                <h3>{{ ls.l('ContactInfo') }}:</h3>
+                <h3 *ngIf="showPropertyFields">{{ ls.l('ContactInfo') }}:</h3>
                 <div class="field">
                     <label class="company-label">{{ls.l('Company')}}</label>
                     <dx-select-box #companyComponent
