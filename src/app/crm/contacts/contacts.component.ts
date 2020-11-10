@@ -57,7 +57,7 @@ import { ContextType } from '@app/crm/contacts/details-header/context-type.enum'
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
-import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/create-entity-dialog-data.interface';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 
 @Component({
     templateUrl: './contacts.component.html',

@@ -55,7 +55,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/create-entity-dialog-data.interface';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 
 @Component({
     selector: 'details-header',

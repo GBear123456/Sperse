@@ -64,7 +64,7 @@ import { ContactDto } from '@root/bank-code/products/bank-pass/contact-dto.type'
 import { BankPassFields } from '@root/bank-code/products/bank-pass/bank-pass-fields.enum';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
-import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/create-entity-dialog-data.interface';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 
 @Component({
     selector: 'bank-pass',

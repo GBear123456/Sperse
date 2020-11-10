@@ -26,6 +26,7 @@ import {
     StatesStoreSelectors
 } from '@root/store';
 import { AddressChanged } from '@shared/common/create-entity-dialog/address-fields/address-changed.interface';
+import { Address } from '@shared/common/create-entity-dialog/models/address.model';
 
 @Component({
     selector: 'address-fields',
@@ -34,7 +35,7 @@ import { AddressChanged } from '@shared/common/create-entity-dialog/address-fiel
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddressFieldsComponent {
-    @Input() address;
+    @Input() address: Address;
     @Input() addressTypes?: AddressUsageTypeDto[];
     @Input() googleAutoComplete: boolean;
     @Input() showClearButton: boolean;

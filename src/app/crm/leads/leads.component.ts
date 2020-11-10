@@ -129,7 +129,7 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { TypeItem } from '@app/crm/shared/types-dropdown/type-item.interface';
 import { LeadType } from '@app/crm/leads/lead-type.enum';
-import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/create-entity-dialog-data.interface';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 
 @Component({
     templateUrl: './leads.component.html',

@@ -74,7 +74,7 @@ import { ContextMenuItem } from '@shared/common/dialogs/modal/context-menu-item.
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 import { CreateInvoiceDialogData } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog-data.interface';
-import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/create-entity-dialog-data.interface';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',

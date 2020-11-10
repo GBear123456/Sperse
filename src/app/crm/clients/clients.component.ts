@@ -122,7 +122,7 @@ import { ClientFields } from '@app/crm/clients/client-fields.enum';
 import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
-import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/create-entity-dialog-data.interface';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 
 @Component({
     templateUrl: './clients.component.html',

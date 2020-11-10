@@ -172,7 +172,7 @@
                 </div>
                 <div class="field">
                     <label>{{ ls.l('Area') }}</label>
-                    <dx-text-box [(value)]="property.area"></dx-text-box>
+                    <dx-number-box [(value)]="property.area"></dx-number-box>
                 </div>
                 <div class="field">
                     <label class="date-label">{{ ls.l('Year') }}</label>
@@ -419,7 +419,7 @@
                                             [googleAutoComplete]="googleAutoComplete"
                                             [showClearButton]="!!((i || address.address ||
                                                address.city || address.state || address.zip ||
-                                               address.country) && 'clear-contact' || 'hidden')"
+                                               address.countryCode) && 'clear-contact' || 'hidden')"
                                             (onCountryUpdate)="updateCountryInfo($event, i)"
                                             (onAddressChanged)="updateContactAddressFields($event, address, i)"
                                             (onAddressTypeChanged)="validateCompanyName()"
@@ -433,7 +433,7 @@
                         </div>
                         <div *ngIf="!disallowMultipleItems"
                              class="add-new-button"
-                             [ngClass]="{ disabled: !addButtonVisible['addresses'] }">
+                             [ngClass]="{ disabled: !addButtonVisible.addresses }">
                             <span (click)="addNewContact('addresses')">{{ls.l('+ Add address')}}</span>
                         </div>
                     </div>
