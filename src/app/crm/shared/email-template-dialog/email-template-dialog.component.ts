@@ -10,6 +10,7 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
 import { DxValidatorComponent } from 'devextreme-angular/ui/validator';
+import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import startCase from 'lodash/startCase';
 import * as ClassicEditor from 'ckeditor5-custom';
@@ -32,9 +33,9 @@ import {
     GetEmailDataOutput
 } from '@shared/service-proxies/service-proxies';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
-import { TemplateDocumentsDialogComponent } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog.component';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { TemplateDocumentsDialogComponent } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog.component';
 import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
 import { EmailAttachment } from '@app/crm/shared/email-template-dialog/email-attachment';
 import { EmailTags } from '@app/crm/contacts/contacts.const';
@@ -51,6 +52,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild(DxSelectBoxComponent, { static: false }) templateComponent: DxSelectBoxComponent;
     @ViewChild(DxTextAreaComponent, { static: false }) htmlComponent: DxTextAreaComponent;
     @ViewChild(DxValidatorComponent, { static: false }) validator: DxValidatorComponent;
+    @ViewChild('scrollView', { static: false }) scrollView: DxScrollViewComponent;
     @ViewChild('tagsButton', { static: false }) tagsButton: ElementRef;
     @ViewChild('preview', { static: false }) preview: ElementRef;
 
@@ -444,19 +446,24 @@ export class EmailTemplateDialogComponent implements OnInit {
         });
     }
 
-    addAttachments(files: NgxFileDropEntry[], scrollView) {
+    addAttachments(files: NgxFileDropEntry[]) {
         if (files.length) {
-            let scroll = scrollView.instance;
-            setTimeout(() => scroll.scrollTo(
-                scroll.scrollHeight()
-            ));
-            scroll.update();
+            if (this.scrollView) {
+                let scroll = this.scrollView.instance;
+                setTimeout(() => scroll.scrollTo(
+                    scroll.scrollHeight()
+                ), 600);
+                scroll.update();
+            }
             files.forEach(file => {
                 if (file.fileEntry)
                     file.fileEntry['file'](this.uploadFile.bind(this));
                 else
                     this.uploadFile(file);
             });
+            let templateDialog = this.dialog.getDialogById('templateDialog');
+            if (templateDialog)
+                templateDialog.close();
         }
     }
 
@@ -573,26 +580,30 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     openDocuments() {
         this.dialog.open(TemplateDocumentsDialogComponent, {
+            id: 'templateDialog',
             panelClass: ['slider'],
             hasBackdrop: true,
             closeOnNavigation: true,
             data: {
                 fullHeight: true,
-                showProviders: true
+                showDocuments: true,
+                dropFiles: this.addAttachments.bind(this)
             }
         }).afterClosed().subscribe(data => {
-            this.attachments = this.attachments.concat(
-                data.map(item => {
-                    let attachment = {
-                        id: item.key,
-                        name: item.name,
-                        size: item.size,
-                        progress: 0
-                    };
-                    return attachment;
-                })
-            );
-            this.changeDetectorRef.detectChanges();
+            if (data && data.length) {
+                this.attachments = this.attachments.concat(
+                    data.map(item => {
+                        let attachment = {
+                            id: item.key,
+                            name: item.name,
+                            size: item.size,
+                            progress: 0
+                        };
+                        return attachment;
+                    })
+                );
+                this.changeDetectorRef.detectChanges();
+            }
         });
     }
 

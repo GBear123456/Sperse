@@ -4,13 +4,17 @@ import { Component, ViewChild, OnInit, AfterViewInit, Inject, ElementRef } from 
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import RemoteFileProvider from 'devextreme/ui/file_manager/file_provider/remote';
+import { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { DxFileManagerComponent } from 'devextreme-angular/ui/file-manager';
+import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { DocumentServiceProxy, UploadDocumentInput } from '@shared/service-proxies/service-proxies';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     templateUrl: 'template-documents-dialog.component.html',
@@ -19,9 +23,15 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     @ViewChild(DxFileManagerComponent, { static: false }) fileManager: DxFileManagerComponent;
 
+    files         = [];
+    uploadedCount = 0;
+    totalCount    = 0;
+
     private slider: any;
-    private readonly VIEW_MODE_DETAILS    = 'details';
-    private readonly VIEW_MODE_THUMBNAILS = 'thumbnails';
+    private uploadSubscribers = [];
+
+    public readonly VIEW_MODE_DETAILS    = 'details';
+    public readonly VIEW_MODE_THUMBNAILS = 'thumbnails';
 
     layout = this.VIEW_MODE_THUMBNAILS;
     documentsFileProvider = new RemoteFileProvider({
@@ -31,23 +41,29 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/TenantFileManager/Files'
     });
     folderTabs = [
-        {     
+        {
             id: 0,
-            visible: this.data.showProviders,
-            text: this.ls.l('Documents'),
-            provider: this.documentsFileProvider,
-            icon: "inactivefolder", 
+            visible: true,
+            text: '',
+            icon: 'upload',
         },
-        { 
+        {
             id: 1,
+            visible: this.data.showDocuments,
+            text: this.ls.l('Documents'),
+            icon: 'inactivefolder',
+        },
+        {
+            id: 2,
             visible: true,
             text: this.ls.l('Templates'),
-            provider: this.templatesFileProvider,
-            icon: "activefolder", 
+            icon: 'activefolder',
         }
     ];
+    selectedIndex = 0;
 
     constructor(
+        private documentService: DocumentServiceProxy,
         private elementRef: ElementRef,
         private notify: NotifyService,
         private loadingService: LoadingService,
@@ -57,7 +73,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     ) {
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({
-                top: (this.data.fullHeight ? 0: 75) + 'px',
+                top: (this.data.fullHeight ? 0 : 75) + 'px',
                 right: '-100vw'
             });
         });
@@ -68,19 +84,18 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         this.slider.classList.add('hide', 'min-width-0');
         this.dialogRef.updateSize('0px', '0px');
         this.dialogRef.updatePosition({
-            top: (this.data.fullHeight ? 0: 75) + 'px',
+            top: (this.data.fullHeight ? 0 : 75) + 'px',
             right: '-100vw'
         });
     }
 
     ngAfterViewInit() {
-        this.loadingService.startLoading(this.elementRef.nativeElement);
         setTimeout(() => {
             this.slider.classList.remove('hide');
             this.dialogRef.updateSize(undefined, '100vh');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
-                    top: (this.data.fullHeight ? 0: 75) + 'px',
+                    top: (this.data.fullHeight ? 0 : 75) + 'px',
                     right: '0px'
                 });
             }, 100);
@@ -88,7 +103,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     }
 
     getHeight() {
-        return innerHeight - 250 + 'px';
+        return innerHeight - (this.data.fullHeight ? 170 : 250) + 'px';
     }
 
     onContentReady() {
@@ -99,22 +114,124 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         );
     }
 
-    onProviderChanged(event) {
-        this.fileManager.instance.option(
-            'fileProvider', 
-            event.addedItems[0].provider
-        );
-        console.log(event);        
-    }
-
     onAddFile() {
         this.dialogRef.close(
             this.fileManager.instance.getSelectedItems());
     }
 
     onLayoutToogle() {
-        this.layout = this.layout == this.VIEW_MODE_DETAILS 
+        this.layout = this.layout == this.VIEW_MODE_DETAILS
             ? this.VIEW_MODE_THUMBNAILS : this.VIEW_MODE_DETAILS;
+    }
+
+    fileDropped(dropedFiles: NgxFileDropEntry[]) {
+        let files = [];
+        dropedFiles.forEach((item) => {
+            (item.fileEntry as FileSystemFileEntry).file((file: File) => {
+                files.push(file);
+                if (dropedFiles.length == files.length)
+                    this.uploadFiles(files);
+            });
+        });
+    }
+
+    getFileTypeByExt(fileName) {
+        let ext = fileName.split('.').pop();
+        if (['xdoc', 'doc', 'txt'].indexOf(ext) >= 0)
+            return 'doc';
+        return ext;
+    }
+
+    uploadFiles(files) {
+        this.files = [];
+        this.uploadedCount = 0;
+        this.uploadSubscribers = [];
+        this.totalCount = files.length;
+
+        Array.prototype.forEach.call(files, (file, index) => {
+            this.files.push({
+                type: this.getFileTypeByExt(file.name),
+                name: file.name,
+                progress: 0
+            });
+            let fileReader: FileReader = new FileReader();
+            fileReader.onloadend = (loadEvent: any) => {
+                this.uploadFile({
+                    name: file.name,
+                    size: StringHelper.getSize(file.size, loadEvent.target.result),
+                    fileBase64: StringHelper.getBase64(loadEvent.target.result)
+                }, index);
+            };
+            fileReader.readAsDataURL(file);
+        });
+    }
+
+    finishUploadProgress(index) {
+        this.files[index].progress = 100;
+    }
+
+    updateUploadProgress(index) {
+        let file = this.files[index];
+        if (file && file.progress < 95)
+            file.progress++;
+    }
+
+    uploadFile(input, index) {
+        if (AppConsts.regexPatterns.notSupportedDocuments.test(input.name)) {
+            this.notify.error(this.ls.l('FileTypeIsNotAllowed'));
+            this.updateUploadedCounter();
+            return;
+        }
+
+        if (input.size > AppConsts.maxDocumentSizeBytes) {
+            this.notify.error(this.ls.l('FilesizeLimitWarn', AppConsts.maxDocumentSizeMB));
+            this.updateUploadedCounter();
+            return;
+        }
+
+        let progressInterval = setInterval(
+            this.updateUploadProgress.bind(this, index),
+            Math.round(input.size / 10000)
+        );
+        this.uploadSubscribers.push(
+            this.documentService.upload(UploadDocumentInput.fromJS({
+                contactId: this.data.contactId,
+                fileName: input.name,
+                size: input.size,
+                file: input.fileBase64
+            })).pipe(finalize(() => {
+                this.finishUploading(progressInterval, index);
+            })).subscribe(() => {
+                if (this.data.invalidate)
+                    this.data.invalidate();
+            })
+        );
+    }
+
+    finishUploading(progressInterval, index) {
+        clearInterval(progressInterval);
+        this.finishUploadProgress(index);
+        this.updateUploadedCounter();
+    }
+
+    updateUploadedCounter() {
+        this.uploadedCount++;
+        if (this.uploadedCount >= this.totalCount) {
+            this.totalCount = 0;
+            this.uploadedCount = 0;
+        }
+    }
+
+    cancelUpload(index) {
+        let file = this.files[index];
+        if (file && file.progress < 100) {
+            if (this.uploadSubscribers[index]) {
+                this.uploadSubscribers[index].unsubscribe();
+                this.uploadSubscribers.splice(index, 1);
+            }
+            this.files.splice(index, 1);
+            this.totalCount = this.files.length;
+        }
     }
 
     close() {

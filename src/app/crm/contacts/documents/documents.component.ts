@@ -134,7 +134,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         ).subscribe(contactInfo => {
             this.manageAllowed = this.permission.checkCGPermission(contactInfo.groupId);
             this.initActionMenuItems();
-            this.updateToolbarOptions();
             this.loadDocuments();
         });
     }
@@ -177,20 +176,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                 this.storeWopiRequestInfoToCache(wopiDocumentDataCacheKey, response);
                 return of(response);
             }));
-    }
-
-    private updateToolbarOptions() {
-        setTimeout(() => this.clientService.toolbarUpdate({
-            optionButton: {
-                widget: 'dxButton',
-                options: {
-                    text: this.l('Templates'),
-                    onClick: () => {
-                        this.clientService.showTemplateDocumentsDialog();
-                    }
-                }
-            }
-        }));
     }
 
     initViewerToolbar(conf: any = {}) {
@@ -345,7 +330,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             if (this.componentIsActivated) {
                 this.dataSource = documents;
                 if (!this.dataSource || !this.dataSource.length)
-                    setTimeout(() => this.openDocumentAddAddDialog());
+                    setTimeout(() => this.openDocumentAddDialog());
                 callback && callback();
             }
         });
@@ -355,15 +340,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         this.documentsService.downloadDocument(this.currentDocumentInfo.id);
     }
 
-    openDocumentAddAddDialog() {
-        this.dialog.open(UploadDocumentsDialogComponent, {
-            panelClass: ['slider'],
-            hasBackdrop: false,
-            closeOnNavigation: true,
-            data: {
-                contactId: this.data.contactInfo.id
-            }
-        });
+    openDocumentAddDialog() {
+        this.clientService.showUploadDocumentsDialog(this.data.contactInfo.id);
     }
 
     onToolbarPreparing($event) {
@@ -661,7 +639,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     closeDocument() {
         this.openDocumentMode = false;
-        this.updateToolbarOptions();
     }
 
     @HostListener('document:keydown', ['$event'])
