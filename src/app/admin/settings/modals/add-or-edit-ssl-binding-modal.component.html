@@ -49,7 +49,7 @@
 
                     <div class="dx-field">
                         <dx-select-box [(value)]="model.organizationUnitId"
-                                       [dataSource]="data.orgUnits | async"
+                                       [dataSource]="data.orgUnits"
                                        [placeholder]="ls.l('OrganizationUnit')"
                                        valueExpr="id"
                                        displayExpr="displayName"
