@@ -112,6 +112,9 @@ export class HostResetPasswordComponent implements OnInit {
         let native = input.valueAccessor._elementRef.nativeElement,
             visible = native.type == 'text';
         native.type = visible ? 'password' : 'text';
-        event.currentTarget.text = this.ls.l(visible ? 'Show' : 'Hide');
+        if (event.currentTarget.text) event.currentTarget.text = this.ls.l((visible ? 'Hide' : 'Show'));
+        visible
+            ? event.currentTarget.classList.remove('visible')
+            : event.currentTarget.classList.add('visible');
     }
 }
