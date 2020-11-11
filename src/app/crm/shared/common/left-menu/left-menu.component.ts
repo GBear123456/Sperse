@@ -86,7 +86,7 @@ export class LeftMenuComponent implements OnInit {
                 component: '/documents',
                 caption: this.ls.l('CRMDashboardMenu_Documents'),
                 iconSrc: './assets/common/icons/folder.svg',
-                visible: true
+                visible: false
             }
         ];
     }
