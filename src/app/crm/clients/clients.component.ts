@@ -1185,7 +1185,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     text: this.l('Delete'),
                                     disabled: this.selectedClientKeys.length != 1, // need update
                                     action: () => {
-                                        this.selectedClients.subscribe(clients => {
+                                        this.selectedClients.subscribe((clients: ContactDto[]) => {
                                             const client =  clients[0];
                                             this.contactService.deleteContact(
                                                 client.Name,
@@ -1203,7 +1203,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     text: this.l('Toolbar_Merge'),
                                     disabled: this.selectedClientKeys.length != 2 || !this.isMergeAllowed,
                                     action: () => {
-                                        this.selectedClients.subscribe(clients => {
+                                        this.selectedClients.subscribe((clients: ContactDto[]) => {
                                             this.contactService.mergeContact(clients[0], clients[1], true, true, () => {
                                                 this.refresh();
                                                 this.dataGrid.instance.deselectAll();
@@ -1229,7 +1229,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 {
                                     text: this.l('Email'),
                                     action: () => {
-                                        this.selectedClients.subscribe(clients => {
+                                        this.selectedClients.subscribe((clients: ContactDto[]) => {
                                             this.contactService.showEmailDialog({
                                                 contactId: this.selectedClientKeys[0],
                                                 to: clients.map(lead => lead.Email).filter(Boolean)
@@ -1240,7 +1240,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 {
                                     text: this.l('SMS'),
                                     action: () => {
-                                        this.selectedClients.subscribe(clients => {
+                                        this.selectedClients.subscribe((clients: ContactDto[]) => {
                                             const contact = clients && clients[clients.length - 1];
                                             const parsedName = contact && this.nameParserService.getParsed(contact.Name);
                                             this.contactService.showSMSDialog({
