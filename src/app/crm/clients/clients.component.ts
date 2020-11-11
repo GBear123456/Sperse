@@ -286,7 +286,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     });
     contactStatus = ContactStatus;
     selectedClientKeys: any = [];
-    selectedClients: any = [];
+    get selectedClients(): Observable<any[]> {
+        let slection = this.dataGrid && this.dataGrid.instance.getSelectedRowsData();
+        return (slection instanceof Array ? of(slection) : from(slection));
+    }
     headlineButtons: HeadlineButton[] = [
         {
             enabled: this.permission.checkCGPermission(ContactGroup.Client),
@@ -305,7 +308,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
                     action: () => {
-                        this.contactService.showSMSDialog({                    
+                        this.contactService.showSMSDialog({
                             phoneNumber: (this.actionEvent.data || this.actionEvent).Phone
                         });
                     }
@@ -868,9 +871,19 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     onSelectionChanged($event) {
-        this.selectedClientKeys = $event.component.getSelectedRowKeys();
-        this.selectedClients = $event.component.getSelectedRowsData();
+        let seletion = $event.component.getSelectedRowKeys();
+        if (seletion instanceof Array)
+            this.updateSelectedKeys(seletion);
+        else {
+            this.startLoading();
+            seletion.then(this.updateSelectedKeys.bind(this));
+        }
+    }
+
+    updateSelectedKeys(keys: number[]) {
+        this.selectedClientKeys = keys;
         this.initToolbarConfig();
+        this.finishLoading();
     }
 
     refresh(refreshDashboard = true) {
@@ -941,7 +954,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.filtersService.apply(() => {
             this.selectedClientKeys = [];
             this.initToolbarConfig();
-            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -1166,32 +1178,38 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'actions',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.selectedClients.length || !this.isGranted(AppPermissions.CRMCustomersManage) || this.selectedClients.length > 2,
+                        disabled: !this.selectedClientKeys.length || !this.isGranted(AppPermissions.CRMCustomersManage) || this.selectedClientKeys.length > 2,
                         options: {
                             items: [
                                 {
                                     text: this.l('Delete'),
-                                    disabled: this.selectedClients.length != 1, // need update
+                                    disabled: this.selectedClientKeys.length != 1, // need update
                                     action: () => {
-                                        const client =  this.selectedClients[0];
-                                        this.contactService.deleteContact(
-                                            client.Name,
-                                            ContactGroup.Client,
-                                            client.Id,
-                                            () => {
-                                                this.refresh();
-                                                this.dataGrid.instance.deselectAll();
-                                            }, false, client.UserId
-                                        );
+                                        this.selectedClients.subscribe(clients => {
+                                            const client =  clients[0];
+                                            this.contactService.deleteContact(
+                                                client.Name,
+                                                ContactGroup.Client,
+                                                client.Id,
+                                                () => {
+                                                    this.refresh();
+                                                    this.dataGrid.instance.deselectAll();
+                                                }, false, client.UserId
+                                            );
+                                        });
                                     }
                                 },
                                 {
                                     text: this.l('Toolbar_Merge'),
-                                    disabled: this.selectedClients.length != 2 || !this.isMergeAllowed,
+                                    disabled: this.selectedClientKeys.length != 2 || !this.isMergeAllowed,
                                     action: () => {
-                                        this.contactService.mergeContact(this.selectedClients[0], this.selectedClients[1], true, true, () => { this.refresh(); this.dataGrid.instance.deselectAll(); });
+                                        this.selectedClients.subscribe(clients => {
+                                            this.contactService.mergeContact(clients[0], clients[1], true, true, () => {
+                                                this.refresh();
+                                                this.dataGrid.instance.deselectAll();
+                                            });
+                                        });
                                     }
-
                                }
                             ]
                         }
@@ -1211,22 +1229,25 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 {
                                     text: this.l('Email'),
                                     action: () => {
-                                        this.contactService.showEmailDialog({
-                                            contactId: this.selectedClientKeys[0],
-                                            to: this.selectedClients.map(lead => lead.Email).filter(Boolean)
-                                        }).subscribe();
+                                        this.selectedClients.subscribe(clients => {
+                                            this.contactService.showEmailDialog({
+                                                contactId: this.selectedClientKeys[0],
+                                                to: clients.map(lead => lead.Email).filter(Boolean)
+                                            }).subscribe();
+                                        });
                                     }
                                 },
                                 {
                                     text: this.l('SMS'),
                                     action: () => {
-                                        const selectedClients = this.selectedClients;
-                                        const contact = selectedClients && selectedClients[selectedClients.length - 1];
-                                        const parsedName = contact && this.nameParserService.getParsed(contact.Name);
-                                        this.contactService.showSMSDialog({
-                                            phoneNumber: contact && contact.Phone,
-                                            firstName: parsedName && parsedName.first,
-                                            lastName: parsedName && parsedName.last
+                                        this.selectedClients.subscribe(clients => {
+                                            const contact = clients && clients[clients.length - 1];
+                                            const parsedName = contact && this.nameParserService.getParsed(contact.Name);
+                                            this.contactService.showSMSDialog({
+                                                phoneNumber: contact && contact.Phone,
+                                                firstName: parsedName && parsedName.first,
+                                                lastName: parsedName && parsedName.last
+                                            });
                                         });
                                     }
                                 }
@@ -1352,7 +1373,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 ]
             }
         ];
-        return this.toolbarConfig;
+        this.changeDetectorRef.detectChanges();
     }
 
     toggleSource() {
@@ -1636,5 +1657,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.contactService.mergeContact(source, target, true, true, () => this.refresh());
             });
         }
+    }
+
+    selectionModeChanged($event) {
+        this.dataGrid.instance.option(
+            'selection.selectAllMode', $event.itemData.mode);
     }
 }
