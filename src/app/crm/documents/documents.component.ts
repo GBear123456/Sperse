@@ -34,7 +34,7 @@ export class DocumentsComponent {
 
     layout = this.VIEW_MODE_THUMBNAILS;
     fileProvider = new RemoteFileProvider({
-        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/TenantFileManager/Files'
+        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/DocumentTemplates/Files'
     });
 
     contextMenu = {
