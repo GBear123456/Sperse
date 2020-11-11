@@ -772,3 +772,19 @@ input.form-control {
 body.modal-open {
     overflow: hidden !important;
 }
+
+.form-group {
+    position: relative;
+}
+.show-password {
+    position: absolute;
+    right: 13px;
+    top: 14px;
+    text-transform: uppercase;
+    width: 22px;
+    height: 15px;
+    background-image: url('../common/icons/trailing-icon.svg');
+}
+.show-password.visible {
+    background-image: url('../common/icons/trailing-icon-blue.svg');
+}
