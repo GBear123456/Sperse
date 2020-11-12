@@ -97,7 +97,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     showToolbar;
     currentItemId;
     dataSourceURI: ItemTypeEnum = ItemTypeEnum.Customer;
-    targetDirections = TargetDirectionEnum;
     private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
     public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
     manageAllowed = false;
