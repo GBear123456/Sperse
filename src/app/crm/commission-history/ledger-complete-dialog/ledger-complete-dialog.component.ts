@@ -30,6 +30,8 @@ export class LedgerCompleteDialogComponent extends ConfirmDialogComponent {
         };
     });
     paymentSystem = PaymentSystem.PayQuicker;
+    today: Date = new Date();
+    payDate: Date = this.today;
 
     constructor(
         injector: Injector,
@@ -50,7 +52,8 @@ export class LedgerCompleteDialogComponent extends ConfirmDialogComponent {
                         this.loadingService.startLoading(this.elementRef.nativeElement);
                         this.commissionProxy.completeWithdrawals(new CompleteWithdrawalInput({
                             withdrawalIds: this.data.entityIds,
-                            paymentSystem: PaymentSystem[this.paymentSystem]
+                            paymentSystem: PaymentSystem[this.paymentSystem],
+                            payDate: DateHelper.removeTimezoneOffset(this.payDate, false, 'from')
                         })).pipe(
                             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
                         ).subscribe(() => {

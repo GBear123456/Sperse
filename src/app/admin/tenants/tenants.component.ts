@@ -21,7 +21,8 @@ import {
     PermissionServiceProxy,
     TenantListDto,
     TenantServiceProxy,
-    EditionServiceProxy
+    EditionServiceProxy,
+    SubscribableEditionComboboxItemDto
 } from '@shared/service-proxies/service-proxies';
 import { CreateTenantModalComponent } from './create-tenant-modal/create-tenant-modal.component';
 import { EditTenantModalComponent } from './edit-tenant-modal/edit-tenant-modal.component';
@@ -39,8 +40,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
-import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
-import { ToolBarComponent } from '../../shared/common/toolbar/toolbar.component';
+import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 
 @Component({
     templateUrl: './tenants.component.html',
@@ -51,7 +51,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild(ToolBarComponent, { static: false }) toolbarComponent: ToolBarComponent;
 
-    private editions: any = [];
+    private editions: SubscribableEditionComboboxItemDto[] = [];
     private filters: FilterModel[];
     public actionMenuItems: ActionMenuItem[] = [
         {
@@ -137,10 +137,11 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
         this.rootComponent.overflowHidden(true);
         this.initToolbarConfig();
 
-        this.editionService.getEditionComboboxItems(0, true, false).subscribe(editions => {
-            this.editions = editions;
-            this.initFilterConfig();
-        });
+        this.editionService.getEditionComboboxItems(0, true, false)
+            .subscribe((editions: SubscribableEditionComboboxItemDto[]) => {
+                this.editions = editions;
+                this.initFilterConfig();
+            });
 
         this.dataSource = new DataSource({
             key: 'id',
@@ -293,7 +294,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
                     items: {
                         element: new FilterRadioGroupModel({
                             value: this.productId,
-                            list: this.editions.map((item) => {
+                            list: this.editions.map((item: SubscribableEditionComboboxItemDto) => {
                                 return {
                                     id: item.value,
                                     name: item.displayText
