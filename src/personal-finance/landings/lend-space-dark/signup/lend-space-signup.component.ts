@@ -13,6 +13,7 @@ import { ApplicationServiceProxy, SignUpMemberRequest } from '@shared/service-pr
 import { LoginService, ExternalLoginProvider } from '@root/account/login/login.service';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { DxCheckBoxComponent } from 'devextreme-angular/ui/check-box';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'lend-space-signup',
@@ -46,7 +47,8 @@ export class LendSpaceSignupComponent {
     constructor(
         private dialog: MatDialog,
         private router: Router,
-        public loginService: LoginService
+        public loginService: LoginService,
+        public ls: AppLocalizationService
     ) {
         this.registerData.isUSCitizen = true;
         this.router.events.subscribe((event) => {

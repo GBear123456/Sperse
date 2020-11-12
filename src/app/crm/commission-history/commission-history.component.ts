@@ -38,8 +38,13 @@ import { ODataRequestValues } from '@shared/common/odata/odata-request-values.in
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
-import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
-    OrderServiceProxy, UpdateOrderAffiliateContactInput } from '@shared/service-proxies/service-proxies';
+import {
+    CommissionServiceProxy,
+    InvoiceSettings,
+    OrderServiceProxy,
+    ProductServiceProxy,
+    UpdateOrderAffiliateContactInput
+} from '@shared/service-proxies/service-proxies';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
@@ -61,6 +66,7 @@ import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.comp
 import { LedgerType } from '@app/crm/commission-history/ledger-type.enum';
 import { LedgerStatus } from '@app/crm/commission-history/ledger-status.enum';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { CrmService } from '@app/crm/crm.service';
 
 @Component({
     templateUrl: './commission-history.component.html',
@@ -150,7 +156,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     [
                         this.commissionFields.Id,
                         this.commissionFields.OrderId,
-                        this.commissionFields.CommissionAmount
+                        this.commissionFields.CommissionAmount,
+                        this.commissionFields.BuyerContactId,
+                        this.commissionFields.ResellerContactId
                     ]
                 );
             }
@@ -169,7 +177,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 request.params.$select = DataGridService.getSelectFields(
                     this.ledgerDataGrid,
-                    [ this.ledgerFields.Id ]
+                    [ this.ledgerFields.Id, this.ledgerFields.ContactId ]
                 );
             }
         })
@@ -442,6 +450,39 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         this.refresh();
                     }
             });
+    }
+
+    private getContactId(data: CommissionDto | LedgerDto | ResellersDto, dataField: string): number {
+        const namesToContactIdsMap = {
+            [this.commissionFields.BuyerName]: this.commissionFields.BuyerContactId,
+            [this.commissionFields.ResellerName]: this.commissionFields.ResellerContactId,
+            [this.ledgerFields.ContactName]: this.ledgerFields.ContactId,
+            [this.resellersFields.FullName]: this.resellersFields.Id
+        };
+        return data[namesToContactIdsMap[dataField]];
+    }
+
+    onCellClick(event) {
+        if (event.column.dataField === this.commissionFields.BuyerName
+            || event.column.dataField === this.commissionFields.ResellerName
+            || event.column.dataField === this.ledgerFields.ContactName
+            || event.column.dataField === this.resellersFields.FullName
+        ) {
+            const data: CommissionDto | LedgerDto | ResellersDto = event.data;
+            const contactId = this.getContactId(data, event.column.dataField);
+            if (contactId) {
+                this.searchClear = false;
+                event.component && event.component.cancelEditData();
+                setTimeout(() => {
+                    this._router.navigate(
+                        CrmService.getEntityDetailsLink(contactId),
+                        { queryParams: {
+                                referrer: 'app/crm/commission-history'
+                            }}
+                    );
+                });
+            }
+        }
     }
 
     onContentReady(event) {
