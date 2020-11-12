@@ -286,9 +286,19 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     });
     contactStatus = ContactStatus;
     selectedClientKeys: any = [];
-    get selectedClients(): Observable<any[]> {
-        let slection = this.dataGrid && this.dataGrid.instance.getSelectedRowsData();
-        return (slection instanceof Array ? of(slection) : from(slection));
+    get selectedClients(): Observable<ContactDto[]> {
+        if (this.dataGrid) {
+            let visibleRows = this.dataGrid.instance.getVisibleRows(), 
+                selection: Promise<ContactDto[]> | ContactDto[];
+            if (this.selectedClientKeys.every(key => visibleRows.some(row => row.data.Id == key)))                
+                selection = visibleRows.map(item => {
+                    return item.isSelected ? item.data : false;
+                }).filter(Boolean);
+            else
+                selection = this.dataGrid.instance.getSelectedRowsData();
+            return (selection instanceof Array ? of(selection) : from(selection));
+        } else 
+            return of([]);
     }
     headlineButtons: HeadlineButton[] = [
         {
@@ -870,16 +880,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
     }
 
-    onSelectionChanged($event) {
-        let seletion = $event.component.getSelectedRowKeys();
-        if (seletion instanceof Array)
-            this.updateSelectedKeys(seletion);
-        else {
-            this.startLoading();
-            seletion.then(this.updateSelectedKeys.bind(this));
-        }
-    }
-
     updateSelectedKeys(keys: number[]) {
         this.selectedClientKeys = keys;
         this.initToolbarConfig();
@@ -1185,7 +1185,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     text: this.l('Delete'),
                                     disabled: this.selectedClientKeys.length != 1, // need update
                                     action: () => {
-                                        this.selectedClients.subscribe(clients => {
+                                        this.selectedClients.subscribe((clients: ContactDto[]) => {
                                             const client =  clients[0];
                                             this.contactService.deleteContact(
                                                 client.Name,
@@ -1203,7 +1203,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     text: this.l('Toolbar_Merge'),
                                     disabled: this.selectedClientKeys.length != 2 || !this.isMergeAllowed,
                                     action: () => {
-                                        this.selectedClients.subscribe(clients => {
+                                        this.selectedClients.subscribe((clients: ContactDto[]) => {
                                             this.contactService.mergeContact(clients[0], clients[1], true, true, () => {
                                                 this.refresh();
                                                 this.dataGrid.instance.deselectAll();
@@ -1229,7 +1229,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 {
                                     text: this.l('Email'),
                                     action: () => {
-                                        this.selectedClients.subscribe(clients => {
+                                        this.selectedClients.subscribe((clients: ContactDto[]) => {
                                             this.contactService.showEmailDialog({
                                                 contactId: this.selectedClientKeys[0],
                                                 to: clients.map(lead => lead.Email).filter(Boolean)
@@ -1240,7 +1240,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 {
                                     text: this.l('SMS'),
                                     action: () => {
-                                        this.selectedClients.subscribe(clients => {
+                                        this.selectedClients.subscribe((clients: ContactDto[]) => {
                                             const contact = clients && clients[clients.length - 1];
                                             const parsedName = contact && this.nameParserService.getParsed(contact.Name);
                                             this.contactService.showSMSDialog({
@@ -1662,5 +1662,33 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     selectionModeChanged($event) {
         this.dataGrid.instance.option(
             'selection.selectAllMode', $event.itemData.mode);
+    }
+
+    onOptionChanged(event) {
+        if (event.name == 'selectionFilter') {
+            if (event.value === null || !event.value.length) {
+                let seletion = event.component.getSelectedRowKeys();
+                if (seletion instanceof Array)
+                    this.updateSelectedKeys(seletion);
+                else {
+                    this.startLoading();
+                    seletion.then(this.updateSelectedKeys.bind(this));
+                }
+            } else {
+                let keys = this.selectedClientKeys;
+                event.component.getVisibleRows().forEach(item => {
+                    let isItemIncluded = ~keys.indexOf(item.data.Id);
+                    if (item.isSelected) {
+                        if (!isItemIncluded)
+                            keys.push(item.data.Id);
+                    } else {
+                        if (isItemIncluded)
+                            keys = keys.filter(key => key != item.data.Id);
+                    }                                        
+                });
+                this.updateSelectedKeys(keys);
+            }
+        }
+        this.onGridOptionChanged(event);
     }
 }

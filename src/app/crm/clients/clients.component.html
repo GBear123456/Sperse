@@ -104,9 +104,8 @@
                                   }"
                                   (onContentReady)="onContentReady($event)"
                                   (onCellClick)="onCellClick($event)"
-                                  (onOptionChanged)="onGridOptionChanged($event)"
+                                  (onOptionChanged)="onOptionChanged($event)"
                                   (onEditingStart)="toggleActionsMenu($event)"
-                                  (onSelectionChanged)="onSelectionChanged($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                         <dxo-selection selectAllMode="page"
                                        showCheckBoxesMode="always"
