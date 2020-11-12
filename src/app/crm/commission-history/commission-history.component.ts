@@ -40,6 +40,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
     OrderServiceProxy, UpdateOrderAffiliateContactInput } from '@shared/service-proxies/service-proxies';
+import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
@@ -619,7 +620,25 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 this.sourceComponent.toggle();
                             }
                         }
-                    }, cancelButton
+                    }, cancelButton, {
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('UpdateCommissionableAmount'),
+                            visible: this.selectedViewType == this.COMMISSION_VIEW,
+                            disabled: !this.selectedRecords.length
+                                || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
+                            onClick: (e) => {
+                                this.dialog.open(UpdateCommissionableDialogComponent, {
+                                    disableClose: true,
+                                    closeOnNavigation: false,
+                                    data: {
+                                        entityIds: this.selectedRecords.map(item => item.Id),
+                                        bulkUpdateAllowed: this.bulkUpdateAllowed
+                                    }
+                                }).afterClosed().subscribe(() => this.refresh());
+                            }
+                        }
+                    }
                 ]
             },
             {
