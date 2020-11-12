@@ -30,11 +30,11 @@ export class ToolBarComponent implements OnDestroy, OnInit, AfterViewInit {
     _config: ToolbarGroupModel[];
     @Input()
     set config(config: ToolbarGroupModel[]) {
-            if (this._config) {
-                this._config = config;
-                this.initToolbarItems();
-            } else
-                this._config = config;
+        if (this._config) {
+            this._config = config;
+            this.initToolbarItems();
+        } else
+            this._config = config;
     }
     @Input() disableToolbarUpdateAfterFiltersFixing = false;
     @HostBinding('style.display') display: string;
