@@ -52,8 +52,8 @@ export class LedgerCompleteDialogComponent extends ConfirmDialogComponent {
                         this.loadingService.startLoading(this.elementRef.nativeElement);
                         this.commissionProxy.completeWithdrawals(new CompleteWithdrawalInput({
                             withdrawalIds: this.data.entityIds,
-                            paymentSystem: PaymentSystem[this.paymentSystem] //,
-                            //payDate: payDate
+                            paymentSystem: PaymentSystem[this.paymentSystem],
+                            payDate: DateHelper.removeTimezoneOffset(this.payDate, false, 'from')
                         })).pipe(
                             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
                         ).subscribe(() => {

@@ -46,7 +46,7 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
 
     confirm() {
         if (this.selectedContactIds && this.selectedContactIds.length &&
-            (this.selectedContactIds.length == 1 || this.data.bulkUpdateAllowed)
+            this.selectedContactIds.length == 1 || this.data.bulkUpdateAllowed
         ) {
             ContactsHelper.showConfirmMessage(
                 this.ls.l('NewEarningsAdd'),
@@ -55,7 +55,8 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
                         this.loadingService.startLoading(this.elementRef.nativeElement);
                         this.commissionProxy.recordEarnings(
                             new RecordEarningsInput({
-                                contactId: this.selectedContactIds[0],
+                                contactIds: this.selectedContactIds && this.selectedContactIds.length 
+                                    ? this.selectedContactIds : undefined,
                                 startDate: DateHelper.removeTimezoneOffset(new Date(
                                     (this.dateRange.from.value || this.dateRange.to.value).getTime()), true, 'from'),
                                 endDate: DateHelper.removeTimezoneOffset(new Date(
