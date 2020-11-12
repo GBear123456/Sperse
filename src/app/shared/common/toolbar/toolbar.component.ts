@@ -1,5 +1,6 @@
 /** Core imports */
-import { Component, Input, HostBinding, OnDestroy, ViewChild, ChangeDetectionStrategy, OnInit } from '@angular/core';
+import { Component, Input, HostBinding, OnDestroy, ChangeDetectorRef,
+    ViewChild, ChangeDetectionStrategy, OnInit, AfterViewInit } from '@angular/core';
 
 /** Third party imports */
 import cloneDeep from 'lodash/cloneDeep';
@@ -23,14 +24,17 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
     styleUrls: ['./toolbar.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ToolBarComponent implements OnDestroy, OnInit {
+export class ToolBarComponent implements OnDestroy, OnInit, AfterViewInit {
     @ViewChild(DxToolbarComponent, { static: false }) toolbarComponent: DxToolbarComponent;
     @Input() width = '100%';
     _config: ToolbarGroupModel[];
     @Input()
     set config(config: ToolbarGroupModel[]) {
-        this._config = config;
-        this.initToolbarItems();
+            if (this._config) {
+                this._config = config;
+                this.initToolbarItems();
+            } else
+                this._config = config;
     }
     @Input() disableToolbarUpdateAfterFiltersFixing = false;
     @HostBinding('style.display') display: string;
@@ -43,6 +47,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
     private fixedSubscription: Subscription;
 
     constructor(
+        private changeDetectorRef: ChangeDetectorRef,
         private filtersService: FiltersService,
         private ls: AppLocalizationService,
         private userManagementService: UserManagementService,
@@ -57,6 +62,13 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 this.updateToolbarItemAttribute('filters', 'button-pressed', fixed);
             });
         }
+    }
+
+    ngAfterViewInit() {
+        setTimeout(() => {
+            this.initToolbarItems();
+            this.changeDetectorRef.detectChanges();
+        }, 1000);
     }
 
     private getSupportedButtons() {
