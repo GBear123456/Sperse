@@ -7396,6 +7396,58 @@ export class CommissionServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    cancelCommissions(body: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Commission/CancelCommissions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelCommissions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelCommissions(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCancelCommissions(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     recordEarnings(body: RecordEarningsInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Commission/RecordEarnings";
         url_ = url_.replace(/[?&]$/, "");
@@ -7500,58 +7552,6 @@ export class CommissionServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    approveLedger(body: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Commission/ApproveLedger";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processApproveLedger(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processApproveLedger(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processApproveLedger(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
     completeWithdrawals(body: CompleteWithdrawalInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Commission/CompleteWithdrawals";
         url_ = url_.replace(/[?&]$/, "");
@@ -7604,8 +7604,8 @@ export class CommissionServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    cancelCommissions(body: number[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Commission/CancelCommissions";
+    approveLedger(body: number[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Commission/ApproveLedger";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -7620,11 +7620,11 @@ export class CommissionServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCancelCommissions(response_);
+            return this.processApproveLedger(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCancelCommissions(<any>response_);
+                    return this.processApproveLedger(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -7633,7 +7633,7 @@ export class CommissionServiceProxy {
         }));
     }
 
-    protected processCancelCommissions(response: HttpResponseBase): Observable<void> {
+    protected processApproveLedger(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -46194,7 +46194,7 @@ export interface IUpdateCommissionableAmountInput {
 }
 
 export class RecordEarningsInput implements IRecordEarningsInput {
-    contactId!: number | undefined;
+    contactIds!: number[] | undefined;
     startDate!: moment.Moment;
     endDate!: moment.Moment;
 
@@ -46209,7 +46209,11 @@ export class RecordEarningsInput implements IRecordEarningsInput {
 
     init(data?: any) {
         if (data) {
-            this.contactId = data["contactId"];
+            if (data["contactIds"] && data["contactIds"].constructor === Array) {
+                this.contactIds = [];
+                for (let item of data["contactIds"])
+                    this.contactIds.push(item);
+            }
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
         }
@@ -46224,7 +46228,11 @@ export class RecordEarningsInput implements IRecordEarningsInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
+        if (this.contactIds && this.contactIds.constructor === Array) {
+            data["contactIds"] = [];
+            for (let item of this.contactIds)
+                data["contactIds"].push(item);
+        }
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         return data; 
@@ -46232,7 +46240,7 @@ export class RecordEarningsInput implements IRecordEarningsInput {
 }
 
 export interface IRecordEarningsInput {
-    contactId: number | undefined;
+    contactIds: number[] | undefined;
     startDate: moment.Moment;
     endDate: moment.Moment;
 }
@@ -46298,6 +46306,7 @@ export enum PaymentSystem {
 export class CompleteWithdrawalInput implements ICompleteWithdrawalInput {
     withdrawalIds!: number[] | undefined;
     paymentSystem!: PaymentSystem;
+    payDate!: moment.Moment;
 
     constructor(data?: ICompleteWithdrawalInput) {
         if (data) {
@@ -46316,6 +46325,7 @@ export class CompleteWithdrawalInput implements ICompleteWithdrawalInput {
                     this.withdrawalIds.push(item);
             }
             this.paymentSystem = data["paymentSystem"];
+            this.payDate = data["payDate"] ? moment(data["payDate"].toString()) : <any>undefined;
         }
     }
 
@@ -46334,6 +46344,7 @@ export class CompleteWithdrawalInput implements ICompleteWithdrawalInput {
                 data["withdrawalIds"].push(item);
         }
         data["paymentSystem"] = this.paymentSystem;
+        data["payDate"] = this.payDate ? this.payDate.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -46341,6 +46352,7 @@ export class CompleteWithdrawalInput implements ICompleteWithdrawalInput {
 export interface ICompleteWithdrawalInput {
     withdrawalIds: number[] | undefined;
     paymentSystem: PaymentSystem;
+    payDate: moment.Moment;
 }
 
 export class SubscribableEditionComboboxItemDto implements ISubscribableEditionComboboxItemDto {
