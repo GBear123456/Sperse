@@ -27,6 +27,10 @@ export class GooglePlaceService {
         return GooglePlaceService.getFieldValue(components, 'postal_town', 'short_name');
     }
 
+    static getCountryName(components: AddressComponent[]): string {
+        return GooglePlaceService.getFieldValue(components, 'country', 'long_name');
+    }
+
     getCountryCode(components: AddressComponent[]): string {
         return this.normalize(GooglePlaceService.getCountryCode(components));
     }
@@ -36,9 +40,17 @@ export class GooglePlaceService {
         return stateCode && this.normalize(stateCode);
     }
 
+    getZipCode(components: AddressComponent[]): string {
+        return GooglePlaceService.getFieldValue(components, 'postal_code', 'long_name');
+    }
+
     getStreet(components: AddressComponent[]): string {
         const street = this.angularGooglePlaceService.street(components);
         return street && this.normalize(street);
+    }
+
+    getStreetNumber(components: AddressComponent[]) {
+        return GooglePlaceService.getFieldValue(components, 'street_number', 'long_name');
     }
 
     getStateName(components: AddressComponent[]): string {

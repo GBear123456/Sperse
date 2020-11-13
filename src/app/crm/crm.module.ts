@@ -96,6 +96,7 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
+import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 
 @NgModule({
     imports: [
@@ -157,7 +158,8 @@ import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/re
         StaticListModule,
         CountryPhoneNumberModule,
         ModalDialogModule,
-        ListsModule
+        ListsModule,
+        GooglePlaceModule
     ],
     declarations: [
         ClientsComponent,

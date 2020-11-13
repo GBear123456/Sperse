@@ -41,6 +41,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppStoreService } from '@app/store/app-store.service';
 import { ListsModule } from '@app/shared/common/lists/lists.module';
 import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module';
+import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 
 @NgModule({
     imports: [
@@ -68,7 +69,8 @@ import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module
         BankCodeLettersModule,
         AngularGooglePlaceModule,
         ListsModule,
-        RatingBarModule
+        RatingBarModule,
+        GooglePlaceModule
     ],
     exports: [
         CreateEntityDialogComponent,
