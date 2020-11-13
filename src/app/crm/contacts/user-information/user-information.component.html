@@ -46,7 +46,10 @@
                         </div>
                         <dx-validator>
                             <dxi-validation-rule type="stringLength" max="24"></dxi-validation-rule>
-                            <dxi-validation-rule type="pattern" [pattern]="phonePattern" message="{{ls.l('PhoneValidationError')}}"></dxi-validation-rule>
+                            <dxi-validation-rule type="pattern"
+                                                 [pattern]="phonePattern"
+                                                 [message]="ls.l('PhoneValidationError')">
+                            </dxi-validation-rule>
                         </dx-validator>
                     </dx-select-box>
                     <dx-check-box [(value)]="inviteSetRandomPassword" [text]="ls.l('SetRandomPassword')"></dx-check-box>
