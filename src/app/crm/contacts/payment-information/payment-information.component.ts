@@ -41,10 +41,9 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     @ViewChild('paymentsContainer', { static: true }) paymentsContainer: ElementRef;
     @ViewChild('paymentMethodsContainer', { static: true }) paymentMethodsContainer: ElementRef;
     warningMessage$: Observable<string>;
-    lastPaymentDate: string;
-    lastPaymentAmount: number;
+    totalPaymentAmount: number;
+    hasRecurringBilling: boolean;
     amountCurrency = '$';
-    balanceAmount$: Observable<number>;
     payments$: Observable<MonthlyPaymentInfo[]>;
     displayedPayments$: Observable<MonthlyPaymentInfo[]>;
     paymentMethods$: Observable<PaymentMethodInfo[]>;
@@ -68,7 +67,6 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.balanceAmount$ = of(0);
         this.contactInfoSubscription = this.contactsService.contactInfo$.pipe(
             map(contactInfo => contactInfo.id),
             distinctUntilChanged()
@@ -90,9 +88,9 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
                         : this.paymentServiceProxy.getPayments(contactId).pipe(
                             tap(paymentInfo => {
                                 this.createPaymentsCache(this.contactService['data'].contactInfo.id);
+                                this.paymentServiceProxy['data'][contactId].totalPaymentAmount = paymentInfo.totalPaymentAmount;
+                                this.paymentServiceProxy['data'][contactId].hasRecurringBilling = paymentInfo.hasRecurringBilling;
                                 this.paymentServiceProxy['data'][contactId].payments = paymentInfo.payments;
-                                this.paymentServiceProxy['data'][contactId].lastPaymentAmount = paymentInfo.lastPaymentAmount;
-                                this.paymentServiceProxy['data'][contactId].lastPaymentDate = paymentInfo.lastPaymentDate && paymentInfo.lastPaymentDate.utc().format('MMM D');
                             }),
                             map(paymentInfo => paymentInfo.payments)
                         )).pipe(finalize(() => this.loadingService.finishLoading(this.paymentsContainer.nativeElement)));
@@ -100,8 +98,8 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
             ),
             tap(() => {
                 const contactId = this.contactService['data'].contactInfo.id;
-                this.lastPaymentAmount = this.paymentServiceProxy['data'][contactId].lastPaymentAmount;
-                this.lastPaymentDate = this.paymentServiceProxy['data'][contactId].lastPaymentDate;
+                this.totalPaymentAmount = this.paymentServiceProxy['data'][contactId].totalPaymentAmount;
+                this.hasRecurringBilling = this.paymentServiceProxy['data'][contactId].hasRecurringBilling;
             }),
             publishReplay(),
             refCount()
@@ -145,7 +143,7 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     private createPaymentsCache(contactId: number) {
         if (!this.paymentServiceProxy['data'] || !this.paymentServiceProxy['data'][contactId]) {
             this.paymentServiceProxy['data'] = {
-                [contactId]: { payments: null, lastPaymentAmount: null, lastPaymentDate: null, paymentMethods: null }
+                [contactId]: { payments: null, totalPaymentAmount: 0, hasRecurringBilling: false, paymentMethods: null }
             };
         }
     }
