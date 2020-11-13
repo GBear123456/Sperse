@@ -40,6 +40,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
     OrderServiceProxy, UpdateOrderAffiliateContactInput } from '@shared/service-proxies/service-proxies';
+import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
@@ -674,6 +675,24 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 }).afterClosed().subscribe(() => this.refresh());
                             }
                         }
+                    }, {
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('UpdateCommissionRate'),
+                            visible: this.selectedViewType == this.COMMISSION_VIEW,
+                            disabled: !this.selectedRecords.length
+                                || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
+                            onClick: (e) => {
+                                this.dialog.open(UpdateCommissionRateDialogComponent, {
+                                    disableClose: true,
+                                    closeOnNavigation: false,
+                                    data: {
+                                        entityIds: this.selectedRecords.map(item => item.Id),
+                                        bulkUpdateAllowed: this.bulkUpdateAllowed
+                                    }
+                                }).afterClosed().subscribe(() => this.refresh());
+                            }
+                        }
                     }
                 ]
             },
@@ -736,9 +755,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                entityIds: this.selectedRecords.filter(
+                entities: this.selectedRecords.filter(
                     item => item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal
-                ).map(item => item.Id),
+                ),
                 bulkUpdateAllowed: this.bulkUpdateAllowed
             }
         }).afterClosed().subscribe(() => this.refresh());

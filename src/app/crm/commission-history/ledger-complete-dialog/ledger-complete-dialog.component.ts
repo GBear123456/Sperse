@@ -44,14 +44,14 @@ export class LedgerCompleteDialogComponent extends ConfirmDialogComponent {
     }
 
     confirm() {
-        if (this.data.entityIds.length <= 1 || this.data.bulkUpdateAllowed) {
+        if (this.data.entities.length <= 1 || this.data.bulkUpdateAllowed) {
             ContactsHelper.showConfirmMessage(
                 this.ls.l('SelectedItemsAction', this.ls.l('Completed')),
                 (isConfirmed: boolean) => {
                     if (isConfirmed) {
                         this.loadingService.startLoading(this.elementRef.nativeElement);
                         this.commissionProxy.completeWithdrawals(new CompleteWithdrawalInput({
-                            withdrawalIds: this.data.entityIds,
+                            withdrawalIds: this.data.entities.map(item => item.Id),
                             paymentSystem: PaymentSystem[this.paymentSystem],
                             payDate: DateHelper.removeTimezoneOffset(this.payDate, false, 'from')
                         })).pipe(
