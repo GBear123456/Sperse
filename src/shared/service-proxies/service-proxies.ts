@@ -68317,12 +68317,11 @@ export interface IRenamePartnerTypeInput {
     name: string;
 }
 
-export class MonthlyPaymentInfo implements IMonthlyPaymentInfo {
-    startDate!: moment.Moment | undefined;
-    endDate!: moment.Moment | undefined;
+export class ShortPaymentInfo implements IShortPaymentInfo {
+    date!: moment.Moment | undefined;
     amount!: number | undefined;
 
-    constructor(data?: IMonthlyPaymentInfo) {
+    constructor(data?: IShortPaymentInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -68333,38 +68332,35 @@ export class MonthlyPaymentInfo implements IMonthlyPaymentInfo {
 
     init(data?: any) {
         if (data) {
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.amount = data["amount"];
         }
     }
 
-    static fromJS(data: any): MonthlyPaymentInfo {
+    static fromJS(data: any): ShortPaymentInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new MonthlyPaymentInfo();
+        let result = new ShortPaymentInfo();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["amount"] = this.amount;
         return data; 
     }
 }
 
-export interface IMonthlyPaymentInfo {
-    startDate: moment.Moment | undefined;
-    endDate: moment.Moment | undefined;
+export interface IShortPaymentInfo {
+    date: moment.Moment | undefined;
     amount: number | undefined;
 }
 
 export class GetPaymentsDto implements IGetPaymentsDto {
-    lastPaymentAmount!: number | undefined;
-    lastPaymentDate!: moment.Moment | undefined;
-    payments!: MonthlyPaymentInfo[] | undefined;
+    totalPaymentAmount!: number | undefined;
+    hasRecurringBilling!: boolean | undefined;
+    payments!: ShortPaymentInfo[] | undefined;
 
     constructor(data?: IGetPaymentsDto) {
         if (data) {
@@ -68377,12 +68373,12 @@ export class GetPaymentsDto implements IGetPaymentsDto {
 
     init(data?: any) {
         if (data) {
-            this.lastPaymentAmount = data["lastPaymentAmount"];
-            this.lastPaymentDate = data["lastPaymentDate"] ? moment(data["lastPaymentDate"].toString()) : <any>undefined;
+            this.totalPaymentAmount = data["totalPaymentAmount"];
+            this.hasRecurringBilling = data["hasRecurringBilling"];
             if (data["payments"] && data["payments"].constructor === Array) {
                 this.payments = [];
                 for (let item of data["payments"])
-                    this.payments.push(MonthlyPaymentInfo.fromJS(item));
+                    this.payments.push(ShortPaymentInfo.fromJS(item));
             }
         }
     }
@@ -68396,8 +68392,8 @@ export class GetPaymentsDto implements IGetPaymentsDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["lastPaymentAmount"] = this.lastPaymentAmount;
-        data["lastPaymentDate"] = this.lastPaymentDate ? this.lastPaymentDate.toISOString() : <any>undefined;
+        data["totalPaymentAmount"] = this.totalPaymentAmount;
+        data["hasRecurringBilling"] = this.hasRecurringBilling;
         if (this.payments && this.payments.constructor === Array) {
             data["payments"] = [];
             for (let item of this.payments)
@@ -68408,9 +68404,9 @@ export class GetPaymentsDto implements IGetPaymentsDto {
 }
 
 export interface IGetPaymentsDto {
-    lastPaymentAmount: number | undefined;
-    lastPaymentDate: moment.Moment | undefined;
-    payments: MonthlyPaymentInfo[] | undefined;
+    totalPaymentAmount: number | undefined;
+    hasRecurringBilling: boolean | undefined;
+    payments: ShortPaymentInfo[] | undefined;
 }
 
 export enum CustomerAccountingType {
