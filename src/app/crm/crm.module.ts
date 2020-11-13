@@ -12,7 +12,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { Store } from '@ngrx/store';
-import { AngularGooglePlaceModule } from 'angular-google-place';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
@@ -141,7 +140,6 @@ import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete'
         MatProgressSpinnerModule,
         MatSelectModule,
         MatStepperModule,
-        AngularGooglePlaceModule,
         SourceContactListModule,
         CRMDashboardWidgetsModule,
         ContactsModule,
