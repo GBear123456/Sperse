@@ -755,9 +755,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             disableClose: true,
             closeOnNavigation: false,
             data: {
-                entityIds: this.selectedRecords.filter(
+                entities: this.selectedRecords.filter(
                     item => item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal
-                ).map(item => item.Id),
+                ),
                 bulkUpdateAllowed: this.bulkUpdateAllowed
             }
         }).afterClosed().subscribe(() => this.refresh());
