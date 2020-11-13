@@ -8,7 +8,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatTabsModule } from '@angular/material/tabs';
-import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
@@ -95,8 +94,9 @@ import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notificat
 import { GenerateReportDialogComponent } from '@app/cfo/reports/generate-report-dialog/generate-report-dialog.component';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
-import { ModalDialogModule } from '../../shared/common/dialogs/modal/modal-dialog.module';
+import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 let COMPONENTS = [
     StartComponent,
@@ -178,7 +178,6 @@ let COMPONENTS = [
         DashboardWidgetsModule,
         DxRangeSliderModule,
         DxSwitchModule,
-        AngularGooglePlaceModule,
         DxPopupModule,
         ImageViewerModule,
         BankAccountsCommonModule,
@@ -189,7 +188,8 @@ let COMPONENTS = [
         SortButtonModule,
         ExpandButtonModule,
         ActionMenuModule,
-        ModalDialogModule
+        ModalDialogModule,
+        GooglePlaceModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,

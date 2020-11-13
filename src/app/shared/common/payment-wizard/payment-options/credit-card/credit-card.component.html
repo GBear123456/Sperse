@@ -90,9 +90,8 @@
                 type="text"
                 placeholder="ADDRESS"
                 formControlName="billingAddress"
-                (postal_code)="creditCardData.controls.billingZip.setValue($event)"
-                (setAddress)="setBillingAddress($event)"
-                angularGooglePlace />
+                (onAddressChange)="setBillingAddress($event)"
+                ngx-google-places-autocomplete/>
             <mat-error *ngIf="creditCardData.controls.billingAddress.touched && creditCardData.controls.billingAddress.invalid">
                 {{ ls.l('BillingAddressValidationMessage') }}
             </mat-error>

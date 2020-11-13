@@ -20,7 +20,6 @@ import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
-import { AngularGooglePlaceModule } from 'angular-google-place';
 
 /** Application imports */
 import { CreateEntityDialogComponent } from './create-entity-dialog.component';
@@ -67,7 +66,6 @@ import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete'
         ModalDialogModule,
         CountryPhoneNumberModule,
         BankCodeLettersModule,
-        AngularGooglePlaceModule,
         ListsModule,
         RatingBarModule,
         GooglePlaceModule

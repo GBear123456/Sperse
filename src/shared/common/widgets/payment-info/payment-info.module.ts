@@ -10,28 +10,23 @@ import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group';
 import { DxValidationSummaryModule } from 'devextreme-angular/ui/validation-summary';
 
-import { AngularGooglePlaceModule } from 'angular-google-place';
-
 import { CommonModule } from '@shared/common/common.module';
-//import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { PaymentInfoComponent } from './payment-info.component';
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 @NgModule({
     imports: [
         FormsModule,
         CommonModule,
         ngCommon.CommonModule,
-//        AppCommonModule,
-
-        AngularGooglePlaceModule,
-
         DxButtonModule,
         DxCheckBoxModule,
         DxSelectBoxModule,
         DxTextBoxModule,
         DxValidatorModule,
         DxValidationGroupModule,
-        DxValidationSummaryModule
+        DxValidationSummaryModule,
+        GooglePlaceModule
     ],
     declarations: [
         PaymentInfoComponent

@@ -102,11 +102,8 @@
                        [ngModel]="address"
                        class="dx-texteditor-input"
                        [disabled]="data.viewMode"
-                       (street_number)='data.streetNumber=$event'
-                       (street)='data.address1=$event'
-                       (postal_code)='data.zip=$event'
-                       (setAddress)="onAddressChanged($event)"
-                       angularGooglePlace/>
+                       (onAddressChange)="onAddressChanged($event)"
+                       ngx-google-places-autocomplete/>
                 <dx-tooltip #addressTooltip
                     width="300px"
                     position="right"

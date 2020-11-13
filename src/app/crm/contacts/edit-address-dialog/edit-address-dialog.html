@@ -49,12 +49,8 @@
                        [(ngModel)]="address"
                        class="dx-texteditor-input"
                        [disabled]="!isEditAllowed"
-                       (country)="updateCountryInfo($event)"
-                       (street_number)='data.streetNumber=$event'
-                       (street)='data.streetAddress=$event'
-                       (postal_code)='data.zip=$event'
-                       (setAddress)="onAddressChanged($event)"
-                       angularGooglePlace/>
+                       (onAddressChange)="onAddressChanged($event)"
+                       ngx-google-places-autocomplete/>
             </div>
             <div>
                 <label>{{ls.l('Country')}}</label>

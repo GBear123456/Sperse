@@ -16,7 +16,6 @@ import {
 import { Router } from '@angular/router';
 
 /** Third party imports */
-import { AngularGooglePlaceService } from 'angular-google-place';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
@@ -243,8 +242,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         private nameParser: NameParserService,
         private pipelineService: PipelineService,
         private dialogService: DialogService,
-        private angularGooglePlaceService: AngularGooglePlaceService,
-        private googlePlaceService: GooglePlaceService,
         private orgServiceProxy: OrganizationContactServiceProxy,
         private notifyService: NotifyService,
         private messageService: MessageService,
@@ -597,11 +594,11 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     onAddressChanged(address: Address, i: number) {
         this.checkAddressControls(i);
-        let number = this.angularGooglePlaceService.street_number(address.address_components);
-        let street = this.googlePlaceService.getStreet(address.address_components);
-        const countryCode = this.googlePlaceService.getCountryCode(address.address_components);
-        const stateCode = this.googlePlaceService.getStateCode(address.address_components);
-        const stateName = this.googlePlaceService.getStateName(address.address_components);
+        let number = GooglePlaceService.getStreetNumber(address.address_components);
+        let street = GooglePlaceService.getStreet(address.address_components);
+        const countryCode = GooglePlaceService.getCountryCode(address.address_components);
+        const stateCode = GooglePlaceService.getStateCode(address.address_components);
+        const stateName = GooglePlaceService.getStateName(address.address_components);
         this.statesService.updateState(countryCode, stateCode, stateName);
         this.contacts.addresses[i].state = {
             code: stateCode,
@@ -611,14 +608,14 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         this.contacts.addresses[i].country = countryName === 'United States'
             ? AppConsts.defaultCountryName
             : countryName;
-        this.contacts.addresses[i].zip = this.googlePlaceService.getZipCode(address.address_components);
-        this.contacts.addresses[i].street = this.googlePlaceService.getStreet(address.address_components);
-        this.contacts.addresses[i].streetNumber = this.googlePlaceService.getStreetNumber(address.address_components);
+        this.contacts.addresses[i].zip = GooglePlaceService.getZipCode(address.address_components);
+        this.contacts.addresses[i].street = GooglePlaceService.getStreet(address.address_components);
+        this.contacts.addresses[i].streetNumber = GooglePlaceService.getStreetNumber(address.address_components);
         this.contacts.addresses[i].countryCode = countryCode;
         this.contacts.addresses[i].address = this.addressInputs.toArray()[i].nativeElement.value = number
             ? number + ' ' + street
             : street;
-        this.contacts.addresses[i].city = this.googlePlaceService.getCity(address.address_components);
+        this.contacts.addresses[i].city = GooglePlaceService.getCity(address.address_components);
         this.changeDetectorRef.detectChanges();
     }
 

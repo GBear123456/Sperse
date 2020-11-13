@@ -204,12 +204,8 @@
                                            [(ngModel)]="model.address.streetAddress"
                                            class="dx-texteditor-input"
                                            [options]="options"
-                                           (country)="updateCountryInfo($event)"
-                                           (street_number)='street_number=$event'
-                                           (street)='street_name=$event'
-                                           (postal_code)='model.address.zip=$event'
-                                           (setAddress)="onAddressChanged($event)"
-                                           angularGooglePlace />
+                                           (onAddressChange)="onAddressChanged($event)"
+                                           ngx-google-places-autocomplete />
                                 </div>
                             </div>
                             <div class="dx-field row">

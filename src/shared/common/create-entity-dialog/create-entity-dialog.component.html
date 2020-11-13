@@ -385,7 +385,8 @@
                                        class="dx-texteditor-input"
                                        (onAddressChange)="onAddressChanged($event, i)"
                                        ngx-google-places-autocomplete/>
-                                <span [class]="(i || address.address || address.city || address.state || address.zip || address.country) && 'clear-contact' || 'hidden'"(click)="emptyOrRemoveInput('addresses', i)"><i class="minus-icon"></i></span>
+                                <span [class]="(i || address.address || address.city || address.state || address.zip || address.country) && 'clear-contact' || 'hidden'"
+                                      (click)="emptyOrRemoveInput('addresses', i)"><i class="minus-icon"></i></span>
                             </div>
                             <div class="field addr padding-right">
                                 <dx-text-box

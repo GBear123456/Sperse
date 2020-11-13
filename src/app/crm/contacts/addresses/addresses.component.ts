@@ -8,6 +8,7 @@ import { ClipboardService } from 'ngx-clipboard';
 import { Store, select } from '@ngrx/store';
 import { filter, first } from 'rxjs/operators';
 import * as _ from 'underscore';
+import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
 /** Application imports */
 import {
@@ -37,7 +38,7 @@ import {
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { StatesService } from '@root/store/states-store/states.service';
-import { AddressUsageTypeDto } from '../../../../shared/service-proxies/service-proxies';
+import { AddressUsageTypeDto } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
@@ -47,7 +48,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
         './addresses.component.less',
         './addresses.styles.less'
     ],
-    providers: [ DialogService, GooglePlaceService ]
+    providers: [ DialogService ]
 })
 export class AddressesComponent implements OnInit {
     @Input() isCompany = false;
@@ -87,7 +88,6 @@ export class AddressesComponent implements OnInit {
         private notifyService: NotifyService,
         private dialogService: DialogService,
         private store$: Store<RootStore.State>,
-        private googlePlaceService: GooglePlaceService,
         private statesService: StatesService,
         private permissionService: AppPermissionService,
         public ls: AppLocalizationService,
@@ -348,19 +348,18 @@ export class AddressesComponent implements OnInit {
         ].join(',');
     }
 
-    addressChanged(address, event) {
-        const countryCode = this.googlePlaceService.getCountryCode(event.address_components);
-        this.stateCode = this.googlePlaceService.getStateCode(event.address_components);
-        this.stateName = this.googlePlaceService.getStateName(event.address_components);
+    addressChanged(address: Address, event) {
+        this.stateCode = GooglePlaceService.getStateCode(event.address_components);
+        this.stateName = GooglePlaceService.getStateName(event.address_components);
+        const countryCode = GooglePlaceService.getCountryCode(event.address_components);
         this.statesService.updateState(countryCode, this.stateCode, this.stateName);
-        this._latestFormatedAddress = address.autoComplete = event.formatted_address;
-        this.city = this.googlePlaceService.getCity(event.address_components);
-    }
-
-    updateCountryInfo(countryName: string) {
-        countryName == 'United States' ?
-            this.country = AppConsts.defaultCountryName :
-            this.country = countryName;
+        const countryName = GooglePlaceService.getCountryName(address.address_components);
+        this.country = countryName === 'United States' ? AppConsts.defaultCountryName : countryName;
+        this.zip = GooglePlaceService.getZipCode(address.address_components);
+        this.streetAddress = GooglePlaceService.getStreet(address.address_components);
+        this.streetNumber = GooglePlaceService.getStreetNumber(address.address_components);
+        this._latestFormatedAddress = address['autoComplete'] = event.formatted_address;
+        this.city = GooglePlaceService.getCity(event.address_components);
     }
 
     copyToClipbord(event, address) {

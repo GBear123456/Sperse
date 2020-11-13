@@ -118,9 +118,8 @@
                                    class="dx-texteditor-input"
                                    [options]="options"
                                    [disabled]="!paymentAuthorizationRequired"
-                                   (postal_code)='bankCard.billingZip=$event'
-                                   (setAddress)="onAddressChanged($event)"
-                                   angularGooglePlace />
+                                   (onAddressChange)="onAddressChanged($event)"
+                                   ngx-google-places-autocomplete />
                         </div>
                     </div>
                     <div class="dx-field row">
@@ -132,7 +131,8 @@
                                          [(value)]="bankCard.billingCity">
                                 <dx-validator>
                                     <dxi-validation-rule type="required"
-                                                         [message]="ls.l('CityRequired')"></dxi-validation-rule>
+                                                         [message]="ls.l('CityRequired')">
+                                    </dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
                         </div>

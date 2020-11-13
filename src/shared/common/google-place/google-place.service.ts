@@ -1,12 +1,8 @@
 import { Injectable } from '@angular/core';
-import { AddressComponent, AngularGooglePlaceService } from 'angular-google-place';
+import { AddressComponent } from 'ngx-google-places-autocomplete/objects/addressComponent';
 
 @Injectable()
 export class GooglePlaceService {
-
-    constructor(
-        private angularGooglePlaceService: AngularGooglePlaceService
-    ) {}
 
     static getFieldValue(components: AddressComponent[], field, value): string {
         for (const attr of components)
@@ -15,55 +11,44 @@ export class GooglePlaceService {
                     return (<any>attr)[value];
     }
 
-    static getStateCode(components: AddressComponent[]): string {
-        return GooglePlaceService.getFieldValue(components, 'administrative_area_level_1', 'short_name');
-    }
-
-    static getCountryCode(components: AddressComponent[]): string {
-        return GooglePlaceService.getFieldValue(components, 'country', 'short_name');
-    }
-
-    static getCity(components: AddressComponent[]): string {
-        return GooglePlaceService.getFieldValue(components, 'postal_town', 'short_name');
-    }
-
     static getCountryName(components: AddressComponent[]): string {
         return GooglePlaceService.getFieldValue(components, 'country', 'long_name');
     }
 
-    getCountryCode(components: AddressComponent[]): string {
-        return this.normalize(GooglePlaceService.getCountryCode(components));
+    static getCountryCode(components: AddressComponent[]): string {
+        return this.normalize(GooglePlaceService.getFieldValue(components, 'country', 'short_name'));
     }
 
-    getStateCode(components: AddressComponent[]): string {
-        const stateCode = GooglePlaceService.getStateCode(components);
+    static getStateCode(components: AddressComponent[]): string {
+        const stateCode = GooglePlaceService.getFieldValue(components, 'administrative_area_level_1', 'short_name');
         return stateCode && this.normalize(stateCode);
     }
 
-    getZipCode(components: AddressComponent[]): string {
+    static getZipCode(components: AddressComponent[]): string {
         return GooglePlaceService.getFieldValue(components, 'postal_code', 'long_name');
     }
 
-    getStreet(components: AddressComponent[]): string {
-        const street = this.angularGooglePlaceService.street(components);
-        return street && this.normalize(street);
+    static getStreet(components: AddressComponent[]): string {
+        const street = GooglePlaceService.getStateName(components);
+        return street && GooglePlaceService.normalize(street);
     }
 
-    getStreetNumber(components: AddressComponent[]) {
+    static getStreetNumber(components: AddressComponent[]) {
         return GooglePlaceService.getFieldValue(components, 'street_number', 'long_name');
     }
 
-    getStateName(components: AddressComponent[]): string {
-        const stateName = this.angularGooglePlaceService.state(components);
-        return stateName && this.normalize(stateName);
+    static getStateName(components: AddressComponent[]): string {
+        const stateName = GooglePlaceService.getFieldValue(components, 'administrative_area_level_1', 'long_name');
+        return stateName && GooglePlaceService.normalize(stateName);
     }
 
-    getCity(components: AddressComponent[]): string {
-        const city = this.angularGooglePlaceService.city(components) || GooglePlaceService.getCity(components);
-        return city && this.normalize(city);
+    static getCity(components: AddressComponent[]): string {
+        const city = GooglePlaceService.getFieldValue(components, 'locality', 'long_name')
+                     || GooglePlaceService.getFieldValue(components, 'postal_town', 'short_name');
+        return city && GooglePlaceService.normalize(city);
     }
 
-    normalize(value: string): string {
+    static normalize(value: string): string {
         return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
 }
