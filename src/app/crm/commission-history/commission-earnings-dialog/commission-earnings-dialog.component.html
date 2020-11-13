@@ -18,8 +18,8 @@
                          selectAllMode="allPages"
                          keyExpr="id">
                     <div *dxTemplate="let contact of 'item'" class="affiliates-list-item-content"> 
-                        <div *ngIf="contact?.name" class="name">{{ contact?.name }}</div>
-                        <div *ngIf="contact?.affiliateCode" class="affiliate-code">{{ contact?.affiliateCode }}</div>
+                        <div *ngIf="contact?.name" class="name" [title]="contact?.name">{{ contact?.name }}</div>
+                        <div *ngIf="contact?.affiliateCode" class="affiliate-code" [title]="contact?.affiliateCode">{{ contact?.affiliateCode }}</div>
                     </div>
                 </dx-list>
             </div>
