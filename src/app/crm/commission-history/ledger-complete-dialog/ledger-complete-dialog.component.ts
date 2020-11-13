@@ -2,17 +2,14 @@
 import { Component, Injector, ElementRef } from '@angular/core';
 
 /** Third party imports */
-import * as moment from 'moment-timezone';
-import { Observable } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppPermissions } from '@shared/AppPermissions';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
-import { PaymentSystem, RecordEarningsInput, CommissionServiceProxy, CompleteWithdrawalInput,
-    PendingCommissionContactInfo } from '@shared/service-proxies/service-proxies';
-import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { PaymentSystem, CommissionServiceProxy,
+    CompleteWithdrawalInput } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -53,7 +50,8 @@ export class LedgerCompleteDialogComponent extends ConfirmDialogComponent {
                         this.commissionProxy.completeWithdrawals(new CompleteWithdrawalInput({
                             withdrawalIds: this.data.entities.map(item => item.Id),
                             paymentSystem: PaymentSystem[this.paymentSystem],
-                            payDate: DateHelper.removeTimezoneOffset(this.payDate, false, 'from')
+                            payDate: DateHelper.isSameDateWithoutTime(this.payDate, this.today) ?
+                                this.payDate : DateHelper.removeTimezoneOffset(this.payDate, false, 'to')
                         })).pipe(
                             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
                         ).subscribe(() => {
