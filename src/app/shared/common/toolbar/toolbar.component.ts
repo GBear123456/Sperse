@@ -41,7 +41,7 @@ export class ToolBarComponent implements OnDestroy, OnInit, AfterViewInit {
     @HostBinding('class.compact') @Input() compact = false;
     public items = [];
     public options = {};
-    private subscription: Subscription = this.filtersService.filterToggle$.subscribe((enabled) => {
+    private subscription: Subscription = this.filtersService.filterToggle$.subscribe((enabled: boolean) => {
         enabled || this.updateToolbarItemAttribute('filters', 'filter-selected', this.filtersService.hasFilterSelected);
     });
     private fixedSubscription: Subscription;

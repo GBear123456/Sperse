@@ -7396,6 +7396,58 @@ export class CommissionServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    updateCommissionRate(body: UpdateCommissionRateInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Commission/UpdateCommissionRate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateCommissionRate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateCommissionRate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateCommissionRate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     cancelCommissions(body: number[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Commission/CancelCommissions";
         url_ = url_.replace(/[?&]$/, "");
@@ -46243,6 +46295,54 @@ export class UpdateCommissionableAmountInput implements IUpdateCommissionableAmo
 export interface IUpdateCommissionableAmountInput {
     commissionIds: number[] | undefined;
     commissionableAmount: number;
+}
+
+export class UpdateCommissionRateInput implements IUpdateCommissionRateInput {
+    commissionIds!: number[] | undefined;
+    commissionRate!: number;
+
+    constructor(data?: IUpdateCommissionRateInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["commissionIds"] && data["commissionIds"].constructor === Array) {
+                this.commissionIds = [];
+                for (let item of data["commissionIds"])
+                    this.commissionIds.push(item);
+            }
+            this.commissionRate = data["commissionRate"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCommissionRateInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateCommissionRateInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.commissionIds && this.commissionIds.constructor === Array) {
+            data["commissionIds"] = [];
+            for (let item of this.commissionIds)
+                data["commissionIds"].push(item);
+        }
+        data["commissionRate"] = this.commissionRate;
+        return data; 
+    }
+}
+
+export interface IUpdateCommissionRateInput {
+    commissionIds: number[] | undefined;
+    commissionRate: number;
 }
 
 export class RecordEarningsInput implements IRecordEarningsInput {
