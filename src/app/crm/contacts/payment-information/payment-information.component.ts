@@ -21,7 +21,7 @@ import * as moment from 'moment';
 import { ContactsService } from '../contacts.service';
 import {
     ContactServiceProxy,
-    MonthlyPaymentInfo,
+    ShortPaymentInfo,
     PaymentMethodInfo,
     PaymentInfoType,
     PaymentServiceProxy,
@@ -44,8 +44,8 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     totalPaymentAmount: number;
     hasRecurringBilling: boolean;
     amountCurrency = '$';
-    payments$: Observable<MonthlyPaymentInfo[]>;
-    displayedPayments$: Observable<MonthlyPaymentInfo[]>;
+    payments$: Observable<ShortPaymentInfo[]>;
+    displayedPayments$: Observable<ShortPaymentInfo[]>;
     paymentMethods$: Observable<PaymentMethodInfo[]>;
     paymentMethodsTypes = PaymentInfoType;
     paymentsDisplayLimit$: BehaviorSubject<number | null> = new BehaviorSubject<number>(9);
