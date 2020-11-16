@@ -288,16 +288,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     selectedClientKeys: any = [];
     get selectedClients(): Observable<ContactDto[]> {
         if (this.dataGrid) {
-            let visibleRows = this.dataGrid.instance.getVisibleRows(), 
+            let visibleRows = this.dataGrid.instance.getVisibleRows(),
                 selection: Promise<ContactDto[]> | ContactDto[];
-            if (this.selectedClientKeys.every(key => visibleRows.some(row => row.data.Id == key)))                
+            if (this.selectedClientKeys.every(key => visibleRows.some(row => row.data.Id == key)))
                 selection = visibleRows.map(item => {
                     return item.isSelected ? item.data : false;
                 }).filter(Boolean);
             else
                 selection = this.dataGrid.instance.getSelectedRowsData();
             return (selection instanceof Array ? of(selection) : from(selection));
-        } else 
+        } else
             return of([]);
     }
     headlineButtons: HeadlineButton[] = [
@@ -1508,7 +1508,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     updateClientStatuses(status: Status) {
         if (this.permission.checkCGPermission(ContactGroup.Client)) {
-            let selectedIds: number[] = this.dataGrid.instance.getSelectedRowKeys();
+            this.statusComponent.toggle();
+            let selectedIds: number[] = this.selectedClientKeys;
             this.clientService.updateContactStatuses(
                 selectedIds,
                 ContactGroup.Client,
@@ -1660,12 +1661,17 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     selectionModeChanged($event) {
+        this.dataGrid.instance.clearSelection();
+        this.dataGrid.instance.option(
+            'selection.deferred', $event.itemData.mode != 'page');
         this.dataGrid.instance.option(
             'selection.selectAllMode', $event.itemData.mode);
     }
 
     onOptionChanged(event) {
-        if (event.name == 'selectionFilter') {
+        if (event.name == 'selectedRowKeys') {
+            this.updateSelectedKeys(event.value);
+        } if (event.name == 'selectionFilter') {
             if (event.value === null || !event.value.length) {
                 let seletion = event.component.getSelectedRowKeys();
                 if (seletion instanceof Array)
@@ -1684,7 +1690,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     } else {
                         if (isItemIncluded)
                             keys = keys.filter(key => key != item.data.Id);
-                    }                                        
+                    }
                 });
                 this.updateSelectedKeys(keys);
             }
