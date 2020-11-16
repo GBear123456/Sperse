@@ -1,7 +1,7 @@
 /** Core imports */
 import {
     ViewChild,
-    Component,    
+    Component,
     ChangeDetectionStrategy,
     ChangeDetectorRef
 } from '@angular/core';
@@ -9,7 +9,7 @@ import {
 /** Third party imports */
 import RemoteFileProvider from 'devextreme/ui/file_manager/file_provider/remote';
 import { DxFileManagerComponent } from 'devextreme-angular/ui/file-manager';
-import { loadMessages } from "devextreme/localization";
+import { loadMessages } from 'devextreme/localization';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -38,7 +38,7 @@ export class DocumentsComponent {
     });
 
     contextMenu = {
-        items: [            
+        items: [
             {
                 name: 'load',
                 icon: 'download',
@@ -86,7 +86,7 @@ export class DocumentsComponent {
     }
 
     onLayoutToogle() {
-        this.layout = this.layout == this.VIEW_MODE_DETAILS 
+        this.layout = this.layout == this.VIEW_MODE_DETAILS
             ? this.VIEW_MODE_THUMBNAILS : this.VIEW_MODE_DETAILS;
     }
 
