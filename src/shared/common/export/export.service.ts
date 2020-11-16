@@ -81,8 +81,13 @@ export class ExportService {
                 initialStore._beforeSend = initialBeforeSend;
                 callback([]);
             });
-        } else
-            callback(dataGrid.instance.getSelectedRowsData());
+        } else {
+            let selection: any = dataGrid.instance.getSelectedRowsData();
+            if (selection instanceof Array)
+                callback(selection);
+            else
+                selection.then(callback);
+        }
     }
 
     exportTo(option, type, dataGrid: DxDataGridComponent = null, prefix?: string, showItemsInName?: boolean): Promise<any> {
