@@ -434,6 +434,17 @@
             $('.print-this').on('click', function(event) {
                 printElement($(event.target).closest('.modal-dialog').find('.print-this-section')[0]);
             });
+
+            let changePassword = document.querySelector('.show-password');
+            let passwordInput = document.querySelector('.password-input');
+            let passwordIsVisible = false;
+            changePassword.addEventListener('click', function () {
+                passwordIsVisible = !passwordIsVisible;
+                passwordIsVisible ? passwordInput.type = 'text' : passwordInput.type = 'password';
+                passwordIsVisible
+                    ? event.currentTarget.classList.add('visible')
+                    : event.currentTarget.classList.remove('visible');
+            });
         });
 
         function printElement(elem) {

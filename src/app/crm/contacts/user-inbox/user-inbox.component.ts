@@ -588,6 +588,11 @@ export class UserInboxComponent implements OnDestroy {
         });
     }
 
+    getExtension(attachment) {
+        let ext = attachment.name.split('.').pop();
+        return ~['docx', 'doc', 'pdf', 'ppt', 'pptx', 'rtf', 'txt', 'xls', 'xlsx'].indexOf(ext) ? ext : '';
+    }
+
     ngOnDestroy() {
         this.contactsService.toolbarUpdate();
         this.contactsService.unsubscribe(this.ident);

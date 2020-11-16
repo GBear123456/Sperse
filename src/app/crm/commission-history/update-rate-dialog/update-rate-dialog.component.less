@@ -17,10 +17,14 @@
     mat-dialog-content {
         text-align: center;
         margin: auto;
-        ::ng-deep dx-date-box {
-            .dx-placeholder {
-                display: block!important;
-                opacity: 1;
+        .field {
+            height: 100px;
+            width: 100%;
+            ::ng-deep dx-number-box {
+                .dx-placeholder {
+                    display: block!important;
+                    opacity: 1;
+                }
             }
         }
     }

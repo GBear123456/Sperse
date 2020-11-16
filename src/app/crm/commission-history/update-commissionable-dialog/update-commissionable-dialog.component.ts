@@ -2,56 +2,52 @@
 import { Component, Injector, ElementRef } from '@angular/core';
 
 /** Third party imports */
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppPermissions } from '@shared/AppPermissions';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
-import { PaymentSystem, CommissionServiceProxy,
-    CompleteWithdrawalInput } from '@shared/service-proxies/service-proxies';
+import { CommissionServiceProxy, UpdateCommissionableAmountInput,
+    InvoiceSettings } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
-import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
-    selector: 'ledger-complete-dialog',
-    templateUrl: 'ledger-complete-dialog.component.html',
-    styleUrls: ['ledger-complete-dialog.component.less']
+    selector: 'update-commissionable-dialog',
+    templateUrl: 'update-commissionable-dialog.component.html',
+    styleUrls: ['update-commissionable-dialog.component.less']
 })
-export class LedgerCompleteDialogComponent extends ConfirmDialogComponent {
-    paymentSystems = Object.keys(PaymentSystem).map(key => {
-        return {
-            id: key,
-            text: this.ls.l(key)
-        };
-    });
-    paymentSystem = PaymentSystem.PayQuicker;
-    today: Date = new Date();
-    payDate: Date = this.today;
+export class UpdateCommissionableDialogComponent extends ConfirmDialogComponent {
+    amount = 0;
+
+    currency$: Observable<string> = this.invoicesService.settings$.pipe(
+        map((settings: InvoiceSettings) => settings && settings.currency)
+    );
 
     constructor(
         injector: Injector,
         public elementRef: ElementRef,
         private notify: NotifyService,
         private loadingService: LoadingService,
-        private commissionProxy: CommissionServiceProxy
+        private commissionProxy: CommissionServiceProxy,
+        private invoicesService: InvoicesService
     ) {
         super(injector);
     }
 
     confirm() {
-        if (this.data.entities.length <= 1 || this.data.bulkUpdateAllowed) {
+        if (this.data.entityIds.length <= 1 || this.data.bulkUpdateAllowed) {
             ContactsHelper.showConfirmMessage(
-                this.ls.l('SelectedItemsAction', this.ls.l('Completed')),
+                this.ls.l('UpdateCommissionableAmount'),
                 (isConfirmed: boolean) => {
                     if (isConfirmed) {
                         this.loadingService.startLoading(this.elementRef.nativeElement);
-                        this.commissionProxy.completeWithdrawals(new CompleteWithdrawalInput({
-                            withdrawalIds: this.data.entities.map(item => item.Id),
-                            paymentSystem: PaymentSystem[this.paymentSystem],
-                            payDate: DateHelper.isSameDateWithoutTime(this.payDate, this.today) ?
-                                this.payDate : DateHelper.removeTimezoneOffset(this.payDate, false, 'to')
+                        this.commissionProxy.updateCommissionableAmount(new UpdateCommissionableAmountInput({
+                            commissionIds: this.data.entityIds,
+                            commissionableAmount: this.amount || 0
                         })).pipe(
                             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
                         ).subscribe(() => {

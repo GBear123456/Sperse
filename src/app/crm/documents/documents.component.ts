@@ -29,8 +29,12 @@ import { AppConsts } from '@shared/AppConsts';
 export class DocumentsComponent {
     @ViewChild(DxFileManagerComponent, { static: false }) fileManager: DxFileManagerComponent;
 
+    private readonly VIEW_MODE_DETAILS    = 'details';
+    private readonly VIEW_MODE_THUMBNAILS = 'thumbnails';
+
+    layout = this.VIEW_MODE_THUMBNAILS;
     fileProvider = new RemoteFileProvider({
-        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/TenantFileManager/Files'
+        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/DocumentTemplates/Files'
     });
 
     contextMenu = {
@@ -79,6 +83,11 @@ export class DocumentsComponent {
                 column.width = 200;
             return column;
         });
+    }
+
+    onLayoutToogle() {
+        this.layout = this.layout == this.VIEW_MODE_DETAILS 
+            ? this.VIEW_MODE_THUMBNAILS : this.VIEW_MODE_DETAILS;
     }
 
     activate() {

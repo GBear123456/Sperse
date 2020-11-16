@@ -63,9 +63,9 @@
     </div>
     <div class="col-md-6 col-sm-12">
         <div class="dx-field">
-            <div class="dx-field-label">{{ls.l('postal_code')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
+            <div class="dx-field-label">{{ls.l('ZipCode')}}<span *ngIf="offersWizardService.isApplicationSubmission">*</span></div>
             <div class="dx-field-value">
-                <dx-text-box placeholder="Enter postal code"
+                <dx-text-box [placeholder]="ls.l('Enter') + ' ' + ls.l('ZipCode').toLowerCase()"
                              name="zipCode"
                              [maxLength]="maxLength"
                              [value]="postalCode"
@@ -74,7 +74,7 @@
                     <dx-validator>
                         <dxi-validation-rule type="pattern"
                                              [pattern]="zipRegex"
-                                             message="Zip Code is invalid">
+                                             [message]="ls.l('ZipCode') + ' ' + ls.l('IsInvalid')">
                         </dxi-validation-rule>
                         <dxi-validation-rule type="custom"
                                              [validationCallback]="offersWizardService.validateRequiredField"

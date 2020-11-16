@@ -157,15 +157,15 @@
                     <p class="char-count" *ngIf="!insertAsHTML">{{charCount}}</p>
                     <i class="insert-html" (click)="showInsertAsHTML()">{{ls.l(insertAsHTML ? 'Apply' : 'Insert as HTML')}}</i>
                     <i class="cancel-html" *ngIf="insertAsHTML" (click)="insertAsHTML = false">{{ls.l('Cancel')}}</i>
-                    <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event, scrollView);" *ngIf="!templateEditMode">
+                    <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)" *ngIf="!templateEditMode">
                         <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
-                            <a href="javascript:void(0);" class="attach-link" (click)="openFileSelector()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>
+                            <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>
                         </ng-template>
                     </ngx-file-drop>
                 </div>
                 <div class="field-area attachments" *ngIf="!templateEditMode">
                     <div *ngFor="let attachment of attachments; let i = index" class="attachment" [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}">
-                        <a target="_blank" [download]="attachment.name" [href]="attachment.url" class="name">{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span><i (click)="removeAttachment(attachment, i)" aria-hidden="true" class="delete fa fa-times"></i>
+                        <a target="_blank" [download]="attachment.name" [href]="attachment.url" (click)="attachmentClick($event, attachment)" class="name">{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span><i (click)="removeAttachment(attachment, i)" aria-hidden="true" class="delete fa fa-times"></i>
                     </div>
                 </div>
                 <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>

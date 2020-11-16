@@ -636,7 +636,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     class: 'sms fa fa-commenting-o',
                     action: (data?) => {
                         let entity = data || this.actionEvent.data || this.actionEvent;
-                        this.contactsService.showSMSDialog({                    
+                        this.contactsService.showSMSDialog({
                             phoneNumber: entity.Phone || entity.PhoneNumber
                         });
                     }
@@ -1439,6 +1439,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.filtersService.apply(() => {
             this.selectedOrderKeys = [];
             this.filterChanged = true;
+            this.contactGroupFilter.items.ContactGroupId
+                .value = this.selectedContactGroup.value;
             this.processFilterInternal();
         });
     }

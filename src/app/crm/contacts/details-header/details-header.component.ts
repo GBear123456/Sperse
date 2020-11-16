@@ -17,7 +17,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { PersonDialogComponent } from '../person-dialog/person-dialog.component';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
-import { UploadDocumentsDialogComponent } from '../documents/upload-documents-dialog/upload-documents-dialog.component';
 import { RelationCompaniesDialogComponent } from '../relation-companies-dialog/relation-companies-dialog.component';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import {
@@ -512,14 +511,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             });
         else if (selectedMenuItem.type === ContextType.AddFiles)
             setTimeout(() => {
-                this.dialog.open(UploadDocumentsDialogComponent, {
-                    panelClass: 'slider',
-                    hasBackdrop: false,
-                    closeOnNavigation: true,
-                    data: {
-                        contactId: this.data.id
-                    }
-                });
+                this.contactsService.showUploadDocumentsDialog(this.data.id);
             });
         else if (selectedMenuItem.type === ContextType.AddNotes)
             setTimeout(() => {

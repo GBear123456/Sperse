@@ -96,6 +96,8 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
+import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
+import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 
 @NgModule({
     imports: [
@@ -181,7 +183,9 @@ import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/re
         CommissionHistoryComponent,
         CommissionEarningsDialogComponent,
         LedgerCompleteDialogComponent,
-        RequestWithdrawalDialogComponent
+        RequestWithdrawalDialogComponent,
+        UpdateCommissionableDialogComponent,
+        UpdateCommissionRateDialogComponent
     ],
     providers: [
         ImportServiceProxy,
@@ -200,7 +204,9 @@ import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/re
         EntityCheckListDialogComponent,
         CommissionEarningsDialogComponent,
         LedgerCompleteDialogComponent,
-        RequestWithdrawalDialogComponent
+        RequestWithdrawalDialogComponent,
+        UpdateCommissionableDialogComponent,
+        UpdateCommissionRateDialogComponent
     ]
 })
 export class CrmModule {
