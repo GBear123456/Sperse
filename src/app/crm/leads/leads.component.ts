@@ -600,7 +600,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.leadFields.Email,
         this.leadFields.Phone,
         this.leadFields.AffiliateContactName,
-        this.leadFields.AffiliateContactAffiliateCode
+        this.leadFields.AffiliateContactAffiliateCode,
+        this.leadFields.PropertyName
     ].concat(
         this.isSmsAndEmailSendingAllowed ? [ this.leadFields.Phone ] : []
     );
