@@ -11,6 +11,7 @@
             <dx-file-manager
                 width="360px"
                 [height]="getHeight()"
+                [allowedFileExtensions]="[]"
                 [fileProvider]="selectedIndex == 1 ? documentsFileProvider : templatesFileProvider" 
                 [itemView]="{mode: layout}"
                 (onContentReady)="onContentReady()">
