@@ -156,12 +156,8 @@
                        placeholder=""
                        [(value)]="address.address"
                        class="dx-texteditor-input"
-                       (country)="updateCountryInfo($event)"
-                       (street_number)='address.streetNumber=$event'
-                       (street)='address.street=$event'
-                       (setAddress)="onAddressChanged($event)"
-                       (postal_code)='businessEntity.zip=$event'
-                       angularGooglePlace />
+                       (onAddressChange)="onAddressChanged($event)"
+                       ngx-google-places-autocomplete/>
                 <span *ngIf="!googleAutoComplete" [class]="businessEntity.address && 'clear-contact' || 'hidden'" (click)="emptyValue('address')"><i class="minus-icon"></i></span>
                 <span *ngIf="googleAutoComplete" [class]="address.address && 'clear-contact' || 'hidden'" (click)="emptyAddress()"><i class="minus-icon"></i></span>
             </div>

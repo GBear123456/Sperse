@@ -5,6 +5,7 @@ import { Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
+import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
 /** Application imports */
 import { RootStore, StatesStoreSelectors } from '@root/store';
@@ -45,7 +46,6 @@ export class PaymentInfoComponent {
     constructor(
         private store$: Store<RootStore.State>,
         private dialog: MatDialog,
-        private googlePlaceService: GooglePlaceService,
         private statesService: StatesService,
         public ls: AppLocalizationService,
         public inputStatusesService: InputStatusesService
@@ -55,14 +55,15 @@ export class PaymentInfoComponent {
         this.validationGroup = event.component;
     }
 
-    onAddressChanged(event) {
-        let number = event.address_components[0]['long_name'];
-        let street = event.address_components[1]['long_name'];
+    onAddressChanged(address: Address) {
+        let number = GooglePlaceService.getStreetNumber(address.address_components);
+        let street = GooglePlaceService.getStateName(address.address_components);
+        this.bankCard.billingZip = GooglePlaceService.getZipCode(address.address_components);
         this.bankCard.billingAddress = this.addressInput.nativeElement.value = number ? (number + ' ' + street) : street;
-        this.bankCard.billingCity = this.googlePlaceService.getCity(event.address_components);
-        this.bankCard.billingStateCode = this.googlePlaceService.getStateCode(event.address_components);
-        this.bankCard.billingState = this.googlePlaceService.getStateName(event.address_components);
-        this.bankCard.billingCountryCode = GooglePlaceService.getCountryCode(event.address_components);
+        this.bankCard.billingCity = GooglePlaceService.getCity(address.address_components);
+        this.bankCard.billingStateCode = GooglePlaceService.getStateCode(address.address_components);
+        this.bankCard.billingState = GooglePlaceService.getStateName(address.address_components);
+        this.bankCard.billingCountryCode = GooglePlaceService.getCountryCode(address.address_components);
         this.statesService.updateState(this.bankCard.billingCountryCode, this.bankCard.billingStateCode, this.bankCard.billingState);
     }
 

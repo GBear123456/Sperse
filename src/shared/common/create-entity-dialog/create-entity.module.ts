@@ -20,7 +20,6 @@ import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
-import { AngularGooglePlaceModule } from 'angular-google-place';
 
 /** Application imports */
 import { CreateEntityDialogComponent } from './create-entity-dialog.component';
@@ -41,6 +40,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppStoreService } from '@app/store/app-store.service';
 import { ListsModule } from '@app/shared/common/lists/lists.module';
 import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module';
+import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 
 @NgModule({
     imports: [
@@ -66,9 +66,9 @@ import { RatingBarModule } from '@app/shared/common/rating-bar/rating-bar.module
         ModalDialogModule,
         CountryPhoneNumberModule,
         BankCodeLettersModule,
-        AngularGooglePlaceModule,
         ListsModule,
-        RatingBarModule
+        RatingBarModule,
+        GooglePlaceModule
     ],
     exports: [
         CreateEntityDialogComponent,

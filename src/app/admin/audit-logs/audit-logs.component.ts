@@ -17,6 +17,7 @@ import { combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { AuditLogDetailModalComponent } from '@app/admin/audit-logs/audit-log-detail/audit-log-detail-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -135,6 +136,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     operationLogsDataSource: DataSource = new DataSource({
         key: 'id',
         load: (loadOptions) => {
+            this.startLoading();
             return this.auditLogService.getAuditLogs(
                 this.searchValue,
                 this.filtersValues.date.startDate,
@@ -154,16 +156,18 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                 loadOptions.skip
             ).toPromise().then(
                 (response: AuditLogListDtoPagedResultDto) => {
+                    this.finishLoading();
                     return {
                         data: response.items,
                         totalCount: response.totalCount
                     };
-                }
+                }, () => this.finishLoading()
             );
         }
     });
     isDataLoaded = false;
     toolbarConfig: ToolbarGroupModel[];
+    formatting = AppConsts.formatting;
 
     constructor(
         injector: Injector,

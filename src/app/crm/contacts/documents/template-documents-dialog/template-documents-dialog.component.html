@@ -3,7 +3,6 @@
     <div class="wrapper">
         <dx-tabs 
             width="300px"
-            [visible]="false"
             [dataSource]="folderTabs"
             [(selectedIndex)]="selectedIndex"
         ></dx-tabs>
@@ -12,6 +11,7 @@
             <dx-file-manager
                 width="360px"
                 [height]="getHeight()"
+                [allowedFileExtensions]="[]"
                 [fileProvider]="selectedIndex == 1 ? documentsFileProvider : templatesFileProvider" 
                 [itemView]="{mode: layout}"
                 (onContentReady)="onContentReady()">

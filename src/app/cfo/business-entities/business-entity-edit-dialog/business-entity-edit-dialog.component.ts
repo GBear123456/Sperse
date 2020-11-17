@@ -10,12 +10,12 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { AngularGooglePlaceService } from 'angular-google-place';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { Observable } from 'rxjs';
 import { finalize, first, map, tap } from 'rxjs/operators';
 import * as _ from 'underscore';
+import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
 /** Application imports */
 import { CountriesStoreActions, CountriesStoreSelectors, RootStore, StatesStoreSelectors, StatesStoreActions } from '@root/store';
@@ -39,7 +39,7 @@ import { StatesService } from '@root/store/states-store/states.service';
 @Component({
     templateUrl: 'business-entity-edit-dialog.component.html',
     styleUrls: [ '../../../shared/common/styles/form.less', 'business-entity-edit-dialog.component.less' ],
-    providers: [ BusinessEntityServiceProxy, GooglePlaceService ],
+    providers: [ BusinessEntityServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BusinessEntityEditDialogComponent implements OnInit {
@@ -63,14 +63,16 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     emailRegEx = AppConsts.regexPatterns.email;
     dateFormat = AppConsts.formatting.dateMoment;
     googleAutoComplete = Boolean(window['google']);
-    address = {
+    address: any = {
         countryCode: null,
         countryName: null,
         address: null
     };
-    isNew = false;
+    isNew = !this.data.id;
     businessEntity: BusinessEntityInfoDto = new BusinessEntityInfoDto();
-    title: string;
+    title: string = this.isNew
+        ? this.ls.l('BusinessEntity_CreateHeader')
+        : this.ls.l('BusinessEntity_EditHeader');
     buttons: IDialogButton[] = [
         {
             title: this.ls.l('BusinessEntity_Cancel'),
@@ -86,20 +88,15 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     ];
 
     constructor(
-        private angularGooglePlaceService: AngularGooglePlaceService,
         private businessEntityService: BusinessEntityServiceProxy,
         private notifyService: NotifyService,
         private changeDetectorRef: ChangeDetectorRef,
         private cfoService: CFOService,
         private store$: Store<RootStore.State>,
-        private googlePlaceService: GooglePlaceService,
         private statesService: StatesService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
-    ) {
-        this.isNew = !this.data.id;
-        this.title = this.isNew ? this.ls.l('BusinessEntity_CreateHeader') : this.ls.l('BusinessEntity_EditHeader');
-    }
+    ) {}
 
     ngOnInit() {
         this.countriesStateLoad();
@@ -301,24 +298,24 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         this.address[propName] = null;
     }
 
-    updateCountryInfo(countryName: string) {
-        countryName == 'United States' ?
-            this.address.countryName = AppConsts.defaultCountryName :
-            this.address.countryName = countryName;
-        this.changeDetectorRef.detectChanges();
-    }
-
-    onAddressChanged(event) {
-        const number = this.angularGooglePlaceService.street_number(event.address_components);
-        const street = this.googlePlaceService.getStreet(event.address_components);
-        const countryCode = this.googlePlaceService.getCountryCode(event.address_components);
-        const stateCode = this.googlePlaceService.getStateCode(event.address_components);
-        const stateName = this.googlePlaceService.getStateName(event.address_components);
+    onAddressChanged(address: Address) {
+        const countryCode = GooglePlaceService.getCountryCode(address.address_components);
+        const stateCode = GooglePlaceService.getStateCode(address.address_components);
+        const stateName = GooglePlaceService.getStateName(address.address_components);
         this.statesService.updateState(countryCode, stateCode, stateName);
+        const countryName = GooglePlaceService.getCountryName(address.address_components);
+        this.address.countryName = countryName === 'United States'
+            ? AppConsts.defaultCountryName
+            : countryName;
+        this.businessEntity.zip = GooglePlaceService.getZipCode(address.address_components);
+        this.address.street = GooglePlaceService.getStreet(address.address_components);
+        this.address.streetNumber = GooglePlaceService.getStreetNumber(address.address_components);
         this.businessEntity.stateId = stateCode;
         this.businessEntity.stateName = stateName;
         this.address.countryCode = countryCode;
-        this.businessEntity.city = this.googlePlaceService.getCity(event.address_components);
-        this.address.address = this.addressInput.nativeElement.value = number ? (number + ' ' + street) : street;
+        this.businessEntity.city = GooglePlaceService.getCity(address.address_components);
+        this.address.address = this.addressInput.nativeElement.value = this.address.streetNumber
+            ? this.address.streetNumber + ' ' + this.address.street
+            : this.address.street;
     }
 }

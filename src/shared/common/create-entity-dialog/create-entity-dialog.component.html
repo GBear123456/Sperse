@@ -383,13 +383,10 @@
                                        [placeholder]="ls.l('Street')"
                                        [(ngModel)]="address['address']"
                                        class="dx-texteditor-input"
-                                       (country)="updateCountryInfo($event, i)"
-                                       (street_number)="address['streetNumber']=$event"
-                                       (street)="address['streetAddress']=$event"
-                                       (postal_code)="address['zip']=$event"
-                                       (setAddress)="onAddressChanged($event, i)"
-                                       angularGooglePlace/>
-                                <span [class]="(i || address.address || address.city || address.state || address.zip || address.country) && 'clear-contact' || 'hidden'" (click)="emptyOrRemoveInput('addresses', i)"><i class="minus-icon"></i></span>
+                                       (onAddressChange)="onAddressChanged($event, i)"
+                                       ngx-google-places-autocomplete/>
+                                <span [class]="(i || address.address || address.city || address.state || address.zip || address.country) && 'clear-contact' || 'hidden'"
+                                      (click)="emptyOrRemoveInput('addresses', i)"><i class="minus-icon"></i></span>
                             </div>
                             <div class="field addr padding-right">
                                 <dx-text-box

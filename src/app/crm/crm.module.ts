@@ -12,7 +12,6 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatStepperModule } from '@angular/material/stepper';
 import { Store } from '@ngrx/store';
-import { AngularGooglePlaceModule } from 'angular-google-place';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
@@ -96,6 +95,7 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
+import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 
@@ -142,7 +142,6 @@ import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history
         MatProgressSpinnerModule,
         MatSelectModule,
         MatStepperModule,
-        AngularGooglePlaceModule,
         SourceContactListModule,
         CRMDashboardWidgetsModule,
         ContactsModule,
@@ -159,7 +158,8 @@ import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history
         StaticListModule,
         CountryPhoneNumberModule,
         ModalDialogModule,
-        ListsModule
+        ListsModule,
+        GooglePlaceModule
     ],
     declarations: [
         ClientsComponent,

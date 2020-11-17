@@ -6910,6 +6910,11 @@ ngx-file-drop@^8.0.8:
   dependencies:
     tslib "^1.9.0"
 
+ngx-google-places-autocomplete@^2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/ngx-google-places-autocomplete/-/ngx-google-places-autocomplete-2.0.5.tgz#1e26b3fb236a0df22c1c65c05b601ca1d960b5d4"
+  integrity sha512-TApaE+X/eaZBDduXvmOMsMC5FTWv3CmgbZ+Iv7NsnrBWJeonPF2SYMGs3vaydM3CY3Rch14/K94ecU0mfyRVWw==
+
 ngx-mask@^7.0.1:
   version "7.9.10"
   resolved "https://registry.yarnpkg.com/ngx-mask/-/ngx-mask-7.9.10.tgz#8d352e00460a79058e2710f44e9d69204a73e38b"

@@ -16,12 +16,8 @@
                        [(ngModel)]="address.autoComplete"
                        [disabled]="false"
                        class="dx-texteditor-input"
-                       (country)="updateCountryInfo($event)"
-                       (street_number)='streetNumber=$event'
-                       (street)='streetAddress=$event'
-                       (postal_code)='zip=$event'
-                       (setAddress)='addressChanged(address, $event)'
-                       angularGooglePlace/>
+                       (onAddressChange)="addressChanged(address, $event)"
+                       ngx-google-places-autocomplete/>
                 <dx-button class="update" icon="todo" (onClick)="updateItem(address, $event, i)"></dx-button>
                 <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit(address, $event)"></dx-button>
             </div>

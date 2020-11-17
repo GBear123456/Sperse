@@ -5,7 +5,6 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 /** Third party imports */
-import { AngularGooglePlaceModule } from 'angular-google-place';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
@@ -20,10 +19,10 @@ import { ReportWizardModule } from '@root/personal-finance/landings/credit-repor
 import { CreditWizardPageComponent } from '@root/personal-finance/landings/credit-report/wizard-form/wizard-page/wizard-page.component';
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 import { UtilsModule } from '@shared/utils/utils.module';
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 @NgModule({
     imports: [
-        AngularGooglePlaceModule,
         CommonModule,
         FormsModule,
         ReactiveFormsModule,
@@ -41,7 +40,8 @@ import { UtilsModule } from '@shared/utils/utils.module';
             path: '',
             component: CreditWizardPageComponent
         }]),
-        UtilsModule
+        UtilsModule,
+        GooglePlaceModule
     ],
     declarations: [
         CreditWizardPageComponent
