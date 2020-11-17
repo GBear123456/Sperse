@@ -11,7 +11,6 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
-import { AngularGooglePlaceModule } from 'angular-google-place';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
@@ -146,6 +145,7 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { AddServiceProductDialogComponent } from './subscriptions/add-subscription-dialog/add-service-product-dialog/add-service-product-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
+import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 
 @NgModule({
     declarations: [
@@ -223,7 +223,6 @@ import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dial
         MatSelectModule,
         MatInputModule,
         ContactsRoutingModule,
-        AngularGooglePlaceModule,
         DxContextMenuModule,
         DxSelectBoxModule,
         DxCheckBoxModule,
@@ -268,7 +267,8 @@ import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dial
         RatingBarModule,
         ListsModule,
         OrgUnitsTreeModule,
-        MatExpansionModule
+        MatExpansionModule,
+        GooglePlaceModule
     ],
     entryComponents: [
         CreateInvoiceDialogComponent,

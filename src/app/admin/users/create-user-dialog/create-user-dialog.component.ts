@@ -283,7 +283,7 @@ export class CreateUserDialogComponent implements OnInit {
         $event.stopPropagation();
     }
 
-    resetFullDialog(forced = true) {
+    resetFullDialog(forced: boolean = true) {
         let resetInternal = () => {
             this.title = '';
             this.modalDialog.clear();
@@ -296,7 +296,7 @@ export class CreateUserDialogComponent implements OnInit {
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;
             this.photoSourceData = undefined;
-            this.roles.forEach((role, index) => {
+            this.roles.forEach((role: UserRoleDto, index: number) => {
                 role.isAssigned = this.initialRoles[index].isAssigned;
             });
 

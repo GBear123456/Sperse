@@ -1439,8 +1439,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.filtersService.apply(() => {
             this.selectedOrderKeys = [];
             this.filterChanged = true;
-            this.contactGroupFilter.items.ContactGroupId
-                .value = this.selectedContactGroup.value;
+            this.contactGroupFilter.items.ContactGroupId.value = this.selectedContactGroup.value;
             this.processFilterInternal();
         });
     }

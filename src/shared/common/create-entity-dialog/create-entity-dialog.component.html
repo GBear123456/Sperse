@@ -54,6 +54,8 @@
               [placeholder]="ls.l('Contact.FullName')"
               (onTitleKeyUp)="onFullNameKeyUp($event)"
               (onContextItemChanged)="onSaveOptionSelectionChanged()">
+
+
     <div *ngIf="!hidePhotoArea"
          class="photo-area"
          [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"

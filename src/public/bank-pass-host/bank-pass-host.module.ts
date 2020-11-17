@@ -30,14 +30,12 @@ import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/comm
 import { ExportService } from '@shared/common/export/export.service';
 import { ExportGoogleSheetService } from '@shared/common/export/export-google-sheets/export-google-sheets';
 import { CreateEntityModule } from '@shared/common/create-entity-dialog/create-entity.module';
-import { AngularGooglePlaceModule } from 'angular-google-place';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-accounts-modal/linked-account.service';
 
 @NgModule({
     imports: [
-        AngularGooglePlaceModule,
         AccessCodeInstructionsModule,
         CommonModule,
         BankCodeCommonModule,

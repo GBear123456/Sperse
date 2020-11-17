@@ -21,7 +21,7 @@ import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
-import { AngularGooglePlaceModule } from 'angular-google-place';
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 /** Application imports */
 import { CreateEntityDialogComponent } from './create-entity-dialog.component';
@@ -69,9 +69,9 @@ import { AddressFieldsComponent } from '@shared/common/create-entity-dialog/addr
         ModalDialogModule,
         CountryPhoneNumberModule,
         BankCodeLettersModule,
-        AngularGooglePlaceModule,
         ListsModule,
-        RatingBarModule
+        RatingBarModule,
+        GooglePlaceModule
     ],
     exports: [
         CreateEntityDialogComponent,

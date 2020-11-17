@@ -240,7 +240,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
         this.inviteData.phoneNumber = undefined;
 
         setTimeout(() => {
-            let instance = this.emailAddressComponent.instance;
+            let instance = this.emailAddressComponent && this.emailAddressComponent.instance;
             if (instance)
                 instance.option('isValid', true);
         });

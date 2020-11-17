@@ -15,7 +15,6 @@ import {
 import { Router } from '@angular/router';
 
 /** Third party imports */
-import { AngularGooglePlaceService } from 'angular-google-place';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
@@ -298,8 +297,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         private nameParser: NameParserService,
         private pipelineService: PipelineService,
         private dialogService: DialogService,
-        private angularGooglePlaceService: AngularGooglePlaceService,
-        private googlePlaceService: GooglePlaceService,
         private orgServiceProxy: OrganizationContactServiceProxy,
         private notifyService: NotifyService,
         private messageService: MessageService,
@@ -669,19 +666,28 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     updateAddressFields(event: AddressChanged, address: Address) {
-        let number = this.angularGooglePlaceService.street_number(event.e.address_components);
-        let street = this.googlePlaceService.getStreet(event.e.address_components);
-        const countryCode = this.googlePlaceService.getCountryCode(event.e.address_components);
-        const stateCode = this.googlePlaceService.getStateCode(event.e.address_components);
-        const stateName = this.googlePlaceService.getStateName(event.e.address_components);
+        let number = GooglePlaceService.getStreetNumber(event.address.address_components);
+        let street = GooglePlaceService.getStreet(event.address.address_components);
+        const countryCode = GooglePlaceService.getCountryCode(event.address.address_components);
+        const stateCode = GooglePlaceService.getStateCode(event.address.address_components);
+        const stateName = GooglePlaceService.getStateName(event.address.address_components);
         this.statesService.updateState(countryCode, stateCode, stateName);
         address.state = {
             code: stateCode,
             name: stateName
         };
+        const countryName = GooglePlaceService.getCountryName(event.address.address_components);
+        address.country = countryName === 'United States'
+            ? AppConsts.defaultCountryName
+            : countryName;
+        address.zip = GooglePlaceService.getZipCode(event.address.address_components);
+        address.streetAddress = GooglePlaceService.getStreet(event.address.address_components);
+        address.streetNumber = GooglePlaceService.getStreetNumber(event.address.address_components);
         address.countryCode = countryCode;
-        address.address = event.addressInput.nativeElement.value = number ? number + ' ' + street : street;
-        address.city = this.googlePlaceService.getCity(event.e.address_components);
+        address.address = event.addressInput.nativeElement.value = number
+            ? number + ' ' + street
+            : street;
+        address.city = GooglePlaceService.getCity(event.address.address_components);
         this.changeDetectorRef.detectChanges();
     }
 

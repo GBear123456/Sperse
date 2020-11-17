@@ -8,6 +8,7 @@ export class Address implements IAddress {
     zip: string;
     city: string;
     countryCode: string;
+    country: string;
     state: {
         code: string;
         name: string;

@@ -52,7 +52,6 @@ import { NgxFileDropModule } from 'ngx-file-drop';
 import { PapaParseModule } from 'ngx-papaparse';
 import { ImageCropperModule } from 'ng2-img-cropper';
 import { CreditCardDirectivesModule } from 'angular-cc-library';
-import { AngularGooglePlaceModule } from 'angular-google-place';
 import { TimeAgoPipe } from 'time-ago-pipe';
 
 /** Application imports */
@@ -92,6 +91,7 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { AppRatingModule } from './rating/app-rating.module';
 import { CalendarButtonComponent } from '@app/shared/common/calendar-button/calendar-button.component';
+import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 
 @NgModule({
     imports: [
@@ -155,10 +155,10 @@ import { CalendarButtonComponent } from '@app/shared/common/calendar-button/cale
         DxTreeListModule,
         DxSliderModule,
         CreditCardDirectivesModule,
-        AngularGooglePlaceModule,
         LoadingSpinnerModule,
         ModalDialogModule,
-        AppRatingModule
+        AppRatingModule,
+        GooglePlaceModule
     ],
     declarations: [
         TimeAgoPipe,

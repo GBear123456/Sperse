@@ -4,9 +4,9 @@ import { Component, Inject, ElementRef, ViewChild } from '@angular/core';
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { AngularGooglePlaceService } from 'angular-google-place';
 import { Observable } from 'rxjs';
 import * as _ from 'underscore';
+import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -28,8 +28,7 @@ import { StatesService } from '@root/store/states-store/states.service';
     host: {
         '(document:mouseup)': 'mouseUp()',
         '(document:mousemove)': 'mouseMove($event)'
-    },
-    providers: [ GooglePlaceService ]
+    }
 })
 export class InvoiceAddressDialog {
     @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
@@ -48,9 +47,7 @@ export class InvoiceAddressDialog {
     constructor(
         private elementRef: ElementRef,
         private contactProxy: ContactServiceProxy,
-        private angularGooglePlaceService: AngularGooglePlaceService,
         private store$: Store<RootStore.State>,
-        private googlePlaceService: GooglePlaceService,
         private statesService: StatesService,
         public dialogRef: MatDialogRef<InvoiceAddressDialog>,
         public ls: AppLocalizationService,
@@ -113,15 +110,18 @@ export class InvoiceAddressDialog {
         this.statesService.updateState(countryCode, this.data.stateId, this.data.stateName);
     }
 
-    onAddressChanged(event) {
-        let number = this.angularGooglePlaceService.street_number(event.address_components);
-        let street = this.googlePlaceService.getStreet(event.address_components);
-        this.data.stateId = this.googlePlaceService.getStateCode(event.address_components);
-        this.data.stateName = this.googlePlaceService.getStateName(event.address_components);
-        this.data.countryId = GooglePlaceService.getCountryCode(event.address_components);
+    onAddressChanged(address: Address) {
+        this.data.zip = GooglePlaceService.getZipCode(address.address_components);
+        this.data.address1 = GooglePlaceService.getStreet(address.address_components);
+        this.data.streetNumber = GooglePlaceService.getStreetNumber(address.address_components);
+        this.data.stateId = GooglePlaceService.getStateCode(address.address_components);
+        this.data.stateName = GooglePlaceService.getStateName(address.address_components);
+        this.data.countryId = GooglePlaceService.getCountryCode(address.address_components);
         this.statesService.updateState(this.data.countryId, this.data.stateId, this.data.stateName);
-        this.data.city = this.googlePlaceService.getCity(event.address_components);
-        this.address = this.addressInput.nativeElement.value = number ? (number + ' ' + street) : street;
+        this.data.city = GooglePlaceService.getCity(address.address_components);
+        this.address = this.addressInput.nativeElement.value = this.data.streetNumber
+            ? this.data.streetNumber + ' ' + this.data.address1
+            : this.data.address1;
     }
 
     getCountryStates(): Observable<CountryStateDto[]> {

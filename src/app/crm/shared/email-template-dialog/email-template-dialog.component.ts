@@ -586,7 +586,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             closeOnNavigation: true,
             data: {
                 fullHeight: true,
-                showDocuments: true,
+                contactId: this.data.contact && this.data.contact.id,
                 dropFiles: this.addAttachments.bind(this)
             }
         }).afterClosed().subscribe(data => {

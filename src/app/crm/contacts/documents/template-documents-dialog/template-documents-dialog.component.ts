@@ -4,16 +4,17 @@ import { Component, ViewChild, OnInit, AfterViewInit, Inject, ElementRef } from 
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import RemoteFileProvider from 'devextreme/ui/file_manager/file_provider/remote';
+import CustomFileProvider from 'devextreme/ui/file_manager/file_provider/custom';
 import { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { DxFileManagerComponent } from 'devextreme-angular/ui/file-manager';
-import { finalize } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { DocumentServiceProxy, UploadDocumentInput } from '@shared/service-proxies/service-proxies';
+import { DocumentServiceProxy, UploadDocumentInput, DocumentInfo } from '@shared/service-proxies/service-proxies';
 import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
@@ -34,11 +35,23 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     public readonly VIEW_MODE_THUMBNAILS = 'thumbnails';
 
     layout = this.VIEW_MODE_THUMBNAILS;
-    documentsFileProvider = new RemoteFileProvider({
-        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/TenantFileManager/Files'
+    documentsFileProvider = new CustomFileProvider({
+        getItems: (pathInfo: string) => {
+            return this.documentService.getAll(this.data.contactId).pipe(
+                map((documents: DocumentInfo[]) => {
+                    return documents.map((item: DocumentInfo) => {
+                        return {
+                            key: item.id,
+                            name: item.fileName,
+                            size: item.size
+                        };
+                    });
+                })
+            ).toPromise();
+        }
     });
     templatesFileProvider = new RemoteFileProvider({
-        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/TenantFileManager/Files'
+        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/DocumentTemplates/Files'
     });
     folderTabs = [
         {
@@ -49,7 +62,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         },
         {
             id: 1,
-            visible: this.data.showDocuments,
+            visible: this.data.contactId,
             text: this.ls.l('Documents'),
             icon: 'inactivefolder',
         },

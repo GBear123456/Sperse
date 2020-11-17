@@ -6,8 +6,8 @@ import { Router } from '@angular/router';
 import { Store, select } from '@ngrx/store';
 import { finalize } from 'rxjs/operators';
 import * as moment from 'moment';
-import { AngularGooglePlaceService } from 'angular-google-place';
 import capitalize from 'underscore.string/capitalize';
+import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
 /** Application imports */
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
@@ -99,8 +99,6 @@ export class CreditWizardPageComponent implements OnInit {
     constructor(
         private data: PackageIdService,
         private memberService: MemberServiceProxy,
-        private angularGooglePlaceService: AngularGooglePlaceService,
-        private googlePlaceService: GooglePlaceService,
         private store$: Store<RootStore.State>,
         private statesService: StatesService,
         private router: Router,
@@ -275,25 +273,24 @@ export class CreditWizardPageComponent implements OnInit {
         this.model.address.zip = paymentInfo.bankCard.billingZip;
     }
 
-    onAddressChanged(event) {
-        let number = this.angularGooglePlaceService.street_number(event.address_components);
-        let street = this.googlePlaceService.getStreet(event.address_components);
-        this.model.address.stateId = this.googlePlaceService.getStateCode(event.address_components);
-        this.model.address.stateName = this.googlePlaceService.getStateName(event.address_components);
-        this.model.address.city = this.googlePlaceService.getCity(event.address_components);
+    onAddressChanged(address: Address) {
+        this.street_number = GooglePlaceService.getStreetNumber(address.address_components);
+        this.street_name = GooglePlaceService.getStreet(address.address_components);
+        this.model.address.stateId = GooglePlaceService.getStateCode(address.address_components);
+        this.model.address.stateName = GooglePlaceService.getStateName(address.address_components);
+        this.model.address.city = GooglePlaceService.getCity(address.address_components);
         this.model.address.streetAddress = this.payment.bankCard.billingAddress = this.addressInput.nativeElement.value
-            = number ? (number + ' ' + street) : street;
-        const countryCode = this.googlePlaceService.getCountryCode(event.address_components);
+            = this.street_number ? this.street_number + ' ' + this.street_name : this.street_name;
+        this.model.address.zip = GooglePlaceService.getZipCode(address.address_components);
+        const countryName = GooglePlaceService.getCountryName(address.address_components);
+        this.country = countryName === 'United States'
+            ? AppConsts.defaultCountryName
+            : countryName;
+        const countryCode = GooglePlaceService.getCountryCode(address.address_components);
         if (this.countryCode !== countryCode) {
             this.model.address.countryId = this.countryCode = countryCode;
             this.getStates();
         }
-    }
-
-    updateCountryInfo(countryName: string) {
-        countryName == 'United States' ?
-            this.country = AppConsts.defaultCountryName :
-            this.country = countryName;
     }
 
     addressInfoSubmit(event) {
