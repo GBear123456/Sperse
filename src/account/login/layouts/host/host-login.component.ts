@@ -35,7 +35,7 @@ export class HostLoginComponent implements OnInit {
         private sessionService: AbpSessionService,
         private sessionAppService: SessionServiceProxy,
         private setting: SettingService,
-        private appSession: AppSessionService,
+        public appSession: AppSessionService,
         public dialog: MatDialog,
         public loginService: LoginService,
         public ls: AppLocalizationService
