@@ -96,6 +96,8 @@ import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/c
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
 import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
+import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
+import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 
 @NgModule({
     imports: [
@@ -181,7 +183,9 @@ import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete'
         CommissionHistoryComponent,
         CommissionEarningsDialogComponent,
         LedgerCompleteDialogComponent,
-        RequestWithdrawalDialogComponent
+        RequestWithdrawalDialogComponent,
+        UpdateCommissionableDialogComponent,
+        UpdateCommissionRateDialogComponent
     ],
     providers: [
         ImportServiceProxy,
@@ -200,7 +204,9 @@ import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete'
         EntityCheckListDialogComponent,
         CommissionEarningsDialogComponent,
         LedgerCompleteDialogComponent,
-        RequestWithdrawalDialogComponent
+        RequestWithdrawalDialogComponent,
+        UpdateCommissionableDialogComponent,
+        UpdateCommissionRateDialogComponent
     ]
 })
 export class CrmModule {

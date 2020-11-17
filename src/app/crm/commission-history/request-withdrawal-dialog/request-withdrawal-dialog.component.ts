@@ -17,6 +17,7 @@ import { CommissionServiceProxy, RequestWithdrawalInput, InvoiceSettings } from 
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     selector: 'request-withdrawal-dialog',
@@ -39,7 +40,7 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 request.params.$filter = '(AvailableBalance gt 0)' +
-                    (this.searchValue ? " and contains(FullName, '" + this.searchValue + "')" : '');
+                    (this.searchValue ? ' and contains(FullName, \'' + this.searchValue + '\')' : '');
                 request.params.$select = [
                     ResellersFields.Id,
                     ResellersFields.FullName,
@@ -52,8 +53,8 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
     currency$: Observable<string> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => settings && settings.currency)
     );
-    date: Date;
     today: Date = new Date();
+    date: Date = this.today;
 
     constructor(
         injector: Injector,
@@ -77,7 +78,8 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
                         this.commissionProxy.requestWithdrawal(new RequestWithdrawalInput({
                             contactId: this.selectedContact.Id,
                             amount: this.withdrawalAmount,
-                            date: this.date
+                            date: DateHelper.isSameDateWithoutTime(this.date, this.today) ?
+                                this.date : DateHelper.removeTimezoneOffset(this.date, false, 'from')
                         })).pipe(finalize(
                             () => this.loadingService.finishLoading(this.elementRef.nativeElement)
                         )).subscribe(() => {

@@ -1,6 +1,9 @@
 import * as moment from 'moment-timezone';
 
 export class DateHelper {
+    static isSameDateWithoutTime(date1: Date, date2: Date): Boolean {
+        return date1.toLocaleDateString('en-US') == date2.toLocaleDateString('en-US');
+    }
 
     static getDateWithoutTime(date: moment): moment {
         return moment(date).utc().set({ hour: 0 , minute: 0, second: 0, millisecond: 0 });
@@ -61,5 +64,4 @@ export class DateHelper {
                 ? periodTo.isAfter(moment.utc()) ? moment.utc().startOf('day') : periodTo
                 : moment.utc().startOf('day');
     }
-
 }

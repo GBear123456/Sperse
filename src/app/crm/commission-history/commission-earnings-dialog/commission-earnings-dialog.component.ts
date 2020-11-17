@@ -55,7 +55,7 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
                         this.loadingService.startLoading(this.elementRef.nativeElement);
                         this.commissionProxy.recordEarnings(
                             new RecordEarningsInput({
-                                contactIds: this.selectedContactIds && this.selectedContactIds.length 
+                                contactIds: this.selectedContactIds && this.selectedContactIds.length
                                     ? this.selectedContactIds : undefined,
                                 startDate: DateHelper.removeTimezoneOffset(new Date(
                                     (this.dateRange.from.value || this.dateRange.to.value).getTime()), true, 'from'),
