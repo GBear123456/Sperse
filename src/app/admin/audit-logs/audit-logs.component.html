@@ -33,7 +33,7 @@
                     <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                     <dxi-column [caption]="" width="45px" alignment="center" cellTemplate="editTemplate"></dxi-column>
                     <dxi-column [caption]="" width="30px" cellTemplate="statusTemplate"></dxi-column>
-                    <dxi-column [caption]="l('Time')" dataField="executionTime" dataType="datetime" cssClass="clipboard-holder" sortOrder="desc" sortIndex="0"></dxi-column>
+                    <dxi-column [caption]="l('Time')" dataField="executionTime" cellTemplate="dateCell" sortOrder="desc" sortIndex="0"></dxi-column>
                     <dxi-column [caption]="l('UserName')" [allowSorting]="false" dataField="userName" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [caption]="l('Service')" dataField="serviceName" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [caption]="l('Action')" dataField="methodName" cssClass="clipboard-holder"></dxi-column>
@@ -56,6 +56,9 @@
                     <ng-container *dxTemplate="let duration of 'executionDurationTemplate'" class="clipboard-holder">
                         {{duration.value}} ms
                     </ng-container>
+                    <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                        {{cellData.value | date: formatting.dateTime : userTimezone }}
+                    </div>
                 </dx-data-grid>
             </div>
         </div>

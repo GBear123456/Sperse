@@ -17,6 +17,7 @@ import { combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { AuditLogDetailModalComponent } from '@app/admin/audit-logs/audit-log-detail/audit-log-detail-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -164,6 +165,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     });
     isDataLoaded = false;
     toolbarConfig: ToolbarGroupModel[];
+    formatting = AppConsts.formatting;
 
     constructor(
         injector: Injector,
