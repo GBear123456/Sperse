@@ -63,8 +63,10 @@ import {
     OrganizationShortInfo,
     PersonInfoDto,
     PhoneUsageTypeDto,
+    PipelineDto,
     PropertyInput,
     SimilarContactOutput,
+    StageDto,
     TrackingInfo
 } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
@@ -992,7 +994,9 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             if (this.userAssignmentComponent) {
                 this.userAssignmentComponent.selectedItemKey = this.currentUserId;
             }
-            this.stageId = this.stages.length ? this.stages.find(v => v.index === this.defaultStageSortOrder).id : undefined;
+            this.stageId = this.stages.length
+                ? this.stages.find(v => v.index === this.defaultStageSortOrder).id
+                : undefined;
             this.ratingComponent && this.ratingComponent.reset();
             this.changeDetectorRef.detectChanges();
         };
@@ -1023,23 +1027,26 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     leadStagesLoad() {
         this.modalDialog.startLoading();
-        this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.data.customerType)
-            .pipe(first(), finalize(() => this.modalDialog.finishLoading())).subscribe(
-                result => {
-                    this.stages = result.stages.map((stage) => {
-                        if (stage.sortOrder === this.defaultStageSortOrder) {
-                            this.stageId = stage.id;
-                        }
-                        return {
-                            id: stage.id,
-                            name: stage.name,
-                            index: stage.sortOrder
-                        };
-                    });
-                    this.changeDetectorRef.detectChanges();
-                },
-                () => this.modalDialog.finishLoading()
-            );
+        this.pipelineService.getPipelineDefinitionObservable(
+            AppConsts.PipelinePurposeIds.lead,
+            this.data.customerType,
+            this.data.pipelineId
+        ).pipe(first(), finalize(() => this.modalDialog.finishLoading())).subscribe(
+            (pipeline: PipelineDto) => {
+                this.stages = pipeline.stages.map((stage: StageDto) => {
+                    if (stage.sortOrder === this.defaultStageSortOrder) {
+                        this.stageId = stage.id;
+                    }
+                    return {
+                        id: stage.id,
+                        name: stage.name,
+                        index: stage.sortOrder
+                    };
+                });
+                this.changeDetectorRef.detectChanges();
+            },
+            () => this.modalDialog.finishLoading()
+        );
     }
 
     onStagesChanged(event) {

@@ -1827,17 +1827,20 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     createLead() {
-        const dialogData: CreateEntityDialogData = {
-            refreshParent: () => this.refresh(),
-            isInLeadMode: true,
-            customerType: this.selectedContactGroup,
-            leadType: this.selectedLeadType
-        };
-        this.dialog.open(CreateEntityDialogComponent, {
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
-            data: dialogData
+        this.selectedPipelineId$.pipe(first()).subscribe((selectedPipelineId: number) => {
+            const dialogData: CreateEntityDialogData = {
+                refreshParent: () => this.refresh(),
+                isInLeadMode: true,
+                customerType: this.selectedContactGroup,
+                leadType: this.selectedLeadType,
+                pipelineId: selectedPipelineId
+            };
+            this.dialog.open(CreateEntityDialogComponent, {
+                panelClass: 'slider',
+                disableClose: true,
+                closeOnNavigation: false,
+                data: dialogData
+            });
         });
     }
 

@@ -7,6 +7,7 @@ export interface CreateEntityDialogData {
     refreshParent?: () => void;
     leadType?: LeadType;
     parentId?: number;
+    pipelineId?: number;
     company?: string;
     /** For bankcode old member area @todo remove in future */
     createMethod?: () => any;
