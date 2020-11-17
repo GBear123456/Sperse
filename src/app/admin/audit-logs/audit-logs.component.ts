@@ -136,6 +136,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     operationLogsDataSource: DataSource = new DataSource({
         key: 'id',
         load: (loadOptions) => {
+            this.startLoading();
             return this.auditLogService.getAuditLogs(
                 this.searchValue,
                 this.filtersValues.date.startDate,
@@ -155,11 +156,12 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                 loadOptions.skip
             ).toPromise().then(
                 (response: AuditLogListDtoPagedResultDto) => {
+                    this.finishLoading();
                     return {
                         data: response.items,
                         totalCount: response.totalCount
                     };
-                }
+                }, () => this.finishLoading()
             );
         }
     });
