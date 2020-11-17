@@ -81,6 +81,12 @@ export class LeftMenuComponent implements OnInit {
                 visible: this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage) && this.appSessionService.tenant
                     && this.appSessionService.tenant.customLayoutType == LayoutType.BankCode,
                 iconSrc: './assets/common/icons/dollar.svg'
+            },
+            {
+                component: '/documents',
+                caption: this.ls.l('CRMDashboardMenu_Documents'),
+                iconSrc: './assets/common/icons/folder.svg',
+                visible: false
             }
         ];
     }

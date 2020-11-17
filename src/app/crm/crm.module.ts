@@ -40,6 +40,7 @@ import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxSchedulerModule } from 'devextreme-angular/ui/scheduler';
 import { DxPopoverModule } from 'devextreme-angular/ui/popover';
 import { DxCalendarModule } from 'devextreme-angular/ui/calendar';
+import { DxFileManagerModule } from 'devextreme-angular';
 import { FileUploadModule } from 'ng2-file-upload';
 
 /** Application imports */
@@ -52,6 +53,7 @@ import { CrmRoutingModule } from './crm-routing.module';
 import { ClientsComponent } from './clients/clients.component';
 import { PartnersComponent } from './partners/partners.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { DocumentsComponent } from './documents/documents.component';
 import { LeftMenuComponent } from './shared/common/left-menu/left-menu.component';
 import { CommissionHistoryComponent } from './commission-history/commission-history.component';
 import { LeadsComponent } from './leads/leads.component';
@@ -94,6 +96,8 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
+import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
+import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 
 @NgModule({
     imports: [
@@ -129,6 +133,7 @@ import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/re
         DxSchedulerModule,
         DxPopoverModule,
         DxCalendarModule,
+        DxFileManagerModule,
 
         MatSidenavModule,
         MatProgressBarModule,
@@ -158,6 +163,7 @@ import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/re
     ],
     declarations: [
         ClientsComponent,
+        DocumentsComponent,
         PartnersComponent,
         LeadsComponent,
         OrdersComponent,
@@ -177,7 +183,9 @@ import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/re
         CommissionHistoryComponent,
         CommissionEarningsDialogComponent,
         LedgerCompleteDialogComponent,
-        RequestWithdrawalDialogComponent
+        RequestWithdrawalDialogComponent,
+        UpdateCommissionableDialogComponent,
+        UpdateCommissionRateDialogComponent
     ],
     providers: [
         ImportServiceProxy,
@@ -196,7 +204,9 @@ import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/re
         EntityCheckListDialogComponent,
         CommissionEarningsDialogComponent,
         LedgerCompleteDialogComponent,
-        RequestWithdrawalDialogComponent
+        RequestWithdrawalDialogComponent,
+        UpdateCommissionableDialogComponent,
+        UpdateCommissionRateDialogComponent
     ]
 })
 export class CrmModule {

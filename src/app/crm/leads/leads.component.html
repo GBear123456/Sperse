@@ -259,7 +259,7 @@
                                         cssClass="clipboard-holder">
                             </dxi-column>
                             <dxi-column [dataField]="leadFields.ZipCode"
-                                        [caption]="l('Contact.Zip')"
+                                        [caption]="l('ZipCode')"
                                         [visible]="false"
                                         cssClass="tabular clipboard-holder">
                             </dxi-column>
@@ -336,6 +336,7 @@
                             [filterModelStages]="filterModelStages"
                             [(selectedEntities)]="selectedLeads"
                             dateField="LeadDate"
+                            [actionMenuGroups]="actionMenuGroups"
                             [contactGroupId]="contactGroupId.value"
                             [moveDisabled]="manageDisabled"
                             (onEntityStageChanged)="onLeadStageChanged($event)"

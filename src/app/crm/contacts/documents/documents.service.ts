@@ -13,12 +13,12 @@ export class DocumentsService {
         private documentServiceProxy: DocumentServiceProxy,
         private cacheService: CacheService
     ) {}
+
     downloadDocument(documentId: string) {
         if (this.documentsUrls[documentId])
             window.open(this.documentsUrls[documentId], '_blank');
         else {
             this.getDocumentUrlInfoObservable(documentId).subscribe((urlInfo) => {
-                this.documentsUrls[documentId] = urlInfo.url;
                 window.open(urlInfo.url, '_blank');
             });
         }

@@ -6,7 +6,7 @@ import { RouteReuseStrategy } from '@angular/router';
 import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@node_modules/@ngrx/store';
-import { BehaviorSubject, Observable, Subject, of } from 'rxjs';
+import { BehaviorSubject, ReplaySubject, Observable, Subject, of } from 'rxjs';
 import { first, filter, map, finalize, switchMap, publishReplay, refCount } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -182,15 +182,16 @@ export class PipelineService {
 
     updateEntitiesStage(pipelineId: string, entities, targetStageName: string, contactGroupId: ContactGroup): Observable<any> {
         let subject = new Subject<any>();
-
         this.updateEntitiesStageInternal(
             pipelineId,
             contactGroupId,
             entities.slice(0),
             targetStageName,
             null,
-            (declinedList) => subject.next(declinedList),
-            []
+            (declinedList) => {
+                this.resetIgnoreChecklist();
+                subject.next(declinedList);
+            }, []
         );
 
         return subject.asObservable();
@@ -221,7 +222,7 @@ export class PipelineService {
                             declinedList
                         );
                         delete entity.data;
-                    }
+                    }, true
                 )
             ) declinedList.push(entity);
         } else
@@ -344,13 +345,12 @@ export class PipelineService {
                 else if (stages.every(item => item.isDone))
                     return of(false);
 
-                let subject = new Subject<boolean>();
+                let subject = new ReplaySubject<boolean>(1);
                 this.lastIgnoreChecklist$ = subject.asObservable();
 
                 this.message.confirm(
                     this.ls.l('ChecklistConfirmationMessage'),
                     isConfirmed => {
-                        this.lastIgnoreChecklist$ = undefined;
                         if (isConfirmed)
                             subject.next(true);
                         else
@@ -551,5 +551,9 @@ export class PipelineService {
             color = stagesColors[maxSortOrder > stageSortOrder ? maxSortOrder * -1 : maxSortOrder];
         }
         return color;
+    }
+
+    resetIgnoreChecklist() {
+        this.lastIgnoreChecklist$ = undefined;
     }
 }

@@ -72,6 +72,8 @@ export class EditContactDialog {
             filter(types => !!types)
         ).subscribe(types => {
             this.types = types;
+            if (!this.data.usageTypeId)
+                this.data.usageTypeId = this.types[0].id;
         });
     }
 
@@ -82,6 +84,8 @@ export class EditContactDialog {
             filter(types => !!types)
         ).subscribe(types => {
             this.types = this.getFilteredUsageTypes(types);
+            if (!this.data.usageTypeId)
+                this.data.usageTypeId = this.types[0].id;
         });
     }
 
@@ -92,6 +96,8 @@ export class EditContactDialog {
             filter(types => !!types)
         ).subscribe(types => {
             this.types = this.getFilteredUsageTypes(types);
+            if (!this.data.usageTypeId)
+                this.data.usageTypeId = this.types[0].id;
         });
     }
 

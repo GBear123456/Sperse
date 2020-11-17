@@ -32,6 +32,7 @@ import { CheckListDialogComponent } from './check-list-dialog/check-list-dialog.
 import { AddRenameMergeDialogComponent } from './add-rename-merge-dialog/add-rename-merge-dialog.component';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
+import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 
 @NgModule({
     imports: [
@@ -51,6 +52,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
         MatInputModule,
         MatButtonModule,
         MatSelectModule,
+        ActionMenuModule,
         BankCodeLettersModule,
         FormsModule,
         LoadingSpinnerModule

@@ -1,4 +1,13 @@
 <div>
+    <action-menu
+            [items]="actionMenuGroups"
+            [visible]="actionEvent"
+            [grouped]="true"
+            class="grouped-action-menu"
+            width="300px"
+            target=".dx-state-hover .dx-link.dx-link-edit"
+            (onItemClick)="onMenuItemClick($event)">
+    </action-menu>
     <app-headline icon="briefcase"
                   [buttons]="headlineButtons"
                   [showCompactView]="showCompactView$ | async"
@@ -50,6 +59,7 @@
                                           [allowColumnResizing]="true"
                                           [hoverStateEnabled]="true"
                                           [loadPanel]="{ enabled: false }"
+                                          [pager]="defaultGridPagerConfig"
                                           [columnChooser]="{
                                             height: rowsViewHeight
                                           }"
@@ -61,9 +71,8 @@
                                             sorting: true,
                                             summary: true
                                           }"
-                                          (onEditingStart)="onCellClick($event)"
+                                          (onEditingStart)="toggleActionsMenu($event)"
                                           (onCellClick)="onCellClick($event)"
-                                          [pager]="defaultGridPagerConfig"
                                           (onOptionChanged)="onGridOptionChanged($event)"
                                           (onContentReady)="onContentReady($event)"
                                           (onSelectionChanged)="onSelectionChanged($event)"
@@ -78,15 +87,12 @@
                                             [allowUpdating]="true">
                                 </dxo-editing>
                                 <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
-                                <dxi-column cssClass="stars"
-                                            [width]="40"
-                                            [showInColumnChooser]="false"
-                                            [allowExporting]="false">
-                                </dxi-column>
+
                                 <dxi-column [dataField]="orderFields.Id" [caption]="l('Id')" [visible]="false"></dxi-column>
                                 <dxi-column [dataField]="orderFields.PhotoPublicId" caption=" " cellTemplate="photoTemplate"
                                             [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
-                                            [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                                            [allowGrouping]="false" [allowSorting]="false">
+                                </dxi-column>
                                 <div *dxTemplate="let data of 'photoTemplate'">
                                     <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                                 </div>
@@ -160,9 +166,10 @@
                                 totalsURI="OrderCount"
                                 dragulaName="orderStages"
                                 [dataSource]="pipelineDataSource"
-                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId', 'ContactGroupId']"
+                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId', 'ContactGroupId', 'Phone']"
                                 dateField="OrderDate"
                                 [contactGroupId]="null"
+                                [actionMenuGroups]="actionMenuGroups"
                                 [pipelinePurposeId]="pipelinePurposeId"
                                 [filterModelStages]="filterModelStages"
                                 [moveDisabled]="manageDisabled"
@@ -184,7 +191,6 @@
             <div [hidden]="subscriptionsDataLayoutType !== layoutTypes.DataGrid">
                 <ghost-list *ngIf="!isDataLoaded"></ghost-list>
                 <dx-data-grid #subscriptionsGrid
-                              id="gridContainer"
                               class="main-component-view limitedPagerTotal"
                               accesskey="narrowHeaderPanel"
                               keyExpr="id"
@@ -205,6 +211,7 @@
                                   summary: true
                               }"
                               [allowColumnResizing]="true"
+                              (onEditingStart)="toggleActionsMenu($event)"
                               (onCellClick)="onCellClick($event, 'subscriptions')"
                               (onOptionChanged)="onGridOptionChanged($event)"
                               (onContentReady)="onContentReady($event)">
@@ -214,10 +221,17 @@
                                    showCheckBoxesMode="always"
                                    mode="multiple">
                     </dxo-selection>
+                    <dxo-editing mode="popup"
+                                [texts]="{editRow: ''}"
+                                [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
+                                [allowUpdating]="true">
+                    </dxo-editing>
+
                     <dxi-column [dataField]="subscriptionFields.Id" [visible]="false" sortOrder="desc" [sortIndex]="0"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.PhotoPublicId" caption=" " cellTemplate="photoTemplate"
                                 [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
-                                [allowGrouping]="false" [allowSorting]="false"></dxi-column>
+                                [allowGrouping]="false" [allowSorting]="false">
+                    </dxi-column>
                     <dxi-column [dataField]="subscriptionFields.ContactId" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.FirstName" [caption]="l('FirstName')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.LastName" [caption]="l('LastName')" cssClass="clipboard-holder"></dxi-column>
@@ -225,7 +239,7 @@
                     <dxi-column [dataField]="subscriptionFields.PhoneNumber" [caption]="l('Contact.Phone')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.City" [caption]="l('Contact.City')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.StateName" [caption]="l('Contact.State')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                    <dxi-column [dataField]="subscriptionFields.Zip" [caption]="l('Contact.Zip')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="subscriptionFields.Zip" [caption]="l('ZipCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.CountryCode" [caption]="l('CountryCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.ContactDate" [caption]="l('Contact.Date')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>

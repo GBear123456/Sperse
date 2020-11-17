@@ -65,29 +65,33 @@
             white-space: nowrap;
             line-height: 18px;
             text-overflow: ellipsis;
-            &.wide {
-                max-width: calc((100vw - 350px) / 2 - 200px);
-            }
         }
         &.app {
             white-space: inherit;
         }
     }
 
+    .item-value span.wide,
+    .inplace-edit-container {
+        max-width: calc((100vw - 350px) / 2 - 200px);
+    }
+
     ::ng-deep .inplace-edit-container {
         margin-right: 50px;
-        max-width: 100%;
         &.comments inplace-edit .inplace-edit-view-mode .link a {
             white-space: break-spaces !important;
         }
     }
 
     .lead-info {
-        margin: 0 0 30px 40px;
+        margin: 0 30px 30px 40px;
         & > div {
             min-width: 280px;
             max-width: 500px;
-            &:last-child {
+        }
+        @media (min-width: 1600px) {
+            margin: 0 0 30px 40px;
+            & > div:last-child {
                 width: 90%;
                 flex: auto;
                 max-width: 1000px;

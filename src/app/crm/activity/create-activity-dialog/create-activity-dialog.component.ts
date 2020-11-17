@@ -162,6 +162,9 @@ export class CreateActivityDialogComponent implements OnInit {
             }
         } else {
             this.endDate = new Date(dateNow);
+            this.endDate.setTime(
+                this.endDate.getTime() + (1000 * 60 * 15)
+            );
         }
     }
 
@@ -381,6 +384,12 @@ export class CreateActivityDialogComponent implements OnInit {
         if (!this.dateValidator.validate().isValid)
             return this.notifyService.error(this.ls.l('DatePeriodIsRequired'));
 
+        if (this.startDate >= this.endDate) {
+            this.startDateComponent.instance.option('isValid', false);
+            this.endDateComponent.instance.option('isValid', false);
+            return this.notifyService.error(this.ls.l('EndDateBeforeStartDate'));
+        }
+
         return true;
     }
 
@@ -524,6 +533,19 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     removeFocusFromElement(event) {
+        this.dateValidator.validate();
         event.component.blur();
+    }
+
+    getStartDayTime(value) {
+        let date = new Date(value);
+        date.setHours(0, 0, 0, 0);
+        return date;
+    }
+
+    getEndDayTime(value) {
+        let date = new Date(value);
+        date.setHours(23, 59, 59, 59);
+        return date;
     }
 }

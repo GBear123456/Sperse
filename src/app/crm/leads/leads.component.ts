@@ -165,17 +165,20 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             visible: true,
             items: [
                 {
-                    text: this.l('Call'),
-                    class: 'call',
-                    disabled: true,
-                    action: () => {}
+                    text: this.l('SMS'),
+                    class: 'sms fa fa-commenting-o',
+                    action: (data?) => {
+                        this.contactService.showSMSDialog({
+                            phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
+                        });
+                    }
                 },
                 {
                     text: this.l('SendEmail'),
                     class: 'email',
-                    action: () => {
+                    action: (data?) => {
                         this.contactService.showEmailDialog({
-                            contactId: (this.actionEvent.data || this.actionEvent).CustomerId
+                            contactId: (data || this.actionEvent.data || this.actionEvent).CustomerId
                         }).subscribe();
                     }
                 },
@@ -191,21 +194,21 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     checkVisible: (lead: LeadDto) => {
                         return !!lead.UserId && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
                     },
-                    action: () => {
-                        const lead: LeadDto = this.actionEvent.data || this.actionEvent;
+                    action: (data?) => {
+                        const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
                         this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId);
                     }
                 },
                 {
                     text: this.l('NotesAndCallLog'),
                     class: 'notes',
-                    action: () => {
-                        this.showLeadDetails({ data: this.actionEvent }, 'notes');
+                    action: (data?) => {
+                        this.showLeadDetails({ data: data || this.actionEvent }, 'notes');
                     },
                     button: {
                         text: '+' + this.l('Add'),
-                        action: () => {
-                            this.showLeadDetails({ data: this.actionEvent }, 'notes', {
+                        action: (data?) => {
+                            this.showLeadDetails({ data: data || this.actionEvent }, 'notes', {
                                 addNew: true
                             });
                         }
@@ -220,8 +223,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 {
                     text: this.l('Orders'),
                     class: 'orders',
-                    action: () => {
-                        this.showLeadDetails({ data: this.actionEvent }, 'invoices');
+                    action: (data?) => {
+                        this.showLeadDetails({ data: data || this.actionEvent }, 'invoices');
                     }
                 },
                 {
@@ -240,8 +243,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, lead.Stage, this.contactGroupId.value);
                         return !!(!stage.isFinal && stage.checklistPoints && stage.checklistPoints.length);
                     },
-                    action: () => {
-                        this.openEntityChecklistDialog();
+                    action: (data?) => {
+                        this.openEntityChecklistDialog(data);
                     }
                 }
             ]
@@ -254,14 +257,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     text: this.l('Delete'),
                     class: 'delete',
                     disabled: false,
-                    action: () => {
-                        this.deleteLeads([(this.actionEvent.data || this.actionEvent).Id]);
+                    action: (data?) => {
+                        this.deleteLeads([(data || this.actionEvent.data || this.actionEvent).Id]);
                     }
                 },
                 {
                     text: this.l('EditRow'),
                     class: 'edit',
-                    action: () => this.showLeadDetails({ data: this.actionEvent })
+                    action: (data?) => this.showLeadDetails({ data: data || this.actionEvent })
                 }
             ]
         }
@@ -538,6 +541,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.leadFields[this.dateField],
         this.leadFields.PhotoPublicId,
         this.leadFields.Email,
+        this.leadFields.Phone,
         this.leadFields.AffiliateContactName,
         this.leadFields.AffiliateContactAffiliateCode
     ].concat(
@@ -1734,7 +1738,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.stagesComponent.tooltipVisible = false;
             this.pipelineService.updateEntitiesStage(
                 this.pipelinePurposeId,
-                this.selectedLeads,
+                this.selectedLeads.filter(lead =>
+                    lead.Stage != $event.name),
                 $event.name,
                 this.contactGroupId.value
             ).subscribe(declinedList => {
@@ -1991,9 +1996,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     }
 
-    openEntityChecklistDialog() {
+    openEntityChecklistDialog(data?) {
         this.dialog.closeAll();
-        let lead = this.actionEvent.data || this.actionEvent;
+        let lead = data || this.actionEvent.data || this.actionEvent;
         this.dialog.open(EntityCheckListDialogComponent, {
             panelClass: ['slider'],
             hasBackdrop: false,

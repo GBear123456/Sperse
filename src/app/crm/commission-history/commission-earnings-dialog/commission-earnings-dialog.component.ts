@@ -28,7 +28,7 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
         }))
     );
     calendarOptions = { allowFutureDates: false };
-    contactId: number;
+    selectedContactIds: number[];
     dateRange = {
         from: { value: DateHelper.addTimezoneOffset(moment().startOf('day').toDate(), true) },
         to: { value: DateHelper.addTimezoneOffset(moment().endOf('day').toDate(), true) }
@@ -45,7 +45,9 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
     }
 
     confirm() {
-        if (this.contactId || this.data.bulkUpdateAllowed) {
+        if (this.selectedContactIds && this.selectedContactIds.length &&
+            this.selectedContactIds.length == 1 || this.data.bulkUpdateAllowed
+        ) {
             ContactsHelper.showConfirmMessage(
                 this.ls.l('NewEarningsAdd'),
                 (isConfirmed: boolean) => {
@@ -53,7 +55,8 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
                         this.loadingService.startLoading(this.elementRef.nativeElement);
                         this.commissionProxy.recordEarnings(
                             new RecordEarningsInput({
-                                contactId: this.contactId,
+                                contactIds: this.selectedContactIds && this.selectedContactIds.length
+                                    ? this.selectedContactIds : undefined,
                                 startDate: DateHelper.removeTimezoneOffset(new Date(
                                     (this.dateRange.from.value || this.dateRange.to.value).getTime()), true, 'from'),
                                 endDate: DateHelper.removeTimezoneOffset(new Date(
@@ -70,5 +73,15 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
             );
         } else
             this.notify.error(this.ls.l('AtLeastOneOfThesePermissionsMustBeGranted', AppPermissions.CRMBulkUpdates));
+    }
+
+    getSelectedName(contactList) {
+        if (this.selectedContactIds && this.selectedContactIds.length) {
+            let selectedItem = contactList.find(
+                item => item.id == this.selectedContactIds[0]
+            ), name = selectedItem && (selectedItem.name || selectedItem.affiliateCode),
+            count = this.selectedContactIds.length - 1;
+            return count > 0 ? name + ` + ${count}` : name;
+        }
     }
 }

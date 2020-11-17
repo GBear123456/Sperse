@@ -10,8 +10,19 @@ import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { BehaviorSubject, combineLatest, concat, forkJoin, Observable } from 'rxjs';
-import { filter, finalize, first, map, mapTo, pluck, skip, switchMap, takeUntil, debounceTime } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, concat, forkJoin, Observable, of } from 'rxjs';
+import {
+    distinctUntilChanged,
+    filter,
+    finalize,
+    first,
+    map,
+    mapTo,
+    pluck,
+    skip,
+    switchMap,
+    takeUntil
+} from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
 
@@ -67,10 +78,18 @@ import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
 import { ContactsHelper } from '@root/shared/crm/helpers/contacts-helper';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { OrderStageSummary } from '@app/crm/orders/order-stage-summary.interface';
+import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
+import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
+import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
+import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 
 @Component({
     templateUrl: './orders.component.html',
-    styleUrls: ['./orders.component.less'],
+    styleUrls: [
+        '../shared/styles/grouped-action-menu.less',
+        './orders.component.less'
+    ],
     providers: [ OrderServiceProxy, CurrencyPipe ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -79,6 +98,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     @ViewChild(PipelineComponent, { static: false }) pipelineComponent: PipelineComponent;
     @ViewChild(StaticListComponent, { static: false }) stagesComponent: StaticListComponent;
     @ViewChild(PivotGridComponent, { static: false }) pivotGridComponent: PivotGridComponent;
+    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
+
     items: any;
     showOrdersPipeline = true;
     pipelineDataSource: any;
@@ -107,6 +128,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.showOrdersPipeline ? DataLayoutType.Pipeline : DataLayoutType.DataGrid
     );
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
     private readonly ordersDataSourceURI = 'Order';
     private readonly subscriptionsDataSourceURI = 'Subscription';
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
@@ -116,7 +138,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
     public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || undefined);
     showCompactView$: Observable<Boolean> = combineLatest(
-        this.dataLayoutType.asObservable(),
+        this.dataLayoutType$,
         this.pipelineService.compactView$,
         this.gridCompactView.asObservable(),
     ).pipe(
@@ -363,7 +385,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ];
     permissions = AppPermissions;
     currency: string;
-    totalCount: number;
+    ordersTotalCount: number;
+    subscriptionsTotalCount: number;
     ordersToolbarConfig: ToolbarGroupModel[];
     subscriptionsToolbarConfig: ToolbarGroupModel[];
     orderTypesEnum = OrderType;
@@ -422,9 +445,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
-    oDataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues();
+    ordersODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Order);
+    subscriptionsODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Subscription);
     private search: BehaviorSubject<string> = new BehaviorSubject<string>(this.searchValue);
-    search$: Observable<string> = this.search.asObservable();
+    search$: Observable<string> = this.search.asObservable().pipe(distinctUntilChanged());
     private subscriptionsPivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
@@ -527,14 +551,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     };
     ordersSum: number;
     ordersSummary$: Observable<OrderStageSummary> = combineLatest(
-        this.oDataRequestValues$,
+        this.ordersODataRequestValues$,
         this.search$,
         this.refresh$
     ).pipe(
-        debounceTime(600),
         takeUntil(this.destroy$),
-        filter(() => this.ordersDataLayoutType == DataLayoutType.DataGrid && this.selectedOrderType.value == OrderType.Order),
-        map(([oDataRequestValues, searchValue, ]: [ODataRequestValues, string, null]) => {
+        switchMap(this.waitUntilLayoutType(DataLayoutType.DataGrid)),
+        switchMap(this.waitUntilOrderType(OrderType.Order)),
+        map(([oDataRequestValues, ]: [ODataRequestValues, ]) => {
             return this.getODataUrl('OrderCount', oDataRequestValues.filter, null,
                 [...this.getSubscriptionsParams(), ...oDataRequestValues.params]);
         }),
@@ -560,14 +584,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     subscriptionsTotalFee: number;
     subscriptionsTotalOrderAmount: number;
     subscriptionsSummary$: Observable<any> = combineLatest(
-        this.oDataRequestValues$,
+        this.subscriptionsODataRequestValues$,
         this.search$,
         this.refresh$
     ).pipe(
-        debounceTime(600),
         takeUntil(this.destroy$),
-        filter(() => this.selectedOrderType.value == OrderType.Subscription),
-        map(([oDataRequestValues, searchValue, ]: [ODataRequestValues, string, null]) => {
+        switchMap(this.waitUntilOrderType(OrderType.Subscription)),
+        map(([oDataRequestValues, ]: [ODataRequestValues, ]) => {
             return this.getODataUrl(
                 'SubscriptionSlice',
                 oDataRequestValues.filter,
@@ -601,6 +624,122 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
     );
+
+    actionEvent: any;
+    actionMenuGroups: ActionMenuGroup[] = [
+        {
+            key: '',
+            visible: true,
+            items: [
+                {
+                    text: this.l('SMS'),
+                    class: 'sms fa fa-commenting-o',
+                    action: (data?) => {
+                        let entity = data || this.actionEvent.data || this.actionEvent;
+                        this.contactsService.showSMSDialog({
+                            phoneNumber: entity.Phone || entity.PhoneNumber
+                        });
+                    }
+                },
+                {
+                    text: this.l('SendEmail'),
+                    class: 'email',
+                    action: (data?) => {
+                        this.contactsService.showEmailDialog({
+                            contactId: (data || this.actionEvent.data || this.actionEvent).ContactId
+                        }).subscribe();
+                    }
+                },
+            ]
+        },
+        {
+            key: '',
+            visible: true,
+            items: [
+                {
+                    text: this.l('LoginAsThisUser'),
+                    class: 'login',
+                    disabled: true,
+                    checkVisible: (entity: any) => {
+                        return !!entity.UserId && this.isGranted(AppPermissions.AdministrationUsersImpersonation);
+                    },
+                    action: (data?) => {
+                        //const entity: any = data || this.actionEvent.data || this.actionEvent;
+                        //this.impersonationService.impersonate(entity.UserId, this.appSession.tenantId);
+                    }
+                },
+                {
+                    text: this.l('NotesAndCallLog'),
+                    class: 'notes',
+                    action: (data?) => {
+                        this.showContactDetails({ data: data || this.actionEvent }, 'notes');
+                    },
+                    button: {
+                        text: '+' + this.l('Add'),
+                        action: (data?) => {
+                            this.showContactDetails({ data: data || this.actionEvent }, 'notes', {
+                                addNew: true
+                            });
+                        }
+                    }
+                },
+                {
+                    text: this.l('Appointment'),
+                    class: 'appointment',
+                    disabled: true,
+                    action: () => {}
+                },
+                {
+                    text: this.l('Orders'),
+                    class: 'orders',
+                    action: (data?) => {
+                        this.showContactDetails({ data: data || this.actionEvent }, 'invoices');
+                    }
+                },
+                {
+                    text: this.l('Notifications'),
+                    class: 'notifications',
+                    disabled: true,
+                    action: () => {}
+                }
+/*
+                {
+                    getText: (entity: any) => {
+                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, entity.Stage, entity.contactGroupId);
+                        return this.l('Checklist') + ' (' + entity.StageChecklistPointDoneCount + '/' + stage.checklistPoints.length + ')';
+                    },
+                    class: 'checklist',
+                    checkVisible: (entity: any) => {
+                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, entity.Stage, entity.contactGroupId);
+                        return !!(!stage.isFinal && stage.checklistPoints && stage.checklistPoints.length);
+                    },
+                    action: (data?) => {
+                        this.openEntityChecklistDialog(data);
+                    }
+                }
+*/
+            ]
+        },
+        {
+            key: '',
+            visible: true,
+            items: [
+                {
+                    text: this.l('Delete'),
+                    class: 'delete',
+                    disabled: false,
+                    action: (data?) => {
+                        this.deleteOrders([(data || this.actionEvent.data || this.actionEvent).Id]);
+                    }
+                },
+                {
+                    text: this.l('EditRow'),
+                    class: 'edit',
+                    action: (data?) => this.showContactDetails({ data: data || this.actionEvent })
+                }
+            ]
+        }
+    ];
 
     constructor(injector: Injector,
         private orderProxy: OrderServiceProxy,
@@ -704,6 +843,36 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return this.selectedOrderType.value === OrderType.Order ? this.ordersGrid : this.subscriptionsGrid;
     }
 
+    set totalCount(value: number) {
+        if (this.selectedOrderType.value === OrderType.Order) {
+            this.ordersTotalCount = value;
+        } else if (this.selectedOrderType.value === OrderType.Subscription) {
+            this.subscriptionsTotalCount = value;
+        }
+    }
+
+    get totalCount() {
+        return this.selectedOrderType.value === OrderType.Order
+               ? this.ordersTotalCount
+               : this.subscriptionsTotalCount;
+    }
+
+    private waitUntilOrderType(orderType: OrderType) {
+        return (data) => this.selectedOrderType.value === orderType ? of(data) : this.selectedOrderType$.pipe(
+            filter((dataOrderType: OrderType) => dataOrderType === orderType),
+            first(),
+            mapTo(data)
+        );
+    }
+
+    private waitUntilLayoutType(layoutType: DataLayoutType) {
+        return (data) => this.dataLayoutType.value === layoutType ? of(data) : this.dataLayoutType$.pipe(
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType === layoutType),
+            first(),
+            mapTo(data)
+        );
+    }
+
     get dataSource() {
         return this.selectedOrderType.value === OrderType.Order ? this.ordersDataSource : this.subscriptionsDataSource;
     }
@@ -713,14 +882,21 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         || this.selectedOrderType.value === OrderType.Subscription;
     }
 
-    getODataRequestValues() {
+    getODataRequestValues(orderType: OrderType) {
         return concat(
-            this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)).pipe(first()),
+            /** Do not emit initial empty filters for subscriptions since they apply its own initial filters */
+            orderType === OrderType.Subscription
+                ? of(null)
+                : this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)).pipe(first()),
             this.filterChanged$.pipe(
+                filter(() => this.selectedOrderType.value === orderType),
                 switchMap(() => this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)))
             ),
         ).pipe(
             filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues),
+            distinctUntilChanged((prev: ODataRequestValues, curr: ODataRequestValues) => {
+                return prev.filter === curr.filter && !ArrayHelper.dataChanged(prev.params, curr.params);
+            })
         );
     }
 
@@ -1260,9 +1436,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     subscribeToFilter() {
-        this.filtersService.apply(filters => {
+        this.filtersService.apply(() => {
             this.selectedOrderKeys = [];
             this.filterChanged = true;
+            this.contactGroupFilter.items.ContactGroupId
+                .value = this.selectedContactGroup.value;
             this.processFilterInternal();
         });
     }
@@ -1367,14 +1545,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             entity: event.data,
             entityStageDataSource: this.dataGrid.instance.getDataSource(),
             loadMethod: null,
+            queryParams: {},
             section: section
         });
     }
 
-    onCardClick({entity, entityStageDataSource, loadMethod, section = 'invoices'}: {
+    onCardClick({entity, entityStageDataSource, loadMethod, queryParams, section = 'invoices'}: {
         entity: OrderDto | SubscriptionDto,
         entityStageDataSource: any,
         loadMethod: () => any,
+        queryParams: Params,
         section: string
     }) {
         if (entity && entity.ContactId) {
@@ -1386,7 +1566,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     queryParams: {
                         ...(isOrder ? {orderId: entity.Id} : {subId: entity.Id}),
                         referrer: 'app/crm/orders',
-                        dataLayoutType: DataLayoutType.Pipeline
+                        dataLayoutType: DataLayoutType.Pipeline,
+                        ...queryParams
                     }
                 }
             );
@@ -1457,22 +1638,22 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.totalCount = totalCount;
     }
 
-    deleteOrders() {
+    deleteOrders(orderIds?) {
         ContactsHelper.showConfirmMessage(
             this.l('OrdersDeleteWarningMessage'),
             (isConfirmed: boolean, [ forceDelete ]: boolean[]) => {
                 if (isConfirmed) {
-                    this.deleteOrdersInternal(forceDelete);
+                    this.deleteOrdersInternal(forceDelete, orderIds);
                 }
             },
             [{ text: this.l('ForceDelete'), visible: this.permission.isGranted(AppPermissions.CRMForceDeleteEntites), checked: false }]
         );
     }
 
-    private deleteOrdersInternal(forceDelete: boolean) {
+    private deleteOrdersInternal(forceDelete: boolean, orderIds?: number[]) {
         this.startLoading();
         forkJoin(
-            this.selectedOrderKeys.map((v) => this.orderProxy.delete(v, forceDelete))
+            (orderIds || this.selectedOrderKeys).map(id => this.orderProxy.delete(id, forceDelete))
         ).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
@@ -1498,7 +1679,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     private changeOrderType(orderType: OrderType) {
-        this.totalCount = undefined;
         if (this.searchClear) {
             this.searchValue = '';
             this.search.next(this.searchValue);
@@ -1512,6 +1692,51 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         setTimeout(() => {
             this.initDataSource();
             this.filtersService.change([this.contactGroupFilter]);
+        });
+    }
+
+    showContactDetails(event, section?: string, queryParams?: Params) {
+        if (!event.data.LeadId || !event.data.ContactId)
+            return;
+
+        this.searchClear = false;
+        event.component && event.component.cancelEditData();
+
+        this.onCardClick({
+            entity: event.data,
+            entityStageDataSource: event.dataSource
+                || this.ordersGrid.instance.getDataSource(),
+            loadMethod: event.loadMethod,
+            queryParams: queryParams,
+            section: section
+        });
+    }
+
+    toggleActionsMenu(event) {
+        ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe(actionRecord => {
+            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, event.data);
+            this.actionEvent = actionRecord;
+        });
+    }
+
+    onMenuItemClick(event) {
+        event.itemData.action.call(this);
+        this.actionEvent = null;
+        this.actionMenu.hide();
+    }
+
+    openEntityChecklistDialog(data?) {
+        this.dialog.closeAll();
+        let entity = data || this.actionEvent.data || this.actionEvent;
+        this.dialog.open(EntityCheckListDialogComponent, {
+            panelClass: ['slider'],
+            hasBackdrop: false,
+            closeOnNavigation: true,
+            data: {
+                entity: entity,
+                pipelinePurposeId: this.pipelinePurposeId,
+                contactGroupId: entity.contactGroupId
+            }
         });
     }
 

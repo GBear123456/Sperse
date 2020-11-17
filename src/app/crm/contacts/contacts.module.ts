@@ -24,6 +24,7 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { DxButtonGroupModule } from 'devextreme-angular/ui/button-group';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
+import { DxTabsModule } from 'devextreme-angular/ui/tabs';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
@@ -35,6 +36,7 @@ import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { DxDropDownBoxModule } from 'devextreme-angular/ui/drop-down-box';
 import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
 import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
+import { DxFileManagerModule } from 'devextreme-angular';
 
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { ImageViewerModule } from 'ng2-image-viewer';
@@ -85,6 +87,7 @@ import { PersonInfoComponent } from './person-info/person-info.component';
 import { UserInboxComponent } from './user-inbox/user-inbox.component';
 import { MergeContactDialogComponent } from './merge-contact-dialog/merge-contact-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
+import { TemplateDocumentsDialogComponent } from './documents/template-documents-dialog/template-documents-dialog.component';
 import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
 import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { DocumentTypesListComponent } from './document-types-list/document-types-list.component';
@@ -203,6 +206,7 @@ import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dial
         CreateInvoiceDialogComponent,
         LeadRelatedContactsComponent,
         AddServiceProductDialogComponent,
+        TemplateDocumentsDialogComponent,
         CustomerListDialogComponent
     ],
     imports: [
@@ -236,9 +240,11 @@ import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dial
         DxDateBoxModule,
         DxTooltipModule,
         DxListModule,
+        DxFileManagerModule,
         DxTreeListModule,
         DxTreeViewModule,
         DxTagBoxModule,
+        DxTabsModule,
         RoundProgressModule,
         PipelineModule,
         DxRadioGroupModule,
@@ -289,6 +295,7 @@ import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dial
         MergeContactDialogComponent,
         MarkAsPaidDialogComponent,
         AddServiceProductDialogComponent,
+        TemplateDocumentsDialogComponent,
         CustomerListDialogComponent
     ],
     providers: [

@@ -17,6 +17,7 @@ import { ConditionsModalComponent } from '@shared/common/conditions-modal/condit
 import { DxCheckBoxComponent } from 'devextreme-angular/ui/check-box';
 import { ConditionsType } from '@shared/AppEnums';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'signup-form',
@@ -51,7 +52,8 @@ export class SignupFormComponent implements OnInit, OnDestroy {
         private dialog: MatDialog,
         private router: Router,
         private lifecycleService: LifecycleSubjectsService,
-        private maskPipe: MaskPipe
+        private maskPipe: MaskPipe,
+        public ls: AppLocalizationService
     ) {
         this.registerData.isUSCitizen = true;
     }

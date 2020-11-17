@@ -81,8 +81,13 @@ export class ExportService {
                 initialStore._beforeSend = initialBeforeSend;
                 callback([]);
             });
-        } else
-            callback(dataGrid.instance.getSelectedRowsData());
+        } else {
+            let selection: any = dataGrid.instance.getSelectedRowsData();
+            if (selection instanceof Array)
+                callback(selection);
+            else
+                selection.then(callback);
+        }
     }
 
     exportTo(option, type, dataGrid: DxDataGridComponent = null, prefix?: string, showItemsInName?: boolean): Promise<any> {
@@ -147,7 +152,7 @@ export class ExportService {
     private exportToGoogleSheetsInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string, showItemsInName?: boolean) {
         return this.exportGoogleSheetService.export(new Promise((resolve) => {
             this.getDataFromGrid(dataGrid, data => {
-                let visibleColumns = dataGrid.instance.getVisibleColumns(),
+                let visibleColumns: DevExpress.ui.dxDataGridColumn[] = dataGrid.instance.getVisibleColumns(),
                     rowData = this.exportGoogleSheetService.getHeaderRows(visibleColumns);
 
                 data.forEach((val: any) => {

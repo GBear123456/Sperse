@@ -148,7 +148,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     emailsTypeDefault = 'P';
     phonesTypeDefault = 'M';
     linksTypeDefault = '-';
-    addressesTypeDefault = 'W';
+    addressesTypeDefault = 'H';
     addressTypes: any = [];
     phoneTypes$: Observable<PhoneUsageTypeDto[]> = this.store$.pipe(
         select(PhoneUsageTypesStoreSelectors.getPhoneUsageTypes),

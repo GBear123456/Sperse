@@ -10,6 +10,13 @@
             [dataSource]="paymentSystems"
             [(value)]="paymentSystem">
         </dx-select-box>
+        <dx-date-box 
+            type="date" 
+            [placeholder]="ls.l('PayDate')"
+            [(value)]="payDate" 
+            [max]="today"
+            [min]="data.entities.length > 1 ? undefined : data.entities[0].StartDate">
+        </dx-date-box>
     </dx-scroll-view>
 </mat-dialog-content>
 <mat-dialog-actions>

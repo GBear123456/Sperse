@@ -17,6 +17,13 @@
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper">
+        <dx-context-menu [items]="[
+                { text: this.l('AffectOnPageItems'), mode: 'page' },
+                { text: this.l('AffectAllPagesItems'), mode: 'allPages' }
+            ]"
+            (onItemClick)="selectionModeChanged($event)"
+            target=".dx-header-row">
+        </dx-context-menu>
         <action-menu [items]="actionMenuGroups"
                 [visible]="!!actionEvent"
                 [grouped]="true"
@@ -97,9 +104,8 @@
                                   }"
                                   (onContentReady)="onContentReady($event)"
                                   (onCellClick)="onCellClick($event)"
-                                  (onOptionChanged)="onGridOptionChanged($event)"
+                                  (onOptionChanged)="onOptionChanged($event)"
                                   (onEditingStart)="toggleActionsMenu($event)"
-                                  (onSelectionChanged)="onSelectionChanged($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                         <dxo-selection selectAllMode="page"
                                        showCheckBoxesMode="always"

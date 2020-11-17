@@ -77,25 +77,6 @@ input.form-control {
     height: 50px;
 }
 
-.grid-compact-view {
-    .dx-datagrid-rowsview {
-        .dx-column-lines {
-            td {
-                height: 24px !important;
-                &.uncategorized {
-                    &::before {
-                        font-size: 15px !important;
-                    }
-                }
-            }
-        }
-    }
-
-    .dx-checkbox-icon {
-        margin-top: 3px;
-    }
-}
-
 //.dx-tooltip-wrapper .dx-overlay-content .dx-popup-content {
 //    height: auto !important;
 //}
@@ -225,9 +206,29 @@ input.form-control {
     display: inline;
 }
 
+dx-file-manager {
+    .dx-toolbar-items-container {
+        .dx-selectbox {
+            width: 200px!important;
+        }
+    }
+    .dx-filemanager-file-actions-button {
+        i {
+            display: none;
+        }
+        .dx-button {
+            background: transparent!important;
+            .dx-button-content {
+                background: url('../../../assets/common/icons/gear-icon.svg') no-repeat center;
+            }
+        }
+    }
+}
+
 /* devExpress common styles */
 //VP should be adjusted to use class instead of Id
-#gridContainer, #operationsLogsGrid, #changeLogsGrid, dx-data-grid.main-component-view {
+#gridContainer, #operationsLogsGrid, #changeLogsGrid, 
+dx-data-grid.main-component-view, dx-file-manager {
     width: 100%;
     max-width: 100vw;
     height: calc(~'100vh - 212px');
@@ -237,6 +238,25 @@ input.form-control {
     .dx-datagrid-content tr td.tabular {
         &, & *:not(.fa):not(.dx-icon):not(.dx-dropdowneditor-icon) {
             font-family: 'Lato' !important;
+        }
+    }
+
+    &.grid-compact-view {
+        .dx-datagrid-rowsview {
+            .dx-column-lines {
+                td {
+                    height: 25px;
+                    &.uncategorized {
+                        &::before {
+                            font-size: 15px !important;
+                        }
+                    }
+                }
+            }
+        }
+
+        .dx-checkbox-icon {
+            margin-top: 3px;
         }
     }
 
@@ -295,8 +315,8 @@ input.form-control {
             border-bottom: 1px solid #ddd
         }
 
-        .dx-column-lines {
-            /deep/ * {
+        .dx-column-lines, .dx-datagrid-table {
+            ::ng-deep * {
                 font-size: 13px;
                 color: #686f76;
                 font-weight: 600;
@@ -356,7 +376,7 @@ input.form-control {
     }
 
     .dx-datagrid-rowsview {
-        .dx-column-lines {
+        .dx-column-lines, .dx-datagrid-table {
             td {
                 height: 45px;
                 border-left: 0;

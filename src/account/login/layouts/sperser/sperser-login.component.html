@@ -25,25 +25,43 @@
                 <p>or log in with email address</p>
             </div>
 
-            <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
+            <form
+                #loginForm="ngForm"
+                class="login-form"
+                method="post"
+                novalidate
+                (ngSubmit)="login()">
                 <div class="form-group input first clearfix">
-                    <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress"
-                           autoFocus #userNameOrEmailAddress="ngModel"
-                           class="form-control form-control-solid placeholder-no-fix input-ltr"
-                           type="email" autocomplete="off"
-                           placeholder="{{getLoginPlaceholder()}}"
-                           name="userNameOrEmailAddress" required tabindex="1" />
+                    <input
+                        [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress"
+                        autoFocus
+                        #userNameOrEmailAddress="ngModel"
+                        class="form-control form-control-solid placeholder-no-fix input-ltr"
+                        type="email"
+                        autocomplete="off"
+                        placeholder="{{ getLoginPlaceholder() }}"
+                        name="userNameOrEmailAddress"
+                        required
+                        tabindex="1"/>
                     <!--<i class="fa fa-check-circle" [hidden]="userNameOrEmailAddress.invalid && userNameOrEmailAddress.touched"></i>
                     <i class="fa fa-exclamation-circle" [hidden]="userNameOrEmailAddress.valid || userNameOrEmailAddress.untouched"></i>-->
                 </div>
 
-                <div class="form-group input last clearfix">
-                    <input [(ngModel)]="loginService.authenticateModel.password"
-                           #password="ngModel"
-                           class="form-control form-control-solid placeholder-no-fix input-ltr"
-                           type="password" autocomplete="off"
-                           placeholder="{{ls.l('Password')}}" name="password"
-                           required maxlength="32" tabindex="2" />
+                <div class="form-group input password last clearfix">
+                    <input
+                        [(ngModel)]="loginService.authenticateModel.password"
+                        #password="ngModel"
+                        class="form-control form-control-solid placeholder-no-fix input-ltr"
+                        [type]="showPassword ? 'text' : 'password'"
+                        autocomplete="off"
+                        placeholder="{{ ls.l('Password') }}"
+                        name="password"
+                        required
+                        maxlength="32"
+                        tabindex="2"/>
+                    <a class="show-password" (click)="showHidePass()">
+                        <img src="./assets/common/images/rapid/icons/trailing-icon.svg" alt="Show">
+                    </a>
                     <!--<i class="fa fa-check-circle" [hidden]="password.invalid && password.touched"></i>
                     <i class="fa fa-exclamation-circle" [hidden]="password.valid || password.untouched"></i>-->
                 </div>
@@ -52,19 +70,33 @@
                     <div class="form-group clearfix">
                         <div class="mt-checkbox-list">
                             <label class="mt-checkbox mt-checkbox-outline">
-                                <input class="form-control" [(ngModel)]="loginService.authenticateModel.rememberClient" type="checkbox" name="rememberMe" value="true" />{{ls.l("RememberMe")}}
+                                <input
+                                    class="form-control"
+                                    [(ngModel)]="loginService.authenticateModel.rememberClient"
+                                    type="checkbox"
+                                    name="rememberMe"
+                                    value="true"/>
+                                {{ ls.l("RememberMe") }}
                                 <span></span>
                             </label>
                         </div>
                     </div>
                     <div class="form-group clearfix">
-                        <a routerLink="/account/forgot-password" id="forget-password" class="forget-password pull-right">{{ls.l("ForgotPassword")}}</a>
+                        <a
+                            routerLink="/account/forgot-password"
+                            id="forget-password"
+                            class="forget-password pull-right">
+                            {{ ls.l("ForgotPassword") }}
+                        </a>
                     </div>
                 </div>
 
                 <div class="form-actions">
-                    <button type="submit" class="btn btn-submit" [disabled]="loginInProgress || !loginForm.form.valid">
-                        {{ls.l("LoginBtn")}}
+                    <button
+                        type="submit"
+                        class="btn btn-submit"
+                        [disabled]="loginInProgress || !loginForm.form.valid">
+                        {{ ls.l("LoginBtn") }}
                     </button>
                 </div>
             </form>
