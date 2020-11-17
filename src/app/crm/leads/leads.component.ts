@@ -326,7 +326,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     );
     selectedContactGroup: ContactGroup;
     selectedLeadType$: Observable<LeadType> = this.selectedPipeline$.pipe(
-        map((pipeline: PipelineDto) => pipeline.defaultLeadTypeId || LeadType.Default)
+        map((pipeline: PipelineDto) => pipeline.entityTypeId || LeadType.Default)
     );
     selectedLeadType: LeadType;
     userGroupText$: Observable<string> = this.selectedPipeline$.pipe(

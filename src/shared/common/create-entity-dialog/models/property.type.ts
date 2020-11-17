@@ -1,9 +1,9 @@
-import { ICreateAcquisitionLeadInput } from '@shared/service-proxies/service-proxies';
+import { IPropertyInput } from '@shared/service-proxies/service-proxies';
 import { Address } from '@shared/common/create-entity-dialog/models/address.model';
 
-type CreateAcquisitionLeadInput = Omit<ICreateAcquisitionLeadInput, 'yearBuilt' | 'contactId' | 'address'>;
+type PropertyType = Omit<IPropertyInput, 'yearBuilt' | 'contactId' | 'address'>;
 
-export interface Property extends CreateAcquisitionLeadInput {
+export interface Property extends PropertyType {
     yearBuilt: Date;
     address: Address;
 }

@@ -109,7 +109,7 @@ export const getPropertiesPipelineId = () => createSelector(
     getPipelines(),
     (pipelines: PipelineDto[]) => {
         const acquisitionPipeline = pipelines && pipelines.find((pipeline: PipelineDto) => {
-            return pipeline.defaultLeadTypeId === LeadType.Acquisition;
+            return pipeline.entityTypeId === LeadType.Acquisition;
         });
         return acquisitionPipeline && acquisitionPipeline.id;
     }

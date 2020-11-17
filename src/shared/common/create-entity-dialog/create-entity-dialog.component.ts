@@ -3,7 +3,7 @@ import {
     AfterViewInit,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    Component,
+    Component, ElementRef,
     HostBinding,
     Inject,
     OnDestroy,
@@ -18,9 +18,10 @@ import { Router } from '@angular/router';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, Subscription, of } from 'rxjs';
-import { filter, finalize, first, map, mapTo, switchMap, pluck } from 'rxjs/operators';
+import { Observable, Subscription } from 'rxjs';
+import { filter, finalize, first, map, switchMap, pluck } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
+import { Address as AutocompleteAddress } from 'ngx-google-places-autocomplete/objects/address';
 
 /** Application imports */
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
@@ -55,15 +56,16 @@ import {
     CreateContactEmailInput,
     CreateContactLinkInput,
     CreateContactPhoneInput,
-    CreateOrUpdateContactInput, CreateOrUpdateContactOutput,
+    CreateOrUpdateContactInput,
+    CreateOrUpdateContactOutput,
     EmailUsageTypeDto,
     OrganizationContactServiceProxy,
     OrganizationShortInfo,
     PersonInfoDto,
-    PhoneUsageTypeDto, PropertyServiceProxy,
+    PhoneUsageTypeDto,
+    PropertyInput,
     SimilarContactOutput,
-    TrackingInfo,
-    CreateAcquisitionLeadInput
+    TrackingInfo
 } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarEntitiesDialogComponent } from './similar-entities-dialog/similar-entities-dialog.component';
@@ -119,8 +121,7 @@ import { LeadDto } from '@app/crm/leads/lead-dto.interface';
         ContactPhotoServiceProxy,
         DialogService,
         GooglePlaceService,
-        ToolbarService,
-        PropertyServiceProxy
+        ToolbarService
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -135,7 +136,11 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChild('propertyValidationGroup', { static: false }) propertyValidationGroup: DxValidationGroupComponent;
     @ViewChildren('linksComponent') linkComponents: QueryList<DxTextBoxComponent>;
-    @HostBinding('class.hidePhotoArea') hidePhotoArea: boolean = this.data.hidePhotoArea;
+
+    showPropertyFields: boolean = this.data.leadType === LeadType.Acquisition;
+    showPropertiesDropdown: boolean = this.data.leadType === LeadType.Management;
+
+    @HostBinding('class.hidePhotoArea') hidePhotoArea: boolean = this.data.hidePhotoArea || this.showPropertyFields;
     @HostBinding('class.hideToolbar') hideToolbar: boolean = this.data.hideToolbar;
 
     currentUserId = abp.session.userId;
@@ -209,6 +214,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         addresses: [ new Address(this.addressesTypeDefault) ]
     };
     property: Property = {
+        propertyId: undefined,
         name: undefined,
         area: undefined,
         yearBuilt: undefined,
@@ -218,7 +224,10 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     };
     similarCustomers: SimilarContactOutput[] = [];
     similarCustomersDialog: any;
-    title = '';
+    contactName: string = '';
+    get title(): string {
+        return this.showPropertyFields ? undefined : this.contactName;
+    }
     jobTitle: string;
     isTitleValid = true;
     buttons: IDialogButton[] = [
@@ -263,8 +272,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     showBankCodeField: boolean = this.userManagementService.checkBankCodeFeature();
     dontCheckSimilarEntities: boolean = this.data.dontCheckSimilarEntities;
     bankCode: string;
-    showPropertyFields: boolean = this.data.leadType === LeadType.Acquisition;
-    showPropertiesDropdown: boolean = this.data.leadType === LeadType.Management;
     today: Date = new Date();
     readonly leadFields: KeysEnum<LeadDto> = LeadFields;
     properties$: Observable<{ PropertyId: number, PropertyName: string }[]> = this.store$.pipe(
@@ -284,6 +291,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         }),
         pluck('value')
     );
+    nameRegex = AppConsts.regexPatterns.fullName;
+    propertyId: number;
 
     constructor(
         public dialog: MatDialog,
@@ -307,7 +316,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         private statesService: StatesService,
         private permissionService: AppPermissionService,
         private userManagementService: UserManagementService,
-        private propertyServiceProxy: PropertyServiceProxy,
         private httpClient: HttpClient,
         private oDataService: ODataService,
         public ls: AppLocalizationService,
@@ -370,12 +378,35 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             sourceContactId: this.sourceContactId,
             trackingInfo: trackingInfo,
             parentContactId: this.data.parentId,
-            bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null
+            bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null,
+            leadTypeId: this.data.leadType
         };
         if (this.disallowMultipleItems) {
             dataObj.emailAddress = dataObj.emailAddresses[0];
             dataObj.phoneNumber = dataObj.phoneNumbers[0];
             dataObj.address = dataObj.addresses[0];
+        }
+        if (this.showPropertyFields) {
+            dataObj.propertyInput = new PropertyInput({
+                propertyId: this.propertyId,
+                name: this.property.name,
+                area: this.property.area,
+                yearBuilt: this.property.yearBuilt && this.property.yearBuilt.getFullYear(),
+                floor: this.property.floor,
+                numberOfLevels: this.property.numberOfLevels,
+                address: CreateContactAddressInput.fromJS({
+                    streetAddress: this.property.address.streetAddress,
+                    city: this.property.address.city,
+                    stateId: this.property.address.state.code,
+                    stateName: this.property.address.state.name,
+                    zip: this.property.address.zip,
+                    countryId: this.property.address.countryCode
+                })
+            })
+        } else if (this.showPropertiesDropdown) {
+            dataObj.propertyInput = {
+                propertyId: this.propertyId,
+            }
         }
 
         this.clearSimilarCustomersCheck();
@@ -386,33 +417,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             ? ContactStatus.Prospective
             : ContactStatus.Active;
         this.contactProxy.createOrUpdateContact(createContactInput).pipe(
-            finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); }),
-            switchMap((createContactResult: CreateOrUpdateContactOutput) => {
-                let nextRequest$: Observable<CreateOrUpdateContactOutput>;
-                if (this.showPropertyFields) {
-                    nextRequest$ = this.propertyServiceProxy.createAcquisitionLead(new CreateAcquisitionLeadInput({
-                        contactId: createContactResult.contactId,
-                        name: this.property.name,
-                        area: this.property.area,
-                        yearBuilt: this.property.yearBuilt && this.property.yearBuilt.getFullYear(),
-                        floor: this.property.floor,
-                        numberOfLevels: this.property.numberOfLevels,
-                        address: CreateContactAddressInput.fromJS({
-                            streetAddress: this.property.address.streetAddress,
-                            city: this.property.address.city,
-                            stateId: this.property.address.state.code,
-                            stateName: this.property.address.state.name,
-                            zip: this.property.address.zip,
-                            countryId: this.property.address.countryCode
-                        })
-                    })).pipe(
-                        mapTo(createContactResult)
-                    )
-                } else {
-                    nextRequest$ = of(createContactResult);
-                }
-                return nextRequest$;
-            })
+            finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); })
         ).subscribe((result: CreateOrUpdateContactOutput) => {
             dataObj.id = result.contactId;
             dataObj.leadId = result.leadId;
@@ -444,7 +449,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             return this.notifyService.error(this.ls.l('RequiredContactInfoIsMissing'));
         }
 
-        if (this.title && !ValidationHelper.ValidateName(this.title)) {
+        if (this.contactName && !ValidationHelper.ValidateName(this.contactName)) {
             this.isTitleValid = false;
             return this.notifyService.error(this.ls.l('FullNameIsNotValid'));
         }
@@ -665,6 +670,17 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         this.updateAddressFields(event, address);
     }
 
+    updatePropertyAddress(address: AutocompleteAddress) {
+        this.property.name = address.formatted_address;
+        this.updateAddressFields(
+            {
+                address: address,
+                addressInput: null
+            },
+            this.property.address
+        )
+    }
+
     updateAddressFields(event: AddressChanged, address: Address) {
         let number = GooglePlaceService.getStreetNumber(event.address.address_components);
         let street = GooglePlaceService.getStreet(event.address.address_components);
@@ -684,9 +700,10 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         address.streetAddress = GooglePlaceService.getStreet(event.address.address_components);
         address.streetNumber = GooglePlaceService.getStreetNumber(event.address.address_components);
         address.countryCode = countryCode;
-        address.address = event.addressInput.nativeElement.value = number
-            ? number + ' ' + street
-            : street;
+        address.address =  number ? number + ' ' + street : street;
+        if (event.addressInput) {
+            event.addressInput.nativeElement.value = address.address;
+        }
         address.city = GooglePlaceService.getCity(event.address.address_components);
         this.changeDetectorRef.detectChanges();
     }
@@ -944,7 +961,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         this.phonesComponent = component;
     }
 
-    resetFullDialog(forced = true) {
+    resetFullDialog(forced: boolean = true) {
         let resetInternal = () => {
             this.resetComponent(this.emailsComponent);
             this.phonesComponent.reset();
@@ -968,7 +985,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;
             this.photoSourceData = undefined;
-            this.title = '';
+            this.contactName = '';
             this.tagsComponent && this.tagsComponent.reset();
             this.listsComponent && this.listsComponent.reset();
             this.partnerTypesComponent && this.partnerTypesComponent.reset();
@@ -994,8 +1011,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     onFullNameKeyUp(inputValue: string) {
-        this.title = inputValue;
-        this.nameParser.parseIntoPerson(this.title, this.person);
+        this.contactName = inputValue;
+        this.nameParser.parseIntoPerson(this.contactName, this.person);
         this.checkSimilarEntities();
     }
 

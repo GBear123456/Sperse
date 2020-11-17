@@ -79,12 +79,13 @@ export class EditAddressDialog {
 
     countriesStateLoad(): void {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
-        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe((countries: CountryDto[]) => {
-            this.countries = countries;
-            this.onCountryChange({
-                value: this.data.country
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries))
+            .subscribe((countries: CountryDto[]) => {
+                this.countries = countries;
+                this.onCountryChange({
+                    value: this.data.country
+                });
             });
-        });
     }
 
     onCountryChange(event) {

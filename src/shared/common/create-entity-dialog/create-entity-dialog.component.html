@@ -54,7 +54,24 @@
               [placeholder]="ls.l('Contact.FullName')"
               (onTitleKeyUp)="onFullNameKeyUp($event)"
               (onContextItemChanged)="onSaveOptionSelectionChanged()">
-
+    <ng-container headerContent>
+        <div *ngIf="showPropertyFields" class="property-address">
+            <input *ngIf="!googleAutoComplete"
+                   type="text"
+                   name="PropertyAddress"
+                   [placeholder]="ls.l('PropertyAddress')"
+                   [(ngModel)]="property.name"
+                   class="dx-texteditor-input"/>
+            <input *ngIf="googleAutoComplete"
+                   type="text"
+                   name="Address"
+                   [placeholder]="ls.l('PropertyAddress')"
+                   [(ngModel)]="property.name"
+                   class="dx-texteditor-input"
+                   (onAddressChange)="updatePropertyAddress($event)"
+                   ngx-google-places-autocomplete/>
+        </div>
+    </ng-container>
 
     <div *ngIf="!hidePhotoArea"
          class="photo-area"
@@ -62,7 +79,9 @@
          (click)="showUploadPhoto($event)">
     </div>
 
-    <dx-toolbar *ngIf="!hideToolbar" (onItemRendered)="toolbarService.onItemRendered($event)">
+    <dx-toolbar *ngIf="!hideToolbar"
+                [ngStyle]="{ paddingLeft: hidePhotoArea ? '12px' : '115px' }"
+                (onItemRendered)="toolbarService.onItemRendered($event)">
         <dxi-item location="before" template="clientAssign" [disabled]="isAssignDisabled"></dxi-item>
         <div *dxTemplate="let data of 'clientAssign'">
             <dx-button [icon]="'./assets/common/icons/assign-icon.svg'"
@@ -160,48 +179,33 @@
     </div>
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
-            <dx-validation-group *ngIf="showPropertyFields" #propertyValidationGroup>
+            <dx-validation-group *ngIf="showPropertyFields" class="property-info" #propertyValidationGroup>
                 <h3>{{ ls.l('PropertyInfo') }}:</h3>
                 <div class="field">
-                    <label>{{ ls.l('Name') }}</label>
-                    <dx-text-box [(value)]="property.name">
-                        <dx-validator>
-                            <dxi-validation-rule type="required"
-                                                 [message]="ls.l('ThisFieldIsRequired')">
-                            </dxi-validation-rule>
-                        </dx-validator>
-                    </dx-text-box>
-                </div>
-                <div class="field">
-                    <label>{{ ls.l('Area') }}</label>
-                    <dx-number-box [(value)]="property.area"></dx-number-box>
-                </div>
-                <div class="field">
-                    <label class="date-label">{{ ls.l('Year') }}</label>
-                    <dx-date-box type="date"
-                                 [calendarOptions]="{
-                                    minZoomLevel: 'century',
-                                    maxZoomLevel: 'decade'
-                                 }"
-                                 displayFormat="year"
-                                 [(value)]="property.yearBuilt">
-                    </dx-date-box>
-                </div>
-                <div class="field">
-                    <label>{{ ls.l('Floor') }}</label>
-                    <dx-number-box [(value)]="property.floor"></dx-number-box>
-                </div>
-                <div class="field">
-                    <label>{{ ls.l('Levels') }}</label>
-                    <dx-number-box [(value)]="property.numberOfLevels"></dx-number-box>
-                </div>
-                <div class="field">
-                    <label class="address-label">{{ls.l('Address')}}</label>
                     <div>
-                        <address-fields [address]="property.address"
-                                        [googleAutoComplete]="googleAutoComplete"
-                                        (onAddressChanged)="updateAddressFields($event, property.address)">
-                        </address-fields>
+                        <label>{{ ls.l('Area') }}</label>
+                        <dx-number-box [(value)]="property.area"></dx-number-box>
+                    </div>
+                    <div>
+                        <label class="date-label">{{ ls.l('Year') }}</label>
+                        <dx-date-box type="date"
+                                     [calendarOptions]="{
+                                        minZoomLevel: 'century',
+                                        maxZoomLevel: 'decade'
+                                     }"
+                                     displayFormat="year"
+                                     [(value)]="property.yearBuilt">
+                        </dx-date-box>
+                    </div>
+                </div>
+                <div class="field">
+                    <div>
+                        <label>{{ ls.l('Floor') }}</label>
+                        <dx-number-box [(value)]="property.floor"></dx-number-box>
+                    </div>
+                    <div>
+                        <label>{{ ls.l('Levels') }}</label>
+                        <dx-number-box [(value)]="property.numberOfLevels"></dx-number-box>
                     </div>
                 </div>
             </dx-validation-group>
@@ -210,13 +214,29 @@
                     <label class="property-label">{{ ls.l('Property') }}</label>
                     <dx-select-box [dataSource]="properties$ | async"
                                    [displayExpr]="leadFields.PropertyName"
-                                   [valueExpr]="leadFields.PropertyId">
+                                   [valueExpr]="leadFields.PropertyId"
+                                   [(value)]="propertyId">
                     </dx-select-box>
                 </div>
             </dx-validation-group>
             <dx-validation-group *ngIf="!hideCompanyField"
                                  (onInitialized)="initValidationGroup($event, 'companyValidators')">
-                <h3 *ngIf="showPropertyFields">{{ ls.l('ContactInfo') }}:</h3>
+                <ng-container *ngIf="showPropertyFields">
+                    <h3>{{ ls.l('BuyerInfo') }}:</h3>
+                    <div class="field">
+                        <label class="name-label">{{ls.l('Contact')}}</label>
+                        <dx-text-box [value]="contactName"
+                                     [placeholder]="ls.l('Contact.FullName')"
+                                     (onKeyUp)="onFullNameKeyUp($event.element.getElementsByTagName('input')[0].value)">
+                            <dx-validator>
+                                <dxi-validation-rule type="pattern"
+                                                     [pattern]="nameRegex"
+                                                     [message]="ls.l('FullNameIsNotValid')">
+                                </dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                    </div>
+                </ng-container>
                 <div class="field">
                     <label class="company-label">{{ls.l('Company')}}</label>
                     <dx-select-box #companyComponent
@@ -243,7 +263,7 @@
                     <dx-text-box #jobTitleComponent
                                  name="jobTitle"
                                  [placeholder]="ls.l('Job title')"
-                                 [valueChangeEvent]="'keyup'"
+                                 valueChangeEvent="keyup"
                                  width="270px"
                                  [(value)]="jobTitle"
                                  (onValueChanged)="validateCompanyName()">
