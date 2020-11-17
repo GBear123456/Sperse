@@ -51,7 +51,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         }
     });
     templatesFileProvider = new RemoteFileProvider({
-        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/DocumentTemplates/Files'
+        endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem'
     });
     folderTabs = [
         {
