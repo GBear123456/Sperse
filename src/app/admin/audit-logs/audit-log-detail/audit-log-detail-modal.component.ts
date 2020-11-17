@@ -3,7 +3,7 @@ import { ChangeDetectionStrategy, Component, Inject, OnInit } from '@angular/cor
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 
 /** Application imports */
 import { AuditLogListDto } from '@shared/service-proxies/service-proxies';
