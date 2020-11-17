@@ -187,7 +187,13 @@
                         <dx-number-box [(value)]="property.area"></dx-number-box>
                     </div>
                     <div>
-                        <label class="date-label">{{ ls.l('Year') }}</label>
+                        <label>{{ ls.l('Floor') }}</label>
+                        <dx-number-box [(value)]="property.floor"></dx-number-box>
+                    </div>
+                </div>
+                <div class="field">
+                    <div>
+                        <label>{{ ls.l('Year') }}</label>
                         <dx-date-box type="date"
                                      [calendarOptions]="{
                                         minZoomLevel: 'century',
@@ -196,12 +202,6 @@
                                      displayFormat="year"
                                      [(value)]="property.yearBuilt">
                         </dx-date-box>
-                    </div>
-                </div>
-                <div class="field">
-                    <div>
-                        <label>{{ ls.l('Floor') }}</label>
-                        <dx-number-box [(value)]="property.floor"></dx-number-box>
                     </div>
                     <div>
                         <label>{{ ls.l('Levels') }}</label>
@@ -217,6 +217,7 @@
                                    [dataSource]="properties$ | async"
                                    [displayExpr]="leadFields.PropertyName"
                                    [valueExpr]="leadFields.PropertyId"
+                                   [placeholder]="ls.l('PropertyDropdownPlaceholder')"
                                    [(value)]="propertyId">
                     </dx-select-box>
                 </div>
