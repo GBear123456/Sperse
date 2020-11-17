@@ -290,7 +290,7 @@ export class PipelineService {
                     AppConsts.PipelinePurposeIds.order,
                     null
                 ).pipe(first(),
-                    switchMap(pipeline => {
+                    switchMap((pipeline: PipelineDto) => {
                         return this.dialog.open(LeadCompleteDialogComponent, {
                             data: {
                                 stages: pipeline.stages

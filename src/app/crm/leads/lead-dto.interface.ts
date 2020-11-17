@@ -8,6 +8,7 @@ export interface LeadDto {
     Phone: string;
     City: string;
     State: string;
+    StageId: number;
     Stage: string;
     LeadDate: string;
     OrganizationId: number;

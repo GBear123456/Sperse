@@ -277,10 +277,16 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     today: Date = new Date();
     readonly leadFields: KeysEnum<LeadDto> = LeadFields;
     properties$: Observable<{ PropertyId: number, PropertyName: string }[]> = this.store$.pipe(
-        select(PipelinesStoreSelectors.getPropertiesPipelineId()),
-        switchMap((propertiesPipelineId: any) => {
+        select(PipelinesStoreSelectors.getPropertiesPipeline()),
+        switchMap((propertiesPipeline: PipelineDto) => {
+            const finalStage = propertiesPipeline && propertiesPipeline.stages.filter((stage: StageDto) => {
+                return stage.isFinal;
+            }).pop();
             return this.httpClient.get(
-                this.oDataService.getODataUrl('Lead', {[this.leadFields.PipelineId]: propertiesPipelineId }),
+                this.oDataService.getODataUrl('Lead', {
+                    [this.leadFields.PipelineId]: propertiesPipeline && propertiesPipeline.id,
+                    [this.leadFields.StageId]: finalStage && finalStage.id
+                }),
                 {
                     headers: {
                         Authorization: 'Bearer ' + abp.auth.getToken()

@@ -38,6 +38,8 @@ import {
     PartnerInfoDto,
     PartnerServiceProxy,
     PersonContactInfoDto,
+    PipelineDto,
+    StageDto,
     UpdatePartnerTypeInput,
     UserServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -529,8 +531,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             callback && callback();
         else
             this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.contactGroupId.value)
-                .subscribe(result => {
-                    this.leadStages = result.stages.map((stage) => {
+                .subscribe((result: PipelineDto) => {
+                    this.leadStages = result.stages.map((stage: StageDto) => {
                         return {
                             id: stage.id,
                             name: stage.name,
@@ -682,7 +684,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         let targetStage = this.pipelineService.getStageByName(pipelineId, $event.itemData.name, this.contactGroupId.value);
 
         if (this.pipelineService.updateEntityStage(pipelineId, this.contactGroupId.value, this.leadInfo, sourceStage, targetStage, () => {
-            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId = targetStage.id]);
+            this.toolbarComponent.stagesComponent.listComponent.option(
+                'selectedItemKeys',
+                [this.clientStageId = targetStage.id]
+            );
         })) {
             this.leadInfo.stage = targetStage.name;
             this.notify.success(this.l('StageSuccessfullyUpdated'));
@@ -713,7 +718,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                         this.notify.success(this.l('TypeSuccessfullyUpdated'));
                     });
                 } else {
-                    this.toolbarComponent.partnerTypesComponent.listComponent.option('selectedItemKeys', [this.partnerInfo.typeId]);
+                    this.toolbarComponent.partnerTypesComponent.listComponent.option(
+                        'selectedItemKeys',
+                        [this.partnerInfo.typeId]
+                    );
                 }
             }
         );

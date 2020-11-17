@@ -13,6 +13,7 @@ export const LeadFields: KeysEnum<LeadDto> = {
     City: 'City',
     State: 'State',
     Stage: 'Stage',
+    StageId: 'StageId',
     LeadDate: 'LeadDate',
     OrganizationId: 'OrganizationId',
     SourceAffiliateCode: 'SourceAffiliateCode',

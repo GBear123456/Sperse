@@ -105,12 +105,12 @@ export const getStageById = (filter: Filter) => createSelector(
     }
 );
 
-export const getPropertiesPipelineId = () => createSelector(
+export const getPropertiesPipeline = () => createSelector(
     getPipelines(),
     (pipelines: PipelineDto[]) => {
         const acquisitionPipeline = pipelines && pipelines.find((pipeline: PipelineDto) => {
             return pipeline.entityTypeId === LeadType.Acquisition;
         });
-        return acquisitionPipeline && acquisitionPipeline.id;
+        return acquisitionPipeline;
     }
 );
