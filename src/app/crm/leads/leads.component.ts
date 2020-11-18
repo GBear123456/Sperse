@@ -1892,6 +1892,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             clientId = lead && lead.CustomerId;
         if (!leadId || !clientId)
             return;
+        if (!section && this.selectedLeadType === LeadType.Acquisition) {
+            section = 'property-information';
+            queryParams = { ...queryParams, propertyId: lead.PropertyId };
+        }
 
         this.searchClear = false;
         let orgId = lead.OrganizationId;

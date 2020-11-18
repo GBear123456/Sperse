@@ -49105,11 +49105,11 @@ export interface ICreateContactAddressInput {
 export class PropertyInput implements IPropertyInput {
     propertyId!: number | undefined;
     name!: string | undefined;
+    address!: CreateContactAddressInput | undefined;
     area!: number | undefined;
     yearBuilt!: number | undefined;
     floor!: number | undefined;
     numberOfLevels!: number | undefined;
-    address!: CreateContactAddressInput | undefined;
 
     constructor(data?: IPropertyInput) {
         if (data) {
@@ -49124,11 +49124,11 @@ export class PropertyInput implements IPropertyInput {
         if (data) {
             this.propertyId = data["propertyId"];
             this.name = data["name"];
+            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.area = data["area"];
             this.yearBuilt = data["yearBuilt"];
             this.floor = data["floor"];
             this.numberOfLevels = data["numberOfLevels"];
-            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
         }
     }
 
@@ -49143,11 +49143,11 @@ export class PropertyInput implements IPropertyInput {
         data = typeof data === 'object' ? data : {};
         data["propertyId"] = this.propertyId;
         data["name"] = this.name;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["area"] = this.area;
         data["yearBuilt"] = this.yearBuilt;
         data["floor"] = this.floor;
         data["numberOfLevels"] = this.numberOfLevels;
-        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -49155,11 +49155,11 @@ export class PropertyInput implements IPropertyInput {
 export interface IPropertyInput {
     propertyId: number | undefined;
     name: string | undefined;
+    address: CreateContactAddressInput | undefined;
     area: number | undefined;
     yearBuilt: number | undefined;
     floor: number | undefined;
     numberOfLevels: number | undefined;
-    address: CreateContactAddressInput | undefined;
 }
 
 export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
@@ -49208,7 +49208,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
     noWelcomeEmail!: boolean | undefined;
-    propertyInput!: PropertyInput | undefined;
+    propertyInfo!: PropertyInput | undefined;
     bypassValidation!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateContactInput) {
@@ -49295,7 +49295,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
             this.noWelcomeEmail = data["noWelcomeEmail"];
-            this.propertyInput = data["propertyInput"] ? PropertyInput.fromJS(data["propertyInput"]) : <any>undefined;
+            this.propertyInfo = data["propertyInfo"] ? PropertyInput.fromJS(data["propertyInfo"]) : <any>undefined;
             this.bypassValidation = data["bypassValidation"];
         }
     }
@@ -49382,7 +49382,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
         data["noWelcomeEmail"] = this.noWelcomeEmail;
-        data["propertyInput"] = this.propertyInput ? this.propertyInput.toJSON() : <any>undefined;
+        data["propertyInfo"] = this.propertyInfo ? this.propertyInfo.toJSON() : <any>undefined;
         data["bypassValidation"] = this.bypassValidation;
         return data; 
     }
@@ -49434,7 +49434,7 @@ export interface ICreateOrUpdateContactInput {
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
     noWelcomeEmail: boolean | undefined;
-    propertyInput: PropertyInput | undefined;
+    propertyInfo: PropertyInput | undefined;
     bypassValidation: boolean | undefined;
 }
 
@@ -61515,7 +61515,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
     noWelcomeEmail!: boolean | undefined;
-    propertyInput!: PropertyInput | undefined;
+    propertyInfo!: PropertyInput | undefined;
     bypassValidation!: boolean | undefined;
 
     constructor(data?: ICreateOrUpdateLeadInput) {
@@ -61599,7 +61599,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
             this.noWelcomeEmail = data["noWelcomeEmail"];
-            this.propertyInput = data["propertyInput"] ? PropertyInput.fromJS(data["propertyInput"]) : <any>undefined;
+            this.propertyInfo = data["propertyInfo"] ? PropertyInput.fromJS(data["propertyInfo"]) : <any>undefined;
             this.bypassValidation = data["bypassValidation"];
         }
     }
@@ -61683,7 +61683,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
         data["noWelcomeEmail"] = this.noWelcomeEmail;
-        data["propertyInput"] = this.propertyInput ? this.propertyInput.toJSON() : <any>undefined;
+        data["propertyInfo"] = this.propertyInfo ? this.propertyInfo.toJSON() : <any>undefined;
         data["bypassValidation"] = this.bypassValidation;
         return data; 
     }
@@ -61732,7 +61732,7 @@ export interface ICreateOrUpdateLeadInput {
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
     noWelcomeEmail: boolean | undefined;
-    propertyInput: PropertyInput | undefined;
+    propertyInfo: PropertyInput | undefined;
     bypassValidation: boolean | undefined;
 }
 
@@ -70159,6 +70159,8 @@ export interface IUpdateMonthlyGoalInput {
 
 export class PropertyDto implements IPropertyDto {
     id!: number | undefined;
+    name!: string | undefined;
+    address!: CreateContactAddressInput | undefined;
     area!: number | undefined;
     yearBuilt!: number | undefined;
     floor!: number | undefined;
@@ -70176,6 +70178,8 @@ export class PropertyDto implements IPropertyDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.name = data["name"];
+            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.area = data["area"];
             this.yearBuilt = data["yearBuilt"];
             this.floor = data["floor"];
@@ -70193,6 +70197,8 @@ export class PropertyDto implements IPropertyDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["name"] = this.name;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["area"] = this.area;
         data["yearBuilt"] = this.yearBuilt;
         data["floor"] = this.floor;
@@ -70203,6 +70209,8 @@ export class PropertyDto implements IPropertyDto {
 
 export interface IPropertyDto {
     id: number | undefined;
+    name: string | undefined;
+    address: CreateContactAddressInput | undefined;
     area: number | undefined;
     yearBuilt: number | undefined;
     floor: number | undefined;

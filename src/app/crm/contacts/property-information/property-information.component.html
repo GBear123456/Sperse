@@ -1,0 +1,41 @@
+<h3>{{ ls.l('GeneralDetails') }}</h3>
+<div class="fields" *ngIf="property">
+    <div class="address">
+        <label>{{ ls.l('Address') }}</label>
+        <addresses [contactInfo]="contactInfo$ | async"
+                   [addresses]="propertyAddresses"
+                   [isAddAllowed]="false"
+                   [isDeleteAllowed]="false"
+                   [showType]="false"
+                   [editDialogTitle]="ls.l('EditAddress')">
+        </addresses>
+    </div>
+    <div>
+        <label>{{ ls.l('PropertyArea') }}</label>
+        <dx-number-box [(value)]="property.area"
+                       (onValueChanged)="valueChanged()">
+        </dx-number-box>
+    </div>
+    <div>
+        <label>{{ ls.l('Year') }}</label>
+        <dx-date-box type="date"
+                     [calendarOptions]="{
+                        minZoomLevel: 'century',
+                        maxZoomLevel: 'decade'
+                     }"
+                     displayFormat="year"
+                     [(value)]="property.yearBuilt"
+                     (onValueChanged)="valueChanged()">
+        </dx-date-box>
+    </div>
+    <div>
+        <label>{{ ls.l('Floor') }}</label>
+        <dx-number-box [(value)]="property.floor"></dx-number-box>
+    </div>
+    <div>
+        <label>{{ ls.l('Levels') }}</label>
+        <dx-number-box [(value)]="property.numberOfLevels"
+                       (onValueChanged)="valueChanged()">
+        </dx-number-box>
+    </div>
+</div>

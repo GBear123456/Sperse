@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component, ElementRef, Inject, ViewChild } fro
 import { select, Store } from '@ngrx/store';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
-import { first, map } from 'rxjs/operators';
+import { first, map, tap } from 'rxjs/operators';
 import * as _ from 'underscore';
 import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
@@ -20,11 +20,16 @@ import {
     StatesStoreSelectors
 } from '@root/store';
 import { AppConsts } from '@shared/AppConsts';
-import { CountryDto, CountryStateDto } from '@shared/service-proxies/service-proxies';
+import {
+    AddressUsageTypeDto,
+    CountryDto,
+    CountryStateDto
+} from '@shared/service-proxies/service-proxies';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { StatesService } from '@root/store/states-store/states.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { EditAddressDialogData } from '@app/crm/contacts/edit-address-dialog/edit-address-dialog-data.interface';
 
 @Component({
     selector: 'edit-address-dialog',
@@ -38,17 +43,18 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 })
 export class EditAddressDialog {
     @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
-    types: any[] = [];
+    types: AddressUsageTypeDto[] = [];
     validator: any;
     action: string;
     address: any;
     movePos: any;
-    isEditAllowed = false;
+    isEditAllowed = this.permissionService.checkCGPermission(this.data.groupId);
     states: CountryStateDto[];
     countries: CountryDto[];
     state: string;
     googleAutoComplete: Boolean;
     localization = AppConsts.localization;
+    countryCode: string;
 
     constructor(
         private elementRef: ElementRef,
@@ -57,9 +63,8 @@ export class EditAddressDialog {
         private permissionService: AppPermissionService,
         public dialogRef: MatDialogRef<EditAddressDialog>,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        @Inject(MAT_DIALOG_DATA) public data: EditAddressDialogData
     ) {
-        this.isEditAllowed = this.permissionService.checkCGPermission(this.data.groupId);
         if (this.validateAddress(data)) {
             this.action = 'Edit';
             this.address =
@@ -90,11 +95,11 @@ export class EditAddressDialog {
 
     onCountryChange(event) {
         const country = _.findWhere(this.countries, { name: event.value });
-        this.data.countryCode = country ? country['code'] : null;
+        this.countryCode = country ? country['code'] : null;
         if (country) {
-            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.data.countryCode));
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
         }
-        this.statesService.updateState(this.data.countryCode, this.data.stateId, this.data.stateName);
+        this.statesService.updateState(this.countryCode, this.data.stateId, this.data.stateName);
     }
 
     onAddressChanged(address: Address) {
@@ -105,28 +110,30 @@ export class EditAddressDialog {
             : countryName;
         this.data.zip = GooglePlaceService.getZipCode(address.address_components);
         this.data.streetAddress = GooglePlaceService.getStreet(address.address_components);
-        this.data.streetNumber = GooglePlaceService.getStreetNumber(address.address_components);
         this.data.stateId = GooglePlaceService.getStateCode(address.address_components);
         this.data.stateName = GooglePlaceService.getStateName(address.address_components);
         this.statesService.updateState(countryCode, this.data.stateId, this.data.stateName);
-        this.data.countryCode = countryCode;
+        this.countryCode = countryCode;
         this.data.city = GooglePlaceService.getCity(address.address_components);
-        this.address = this.addressInput.nativeElement.value = this.data.streetNumber
-            ? this.data.streetNumber + ' ' + this.data.streetAddress
+        const streetNumber = GooglePlaceService.getStreetNumber(address.address_components);
+        this.address = this.addressInput.nativeElement.value = streetNumber
+            ? streetNumber + ' ' + this.data.streetAddress
             : this.data.streetAddress;
     }
 
     addressTypesLoad() {
         this.store$.dispatch(new AddressUsageTypesStoreActions.LoadRequestAction());
-        this.store$.pipe(select(AddressUsageTypesStoreSelectors.getAddressUsageTypes))
-            .subscribe(result => {
-                if (result)
-                    this.types = result.filter((type) => {
-                        return type['isCompany'] == this.data.isCompany;
+        this.store$.pipe(
+            select(AddressUsageTypesStoreSelectors.getAddressUsageTypes),
+            tap(console.log)
+        )
+            .subscribe((types: AddressUsageTypeDto[]) => {
+                if (types)
+                    this.types = types.filter((type: AddressUsageTypeDto) => {
+                        return type.isCompany == this.data.isCompany;
                     });
                 if (!this.data.usageTypeId)
                     this.data.usageTypeId = this.types[0].id;
-
             });
     }
 
@@ -134,7 +141,7 @@ export class EditAddressDialog {
         this.data.streetAddress = this.address;
         if (this.validator.validate().isValid && this.validateAddress(this.data)) {
             if (this.data.country)
-                this.data.countryId = _.findWhere(this.countries, { name: this.data.country })['code'];
+                this.countryCode = _.findWhere(this.countries, { name: this.data.country })['code'];
             this.data.stateId = this.statesService.getAdjustedStateCode(this.data.stateId, this.data.stateName);
             this.dialogRef.close(true);
         }
@@ -142,7 +149,7 @@ export class EditAddressDialog {
 
     getCountryStates(): Observable<CountryStateDto[]> {
         return this.store$.pipe(
-            select(StatesStoreSelectors.getCountryStates, { countryCode: this.data.countryCode }),
+            select(StatesStoreSelectors.getCountryStates, { countryCode: this.countryCode }),
             map((states: CountryStateDto[]) => states || [])
         );
     }
@@ -150,7 +157,7 @@ export class EditAddressDialog {
     stateChanged(e) {
         this.store$.pipe(
             select(StatesStoreSelectors.getStateCodeFromStateName, {
-                countryCode: this.data.countryCode,
+                countryCode: this.countryCode,
                 stateName: e.value
             }),
             first()
@@ -162,17 +169,17 @@ export class EditAddressDialog {
     onCustomStateCreate(e) {
         this.data.stateId = null;
         this.data.stateName = e.text;
-        this.statesService.updateState(this.data.countryCode, null, e.text);
+        this.statesService.updateState(this.countryCode, null, e.text);
         e.customItem = {
             code: null,
             name: e.text
         };
     }
 
-    validateAddress(data) {
+    validateAddress(data: EditAddressDialogData) {
         return data.streetAddress ||
             data.country ||
-            data.state ||
+            data.stateId ||
             data.city ||
             data.zip;
     }

@@ -1,12 +1,13 @@
 /** Core imports */
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, EventEmitter, Input, OnDestroy, OnInit, Output } from '@angular/core';
 
 /** Third party imports */
 import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
 import { Store, select } from '@ngrx/store';
-import { filter, first } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, first, takeUntil } from 'rxjs/operators';
 import * as _ from 'underscore';
 import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
@@ -26,20 +27,19 @@ import { AppConsts } from '@shared/AppConsts';
 import { EditAddressDialog } from '../edit-address-dialog/edit-address-dialog.component';
 import { ContactsService } from '../contacts.service';
 import {
-    ContactAddressDto,
     ContactAddressServiceProxy,
-    ContactInfoDetailsDto,
     ContactInfoDto,
     CountryDto,
-    CreateContactAddressInput,
-    OrganizationContactServiceProxy,
-    UpdateContactAddressInput
+    CreatePersonOrgRelationOutput,
+    OrganizationContactServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { StatesService } from '@root/store/states-store/states.service';
 import { AddressUsageTypeDto } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { EditAddressDialogData } from '@app/crm/contacts/edit-address-dialog/edit-address-dialog-data.interface';
+import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
 
 @Component({
     selector: 'addresses',
@@ -50,7 +50,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
     ],
     providers: [ DialogService ]
 })
-export class AddressesComponent implements OnInit {
+export class AddressesComponent implements OnInit, OnDestroy {
     @Input() isCompany = false;
     @Input()
     set contactInfo(val: ContactInfoDto) {
@@ -60,8 +60,18 @@ export class AddressesComponent implements OnInit {
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
     }
-    @Input() contactInfoData: ContactInfoDetailsDto;
-
+    @Input() contactId: number;
+    @Input() addresses: AddressDto[];
+    @Input() isAddAllowed = true;
+    @Input() isDeleteAllowed = true;
+    @Input() showType = true;
+    @Input() editDialogTitle: string;
+    @Output() onAddressUpdate: EventEmitter<{
+        address: AddressDto,
+        dialogData: Pick<EditAddressDialogData, 'id' | 'contactId' | 'city' | 'country' | 'isActive'
+            | 'isConfirmed' | 'stateId' | 'stateName' | 'streetAddress' | 'comment' | 'usageTypeId'
+            | 'zip'>
+    }> = new EventEmitter();
 
     types: Object = {};
     country: string;
@@ -73,12 +83,13 @@ export class AddressesComponent implements OnInit {
     zip: string;
 
     isEditAllowed = false;
+    destroy: Subject<any> = new Subject<any>();
 
-    private _clickTimeout;
-    private _clickCounter = 0;
-    private _itemInEditMode: any;
+    private clickTimeout;
+    private clickCounter = 0;
+    private itemInEditMode: any;
+    private latestFormattedAddress: string;
     private _contactInfo: ContactInfoDto;
-    private _latestFormatedAddress: string;
 
     constructor(
         private contactsService: ContactsService,
@@ -95,20 +106,19 @@ export class AddressesComponent implements OnInit {
     ) {
         contactsService.organizationContactInfo$.pipe(filter(orgInfo => {
             return this.isCompany && orgInfo.id && !orgInfo.isUpdatable;
-        }), first()).subscribe(orgInfo => {
+        }), first()).subscribe(() => {
             this.isEditAllowed = false;
         });
     }
 
     ngOnInit() {
         this.loadAddressTypes();
-        this.getAddressTypes()
-            .subscribe((types: AddressUsageTypeDto[]) => {
-                types.map((type) => {
-                    if (type['isCompany'] == this.isCompany)
-                        this.types[type.id] = type.name;
-                });
+        this.getAddressTypes().subscribe((types: AddressUsageTypeDto[]) => {
+            types.map((type: AddressUsageTypeDto) => {
+                if (type.isCompany == this.isCompany)
+                    this.types[type.id] = type.name;
             });
+        });
     }
 
     loadAddressTypes() {
@@ -118,7 +128,8 @@ export class AddressesComponent implements OnInit {
     getAddressTypes() {
         return this.store$.pipe(
             select(AddressUsageTypesStoreSelectors.getAddressUsageTypes),
-            filter(Boolean)
+            filter(Boolean),
+            takeUntil(this.destroy.asObservable())
         );
     }
 
@@ -150,72 +161,63 @@ export class AddressesComponent implements OnInit {
         return shift;
     }
 
-    showDialog(address, event, index?) {
-        if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
+    showDialog(address: AddressDto, event, index?) {
+        if (!this.isCompany || this.contactId)
             this.showAddressDialog(address, event, index);
         else
             this.contactsService.addCompanyDialog(
                 event,
                 this.contactInfo,
                 Math.round(event.target.offsetWidth / 2)
-            ).subscribe(result => {
+            ).subscribe((result: CreatePersonOrgRelationOutput) => {
                 if (result) {
                     this.showAddressDialog(address, event, index);
                 }
             });
     }
 
-    showAddressDialog(address, event, index) {
-        let dialogData = _.pick(address || { isActive: true, isConfirmed: false }, 'id', 'city',
-            'comment', 'country', 'isActive', 'isConfirmed', 'stateId',
-            'stateName', 'streetAddress', 'usageTypeId', 'zip');
-        dialogData.groupId = this.contactInfo.groupId;
-        dialogData.contactId = this.contactInfoData && this.contactInfoData.contactId;
-        dialogData.isCompany = this.isCompany;
-        dialogData.deleteItem = (event) => {
-            this.deleteAddress(address, event, index);
+    showAddressDialog(address: AddressDto, event, index) {
+        const dialogData: EditAddressDialogData = {
+            id: address && address.id,
+            groupId: this.contactInfo.groupId,
+            contactId: this.contactId,
+            isCompany: this.isCompany,
+            deleteItem: (event: MouseEvent) => {
+                this.deleteAddress(address, event, index);
+            },
+            city: address && address.city,
+            comment: address && address.comment,
+            country: address && address.country,
+            isActive: address ? address.isActive : true,
+            isConfirmed: address ? address.isConfirmed : false,
+            stateId: address && address.stateId,
+            stateName: address && address.stateName,
+            streetAddress: address && address.streetAddress,
+            usageTypeId: address && address.usageTypeId,
+            zip: address && address.zip,
+            isDeleteAllowed: this.isDeleteAllowed,
+            showType: this.showType,
+            editDialogTitle: this.editDialogTitle
         };
         this.dialog.closeAll();
         this.dialog.open(EditAddressDialog, {
             data: dialogData,
             hasBackdrop: false,
             position: this.getDialogPosition(event)
-        }).afterClosed().subscribe(result => {
+        }).afterClosed().subscribe((saved: boolean) => {
             scrollTo(0, 0);
-            if (result && dialogData.contactId) {
-                this.updateDataField(address, dialogData);
+            if (saved && dialogData.contactId) {
+                this.onAddressUpdate.emit({
+                    address: address,
+                    dialogData: dialogData
+                });
             }
         });
         if (event.stopPropagation)
             event.stopPropagation();
     }
 
-    updateDataField(address, data) {
-        this.addressService
-            [(address ? 'update' : 'create') + 'ContactAddress'](
-            (address ? UpdateContactAddressInput : CreateContactAddressInput).fromJS(data)
-        ).subscribe(result => {
-            if (!result && address) {
-                address.city = data.city;
-                address.country = data.country;
-                address.isActive = data.isActive;
-                address.isConfirmed = data.isConfirmed;
-                address.stateId = data.stateId;
-                address.stateName = data.stateName;
-                address.streetAddress = data.streetAddress;
-                address.comment = data.comment;
-                address.usageTypeId = data.usageTypeId;
-                address.zip = data.zip;
-            } else if (result.id) {
-                data.id = result.id;
-                this.contactInfoData.addresses
-                    .push(ContactAddressDto.fromJS(data));
-            }
-            this.contactsService.verificationUpdate();
-        });
-    }
-
-    deleteAddress(address, event, index) {
+    deleteAddress(address: AddressDto, event: MouseEvent, index) {
         this.dialog.open(ConfirmDialogComponent, {
             data: {
                 title: this.ls.l('DeleteContactHeader', this.ls.l('Address')),
@@ -224,43 +226,43 @@ export class AddressesComponent implements OnInit {
         }).afterClosed().subscribe(result => {
             if (result) {
                 this.dialog.closeAll();
-                this.addressService.deleteContactAddress(
-                    this.contactInfoData.contactId, address.id).subscribe(() => {
-                    this.contactInfoData.addresses.splice(index, 1);
-                    this.contactsService.verificationUpdate();
-                });
+                this.addressService.deleteContactAddress(this.contactId, address.id)
+                    .subscribe(() => {
+                        this.addresses.splice(index, 1);
+                        this.contactsService.verificationUpdate();
+                    });
             }
         });
         event.stopPropagation();
     }
 
-    inPlaceEdit(address, event, index) {
+    inPlaceEdit(address: AddressDto, event, index) {
         if (address.inplaceEdit)
             return ;
 
-        this._clickCounter++;
-        clearTimeout(this._clickTimeout);
-        this._clickTimeout = setTimeout(() => {
-            if (this.isEditAllowed && this._clickCounter > 1) {
+        this.clickCounter++;
+        clearTimeout(this.clickTimeout);
+        this.clickTimeout = setTimeout(() => {
+            if (this.isEditAllowed && this.clickCounter > 1) {
                 if (!window['google'])
                     this.showDialog(address, event, index);
 
                 address.inplaceEdit = true;
                 address.autoComplete = this.aggregateAddress(address);
 
-                if (this._itemInEditMode && this._itemInEditMode != address)
-                    this._itemInEditMode.inplaceEdit = false;
+                if (this.itemInEditMode && this.itemInEditMode != address)
+                    this.itemInEditMode.inplaceEdit = false;
 
-                this._itemInEditMode = address;
+                this.itemInEditMode = address;
             } else
                 this.showDialog(address, event, index);
-            this._clickCounter = 0;
+            this.clickCounter = 0;
         }, 250);
 
         event.stopPropagation();
     }
 
-    closeInPlaceEdit(address, event) {
+    closeInPlaceEdit(address: AddressDto, event) {
         this.clearInplaceData();
         address.inplaceEdit = false;
         event.event.stopPropagation();
@@ -276,10 +278,10 @@ export class AddressesComponent implements OnInit {
         this.zip = '';
     }
 
-    updateItem(address, event, index) {
+    updateItem(address: AddressDto, event, index) {
         event.event.stopPropagation();
 
-        if ((this._latestFormatedAddress != address.autoComplete)
+        if ((this.latestFormattedAddress != address.autoComplete)
             && (address.autoComplete != this.aggregateAddress(address))
         ) {
             address.inplaceEdit = false;
@@ -290,7 +292,7 @@ export class AddressesComponent implements OnInit {
                     btnConfirmTitle: this.ls.l('Update'),
                     btnCancelTitle: this.ls.l('Discard')
                 }
-            }).afterClosed().subscribe(isConfirmed => {
+            }).afterClosed().subscribe((isConfirmed: boolean) => {
                 if (isConfirmed)
                     this.showDialog(address, event, index);
             });
@@ -301,7 +303,7 @@ export class AddressesComponent implements OnInit {
             first()
         ).subscribe((countries: CountryDto[]) => {
             let country = _.findWhere(countries, { name: this.country }),
-                countryId = country && country['code'];
+                countryId = country && country.code;
             if (countryId) {
                 this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryId));
                 this.store$.pipe(
@@ -314,22 +316,25 @@ export class AddressesComponent implements OnInit {
                         ((this.country != address.country) ||
                             (address.streetAddress != (this.streetAddress + ' ' + this.streetNumber)) ||
                             (this.city != address.city) ||
-                            (this.stateName != address.state))
+                            (this.stateName != address.stateName))
                     ) {
-                        this.updateDataField(address, {
-                            id: address.id,
-                            contactId: this.contactInfoData.contactId,
-                            city: this.city,
-                            country: this.country,
-                            isActive: address.isActive,
-                            isConfirmed: address.isConfirmed,
-                            streetAddress: this.streetAddress + ' ' + this.streetNumber,
-                            comment: address.comment,
-                            usageTypeId: address.usageTypeId,
-                            countryId: countryId,
-                            stateName: this.stateCode,
-                            stateId: this.statesService.getAdjustedStateCode(this.stateCode, this.stateName)
-                        });
+                        this.onAddressUpdate.emit({
+                            address: address,
+                            dialogData: {
+                                id: address.id,
+                                contactId: this.contactId,
+                                city: this.city,
+                                country: this.country,
+                                isActive: address.isActive,
+                                isConfirmed: address.isConfirmed,
+                                streetAddress: this.streetAddress + ' ' + this.streetNumber,
+                                comment: address.comment,
+                                usageTypeId: address.usageTypeId,
+                                stateName: this.stateCode,
+                                stateId: this.statesService.getAdjustedStateCode(this.stateCode, this.stateName),
+                                zip: address.zip
+                            }
+                        })
                         this.clearInplaceData();
                     }
                 });
@@ -338,7 +343,7 @@ export class AddressesComponent implements OnInit {
         });
     }
 
-    aggregateAddress(address: ContactAddressDto) {
+    aggregateAddress(address: AddressDto) {
         return [
             address.streetAddress,
             address.city,
@@ -348,17 +353,17 @@ export class AddressesComponent implements OnInit {
         ].join(',');
     }
 
-    addressChanged(address: Address, event) {
+    addressChanged(event: Address, address: AddressDto) {
         this.stateCode = GooglePlaceService.getStateCode(event.address_components);
         this.stateName = GooglePlaceService.getStateName(event.address_components);
         const countryCode = GooglePlaceService.getCountryCode(event.address_components);
         this.statesService.updateState(countryCode, this.stateCode, this.stateName);
-        const countryName = GooglePlaceService.getCountryName(address.address_components);
+        const countryName = GooglePlaceService.getCountryName(event.address_components);
         this.country = countryName === 'United States' ? AppConsts.defaultCountryName : countryName;
-        this.zip = GooglePlaceService.getZipCode(address.address_components);
-        this.streetAddress = GooglePlaceService.getStreet(address.address_components);
-        this.streetNumber = GooglePlaceService.getStreetNumber(address.address_components);
-        this._latestFormatedAddress = address['autoComplete'] = event.formatted_address;
+        this.zip = GooglePlaceService.getZipCode(event.address_components);
+        this.streetAddress = GooglePlaceService.getStreet(event.address_components);
+        this.streetNumber = GooglePlaceService.getStreetNumber(event.address_components);
+        this.latestFormattedAddress = address.autoComplete = event.formatted_address;
         this.city = GooglePlaceService.getCity(event.address_components);
     }
 
@@ -368,5 +373,9 @@ export class AddressesComponent implements OnInit {
         this.notifyService.info(this.ls.l('SavedToClipboard'));
         event.stopPropagation();
         event.preventDefault();
+    }
+
+    ngOnDestroy() {
+        this.destroy.next();
     }
 }

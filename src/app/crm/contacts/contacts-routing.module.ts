@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { RouterModule } from '@angular/router';
+import { RouterModule, Routes } from '@angular/router';
 
 import { ContactsComponent } from './contacts.component';
 import { DocumentsComponent } from './documents/documents.component';
@@ -19,6 +19,7 @@ import { OrdersComponent } from './orders/orders.component';
 import { InvoicesComponent } from './invoices/invoices.component';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
+import { PropertyInformationComponent } from '@app/crm/contacts/property-information/property-information.component';
 
 @NgModule({
     imports: [
@@ -79,6 +80,7 @@ import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-relat
                 component: ContactsComponent,
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+                    { path: 'property-information', component: PropertyInformationComponent },
                     { path: 'contact-information', component: ContactInformationComponent },
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-inbox', component: UserInboxComponent },

@@ -57,6 +57,7 @@ import { NoteAddDialogComponent } from '@app/crm/contacts/notes/note-add-dialog/
 import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
+import { AddCompanyDialogData } from '@app/crm/contacts/add-company-dialog/add-company-dialog-data.interface';
 
 @Injectable()
 export class ContactsService {
@@ -244,18 +245,19 @@ export class ContactsService {
         this.leadInfoUpdate();
     }
 
-    addCompanyDialog(event, contactInfo, shiftX?, shiftY?): Observable<CreatePersonOrgRelationOutput> {
+    addCompanyDialog(event, contactInfo: ContactInfoDto, shiftX?, shiftY?): Observable<CreatePersonOrgRelationOutput> {
         this.dialog.closeAll();
         event.stopPropagation();
 
         let leadInfo = this.leadInfoSubject.getValue();
+        const dialogData: AddCompanyDialogData = {
+            leadId: leadInfo && leadInfo.id,
+            contactId: contactInfo.id,
+            contactInfo: contactInfo,
+            updateLocation: this.updateLocation.bind(this)
+        };
         return this.dialog.open(AddCompanyDialogComponent, {
-            data: {
-                leadId: leadInfo && leadInfo.id,
-                contactId: contactInfo.id,
-                contactInfo: contactInfo,
-                updateLocation: this.updateLocation.bind(this)
-            },
+            data: dialogData,
             hasBackdrop: false,
             position: this.dialogService.calculateDialogPosition(
                 event, event.target, shiftX, shiftY

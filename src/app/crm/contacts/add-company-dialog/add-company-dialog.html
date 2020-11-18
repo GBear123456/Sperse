@@ -6,7 +6,7 @@
         valueExpr="id"
         [acceptCustomValue]="true"
         [placeholder]="ls.l('CompanyName')"
-        [(value)]="data.company"
+        [(value)]="company"
         [dataSource]="companies"
         [searchEnabled]="true"
         [searchTimeout]="0"
@@ -21,7 +21,7 @@
         name="title"
         width="350px"
         [placeholder]="ls.l('JobTitle')"
-        [(value)]="data.title"
+        [(value)]="title"
         [valueChangeEvent]="'keyup'">
     </dx-text-box>
 </mat-dialog-content>

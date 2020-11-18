@@ -83,8 +83,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     @Input() ratingId: number;
     private readonly ADD_OPTION_DEFAULT = ContextType.AddFiles;
-
-    @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
     @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
 
     get isOrgUpdatable(): Boolean {
@@ -505,7 +503,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                     disableClose: true,
                     closeOnNavigation: false,
                     data: dialogData
-                }).afterClosed().subscribe(res => {
+                }).afterClosed().subscribe(() => {
                     this.contactsService.invalidate('sub-contacts');
                 });
             });
