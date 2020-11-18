@@ -143,6 +143,7 @@ import { ListsModule } from '@app/shared/common/lists/lists.module';
 import { OrgUnitsTreeModule } from '@shared/common/organization-units-tree/organization-units-tree.module';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
+import { ResellerActivityComponent } from './reseller-activity/reseller-activity.component';
 import { AddServiceProductDialogComponent } from './subscriptions/add-subscription-dialog/add-service-product-dialog/add-service-product-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
@@ -207,7 +208,8 @@ import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete'
         LeadRelatedContactsComponent,
         AddServiceProductDialogComponent,
         TemplateDocumentsDialogComponent,
-        CustomerListDialogComponent
+        CustomerListDialogComponent,
+        ResellerActivityComponent
     ],
     imports: [
         FormsModule,
