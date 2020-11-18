@@ -71523,6 +71523,7 @@ export interface ITenantCustomizationInfoDto {
 export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     tenancyName!: string | undefined;
     name!: string | undefined;
+    isWhiteLabel!: boolean | undefined;
     logoId!: string | undefined;
     logoFileType!: string | undefined;
     customCssId!: string | undefined;
@@ -71548,6 +71549,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         if (data) {
             this.tenancyName = data["tenancyName"];
             this.name = data["name"];
+            this.isWhiteLabel = data["isWhiteLabel"];
             this.logoId = data["logoId"];
             this.logoFileType = data["logoFileType"];
             this.customCssId = data["customCssId"];
@@ -71573,6 +71575,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data = typeof data === 'object' ? data : {};
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
+        data["isWhiteLabel"] = this.isWhiteLabel;
         data["logoId"] = this.logoId;
         data["logoFileType"] = this.logoFileType;
         data["customCssId"] = this.customCssId;
@@ -71591,6 +71594,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
 export interface ITenantLoginInfoDto {
     tenancyName: string | undefined;
     name: string | undefined;
+    isWhiteLabel: boolean | undefined;
     logoId: string | undefined;
     logoFileType: string | undefined;
     customCssId: string | undefined;

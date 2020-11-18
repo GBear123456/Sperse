@@ -8,20 +8,20 @@
         </div>
         <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="login()">
             <div class="logo">
-                <ng-container *ngIf="isCodebreaker(); else notCodebreaker">
-                    <a href="https://www.codebreakertech.com">
-                        <img src="./assets/common/images/bank-code/CodebreakerWideLogo.png" alt="Codebreaker Teach">
-                    </a>
-                </ng-container>
-                <ng-template #notCodebreaker>
+                <ng-container *ngIf="appSession.tenant && appSession.tenant.isWhiteLabel; else defaultTemplate">
                     <a href="javascript:void(0);">
-                        <img *ngIf="appSession.tenant && appSession.tenant.logoId"
+                        <img *ngIf="appSession.tenant.logoId"
                              [src]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId"
                              [alt]="appSession.tenant.name"
                              width="auto" height="60"/>
-                        <img *ngIf="!appSession.tenant || !appSession.tenant.logoId"
+                        <img *ngIf="!appSession.tenant.logoId"
                              src="./assets/common/images/bank-code/CodebreakerWideLogo.png"
                              alt="Codebreaker Teach"/>
+                    </a>
+                </ng-container>
+                <ng-template #defaultTemplate>
+                    <a href="https://www.codebreakertech.com">
+                        <img src="./assets/common/images/bank-code/CodebreakerWideLogo.png" alt="Codebreaker Teach">
                     </a>
                 </ng-template>
             </div>

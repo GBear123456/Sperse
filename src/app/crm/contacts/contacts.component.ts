@@ -39,7 +39,8 @@ import {
     PartnerServiceProxy,
     PersonContactInfoDto,
     UpdatePartnerTypeInput,
-    UserServiceProxy
+    UserServiceProxy,
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { OperationsWidgetComponent } from './operations-widget/operations-widget.component';
 import { ContactsService } from './contacts.service';
@@ -57,6 +58,7 @@ import { ContextType } from '@app/crm/contacts/details-header/context-type.enum'
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -112,6 +114,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         private dialogService: DialogService,
         private userService: UserServiceProxy,
         private contactService: ContactServiceProxy,
+        private appSessionService: AppSessionService,
         private appHttpConfiguration: AppHttpConfiguration,
         private orgContactService: OrganizationContactServiceProxy,
         private partnerService: PartnerServiceProxy,
@@ -286,6 +289,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 route: 'invoices',
                 disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices),
                 hidden: !!this.contactInfo.parentId
+            },
+            {
+                name: 'reseller-activity',
+                label: this.l('ResellerActivity'), route: 'reseller-activity',
+                hidden: !this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage) ||
+                    !this.appSessionService.tenant || this.appSessionService.tenant.customLayoutType != LayoutType.BankCode
             },
             { name: 'subscriptions', label: this.l('Subscriptions'), route: 'subscriptions', hidden: !!this.contactInfo.parentId || (!contact.userId && !this.isClientDetailPage()) },
             { name: 'payment-information', label: this.l('PaymentInformation'), route: 'payment-information', hidden: !!this.contactInfo.parentId || !this.isClientDetailPage() },

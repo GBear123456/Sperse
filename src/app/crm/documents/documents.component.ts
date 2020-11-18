@@ -69,14 +69,14 @@ export class DocumentsComponent {
     }
 
     download(event) {
-        this.loadingService.startLoading();
         let dir = this.fileManager.instance.getCurrentDirectory();
         this.fileManager.instance.getSelectedItems().forEach(item => {
-            this.documentProxy.getUrl(dir.key, item.fileName).pipe(
+            this.loadingService.startLoading();
+            this.documentProxy.getUrl(~dir.key.indexOf('root') ? undefined : dir.key, item.name).pipe(
                 finalize(() => this.loadingService.finishLoading())
             ).subscribe((data: GetFileUrlDto) => {
-                window.location.href = data.url;
-            });            
+                window.open(data.url, '_blank');
+            });
         });
     }
 
