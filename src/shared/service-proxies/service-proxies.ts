@@ -49105,11 +49105,11 @@ export interface ICreateContactAddressInput {
 export class PropertyInput implements IPropertyInput {
     propertyId!: number | undefined;
     name!: string | undefined;
-    address!: CreateContactAddressInput | undefined;
     area!: number | undefined;
     yearBuilt!: number | undefined;
     floor!: number | undefined;
     numberOfLevels!: number | undefined;
+    address!: CreateContactAddressInput | undefined;
 
     constructor(data?: IPropertyInput) {
         if (data) {
@@ -49124,11 +49124,11 @@ export class PropertyInput implements IPropertyInput {
         if (data) {
             this.propertyId = data["propertyId"];
             this.name = data["name"];
-            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.area = data["area"];
             this.yearBuilt = data["yearBuilt"];
             this.floor = data["floor"];
             this.numberOfLevels = data["numberOfLevels"];
+            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
         }
     }
 
@@ -49143,11 +49143,11 @@ export class PropertyInput implements IPropertyInput {
         data = typeof data === 'object' ? data : {};
         data["propertyId"] = this.propertyId;
         data["name"] = this.name;
-        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["area"] = this.area;
         data["yearBuilt"] = this.yearBuilt;
         data["floor"] = this.floor;
         data["numberOfLevels"] = this.numberOfLevels;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -49155,11 +49155,11 @@ export class PropertyInput implements IPropertyInput {
 export interface IPropertyInput {
     propertyId: number | undefined;
     name: string | undefined;
-    address: CreateContactAddressInput | undefined;
     area: number | undefined;
     yearBuilt: number | undefined;
     floor: number | undefined;
     numberOfLevels: number | undefined;
+    address: CreateContactAddressInput | undefined;
 }
 
 export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
@@ -70160,11 +70160,11 @@ export interface IUpdateMonthlyGoalInput {
 export class PropertyDto implements IPropertyDto {
     id!: number | undefined;
     name!: string | undefined;
-    address!: CreateContactAddressInput | undefined;
     area!: number | undefined;
     yearBuilt!: number | undefined;
     floor!: number | undefined;
     numberOfLevels!: number | undefined;
+    address!: CreateContactAddressInput | undefined;
 
     constructor(data?: IPropertyDto) {
         if (data) {
@@ -70179,11 +70179,11 @@ export class PropertyDto implements IPropertyDto {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
-            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.area = data["area"];
             this.yearBuilt = data["yearBuilt"];
             this.floor = data["floor"];
             this.numberOfLevels = data["numberOfLevels"];
+            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
         }
     }
 
@@ -70198,11 +70198,11 @@ export class PropertyDto implements IPropertyDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
-        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["area"] = this.area;
         data["yearBuilt"] = this.yearBuilt;
         data["floor"] = this.floor;
         data["numberOfLevels"] = this.numberOfLevels;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         return data; 
     }
 }
@@ -70210,11 +70210,11 @@ export class PropertyDto implements IPropertyDto {
 export interface IPropertyDto {
     id: number | undefined;
     name: string | undefined;
-    address: CreateContactAddressInput | undefined;
     area: number | undefined;
     yearBuilt: number | undefined;
     floor: number | undefined;
     numberOfLevels: number | undefined;
+    address: CreateContactAddressInput | undefined;
 }
 
 export class OptionDto implements IOptionDto {
