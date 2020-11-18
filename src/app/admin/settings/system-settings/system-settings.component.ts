@@ -38,7 +38,7 @@ export class SystemSettingsComponent implements OnInit {
         return {id: item, name: this.ls.l('HostType_' + item)};
     });
 
-    orgUnits = this.dictionaryProxy.getOrganizationUnits(undefined, undefined, true);
+    orgUnits = [];
     tenantHostsEnabled = abp.features.isEnabled(AppFeatures.AdminCustomizations)
         && this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
 
@@ -52,7 +52,11 @@ export class SystemSettingsComponent implements OnInit {
         public httpInterceptor: AppHttpInterceptor,
         private dialog: MatDialog,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        this.dictionaryProxy.getOrganizationUnits(
+            undefined, undefined, true
+        ).subscribe(res => this.orgUnits = res);
+    }
 
     ngOnInit(): void {
         if (this.tenantHostsEnabled) {
@@ -132,5 +136,14 @@ export class SystemSettingsComponent implements OnInit {
                     });
             }
         });
+    }
+
+    getOrgUnitName(id) {
+        if (id) {
+          for (let i = 0; i <= this.orgUnits.length; i++)
+              if (this.orgUnits[i].id == id)
+                  return this.orgUnits[i].displayName;
+        }
+        return this.ls.l('Default');
     }
 }
