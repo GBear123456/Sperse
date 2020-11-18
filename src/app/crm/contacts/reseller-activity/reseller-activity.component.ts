@@ -131,7 +131,7 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
         if (this.contactDataSource)
             this.initContactDataSource();
         if (this.ledgerDataSource)
-            this.ledgerDataSource();
+            this.initLedgerDataSource();
         if (this.commissionDataSource)
             this.initCommissionDataSource();
     }
