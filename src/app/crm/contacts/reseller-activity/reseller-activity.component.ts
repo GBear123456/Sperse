@@ -3,18 +3,20 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, RouteReuseStrategy, Params } from '@angular/router';
 
 /** Third party imports */
-import { BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { finalize, first } from 'rxjs/operators';
+import DevExpress from 'devextreme/bundles/dx.all';
+import { map, finalize, first } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { ContactGroup } from '@shared/AppEnums';
 import {
     LeadServiceProxy, LeadInfoDto,
-    ContactInfoDto, ContactServiceProxy
+    ContactInfoDto, ContactServiceProxy,
+    InvoiceSettings
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactsService } from '../contacts.service';
@@ -91,6 +93,16 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     isCGManageAllowed = false;
+
+    currencyFormat$: Observable<DevExpress.ui.format> = this.invoicesService.settings$.pipe(
+        map((settings: InvoiceSettings) => {
+            return {
+                type: 'currency',
+                precision: 2,
+                currency: settings && settings.currency
+            };
+        })
+    );
 
     constructor(
         private router: Router,
