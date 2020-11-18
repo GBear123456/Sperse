@@ -395,7 +395,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             dataObj.address = dataObj.addresses[0];
         }
         if (this.showPropertyFields) {
-            dataObj.propertyInput = new PropertyInput({
+            dataObj.propertyInfo = new PropertyInput({
                 propertyId: this.propertyId,
                 name: this.property.name,
                 area: this.property.area,
@@ -412,7 +412,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
                 })
             })
         } else if (this.showPropertiesDropdown) {
-            dataObj.propertyInput = {
+            dataObj.propertyInfo = {
                 propertyId: this.propertyId,
             }
         }
