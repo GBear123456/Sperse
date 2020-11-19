@@ -6,6 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import * as moment from 'moment-timezone';
 
 /** Application imports */
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AuditLogListDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -16,6 +17,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class AuditLogDetailModalComponent implements OnInit {
     auditLog: AuditLogListDto;
+    urlHelper = UrlHelper;
 
     constructor(
         public ls: AppLocalizationService,

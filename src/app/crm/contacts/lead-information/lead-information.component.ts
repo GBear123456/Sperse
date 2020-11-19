@@ -35,6 +35,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { SourceContact } from '@shared/common/source-contact-list/source-contact.interface';
 import { LayoutSection } from '@app/crm/contacts/lead-information/layout-section.interface';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 @Component({
     selector: 'lead-information',
@@ -68,6 +69,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
     private invoiceSettings: InvoiceSettings = new InvoiceSettings();
     private readonly ident = 'LeadInformation';
 
+    urlHelper = UrlHelper;
     isCGManageAllowed = false;
     isEditAllowed = false;
     startCase = startCase;
