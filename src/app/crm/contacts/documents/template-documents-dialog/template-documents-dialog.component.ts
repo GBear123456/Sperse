@@ -128,8 +128,11 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     }
 
     onAddFile() {
-        this.dialogRef.close(
-            this.fileManager.instance.getSelectedItems());
+        let selected = this.fileManager.instance.getSelectedItems().filter(item => !item.isDirectory);
+        if (selected.length)
+            this.dialogRef.close(selected);
+        else
+            this.notify.error(this.ls.l('File_Empty_Error'));        
     }
 
     onLayoutToogle() {
