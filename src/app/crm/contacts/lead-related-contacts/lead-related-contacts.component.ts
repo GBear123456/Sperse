@@ -97,11 +97,11 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         private contactProxy: ContactServiceProxy,
         private contactsService: ContactsService,
         private lifeCycleService: LifecycleSubjectsService,
-        private loadingService: LoadingService,
         private itemDetailsService: ItemDetailsService,
         private permissionCheckerService: PermissionCheckerService,
         private permissionService: AppPermissionService,
         private oDataService: ODataService,
+        public loadingService: LoadingService,
         public userManagementService: UserManagementService,
         public httpInterceptor: AppHttpInterceptor,
         public ls: AppLocalizationService
@@ -174,6 +174,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
+                    this.loadingService.startLoading();
                     request.params.$select = DataGridService.getSelectFields(
                         this.contactDataGrid,
                         [
@@ -205,6 +206,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
+                    this.loadingService.startLoading();
                     request.params.$select = DataGridService.getSelectFields(
                         this.subContactDataGrid,
                         [
@@ -238,6 +240,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                     }),
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
+                        this.loadingService.startLoading();
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                         request.params.$select = DataGridService.getSelectFields(
                             this.leadDataGrid,

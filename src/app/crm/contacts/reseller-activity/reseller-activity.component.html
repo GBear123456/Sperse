@@ -12,6 +12,7 @@
                 accessKey="narrowHeaderPanel"
                 noDataText=""
                 [renderAsync]="true"
+                [loadPanel]="{enabled: false}"
                 [dataSource]="contactDataSource"
                 [allowColumnReordering]="true"
                 [columnAutoWidth]="true"
@@ -28,6 +29,7 @@
                 [hoverStateEnabled]="true"
                 [pager]="defaultGridPagerConfig"
                 (onCellClick)="onCellClick($event)"
+                (onContentReady)="loadingService.finishLoading()"
                 (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                 <dxo-selection mode="none"></dxo-selection>
                 <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
@@ -61,6 +63,7 @@
                 accessKey="narrowHeaderPanel"
                 noDataText=""
                 [renderAsync]="true"
+                [loadPanel]="{enabled: false}"
                 [dataSource]="commissionDataSource"
                 [allowColumnReordering]="true"
                 [columnAutoWidth]="true"
@@ -77,6 +80,7 @@
                 [hoverStateEnabled]="true"
                 [pager]="defaultGridPagerConfig"
                 (onCellClick)="onCellClick($event)"
+                (onContentReady)="loadingService.finishLoading()"
                 (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                 <dxo-selection mode="none"></dxo-selection>
                 <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
@@ -183,6 +187,7 @@
                 accessKey="narrowHeaderPanel"
                 noDataText=""
                 [renderAsync]="true"
+                [loadPanel]="{enabled: false}"
                 [dataSource]="ledgerDataSource"
                 [allowColumnReordering]="true"
                 [columnAutoWidth]="true"
@@ -199,6 +204,7 @@
                 [hoverStateEnabled]="true"
                 [pager]="defaultGridPagerConfig"
                 (onCellClick)="onCellClick($event)"
+                (onContentReady)="loadingService.finishLoading()"
                 (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                 <dxo-selection mode="none"></dxo-selection>
                 <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
