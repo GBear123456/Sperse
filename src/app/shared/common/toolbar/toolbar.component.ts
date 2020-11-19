@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, Input, HostBinding, OnDestroy, ChangeDetectorRef,
-    ViewChild, ChangeDetectionStrategy, OnInit, AfterViewInit } from '@angular/core';
+    ViewChild, ChangeDetectionStrategy, OnInit } from '@angular/core';
 
 /** Third party imports */
 import cloneDeep from 'lodash/cloneDeep';
@@ -24,17 +24,17 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
     styleUrls: ['./toolbar.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ToolBarComponent implements OnDestroy, OnInit, AfterViewInit {
+export class ToolBarComponent implements OnDestroy, OnInit {
     @ViewChild(DxToolbarComponent, { static: false }) toolbarComponent: DxToolbarComponent;
     @Input() width = '100%';
     _config: ToolbarGroupModel[];
     @Input()
     set config(config: ToolbarGroupModel[]) {
-        if (this._config) {
-            this._config = config;
+        this._config = config;
+        setTimeout(() => {
             this.initToolbarItems();
-        } else
-            this._config = config;
+            this.changeDetectorRef.detectChanges();
+        }, 1000);
     }
     @Input() disableToolbarUpdateAfterFiltersFixing = false;
     @HostBinding('style.display') display: string;
@@ -62,13 +62,6 @@ export class ToolBarComponent implements OnDestroy, OnInit, AfterViewInit {
                 this.updateToolbarItemAttribute('filters', 'button-pressed', fixed);
             });
         }
-    }
-
-    ngAfterViewInit() {
-        setTimeout(() => {
-            this.initToolbarItems();
-            this.changeDetectorRef.detectChanges();
-        }, 1000);
     }
 
     private getSupportedButtons() {
