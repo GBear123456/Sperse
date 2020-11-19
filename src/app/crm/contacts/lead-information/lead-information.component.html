@@ -60,9 +60,13 @@
                         <div *ngFor="let field of getObjectKeys(application[group])" class="section-item">
                             <div class="item-edit-label app">{{startCase(field)}}:</div>
                             <div *ngIf="formatFieldValue(field, application[group][field]) as value"
-                                 class="item-value app"
-                                 [title]="value">
-                                {{value}}
+                                class="item-value app clipboard-holder"
+                                [title]="value">
+                                <a *ngIf="field == 'ipAddress'; else default" class="client-ip-link" target="_blank" [href]="urlHelper.getLookupIpUrl(value)">{{value}}</a>
+                                <ng-template #default>
+                                    {{value}}
+                                </ng-template>
+                                <i class="save-to-clipboard" (click)="saveToClipboard($event, value)"></i>
                             </div>
                         </div>
                     </div>
