@@ -31,6 +31,7 @@ import {
     ContactInfoDto,
     CountryDto,
     CreatePersonOrgRelationOutput,
+    OrganizationContactInfoDto,
     OrganizationContactServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
@@ -40,6 +41,7 @@ import { AddressUsageTypeDto } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { EditAddressDialogData } from '@app/crm/contacts/edit-address-dialog/edit-address-dialog-data.interface';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
+import { AddressUpdate } from '@app/crm/contacts/addresses/address-update.interface';
 
 @Component({
     selector: 'addresses',
@@ -66,12 +68,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
     @Input() isDeleteAllowed = true;
     @Input() showType = true;
     @Input() editDialogTitle: string;
-    @Output() onAddressUpdate: EventEmitter<{
-        address: AddressDto,
-        dialogData: Pick<EditAddressDialogData, 'id' | 'contactId' | 'city' | 'country' | 'isActive'
-            | 'isConfirmed' | 'stateId' | 'stateName' | 'streetAddress' | 'comment' | 'usageTypeId'
-            | 'zip'>
-    }> = new EventEmitter();
+    @Output() onAddressUpdate: EventEmitter<AddressUpdate> = new EventEmitter();
 
     types: Object = {};
     country: string;
@@ -104,7 +101,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService,
         public dialog: MatDialog,
     ) {
-        contactsService.organizationContactInfo$.pipe(filter(orgInfo => {
+        contactsService.organizationContactInfo$.pipe(filter((orgInfo: OrganizationContactInfoDto) => {
             return this.isCompany && orgInfo.id && !orgInfo.isUpdatable;
         }), first()).subscribe(() => {
             this.isEditAllowed = false;
@@ -188,6 +185,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
             city: address && address.city,
             comment: address && address.comment,
             country: address && address.country,
+            countryCode: address && address.countryCode,
             isActive: address ? address.isActive : true,
             isConfirmed: address ? address.isConfirmed : false,
             stateId: address && address.stateId,
@@ -206,7 +204,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
             position: this.getDialogPosition(event)
         }).afterClosed().subscribe((saved: boolean) => {
             scrollTo(0, 0);
-            if (saved && dialogData.contactId) {
+            if (saved) {
                 this.onAddressUpdate.emit({
                     address: address,
                     dialogData: dialogData

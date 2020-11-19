@@ -5,6 +5,7 @@ export interface EditAddressDialogData {
     city: string;
     stateName: string;
     country: string;
+    countryCode?: string;
     stateId: string;
     zip: string;
     isCompany: boolean;
@@ -17,4 +18,5 @@ export interface EditAddressDialogData {
     isDeleteAllowed: boolean;
     showType: boolean;
     editDialogTitle: string;
+    formattedAddress?: string;
 }

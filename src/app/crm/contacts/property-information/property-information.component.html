@@ -7,7 +7,9 @@
                    [isAddAllowed]="false"
                    [isDeleteAllowed]="false"
                    [showType]="false"
-                   [editDialogTitle]="ls.l('EditAddress')">
+                   [editDialogTitle]="ls.l('EditAddress')"
+                   [contactId]="property.address.contactId"
+                   (onAddressUpdate)="updateAddress($event)">
         </addresses>
     </div>
     <div>
@@ -24,13 +26,15 @@
                         maxZoomLevel: 'decade'
                      }"
                      displayFormat="year"
-                     [(value)]="property.yearBuilt"
-                     (onValueChanged)="valueChanged()">
+                     [value]="yearBuilt"
+                     (onValueChanged)="yearBuiltChanged($event.value)">
         </dx-date-box>
     </div>
     <div>
         <label>{{ ls.l('Floor') }}</label>
-        <dx-number-box [(value)]="property.floor"></dx-number-box>
+        <dx-number-box [(value)]="property.floor"
+                       (onValueChanged)="valueChanged()">
+        </dx-number-box>
     </div>
     <div>
         <label>{{ ls.l('Levels') }}</label>

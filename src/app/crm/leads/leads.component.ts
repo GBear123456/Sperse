@@ -297,6 +297,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         })
     );
     pipelineTypes$: Observable<TypeItem[]> = this.pipelines$.pipe(
+        filter(Boolean),
         map((pipelines: PipelineDto[]) => {
             return pipelines.map((pipeline: PipelineDto) => {
                 return {

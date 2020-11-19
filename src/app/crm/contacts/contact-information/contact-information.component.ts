@@ -19,7 +19,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { PersonalDetailsService } from '../personal-details/personal-details.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
-import { EditAddressDialogData } from '@app/crm/contacts/edit-address-dialog/edit-address-dialog-data.interface';
 
 @Component({
     selector: 'contact-information',
@@ -81,9 +80,7 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
                 address.usageTypeId = dialogData.usageTypeId;
                 address.zip = dialogData.zip;
             } else if (result.id) {
-                addresses.push(AddressDto.fromJS({
-                    dialogData
-                }));
+                addresses.push(AddressDto.fromJS(dialogData));
             }
             this.contactsService.verificationUpdate();
         });

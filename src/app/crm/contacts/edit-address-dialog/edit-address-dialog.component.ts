@@ -95,11 +95,11 @@ export class EditAddressDialog {
 
     onCountryChange(event) {
         const country = _.findWhere(this.countries, { name: event.value });
-        this.countryCode = country ? country['code'] : null;
+        this.data.countryCode = country ? country['code'] : null;
         if (country) {
-            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.countryCode));
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.data.countryCode));
         }
-        this.statesService.updateState(this.countryCode, this.data.stateId, this.data.stateName);
+        this.statesService.updateState(this.data.countryCode, this.data.stateId, this.data.stateName);
     }
 
     onAddressChanged(address: Address) {
@@ -113,8 +113,9 @@ export class EditAddressDialog {
         this.data.stateId = GooglePlaceService.getStateCode(address.address_components);
         this.data.stateName = GooglePlaceService.getStateName(address.address_components);
         this.statesService.updateState(countryCode, this.data.stateId, this.data.stateName);
-        this.countryCode = countryCode;
+        this.data.countryCode = countryCode;
         this.data.city = GooglePlaceService.getCity(address.address_components);
+        this.data.formattedAddress = address.formatted_address;
         const streetNumber = GooglePlaceService.getStreetNumber(address.address_components);
         this.address = this.addressInput.nativeElement.value = streetNumber
             ? streetNumber + ' ' + this.data.streetAddress
@@ -141,7 +142,7 @@ export class EditAddressDialog {
         this.data.streetAddress = this.address;
         if (this.validator.validate().isValid && this.validateAddress(this.data)) {
             if (this.data.country)
-                this.countryCode = _.findWhere(this.countries, { name: this.data.country })['code'];
+                this.data.countryCode = _.findWhere(this.countries, { name: this.data.country })['code'];
             this.data.stateId = this.statesService.getAdjustedStateCode(this.data.stateId, this.data.stateName);
             this.dialogRef.close(true);
         }
@@ -149,7 +150,7 @@ export class EditAddressDialog {
 
     getCountryStates(): Observable<CountryStateDto[]> {
         return this.store$.pipe(
-            select(StatesStoreSelectors.getCountryStates, { countryCode: this.countryCode }),
+            select(StatesStoreSelectors.getCountryStates, { countryCode: this.data.countryCode }),
             map((states: CountryStateDto[]) => states || [])
         );
     }
@@ -157,7 +158,7 @@ export class EditAddressDialog {
     stateChanged(e) {
         this.store$.pipe(
             select(StatesStoreSelectors.getStateCodeFromStateName, {
-                countryCode: this.countryCode,
+                countryCode: this.data.countryCode,
                 stateName: e.value
             }),
             first()
@@ -169,7 +170,7 @@ export class EditAddressDialog {
     onCustomStateCreate(e) {
         this.data.stateId = null;
         this.data.stateName = e.text;
-        this.statesService.updateState(this.countryCode, null, e.text);
+        this.statesService.updateState(this.data.countryCode, null, e.text);
         e.customItem = {
             code: null,
             name: e.text
