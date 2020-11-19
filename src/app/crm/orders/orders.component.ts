@@ -1,5 +1,12 @@
 /** Core imports */
-import { AfterViewInit, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    Component,
+    Injector,
+    OnDestroy,
+    OnInit,
+    ViewChild
+} from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { CurrencyPipe } from '@angular/common';
 import { Params } from '@angular/router';
