@@ -3,28 +3,23 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, RouteReuseStrategy, Params } from '@angular/router';
 
 /** Third party imports */
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DevExpress from 'devextreme/bundles/dx.all';
-import { map, finalize, first } from 'rxjs/operators';
-import * as _ from 'underscore';
+import { map, first } from 'rxjs/operators';
 
 /** Application imports */
-import { ContactGroup } from '@shared/AppEnums';
 import {
-    LeadServiceProxy, LeadInfoDto,
     ContactInfoDto, ContactServiceProxy,
     InvoiceSettings
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactsService } from '../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AppPermissions } from '@shared/AppPermissions';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
-import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
