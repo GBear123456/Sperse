@@ -183,17 +183,17 @@
                 <h3>{{ ls.l('PropertyInfo') }}:</h3>
                 <div class="field">
                     <div>
-                        <label>{{ ls.l('PropertyArea') }}</label>
+                        <label class="area-label">{{ ls.l('PropertyArea') }}</label>
                         <dx-number-box [(value)]="property.area"></dx-number-box>
                     </div>
                     <div>
-                        <label>{{ ls.l('Floor') }}</label>
+                        <label class="floor-label">{{ ls.l('Floor') }}</label>
                         <dx-number-box [(value)]="property.floor"></dx-number-box>
                     </div>
                 </div>
                 <div class="field">
                     <div>
-                        <label>{{ ls.l('Year') }}</label>
+                        <label class="date-label">{{ ls.l('Year') }}</label>
                         <dx-date-box type="date"
                                      [calendarOptions]="{
                                         minZoomLevel: 'century',
@@ -204,7 +204,7 @@
                         </dx-date-box>
                     </div>
                     <div>
-                        <label>{{ ls.l('Levels') }}</label>
+                        <label class="levels-label">{{ ls.l('Levels') }}</label>
                         <dx-number-box [(value)]="property.numberOfLevels"></dx-number-box>
                     </div>
                 </div>
