@@ -1,8 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ContactsService } from '../contacts.service';
-import { UserServiceProxy, UserLoginServiceProxy, UserLoginAttemptDto } from '@shared/service-proxies/service-proxies';
+import {
+    UserServiceProxy,
+    UserLoginServiceProxy,
+    UserLoginAttemptDto,
+    UserLoginAttemptDtoListResultDto
+} from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 @Component({
     selector: 'login-attempts',
@@ -13,6 +19,7 @@ export class LoginAttemptsComponent implements OnInit, OnDestroy {
     userLoginAttempts: UserLoginAttemptDto[];
     private readonly ident = 'LoginAttempts';
     urlHelper = UrlHelper;
+    userTimezone = DateHelper.getUserTimezone();
 
     constructor(
         private userService: UserServiceProxy,
@@ -23,7 +30,7 @@ export class LoginAttemptsComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.contactsService.userSubscribe(
-            (userId) => {
+            (userId: number) => {
                 if (userId) this.loadData(userId);
             },
             this.ident
@@ -32,10 +39,11 @@ export class LoginAttemptsComponent implements OnInit, OnDestroy {
             this.loadData(this.userService['data'].userId);
     }
 
-    loadData(userId) {
-        this.userLoginService.getRecentLoginAttemptsForOtherUser(userId).subscribe(result => {
-            this.userLoginAttempts = result.items;
-        });
+    loadData(userId: number) {
+        this.userLoginService.getRecentLoginAttemptsForOtherUser(userId)
+            .subscribe((result: UserLoginAttemptDtoListResultDto) => {
+                this.userLoginAttempts = result.items;
+            });
     }
 
     onRowPrepared(e) {
