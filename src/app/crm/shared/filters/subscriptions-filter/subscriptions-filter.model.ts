@@ -82,6 +82,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                             result.push(<DisplayElement>{
                                 item: this,
                                 id: level.id,
+                                args: level.uid,
                                 parentCode: item.id,
                                 displayValue: level.name + ' (' + ([
                                     level.current ? 'Current' : null,
@@ -100,6 +101,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                     result.splice(initialCount, 0, <DisplayElement>{
                         item: this,
                         id: item.id,
+                        args: item.uid,
                         displayValue: item.name + (columns.length ?
                             ' (' +  columns.join(',') + ')' : ''
                         )
@@ -118,16 +120,16 @@ export class SubscriptionsFilterModel extends FilterItemModel {
             });
     }
 
-    removeFilterItem(filter: FilterModel, args: any, id: string) {
+    removeFilterItem(filter: FilterModel, uid: any, id: string) {
         if (id !== undefined) {
             this.clearItem(
                 filter.items.element.dataSource.reduce((result, item) => {
-                    if (result && result.id === id)
+                    if (result && result.uid === uid)
                         return result;
-                    else if (item.id === id)
+                    else if (item.uid === uid)
                         return item;
                     else if (item.serviceProductLevels)
-                        return item.serviceProductLevels.find(level => level.id == id);
+                        return item.serviceProductLevels.find(level => level.uid == uid);
                 }, null)
             );
         } else {
