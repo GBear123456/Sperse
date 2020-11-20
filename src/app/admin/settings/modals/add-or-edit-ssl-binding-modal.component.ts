@@ -12,7 +12,7 @@ import {
 /** Third party imports */
 import { of } from 'rxjs';
 import { ModalDirective } from 'ngx-bootstrap';
-import { finalize, map } from 'rxjs/operators';
+import { finalize, map, tap } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
@@ -26,6 +26,7 @@ import {
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { environment } from '@root/environments/environment';
 
 @Component({
     selector: 'addOrEditSSLBindingModal',
@@ -50,9 +51,29 @@ export class AddOrEditSSLBindingModalComponent {
         {
             title: this.ls.l('Save'),
             class: 'primary',
-            action: this.save.bind(this)
+            action: this.save.bind(this),
+            disabled: true
         }
     ];
+
+    envHost = {
+        production: {
+            ip: '52.165.168.40',
+            host: 'sperseprodapiservice.azurewebsites.net'
+        },
+        development: {
+            ip: '40.80.155.102',
+            host: 'testsperseplatformapi.azurewebsites.net'
+        },
+        staging: {
+            ip: '40.80.155.102',
+            host: 'testsperseplatformapi.azurewebsites.net'
+        },
+        beta: {
+            ip: '52.176.6.37',
+            host: 'sperseapi.azurewebsites.net'
+        }
+    }[environment.releaseStage];
 
     constructor(
         private changeDetection: ChangeDetectorRef,
@@ -146,8 +167,16 @@ export class AddOrEditSSLBindingModalComponent {
                         hostName: data.value
                     })
                 ).pipe(map(res => res.hostNameDnsMapped)) : of(true)
-            ).subscribe(approve, reject);
+            ).pipe(tap(isValid => {
+                this.buttons[0].disabled = !isValid;
+                this.changeDetection.detectChanges();
+            })).subscribe(approve, reject);
         });
+    }
+
+    onValueChanged(event) {
+        this.buttons[0].disabled = true;
+        this.changeDetection.detectChanges();
     }
 
     validate(event): boolean {
