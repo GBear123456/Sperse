@@ -1,6 +1,7 @@
 <div class="close-button" (click)="close(true)"></div>
 <div class="mat-dialog-header">
     <div class="title-wrapper">
+        <label *ngIf="titleLabel" class="title-label">{{ titleLabel }}</label>
         <dx-text-box #titleComponent
             *ngIf="title != undefined"
             name="title"
@@ -11,6 +12,11 @@
             [isValid]="isTitleValid == undefined || isTitleValid"
             (onInput)="titleChanged($event)"
             (onKeyUp)="titleKeyUp($event)">
+            <dx-validator>
+                <dxi-validation-rule type="required"
+                                     [message]="ls.l('ThisFieldIsRequired')">
+                </dxi-validation-rule>
+            </dx-validator>
         </dx-text-box>
         <ng-content select="[headerContent]"></ng-content>
     </div>
