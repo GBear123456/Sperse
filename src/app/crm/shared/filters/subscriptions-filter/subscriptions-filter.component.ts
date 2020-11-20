@@ -29,7 +29,7 @@ export class SubscriptionsFilterComponent implements FilterComponent {
 
         let parent = cell.row.node.parent,
             children = cell.row.node.children;
-        if (children.length) {
+        if (parent.level < 0) {
             this.setProductValue(cell.data.id, type, event.value);
             children.forEach(item => {
                 item.data[type] = event.value;
