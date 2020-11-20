@@ -14,7 +14,7 @@
                     </div>
 
                     <div class="dx-field">
-                        <p>
+                        <p *ngIf="model.tenantHostType == HostType_PlatformApp">
                             {{ls.l('MapHostNameDNS')}}<br>
                             <b>A</b> {{ls.l('record')}} <i>custom.mysite.com</i> {{ls.l('ShoudPointTo')}} <b>{{envHost.ip}}</b><br>
                             <b>TXT</b> {{ls.l('record')}} <i>custom.mysite.com</i> {{ls.l('ShoudPointTo')}} <b>{{envHost.host}}</b><br>
