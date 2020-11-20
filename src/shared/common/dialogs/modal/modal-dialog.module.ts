@@ -7,7 +7,6 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
-import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 
 /** Application imports */
 import { ModalDialogComponent } from './modal-dialog.component';
@@ -18,8 +17,7 @@ import { ModalDialogComponent } from './modal-dialog.component';
         MatDialogModule,
         DxTextBoxModule,
         DxCheckBoxModule,
-        DxContextMenuModule,
-        DxValidatorModule
+        DxContextMenuModule
     ],
     exports: [ ModalDialogComponent ],
     declarations: [ ModalDialogComponent ],
