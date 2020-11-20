@@ -11,6 +11,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
@@ -143,6 +144,7 @@ import { ListsModule } from '@app/shared/common/lists/lists.module';
 import { OrgUnitsTreeModule } from '@shared/common/organization-units-tree/organization-units-tree.module';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
+import { ResellerActivityComponent } from './reseller-activity/reseller-activity.component';
 import { AddServiceProductDialogComponent } from './subscriptions/add-subscription-dialog/add-service-product-dialog/add-service-product-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
@@ -209,7 +211,8 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         AddServiceProductDialogComponent,
         TemplateDocumentsDialogComponent,
         CustomerListDialogComponent,
-        PropertyInformationComponent
+        PropertyInformationComponent,
+        ResellerActivityComponent
     ],
     imports: [
         FormsModule,
@@ -270,7 +273,8 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         ListsModule,
         OrgUnitsTreeModule,
         MatExpansionModule,
-        GooglePlaceModule
+        GooglePlaceModule,
+        MatTooltipModule
     ],
     entryComponents: [
         CreateInvoiceDialogComponent,

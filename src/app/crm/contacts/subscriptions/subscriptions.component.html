@@ -26,7 +26,7 @@
     <dxi-column dataField="endDate" cellTemplate="dateCell"></dxi-column>
     <dxi-column dataField="trialEndDate" dataType="date" cssClass="clipboard-holder"></dxi-column>
     <dxi-column dataField="fee" cellTemplate="amountTemplate"></dxi-column>
-    <dxi-column dataField="status" [caption]="ls.l('Status')" cssClass="clipboard-holder"></dxi-column>
+    <dxi-column dataField="status" [caption]="ls.l('Status')" cellTemplate="statusCell"></dxi-column>
     <dxi-column caption="" [width]="220" cellTemplate="actionsTemplate"></dxi-column>
     <div *dxTemplate="let cell of 'actionsTemplate'" class="billing-actions">
         <a *ngIf="cell.data.tenantId && permission.isGranted(permissions.TenantsImpersonation)"
@@ -36,6 +36,15 @@
     </div>
     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
         <span title="{{cellData.value | date: formatting.dateTime : userTimezone }}">{{cellData.value | date: formatting.date : userTimezone }}</span>
+    </div>
+    <div *dxTemplate="let cellData of 'statusCell'" class="clipboard-holder">
+        <span [matTooltip]="'Cancellation Reason: ' + cellData.data.cancelationReason"
+              [matTooltipDisabled]="!cellData.data.cancelationReason"
+              matTooltipClass="mat-primary-tooltip"
+              matTooltipShowDelay="200"
+              matTooltipHideDelay="0">
+            {{ cellData.value }}
+        </span>
     </div>
     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
         <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>

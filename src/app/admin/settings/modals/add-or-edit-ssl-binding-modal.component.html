@@ -3,23 +3,49 @@
         <div class="content">
             <form #clientForm="ngForm" novalidate>
                 <div class="modal-body">
-                    <div class="dx-field" hidden>
+                    <div class="dx-field">
                         <dx-select-box [(value)]="model.tenantHostType"
                                        [dataSource]="data.hostTypes"
                                        [placeholder]="ls.l('Type')"
                                        [readOnly]="editing"
+                                       (onValueChanged)="onHostTypeChanged()"
                                        valueExpr="id" displayExpr="name">
                         </dx-select-box>
                     </div>
 
                     <div class="dx-field">
-                        <dx-text-box name="DomainName" [placeholder]="ls.l('HostName') + ' (custom.mysite.com)'"
-                                     [maxLength]="256" [readOnly]="editing"
-                                     [(value)]="model.domainName">
+                        <p *ngIf="model.tenantHostType == HostType_PlatformApp">
+                            {{ls.l('MapHostNameDNS')}}<br>
+                            <b>A</b> {{ls.l('record')}} <i>custom.mysite.com</i> {{ls.l('ShoudPointTo')}} <b>{{envHost.ip}}</b><br>
+                            <b>TXT</b> {{ls.l('record')}} <i>custom.mysite.com</i> {{ls.l('ShoudPointTo')}} <b>{{envHost.host}}</b><br>
+                            {{ls.l('CheckCorrectMapping')}} <a target="_blank" href="https://www.ultratools.com/tools/dnsLookupResult">{{ls.l('DNSLookup')}}</a>
+                        </p>
+                        <dx-text-box #DomainName 
+                                     [placeholder]="ls.l('HostName') + ' (custom.mysite.com)'"
+                                     [maxLength]="256" 
+                                     [readOnly]="editing"
+                                     [(value)]="model.domainName"
+                                     (onInput)="onValueChanged($event)">
+                                     <dx-validator>
+                                         <dxi-validation-rule 
+                                             type="required" 
+                                             message="{{ls.l('ThisFieldIsRequired')}}.">
+                                         </dxi-validation-rule>
+                                         <dxi-validation-rule 
+                                             type="pattern"
+                                             [pattern]="regexPatterns.url"
+                                             [message]="ls.l('LetsEncrypt_FailedToValidateDomain')">
+                                         </dxi-validation-rule>
+                                         <dxi-validation-rule 
+                                             type="async" 
+                                             [message]="ls.l('HostName_NotMapped')" 
+                                             [validationCallback]="checkHostNameDnsMapping">
+                                          </dxi-validation-rule>
+                                     </dx-validator>
                         </dx-text-box>
                     </div>
 
-                    <div class="dx-field">
+                    <div class="dx-field" *ngIf="model.tenantHostType == HostType_PlatformApp"> 
                         <dx-select-box [(value)]="model.sslCertificateId"
                                        [dataSource]="sslCertificates"
                                        [placeholder]="ls.l('SSLCertificate')"
@@ -30,8 +56,8 @@
 
                     <div class="dx-field">
                         <dx-select-box [(value)]="model.organizationUnitId"
-                                       [dataSource]="data.orgUnits | async"
-                                       [placeholder]="ls.l('OrganizationUnits')"
+                                       [dataSource]="data.orgUnits"
+                                       [placeholder]="ls.l('OrganizationUnit')"
                                        valueExpr="id"
                                        displayExpr="displayName"
                                        [showClearButton]="true">

@@ -1,4 +1,3 @@
-
 export class RequestHelper {
     static downloadFileBlob(url, callback, includeAuth = false) {
         let xhr = new XMLHttpRequest();

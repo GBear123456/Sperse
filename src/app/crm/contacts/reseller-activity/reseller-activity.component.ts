@@ -3,26 +3,23 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, RouteReuseStrategy, Params } from '@angular/router';
 
 /** Third party imports */
-import { BehaviorSubject } from 'rxjs';
+import { Observable } from 'rxjs';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { finalize, first } from 'rxjs/operators';
-import * as _ from 'underscore';
+import DevExpress from 'devextreme/bundles/dx.all';
+import { map, first } from 'rxjs/operators';
 
 /** Application imports */
-import { ContactGroup } from '@shared/AppEnums';
 import {
-    LeadServiceProxy, LeadInfoDto,
-    ContactInfoDto, ContactServiceProxy
+    ContactInfoDto, ContactServiceProxy,
+    InvoiceSettings
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactsService } from '../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AppPermissions } from '@shared/AppPermissions';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
-import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
@@ -34,37 +31,40 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
+import { CommissionFields } from '@app/crm/commission-history/commission-fields.enum';
+import { LedgerFields } from '@app/crm/commission-history/ledger-fields.enum';
 import { ClientFields } from '@app/crm/clients/client-fields.enum';
-import { LeadFields } from '@app/crm/leads/lead-fields.enum';
 
 @Component({
-    selector: 'lead-related-contacts',
-    templateUrl: './lead-related-contacts.component.html',
-    styleUrls: ['./lead-related-contacts.component.less'],
+    selector: 'reseller-activity',
+    templateUrl: './reseller-activity.component.html',
+    styleUrls: ['./reseller-activity.component.less'],
     providers: [ LifecycleSubjectsService ]
 })
-export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
+export class ResellerActivityComponent implements OnInit, OnDestroy {
     @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
-    @ViewChild('leadDataGrid', {static: false}) leadDataGrid: DxDataGridComponent;
+    @ViewChild('commissionDataGrid', {static: false}) commissionDataGrid: DxDataGridComponent;
     @ViewChild('contactDataGrid', {static: false}) contactDataGrid: DxDataGridComponent;
-    @ViewChild('subContactDataGrid', {static: false}) subContactDataGrid: DxDataGridComponent;
+    @ViewChild('ledgerDataGrid', {static: false}) ledgerDataGrid: DxDataGridComponent;
 
     data = {
-        contactInfo: new ContactInfoDto(),
-        leadInfo: new LeadInfoDto()
+        contactInfo: new ContactInfoDto()
     };
 
     userTimezone = DateHelper.getUserTimezone();
     private formatting = AppConsts.formatting;
-    private readonly leadDataSourceURI = 'Lead';
+    private readonly ledgerDataSourceURI = 'CommissionLedgerEntry';
+    private readonly commissionDataSourceURI = 'Commission';
     private readonly contactDataSourceURI = 'Contact';
-    private readonly ident = 'LeadRelatedContacts';
-    private readonly CONTACT_TAB_INDEX = 1;
+    private readonly ident = 'ResellerActivity';
+    private readonly COMMISSION_TAB_INDEX = 1;
     private _selectedTabIndex = 0;
 
     actionMenuItems: ActionMenuItem[];
     readonly clientFields = ClientFields;
-    readonly leadFields = LeadFields;
+    readonly commissionFields = CommissionFields;
+    readonly ledgerFields = LedgerFields;
+
 
     get selectedTabIndex(): number {
         return this._selectedTabIndex;
@@ -73,21 +73,31 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
     set selectedTabIndex(val: number) {
         this._selectedTabIndex = val;
         if (val) {
-            if (val == this.CONTACT_TAB_INDEX)
-                this.initContactDataSource();
+            if (val == this.COMMISSION_TAB_INDEX)
+                this.initCommissionDataSource();
             else
-                this.initSubContactDataSource();
+                this.initLedgerDataSource();
         } else
-            this.initLeadDataSource();
+            this.initContactDataSource();
     }
 
-    leadDataSource;
+    ledgerDataSource;
     contactDataSource;
-    subContactDataSource;
+    commissionDataSource;
     actionRecordData: any;
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     isCGManageAllowed = false;
+
+    currencyFormat$: Observable<DevExpress.ui.format> = this.invoicesService.settings$.pipe(
+        map((settings: InvoiceSettings) => {
+            return {
+                type: 'currency',
+                precision: 2,
+                currency: settings && settings.currency
+            };
+        })
+    );
 
     constructor(
         private router: Router,
@@ -106,17 +116,13 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         public httpInterceptor: AppHttpInterceptor,
         public ls: AppLocalizationService
     ) {
-        this.contactsService.loadLeadInfo();
         this.contactsService.invalidateSubscribe(area => {
-            if (area == 'sub-contacts')
-                this.subContactDataGrid.instance.refresh();
+            if (area == 'ledger')
+                this.ledgerDataGrid.instance.refresh();
         });
     }
 
     ngOnInit() {
-        this.contactsService.leadInfoSubscribe(leadInfo => {
-            this.data.leadInfo = leadInfo;
-        }, this.ident);
         this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo) {
                 this.data.contactInfo = contactInfo;
@@ -131,10 +137,10 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
     refreshDataSources() {
         if (this.contactDataSource)
             this.initContactDataSource();
-        if (this.subContactDataSource)
-            this.initSubContactDataSource();
-        if (this.leadDataSource)
-            this.initLeadDataSource();
+        if (this.ledgerDataSource)
+            this.initLedgerDataSource();
+        if (this.commissionDataSource)
+            this.initCommissionDataSource();
     }
 
     initQueryParams() {
@@ -143,23 +149,12 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                 this.selectedTabIndex = parseInt(params['tab']);
                 this.removeTabQueryParam();
             } else
-                this.initLeadDataSource();
+                this.initContactDataSource();
         });
     }
 
     initActionMenuItems() {
         this.actionMenuItems = [
-            {
-                text: this.ls.l('View'),
-                class: 'edit',
-                action: this.viewLead.bind(this)
-            },
-            {
-                text: this.ls.l('Delete'),
-                class: 'delete',
-                action: this.deleteLead.bind(this),
-                disabled: !this.isCGManageAllowed
-            }
         ];
     }
 
@@ -169,7 +164,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                 key: this.clientFields.Id,
                 url: this.oDataService.getODataUrl(
                     this.contactDataSourceURI,
-                    {[this.clientFields.SourceContactId]: this.data.contactInfo.id}
+                    {[this.clientFields.AffiliateContactId]: this.data.contactInfo.id}
                 ),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
@@ -179,13 +174,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                         this.contactDataGrid,
                         [
                             this.clientFields.Id,
-                            this.clientFields.Name,
-                            this.clientFields.Email,
-                            this.clientFields.Status,
-                            this.clientFields.ContactDate,
-                            this.clientFields.BankCode,
-                            this.clientFields.SourceContactId,
-                            this.clientFields.GroupId
+                            this.clientFields.AffiliateContactId
                         ]
                     );
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
@@ -195,72 +184,54 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         });
     }
 
-    initSubContactDataSource() {
-        this.subContactDataSource = new DataSource({
+    initLedgerDataSource() {
+        this.ledgerDataSource = new DataSource({
+            requireTotalCount: true,
             store: new ODataStore({
-                key: this.clientFields.Id,
-                url: this.oDataService.getODataUrl(
-                    this.contactDataSourceURI,
-                    {[this.clientFields.ParentId]: this.data.contactInfo.id}
+                key: this.ledgerFields.Id,
+                url: this.oDataService.getODataUrl(this.ledgerDataSourceURI,
+                    {[this.ledgerFields.ContactId]: this.data.contactInfo.id}
                 ),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
                     this.loadingService.startLoading();
-                    request.params.$select = DataGridService.getSelectFields(
-                        this.subContactDataGrid,
-                        [
-                            this.clientFields.Id,
-                            this.clientFields.Name,
-                            this.clientFields.Email,
-                            this.clientFields.Status,
-                            this.clientFields.ContactDate,
-                            this.clientFields.BankCode,
-                            this.clientFields.ParentId,
-                            this.clientFields.GroupId
-                        ]
-                    );
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                    request.params.$select = DataGridService.getSelectFields(
+                        this.ledgerDataGrid,
+                        [ this.ledgerFields.Id, this.ledgerFields.ContactId ]
+                    );
                 }
             })
         });
     }
 
-    initLeadDataSource() {
+    initCommissionDataSource() {
         if (this.data.contactInfo.id)
-            this.leadDataSource = {
-                uri: this.leadDataSourceURI,
+            this.commissionDataSource = new DataSource({
                 requireTotalCount: true,
-                store: {
-                    key: this.leadFields.Id,
-                    type: 'odata',
-                    url: this.oDataService.getODataUrl(this.leadDataSourceURI, {
-                        [this.leadFields.CustomerId]: this.data.contactInfo.id
-                    }),
+                store: new ODataStore({
+                    key: this.commissionFields.Id,
+                    url: this.oDataService.getODataUrl(this.commissionDataSourceURI,
+                        {[this.commissionFields.ResellerContactId]: this.data.contactInfo.id}
+                    ),
                     version: AppConsts.ODataVersion,
+                    deserializeDates: false,
                     beforeSend: (request) => {
                         this.loadingService.startLoading();
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                         request.params.$select = DataGridService.getSelectFields(
-                            this.leadDataGrid,
+                            this.commissionDataGrid,
                             [
-                                this.leadFields.Id,
-                                this.leadFields.CustomerId,
-                                this.leadFields.LeadDate,
-                                this.leadFields.Stage,
-                                this.leadFields.SourceAffiliateCode,
-                                this.leadFields.SourceContactName,
-                                this.leadFields.SourceCampaignCode,
-                                this.leadFields.SourceChannelCode,
-                                this.leadFields.SourceRefererUrl
+                                this.commissionFields.Id,
+                                this.commissionFields.ResellerContactId
                             ]
                         );
-                        request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                    },
-                    deserializeDates: false
-                }
-            };
+                    }
+                })
+            });
     }
 
     removeTabQueryParam() {
@@ -277,10 +248,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                 this.toggleActionsMenu(event.data, target);
             else {
                 this.itemDetailsService.clearItemsSource();
-                if (event.data.CustomerId)
-                    this.contactsService.updateLocation(event.data.CustomerId, event.data.Id,
-                        undefined, undefined, undefined, 'lead-information');
-                else
+                if (event.data.AffiliateContactId)
                     this.contactsService.updateLocation(event.data.Id, undefined,
                         undefined, undefined, undefined, 'contact-information');
             }
@@ -296,53 +264,6 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         event.itemData.action.call(this);
         this.actionRecordData = null;
         this.actionMenu.hide();
-    }
-
-    viewLead() {
-        this.itemDetailsService.clearItemsSource();
-        if (this.actionRecordData.CustomerId)
-            this.contactsService.updateLocation(
-                this.actionRecordData.CustomerId, this.actionRecordData.Id,
-                undefined, undefined, undefined, 'lead-information');
-        else
-            this.contactsService.updateLocation(this.actionRecordData.Id, undefined,
-                undefined, undefined, undefined, 'contact-information');
-    }
-
-    deleteLead() {
-        let id = this.actionRecordData.Id;
-        if (this.actionRecordData.CustomerId)
-            this.contactsService.deleteContact(
-                this.data.contactInfo.personContactInfo.fullName,
-                this.data.contactInfo.groupId, id,
-                () => {
-                    this.itemDetailsService.clearItemsSource();
-                    (this.reuseService as CustomReuseStrategy).invalidate('leads');
-                    if (this.data.leadInfo.id == id) {
-                        if (this.leadDataGrid.instance.getDataSource().totalCount() == 1) {
-                            let params = (this.route.queryParams as BehaviorSubject<Params>).getValue();
-                            this.router.navigate([params.referrer || 'app/crm/leads'], {
-                                queryParams: _.mapObject(params,
-                                    (val, key) => key == 'referrer' ? undefined : val
-                                )
-                            });
-                        } else
-                            this.contactsService.updateLocation(this.data.contactInfo.id, undefined,
-                                undefined, undefined, undefined, 'lead-related-contacts');
-                    } else
-                        this.leadDataGrid.instance.refresh();
-                }, true
-            );
-        else
-            this.contactsService.deleteContact(
-                this.actionRecordData.Name,
-                this.actionRecordData.GroupId,
-                id, () => {
-                    (this.reuseService as CustomReuseStrategy).invalidate('clients');
-                    this.subContactDataGrid.instance.refresh();
-                    this.contactDataGrid.instance.refresh();
-                }
-            );
     }
 
     ngOnDestroy() {

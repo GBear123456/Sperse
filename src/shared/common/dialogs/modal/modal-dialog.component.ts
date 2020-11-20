@@ -46,6 +46,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     @Input() isTitleValid: boolean;
     @Input() buttons: IDialogButton[] = [];
     @Input() options: IDialogOption[];
+    @Input() titleLabel: string;
     @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
     @Output() titleChange: EventEmitter<string> = new EventEmitter<string>();
     @Output() onContextItemChanged: EventEmitter<any> = new EventEmitter<any>();

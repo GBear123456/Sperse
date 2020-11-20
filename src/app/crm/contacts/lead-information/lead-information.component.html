@@ -29,11 +29,14 @@
                                     </ng-container>
                                     <ng-container *ngSwitchDefault>
                                         <div *ngIf="getPropValue(item.name) as value"
-                                             class="item-value clipboard-holder"
-                                             [ngClass]="{'item-link': showApplicationAllowed && item.action}"
-                                             [hidden]="isEditAllowed && !item.readonly"
-                                             (click)="showApplicationAllowed && item.action && item.action()">
-                                            <span [title]="value" [ngClass]="{'wide': item.wide}">{{value}}</span>
+                                            class="item-value clipboard-holder"
+                                            [ngClass]="{'item-link': showApplicationAllowed && item.action}"
+                                            [hidden]="isEditAllowed && !item.readonly"
+                                            (click)="showApplicationAllowed && item.action && item.action()">
+                                            <a *ngIf="item?.name == 'clientIp'; else default" target="_blank" class="client-ip-link" [href]="urlHelper.getLookupIpUrl(value)">{{value}}</a>
+                                            <ng-template #default>
+                                                <span [title]="value" [ngClass]="{'wide': item.wide}">{{value}}</span>
+                                            </ng-template>
                                             <i class="save-to-clipboard" (click)="saveToClipboard($event, value)"></i>
                                         </div>
                                         <ng-container *ngIf="isEditAllowed && !item.readonly">
@@ -57,9 +60,13 @@
                         <div *ngFor="let field of getObjectKeys(application[group])" class="section-item">
                             <div class="item-edit-label app">{{startCase(field)}}:</div>
                             <div *ngIf="formatFieldValue(field, application[group][field]) as value"
-                                 class="item-value app"
-                                 [title]="value">
-                                {{value}}
+                                class="item-value app clipboard-holder"
+                                [title]="value">
+                                <a *ngIf="field == 'ipAddress'; else default" class="client-ip-link" target="_blank" [href]="urlHelper.getLookupIpUrl(value)">{{value}}</a>
+                                <ng-template #default>
+                                    {{value}}
+                                </ng-template>
+                                <i class="save-to-clipboard" (click)="saveToClipboard($event, value)"></i>
                             </div>
                         </div>
                     </div>

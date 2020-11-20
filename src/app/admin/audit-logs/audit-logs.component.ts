@@ -17,6 +17,7 @@ import { combineLatest } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { AuditLogDetailModalComponent } from '@app/admin/audit-logs/audit-log-detail/audit-log-detail-modal.component';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -38,6 +39,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 @Component({
     templateUrl: './audit-logs.component.html',
@@ -135,6 +137,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     operationLogsDataSource: DataSource = new DataSource({
         key: 'id',
         load: (loadOptions) => {
+            this.startLoading();
             return this.auditLogService.getAuditLogs(
                 this.searchValue,
                 this.filtersValues.date.startDate,
@@ -154,16 +157,19 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                 loadOptions.skip
             ).toPromise().then(
                 (response: AuditLogListDtoPagedResultDto) => {
+                    this.finishLoading();
                     return {
                         data: response.items,
                         totalCount: response.totalCount
                     };
-                }
+                }, () => this.finishLoading()
             );
         }
     });
     isDataLoaded = false;
     toolbarConfig: ToolbarGroupModel[];
+    formatting = AppConsts.formatting;
+    urlHelper = UrlHelper;
 
     constructor(
         injector: Injector,

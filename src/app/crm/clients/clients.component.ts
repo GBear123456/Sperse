@@ -567,7 +567,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         filter(Boolean), first()
                     ),
                     dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
-                    nameField: this.appService.isHostTenant ? 'name' : 'code'
+                    nameField: 'name'
                 })
         }
     });

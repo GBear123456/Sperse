@@ -14855,6 +14855,77 @@ export class DocumentServiceProxy {
 }
 
 @Injectable()
+export class DocumentTemplatesServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @folderId (optional) 
+     * @return Success
+     */
+    getUrl(folderId: number | null | undefined, fileName: string): Observable<GetFileUrlDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/DocumentTemplates/GetUrl?";
+        if (folderId !== undefined)
+            url_ += "folderId=" + encodeURIComponent("" + folderId) + "&"; 
+        if (fileName === undefined || fileName === null)
+            throw new Error("The parameter 'fileName' must be defined and cannot be null.");
+        else
+            url_ += "fileName=" + encodeURIComponent("" + fileName) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUrl(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUrl(<any>response_);
+                } catch (e) {
+                    return <Observable<GetFileUrlDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetFileUrlDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUrl(response: HttpResponseBase): Observable<GetFileUrlDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetFileUrlDto.fromJS(resultData200) : new GetFileUrlDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetFileUrlDto>(<any>null);
+    }
+}
+
+@Injectable()
 export class DocumentTypeServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -30649,6 +30720,58 @@ export class TenantHostServiceProxy {
             }));
         }
         return _observableOf<TenantAppHostOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getMemberPortalUrl(): Observable<GetMemberPortalUrlOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/GetMemberPortalUrl";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMemberPortalUrl(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMemberPortalUrl(<any>response_);
+                } catch (e) {
+                    return <Observable<GetMemberPortalUrlOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetMemberPortalUrlOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetMemberPortalUrl(response: HttpResponseBase): Observable<GetMemberPortalUrlOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetMemberPortalUrlOutput.fromJS(resultData200) : new GetMemberPortalUrlOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetMemberPortalUrlOutput>(<any>null);
     }
 
     /**
@@ -55627,6 +55750,46 @@ export interface IWopiRequestOutcoming {
     validityPeriodSeconds: number | undefined;
 }
 
+export class GetFileUrlDto implements IGetFileUrlDto {
+    url!: string | undefined;
+    validityPeriodSeconds!: number | undefined;
+
+    constructor(data?: IGetFileUrlDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.url = data["url"];
+            this.validityPeriodSeconds = data["validityPeriodSeconds"];
+        }
+    }
+
+    static fromJS(data: any): GetFileUrlDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetFileUrlDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["url"] = this.url;
+        data["validityPeriodSeconds"] = this.validityPeriodSeconds;
+        return data; 
+    }
+}
+
+export interface IGetFileUrlDto {
+    url: string | undefined;
+    validityPeriodSeconds: number | undefined;
+}
+
 export class DocumentTypeInfo implements IDocumentTypeInfo {
     id!: number | undefined;
     name!: string | undefined;
@@ -71639,6 +71802,7 @@ export interface ITenantCustomizationInfoDto {
 export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     tenancyName!: string | undefined;
     name!: string | undefined;
+    isWhiteLabel!: boolean | undefined;
     logoId!: string | undefined;
     logoFileType!: string | undefined;
     customCssId!: string | undefined;
@@ -71664,6 +71828,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         if (data) {
             this.tenancyName = data["tenancyName"];
             this.name = data["name"];
+            this.isWhiteLabel = data["isWhiteLabel"];
             this.logoId = data["logoId"];
             this.logoFileType = data["logoFileType"];
             this.customCssId = data["customCssId"];
@@ -71689,6 +71854,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data = typeof data === 'object' ? data : {};
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
+        data["isWhiteLabel"] = this.isWhiteLabel;
         data["logoId"] = this.logoId;
         data["logoFileType"] = this.logoFileType;
         data["customCssId"] = this.customCssId;
@@ -71707,6 +71873,7 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
 export interface ITenantLoginInfoDto {
     tenancyName: string | undefined;
     name: string | undefined;
+    isWhiteLabel: boolean | undefined;
     logoId: string | undefined;
     logoFileType: string | undefined;
     customCssId: string | undefined;
@@ -73287,8 +73454,45 @@ export interface ITenantAppHostOutput {
     appHostName: string | undefined;
 }
 
+export class GetMemberPortalUrlOutput implements IGetMemberPortalUrlOutput {
+    url!: string | undefined;
+
+    constructor(data?: IGetMemberPortalUrlOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.url = data["url"];
+        }
+    }
+
+    static fromJS(data: any): GetMemberPortalUrlOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetMemberPortalUrlOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["url"] = this.url;
+        return data; 
+    }
+}
+
+export interface IGetMemberPortalUrlOutput {
+    url: string | undefined;
+}
+
 export enum TenantHostType {
     PlatformApp = "PlatformApp", 
+    MemberPortal = "MemberPortal", 
 }
 
 export class CheckHostNameDnsMappingInput implements ICheckHostNameDnsMappingInput {

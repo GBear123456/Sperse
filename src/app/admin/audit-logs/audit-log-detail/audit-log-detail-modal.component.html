@@ -20,7 +20,9 @@
                                 {{ls.l("IpAddress")}}:
                             </label>
                             <div class="col-lg-9">
-                                <span>{{auditLog.clientIpAddress}}</span>
+                                <span>
+                                    <a target="_blank" [href]="urlHelper.getLookupIpUrl(auditLog.clientIpAddress)">{{auditLog.clientIpAddress}}</a>
+                                </span>
                             </div>
                         </div>
 

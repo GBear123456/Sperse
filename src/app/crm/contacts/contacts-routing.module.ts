@@ -20,6 +20,7 @@ import { InvoicesComponent } from './invoices/invoices.component';
 import { PersonalDetailsComponent } from './personal-details/personal-details.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { PropertyInformationComponent } from '@app/crm/contacts/property-information/property-information.component';
+import { ResellerActivityComponent } from './reseller-activity/reseller-activity.component';
 
 @NgModule({
     imports: [
@@ -43,6 +44,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
                     { path: 'documents', component: DocumentsComponent },
                     { path: 'application-status', component: ApplicationStatusComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },
+                    { path: 'reseller-activity', component: ResellerActivityComponent },
                     { path: 'orders', component: OrdersComponent },
                     { path: 'invoices', component: InvoicesComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
@@ -67,6 +69,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
                     { path: 'documents', component: DocumentsComponent },
                     { path: 'application-status', component: ApplicationStatusComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },
+                    { path: 'reseller-activity', component: ResellerActivityComponent },
                     { path: 'orders', component: OrdersComponent },
                     { path: 'invoices', component: InvoicesComponent },
                     { path: 'subscriptions', component: SubscriptionsComponent },
@@ -91,6 +94,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
                     { path: 'questionnaire', component: QuestionnaireComponent },
                     { path: 'documents', component: DocumentsComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },
+                    { path: 'reseller-activity', component: ResellerActivityComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent },
                     { path: 'orders', component: OrdersComponent },
@@ -115,6 +119,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
                     { path: 'documents', component: DocumentsComponent },
                     { path: 'application-status', component: ApplicationStatusComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },
+                    { path: 'reseller-activity', component: ResellerActivityComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent },
                     { path: 'orders', component: OrdersComponent },
@@ -138,6 +143,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
                     { path: 'questionnaire', component: QuestionnaireComponent },
                     { path: 'documents', component: DocumentsComponent },
                     { path: 'referral-history', component: ReferralHistoryComponent },
+                    { path: 'reseller-activity', component: ResellerActivityComponent },
                     { path: 'activity-logs', component: ActivityLogsComponent },
                     { path: 'notes', component: NotesComponent },
                     { path: 'orders', component: OrdersComponent },

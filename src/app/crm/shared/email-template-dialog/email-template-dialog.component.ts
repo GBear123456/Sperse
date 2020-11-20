@@ -472,9 +472,10 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.attachments.splice(index, 1);
             this.changeDetectorRef.markForCheck();
         }
-        if (attachment.id)
-            this.communicationProxy.deleteAttachment(attachment.id).subscribe();
-        else
+        if (attachment.id) {
+            if (attachment.hasOwnProperty('loader'))
+                this.communicationProxy.deleteAttachment(attachment.id).subscribe();
+        } else
             attachment.loader.unsubscribe();
     }
 
