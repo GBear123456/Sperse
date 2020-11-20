@@ -12,6 +12,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 @Component({
     selector: 'loginAttemptsModal',
@@ -28,6 +29,7 @@ export class LoginAttemptsModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     userLoginAttempts: UserLoginAttemptDto[];
     profileThumbnailId: string;
+    urlHelper = UrlHelper;
 
     constructor(
         private userLoginService: UserLoginServiceProxy,

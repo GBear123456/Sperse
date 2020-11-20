@@ -9,6 +9,10 @@ export class UrlHelper {
         'why-they-buy'
     ];
 
+    static getLookupIpUrl(ip: string): string {
+        return 'https://search.arin.net/rdap/?query=' + ip;
+    }
+
     static getQueryParameters(): any {
         return UrlHelper.getQueryParametersUsingParameters(document.location.search);
     }

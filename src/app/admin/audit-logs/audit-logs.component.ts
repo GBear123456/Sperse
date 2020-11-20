@@ -39,6 +39,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 @Component({
     templateUrl: './audit-logs.component.html',
@@ -168,6 +169,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
     isDataLoaded = false;
     toolbarConfig: ToolbarGroupModel[];
     formatting = AppConsts.formatting;
+    urlHelper = UrlHelper;
 
     constructor(
         injector: Injector,

@@ -11,6 +11,7 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RoundProgressModule } from 'angular-svg-round-progressbar';
 
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
@@ -270,7 +271,8 @@ import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete'
         ListsModule,
         OrgUnitsTreeModule,
         MatExpansionModule,
-        GooglePlaceModule
+        GooglePlaceModule,
+        MatTooltipModule
     ],
     entryComponents: [
         CreateInvoiceDialogComponent,

@@ -2,6 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ContactsService } from '../contacts.service';
 import { UserServiceProxy, UserLoginServiceProxy, UserLoginAttemptDto } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 @Component({
     selector: 'login-attempts',
@@ -11,6 +12,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class LoginAttemptsComponent implements OnInit, OnDestroy {
     userLoginAttempts: UserLoginAttemptDto[];
     private readonly ident = 'LoginAttempts';
+    urlHelper = UrlHelper;
 
     constructor(
         private userService: UserServiceProxy,
