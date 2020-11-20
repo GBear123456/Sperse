@@ -41,7 +41,8 @@
         <span [matTooltip]="'Cancellation Reason: ' + cellData.data.cancelationReason"
               [matTooltipDisabled]="!cellData.data.cancelationReason"
               matTooltipClass="mat-primary-tooltip"
-              matTooltipHideDelay="1500">
+              matTooltipShowDelay="200"
+              matTooltipHideDelay="0">
             {{ cellData.value }}
         </span>
     </div>
