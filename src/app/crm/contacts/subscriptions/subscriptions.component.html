@@ -38,16 +38,12 @@
         <span title="{{cellData.value | date: formatting.dateTime : userTimezone }}">{{cellData.value | date: formatting.date : userTimezone }}</span>
     </div>
     <div *dxTemplate="let cellData of 'statusCell'" class="clipboard-holder">
-        <ng-container *ngIf="cellData.data.cancelationReason; else justText">
-            <span [matTooltip]="'Cancellation Reason: ' + cellData.data.cancelationReason"
-                  matTooltipClass="mat-primary-tooltip"
-                  matTooltipHideDelay="1500">
-                {{ cellData.value }}
-            </span>
-        </ng-container>
-        <ng-template #justText>
-            <span>{{ cellData.value }}</span>
-        </ng-template>
+        <span [matTooltip]="'Cancellation Reason: ' + cellData.data.cancelationReason"
+              [matTooltipDisabled]="!cellData.data.cancelationReason"
+              matTooltipClass="mat-primary-tooltip"
+              matTooltipHideDelay="1500">
+            {{ cellData.value }}
+        </span>
     </div>
     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
         <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
