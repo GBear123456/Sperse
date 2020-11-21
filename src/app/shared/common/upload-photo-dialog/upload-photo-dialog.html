@@ -1,5 +1,5 @@
-<header>
-    <h2 mat-dialog-title>{{ ls.l('ChangeProfilePicture') }}</h2>
+<header *ngIf="title">
+    <h2 mat-dialog-title>{{ title }}</h2>
 </header>
 <mat-dialog-content>
     <mat-tab-group>

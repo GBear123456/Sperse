@@ -92,6 +92,8 @@ import { SourceContactListComponent } from '@shared/common/source-contact-list/s
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { StatesService } from '@root/store/states-store/states.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
+import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 
 @Component({
     templateUrl: 'create-entity-dialog.component.html',
@@ -857,15 +859,18 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     showUploadPhoto($event) {
+        const data: UploadPhotoData = {
+            source: this.photoOriginalData,
+            title: this.ls.l('AddLogo')
+        };
+        console.log('ContactGroup_' + this.data.customerType + '_singular');
         this.dialog.open(UploadPhotoDialogComponent, {
-            data: {
-                source: this.photoOriginalData
-            },
+            data: data,
             hasBackdrop: true
-        }).afterClosed().subscribe((result) => {
+        }).afterClosed().subscribe((result: UploadPhotoResult) => {
             if (result) {
                 this.photoOriginalData = result.origImage;
-                this.photoThumbnailData = result.thumImage;
+                this.photoThumbnailData = result.thumbImage;
                 this.photoSourceData = result.source;
                 this.changeDetectorRef.detectChanges();
             }

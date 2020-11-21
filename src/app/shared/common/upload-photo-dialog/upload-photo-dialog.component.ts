@@ -20,6 +20,8 @@ import { DownloadPictureInput, ProfileServiceProxy } from '@shared/service-proxi
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from '@abp/notify/notify.service';
+import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
+import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 
 @Component({
     selector: 'upload-photo-dialog',
@@ -40,6 +42,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
     ]);
     clearDisabled = true;
     private thumbData: string;
+    title: string = this.data.title;
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
@@ -48,7 +51,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
         private notifyService: NotifyService,
         public dialogRef: MatDialogRef<UploadPhotoDialogComponent>,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        @Inject(MAT_DIALOG_DATA) public data: UploadPhotoData
     ) {}
 
     ngAfterViewInit() {
@@ -136,17 +139,23 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
         if (this.data.maxSizeBytes && this.imageData.image) {
             const fileBytes = window.atob(StringHelper.getBase64(this.imageData.image)).length;
             if (fileBytes > this.data.maxSizeBytes) {
-                abp.message.error(this.ls.l('ResizedProfilePicture_Warn_SizeLimit', (this.data.maxSizeBytes / 1024).toFixed(2)));
+                abp.message.error(
+                    this.ls.l(
+                        'ResizedProfilePicture_Warn_SizeLimit',
+                        (this.data.maxSizeBytes / 1024).toFixed(2)
+                    )
+                );
                 return;
             }
         }
 
         this.imgResize().then(() => {
-            this.dialogRef.close({
+            const uploadPhotoResult: UploadPhotoResult = {
                 origImage: this.imageData.image,
-                thumImage: this.thumbData,
+                thumbImage: this.thumbData,
                 source: this.fileUrlFormControl.value
-            });
+            };
+            this.dialogRef.close(uploadPhotoResult);
         });
     }
 
@@ -178,11 +187,12 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
 
     clearPhoto() {
         if (!this.clearDisabled) {
-            this.dialogRef.close({
+            const uploadPhotoResult: UploadPhotoResult = {
                 clearPhoto: true,
                 origImage: null,
-                thumImage: null
-            });
+                thumbImage: null
+            };
+            this.dialogRef.close(uploadPhotoResult);
         }
     }
 

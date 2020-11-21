@@ -33,6 +33,8 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { CompanyDialogData } from '@app/crm/contacts/company-dialog/company-dialog-data.interface';
+import { Company } from '@app/crm/contacts/company-dialog/company.interface';
+import { CompanySize } from '@app/crm/contacts/company-dialog/company-size.interface';
 
 @Component({
     selector: 'company-dialog',
@@ -48,7 +50,7 @@ export class CompanyDialogComponent implements OnInit {
     states$: Observable<CountryStateDto[]>;
     countries$: Observable<CountryDto[]> = this.store$.pipe(select(CountriesStoreSelectors.getCountries));
     companyTypes$: Observable<any[]> = this.store$.pipe(select(OrganizationTypeSelectors.getOrganizationTypes));
-    companySizes: any = [
+    companySizes: CompanySize[] = [
         { id: 0, name: '1 to 9', from: 1, to: 9 },
         { id: 1, name: '10 to 19', from: 10, to: 19 },
         { id: 2, name: '20 to 49', from: 20, to: 49 },
@@ -61,7 +63,7 @@ export class CompanyDialogComponent implements OnInit {
         { id: 9, name: '5,000 to 9,999', from: 5000, to: 9999 },
         { id: 10, name: '10,000 or more', from: 10000, to: null }
     ];
-    company: any = {
+    company: Company = {
         id: null,
         fullName: null,
         shortName: null,
@@ -110,10 +112,18 @@ export class CompanyDialogComponent implements OnInit {
         const company: OrganizationContactInfoDto = this.data.company;
         this.manageAllowed = this.manageAllowed && company.isUpdatable;
         this.title = this.company.fullName = company.fullName;
-        this.company = { ...this.company, ...company.organization };
+        this.company = {
+            ...this.company,
+            ...company.organization
+        };
         this.company.id = company.id;
         if (this.company.sizeId === null) {
-            let size = _.find(this.companySizes, size => size.to === company.organization.sizeTo && size.from === company.organization.sizeFrom);
+            let size = _.find(
+                this.companySizes,
+                (size: CompanySize) => {
+                    return size.to === company.organization.sizeTo && size.from === company.organization.sizeFrom
+                }
+            );
             this.company.sizeId = size ? size.id : null;
         }
         this.company.primaryPhoto = company.primaryPhoto;
@@ -151,7 +161,7 @@ export class CompanyDialogComponent implements OnInit {
         }
 
         this.modalDialog.startLoading();
-        this.company.companyName = this.company.fullName = this.title;
+        this.company.fullName = this.title;
         let input = new UpdateOrganizationInfoInput(_.mapObject(this.company, val => {
             return val || null;
         }));
@@ -231,7 +241,11 @@ export class CompanyDialogComponent implements OnInit {
 
     showUploadPhotoDialog(e) {
         if (this.manageAllowed)
-            this.contactService.showUploadPhotoDialog(this.company, e).subscribe((photo: string) => {
+            this.contactService.showUploadPhotoDialog(
+                this.company.id,
+                this.company.primaryPhoto,
+                e
+            ).subscribe((photo: string) => {
                 this.company.primaryPhoto = photo;
                 this.changeDetectorRef.detectChanges();
             });

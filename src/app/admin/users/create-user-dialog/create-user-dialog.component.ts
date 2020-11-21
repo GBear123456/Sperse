@@ -38,6 +38,8 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 import { AppStoreService } from '@app/store/app-store.service';
+import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
+import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 
 @Component({
     templateUrl: 'create-user-dialog.component.html',
@@ -266,16 +268,18 @@ export class CreateUserDialogComponent implements OnInit {
     }
 
     showUploadPhoto($event) {
+        const uploadPhotoData: UploadPhotoData = {
+            source: this.photoOriginalData,
+            maxSizeBytes: AppConsts.maxImageSize,
+            title: this.ls.l('AddUserLogo')
+        };
         this.dialog.open(UploadPhotoDialogComponent, {
-            data: {
-                source: this.photoOriginalData,
-                maxSizeBytes: AppConsts.maxImageSize
-            },
+            data: uploadPhotoData,
             hasBackdrop: true
-        }).afterClosed().subscribe((result) => {
+        }).afterClosed().subscribe((result: UploadPhotoResult) => {
             if (result) {
                 this.photoOriginalData = result.origImage;
-                this.photoThumbnailData = result.thumImage;
+                this.photoThumbnailData = result.thumbImage;
                 this.photoSourceData = result.source;
                 this.changeDetectorRef.detectChanges();
             }
