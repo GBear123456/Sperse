@@ -5,7 +5,7 @@ import { ActivatedRoute } from '@angular/router';
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material/dialog';
-import { map, first, filter } from 'rxjs/operators';
+import { map, first, filter, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -13,7 +13,9 @@ import {
     InvoiceSettings,
     ContactServiceProxy,
     OrderSubscriptionServiceProxy,
+    UpdateOrderSubscriptionInput,
     OrderSubscriptionDto,
+    SubscriptionInput,
     ContactInfoDto,
     NameValueDto,
     CommonLookupServiceProxy,
@@ -33,6 +35,8 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { AppService } from '@app/app.service';
 
 @Component({
     selector: 'subscriptions',
@@ -59,13 +63,15 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
     constructor(
         private invoicesService: InvoicesService,
-        private contactService: ContactServiceProxy,
         private contactsService: ContactsService,
-        private orderSubscriptionService: OrderSubscriptionServiceProxy,
+        private contactService: ContactServiceProxy,
+        private orderSubscriptionProxy: OrderSubscriptionServiceProxy,
         private commonLookupService: CommonLookupServiceProxy,
         private impersonationService: ImpersonationService,
+        private loadingService: LoadingService,
         private dialog: MatDialog,
         private route: ActivatedRoute,
+        public appService: AppService,
         public permission: AppPermissionService,
         public ls: AppLocalizationService
     ) {
@@ -105,22 +111,25 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     }
 
     refreshData(forced = false) {
-        let subData = this.orderSubscriptionService['data'],
+        let subData = this.orderSubscriptionProxy['data'],
             contactId = this.data.contactInfo.id;
         if (!forced && subData && subData.contactId == contactId)
             this.setDataSource(subData.source);
-        else
-            this.orderSubscriptionService
-                .getSubscriptionHistory(contactId)
-                /** Filter draft subscriptions */
-                .pipe(map(subscriptions => subscriptions.filter(subscription => subscription.statusCode !== 'D')))
-                .subscribe(result => {
-                    this.orderSubscriptionService['data'] = {
+        else {
+            this.loadingService.startLoading();
+            this.orderSubscriptionProxy
+                .getSubscriptionHistory(contactId).pipe(
+                    /** Filter draft subscriptions */
+                    map(subscriptions => subscriptions.filter(subscription => subscription.statusCode !== 'D')),
+                    finalize(() => this.loadingService.finishLoading())
+                ).subscribe(result => {
+                    this.orderSubscriptionProxy['data'] = {
                         contactId: contactId,
                         source: result
                     };
                     this.setDataSource(result);
                 });
+        }
     }
 
     cancelSubscription(id: number, $event) {
@@ -133,7 +142,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             }
         }).afterClosed().subscribe(result => {
             if (result) {
-                this.orderSubscriptionService
+                this.orderSubscriptionProxy
                     .cancel(new CancelOrderSubscriptionInput({
                         subscriptionId: id,
                         cancelationReason: result.cancellationReason
@@ -209,6 +218,47 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             data: data
         });
         e.stopPropagation ? e.stopPropagation() : e.event.stopPropagation();
+    }
+
+    onDateHover(event) {
+        let target = event.target.children[0];
+        target.innerText = target.title;
+    }
+
+    onDateLeave(event) {
+        let target = event.target.children[0];
+        target.innerText = target.title.split(' ').shift();
+    }
+
+    onDateChanged(event, cell) {
+        console.log(event, cell);
+        let leadId = this.route.parent.snapshot.paramMap.get('leadId') ?
+            this.data.leadInfo.id :
+            null;
+
+        this.loadingService.startLoading();
+        this.orderSubscriptionProxy.update(new UpdateOrderSubscriptionInput({
+            contactId: this.data.contactInfo.id,
+            leadId: leadId,
+            orderNumber: undefined,
+            subscriptions: [new SubscriptionInput({
+                ...cell.data,
+                code: cell.data.serviceTypeId,
+                name: cell.data.serviceType,
+                level: cell.data.serviceId,
+                amount: cell.data.fee,
+                startDate: cell.column.dataField == 'startDate' ?
+                    DateHelper.removeTimezoneOffset(new Date(event.value), true, 'from') : cell.data.startDate,
+                endDate: cell.column.dataField == 'endDate' ?
+                    DateHelper.removeTimezoneOffset(new Date(event.value), true, 'to') : cell.data.endDate
+            })],
+            updateThirdParty: true
+        })).pipe(
+            finalize(() => this.loadingService.finishLoading())
+        ).subscribe(() => {
+            this.refreshData(true);
+            abp.notify.info(this.ls.l('SavedSuccessfully'));
+        });
     }
 
     ngOnDestroy() {

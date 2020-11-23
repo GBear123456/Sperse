@@ -48,5 +48,19 @@
 
     ::ng-deep #gridContainer {
         height: calc(~'100vh - 299px');
+        ::ng-deep dx-date-box {
+            background: transparent;
+            display: inline-block;
+            input {
+                width: 0px;                
+                border: none;
+            }
+            .dx-placeholder {
+                display: none;
+            }
+        }
+        .dx-datagrid-focus-overlay.dx-pointer-events-target {
+            display: none;
+        }
     }
 }
