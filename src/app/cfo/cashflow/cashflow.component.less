@@ -1138,16 +1138,19 @@
         }
     }
 
-    .main-wrapper.grid-is-empty {
-        height: calc(~'100vh - 210px');
-        ::ng-deep .dx-bottom-row > td{
-            padding-top: 0 !important;
-        }
-        ::ng-deep .cashflow .dx-pivotgrid .dx-pivotgrid-container table.dx-pivotgrid-border > tr:nth-child(3) .dx-area-column-cell tr td {
-            background: transparent;
-        }
-        app-no-data {
-            height: calc(~'100% - 78px');
+    .main-wrapper {
+        height: 100%;
+        &.grid-is-empty {
+            height: calc(~'100vh - 210px');
+            ::ng-deep .dx-bottom-row > td{
+                padding-top: 0 !important;
+            }
+            ::ng-deep .cashflow .dx-pivotgrid .dx-pivotgrid-container table.dx-pivotgrid-border > tr:nth-child(3) .dx-area-column-cell tr td {
+                background: transparent;
+            }
+            app-no-data {
+                height: calc(~'100% - 78px');
+            }
         }
     }
 
