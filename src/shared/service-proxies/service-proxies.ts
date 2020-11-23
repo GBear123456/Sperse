@@ -14753,6 +14753,58 @@ export class DocumentServiceProxy {
     }
 
     /**
+     * @body (optional) 
+     * @return Success
+     */
+    copyFile(body: CopyFileInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Document/CopyFile";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCopyFile(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCopyFile(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCopyFile(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @contactId (optional) 
      * @documentId (optional) 
      * @return Success
@@ -55587,6 +55639,46 @@ export interface IUpdateTypeInput {
     contactId: number;
     documentId: string;
     typeId: number | undefined;
+}
+
+export class CopyFileInput implements ICopyFileInput {
+    contactId!: number;
+    fileId!: string;
+
+    constructor(data?: ICopyFileInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.fileId = data["fileId"];
+        }
+    }
+
+    static fromJS(data: any): CopyFileInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CopyFileInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["fileId"] = this.fileId;
+        return data; 
+    }
+}
+
+export interface ICopyFileInput {
+    contactId: number;
+    fileId: string;
 }
 
 export class WopiRequestOutcoming implements IWopiRequestOutcoming {
