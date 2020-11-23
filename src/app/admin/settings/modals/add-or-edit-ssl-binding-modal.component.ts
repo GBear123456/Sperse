@@ -20,8 +20,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { AppConsts } from '@shared/AppConsts';
 import {
     TenantHostServiceProxy, AddSslBindingInput, TenantSslCertificateServiceProxy,
-    TenantSslCertificateInfo, TenantSslBindingInfo, UpdateSslBindingInput,
-    IAddSslBindingInput, CheckHostNameDnsMappingInput, TenantHostType
+    TenantSslCertificateInfo, UpdateSslBindingInput,
+    CheckHostNameDnsMappingInput, TenantHostType
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
