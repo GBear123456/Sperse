@@ -36,6 +36,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { SourceContact } from '@shared/common/source-contact-list/source-contact.interface';
 import { LayoutSection } from '@app/crm/contacts/lead-information/layout-section.interface';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { OrganizationUnitsDialogData } from '@shared/common/organization-units-tree/organization-units-dialog/organization-units-dialog-data.interface';
 
 @Component({
     selector: 'lead-information',
@@ -347,20 +348,23 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
         this.sourceComponent.toggle();
     }
 
-    toggleOrgUnitsDialog(open = true): void {
+    toggleOrgUnitsDialog(open: boolean = true): void {
         let dialog = this.dialog.getDialogById('lead-organization-units-dialog');
-        if (!dialog)
-            open && this.dialog.open(OrganizationUnitsDialogComponent, {
-                id: 'lead-organization-units-dialog',
-                panelClass: ['slider'],
-                hasBackdrop: false,
-                closeOnNavigation: true,
-                data: {
-                    title: this.ls.l('Owner'),
+        if (!dialog) {
+            if (open) {
+                const dialogData: OrganizationUnitsDialogData = {
+                    title: this.ls.l('Toolbar_ReferredBy') + ' ' + this.ls.l('ReferredByOrgUnit'),
                     selectionMode: 'single'
-                }
-            });
-        else if (!open)
+                };
+                this.dialog.open(OrganizationUnitsDialogComponent, {
+                    id: 'lead-organization-units-dialog',
+                    panelClass: ['slider'],
+                    hasBackdrop: false,
+                    closeOnNavigation: true,
+                    data: dialogData
+                });
+            }
+        } else if (!open)
             dialog.close();
     }
 

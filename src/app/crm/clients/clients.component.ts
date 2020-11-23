@@ -566,7 +566,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         filter(Boolean), first()
                     ),
                     dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
-                    nameField: this.appService.isHostTenant ? 'name' : 'code'
+                    nameField: 'name'
                 })
         }
     });
@@ -1121,8 +1121,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         name: 'archive',
                         disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
                         options: {
-                            text: this.l('Source'),
-                            hint: this.l('Source')
+                            text: this.l('Toolbar_ReferredBy'),
+                            hint: this.l('Toolbar_ReferredBy'),
+                            elementAttr: {
+                                class: 'referred-by'
+                            }
                         },
                         action: this.toggleSource.bind(this),
                         attr: {

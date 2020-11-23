@@ -9,4 +9,5 @@ export class IRecentClientsSelectItem {
     allRecordsLink: string;
     dataSource: (contactId: number, orgUnitIds: number[]) => Observable<GetRecentlyCreatedCustomersOutput[]>;
     linkParams?: Params;
+    visible?: boolean;
 }

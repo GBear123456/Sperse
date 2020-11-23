@@ -22,6 +22,8 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactGroup } from '@shared/AppEnums';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { AppPermissions } from '@shared/AppPermissions';
+import { AppPermissionService } from '@root/shared/common/auth/permission.service';
 
 @Component({
     selector: 'recent-clients',
@@ -40,6 +42,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             message: this.ls.l('CRMDashboard_LastNEntitiesRecords', this.recordsCount, this.ls.l('ContactGroup_Client').toLowerCase()),
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
+            visible: this.permissionService.isGranted(AppPermissions.CRMCustomers),
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
                 this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Client, contactId, orgUnitIds)
         },
@@ -48,6 +51,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             message: this.ls.l('CRMDashboard_LastNClientsRecords', [this.recordsCount]),
             dataLink: 'app/crm/contact',
             allRecordsLink: '/app/crm/clients',
+            visible: this.permissionService.isGranted(AppPermissions.CRMCustomers),
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
                 this.dashboardServiceProxy.getRecentlyCreatedCustomers(this.recordsCount, ContactGroup.Client, contactId, orgUnitIds)
         },
@@ -57,6 +61,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Partner' },
+            visible: this.permissionService.isGranted(AppPermissions.CRMPartners),
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedLeadsOutput[]> =>
                 this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Partner, contactId, orgUnitIds)
         },
@@ -66,6 +71,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'UserProfile' },
+            visible: this.permissionService.isGranted(AppPermissions.CRMEmployees),
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedLeadsOutput[]> =>
                 this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.UserProfile, contactId, orgUnitIds)
         },
@@ -75,6 +81,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Investor' },
+            visible: this.permissionService.isGranted(AppPermissions.CRMInvestors),
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedLeadsOutput[]> =>
                 this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Investor, contactId, orgUnitIds)
         },
@@ -84,6 +91,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Vendor' },
+            visible: this.permissionService.isGranted(AppPermissions.CRMVendors),
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedLeadsOutput[]> =>
                 this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Vendor, contactId, orgUnitIds)
         },
@@ -93,10 +101,12 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             dataLink: '',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Other' },
+            visible: this.permissionService.isGranted(AppPermissions.CRMOthers),
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedLeadsOutput[]> =>
                 this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Other, contactId, orgUnitIds)
         }
     ];
+    visibleItems: IRecentClientsSelectItem[] = this.selectItems.filter(item => item.visible);
     selectedItem: BehaviorSubject<IRecentClientsSelectItem> = new BehaviorSubject<IRecentClientsSelectItem>(this.selectItems[0]);
     selectedItem$: Observable<IRecentClientsSelectItem> = this.selectedItem.asObservable().pipe(distinctUntilChanged());
     userTimezone = DateHelper.getUserTimezone();
@@ -111,7 +121,8 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         private userManagementService: UserManagementService,
         private lifeCycleSubject: LifecycleSubjectsService,
         public ls: AppLocalizationService,
-        public httpInterceptor: AppHttpInterceptor
+        public httpInterceptor: AppHttpInterceptor,
+        private permissionService: AppPermissionService
     ) {}
 
     ngOnInit() {
@@ -132,15 +143,15 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             takeUntil(this.lifeCycleSubject.deactivate$)
         ).subscribe((groupId: ContactGroup) => {
             if (groupId == ContactGroup.Client)
-                this.selectedItem.next(this.selectItems[0]); 
+                this.selectedItem.next(this.selectItems[0]);
             else {
                 let selectedList = this.selectItems.filter(item => {
                     return item.linkParams && ContactGroup[item.linkParams.contactGroup] == groupId;
                 });
                 if (selectedList.length)
-                    this.selectedItem.next(selectedList[0]); 
+                    this.selectedItem.next(selectedList[0]);
                 else
-                    this.selectedItem.next(this.selectItems[0]); 
+                    this.selectedItem.next(this.selectItems[0]);
             }
         });
     }

@@ -6,10 +6,30 @@
         <a (click)="link && $event.stopPropagation()" [attr.href]="link" [attr.title]="displayValue || value || editPlaceholder" target="_blank" #editText>{{displayValue || value || editPlaceholder}}</a>
     </span>
     <div class="actions {{ buttonsPosition }}" [ngClass]="{ empty: !displayValue && !value && !editPlaceholder}">
-        <i *ngIf="isEditDialogEnabled" [ngClass]="{ hidden: isReadOnlyField }" class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog($event)"></i>
-        <i *ngIf="showInlineEditButton" [ngClass]="{ hidden: isReadOnlyField }" class="edit fa fa-pencil" aria-hidden="true" (click)="showInput(true)"></i>
-        <i *ngIf="isDeleteEnabled && value" [ngClass]="{ hidden: isReadOnlyField }" class="delete fa fa-times" aria-hidden="true" (click)="deleteItem($event)"></i>
-        <i *ngIf="isCopyEnabled && value" class="save-to-clipboard" aria-hidden="true" (click)="copyItem($event)"></i>
+        <i *ngIf="isEditDialogEnabled"
+           [ngClass]="{ hidden: isReadOnlyField }"
+           class="edit fa fa-pencil"
+           aria-hidden="true"
+           (click)="showDialog($event)">
+        </i>
+        <i *ngIf="showInlineEditButton"
+           [ngClass]="{ hidden: isReadOnlyField }"
+           class="edit fa fa-pencil"
+           aria-hidden="true"
+           (click)="showInput(true)">
+        </i>
+        <i *ngIf="isDeleteEnabled && value"
+           [ngClass]="{ hidden: isReadOnlyField }"
+           class="delete fa fa-times"
+           aria-hidden="true"
+           (click)="deleteItem($event)">
+        </i>
+        <i *ngIf="isCopyEnabled && value"
+           class="save-to-clipboard"
+           aria-hidden="true"
+           [title]="l('Copy')"
+           (click)="copyItem($event)">
+        </i>
     </div>
 </div>
 <div *ngIf="!isReadOnlyField && isEditModeEnabled" class="inplace-edit-edit-mode {{multiline ? 'multiline': ''}}">

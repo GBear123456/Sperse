@@ -25,7 +25,7 @@
                      (onItemClick)="onMenuItemClick($event)">
         </action-menu>
         <source-contact-list #sourceList
-            targetSelector=".dx-button[aria-label=Source]"
+            targetSelector=".dx-button.referred-by"
             [showOrgUnits]="true"
             [filterModel]="filterModelSource"
             [selectedLeads]="[]"

@@ -2,7 +2,7 @@
     <header>
         <h2 class="title">
             <dx-select-box
-                [items]="selectItems"
+                [items]="visibleItems"
                 [displayExpr]="'name'"
                 [value]="selectedItem.value"
                 (onSelectionChanged)="onSelectionChanged($event)">

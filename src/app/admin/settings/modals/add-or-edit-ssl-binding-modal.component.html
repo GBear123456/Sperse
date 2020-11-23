@@ -14,11 +14,18 @@
                     </div>
 
                     <div class="dx-field">
+                        <p *ngIf="model.tenantHostType == HostType_PlatformApp">
+                            {{ls.l('MapHostNameDNS')}}<br>
+                            <b>A</b> {{ls.l('record')}} <i>custom.mysite.com</i> {{ls.l('ShoudPointTo')}} <b>{{envHost.ip}}</b><br>
+                            <b>TXT</b> {{ls.l('record')}} <i>custom.mysite.com</i> {{ls.l('ShoudPointTo')}} <b>{{envHost.host}}</b><br>
+                            {{ls.l('CheckCorrectMapping')}} <a target="_blank" href="https://www.ultratools.com/tools/dnsLookupResult">{{ls.l('DNSLookup')}}</a>
+                        </p>
                         <dx-text-box #DomainName 
                                      [placeholder]="ls.l('HostName') + ' (custom.mysite.com)'"
                                      [maxLength]="256" 
                                      [readOnly]="editing"
-                                     [(value)]="model.domainName">
+                                     [(value)]="model.domainName"
+                                     (onInput)="onValueChanged($event)">
                                      <dx-validator>
                                          <dxi-validation-rule 
                                              type="required" 

@@ -14479,11 +14479,14 @@ export class DocumentServiceProxy {
     }
 
     /**
+     * @contactId (optional) 
      * @id (optional) 
      * @return Success
      */
-    getContent(id: string | null | undefined): Observable<string> {
+    getContent(contactId: number | null | undefined, id: string | null | undefined): Observable<string> {
         let url_ = this.baseUrl + "/api/services/CRM/Document/GetContent?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -14534,11 +14537,14 @@ export class DocumentServiceProxy {
     }
 
     /**
+     * @contactId (optional) 
      * @id (optional) 
      * @return Success
      */
-    getUrl(id: string | null | undefined): Observable<GetUrlOutput> {
+    getUrl(contactId: number | null | undefined, id: string | null | undefined): Observable<GetUrlOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Document/GetUrl?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -14641,11 +14647,14 @@ export class DocumentServiceProxy {
     }
 
     /**
+     * @contactId (optional) 
      * @id (optional) 
      * @return Success
      */
-    delete(id: string | null | undefined): Observable<void> {
+    delete(contactId: number | null | undefined, id: string | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Document/Delete?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -14744,11 +14753,66 @@ export class DocumentServiceProxy {
     }
 
     /**
+     * @body (optional) 
+     * @return Success
+     */
+    copyFile(body: CopyFileInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Document/CopyFile";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCopyFile(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCopyFile(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCopyFile(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @contactId (optional) 
      * @documentId (optional) 
      * @return Success
      */
-    getViewWopiRequestInfo(documentId: string | null | undefined): Observable<WopiRequestOutcoming> {
+    getViewWopiRequestInfo(contactId: number | null | undefined, documentId: string | null | undefined): Observable<WopiRequestOutcoming> {
         let url_ = this.baseUrl + "/api/services/CRM/Document/GetViewWopiRequestInfo?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (documentId !== undefined)
             url_ += "documentId=" + encodeURIComponent("" + documentId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -14799,11 +14863,14 @@ export class DocumentServiceProxy {
     }
 
     /**
+     * @contactId (optional) 
      * @documentId (optional) 
      * @return Success
      */
-    getEditWopiRequestInfo(documentId: string | null | undefined): Observable<WopiRequestOutcoming> {
+    getEditWopiRequestInfo(contactId: number | null | undefined, documentId: string | null | undefined): Observable<WopiRequestOutcoming> {
         let url_ = this.baseUrl + "/api/services/CRM/Document/GetEditWopiRequestInfo?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (documentId !== undefined)
             url_ += "documentId=" + encodeURIComponent("" + documentId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -30601,6 +30668,61 @@ export class TenantHostServiceProxy {
             }));
         }
         return _observableOf<TenantAppHostOutput>(<any>null);
+    }
+
+    /**
+     * @appUi (optional) 
+     * @return Success
+     */
+    getPlatformAppUrl(appUi: boolean | null | undefined): Observable<GetPlatformAppUrlOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantHost/GetPlatformAppUrl?";
+        if (appUi !== undefined)
+            url_ += "appUi=" + encodeURIComponent("" + appUi) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPlatformAppUrl(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPlatformAppUrl(<any>response_);
+                } catch (e) {
+                    return <Observable<GetPlatformAppUrlOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetPlatformAppUrlOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPlatformAppUrl(response: HttpResponseBase): Observable<GetPlatformAppUrlOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetPlatformAppUrlOutput.fromJS(resultData200) : new GetPlatformAppUrlOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetPlatformAppUrlOutput>(<any>null);
     }
 
     /**
@@ -55476,6 +55598,7 @@ export interface IUploadDocumentInput {
 }
 
 export class UpdateTypeInput implements IUpdateTypeInput {
+    contactId!: number;
     documentId!: string;
     typeId!: number | undefined;
 
@@ -55490,6 +55613,7 @@ export class UpdateTypeInput implements IUpdateTypeInput {
 
     init(data?: any) {
         if (data) {
+            this.contactId = data["contactId"];
             this.documentId = data["documentId"];
             this.typeId = data["typeId"];
         }
@@ -55504,6 +55628,7 @@ export class UpdateTypeInput implements IUpdateTypeInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
         data["documentId"] = this.documentId;
         data["typeId"] = this.typeId;
         return data; 
@@ -55511,8 +55636,49 @@ export class UpdateTypeInput implements IUpdateTypeInput {
 }
 
 export interface IUpdateTypeInput {
+    contactId: number;
     documentId: string;
     typeId: number | undefined;
+}
+
+export class CopyFileInput implements ICopyFileInput {
+    contactId!: number;
+    fileId!: string;
+
+    constructor(data?: ICopyFileInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.fileId = data["fileId"];
+        }
+    }
+
+    static fromJS(data: any): CopyFileInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CopyFileInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["fileId"] = this.fileId;
+        return data; 
+    }
+}
+
+export interface ICopyFileInput {
+    contactId: number;
+    fileId: string;
 }
 
 export class WopiRequestOutcoming implements IWopiRequestOutcoming {
@@ -73173,6 +73339,46 @@ export class TenantAppHostOutput implements ITenantAppHostOutput {
 
 export interface ITenantAppHostOutput {
     appHostName: string | undefined;
+}
+
+export class GetPlatformAppUrlOutput implements IGetPlatformAppUrlOutput {
+    url!: string | undefined;
+    isCustom!: boolean | undefined;
+
+    constructor(data?: IGetPlatformAppUrlOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.url = data["url"];
+            this.isCustom = data["isCustom"];
+        }
+    }
+
+    static fromJS(data: any): GetPlatformAppUrlOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetPlatformAppUrlOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["url"] = this.url;
+        data["isCustom"] = this.isCustom;
+        return data; 
+    }
+}
+
+export interface IGetPlatformAppUrlOutput {
+    url: string | undefined;
+    isCustom: boolean | undefined;
 }
 
 export class GetMemberPortalUrlOutput implements IGetMemberPortalUrlOutput {

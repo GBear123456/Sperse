@@ -63,9 +63,18 @@
                             class="fa fa-angle-down" (click)="showCompanyList($event)">
                         </i>
                         <div class="actions" [hidden]="!isOrgUpdatable || companyName.isEditModeEnabled">
-                            <i class="edit fa fa-pencil" (click)="showCompanyDialog($event)"></i>
-                            <i class="add fa fa-plus" (click)="addCompanyDialog($event)"></i>
-                            <i class="delete fa fa-times" (click)="removePersonOrgRelation($event)"></i>
+                            <i class="edit fa fa-pencil"
+                               [title]="ls.l('EditCompanyDetails')"
+                               (click)="showCompanyDialog($event)">
+                            </i>
+                            <i class="add fa fa-plus"
+                               [title]="ls.l('AddNewCompany')"
+                               (click)="addCompanyDialog($event)">
+                            </i>
+                            <i class="delete fa fa-times"
+                               [title]="ls.l('RemoveCompanyFromContact')"
+                               (click)="removePersonOrgRelation($event)">
+                            </i>
                         </div>
                     </h2>
                     <h3>
