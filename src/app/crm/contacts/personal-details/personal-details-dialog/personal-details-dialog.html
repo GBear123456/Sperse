@@ -39,7 +39,7 @@
                                               (valueChanged)="updateAffiliateRate($event)"
                                               (itemDeleted)="deleteItem(ls.l('AffiliateRate'))">
                                 </inplace-edit>
-                            </div>    
+                            </div>
                         </mat-expansion-panel>
                         <mat-expansion-panel class="source-info" [expanded]="true">
                             <mat-expansion-panel-header>
@@ -138,18 +138,21 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="field" *ngIf="lastModificationInfo?.userId">
+                            <div class="field" *ngIf="lastModificationInfo?.date">
                                 <label>{{ ls.l('LastUpdatedBy') }}:</label>
                                 <div>
                                     <div class="thumbnail">
-                                        <img [src]="getThumbnailSrc(lastModificationInfo.photoPublicId)"/>
+                                        <img [src]="getThumbnailSrc(lastModificationInfo.photoPublicId)" alt="Profile image"/>
                                     </div>
                                     <div class="field-info">
-                                        <a *ngIf="lastModificationInfo.userName as updatedByUserName" (click)="openContactDetails(lastModificationInfo?.contactId)">{{updatedByUserName}}
+                                        <a *ngIf="lastModificationInfo.userName as updatedByUserName; else system" (click)="openContactDetails(lastModificationInfo?.contactId)">{{updatedByUserName}}
                                             <i class="save-to-clipboard"
                                                (click)="saveToClipboard($event, updatedByUserName)">
                                             </i>
                                         </a>
+                                        <ng-template #system>
+                                            {{ ls.l('System') }}
+                                        </ng-template>
                                         <div *ngIf="lastModificationInfo.date as lastModificationTime" class="additional-info">
                                             <span>on {{lastModificationTime | date: formatting.dateTime : userTimezone}} </span>
                                             <span class="date-ago">({{ lastModificationTime | timeAgo}})</span>
