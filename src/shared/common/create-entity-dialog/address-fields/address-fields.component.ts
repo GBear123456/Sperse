@@ -11,7 +11,7 @@ import {
 /** Third party imports */
 import { Observable } from 'rxjs';
 import { Store, select } from '@ngrx/store';
-import { Address } from 'ngx-google-places-autocomplete/objects/address';
+import { Address as AutocompleteAddress} from 'ngx-google-places-autocomplete/objects/address';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -27,6 +27,7 @@ import {
     StatesStoreSelectors
 } from '@root/store';
 import { AddressChanged } from '@shared/common/create-entity-dialog/address-fields/address-changed.interface';
+import { Address } from '@shared/common/create-entity-dialog/models/address.model';
 
 @Component({
     selector: 'address-fields',
@@ -78,7 +79,7 @@ export class AddressFieldsComponent {
         );
     }
 
-    changeAddress(address: Address) {
+    changeAddress(address: AutocompleteAddress) {
         this.onAddressChanged.emit({
             address: address,
             addressInput: this.addressInput
