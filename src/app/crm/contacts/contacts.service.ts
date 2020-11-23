@@ -43,7 +43,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { MergeContactDialogComponent } from '@app/crm/contacts/merge-contact-dialog/merge-contact-dialog.component';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
-import { UploadPhoto } from '@app/shared/common/upload-photo-dialog/upload-photo.model';
+import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { CacheService } from 'ng2-cache-service';
@@ -58,6 +58,7 @@ import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-t
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 import { AddCompanyDialogData } from '@app/crm/contacts/add-company-dialog/add-company-dialog-data.interface';
+import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 
 @Injectable()
 export class ContactsService {
@@ -270,25 +271,29 @@ export class ContactsService {
         );
     }
 
-    showUploadPhotoDialog(company: any, event): Observable<any> {
+    showUploadPhotoDialog(companyId: number, companyPhoto: string, event): Observable<any> {
         event.stopPropagation();
+        const uploadPhotoData: UploadPhotoData = {
+            source: companyPhoto ? 'data:image/jpeg;base64,' + companyPhoto : null,
+            title: this.ls.l('ChangeCompanyLogo')
+        };
         return this.dialog.open(UploadPhotoDialogComponent, {
-            data: { ...company, ...this.getCompanyPhoto(company) },
+            data: uploadPhotoData,
             hasBackdrop: true
         }).afterClosed().pipe(
             filter(Boolean),
-            switchMap((result: UploadPhoto) => {
-                let action$: Observable<any>;
+            switchMap((result: UploadPhotoResult) => {
+                let action$: Observable<string>;
                 if (result.clearPhoto) {
-                    action$ = this.contactPhotoServiceProxy.clearContactPhoto(company.id).pipe(
+                    action$ = this.contactPhotoServiceProxy.clearContactPhoto(companyId).pipe(
                         mapTo(null)
                     );
                 } else {
                     let base64OrigImage = StringHelper.getBase64(result.origImage);
-                    let base64ThumbImage = StringHelper.getBase64(result.thumImage);
+                    let base64ThumbImage = StringHelper.getBase64(result.thumbImage);
                     action$ = this.contactPhotoServiceProxy.createContactPhoto(
                         CreateContactPhotoInput.fromJS({
-                            contactId: company.id,
+                            contactId: companyId,
                             original: base64OrigImage,
                             thumbnail: base64ThumbImage,
                             source: result.source
@@ -300,10 +305,6 @@ export class ContactsService {
                 return action$;
             })
         );
-    }
-
-    private getCompanyPhoto(company): { source?: string } {
-        return company.primaryPhoto ? { source: 'data:image/jpeg;base64,' + company.primaryPhoto } : {};
     }
 
     updateLocation(contactId?, leadId?, companyId?, userId?, queryParams?, section?) {

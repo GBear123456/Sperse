@@ -14,23 +14,23 @@ export class DocumentsService {
         private cacheService: CacheService
     ) {}
 
-    downloadDocument(documentId: string) {
+    downloadDocument(contactId: number, documentId: string) {
         if (this.documentsUrls[documentId])
             window.open(this.documentsUrls[documentId], '_blank');
         else {
-            this.getDocumentUrlInfoObservable(documentId).subscribe((urlInfo) => {
+            this.getDocumentUrlInfoObservable(contactId, documentId).subscribe((urlInfo) => {
                 window.open(urlInfo.url, '_blank');
             });
         }
     }
 
-    getDocumentUrlInfoObservable(documentId: string): Observable<GetUrlOutput> {
+    getDocumentUrlInfoObservable(contactId: number, documentId: string): Observable<GetUrlOutput> {
         if (this.cacheService.exists(documentId)) {
             let urlInfo = this.cacheService.get(documentId) as GetUrlOutput;
             return of(urlInfo);
         }
 
-        return this.documentServiceProxy.getUrl(documentId).pipe(
+        return this.documentServiceProxy.getUrl(contactId, documentId).pipe(
             flatMap((urlInfo) => {
                 this.storeUrlToCache(documentId, urlInfo);
                 this.documentsUrls[documentId] = urlInfo.url;

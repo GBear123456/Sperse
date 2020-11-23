@@ -55,6 +55,8 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
+import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
+import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 
 @Component({
     selector: 'details-header',
@@ -199,7 +201,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         });
     }
 
-    private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): { source?: string } {
+    private getPhotoSrc(data: ContactInfoDto, isCompany?: boolean): Pick<UploadPhotoData, 'source'> {
         let photoBase64;
         if (isCompany && data['organizationContactInfo'].primaryPhoto) {
             photoBase64 = data['organizationContactInfo'].primaryPhoto;
@@ -376,13 +378,16 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         }
 
         this.dialog.closeAll();
-        let data = { ...this.data, ...this.getPhotoSrc(this.data, isCompany) };
+        let data: UploadPhotoData = {
+            ...this.getPhotoSrc(this.data, isCompany),
+            title: this.ls.l('ChangeLogo')
+        };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: data,
             hasBackdrop: true
         }).afterClosed()
-            .pipe(filter(result => result))
-            .subscribe(result => {
+            .pipe(filter(Boolean))
+            .subscribe((result: UploadPhotoResult) => {
                 let dataField = (isCompany ? 'primaryOrganization' : 'person') + 'ContactInfo';
                 if (result.clearPhoto) {
                     this.contactPhotoServiceProxy.clearContactPhoto(this.data[dataField].id)
@@ -391,15 +396,14 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                         });
                 } else {
                     let base64OrigImage = StringHelper.getBase64(result.origImage);
-                    let base64ThumbImage = StringHelper.getBase64(result.thumImage);
-
+                    let base64ThumbImage = StringHelper.getBase64(result.thumbImage);
                     this.contactPhotoServiceProxy.createContactPhoto(
                         CreateContactPhotoInput.fromJS({
                             contactId: this.data[dataField].id,
                             original: base64OrigImage,
                             thumbnail: base64ThumbImage,
                             source: result.source
-                        })).subscribe((result) => {
+                        })).subscribe((result: string) => {
                             this.handlePhotoChange(dataField, base64OrigImage, result);
                         });
                 }
@@ -556,11 +560,13 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     addCompanyLogo(event) {
         if (this.isOrgUpdatable) {
+            const organizationContactInfo: OrganizationContactInfoDto = this.data['organizationContactInfo'];
             this.contactsService.showUploadPhotoDialog(
-                this.data['organizationContactInfo'],
+                organizationContactInfo.id,
+                organizationContactInfo.primaryPhoto,
                 event
             ).subscribe((logo: string) => {
-                this.data['organizationContactInfo'].primaryPhoto = logo;
+                organizationContactInfo.primaryPhoto = logo;
             });
         }
     }

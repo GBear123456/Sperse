@@ -39,6 +39,8 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { Router } from '@angular/router';
 import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
+import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 
 @Injectable()
 export class UserManagementService {
@@ -249,15 +251,17 @@ export class UserManagementService {
     }
 
     changeProfilePicture(e): void {
+        const uploadPhotoData: UploadPhotoData = {
+            source: this.profileService.getProfilePictureUrl(this.appSession.user.profilePictureId),
+            maxSizeBytes: AppConsts.maxImageSize,
+            title: this.ls.l('ChangeProfilePicture')
+        };
         this.dialog.open(UploadPhotoDialogComponent, {
-            data: {
-                source: this.profileService.getProfilePictureUrl(this.appSession.user.profilePictureId),
-                maxSizeBytes: AppConsts.maxImageSize
-            },
+            data: uploadPhotoData,
             hasBackdrop: true
         }).afterClosed()
             .pipe(filter(result => result))
-            .subscribe((result) => {
+            .subscribe((result: UploadPhotoResult) => {
                 if (result.clearPhoto) {
                     this.profileServiceProxy.clearProfilePicture()
                         .subscribe(() => {
@@ -265,7 +269,7 @@ export class UserManagementService {
                         });
                 } else {
                     const base64OrigImage = StringHelper.getBase64(result.origImage),
-                        base64ThumbImage = StringHelper.getBase64(result.thumImage);
+                        base64ThumbImage = StringHelper.getBase64(result.thumbImage);
                     this.profileServiceProxy.updateProfilePicture(UpdateProfilePictureInput.fromJS({
                         originalImage: base64OrigImage,
                         thumbnail: base64ThumbImage,

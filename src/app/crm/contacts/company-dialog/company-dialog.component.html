@@ -56,7 +56,7 @@
                                      [valueChangeEvent]="'focusout'"
                                      [(value)]="company.annualRevenue">
                         </dx-number-box>
-                        <span [class]="company.annualRevenue && 'clear-contact' || 'hidden'" (click)="company.annualRevenue = ''"><i class="minus-icon"></i></span>
+                        <span [class]="company.annualRevenue && 'clear-contact' || 'hidden'" (click)="company.annualRevenue = null"><i class="minus-icon"></i></span>
                     </div>
 
                     <div class="field country">
@@ -108,7 +108,7 @@
                                      [valueChangeEvent]="'focusout'"
                                      [(value)]="company.businessSicCode">
                         </dx-number-box>
-                        <span [class]="company.businessSicCode && 'clear-contact' || 'hidden'" (click)="company.businessSicCode = ''"><i class="minus-icon"></i></span>
+                        <span [class]="company.businessSicCode && 'clear-contact' || 'hidden'" (click)="company.businessSicCode = null"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field affiliateCode">
                         <label for="affiliateCode">{{ls.l('Company_affiliateCode')}}</label>

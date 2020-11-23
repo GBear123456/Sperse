@@ -109,6 +109,8 @@ import { LeadFields } from '@app/crm/leads/lead-fields.enum';
 import { PipelinesStoreSelectors } from '@app/crm/store';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { LeadDto } from '@app/crm/leads/lead-dto.interface';
+import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
+import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 
 @Component({
     templateUrl: 'create-entity-dialog.component.html',
@@ -944,15 +946,18 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     showUploadPhoto($event) {
+        const data: UploadPhotoData = {
+            source: this.photoOriginalData,
+            title: this.ls.l('AddLogo')
+        };
+        console.log('ContactGroup_' + this.data.customerType + '_singular');
         this.dialog.open(UploadPhotoDialogComponent, {
-            data: {
-                source: this.photoOriginalData
-            },
+            data: data,
             hasBackdrop: true
-        }).afterClosed().subscribe((result) => {
+        }).afterClosed().subscribe((result: UploadPhotoResult) => {
             if (result) {
                 this.photoOriginalData = result.origImage;
-                this.photoThumbnailData = result.thumImage;
+                this.photoThumbnailData = result.thumbImage;
                 this.photoSourceData = result.source;
                 this.changeDetectorRef.detectChanges();
             }
