@@ -164,11 +164,11 @@
             </dx-button>
         </div>
 
-        <dxi-item location="before" template="discardTemplate"></dxi-item>
+        <dxi-item location="after" template="discardTemplate"></dxi-item>
         <div *dxTemplate="let data of 'discardTemplate'">
             <dx-button [icon]="'./assets/common/icons/delete-icon.svg'"
-                       [text]="ls.l('Discard')"
-                       [ngClass]="'discard-button'"
+                       [text]=""
+                       class="discard-button"
                        (onClick)="resetFullDialog(false)">
             </dx-button>
         </div>

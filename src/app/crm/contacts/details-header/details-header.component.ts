@@ -380,7 +380,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         this.dialog.closeAll();
         let data: UploadPhotoData = {
             ...this.getPhotoSrc(this.data, isCompany),
-            title: this.ls.l('ChangeLogo')
+            title: this.ls.l('ChangeContactPhoto')
         };
         this.dialog.open(UploadPhotoDialogComponent, {
             data: data,
