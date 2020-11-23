@@ -1114,8 +1114,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         name: 'archive',
                         disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
                         options: {
-                            text: this.l('Source'),
-                            hint: this.l('Source')
+                            text: this.l('Toolbar_ReferredBy'),
+                            hint: this.l('Toolbar_ReferredBy'),
+                            elementAttr: {
+                                class: 'referred-by'
+                            }
                         },
                         action: this.toggleSource.bind(this),
                         attr: {

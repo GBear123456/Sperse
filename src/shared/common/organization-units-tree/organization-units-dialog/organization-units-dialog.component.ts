@@ -3,6 +3,7 @@ import { Component, OnInit, AfterViewInit, Inject, ElementRef } from '@angular/c
 
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { OrganizationUnitsDialogData } from '@shared/common/organization-units-tree/organization-units-dialog/organization-units-dialog-data.interface';
 
 @Component({
     templateUrl: 'organization-units-dialog.html',
@@ -14,7 +15,7 @@ export class OrganizationUnitsDialogComponent implements OnInit, AfterViewInit {
     constructor(
         private elementRef: ElementRef,
         public dialogRef: MatDialogRef<OrganizationUnitsDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        @Inject(MAT_DIALOG_DATA) public data: OrganizationUnitsDialogData
     ) {
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({

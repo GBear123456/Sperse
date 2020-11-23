@@ -3,7 +3,7 @@
     listHeight="calc(100% - 75px)"
     accessKey="sourceContactList"
     [targetSelector]="targetSelector"
-    [title]="showOrgUnits ? '' : ls.l('SourceContact')"
+    [title]="showOrgUnits ? '' : ls.l('ReferredByPerson')"
     [showSelectionControls]="checkSelectionAllowed()"
     [hideButtons]="!checkSelectionAllowed()"
     [selectedKeys]="selectedKeys ? selectedKeys : [selectedKey]"
@@ -22,10 +22,17 @@
     (onApply)="onApply.emit($event)"
     [list]="contacts">
         <div custom-title [hidden]="!showOrgUnits">
-            <span [class]="showContacts ? 'selected' : ''" (click)="toggleContacts()">{{ls.l('SourceContact')}}</span>
-            <span [class]="showContacts ? '' : 'selected'" (click)="toggleContacts()">{{ls.l('Owner')}}</span>
-            <span class="filter-apply" [hidden]="showContacts || !selectedOrgUnits?.length || !hasBulkUpdatePermission" (click)="applyOrganizationUnits()">{{ls.l('Apply')}}</span>
-            <span class="filter-apply" [hidden]="showContacts || !filterModelOrgUnit?.items?.element?.value?.length" (click)="onOwnerFilter()">{{ls.l('ClearFilter')}}</span>
+            <span [class]="showContacts ? 'selected' : ''" (click)="toggleContacts()">{{ls.l('ReferredByPerson')}}</span>
+            <span [class]="showContacts ? '' : 'selected'" (click)="toggleContacts()">{{ls.l('ReferredByOrgUnit')}}</span>
+            <span class="filter-apply"
+                  [hidden]="showContacts || !selectedOrgUnits?.length || !hasBulkUpdatePermission"
+                  (click)="applyOrganizationUnits()">{{ls.l('Apply')}}
+            </span>
+            <span class="filter-apply"
+                  [hidden]="showContacts || !filterModelOrgUnit?.items?.element?.value?.length"
+                  (click)="onOwnerFilter()">
+                {{ls.l('ClearFilter')}}
+            </span>
         </div>
         <div custom-content>
             <organization-units-tree
