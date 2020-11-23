@@ -17,7 +17,8 @@ import {
     API_BASE_URL,
     LocalizationServiceProxy,
     PackageServiceProxy,
-    SessionServiceProxy
+    SessionServiceProxy,
+    TenantHostServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
@@ -59,6 +60,7 @@ export function initialize(widgetsService: WidgetsService, injector: Injector) {
         AppLocalizationService,
         AppHttpConfiguration,
         AppSessionService,
+        TenantHostServiceProxy,
         AbpMultiTenancyService,
         LocalizationResolver,
         PackageServiceProxy,
