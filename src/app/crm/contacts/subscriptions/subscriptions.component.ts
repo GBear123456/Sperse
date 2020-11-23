@@ -231,7 +231,6 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     }
 
     onDateChanged(event, cell) {
-        console.log(event, cell);
         let leadId = this.route.parent.snapshot.paramMap.get('leadId') ?
             this.data.leadInfo.id :
             null;
