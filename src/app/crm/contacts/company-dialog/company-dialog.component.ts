@@ -83,7 +83,8 @@ export class CompanyDialogComponent implements OnInit {
         notes: null,
         primaryPhoto: null,
         affiliateCode: null,
-        rootOrganizationUnitId: null
+        rootOrganizationUnitId: null,
+        departmentCode: null
     };
     manageAllowed = this.permissionService.checkCGPermission(this.data.contactInfo.groupId);
     dunsRegex = AppConsts.regexPatterns.duns;

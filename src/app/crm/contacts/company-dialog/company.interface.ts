@@ -19,4 +19,5 @@ export interface Company {
     primaryPhoto: string;
     affiliateCode: string;
     rootOrganizationUnitId: number;
+    departmentCode: string;
 }
