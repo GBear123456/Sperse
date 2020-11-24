@@ -32,7 +32,10 @@ import {
     LeadServiceProxy,
     EmailTemplateType,
     UpdateContactStatusInput,
-    UpdateUserOptionsDto
+    UpdateUserOptionsDto,
+    DocumentServiceProxy,
+    CopyTemplateInput,
+    FileInfo
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -98,6 +101,7 @@ export class ContactsService {
         private contactProxy: ContactServiceProxy,
         private leadService: LeadServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
+        private documentProxy: DocumentServiceProxy,
         private communicationProxy: ContactCommunicationServiceProxy,
         private permission: AppPermissionService,
         private userService: UserServiceProxy,
@@ -568,10 +572,27 @@ export class ContactsService {
         });
     }
 
-    showUploadDocumentsDialog(contactId: number): Observable<any> {
-        return this.showTemplateDocumentsDialog(
+    showUploadDocumentsDialog(contactId: number) {
+        this.showTemplateDocumentsDialog(
             contactId, () => this.invalidate('documents')
-        ).afterClosed();
+        ).afterClosed().subscribe(files => {
+            if (files && files.length) {
+                abp.ui.setBusy();
+                this.documentProxy.copyTemplate(new CopyTemplateInput({
+                    contactId: contactId,
+                    files: files.map(item => {
+                        return new FileInfo({
+                            id: item.key,
+                            name: item.name
+                        });
+                    })
+                })).pipe(
+                    finalize(() => abp.ui.clearBusy())
+                ).subscribe(() => {
+                    this.invalidate('documents');
+                });
+            }
+        });
     }
 
     deleteContact(customerName, contactGroup, entityId, callback?, isLead = false, userId?) {

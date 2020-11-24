@@ -172,11 +172,12 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
             });
             let fileReader: FileReader = new FileReader();
             fileReader.onloadend = (loadEvent: any) => {
-                this.uploadFile({
-                    name: file.name,
-                    size: StringHelper.getSize(file.size, loadEvent.target.result),
-                    fileBase64: StringHelper.getBase64(loadEvent.target.result)
-                }, index);
+                if (loadEvent.target.result != null)
+                    this.uploadFile({
+                        name: file.name,
+                        size: StringHelper.getSize(file.size, loadEvent.target.result),
+                        fileBase64: StringHelper.getBase64(loadEvent.target.result)
+                    }, index);
             };
             fileReader.readAsDataURL(file);
         });

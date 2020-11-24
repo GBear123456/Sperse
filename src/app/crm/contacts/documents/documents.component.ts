@@ -34,7 +34,7 @@ import { PapaParseResult } from 'ngx-papaparse/lib/interfaces/papa-parse-result'
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactServiceProxy, ContactInfoDto, DocumentServiceProxy, DocumentInfo, DocumentTypeServiceProxy,
-    DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming, CopyTemplateInput, FileInfo } from '@shared/service-proxies/service-proxies';
+    DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { PrinterService } from '@shared/common/printer/printer.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
@@ -340,27 +340,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     openDocumentAddDialog() {
-        this.clientService.showUploadDocumentsDialog(
-            this.data.contactInfo.id
-        ).subscribe(files => {
-            if (files && files.length) {
-                this.startLoading();
-                this.documentProxy.copyTemplate(new CopyTemplateInput({
-                    contactId: this.data.contactInfo.id,
-                    files: files.map(item => {
-                        return new FileInfo({
-                            id: item.key,
-                            name: item.name
-                        });
-                    })
-                })).pipe(
-                    finalize(() => this.finishLoading())
-                ).subscribe(() => {
-                    this.documentProxy['data'] = undefined;
-                    this.loadDocuments();
-                });
-            }
-        });
+        this.clientService.showUploadDocumentsDialog(this.data.contactInfo.id);
     }
 
     onToolbarPreparing($event) {
