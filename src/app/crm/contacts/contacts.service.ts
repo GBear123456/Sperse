@@ -32,7 +32,6 @@ import {
     LeadServiceProxy,
     EmailTemplateType,
     UpdateContactStatusInput,
-
     UpdateUserOptionsDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -567,14 +566,10 @@ export class ContactsService {
         });
     }
 
-    showUploadDocumentsDialog(contactId: number) {
-        this.showTemplateDocumentsDialog(
+    showUploadDocumentsDialog(contactId: number): Observable<any> {
+        return this.showTemplateDocumentsDialog(
             contactId, () => this.invalidate('documents')
-        ).afterClosed().subscribe(files => {
-            if (files && files.length) {
-                //!! files from templates should be saved here
-            }
-        });
+        ).afterClosed();
     }
 
     deleteContact(customerName, contactGroup, entityId, callback?, isLead = false, userId?) {

@@ -62,7 +62,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         },
         {
             id: 1,
-            visible: this.data.contactId,
+            visible: this.data.showDocuments && this.data.contactId,
             text: this.ls.l('Documents'),
             icon: 'inactivefolder',
         },
@@ -132,7 +132,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         if (selected.length)
             this.dialogRef.close(selected);
         else
-            this.notify.error(this.ls.l('File_Empty_Error'));        
+            this.notify.error(this.ls.l('File_Empty_Error'));
     }
 
     onLayoutToogle() {
