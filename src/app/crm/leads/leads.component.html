@@ -13,8 +13,10 @@
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="pipelineTypes$ | async"
                         [totalCount]="totalCount"
+                        [allowEdit]="true"
                         [value]="selectedPipelineId$ | async"
-                        (onValueChanged)="onSelectedPipelineChanged($event)">
+                        (onValueChanged)="onSelectedPipelineChanged($event)"
+                        (onEdit)="editPipeline($event)">
         </types-dropdown>
         <import-progress-bar></import-progress-bar>
     </app-headline>

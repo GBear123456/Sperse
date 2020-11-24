@@ -102,7 +102,6 @@ export class ContactsService {
         private communicationProxy: ContactCommunicationServiceProxy,
         private permission: AppPermissionService,
         private userService: UserServiceProxy,
-        private dialogService: DialogService,
         private notifyService: NotifyService,
         private ls: AppLocalizationService,
         private router: Router,
@@ -260,7 +259,7 @@ export class ContactsService {
         return this.dialog.open(AddCompanyDialogComponent, {
             data: dialogData,
             hasBackdrop: false,
-            position: this.dialogService.calculateDialogPosition(
+            position: DialogService.calculateDialogPosition(
                 event, event.target, shiftX, shiftY
             )
         }).afterClosed().pipe(

@@ -206,7 +206,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private permission: AppPermissionService,
         private contactsService: ContactsService,
         private statesService: StatesService,
-        private dialogService: DialogService,
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -696,7 +695,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     openContactListDialog(event) {
         this.dialog.open(CustomerListDialogComponent, {
             minWidth: 350,
-            position: this.dialogService.calculateDialogPosition(event, event.target)
+            position: DialogService.calculateDialogPosition(event, event.target)
         }).afterClosed().subscribe((customer: EntityContactInfo) => {
             if (customer) {
                 this.selectContact(customer);

@@ -4,14 +4,30 @@
                valueExpr="value"
                [items]="items"
                fieldTemplate="selectTemplate"
+               itemTemplate="itemTemplate"
                [value]="value"
-               (onValueChanged)="valueChanged($event)">
+               (onValueChanged)="valueChanged($event)"
+               (onItemClick)="itemClick($event)"
+               (onOpened)="onOpened($event)">
     <div *dxTemplate="let data of 'selectTemplate'">
         <div class="select-header">
             <span>{{data.text}}</span>
             <span *ngIf="totalCount !== undefined" class="total-count">({{ totalCount | number }})</span>
             <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
         </div>
+    </div>
+    <div *dxTemplate="let data of 'itemTemplate'">
+        <div *ngIf="allowEdit; else default">
+            <div class="types-dropdown-item">
+                <span>{{ data.text }}</span>
+                <i class="edit fa fa-pencil"
+                   (click)="openEditDialog($event, data.value, data.text)">
+                </i>
+            </div>
+        </div>
+        <ng-template #default>
+            {{ data.text }}
+        </ng-template>
     </div>
 </dx-select-box>
 <ng-template #text>

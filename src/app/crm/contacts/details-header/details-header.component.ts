@@ -147,7 +147,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private nameParserService: NameParserService,
         private appService: AppService,
-        private dialogService: DialogService,
         private cacheService: CacheService,
         private lifeCycleService: LifecycleSubjectsService,
         private cacheHelper: CacheHelper,
@@ -421,7 +420,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         this.dialog.closeAll();
         this.dialog.open(PersonDialogComponent, {
             data: this.data,
-            position: this.dialogService.calculateDialogPosition(
+            position: DialogService.calculateDialogPosition(
                 event, event.target.closest('div'), 200, -12)
         });
         event.stopPropagation();
@@ -576,7 +575,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         this.dialog.open(RelationCompaniesDialogComponent, {
             data: this.data,
             hasBackdrop: false,
-            position: this.dialogService.calculateDialogPosition(event, event.target)
+            position: DialogService.calculateDialogPosition(event, event.target)
         }).afterClosed().subscribe(result => {
             if (result == 'addContact')
                 this.addCompanyDialog(event);

@@ -94,7 +94,6 @@ export class AddressesComponent implements OnInit, OnDestroy {
         private organizationContactService: OrganizationContactServiceProxy,
         private clipboardService: ClipboardService,
         private notifyService: NotifyService,
-        private dialogService: DialogService,
         private store$: Store<RootStore.State>,
         private statesService: StatesService,
         private permissionService: AppPermissionService,
@@ -145,7 +144,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
         let shiftY = this.calculateShiftY(event);
         let dialogHeight = 550;
         let parent = event.target && event.target.closest('.address-wrapper') || document.body;
-        return this.dialogService.calculateDialogPosition(event, parent, 150, shiftY, dialogHeight);
+        return DialogService.calculateDialogPosition(event, parent, 150, shiftY, dialogHeight);
     }
 
     calculateShiftY(event) {

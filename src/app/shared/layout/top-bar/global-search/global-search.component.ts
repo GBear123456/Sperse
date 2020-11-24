@@ -17,7 +17,6 @@ import { finalize, first, map, startWith, switchMap, take, tap } from 'rxjs/oper
 
 /** Application imports */
 import { ODataService } from '@shared/common/odata/odata.service';
-import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { GlobalSearchGroup } from '@app/shared/layout/top-bar/global-search/global-search-group.interface';
 import { LeadFields } from '@app/crm/leads/lead-fields.enum';
 import { OrderFields } from '@app/crm/orders/order-fields.enum';
@@ -78,7 +77,6 @@ export class GlobalSearchComponent implements OnInit {
     constructor(
         private http: HttpClient,
         private oDataService: ODataService,
-        private dialogService: DialogService,
         private dialog: MatDialog,
         private route: ActivatedRoute,
         private router: Router,

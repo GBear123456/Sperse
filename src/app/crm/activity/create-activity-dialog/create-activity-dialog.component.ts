@@ -43,8 +43,7 @@ import { ActivityDto as InternalActivityDto } from '@app/crm/activity/activity-d
     providers: [
         ActivityServiceProxy,
         CacheHelper,
-        ContactServiceProxy,
-        DialogService
+        ContactServiceProxy
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -106,7 +105,6 @@ export class CreateActivityDialogComponent implements OnInit {
 
     constructor(
         private cacheService: CacheService,
-        private dialogService: DialogService,
         private cacheHelper: CacheHelper,
         private notifyService: NotifyService,
         private messageService: MessageService,
