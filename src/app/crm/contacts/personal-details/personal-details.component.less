@@ -31,9 +31,13 @@
 
             &.bool {
                 width: 49%;
-                display: inline-block;
+                display: inline-flex;
                 white-space: nowrap;
-
+                align-items: center;
+                .item-edit-label {
+                    min-width: 0;
+                    margin-right: 41px;
+                }
                 .item-value {
                     width: auto;
                 }
@@ -98,7 +102,7 @@
 
             .item-value {
                 width: 260px;
-                height: 36px;
+                height: 35px;
                 display: inline-block;
                 &.multiline {
                     height: auto!important;
@@ -116,6 +120,7 @@
                 font-size: 14px;
                 font-weight: normal;
                 line-height: 35px;
+                height: 35px;
                 letter-spacing: 0.2px;
                 color: #677380;
             }
@@ -123,7 +128,7 @@
             ::ng-deep inplace-edit {
                 .dx-widget {
                     input, textarea {
-                        border-bottom: 0px!important;
+                        border-bottom: 0!important;
                     }
                 }
                 span:not(.placeholder) a {
@@ -165,6 +170,7 @@
                 font-style: normal;
                 letter-spacing: 0.3px;
                 color: #424c56;
+                height: 35px;
             }
 
             ::ng-deep dx-date-box {

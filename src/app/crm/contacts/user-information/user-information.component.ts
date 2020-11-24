@@ -47,6 +47,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppStoreService } from '@app/store/app-store.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { OrganizationUnitsDialogData } from '@shared/common/organization-units-tree/organization-units-dialog/organization-units-dialog-data.interface';
 
 @Component({
     selector: 'user-information',
@@ -489,21 +490,24 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
         event.stopPropagation();
     }
 
-    toggleOrgUnitsDialog(open = true): void {
+    toggleOrgUnitsDialog(open: boolean = true): void {
         const dialog = this.dialog.getDialogById('user-organization-units-dialog');
-        if (!dialog)
-            open && this.dialog.open(OrganizationUnitsDialogComponent, {
-                id: 'user-organization-units-dialog',
-                panelClass: ['slider'],
-                disableClose: false,
-                hasBackdrop: false,
-                closeOnNavigation: true,
-                data: {
+        if (!dialog) {
+            if (open) {
+                const dialogData: OrganizationUnitsDialogData = {
                     title: this.ls.l('OrganizationUnits'),
                     selectionMode: 'multiple'
-                }
-            });
-        else if (!open) 
+                };
+                this.dialog.open(OrganizationUnitsDialogComponent, {
+                    id: 'user-organization-units-dialog',
+                    panelClass: ['slider'],
+                    disableClose: false,
+                    hasBackdrop: false,
+                    closeOnNavigation: true,
+                    data: dialogData
+                });
+            }
+        } else if (!open)
             dialog.close();
     }
 

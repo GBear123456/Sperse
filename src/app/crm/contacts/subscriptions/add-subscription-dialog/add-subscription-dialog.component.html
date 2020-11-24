@@ -48,7 +48,6 @@
             <div class="field">
                 <label for="endDate">{{ls.l('StartDate') }}</label>
                 <dx-date-box type="date"
-                             [min]="subscription.startDate || today"
                              [max]="subscription.maxStartDate"
                              [(value)]="subscription.startDate"
                              (onValueChanged)="onStartDateChanged(subscription)">

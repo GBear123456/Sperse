@@ -32,7 +32,7 @@
                                             class="item-value clipboard-holder"
                                             [ngClass]="{'item-link': showApplicationAllowed && item.action}"
                                             [hidden]="isEditAllowed && !item.readonly"
-                                            (click)="showApplicationAllowed && item.action && item.action()">
+                                            (click)="showApplicationAllowed && item.action ? item.action() : undefined">
                                             <a *ngIf="item?.name == 'clientIp'; else default" target="_blank" class="client-ip-link" [href]="urlHelper.getLookupIpUrl(value)">{{value}}</a>
                                             <ng-template #default>
                                                 <span [title]="value" [ngClass]="{'wide': item.wide}">{{value}}</span>

@@ -1410,8 +1410,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         name: 'archive',
                         disabled: this.manageDisabled,
                         options: {
-                            text: this.l('Source'),
-                            hint: this.l('Source')
+                            text: this.l('Toolbar_ReferredBy'),
+                            hint: this.l('Toolbar_ReferredBy'),
+                            elementAttr: {
+                                class: 'referred-by'
+                            }
                         },
                         action: this.toggleSource.bind(this),
                         attr: {
