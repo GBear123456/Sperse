@@ -1291,7 +1291,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         action: this.toggleUserAssignment.bind(this),
                         disabled: !this.permission.checkCGPermission(this.contactGroupId.value, 'ManageAssignments'),
                         attr: {
-                            'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
+                            'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected,
+                            class: 'assign-to'
                         }
                     },
                     {
@@ -1299,15 +1300,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         disabled: this.manageDisabled,
                         options: {
                             text: this.l('Toolbar_ReferredBy'),
-                            hint: this.l('Toolbar_ReferredBy'),
-                            elementAttr: {
-                                class: 'referred-by'
-                            }
+                            hint: this.l('Toolbar_ReferredBy')
                         },
                         action: this.toggleSource.bind(this),
                         attr: {
                             'filter-selected': !!this.filterModelSource.items.element['contact']
-                                || !!this.filterModelOrgUnit.items.element.value.length
+                                || !!this.filterModelOrgUnit.items.element.value.length,
+                            class: 'referred-by'
                         }
                     },
                     {

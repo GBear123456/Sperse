@@ -1107,7 +1107,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         action: this.toggleUserAssignment.bind(this),
                         disabled: !this.permission.checkCGPermission(this.partnerContactGroup, 'ManageAssignments'),
                         attr: {
-                            'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected
+                            'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected,
+                            class: 'assign-to'
                         }
                     },
                     {
@@ -1115,15 +1116,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
                         options: {
                             text: this.l('Toolbar_ReferredBy'),
-                            hint: this.l('Toolbar_ReferredBy'),
-                            elementAttr: {
-                                class: 'referred-by'
-                            }
+                            hint: this.l('Toolbar_ReferredBy')
                         },
                         action: this.toggleSource.bind(this),
                         attr: {
                             'filter-selected': !!this.filterModelSource.items.element['contact']
-                                || !!this.filterModelOrgUnit.items.element.value.length
+                                || !!this.filterModelOrgUnit.items.element.value.length,
+                            class: 'referred-by'
                         }
                     },
                     {

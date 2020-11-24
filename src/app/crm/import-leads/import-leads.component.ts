@@ -961,7 +961,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                         action: () => this.userAssignmentComponent.toggle(),
                         disabled: !this.permission.checkCGPermission(this.contactGroupId, 'ManageAssignments'),
                         attr: {
-                            'filter-selected': this.isUserSelected
+                            'filter-selected': this.isUserSelected,
+                            class: 'assign-to'
                         }
                     },
                     {
