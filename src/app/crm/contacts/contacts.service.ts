@@ -32,8 +32,10 @@ import {
     LeadServiceProxy,
     EmailTemplateType,
     UpdateContactStatusInput,
-
-    UpdateUserOptionsDto
+    UpdateUserOptionsDto,
+    DocumentServiceProxy,
+    CopyTemplateInput,
+    FileInfo
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -98,6 +100,7 @@ export class ContactsService {
         private contactProxy: ContactServiceProxy,
         private leadService: LeadServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
+        private documentProxy: DocumentServiceProxy,
         private communicationProxy: ContactCommunicationServiceProxy,
         private permission: AppPermissionService,
         private userService: UserServiceProxy,
@@ -436,8 +439,14 @@ export class ContactsService {
         return dialogComponent.onSave.pipe(
             switchMap((res: any) => {
                 dialogComponent.startLoading();
-                if (res.attachments)
-                    res.attachments = res.attachments.map(item => item.id);
+                if (res.attachments) {
+                    res.attachments = res.attachments.map(item => {
+                        return new FileInfo({
+                            id: item.id,
+                            name: item.name
+                        });
+                    });
+                }
                 return this.sendEmail(res).pipe(
                     finalize(() => dialogComponent.finishLoading())
                 );
@@ -572,7 +581,20 @@ export class ContactsService {
             contactId, () => this.invalidate('documents')
         ).afterClosed().subscribe(files => {
             if (files && files.length) {
-                //!! files from templates should be saved here
+                abp.ui.setBusy();
+                this.documentProxy.copyTemplate(new CopyTemplateInput({
+                    contactId: contactId,
+                    files: files.map(item => {
+                        return new FileInfo({
+                            id: item.key,
+                            name: item.name
+                        });
+                    })
+                })).pipe(
+                    finalize(() => abp.ui.clearBusy())
+                ).subscribe(() => {
+                    this.invalidate('documents');
+                });
             }
         });
     }
