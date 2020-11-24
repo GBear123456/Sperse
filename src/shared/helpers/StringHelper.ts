@@ -7,7 +7,7 @@ export class StringHelper {
     }
 
     static getSize(originalSize: number, data: string): number {
-        return data.indexOf(StringHelper.prefixes[0]) >= 0 ? originalSize - 3 : originalSize;
+        return data && data.indexOf(StringHelper.prefixes[0]) >= 0 ? originalSize - 3 : originalSize;
     }
 
     static convertToBytes(str: string): any[] {
