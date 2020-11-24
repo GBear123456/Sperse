@@ -35,8 +35,8 @@
                                   [dataSource]="apiKeys">
                         <dxi-column dataField="name" [caption]="l('ApiKey_Name')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="key" [caption]="l('ApiKey_Key')" cellTemplate="keyTemplate" [width]="400"></dxi-column>
-                        <dxi-column dataField="expirationDate" [caption]="l('ApiKey_ExpirationDate')" dataType="date" [width]="150" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="creationTime" [caption]="l('CreationTime')" dataType="date" [width]="150" cssClass="clipboard-holder"></dxi-column>
+                        <dxi-column dataField="expirationDate" [caption]="l('ApiKey_ExpirationDate')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
+                        <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="userName" [caption]="l('UserName')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [width]="100" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" [visible]="canManageApiKeys" cellTemplate="editDeleteTemplate"></dxi-column>
                         <div *dxTemplate="let data of 'editDeleteTemplate'">
