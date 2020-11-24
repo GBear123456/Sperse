@@ -33,14 +33,13 @@ import { PapaParseResult } from 'ngx-papaparse/lib/interfaces/papa-parse-result'
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ContactServiceProxy, ContactInfoDto, DocumentServiceProxy,
-DocumentInfo, DocumentTypeServiceProxy, DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
+import { ContactServiceProxy, ContactInfoDto, DocumentServiceProxy, DocumentInfo, DocumentTypeServiceProxy,
+    DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming, CopyTemplateInput, FileInfo } from '@shared/service-proxies/service-proxies';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { PrinterService } from '@shared/common/printer/printer.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { DocumentType } from './document-type.enum';
 import { ContactsService } from '../contacts.service';
-import { UploadDocumentsDialogComponent } from './upload-documents-dialog/upload-documents-dialog.component';
 import { NotSupportedTypeDialogComponent } from '@app/crm/contacts/documents/not-supported-type-dialog/not-supported-type-dialog.component';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { DocumentViewerType } from '@app/crm/contacts/documents/document-viewer-type.enum';
@@ -101,7 +100,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     constructor(injector: Injector,
         private dialog: MatDialog,
         private fileSizePipe: FileSizePipe,
-        private documentService: DocumentServiceProxy,
+        private documentProxy: DocumentServiceProxy,
         private documentTypeService: DocumentTypeServiceProxy,
         private contactService: ContactServiceProxy,
         private clientService: ContactsService,
@@ -116,7 +115,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         clientService.invalidateSubscribe(
             (area: string) => {
                 if (area === 'documents') {
-                    this.documentService['data'] = undefined;
+                    this.documentProxy['data'] = undefined;
                     this.loadDocuments();
                 }
             },
@@ -171,7 +170,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             return of(requestInfo);
         }
 
-        return this.documentService.getViewWopiRequestInfo(this.data.contactInfo.id, this.currentDocumentInfo.id).pipe(
+        return this.documentProxy.getViewWopiRequestInfo(this.data.contactInfo.id, this.currentDocumentInfo.id).pipe(
             flatMap((response) => {
                 this.storeWopiRequestInfoToCache(wopiDocumentDataCacheKey, response);
                 return of(response);
@@ -317,11 +316,11 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     loadDocuments(callback = null) {
-        let documentData = this.documentService['data'], groupId = this.data.contactInfo.id;
+        let documentData = this.documentProxy['data'], groupId = this.data.contactInfo.id;
         const dataSource$: Observable<DocumentInfo[]> = !callback && documentData && documentData.groupId == groupId
                             ? of(documentData.source)
-                            : this.documentService.getAll(groupId).pipe(tap((documents: DocumentInfo[]) => {
-                                this.documentService['data'] = {
+                            : this.documentProxy.getAll(groupId).pipe(tap((documents: DocumentInfo[]) => {
+                                this.documentProxy['data'] = {
                                     groupId: groupId,
                                     source: documents
                                 };
@@ -341,7 +340,27 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     openDocumentAddDialog() {
-        this.clientService.showUploadDocumentsDialog(this.data.contactInfo.id);
+        this.clientService.showUploadDocumentsDialog(
+            this.data.contactInfo.id
+        ).subscribe(files => {
+            if (files && files.length) {
+                this.startLoading();
+                this.documentProxy.copyTemplate(new CopyTemplateInput({
+                    contactId: this.data.contactInfo.id,
+                    files: files.map(item => {
+                        return new FileInfo({
+                            id: item.key,
+                            name: item.name
+                        });
+                    })
+                })).pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe(() => {
+                    this.documentProxy['data'] = undefined;
+                    this.loadDocuments();
+                });
+            }
+        });
     }
 
     onToolbarPreparing($event) {
@@ -565,7 +584,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             editDisabled: true
         });
         super.startLoading(true);
-        this.documentService.getEditWopiRequestInfo(this.data.contactInfo.id, this.currentDocumentInfo.id).pipe(finalize(() => {
+        this.documentProxy.getEditWopiRequestInfo(this.data.contactInfo.id, this.currentDocumentInfo.id).pipe(finalize(() => {
             super.finishLoading(true);
         })).subscribe((response) => {
             this.showOfficeOnline(response);
@@ -610,7 +629,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     super.startLoading(true);
                     this.showViewerType = undefined;
                     this.openDocumentMode = false;
-                    this.documentService.delete(this.data.contactInfo.id, this.currentDocumentInfo.id)
+                    this.documentProxy.delete(this.data.contactInfo.id, this.currentDocumentInfo.id)
                         .pipe(finalize(() => super.finishLoading(true)))
                         .subscribe(() => {
                             this.loadDocuments(() => {
@@ -658,7 +677,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     onDocumentTypeSelected(documentTypeId, data) {
         setTimeout(() => {
-            this.documentService.updateType(UpdateTypeInput.fromJS({
+            this.documentProxy.updateType(UpdateTypeInput.fromJS({
                 documentId: data.id,
                 typeId: documentTypeId
             })).subscribe(() => {
