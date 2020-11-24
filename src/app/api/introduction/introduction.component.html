@@ -1,7 +1,10 @@
 <div [@routerTransition]>
     <app-headline [names]="[ l('Interactive API Documentation') ]"
                   iconSrc="assets/common/icons/api-icon.svg"
-                  [showToggleLeftMenuButton]="true">
+                  [showReloadButton]="ui.showReload"
+                  [showToggleLeftMenuButton]="true"
+                  (onReload)="loadApiKeys()">
+        <button class="btn btn-layout gen-button" (click)="addApiKey()">{{ l('API_Intro_GenerateKey') }}</button>
     </app-headline>
     <div class="content">
         <api-left-menu></api-left-menu>
@@ -28,7 +31,7 @@
                 </div>
             </dx-tooltip>
             <div class="api-into portlet light no-padding margin-bottom-0">
-                <api-welcome (onAddApiKey)="addApiKey()" [small]="apiKeys"></api-welcome>
+                <api-welcome [small]="apiKeys"></api-welcome>
                 <div *ngIf="apiKeys">
                     <dx-data-grid id="gridContainer"
                                   keyExpr="id"

@@ -11,6 +11,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ApiKeyServiceProxy, ApiKeyInfo, GenerateApiKeyInput } from '@shared/service-proxies/service-proxies';
 import { EditKeyDialog } from '@app/api/introduction/add-key-dialog/add-key-dialog.component';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './introduction.component.html',
@@ -23,6 +24,7 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
     public apiKeys: ApiKeyInfo[];
     private elementForBlocking: Element;
     scrollHeight: number = window.innerHeight - 149;
+    canManageApiKeys = this.permission.isGranted(AppPermissions.APIManageKeys);
 
     constructor(
         injector: Injector,
