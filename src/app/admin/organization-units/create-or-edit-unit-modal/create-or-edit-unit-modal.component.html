@@ -11,7 +11,7 @@
                         <span *ngIf="organizationUnit.id">{{ls.l("Edit")}}: {{organizationUnit.displayName}}</span>
                         <span *ngIf="!organizationUnit.id">{{ls.l("NewOrganizationUnit")}}</span>
                     </h5>
-                    <button type="button" class="close" (click)="close()" [attr.aria-label]="l('Close')">
+                    <button type="button" class="close" (click)="close()" [attr.aria-label]="ls.l('Close')">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>

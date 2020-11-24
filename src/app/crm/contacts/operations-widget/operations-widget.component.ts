@@ -350,6 +350,9 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                     items: [
                         {
                             name: 'assign',
+                            attr: {
+                                class: 'assign-to'
+                            },
                             action: this.toggleUserAssignment.bind(this),
                             disabled: !this.permission.checkCGPermission(this.customerType, 'ManageAssignments')
                         },
