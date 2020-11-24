@@ -123,7 +123,6 @@ import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload
         CacheHelper,
         ContactServiceProxy,
         ContactPhotoServiceProxy,
-        DialogService,
         GooglePlaceService,
         ToolbarService
     ],
@@ -315,7 +314,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         private contactAddressService: ContactAddressServiceProxy,
         private nameParser: NameParserService,
         private pipelineService: PipelineService,
-        private dialogService: DialogService,
         private orgServiceProxy: OrganizationContactServiceProxy,
         private notifyService: NotifyService,
         private messageService: MessageService,
@@ -586,7 +584,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     getDialogPosition(event, shiftX) {
-        return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
+        return DialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
     toggleStages() {
