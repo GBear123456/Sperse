@@ -14756,8 +14756,8 @@ export class DocumentServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    copyFile(body: CopyFileInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Document/CopyFile";
+    copyTemplate(body: CopyTemplateInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Document/CopyTemplate";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -14772,11 +14772,11 @@ export class DocumentServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCopyFile(response_);
+            return this.processCopyTemplate(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCopyFile(<any>response_);
+                    return this.processCopyTemplate(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -14785,7 +14785,7 @@ export class DocumentServiceProxy {
         }));
     }
 
-    protected processCopyFile(response: HttpResponseBase): Observable<void> {
+    protected processCopyTemplate(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -55828,11 +55828,51 @@ export interface IUpdateTypeInput {
     typeId: number | undefined;
 }
 
-export class CopyFileInput implements ICopyFileInput {
-    contactId!: number;
-    fileId!: string;
+export class FileInfo implements IFileInfo {
+    id!: string | undefined;
+    name!: string | undefined;
 
-    constructor(data?: ICopyFileInput) {
+    constructor(data?: IFileInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): FileInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new FileInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IFileInfo {
+    id: string | undefined;
+    name: string | undefined;
+}
+
+export class CopyTemplateInput implements ICopyTemplateInput {
+    contactId!: number;
+    files!: FileInfo[] | undefined;
+
+    constructor(data?: ICopyTemplateInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -55844,13 +55884,17 @@ export class CopyFileInput implements ICopyFileInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            this.fileId = data["fileId"];
+            if (data["files"] && data["files"].constructor === Array) {
+                this.files = [];
+                for (let item of data["files"])
+                    this.files.push(FileInfo.fromJS(item));
+            }
         }
     }
 
-    static fromJS(data: any): CopyFileInput {
+    static fromJS(data: any): CopyTemplateInput {
         data = typeof data === 'object' ? data : {};
-        let result = new CopyFileInput();
+        let result = new CopyTemplateInput();
         result.init(data);
         return result;
     }
@@ -55858,14 +55902,18 @@ export class CopyFileInput implements ICopyFileInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        data["fileId"] = this.fileId;
+        if (this.files && this.files.constructor === Array) {
+            data["files"] = [];
+            for (let item of this.files)
+                data["files"].push(item.toJSON());
+        }
         return data; 
     }
 }
 
-export interface ICopyFileInput {
+export interface ICopyTemplateInput {
     contactId: number;
-    fileId: string;
+    files: FileInfo[] | undefined;
 }
 
 export class WopiRequestOutcoming implements IWopiRequestOutcoming {
