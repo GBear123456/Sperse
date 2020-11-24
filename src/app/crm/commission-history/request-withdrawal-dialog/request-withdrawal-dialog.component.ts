@@ -53,7 +53,7 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
     currency$: Observable<string> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => settings && settings.currency)
     );
-    today: Date = new Date();
+    today: Date = DateHelper.addTimezoneOffset(new Date(), true);
     date: Date = this.today;
 
     constructor(
@@ -79,7 +79,7 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
                             contactId: this.selectedContact.Id,
                             amount: this.withdrawalAmount,
                             date: DateHelper.isSameDateWithoutTime(this.date, this.today) ?
-                                this.date : DateHelper.removeTimezoneOffset(this.date, false, 'from')
+                                this.date : DateHelper.removeTimezoneOffset(this.date, true, 'from')
                         })).pipe(finalize(
                             () => this.loadingService.finishLoading(this.elementRef.nativeElement)
                         )).subscribe(() => {

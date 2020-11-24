@@ -27,7 +27,7 @@ export class LedgerCompleteDialogComponent extends ConfirmDialogComponent {
         };
     });
     paymentSystem = PaymentSystem.PayQuicker;
-    today: Date = new Date();
+    today: Date = DateHelper.addTimezoneOffset(new Date(), true);
     payDate: Date = this.today;
 
     constructor(
@@ -51,7 +51,7 @@ export class LedgerCompleteDialogComponent extends ConfirmDialogComponent {
                             withdrawalIds: this.data.entities.map(item => item.Id),
                             paymentSystem: PaymentSystem[this.paymentSystem],
                             payDate: DateHelper.isSameDateWithoutTime(this.payDate, this.today) ?
-                                this.payDate : DateHelper.removeTimezoneOffset(this.payDate, false, 'to')
+                                this.payDate : DateHelper.removeTimezoneOffset(this.payDate, true, 'to')
                         })).pipe(
                             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
                         ).subscribe(() => {
