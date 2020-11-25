@@ -232,11 +232,9 @@ export class CreateActivityDialogComponent implements OnInit {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
                         disabled: !this.hasManagePermission,
-                        options: {
-                            accessKey: 'UserAssign'
-                        },
                         attr: {
-                            'filter-selected': this.hasManagePermission && this.isUserSelected
+                            'filter-selected': this.hasManagePermission && this.isUserSelected,
+                            class: 'assign-to'
                         }
                     },
                     {
