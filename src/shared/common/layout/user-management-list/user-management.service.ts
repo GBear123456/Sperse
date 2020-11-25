@@ -41,6 +41,7 @@ import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
+import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
 
 @Injectable()
 export class UserManagementService {
@@ -106,6 +107,16 @@ export class UserManagementService {
             id: 'UserProfileMySettingsLink',
             iconClass: 'flaticon-cogwheel',
             onClick: (e) => this.changeMySettings(e)
+        },
+        {
+            name: this.ls.l('TenantSettings'),
+            id: 'UserProfileTenantSettings',
+            iconClass: 'flaticon-cogwheel',
+            visible: this.permissionChecker.isGranted(AppPermissions.AdministrationHostSettings)
+                     || this.permissionChecker.isGranted(AppPermissions.AdministrationTenantHosts),
+            onClick: () => {
+                this.openProfileTenantSettingsDialog();
+            }
         },
         {
             name: this.ls.l('Help'),
@@ -221,6 +232,15 @@ export class UserManagementService {
         private router: Router,
         private profileService: ProfileService
     ) {}
+
+    openProfileTenantSettingsDialog() {
+        this.dialog.open(TenantSettingsWizardComponent, {
+            width: '960px',
+            height: '700px',
+            id: 'tenant-settings',
+            panelClass: ['tenant-settings']
+        });
+    }
 
     backToMyAccount(): void {
         this.impersonationService.backToImpersonator();
