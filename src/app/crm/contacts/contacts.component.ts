@@ -114,7 +114,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     constructor(
         injector: Injector,
         private dialog: MatDialog,
-        private dialogService: DialogService,
         private userService: UserServiceProxy,
         private contactService: ContactServiceProxy,
         private appSessionService: AppSessionService,
@@ -664,7 +663,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     getDialogPosition(event, shiftX, shiftY) {
-        return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, shiftY);
+        return DialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, shiftY);
     }
 
     close(force: boolean = false) {

@@ -54,6 +54,7 @@ import {
 import {
     OrganizationUnitsStoreActions,
     OrganizationUnitsStoreSelectors,
+    PipelinesStoreActions,
     PipelinesStoreSelectors
 } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -74,6 +75,8 @@ import {
     LeadServiceProxy,
     OrganizationUnitDto,
     PipelineDto,
+    PipelineServiceProxy,
+    PipelineRenameInput,
     StageDto,
     UpdateLeadSourceContactsInput
 } from '@shared/service-proxies/service-proxies';
@@ -412,11 +415,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     public headlineButtons$: Observable<HeadlineButton[]> = this.selectedPipeline$.pipe(
         map((selectedPipeline: PipelineDto) => {
+            let localizedLabel = this.l('Pipeline_' + selectedPipeline.name + '_Single');
+            localizedLabel = this.l('Pipeline_' + selectedPipeline.name + '_Single') !== localizedLabel
+                ? localizedLabel
+                : selectedPipeline.name.slice(0, -1)
             return [
                 {
                     enabled: this.permission.checkCGPermission(selectedPipeline.contactGroupId),
                     action: this.createLead.bind(this),
-                    label: this.l('CreateNew') + ' ' + this.l('Pipeline_' + selectedPipeline.name + '_Single')
+                    label: this.l('CreateNew') + ' ' + localizedLabel
                 }
             ]
         })
@@ -631,6 +638,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         private contactService: ContactsService,
         private leadService: LeadServiceProxy,
         private pipelineService: PipelineService,
+        private pipelineServiceProxy: PipelineServiceProxy,
         private filtersService: FiltersService,
         private store$: Store<AppStore.State>,
         private reuseService: RouteReuseStrategy,
@@ -1080,7 +1088,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private getUserGroup(pipelineName: string): string {
-        return this.l('Pipeline_' + pipelineName + '_Plural');
+        let userGroup = this.l('Pipeline_' + pipelineName + '_Plural');
+        return userGroup !== 'Pipeline_' + pipelineName + '_Plural'
+            ? userGroup
+            : userGroup.slice(0, -1);
     }
 
     getOrganizationUnitName = (e) => {
@@ -2068,6 +2079,15 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.cacheService.set(this.cacheKey, event.value);
             this.initToolbarConfig();
         }
+    }
+
+    editPipeline({ id, value }) {
+        this.pipelineServiceProxy.rename(new PipelineRenameInput({
+            id: id,
+            name: value
+        })).subscribe(() => {
+            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+        });
     }
 
     onOwnerFilterApply(event?) {
