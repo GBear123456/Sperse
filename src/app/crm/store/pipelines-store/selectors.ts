@@ -5,7 +5,7 @@ import { StageDto } from '@shared/service-proxies/service-proxies';
 import { ContactGroup } from '@shared/AppEnums';
 import { StageDtoExtended } from '@app/crm/store/pipelines-store/stage-dto-extended.interface';
 import { Stage } from '@app/shared/pipeline/stage.model';
-import { LeadType } from '@app/crm/leads/lead-type.enum';
+import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 
 interface Filter {
     id?: number;
@@ -109,7 +109,7 @@ export const getPropertiesPipeline = () => createSelector(
     getPipelines(),
     (pipelines: PipelineDto[]) => {
         const acquisitionPipeline = pipelines && pipelines.find((pipeline: PipelineDto) => {
-            return pipeline.entityTypeId === LeadType.Acquisition;
+            return pipeline.entityTypeSysId === EntityTypeSys.Acquisition;
         });
         return acquisitionPipeline;
     }

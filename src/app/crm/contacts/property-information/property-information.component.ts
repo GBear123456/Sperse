@@ -61,6 +61,7 @@ export class PropertyInformationComponent implements OnInit {
                 filter(Boolean)
             )
         ).pipe(
+            filter(Boolean),
             switchMap((propertyId: number) => {
                 return this.propertyServiceProxy.getPropertyDetails(propertyId);
             })

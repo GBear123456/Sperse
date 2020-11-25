@@ -1,11 +1,12 @@
 import { ContactGroup } from '@shared/AppEnums';
-import { LeadType } from '@app/crm/leads/lead-type.enum';
+import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 
 export interface CreateEntityDialogData {
     customerType: ContactGroup;
     isInLeadMode?: boolean;
     refreshParent?: () => void;
-    leadType?: LeadType;
+    entityTypeId?: number;
+    entityTypeSysId?: EntityTypeSys;
     parentId?: number;
     pipelineId?: number;
     company?: string;
