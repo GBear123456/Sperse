@@ -125,7 +125,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                 icon: 'c-info',
                 items: [
                     { name: 'affiliateCode', lname: 'LeadInformation_SourceAffiliateCode' },
-                    { name: 'contact', lname: 'SourceContact' },
+                    { name: 'contact', lname: 'ReferredByPerson' },
                     { name: 'campaignCode' },
                     { name: 'channelCode' },
                     { name: 'importFileName', lname: 'FileName', readonly: true, hideEmpty: true }

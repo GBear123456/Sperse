@@ -51716,6 +51716,46 @@ export interface IGetEmailDataOutput {
     tags: { [key: string] : string; } | undefined;
 }
 
+export class FileInfo implements IFileInfo {
+    id!: string | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IFileInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): FileInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new FileInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IFileInfo {
+    id: string | undefined;
+    name: string | undefined;
+}
+
 export class SendEmailInput implements ISendEmailInput {
     contactId!: number;
     parentId!: number | undefined;
@@ -51726,7 +51766,7 @@ export class SendEmailInput implements ISendEmailInput {
     bcc!: string[] | undefined;
     subject!: string;
     body!: string;
-    attachments!: string[] | undefined;
+    attachments!: FileInfo[] | undefined;
 
     constructor(data?: ISendEmailInput) {
         if (data) {
@@ -51770,7 +51810,7 @@ export class SendEmailInput implements ISendEmailInput {
             if (data["attachments"] && data["attachments"].constructor === Array) {
                 this.attachments = [];
                 for (let item of data["attachments"])
-                    this.attachments.push(item);
+                    this.attachments.push(FileInfo.fromJS(item));
             }
         }
     }
@@ -51812,7 +51852,7 @@ export class SendEmailInput implements ISendEmailInput {
         if (this.attachments && this.attachments.constructor === Array) {
             data["attachments"] = [];
             for (let item of this.attachments)
-                data["attachments"].push(item);
+                data["attachments"].push(item.toJSON());
         }
         return data; 
     }
@@ -51828,7 +51868,7 @@ export interface ISendEmailInput {
     bcc: string[] | undefined;
     subject: string;
     body: string;
-    attachments: string[] | undefined;
+    attachments: FileInfo[] | undefined;
 }
 
 export class SendSMSInput implements ISendSMSInput {
@@ -55981,46 +56021,6 @@ export interface IUpdateTypeInput {
     contactId: number;
     documentId: string;
     typeId: number | undefined;
-}
-
-export class FileInfo implements IFileInfo {
-    id!: string | undefined;
-    name!: string | undefined;
-
-    constructor(data?: IFileInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-        }
-    }
-
-    static fromJS(data: any): FileInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new FileInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        return data; 
-    }
-}
-
-export interface IFileInfo {
-    id: string | undefined;
-    name: string | undefined;
 }
 
 export class CopyTemplateInput implements ICopyTemplateInput {
