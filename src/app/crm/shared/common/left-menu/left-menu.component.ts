@@ -78,13 +78,15 @@ export class LeftMenuComponent implements OnInit {
             {
                 caption: this.ls.l('CRMDashboardMenu_CommissionHistory'),
                 component: '/commission-history',
-                visible: this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage) && this.appSessionService.tenant
+                visible: this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage) 
+                    && this.appSessionService.tenant
                     && this.appSessionService.tenant.customLayoutType == LayoutType.BankCode,
                 iconSrc: './assets/common/icons/dollar.svg'
             },
             {
                 component: '/documents',
                 caption: this.ls.l('CRMDashboardMenu_Documents'),
+                visible: this.permission.isGranted(AppPermissions.CRMFileStorageTemplates),
                 iconSrc: './assets/common/icons/folder.svg'
             }
         ];
