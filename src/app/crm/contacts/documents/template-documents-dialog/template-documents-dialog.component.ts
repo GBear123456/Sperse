@@ -12,6 +12,8 @@ import { finalize, map } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
+import { AppPermissions } from '@shared/AppPermissions';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { DocumentServiceProxy, UploadDocumentInput, DocumentInfo } from '@shared/service-proxies/service-proxies';
@@ -68,7 +70,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         },
         {
             id: 2,
-            visible: true,
+            visible: this.permission.isGranted(AppPermissions.CRMFileStorageTemplatesManage),
             text: this.ls.l('Templates'),
             icon: 'activefolder',
         }
@@ -80,6 +82,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         private elementRef: ElementRef,
         private notify: NotifyService,
         private loadingService: LoadingService,
+        private permission: PermissionCheckerService,
         public dialogRef: MatDialogRef<TemplateDocumentsDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any,

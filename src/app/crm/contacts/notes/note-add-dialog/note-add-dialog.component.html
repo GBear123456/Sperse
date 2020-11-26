@@ -40,7 +40,7 @@
                         [(value)]="contactId">
                     </dx-select-box>
                 </div>
-                <div class="field">
+                <div class="field" *ngIf="isCRMOrdersGranted">
                     <label>{{l('Orders') | uppercase }}</label>
                     <dx-select-box
                         width="355px"

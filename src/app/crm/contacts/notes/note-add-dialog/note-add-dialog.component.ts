@@ -81,6 +81,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     ordersDataSource: any;
     invoicesFields: KeysEnum<InvoiceDto> = InvoiceFields;
     noteId: number;
+    isCRMOrdersGranted = this.permission.isGranted(AppPermissions.CRMOrdersInvoices);
 
     constructor(
         injector: Injector,

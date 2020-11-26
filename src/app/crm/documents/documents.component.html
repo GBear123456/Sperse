@@ -12,13 +12,13 @@
             [allowedFileExtensions]="[]"
             [customizeDetailColumns]="customizeDetailColumns"
             [height]="getHeight()">
-            <dxo-permissions 
-                [create]="true"
-                [copy]="true"
-                [move]="true"
-                [remove]="true"
-                [rename]="true"
-                [upload]="true"
+            <dxo-permissions
+                [create]="manageAllowed"
+                [copy]="manageAllowed"
+                [move]="manageAllowed"
+                [remove]="manageAllowed"
+                [rename]="manageAllowed"
+                [upload]="manageAllowed"
                 [download]="false">
             </dxo-permissions>
         </dx-file-manager>
