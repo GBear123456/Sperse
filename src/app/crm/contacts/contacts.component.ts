@@ -293,8 +293,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             {
                 name: 'reseller-activity',
                 label: this.l('ResellerActivity'), route: 'reseller-activity',
-                hidden: !this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage) ||
-                    !this.appSessionService.tenant || this.appSessionService.tenant.customLayoutType != LayoutType.BankCode
+                hidden: !this.appSessionService.tenant || 
+                    this.appSessionService.tenant.customLayoutType != LayoutType.BankCode
             },
             { name: 'subscriptions', label: this.l('Subscriptions'), route: 'subscriptions', hidden: !!this.contactInfo.parentId || (!contact.userId && !this.isClientDetailPage()) },
             { name: 'payment-information', label: this.l('PaymentInformation'), route: 'payment-information', hidden: !!this.contactInfo.parentId || !this.isClientDetailPage() },
