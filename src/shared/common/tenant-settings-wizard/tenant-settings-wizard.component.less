@@ -2,7 +2,7 @@
     display: flex;
     height: 100%;
     .left {
-        width: 274px;
+        min-width: 274px;
         background-color: #f3f7fa;
         padding: 74px 0 0 35px;
         h3 {
@@ -92,16 +92,19 @@
                     display: none;
                 }
                 .mat-vertical-content-container {
-                    padding-top: 62px;
                     margin-left: 23px;
                     &:before {
                         display: none;
+                    }
+                    .mat-vertical-content {
+                        padding-top: 62px;
                     }
                     h2 {
                         font-size: 24px;
                         font-weight: 700;
                         letter-spacing: 0.8px;
                         color: #212c36;
+                        margin-bottom: 40px;
                     }
                 }
             }

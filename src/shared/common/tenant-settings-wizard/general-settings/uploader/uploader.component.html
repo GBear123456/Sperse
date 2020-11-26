@@ -1,0 +1,19 @@
+<h5>{{ title }}</h5>
+<p [ngStyle]="{ visibility: documentId ? 'visible' : 'hidden' }">
+    <a [href]="documentLink"
+       target="_blank">
+        {{ls.l('Download')}}
+    </a>
+</p>
+<form #privacyPolicyUploadForm>
+    <div class="form-group">
+        <ngx-file-drop accept=".html" [multiple]="false" (onFileDrop)="fileDropped($event)">
+            <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                <a href="javascript:void(0);" class="attach-link" (click)="openFileSelector()">
+                    + {{ uploadButtonText }}
+                </a>
+            </ng-template>
+        </ngx-file-drop>
+    </div>
+    <div *ngIf="file">{{ file.fileEntry.name }}</div>
+</form>

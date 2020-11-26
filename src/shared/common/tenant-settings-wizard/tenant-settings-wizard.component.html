@@ -16,8 +16,8 @@
 </div>
 <div class="right">
     <mat-vertical-stepper>
-        <mat-step>
-            <general-settings></general-settings>
+        <mat-step *ngIf="showTimezoneSelection">
+            <general-settings [generalSettings]="generalSettings | async"></general-settings>
         </mat-step>
         <mat-step></mat-step>
         <mat-step></mat-step>

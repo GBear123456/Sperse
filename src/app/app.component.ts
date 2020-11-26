@@ -96,8 +96,11 @@ export class AppComponent implements OnInit {
                 }
             });
             /** Show tenant settings dialog to admins who come the first time */
-            if (this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings)
-                || this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantHosts)) {
+            if (this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantHosts)
+                && (
+                    this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings)
+                    || this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings)
+                )) {
                 const tenantSettingsDialogCacheKey: string = this.cacheHelper.getCacheKey('TenantSettingsDialog');
                 if (!this.cacheService.exists(tenantSettingsDialogCacheKey)) {
                     this.userManagementService.openProfileTenantSettingsDialog();

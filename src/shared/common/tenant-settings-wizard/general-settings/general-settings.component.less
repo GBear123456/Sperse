@@ -1,0 +1,47 @@
+:host {
+    .form-group {
+        margin-bottom: 21px;
+        display: flex;
+        height: 30px;
+        &.zendesk {
+            margin-top: 51px;
+        }
+        label {
+            font-size: 14px;
+            letter-spacing: 0.2px;
+            color: #677380;
+            min-width: 180px;
+            border-bottom: 1px solid #dfdfdf;
+            margin-bottom: 0;
+            display: flex;
+            align-items: center;
+        }
+        input {
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: #424c56;
+        }
+    }
+    .file-uploads {
+        margin-top: 55px;
+    }
+    ::ng-deep timezone-combo {
+        flex-grow: 1;
+        .form-control {
+            border: none;
+            border-bottom: 1px solid #dfdfdf;
+            padding: 5px;
+            height: 30px;
+            border-radius: 0;
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: #424c56;
+            &:focus {
+                border-color: #dfdfdf;
+                outline: none;
+            }
+        }
+    }
+}
