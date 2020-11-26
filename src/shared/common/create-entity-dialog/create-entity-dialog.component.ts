@@ -3,7 +3,7 @@ import {
     AfterViewInit,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    Component, ElementRef,
+    Component,
     HostBinding,
     Inject,
     OnDestroy,
@@ -94,7 +94,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { StatesService } from '@root/store/states-store/states.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
-import { LeadType } from '@app/crm/leads/lead-type.enum';
+import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { AddressChanged } from '@shared/common/create-entity-dialog/address-fields/address-changed.interface';
 import { Property } from '@shared/common/create-entity-dialog/models/property.type';
@@ -140,8 +140,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     @ViewChild('propertyValidationGroup', { static: false }) propertyValidationGroup: DxValidationGroupComponent;
     @ViewChildren('linksComponent') linkComponents: QueryList<DxTextBoxComponent>;
 
-    showPropertyFields: boolean = this.data.leadType === LeadType.Acquisition;
-    showPropertiesDropdown: boolean = this.data.leadType === LeadType.Management;
+    showPropertyFields: boolean = this.data.entityTypeSysId === EntityTypeSys.Acquisition;
+    showPropertiesDropdown: boolean = this.data.entityTypeSysId === EntityTypeSys.Management;
 
     @HostBinding('class.hidePhotoArea') hidePhotoArea: boolean = this.data.hidePhotoArea || this.showPropertyFields;
     @HostBinding('class.hideToolbar') hideToolbar: boolean = this.data.hideToolbar;
@@ -387,7 +387,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             trackingInfo: trackingInfo,
             parentContactId: this.data.parentId,
             bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null,
-            leadTypeId: this.data.leadType
+            leadTypeId: this.data.entityTypeId
         };
         if (this.disallowMultipleItems) {
             dataObj.emailAddress = dataObj.emailAddresses[0];

@@ -131,8 +131,8 @@ import { MessageService } from '@abp/message/message.service';
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { TypeItem } from '@app/crm/shared/types-dropdown/type-item.interface';
-import { LeadType } from '@app/crm/leads/lead-type.enum';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
+import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -329,10 +329,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         map((pipeline: PipelineDto) => pipeline.contactGroupId)
     );
     selectedContactGroup: ContactGroup;
-    selectedLeadType$: Observable<LeadType> = this.selectedPipeline$.pipe(
-        map((pipeline: PipelineDto) => pipeline.entityTypeId || LeadType.Default)
-    );
-    selectedLeadType: LeadType;
     userGroupText$: Observable<string> = this.selectedPipeline$.pipe(
         map((selectedPipeline: PipelineDto) => this.getUserGroup(selectedPipeline.name))
     );
@@ -609,6 +605,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.leadFields.Phone,
         this.leadFields.AffiliateContactName,
         this.leadFields.AffiliateContactAffiliateCode,
+        this.leadFields.PropertyId,
         this.leadFields.PropertyName
     ].concat(
         this.isSmsAndEmailSendingAllowed ? [ this.leadFields.Phone ] : []
@@ -661,7 +658,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         super(injector);
         this.setInitialPipelineId();
         this.listenAndUpdateContactGroup();
-        this.listenAndUpdateLeadType();
         this.crmService.updateDateFilter(this._activatedRoute.snapshot.queryParams, this.filterDate);
         this.crmService.updateCountryStateFilter(this._activatedRoute.snapshot.queryParams, this.filterCountryStates);
         this.selectedPipelineId$.pipe(first()).subscribe((selectedPipelineId: number) => {
@@ -781,14 +777,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             takeUntil(this.lifeCycleSubjectsService.destroy$),
         ).subscribe((selectedContactGroup: ContactGroup) => {
             this.selectedContactGroup = selectedContactGroup;
-        });
-    }
-
-    private listenAndUpdateLeadType() {
-        this.selectedLeadType$.pipe(
-            takeUntil(this.lifeCycleSubjectsService.destroy$),
-        ).subscribe((selectedLeadType: LeadType) => {
-            this.selectedLeadType = selectedLeadType;
         });
     }
 
@@ -1842,13 +1830,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     createLead() {
-        this.selectedPipelineId$.pipe(first()).subscribe((selectedPipelineId: number) => {
+        this.selectedPipeline$.pipe(first()).subscribe((selectedPipeline: PipelineDto) => {
             const dialogData: CreateEntityDialogData = {
                 refreshParent: () => this.refresh(),
                 isInLeadMode: true,
                 customerType: this.selectedContactGroup,
-                leadType: this.selectedLeadType,
-                pipelineId: selectedPipelineId
+                entityTypeId: selectedPipeline.entityTypeId,
+                entityTypeSysId: selectedPipeline.entityTypeSysId as EntityTypeSys,
+                pipelineId: selectedPipeline.id
             };
             this.dialog.open(CreateEntityDialogComponent, {
                 panelClass: 'slider',
@@ -1906,7 +1895,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             clientId = lead && lead.CustomerId;
         if (!leadId || !clientId)
             return;
-        if (!section && this.selectedLeadType === LeadType.Acquisition) {
+        if (!section && lead.PropertyId !== null) {
             section = 'property-information';
             queryParams = { ...queryParams, propertyId: lead.PropertyId };
         }
