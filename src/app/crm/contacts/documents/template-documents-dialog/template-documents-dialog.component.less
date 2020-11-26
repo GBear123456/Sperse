@@ -112,6 +112,12 @@
             ::ng-deep ngx-file-drop {
                 &.full-height .ngx-file-drop__drop-zone {
                     height: calc(~"100vh - 140px");
+                    &.single-tab {
+                        height: calc(~"100vh - 100px");
+                    }
+                }
+                &.single-tab .ngx-file-drop__drop-zone {
+                    height: calc(~"100vh - 180px");
                 }
                 .ngx-file-drop__drop-zone {
                     width: 350px;

@@ -55,22 +55,24 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     templatesFileProvider = new RemoteFileProvider({
         endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem'
     });
+    isDocumentsVisible = this.data.showDocuments && this.data.contactId;
+    isTemplatesVisible = this.permission.isGranted(AppPermissions.CRMFileStorageTemplatesManage);
     folderTabs = [
         {
             id: 0,
-            visible: true,
+            visible: this.isDocumentsVisible || this.isTemplatesVisible,
             text: '',
             icon: 'upload',
         },
         {
             id: 1,
-            visible: this.data.showDocuments && this.data.contactId,
+            visible: this.isDocumentsVisible,
             text: this.ls.l('Documents'),
             icon: 'inactivefolder',
         },
         {
             id: 2,
-            visible: this.permission.isGranted(AppPermissions.CRMFileStorageTemplatesManage),
+            visible: this.isTemplatesVisible,
             text: this.ls.l('Templates'),
             icon: 'activefolder',
         }

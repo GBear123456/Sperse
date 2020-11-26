@@ -127,7 +127,6 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
                 this.data.contactInfo = contactInfo;
                 this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
                 this.refreshDataSources();
-                this.initActionMenuItems();
                 this.initQueryParams();
             }
         }, this.ident);
@@ -150,11 +149,6 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
             } else
                 this.initContactDataSource();
         });
-    }
-
-    initActionMenuItems() {
-        this.actionMenuItems = [
-        ];
     }
 
     initContactDataSource() {
