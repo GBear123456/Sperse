@@ -43,7 +43,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
                 map((documents: DocumentInfo[]) => {
                     return documents.map((item: DocumentInfo) => {
                         return {
-                            key: item.id,
+                            key: item.fileId,
                             name: item.fileName,
                             size: item.size
                         };

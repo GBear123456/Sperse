@@ -34,6 +34,7 @@ import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { CommissionFields } from '@app/crm/commission-history/commission-fields.enum';
 import { LedgerFields } from '@app/crm/commission-history/ledger-fields.enum';
 import { ClientFields } from '@app/crm/clients/client-fields.enum';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'reseller-activity',
@@ -60,7 +61,6 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     private readonly COMMISSION_TAB_INDEX = 1;
     private _selectedTabIndex = 0;
 
-    actionMenuItems: ActionMenuItem[];
     readonly clientFields = ClientFields;
     readonly commissionFields = CommissionFields;
     readonly ledgerFields = LedgerFields;
@@ -84,11 +84,10 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     ledgerDataSource;
     contactDataSource;
     commissionDataSource;
-    actionRecordData: any;
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     isCGManageAllowed = false;
-
+    isOrdersManageAllowed = this.permissionService.isGranted(AppPermissions.CRMOrdersInvoicesManage);
     currencyFormat$: Observable<DevExpress.ui.format> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => {
             return {
@@ -244,26 +243,11 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     onCellClick(event) {
         let target = event.event.target;
         if (event.rowType === 'data') {
-            if (target.closest('.dx-link.dx-link-edit'))
-                this.toggleActionsMenu(event.data, target);
-            else {
-                this.itemDetailsService.clearItemsSource();
-                if (event.data.AffiliateContactId)
-                    this.contactsService.updateLocation(event.data.Id, undefined,
-                        undefined, undefined, undefined, 'contact-information');
-            }
+            this.itemDetailsService.clearItemsSource();
+            if (event.data.AffiliateContactId)
+                this.contactsService.updateLocation(event.data.Id, undefined,
+                    undefined, undefined, undefined, 'contact-information');
         }
-    }
-
-    toggleActionsMenu(data, target) {
-        this.actionRecordData = data;
-        this.actionMenu.toggle(target);
-    }
-
-    onMenuItemClick(event) {
-        event.itemData.action.call(this);
-        this.actionRecordData = null;
-        this.actionMenu.hide();
     }
 
     ngOnDestroy() {
