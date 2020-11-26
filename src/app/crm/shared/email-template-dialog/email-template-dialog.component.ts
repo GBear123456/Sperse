@@ -610,7 +610,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     attachmentClick(event, attachment) {
         if (!attachment.url) {
-            this.documentsService.downloadDocument(this.data.contact.id, attachment.id);
+            this.documentsService.downloadDocument(attachment.id);
             event.stopPropagation();
         }
     }
