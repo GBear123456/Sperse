@@ -1,9 +1,9 @@
 <h2>{{ ls.l('GeneralSettings') }}</h2>
-<ng-container *ngIf="generalSettings">
+<ng-container *ngIf="settings">
     <div class="form-group" *ngIf="showTimezoneSelection">
         <label for="Timezone">{{ls.l("Timezone")}}</label>
         <timezone-combo id="Timezone"
-                        [(selectedTimeZone)]="generalSettings.timezone"
+                        [(selectedTimeZone)]="settings.timezone"
                         [defaultTimezoneScope]="defaultTimezoneScope">
         </timezone-combo>
     </div>
@@ -15,7 +15,7 @@
                    type="url"
                    name="PublicSiteUrl"
                    class="form-control"
-                   [(ngModel)]="generalSettings.publicSiteUrl"
+                   [(ngModel)]="settings.publicSiteUrl"
                    maxlength="128"
                    [pattern]="siteUrlRegexPattern"
                    (change)="changeDetectorRef.detectChanges()">
@@ -31,7 +31,7 @@
                    type="text"
                    name="ZendeskAccountUrl"
                    class="form-control"
-                   [(ngModel)]="generalSettings.zendeskAccountUrl"
+                   [(ngModel)]="settings.zendeskAccountUrl"
                    maxlength="128">
         </div>
         <div class="row m-form file-uploads" *ngIf="tenant && isAdminCustomizations">
