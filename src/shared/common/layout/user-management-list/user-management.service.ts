@@ -114,11 +114,8 @@ export class UserManagementService {
                   : this.ls.l('TenantSettings'),
             id: 'UserProfileTenantSettings',
             iconClass: 'flaticon-cogwheel',
-            visible: this.permissionChecker.isGranted(AppPermissions.AdministrationTenantHosts)
-                     && (
-                         this.permissionChecker.isGranted(AppPermissions.AdministrationHostSettings)
-                         || this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSettings)
-                     ),
+            visible: this.permissionChecker.isGranted(AppPermissions.AdministrationHostSettings)
+                     || this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSettings),
             onClick: () => {
                 this.openProfileTenantSettingsDialog();
             }

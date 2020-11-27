@@ -24,8 +24,10 @@
                                [editions]="editions$ | async">
             </tenant-management>
         </mat-step>
-        <mat-step *ngIf="hasTenantPermission">
-            <user-management></user-management>
+        <mat-step>
+            <user-management [hostSettings]="hostUserManagementSettings$ | async"
+                             [tenantSettings]="tenantUserManagementSettings$ | async">
+            </user-management>
         </mat-step>
         <mat-step>
             <security></security>

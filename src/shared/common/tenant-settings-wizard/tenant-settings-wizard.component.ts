@@ -21,11 +21,13 @@ import {
     GeneralSettingsEditDto,
     HostSettingsEditDto,
     HostSettingsServiceProxy,
+    HostUserManagementSettingsEditDto,
     SubscribableEditionComboboxItemDto,
     SubscribableEditionComboboxItemDtoListResultDto,
     TenantManagementSettingsEditDto,
     TenantSettingsEditDto,
-    TenantSettingsServiceProxy
+    TenantSettingsServiceProxy,
+    TenantUserManagementSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -74,7 +76,13 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     );
     tenantManagementSettings$: Observable<TenantManagementSettingsEditDto> = this.hostSettings$.pipe(
         map((settings: HostSettingsEditDto) => settings && settings.tenantManagement)
-    )
+    );
+    hostUserManagementSettings$: Observable<HostUserManagementSettingsEditDto> = this.hostSettings$.pipe(
+        map((settings: HostSettingsEditDto) => settings && settings.userManagement)
+    );
+    tenantUserManagementSettings$: Observable<TenantUserManagementSettingsEditDto> = this.tenantSettings$.pipe(
+        map((settings: TenantSettingsEditDto) => settings && settings.userManagement)
+    );
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     editions$: Observable<SubscribableEditionComboboxItemDto[]> = this.commonLookupServiceProxy.getEditionsForCombobox(false).pipe(
         map((result: SubscribableEditionComboboxItemDtoListResultDto) => {
@@ -125,7 +133,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 text: this.ls.l('UserManagement'),
                 component: this.userManagementComponent,
                 saved: false,
-                visible: this.hasTenantPermission
+                visible: true
             },
             {
                 name: 'security',
