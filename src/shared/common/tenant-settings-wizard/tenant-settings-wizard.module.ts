@@ -12,6 +12,7 @@ import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
 import { InlineSVGModule } from 'ng-inline-svg';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
+import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { NgxFileDropModule } from 'ngx-file-drop';
 
 /** Application imports */
@@ -19,6 +20,10 @@ import { TenantSettingsWizardComponent } from './tenant-settings-wizard.componen
 import { GeneralSettingsComponent } from '@shared/common/tenant-settings-wizard/general-settings/general-settings.component';
 import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.module';
 import { UploaderComponent } from '@shared/common/tenant-settings-wizard/general-settings/uploader/uploader.component';
+import { EmailComponent } from '@shared/common/tenant-settings-wizard/email/email.component';
+import { SecurityComponent } from '@shared/common/tenant-settings-wizard/security/security.component';
+import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard/tenant-management/tenant-management.component';
+import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/user-management/user-management.component';
 
 @NgModule({
     imports: [
@@ -29,6 +34,7 @@ import { UploaderComponent } from '@shared/common/tenant-settings-wizard/general
         MatDialogModule,
         MatFormFieldModule,
         MatSelectModule,
+        DxCheckBoxModule,
         InlineSVGModule,
         MatInputModule,
         FormsModule,
@@ -39,7 +45,11 @@ import { UploaderComponent } from '@shared/common/tenant-settings-wizard/general
     declarations: [
         TenantSettingsWizardComponent,
         GeneralSettingsComponent,
-        UploaderComponent
+        UploaderComponent,
+        EmailComponent,
+        SecurityComponent,
+        TenantManagementComponent,
+        UserManagementComponent
     ],
     providers: [],
     entryComponents: [ TenantSettingsWizardComponent ]

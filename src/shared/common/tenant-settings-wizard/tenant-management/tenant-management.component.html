@@ -1,0 +1,36 @@
+<h2>{{ ls.l('TenantManagement') }}</h2>
+<div class="m-form" *ngIf="settings">
+    <h5>{{ls.l("FormBasedRegistration")}}</h5>
+    <div class="m-checkbox-list">
+        <div class="form-group">
+            <dx-check-box id="Setting_AllowSelfRegistration"
+                          [text]="ls.l('AllowTenantsToRegisterThemselves')"
+                          [(value)]="settings.allowSelfRegistration">
+            </dx-check-box>
+            <span class="m-form__help">{{ls.l("AllowTenantsToRegisterThemselves_Hint")}}</span>
+        </div>
+        <div class="form-group new-registered">
+            <dx-check-box id="Setting_IsNewRegisteredTenantActiveByDefault"
+                          [text]="ls.l('NewRegisteredTenantsIsActiveByDefault')"
+                          [(value)]="settings.isNewRegisteredTenantActiveByDefault">
+            </dx-check-box>
+            <span class="m-form__help">{{ls.l("NewRegisteredTenantsIsActiveByDefault_Hint")}}</span>
+        </div>
+        <div class="form-group">
+            <dx-check-box id="Setting_UseCaptchaOnRegistration"
+                          [text]="ls.l('UseCaptchaOnRegistration')"
+                          [(value)]="settings.useCaptchaOnRegistration">
+            </dx-check-box>
+        </div>
+    </div>
+    <div class="product">
+        <h5>{{ls.l("Edition")}}</h5>
+        <div class="form-group">
+            <label for="DefaultEditionId">{{ ls.l('ProductType') }}</label>
+            <select id="DefaultEditionId" class="form-control" [(ngModel)]="settings.defaultEditionId">
+                <option value=""></option>
+                <option *ngFor="let edition of editions" [value]="edition.value">{{edition.displayText}}</option>
+            </select>
+        </div>
+    </div>
+</div>

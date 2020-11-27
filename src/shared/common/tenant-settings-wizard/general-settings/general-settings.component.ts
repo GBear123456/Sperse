@@ -10,7 +10,7 @@ import {
 import { AbstractControlDirective } from '@angular/forms';
 
 /** Third party imports */
-import { forkJoin, Observable, throwError } from 'rxjs';
+import { forkJoin, Observable, throwError, of } from 'rxjs';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -25,20 +25,21 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UploaderComponent } from '@shared/common/tenant-settings-wizard/general-settings/uploader/uploader.component';
+import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 
 @Component({
     selector: 'general-settings',
     templateUrl: 'general-settings.component.html',
-    styleUrls: [ 'general-settings.component.less' ],
+    styleUrls: [ '../shared/styles/common.less', 'general-settings.component.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class GeneralSettingsComponent  {
+export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     @ViewChild('privacyInput', { static: false }) privacyInput: ElementRef;
     @ViewChild('tosInput', { static: false }) tosInput: ElementRef;
     @ViewChild('privacyPolicyUploader', { static: false }) privacyPolicyUploader: UploaderComponent;
     @ViewChild('tosUploader', { static: false }) tosUploader: UploaderComponent;
     @ViewChild('publicSiteUrl', { static: false }) publicSiteUrl: AbstractControlDirective;
-    @Input() generalSettings: GeneralSettingsEditDto;
+    @Input() settings: GeneralSettingsEditDto;
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
     siteUrlRegexPattern = AppConsts.regexPatterns.siteUrl;
@@ -56,16 +57,16 @@ export class GeneralSettingsComponent  {
     save(): Observable<any> {
         const generalSettings: any = {
             general: {
-                timezone: this.generalSettings.timezone,
-                zendeskAccountUrl: this.generalSettings.zendeskAccountUrl,
-                publicSiteUrl: this.generalSettings.publicSiteUrl
+                timezone: this.settings.timezone,
+                zendeskAccountUrl: this.settings.zendeskAccountUrl,
+                publicSiteUrl: this.settings.publicSiteUrl
             }
         };
-        if (this.publicSiteUrl.valid) {
+        if (!this.publicSiteUrl || this.publicSiteUrl.valid) {
             return forkJoin(
                 //this.settingsService.updateAllSettings(generalSettings),
-                this.privacyPolicyUploader.uploadFile(),
-                this.tosUploader.uploadFile()
+                this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),
+                this.tosUploader ? this.tosUploader.uploadFile() : of(null)
             );
         } else {
             return throwError('Invalid data');
