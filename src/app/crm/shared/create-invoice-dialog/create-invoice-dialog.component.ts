@@ -634,7 +634,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (forced)
             resetInternal();
         else
-            this.messageService.confirm(this.ls.l('DiscardConfirmation'), '', (confirmed) => {
+            this.messageService.confirm('', this.ls.l('DiscardConfirmation'), (confirmed) => {
                 if (confirmed)
                     resetInternal();
             });
