@@ -12,6 +12,8 @@ import { finalize, map } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
+import { AppPermissions } from '@shared/AppPermissions';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { DocumentServiceProxy, UploadDocumentInput, DocumentInfo } from '@shared/service-proxies/service-proxies';
@@ -41,7 +43,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
                 map((documents: DocumentInfo[]) => {
                     return documents.map((item: DocumentInfo) => {
                         return {
-                            key: item.id,
+                            key: item.fileId,
                             name: item.fileName,
                             size: item.size
                         };
@@ -53,22 +55,24 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     templatesFileProvider = new RemoteFileProvider({
         endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem'
     });
+    isDocumentsVisible = this.data.showDocuments && this.data.contactId;
+    isTemplatesVisible = this.permission.isGranted(AppPermissions.CRMFileStorageTemplates);
     folderTabs = [
         {
             id: 0,
-            visible: true,
+            visible: this.isDocumentsVisible || this.isTemplatesVisible,
             text: '',
             icon: 'upload',
         },
         {
             id: 1,
-            visible: this.data.showDocuments && this.data.contactId,
+            visible: this.isDocumentsVisible,
             text: this.ls.l('Documents'),
             icon: 'inactivefolder',
         },
         {
             id: 2,
-            visible: true,
+            visible: this.isTemplatesVisible,
             text: this.ls.l('Templates'),
             icon: 'activefolder',
         }
@@ -80,6 +84,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         private elementRef: ElementRef,
         private notify: NotifyService,
         private loadingService: LoadingService,
+        private permission: PermissionCheckerService,
         public dialogRef: MatDialogRef<TemplateDocumentsDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any,

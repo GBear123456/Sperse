@@ -1689,7 +1689,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         }
                     }
                 ]
-            },
+            }
         ];
     }
 
