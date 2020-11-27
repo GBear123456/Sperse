@@ -1,14 +1,25 @@
 :host {
-    padding: 20px 25px;
+    padding: 25px 20px 20px 60px;
     display: block;
+    h3 {
+        margin-bottom: 60px;
+        &:before {
+            content: url("../../../../assets/common/icons/social.svg");
+            margin-right: 10px;
+            height: 23px;
+        }
+    }
     .fields {
         & > div {
             display: flex;
             align-items: center;
             &.address {
                 align-items: flex-start;
-                addresses {
+                ::ng-deep addresses {
                     width: 400px;
+                    .addresses .address p {
+                        margin-top: 0;
+                    }
                 }
             }
             label {
@@ -19,6 +30,27 @@
                 color: #202b35;
                 letter-spacing: 0.3px;
                 width: 200px;
+                display: flex;
+                &:before {
+                    margin-right: 10px;
+                }
+            }
+            &.property-area label:before {
+                content: "";
+                background-image: url("../../../../assets/common/icons/property.png");
+                height: 18px;
+                width: 18px;
+                display: inline-block;
+                background-size: cover;
+            }
+            &.year label:before {
+                content: url("../../../../assets/common/icons/date.svg");
+            }
+            &.floor label:before {
+                content: url("../../../../assets/common/icons/floor.png");
+            }
+            &.levels label:before {
+                content: url("../../../../assets/common/icons/levels.png");
             }
         }
     }

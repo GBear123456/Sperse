@@ -12,13 +12,13 @@
                    (onAddressUpdate)="updateAddress($event)">
         </addresses>
     </div>
-    <div>
+    <div class="property-area">
         <label>{{ ls.l('PropertyArea') }}</label>
         <dx-number-box [(value)]="property.area"
                        (onValueChanged)="valueChanged()">
         </dx-number-box>
     </div>
-    <div>
+    <div class="year">
         <label>{{ ls.l('Year') }}</label>
         <dx-date-box type="date"
                      [calendarOptions]="{
@@ -30,13 +30,13 @@
                      (onValueChanged)="yearBuiltChanged($event.value)">
         </dx-date-box>
     </div>
-    <div>
+    <div class="floor">
         <label>{{ ls.l('Floor') }}</label>
         <dx-number-box [(value)]="property.floor"
                        (onValueChanged)="valueChanged()">
         </dx-number-box>
     </div>
-    <div>
+    <div class="levels">
         <label>{{ ls.l('Levels') }}</label>
         <dx-number-box [(value)]="property.numberOfLevels"
                        (onValueChanged)="valueChanged()">
