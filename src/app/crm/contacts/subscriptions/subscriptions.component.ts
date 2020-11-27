@@ -20,7 +20,8 @@ import {
     NameValueDto,
     CommonLookupServiceProxy,
     CancelOrderSubscriptionInput,
-    LeadInfoDto
+    LeadInfoDto,
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CommonLookupModalComponent } from '@app/shared/common/lookup/common-lookup-modal.component';
@@ -31,6 +32,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppConsts } from '@shared/AppConsts';
@@ -60,6 +63,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     formatting = AppConsts.formatting;
     userTimezone = DateHelper.getUserTimezone();
     private readonly ident = 'Subscriptions';
+    isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
 
     constructor(
         private invoicesService: InvoicesService,
@@ -68,6 +72,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         private orderSubscriptionProxy: OrderSubscriptionServiceProxy,
         private commonLookupService: CommonLookupServiceProxy,
         private impersonationService: ImpersonationService,
+        private userManagementService: UserManagementService,
         private loadingService: LoadingService,
         private dialog: MatDialog,
         private route: ActivatedRoute,
@@ -251,7 +256,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                 endDate: cell.column.dataField == 'endDate' ?
                     DateHelper.removeTimezoneOffset(new Date(event.value), true, 'to') : cell.data.endDate
             })],
-            updateThirdParty: true
+            updateThirdParty: this.isBankCodeLayout && cell.data.serviceTypeId === BankCodeServiceType.BANKVault
         })).pipe(
             finalize(() => this.loadingService.finishLoading())
         ).subscribe(() => {
