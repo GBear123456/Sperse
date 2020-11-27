@@ -24,7 +24,7 @@ import { PhoneFormatModule } from '@shared/common/pipes/phone-format/phone-forma
 import { AccessCodeInstructionsModule } from '@shared/common/access-code-instructions/access-code-instructions.module';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
-import { MemberSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
+import { DocumentServiceProxy, MemberSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppComponent } from './app.component';
 import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/common/common.module';
 import { ExportService } from '@shared/common/export/export.service';
@@ -84,6 +84,7 @@ import { LinkedAccountService } from '@app/shared/layout/linked-accounts-modal/l
         UserManagementService,
         ImpersonationService,
         LinkedAccountService,
+        DocumentServiceProxy,
         { provide: 'shared', useValue: true }
     ]
 })
