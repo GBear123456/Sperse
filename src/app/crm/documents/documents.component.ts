@@ -14,6 +14,8 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
+import { AppPermissions } from '@shared/AppPermissions';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { DocumentTemplatesServiceProxy, GetFileUrlDto } from '@shared/service-proxies/service-proxies';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -39,6 +41,7 @@ export class DocumentsComponent {
     fileProvider = new RemoteFileProvider({
         endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem'
     });
+    manageAllowed = this.permission.isGranted(AppPermissions.CRMFileStorageTemplatesManage);
 
     contextMenu = {
         items: [
@@ -56,6 +59,7 @@ export class DocumentsComponent {
         private appService: AppService,
         private loadingService: LoadingService,
         private documentProxy: DocumentTemplatesServiceProxy,
+        private permission: PermissionCheckerService,
         private changeDetectorRef: ChangeDetectorRef,
         private lifeCycleSubject: LifecycleSubjectsService,
         public ui: AppUiCustomizationService,

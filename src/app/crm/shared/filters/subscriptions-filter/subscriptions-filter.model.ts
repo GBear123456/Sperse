@@ -33,9 +33,11 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                     filterIndex++;
                 }
 
-                if (item.current == undefined || item.past == undefined || item.never == undefined) {
+                if (item.current || item.past || item.never || 
+                    item.current == undefined || item.past == undefined || item.never == undefined
+                ) {
                     item.serviceProductLevels.forEach(level => {
-                        if (level.current && !item.current || level.past && !item.past || level.never && !item.never) {
+                        if (level.current || level.past || level.never) {
                             result.push(
                                 {
                                     name: ['subscriptionFilters[' + filterIndex + '].ProductId'],

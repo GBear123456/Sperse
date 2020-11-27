@@ -170,7 +170,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             return of(requestInfo);
         }
 
-        return this.documentProxy.getViewWopiRequestInfo(this.data.contactInfo.id, this.currentDocumentInfo.id).pipe(
+        return this.documentProxy.getViewWopiRequestInfo(this.currentDocumentInfo.id).pipe(
             flatMap((response) => {
                 this.storeWopiRequestInfoToCache(wopiDocumentDataCacheKey, response);
                 return of(response);
@@ -336,7 +336,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     downloadDocument() {
-        this.documentsService.downloadDocument(this.data.contactInfo.id, this.currentDocumentInfo.id);
+        this.documentsService.downloadDocument(this.currentDocumentInfo.id);
     }
 
     openDocumentAddDialog() {
@@ -434,7 +434,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     });
                     break;
                 case DocumentViewerType.VIDEO:
-                    this.documentsService.getDocumentUrlInfoObservable(this.data.contactInfo.id, this.currentDocumentInfo.id).subscribe((urlInfo) => {
+                    this.documentsService.getDocumentUrlInfoObservable(this.currentDocumentInfo.id).subscribe((urlInfo) => {
                         super.finishLoading(true);
                         this.currentDocumentURL = urlInfo.url;
                         this.showViewerType = viewerType;
@@ -442,7 +442,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     });
                     break;
                 default:
-                    this.documentsService.getDocumentUrlInfoObservable(this.data.contactInfo.id, this.currentDocumentInfo.id).subscribe((urlInfo) => {
+                    this.documentsService.getDocumentUrlInfoObservable(this.currentDocumentInfo.id).subscribe((urlInfo) => {
                         RequestHelper.downloadFileBlob(urlInfo.url, (blob) => {
                             if (viewerType === DocumentViewerType.ARCHIVE) {
                                 this.archiveFiles$ = (ext === 'rar' ? this.getFilesInfoFromRarBlob(blob) : this.getFilesInfoFromZipBlob(blob)).pipe(tap(() => this.openDocumentMode = true));
@@ -507,7 +507,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             }
             this.dialog.open(NotSupportedTypeDialogComponent, {
                 data: {
-                    contactId: this.data.contactInfo.id,
                     documentId: this.currentDocumentInfo.id
                 }
             });
@@ -564,7 +563,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             editDisabled: true
         });
         super.startLoading(true);
-        this.documentProxy.getEditWopiRequestInfo(this.data.contactInfo.id, this.currentDocumentInfo.id).pipe(finalize(() => {
+        this.documentProxy.getEditWopiRequestInfo(this.currentDocumentInfo.id).pipe(finalize(() => {
             super.finishLoading(true);
         })).subscribe((response) => {
             this.showOfficeOnline(response);
@@ -609,7 +608,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     super.startLoading(true);
                     this.showViewerType = undefined;
                     this.openDocumentMode = false;
-                    this.documentProxy.delete(this.data.contactInfo.id, this.currentDocumentInfo.id)
+                    this.documentProxy.delete(this.currentDocumentInfo.id)
                         .pipe(finalize(() => super.finishLoading(true)))
                         .subscribe(() => {
                             this.loadDocuments(() => {

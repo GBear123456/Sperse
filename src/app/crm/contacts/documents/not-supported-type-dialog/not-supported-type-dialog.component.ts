@@ -16,7 +16,7 @@ export class NotSupportedTypeDialogComponent {
     ) {}
 
     downloadDocument() {
-        this.documentsService.downloadDocument(this.data.contactId, this.data.documentId);
+        this.documentsService.downloadDocument(this.data.documentId);
         this.dialogRef.close();
     }
 }
