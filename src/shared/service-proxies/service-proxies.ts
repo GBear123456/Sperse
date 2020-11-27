@@ -14479,14 +14479,11 @@ export class DocumentServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
      * @id (optional) 
      * @return Success
      */
-    getContent(contactId: number | null | undefined, id: string | null | undefined): Observable<string> {
+    getContent(id: string | null | undefined): Observable<string> {
         let url_ = this.baseUrl + "/api/services/CRM/Document/GetContent?";
-        if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -14537,14 +14534,11 @@ export class DocumentServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
      * @id (optional) 
      * @return Success
      */
-    getUrl(contactId: number | null | undefined, id: string | null | undefined): Observable<GetUrlOutput> {
+    getUrl(id: string | null | undefined): Observable<GetUrlOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Document/GetUrl?";
-        if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -14647,14 +14641,11 @@ export class DocumentServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
      * @id (optional) 
      * @return Success
      */
-    delete(contactId: number | null | undefined, id: string | null | undefined): Observable<void> {
+    delete(id: string | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Document/Delete?";
-        if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -14805,14 +14796,11 @@ export class DocumentServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
      * @documentId (optional) 
      * @return Success
      */
-    getViewWopiRequestInfo(contactId: number | null | undefined, documentId: string | null | undefined): Observable<WopiRequestOutcoming> {
+    getViewWopiRequestInfo(documentId: string | null | undefined): Observable<WopiRequestOutcoming> {
         let url_ = this.baseUrl + "/api/services/CRM/Document/GetViewWopiRequestInfo?";
-        if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (documentId !== undefined)
             url_ += "documentId=" + encodeURIComponent("" + documentId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -14863,14 +14851,11 @@ export class DocumentServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
      * @documentId (optional) 
      * @return Success
      */
-    getEditWopiRequestInfo(contactId: number | null | undefined, documentId: string | null | undefined): Observable<WopiRequestOutcoming> {
+    getEditWopiRequestInfo(documentId: string | null | undefined): Observable<WopiRequestOutcoming> {
         let url_ = this.baseUrl + "/api/services/CRM/Document/GetEditWopiRequestInfo?";
-        if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (documentId !== undefined)
             url_ += "documentId=" + encodeURIComponent("" + documentId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -55485,6 +55470,7 @@ export class DocumentInfo implements IDocumentInfo {
     id!: string | undefined;
     typeId!: number | undefined;
     typeName!: string | undefined;
+    fileId!: string | undefined;
     fileName!: string | undefined;
     size!: string | undefined;
     creationTime!: moment.Moment | undefined;
@@ -55505,6 +55491,7 @@ export class DocumentInfo implements IDocumentInfo {
             this.id = data["id"];
             this.typeId = data["typeId"];
             this.typeName = data["typeName"];
+            this.fileId = data["fileId"];
             this.fileName = data["fileName"];
             this.size = data["size"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
@@ -55525,6 +55512,7 @@ export class DocumentInfo implements IDocumentInfo {
         data["id"] = this.id;
         data["typeId"] = this.typeId;
         data["typeName"] = this.typeName;
+        data["fileId"] = this.fileId;
         data["fileName"] = this.fileName;
         data["size"] = this.size;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
@@ -55538,6 +55526,7 @@ export interface IDocumentInfo {
     id: string | undefined;
     typeId: number | undefined;
     typeName: string | undefined;
+    fileId: string | undefined;
     fileName: string | undefined;
     size: string | undefined;
     creationTime: moment.Moment | undefined;
@@ -55638,7 +55627,6 @@ export interface IUploadDocumentInput {
 }
 
 export class UpdateTypeInput implements IUpdateTypeInput {
-    contactId!: number;
     documentId!: string;
     typeId!: number | undefined;
 
@@ -55653,7 +55641,6 @@ export class UpdateTypeInput implements IUpdateTypeInput {
 
     init(data?: any) {
         if (data) {
-            this.contactId = data["contactId"];
             this.documentId = data["documentId"];
             this.typeId = data["typeId"];
         }
@@ -55668,7 +55655,6 @@ export class UpdateTypeInput implements IUpdateTypeInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
         data["documentId"] = this.documentId;
         data["typeId"] = this.typeId;
         return data; 
@@ -55676,7 +55662,6 @@ export class UpdateTypeInput implements IUpdateTypeInput {
 }
 
 export interface IUpdateTypeInput {
-    contactId: number;
     documentId: string;
     typeId: number | undefined;
 }

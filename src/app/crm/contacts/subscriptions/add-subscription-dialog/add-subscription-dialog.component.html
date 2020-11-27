@@ -11,10 +11,10 @@
         <div class="subscription" *ngFor="let subscription of subscription.subscriptions; let i = index">
             <i *ngIf="i !== 0" class="fa fa-close" (click)="removeSubscriptionFields(i)"></i>
             <div class="field">
-                <label for="code">{{ls.l('Code')}}</label>
+                <label for="code">{{ls.l('Product')}}</label>
                 <dx-select-box [inputAttr]="{ id: 'code' }"
                                [dataSource]="serviceTypes"
-                               displayExpr="code"
+                               displayExpr="name"
                                valueExpr="code"
                                [(value)]="subscription.code"
                                placeholder="Select service..."
