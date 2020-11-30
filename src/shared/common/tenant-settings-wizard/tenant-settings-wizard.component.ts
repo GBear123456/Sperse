@@ -18,6 +18,7 @@ import { finalize, publishReplay, refCount, map } from 'rxjs/operators';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     CommonLookupServiceProxy,
+    EmailSettingsEditDto,
     GeneralSettingsEditDto,
     HostSettingsEditDto,
     HostSettingsServiceProxy,
@@ -96,7 +97,10 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
         })
     );
     securitySettings$: Observable<SecuritySettingsEditDto> = this.settings$.pipe(
-        map((settings: HostSettingsEditDto) => settings && settings.security)
+        map((settings: TenantSettingsEditDto | HostSettingsEditDto) => settings && settings.security)
+    );
+    emailSettings$: Observable<EmailSettingsEditDto> = this.settings$.pipe(
+        map((settings: TenantSettingsEditDto | HostSettingsEditDto) => settings && settings.email)
     );
 
     constructor(

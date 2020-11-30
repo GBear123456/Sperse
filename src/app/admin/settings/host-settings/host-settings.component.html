@@ -45,7 +45,7 @@
                         <div class="form-group">
                             <label for="DefaultEditionId">{{l("Edition")}}</label>
                             <select id="DefaultEditionId" class="form-control" [(ngModel)]="hostSettings.tenantManagement.defaultEditionId">
-                                <option value="">{{emptyText}}</option>
+                                <option value=""></option>
                                 <option *ngFor="let edition of editions" [value]="edition.value">{{edition.displayText}}</option>
                             </select>
                         </div>
@@ -265,7 +265,7 @@
                         <label for="SmtpPassword">{{l("Password")}}</label>
                         <input type="text" class="hidden-field">
                         <input type="password" class="hidden-field">
-                        <input id="SmtpPassword" type="password" name="SmtpPassword" id="SmtpPassword" class="form-control"
+                        <input id="SmtpPassword" type="password" name="SmtpPassword" class="form-control"
                                [ngClass]="{'edited':hostSettings.email.smtpPassword}" [(ngModel)]="hostSettings.email.smtpPassword"
                                maxlength="128" autocomplete="off">
                     </div>

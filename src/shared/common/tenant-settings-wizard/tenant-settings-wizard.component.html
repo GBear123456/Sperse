@@ -33,7 +33,7 @@
             <security [settings]="securitySettings$ | async"></security>
         </mat-step>
         <mat-step>
-            <email></email>
+            <email [settings]="emailSettings$ | async"></email>
         </mat-step>
     </mat-vertical-stepper>
     <div mat-dialog-actions>
