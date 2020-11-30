@@ -22,6 +22,7 @@ import {
     HostSettingsEditDto,
     HostSettingsServiceProxy,
     HostUserManagementSettingsEditDto,
+    SecuritySettingsEditDto,
     SubscribableEditionComboboxItemDto,
     SubscribableEditionComboboxItemDtoListResultDto,
     TenantManagementSettingsEditDto,
@@ -93,6 +94,9 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             result.items.unshift(notAssignedEdition);
             return result.items;
         })
+    );
+    securitySettings$: Observable<SecuritySettingsEditDto> = this.settings$.pipe(
+        map((settings: HostSettingsEditDto) => settings && settings.security)
     );
 
     constructor(

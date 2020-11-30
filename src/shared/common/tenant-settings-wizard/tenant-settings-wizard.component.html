@@ -30,7 +30,7 @@
             </user-management>
         </mat-step>
         <mat-step>
-            <security></security>
+            <security [settings]="securitySettings$ | async"></security>
         </mat-step>
         <mat-step>
             <email></email>
