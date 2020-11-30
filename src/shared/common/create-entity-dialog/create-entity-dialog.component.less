@@ -294,16 +294,20 @@
     }
 
     .property-info .field > div {
-        width: 360px;
+        width: 410px;
         label {
             width: 140px;
             margin-right: 0;
             padding-left: 30px;
         }
-        &:last-child {
-            dx-number-box {
-                margin-left: 15px;
-            }
+
+        dx-number-box,
+        dx-date-box {
+            margin-left: 0;
+        }
+        &:last-child label {
+            width: 0;
+            min-width: 100px;
         }
     }
 

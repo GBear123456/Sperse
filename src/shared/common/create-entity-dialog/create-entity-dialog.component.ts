@@ -420,11 +420,13 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         this.clearSimilarCustomersCheck();
         let saveButton: any = document.getElementById(this.saveButtonId);
         saveButton.disabled = true;
-        let createContactInput = CreateOrUpdateContactInput.fromJS(dataObj);
+        const createModel = this.data.createModel || CreateOrUpdateContactInput;
+        let createContactInput = createModel.fromJS(dataObj);
         createContactInput.statusId = this.data.isInLeadMode && !this.data.parentId
             ? ContactStatus.Prospective
             : ContactStatus.Active;
-        this.contactProxy.createOrUpdateContact(createContactInput).pipe(
+        const createMethod = this.data.createMethod || this.contactProxy.createOrUpdateContact.bind(this.contactProxy);
+        createMethod(createContactInput).pipe(
             finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); })
         ).subscribe((result: CreateOrUpdateContactOutput) => {
             dataObj.id = result.contactId;
@@ -1013,7 +1015,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         if (forced)
             resetInternal();
         else
-            this.messageService.confirm(this.ls.l('DiscardConfirmation'), '', (confirmed) => {
+            this.messageService.confirm('', this.ls.l('DiscardConfirmation'), (confirmed) => {
                 if (confirmed)
                     resetInternal();
             });
