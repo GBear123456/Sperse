@@ -279,8 +279,11 @@
                                 <span></span>
                             </label>
                             <label for="Setting_TwoFactorLogin_IsRememberBrowserEnabled" class="m-checkbox" *ngIf="settings.security.twoFactorLogin.isEnabled">
-                                <input id="Setting_TwoFactorLogin_IsRememberBrowserEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsRememberBrowserEnabled" [(ngModel)]="settings.security.twoFactorLogin.isRememberBrowserEnabled">
-                                {{l("AllowToRememberBrowserForTwoFactorLogin")}}
+                                <input id="Setting_TwoFactorLogin_IsRememberBrowserEnabled"
+                                       type="checkbox"
+                                       name="Setting_TwoFactorLogin_IsRememberBrowserEnabled"
+                                       [(ngModel)]="settings.security.twoFactorLogin.isRememberBrowserEnabled">
+                                {{l("AllowToRememberBrowserForTwoFactorLogin")}}. {{ l('AllowToRememberBrowserForTwoFactorLoginDescription') }}
                                 <span></span>
                             </label>
                         </div>

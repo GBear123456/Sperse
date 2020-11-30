@@ -200,7 +200,7 @@
                         <div class="form-group">
                             <dx-check-box id="Setting_TwoFactorLogin_IsRememberBrowserEnabled"
                                           *ngIf="hostSettings.security.twoFactorLogin.isEnabled"
-                                          [text]="l('AllowToRememberBrowserForTwoFactorLogin')"
+                                          [text]="l('AllowToRememberBrowserForTwoFactorLogin') + '. ' + l('AllowToRememberBrowserForTwoFactorLoginDescription')"
                                           [(value)]="hostSettings.security.twoFactorLogin.isRememberBrowserEnabled">
                             </dx-check-box>
                         </div>

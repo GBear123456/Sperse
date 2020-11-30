@@ -41,7 +41,6 @@
                 </div>
                 <div class="form-group require-uppercase">
                     <dx-check-box id="Setting_PasswordComplexity_RequireUppercase"
-                                  *ngIf="!settings.useDefaultPasswordComplexitySettings"
                                   [disabled]="settings.useDefaultPasswordComplexitySettings"
                                   [text]="ls.l('PasswordComplexity_RequireUppercase')"
                                   [(value)]="settings.useDefaultPasswordComplexitySettings
