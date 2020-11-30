@@ -35,7 +35,9 @@ import {
     UpdateUserOptionsDto,
     DocumentServiceProxy,
     CopyTemplateInput,
-    FileInfo
+    FileInfo,
+    NoteInfoDto,
+    LeadInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
@@ -61,6 +63,7 @@ import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum'
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 import { AddCompanyDialogData } from '@app/crm/contacts/add-company-dialog/add-company-dialog-data.interface';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
+import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
 
 @Injectable()
 export class ContactsService {
@@ -493,7 +496,7 @@ export class ContactsService {
         }).afterClosed();
     }
 
-    showNoteAddDialog(noteData?) {
+    showNoteAddDialog(noteData?: NoteInfoDto) {
         let dialogId = 'note' + (noteData && noteData.id || ''),
             dialog = this.dialog.getDialogById(dialogId);
         if (dialog && (!noteData || dialog.componentInstance.data.note.id == noteData.id))
@@ -504,17 +507,21 @@ export class ContactsService {
         forkJoin(
             this.contactInfo$.pipe(filter(Boolean), first()),
             this.personContactInfo$.pipe(filter(Boolean), first()),
-            this.organizationContactInfo$.pipe(filter(Boolean), first())
-        ).subscribe(([contactInfo, personContactInfo, organizationContactInfo]: [ContactInfoDto, PersonContactInfoDto, OrganizationContactInfoDto]) => {
+            this.organizationContactInfo$.pipe(filter(Boolean), first()),
+            this.leadInfo$.pipe(filter(Boolean), first(), map((leadInfo: LeadInfoDto) => leadInfo.propertyId))
+        ).subscribe(([contactInfo, personContactInfo, organizationContactInfo, propertyId]:
+                          [ContactInfoDto, PersonContactInfoDto, OrganizationContactInfoDto, number]) => {
+            const noteAddDialogData: NoteAddDialogData = {
+                note: noteData,
+                contactInfo: contactInfo,
+                showPropertyType: !!propertyId
+            };
             this.dialog.open(NoteAddDialogComponent, {
                 id: dialogId,
                 panelClass: ['slider'],
                 hasBackdrop: false,
                 closeOnNavigation: true,
-                data: {
-                    note: noteData,
-                    contactInfo: contactInfo
-                }
+                data: noteAddDialogData
             }).componentInstance.onSaved.subscribe(() => {
                 this.invalidate('notes');
             });
