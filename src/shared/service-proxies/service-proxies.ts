@@ -2904,6 +2904,76 @@ export class BANKCodeServiceProxy {
 }
 
 @Injectable()
+export class BudgetServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    import(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: BudgetImportInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Budget/Import?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processImport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processImport(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processImport(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class BusinessEntityServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -42314,6 +42384,58 @@ export interface IRecentlyAddedContact {
     bankCodeDate: moment.Moment | undefined;
     countryId: string | undefined;
     countryName: string | undefined;
+}
+
+export class BudgetImportInput implements IBudgetImportInput {
+    year!: number;
+    businessEntityId!: number;
+    currencyId!: string;
+    excelFile!: string | undefined;
+    override!: boolean | undefined;
+
+    constructor(data?: IBudgetImportInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.year = data["year"];
+            this.businessEntityId = data["businessEntityId"];
+            this.currencyId = data["currencyId"];
+            this.excelFile = data["excelFile"];
+            this.override = data["override"];
+        }
+    }
+
+    static fromJS(data: any): BudgetImportInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new BudgetImportInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["year"] = this.year;
+        data["businessEntityId"] = this.businessEntityId;
+        data["currencyId"] = this.currencyId;
+        data["excelFile"] = this.excelFile;
+        data["override"] = this.override;
+        return data; 
+    }
+}
+
+export interface IBudgetImportInput {
+    year: number;
+    businessEntityId: number;
+    currencyId: string;
+    excelFile: string | undefined;
+    override: boolean | undefined;
 }
 
 export class BusinessEntityDto implements IBusinessEntityDto {
