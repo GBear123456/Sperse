@@ -118,6 +118,7 @@ import { TransactionStatsDtoExtended } from './models/transaction-stats-dto-exte
 import { WeekInfo } from './models/week-info';
 import { UserPreferencesService } from './preferences-dialog/preferences.service';
 import { PreferencesDialogComponent } from './preferences-dialog/preferences-dialog.component';
+import { UploadBudgetDialogComponent } from './upload-budget-dialog/upload-budget-dialog.component';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import {
@@ -1145,6 +1146,32 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     {
                         name: 'rules',
                         action: this.showPreferencesDialog.bind(this)
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('UploadBudget'),
+                            onClick: () => {
+                                this.dialog.open(UploadBudgetDialogComponent, {
+                                    panelClass: [ 'slider' ],
+                                    disableClose: true,
+                                    hasBackdrop: true,
+                                    closeOnNavigation: true,
+                                    data: {
+                                        instanceType: this.instanceType,
+                                        instanceId: this.instanceId
+                                    }
+                                }).afterClosed().subscribe(() => {
+
+                                });
+                            }
+                        }
                     }
                 ]
             },
