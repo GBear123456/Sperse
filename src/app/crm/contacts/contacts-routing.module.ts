@@ -58,6 +58,7 @@ import { ResellerActivityComponent } from './reseller-activity/reseller-activity
                 component: ContactsComponent,
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+                    { path: 'property-information', component: PropertyInformationComponent },
                     { path: 'contact-information', component: ContactInformationComponent },
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-inbox', component: UserInboxComponent },
@@ -108,6 +109,7 @@ import { ResellerActivityComponent } from './reseller-activity/reseller-activity
                 component: ContactsComponent,
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+                    { path: 'property-information', component: PropertyInformationComponent },
                     { path: 'contact-information', component: ContactInformationComponent },
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-inbox', component: UserInboxComponent },
@@ -133,6 +135,7 @@ import { ResellerActivityComponent } from './reseller-activity/reseller-activity
                 component: ContactsComponent,
                 children: [
                     { path: '', redirectTo: 'contact-information', pathMatch: 'full' },
+                    { path: 'property-information', component: PropertyInformationComponent },
                     { path: 'contact-information', component: ContactInformationComponent },
                     { path: 'personal-details', component: PersonalDetailsComponent },
                     { path: 'user-inbox', component: UserInboxComponent },

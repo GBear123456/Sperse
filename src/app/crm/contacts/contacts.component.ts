@@ -303,7 +303,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             {
                 name: 'reseller-activity',
                 label: this.l('ResellerActivity'), route: 'reseller-activity',
-                hidden: !this.appSessionService.tenant || 
+                hidden: !this.appSessionService.tenant ||
                     this.appSessionService.tenant.customLayoutType != LayoutType.BankCode
             },
             { name: 'lead-information', label: this.l('LeadInformation'), route: 'lead-information', hidden: !!this.contactInfo.parentId },
