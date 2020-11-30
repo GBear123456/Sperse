@@ -683,7 +683,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 this.leadFields.Phone,
                                 this.leadFields.StageChecklistPointDoneCount,
                                 this.leadFields.AffiliateContactName,
-                                this.leadFields.AffiliateContactAffiliateCode
+                                this.leadFields.AffiliateContactAffiliateCode,
+                                this.leadFields.PropertyId
                             ]
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -1895,7 +1896,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             clientId = lead && lead.CustomerId;
         if (!leadId || !clientId)
             return;
-        if (!section && lead.PropertyId !== null) {
+        if (!section && typeof lead.PropertyId === 'number') {
             section = 'property-information';
             queryParams = { ...queryParams, propertyId: lead.PropertyId };
         }
