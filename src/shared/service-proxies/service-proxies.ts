@@ -9217,6 +9217,65 @@ export class ContactServiceProxy {
     }
 
     /**
+     * @contactId (optional) 
+     * @return Success
+     */
+    getAffiliateHistory(contactId: number | null | undefined): Observable<AffiliateInfoHistoryInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetAffiliateHistory?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAffiliateHistory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAffiliateHistory(<any>response_);
+                } catch (e) {
+                    return <Observable<AffiliateInfoHistoryInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AffiliateInfoHistoryInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAffiliateHistory(response: HttpResponseBase): Observable<AffiliateInfoHistoryInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(AffiliateInfoHistoryInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AffiliateInfoHistoryInfo[]>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -51292,6 +51351,66 @@ export class ContactStatusDto implements IContactStatusDto {
 export interface IContactStatusDto {
     id: string | undefined;
     name: string | undefined;
+}
+
+export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
+    affiliateContactId!: number | undefined;
+    affiliateCode!: string | undefined;
+    affiliateRate!: number | undefined;
+    dateTime!: moment.Moment | undefined;
+    userId!: number | undefined;
+    userName!: string | undefined;
+    userPhotoPublicId!: string | undefined;
+
+    constructor(data?: IAffiliateInfoHistoryInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.affiliateContactId = data["affiliateContactId"];
+            this.affiliateCode = data["affiliateCode"];
+            this.affiliateRate = data["affiliateRate"];
+            this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
+            this.userId = data["userId"];
+            this.userName = data["userName"];
+            this.userPhotoPublicId = data["userPhotoPublicId"];
+        }
+    }
+
+    static fromJS(data: any): AffiliateInfoHistoryInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new AffiliateInfoHistoryInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["affiliateContactId"] = this.affiliateContactId;
+        data["affiliateCode"] = this.affiliateCode;
+        data["affiliateRate"] = this.affiliateRate;
+        data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
+        data["userPhotoPublicId"] = this.userPhotoPublicId;
+        return data; 
+    }
+}
+
+export interface IAffiliateInfoHistoryInfo {
+    affiliateContactId: number | undefined;
+    affiliateCode: string | undefined;
+    affiliateRate: number | undefined;
+    dateTime: moment.Moment | undefined;
+    userId: number | undefined;
+    userName: string | undefined;
+    userPhotoPublicId: string | undefined;
 }
 
 export class AssignUserInput implements IAssignUserInput {
