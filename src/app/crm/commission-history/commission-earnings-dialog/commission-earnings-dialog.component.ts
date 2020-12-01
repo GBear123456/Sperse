@@ -11,7 +11,6 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { NotifyService } from '@abp/notify/notify.service';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { RecordEarningsInput, CommissionServiceProxy, PendingCommissionContactInfo } from '@shared/service-proxies/service-proxies';
-import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -28,7 +27,7 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
         }))
     );
     calendarOptions = { allowFutureDates: false };
-    selectedContactIds: number[];
+    contactId: number;
     dateRange = {
         from: { value: DateHelper.addTimezoneOffset(moment().startOf('day').toDate(), true) },
         to: { value: DateHelper.addTimezoneOffset(moment().endOf('day').toDate(), true) }
@@ -45,9 +44,7 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
     }
 
     confirm() {
-        if (this.selectedContactIds && this.selectedContactIds.length &&
-            this.selectedContactIds.length == 1 || this.data.bulkUpdateAllowed
-        ) {
+        if (this.contactId || this.data.bulkUpdateAllowed) {
             ContactsHelper.showConfirmMessage(
                 this.ls.l('NewEarningsAdd'),
                 (isConfirmed: boolean) => {
@@ -55,8 +52,7 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
                         this.loadingService.startLoading(this.elementRef.nativeElement);
                         this.commissionProxy.recordEarnings(
                             new RecordEarningsInput({
-                                contactIds: this.selectedContactIds && this.selectedContactIds.length
-                                    ? this.selectedContactIds : undefined,
+                                contactIds: [ this.contactId ],
                                 startDate: DateHelper.removeTimezoneOffset(new Date(
                                     (this.dateRange.from.value || this.dateRange.to.value).getTime()), true, 'from'),
                                 endDate: DateHelper.removeTimezoneOffset(new Date(
@@ -73,15 +69,5 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
             );
         } else
             this.notify.error(this.ls.l('AtLeastOneOfThesePermissionsMustBeGranted', AppPermissions.CRMBulkUpdates));
-    }
-
-    getSelectedName(contactList) {
-        if (this.selectedContactIds && this.selectedContactIds.length) {
-            let selectedItem = contactList.find(
-                item => item.id == this.selectedContactIds[0]
-            ), name = selectedItem && (selectedItem.name || selectedItem.affiliateCode),
-            count = this.selectedContactIds.length - 1;
-            return count > 0 ? name + ` + ${count}` : name;
-        }
     }
 }

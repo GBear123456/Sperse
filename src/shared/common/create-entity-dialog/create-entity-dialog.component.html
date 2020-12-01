@@ -54,13 +54,34 @@
               [placeholder]="ls.l('Contact.FullName')"
               (onTitleKeyUp)="onFullNameKeyUp($event)"
               (onContextItemChanged)="onSaveOptionSelectionChanged()">
+    <ng-container headerContent>
+        <div *ngIf="showPropertyFields" class="property-address">
+            <input *ngIf="!googleAutoComplete"
+                   type="text"
+                   name="PropertyAddress"
+                   [placeholder]="ls.l('PropertyAddress')"
+                   [(ngModel)]="property.name"
+                   class="dx-texteditor-input"/>
+            <input *ngIf="googleAutoComplete"
+                   type="text"
+                   name="Address"
+                   [placeholder]="ls.l('PropertyAddress')"
+                   [(ngModel)]="property.name"
+                   class="dx-texteditor-input"
+                   (onAddressChange)="updatePropertyAddress($event)"
+                   ngx-google-places-autocomplete/>
+        </div>
+    </ng-container>
+
     <div *ngIf="!hidePhotoArea"
          class="photo-area"
          [ngStyle]="{'background-image': photoOriginalData ? 'url(' + photoOriginalData + ')': ''}"
          (click)="showUploadPhoto($event)">
     </div>
 
-    <dx-toolbar *ngIf="!hideToolbar" (onItemRendered)="toolbarService.onItemRendered($event)">
+    <dx-toolbar *ngIf="!hideToolbar"
+                [ngStyle]="{ paddingLeft: hidePhotoArea ? '12px' : '115px' }"
+                (onItemRendered)="toolbarService.onItemRendered($event)">
         <dxi-item location="before" template="clientAssign" [disabled]="isAssignDisabled"></dxi-item>
         <div *dxTemplate="let data of 'clientAssign'">
             <dx-button [icon]="'./assets/common/icons/assign-icon.svg'"
@@ -159,7 +180,71 @@
     </div>
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover">
-            <dx-validation-group *ngIf="!hideCompanyField" (onInitialized)="initValidationGroup($event, 'companyValidators')">
+            <dx-validation-group *ngIf="showPropertyFields" class="property-info" #propertyValidationGroup>
+                <h3>{{ ls.l('PropertyInfo') }}:</h3>
+                <div class="field">
+                    <div>
+                        <label class="area-label">{{ ls.l('PropertyArea') }}</label>
+                        <dx-number-box [(value)]="property.area"></dx-number-box>
+                    </div>
+                    <div>
+                        <label class="floor-label">{{ ls.l('Floor') }}</label>
+                        <dx-number-box [(value)]="property.floor"></dx-number-box>
+                    </div>
+                </div>
+                <div class="field">
+                    <div>
+                        <label class="date-label">{{ ls.l('Year') }}</label>
+                        <dx-date-box type="date"
+                                     [calendarOptions]="{
+                                        minZoomLevel: 'century',
+                                        maxZoomLevel: 'decade'
+                                     }"
+                                     dropDownButtonTemplate="dropDownButtonTemplate"
+                                     displayFormat="year"
+                                     [(value)]="property.yearBuilt">
+                            <div *dxTemplate="let data of 'dropDownButtonTemplate'">
+                                <img src="./assets/common/icons/calendar-date.svg">
+                            </div>
+                        </dx-date-box>
+                    </div>
+                    <div>
+                        <label class="levels-label">{{ ls.l('Levels') }}</label>
+                        <dx-number-box [(value)]="property.numberOfLevels"></dx-number-box>
+                    </div>
+                </div>
+            </dx-validation-group>
+            <dx-validation-group *ngIf="showPropertiesDropdown">
+                <div class="field">
+                    <label class="property-label">{{ ls.l('Property') }}</label>
+                    <dx-select-box class="property-dropdown"
+                                   width="570px"
+                                   [dataSource]="properties$ | async"
+                                   [displayExpr]="leadFields.PropertyName"
+                                   [valueExpr]="leadFields.PropertyId"
+                                   [placeholder]="ls.l('PropertyDropdownPlaceholder')"
+                                   [(value)]="propertyId">
+                    </dx-select-box>
+                </div>
+            </dx-validation-group>
+            <dx-validation-group *ngIf="!hideCompanyField"
+                                 (onInitialized)="initValidationGroup($event, 'companyValidators')">
+                <ng-container *ngIf="showPropertyFields">
+                    <h3>{{ ls.l('SellerInformation') }}:</h3>
+                    <div class="field">
+                        <label class="name-label">{{ls.l('Contact')}}</label>
+                        <dx-text-box [value]="contactName"
+                                     [placeholder]="ls.l('Contact.FullName')"
+                                     (onKeyUp)="onFullNameKeyUp($event.element.getElementsByTagName('input')[0].value)">
+                            <dx-validator>
+                                <dxi-validation-rule type="pattern"
+                                                     [pattern]="nameRegex"
+                                                     [message]="ls.l('FullNameIsNotValid')">
+                                </dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                    </div>
+                </ng-container>
                 <div class="field">
                     <label class="company-label">{{ls.l('Company')}}</label>
                     <dx-select-box #companyComponent
@@ -186,7 +271,7 @@
                     <dx-text-box #jobTitleComponent
                                  name="jobTitle"
                                  [placeholder]="ls.l('Job title')"
-                                 [valueChangeEvent]="'keyup'"
+                                 valueChangeEvent="keyup"
                                  width="270px"
                                  [(value)]="jobTitle"
                                  (onValueChanged)="validateCompanyName()">
@@ -201,7 +286,7 @@
                 <div class="field email">
                     <label class="email-label">{{ls.l('Email')}}</label>
                     <div>
-                        <div *ngFor="let email of contacts.emails; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
+                        <div *ngFor="let email of contact.emails; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
                             <div class="drop-down-box-wrapper">
                                 <dx-select-box
                                     width="340px"
@@ -226,10 +311,16 @@
                                          (onValueChanged)="onFieldChanged($event, 'emails', i)"
                                          (onInitialized)="onComponentInitialized($event, 'emails')">
                                 <dx-validator>
-                                    <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{ls.l('EmailIsNotValid')}}."></dxi-validation-rule>
+                                    <dxi-validation-rule type="pattern"
+                                                         [pattern]="emailRegEx"
+                                                         message="{{ls.l('EmailIsNotValid')}}.">
+                                    </dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
-                            <span [class]="(i || email.email) && 'clear-contact' || 'hidden'" (click)="emptyOrRemoveInput('emails', i)"><i class="minus-icon"></i></span>
+                            <span [class]="(i || email.email) && 'clear-contact' || 'hidden'"
+                                  (click)="emptyOrRemoveInput('emails', i)">
+                                <i class="minus-icon"></i>
+                            </span>
                         </div>
                         <div *ngIf="!disallowMultipleItems"
                              class="add-new-button"
@@ -243,7 +334,7 @@
                 <div class="field phone H">
                     <label class="phone-label">{{ls.l('Phone')}}</label>
                     <div>
-                        <div *ngFor="let phone of contacts.phones; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
+                        <div *ngFor="let phone of contact.phones; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
                             <div class="drop-down-box-wrapper">
                                 <dx-select-box
                                     width="370px"
@@ -253,7 +344,7 @@
                                     displayExpr="name"
                                     valueExpr="id"
                                     [(value)]="phone.type"
-                                    [itemTemplate]="'phoneTypeItemTemplate'"
+                                    itemTemplate="phoneTypeItemTemplate"
                                     (onValueChanged)="validateCompanyName()">
                                     <div *dxTemplate="let data of 'phoneTypeItemTemplate'">
                                         <div class="usage-type-item"><span style="width: 100px;">{{data.name}}</span><span>{{ls.l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span></div>
@@ -275,7 +366,10 @@
                                 [placeholder]="ls.l('Ext')"
                                 [(value)]="phone.ext">
                                 <dx-validator>
-                                    <dxi-validation-rule type="stringLength" [max]="5" message="{{ls.l('PhoneExtensionExceedsMaxSize')}}."></dxi-validation-rule>
+                                    <dxi-validation-rule type="stringLength"
+                                                         [max]="5"
+                                                         message="{{ls.l('PhoneExtensionExceedsMaxSize')}}.">
+                                    </dxi-validation-rule>
                                 </dx-validator>
                             </dx-number-box>
                             <span [class]="(i || phone.number || phone.ext) && 'clear-contact' || 'hidden'"
@@ -295,7 +389,7 @@
                 <div class="field">
                     <label class="link-label">{{ls.l('Links')}}</label>
                     <div>
-                        <div *ngFor="let link of contacts.links; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
+                        <div *ngFor="let link of contact.links; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
                             <div class="drop-down-box-wrapper">
                                 <dx-drop-down-box
                                     width="330px"
@@ -340,7 +434,10 @@
                                          (onValueChanged)="onFieldChanged($event, 'links', i)"
                                          (onInitialized)="onComponentInitialized($event, 'links')">
                                 <dx-validator>
-                                    <dxi-validation-rule type="pattern" [pattern]="urlRegEx" message="{{ls.l('LinkIsNotValid')}}."></dxi-validation-rule>
+                                    <dxi-validation-rule type="pattern"
+                                                         [pattern]="urlRegEx"
+                                                         message="{{ls.l('LinkIsNotValid')}}.">
+                                    </dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
                             <span [class]="(i || link.url) && 'clear-contact' || 'hidden'" (click)="emptyOrRemoveInput('links', i)"><i class="minus-icon"></i></span>
@@ -355,86 +452,27 @@
                 <div class="field">
                     <label class="address-label">{{ls.l('Address')}}</label>
                     <div>
-                        <div *ngFor="let address of contacts.addresses; index as i" class="editable-item">
-                            <div class="field addr {{i ? 'padding-right': ''}}">
-                                <div class="drop-down-box-wrapper">
-                                    <dx-select-box
-                                        width="380px"
-                                        name="addressType"
-                                        [placeholder]="ls.l('Type')"
-                                        [dataSource]="addressTypes"
-                                        displayExpr="name"
-                                        valueExpr="id"
-                                        [(value)]="address['type']"
-                                        [itemTemplate]="'addressTypeItemTemplate'"
-                                        (onValueChanged)="validateCompanyName()">
-                                        <div *dxTemplate="let data of 'addressTypeItemTemplate'">
-                                            <div class="usage-type-item"><span>{{data.name}}</span><span>{{ls.l('ContactInformation_AddressTypeTooltip_' + data.id)}}</span></div>
-                                        </div>
-                                    </dx-select-box>
-                                </div>
-                                <input *ngIf="!googleAutoComplete" type="text"
-                                       name="Address"
-                                       [placeholder]="ls.l('Street')"
-                                       [(ngModel)]="address['address']"
-                                       class="dx-texteditor-input"/>
-                                <input *ngIf="googleAutoComplete" type="text"
-                                       #addressInput
-                                       name="Address"
-                                       [placeholder]="ls.l('Street')"
-                                       [(ngModel)]="address['address']"
-                                       class="dx-texteditor-input"
-                                       (onAddressChange)="onAddressChanged($event, i)"
-                                       ngx-google-places-autocomplete/>
-                                <span [class]="(i || address.address || address.city || address.state || address.zip || address.country) && 'clear-contact' || 'hidden'"
-                                      (click)="emptyOrRemoveInput('addresses', i)"><i class="minus-icon"></i></span>
-                            </div>
-                            <div class="field addr padding-right">
-                                <dx-text-box
-                                    name="city"
-                                    maxLength="50"
-                                    [placeholder]="ls.l('City')"
-                                    width="270px"
-                                    [(value)]="address['city']"
-                                    [valueChangeEvent]="'keyup'"
-                                    (onValueChanged)="checkAddressControls(i)">
-                                </dx-text-box>
-                                <dx-select-box
-                                    [acceptCustomValue]="true"
-                                    [dataSource]="getCountryStates(address.countryCode) | async"
-                                    displayExpr="name"
-                                    name="state"
-                                    [placeholder]="ls.l('State')"
-                                    width="270px"
-                                    [searchEnabled]="true"
-                                    [(value)]="address['state']"
-                                    (onValueChanged)="checkAddressControls(i)"
-                                    (onCustomItemCreating)="onCustomStateCreate($event, i)">
-                                </dx-select-box>
-                            </div>
-                            <div class="field addr padding-right" style="padding-bottom: 10px;">
-                                <dx-text-box
-                                    maxLength="10"
-                                    [placeholder]="ls.l('ZipCode')"
-                                    width="270px"
-                                    [(value)]="address['zip']"
-                                    valueChangeEvent="keyup"
-                                    (onValueChanged)="checkAddressControls(i)">
-                                </dx-text-box>
-                                <dx-select-box
-                                    [dataSource]="countries"
-                                    displayExpr="name"
-                                    valueExpr="code"
-                                    name="country"
-                                    [placeholder]="ls.l('Country')"
-                                    width="270px"
-                                    [searchEnabled]="true"
-                                    [(value)]="address['countryCode']"
-                                    (onValueChanged)="onCountryChange($event, i)">
-                                </dx-select-box>
-                            </div>
+                        <div *ngFor="let address of contact.addresses; index as i" class="editable-item">
+                            <address-fields [addressTypes]="addressTypes$ | async"
+                                            [address]="address"
+                                            [googleAutoComplete]="googleAutoComplete"
+                                            [showClearButton]="!!((i || address.address ||
+                                               address.city || address.state || address.zip ||
+                                               address.countryCode) && 'clear-contact' || 'hidden')"
+                                            (onCountryUpdate)="updateCountryInfo($event, i)"
+                                            (onAddressChanged)="updateContactAddressFields($event, address, i)"
+                                            (onAddressTypeChanged)="validateCompanyName()"
+                                            (onCustomStateCreated)="onCustomStateCreate($event, i)"
+                                            (onAddressRemove)="emptyOrRemoveInput('addresses', i)"
+                                            (onCountryChanged)="onCountryChange($event, i)"
+                                            (onCityChanged)="checkAddressControls(i)"
+                                            (onZipChanged)="checkAddressControls(i)"
+                                            (onStateChanged)="checkAddressControls(i)">
+                            </address-fields>
                         </div>
-                        <div *ngIf="!disallowMultipleItems" class="add-new-button" [ngClass]="{ disabled: !addButtonVisible['addresses'] }">
+                        <div *ngIf="!disallowMultipleItems"
+                             class="add-new-button"
+                             [ngClass]="{ disabled: !addButtonVisible.addresses }">
                             <span (click)="addNewContact('addresses')">{{ls.l('+ Add address')}}</span>
                         </div>
                     </div>

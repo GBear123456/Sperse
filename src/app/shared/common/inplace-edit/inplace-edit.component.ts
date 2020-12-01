@@ -7,7 +7,7 @@ import {
     ViewChild,
     EventEmitter,
     ChangeDetectorRef,
-    ChangeDetectionStrategy
+    ChangeDetectionStrategy, HostListener
 } from '@angular/core';
 
 /** Third party imports */

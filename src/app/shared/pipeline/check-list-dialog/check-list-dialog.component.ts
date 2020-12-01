@@ -158,7 +158,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
 
     reloadStageConfig() {
         zip(
-            this.store$.pipe(select(PipelinesStoreSelectors.getPipelines(undefined)), first()),
+            this.store$.pipe(select(PipelinesStoreSelectors.getPipelines()), first()),
             this.checklistProxy.getPoints(this.dialogData.stage.id)
         ).subscribe(([pipelines, checklist]: [PipelineDto[], StageChecklistPointDto[]]) => {
             pipelines.some(pipeline => {

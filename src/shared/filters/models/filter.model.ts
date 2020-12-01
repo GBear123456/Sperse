@@ -29,7 +29,7 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
                     if (val && this.operator === 'contains')
                         return this.processContainsOperator(val, key);
                     if (this.operator)
-                        operator[this.operator] = val;
+                        operator[this.operator as string] = val;
                     if (val && (['string', 'number'].indexOf(typeof (val)) >= 0)) {
                         obj[capitalize(key)] = this.operator ? operator : val;
                     }
@@ -42,7 +42,7 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
 
         let colFilterData: any[] = [];
 
-        values.forEach((val) => {
+        values.forEach((val: string) => {
             let el = {};
             el[key] = {
                 contains: val
@@ -57,7 +57,7 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
     private getFilterByDate(params?) {
         let data = {};
         data[this.field] = {};
-        _.each(this.items, (item: FilterItemModel, key) => {
+        _.each(this.items, (item: FilterItemModel, key: string) => {
             if (item && item.value) {
                 let clone = new Date(item.value.getTime());
                 DateHelper.removeTimezoneOffset(clone, params && params.useUserTimezone, key);

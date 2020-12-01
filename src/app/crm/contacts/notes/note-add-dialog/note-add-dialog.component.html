@@ -6,7 +6,6 @@
                     <dx-select-box
                         width="320px"
                         [dataSource]="types"
-                        [dropDownButtonTemplate]="''"
                         displayExpr="name"
                         valueExpr="id"
                         [(value)]="type">
@@ -23,7 +22,7 @@
                 </div>
                 <div class="field">
                     <label>{{l('Summary') | uppercase }}</label>
-                    <dx-text-area width="355px" [height]="'100px'" [(value)]="summary">
+                    <dx-text-area width="450px" height="100px" [(value)]="summary">
                         <dx-validator>
                             <dxi-validation-rule type="required" [message]="l('NoteIsRequired')"></dxi-validation-rule>
                         </dx-validator>
@@ -32,7 +31,7 @@
                 <div *ngIf="contacts.length > 1" class="field contact">
                     <label>{{l('Contact') | uppercase }}</label>
                     <dx-select-box
-                        width="355px"
+                        width="450px"
                         [dataSource]="contacts"
                         displayExpr="fullName"
                         valueExpr="id"
@@ -43,7 +42,7 @@
                 <div class="field" *ngIf="isCRMOrdersGranted">
                     <label>{{l('Orders') | uppercase }}</label>
                     <dx-select-box
-                        width="355px"
+                        width="450px"
                         [showClearButton]="true"
                         [dataSource]="ordersDataSource"
                         [displayExpr]="orderDisplayValue"
@@ -55,7 +54,7 @@
                     <label>{{l('FollowUpDate') | uppercase }}</label>
                     <dx-date-box
                         #followUpDateBox
-                        width="355px"
+                        width="450px"
                         type="datetime"
                         [(value)]="followupDate">
                     </dx-date-box>
@@ -63,7 +62,7 @@
                 <div class="field phone">
                     <label>{{l('Phone') | uppercase }}</label>
                     <dx-select-box
-                        width="320px"
+                        width="420px"
                         [dataSource]="phones"
                         displayExpr="phoneNumber"
                         valueExpr="id"
@@ -77,7 +76,7 @@
                         <label>{{l('Date') | uppercase }}</label>
                         <dx-date-box
                             #currentDateBox
-                            width="355px"
+                            width="450px"
                             type="datetime"
                             [(value)]="currentDate">
                         </dx-date-box>
@@ -85,7 +84,7 @@
                     <div class="field">
                         <label>{{l('AddedBy') | uppercase }}</label>
                         <dx-select-box
-                            width="355px"
+                            width="450px"
                             [placeholder]="l('EditValuePlaceholder')"
                             [dataSource]="users"
                             displayExpr="name"

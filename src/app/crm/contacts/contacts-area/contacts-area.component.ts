@@ -26,8 +26,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 @Component({
     selector: 'contacts-area',
     templateUrl: './contacts-area.component.html',
-    styleUrls: ['./contacts-area.component.less'],
-    providers: [ DialogService ]
+    styleUrls: ['./contacts-area.component.less']
 })
 export class ContactsAreaComponent {
     @Input() isCompany = false;
@@ -60,7 +59,6 @@ export class ContactsAreaComponent {
         private organizationContactService: OrganizationContactServiceProxy,
         private clipboardService: ClipboardService,
         private notifyService: NotifyService,
-        private dialogService: DialogService,
         private permissionService: AppPermissionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService
@@ -75,7 +73,7 @@ export class ContactsAreaComponent {
     getDialogPosition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('ul');
-        return this.dialogService.calculateDialogPosition(event, parent, 400, shiftY);
+        return DialogService.calculateDialogPosition(event, parent, 400, shiftY);
     }
 
     calculateShiftY(event) {

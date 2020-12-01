@@ -149,6 +149,7 @@ import { AddServiceProductDialogComponent } from './subscriptions/add-subscripti
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 import { AffiliateHistoryDialogComponent } from './personal-details/personal-details-dialog/affiliate-history-dialog/affiliate-history-dialog.component';
 import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
+import { PropertyInformationComponent } from '@app/crm/contacts/property-information/property-information.component';
 
 @NgModule({
     declarations: [
@@ -212,6 +213,7 @@ import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete'
         TemplateDocumentsDialogComponent,
         AffiliateHistoryDialogComponent,
         CustomerListDialogComponent,
+        PropertyInformationComponent,
         ResellerActivityComponent
     ],
     imports: [
