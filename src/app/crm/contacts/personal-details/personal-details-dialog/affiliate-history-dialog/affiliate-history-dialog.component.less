@@ -3,15 +3,36 @@
         padding-left: 20px;
         padding-right: 15px;
         padding-top: 10px;
+        .alert-info {
+            color: #000;
+            border-color: rgba(55, 215, 73, 0.1);
+            &.zero {
+                border-color: rgba(209, 172, 0, 0.2);
+                #code-color {
+                    background: rgba(209, 172, 0, 0.2);
+                }
+            }
+            &.undefined {
+                border-color: #dadee1;
+                #code-color {
+                    background: #dadee1;
+                }
+            }
+            #code-color {
+                background: rgba(55, 215, 73, 0.1);
+            }
+        }
         .control-label {
-            padding: 0;
-            flex: 0 0 25%;
-            max-width: 25%;
+            font-weight: 600;
+            padding: 0 10px 0 0;
+            min-width: 125px;
             white-space: nowrap;
         }
-        .col-sm-10 {
-            flex: 0 0 75%;
-            max-width: 75%;
+        .form-control-static {
+            max-width: 250px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
         }
     }
 }
