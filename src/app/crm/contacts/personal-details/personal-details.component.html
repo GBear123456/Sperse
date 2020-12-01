@@ -17,7 +17,7 @@
                     <inplace-select *ngSwitchCase="'select'"
                         width="260px"
                         height="36px"
-                        [data]="getSelectData(field.name)" 
+                        [data]="getSelectData(field.name)"
                         (valueChanged)="updateValue($event, field.name)">
                     </inplace-select>
                     <dx-date-box *ngSwitchCase="'date'"
