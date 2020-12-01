@@ -21,7 +21,7 @@
             <ul class="full legend-list" [hidden]="!showFullLegend">
                 <li class="legend-item" *ngFor="let seria of allSeries$ | async">
                     <span class="legendMarker" [ngStyle]="{'backgroundColor' : seria.color }"></span>
-                    {{ startCase(seria.name.toLowerCase()) }}
+                    <ng-container *ngIf="seria.name">{{ startCase(seria.name.toLowerCase()) }}</ng-container>
                 </li>
             </ul>
         </div>

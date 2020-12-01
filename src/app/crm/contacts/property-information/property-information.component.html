@@ -1,0 +1,53 @@
+<h3>{{ ls.l('GeneralDetails') }}</h3>
+<div class="fields" *ngIf="property">
+    <div class="address">
+        <label>{{ ls.l('Address') }}</label>
+        <addresses [contactInfo]="contactInfo$ | async"
+                   [addresses]="propertyAddresses"
+                   [isAddAllowed]="false"
+                   [isCopyAllowed]="false"
+                   [isDeleteAllowed]="false"
+                   [showType]="false"
+                   [editDialogTitle]="ls.l('EditAddress')"
+                   [contactId]="property.address.contactId"
+                   (onAddressUpdate)="updateAddress($event)">
+        </addresses>
+    </div>
+    <div class="property-area">
+        <label>{{ ls.l('PropertyArea') }}</label>
+        <dx-number-box [(value)]="property.area"
+                       (onValueChanged)="valueChanged()">
+        </dx-number-box>
+    </div>
+    <div class="year">
+        <label>{{ ls.l('Year') }}</label>
+        <dx-date-box type="date"
+                     [calendarOptions]="{
+                        minZoomLevel: 'century',
+                        maxZoomLevel: 'decade'
+                     }"
+                     [placeholder]="ls.l('EditValuePlaceholder')"
+                     dropDownButtonTemplate="dropDownButtonTemplate"
+                     displayFormat="year"
+                     [value]="yearBuilt"
+                     (onValueChanged)="yearBuiltChanged($event.value)">
+            <div *dxTemplate="let data of 'dropDownButtonTemplate'">
+                <img src="./assets/common/icons/calendar-date.svg">
+            </div>
+        </dx-date-box>
+    </div>
+    <div class="floor">
+        <label>{{ ls.l('Floor') }}</label>
+        <dx-number-box [(value)]="property.floor"
+                       [placeholder]="ls.l('EditValuePlaceholder')"
+                       (onValueChanged)="valueChanged()">
+        </dx-number-box>
+    </div>
+    <div class="levels">
+        <label>{{ ls.l('Levels') }}</label>
+        <dx-number-box [(value)]="property.numberOfLevels"
+                       [placeholder]="ls.l('EditValuePlaceholder')"
+                       (onValueChanged)="valueChanged()">
+        </dx-number-box>
+    </div>
+</div>

@@ -148,6 +148,7 @@ import { ResellerActivityComponent } from './reseller-activity/reseller-activity
 import { AddServiceProductDialogComponent } from './subscriptions/add-subscription-dialog/add-service-product-dialog/add-service-product-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
+import { PropertyInformationComponent } from '@app/crm/contacts/property-information/property-information.component';
 
 @NgModule({
     declarations: [
@@ -210,6 +211,7 @@ import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete'
         AddServiceProductDialogComponent,
         TemplateDocumentsDialogComponent,
         CustomerListDialogComponent,
+        PropertyInformationComponent,
         ResellerActivityComponent
     ],
     imports: [

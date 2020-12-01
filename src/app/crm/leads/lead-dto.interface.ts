@@ -8,6 +8,7 @@ export interface LeadDto {
     Phone: string;
     City: string;
     State: string;
+    StageId: number;
     Stage: string;
     LeadDate: string;
     OrganizationId: number;
@@ -34,4 +35,7 @@ export interface LeadDto {
     ContactGroupId: string;
     AffiliateContactName: string;
     AffiliateContactAffiliateCode: string;
+    PipelineId: number;
+    PropertyId: number;
+    PropertyName: string;
 }

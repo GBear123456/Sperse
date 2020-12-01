@@ -26,8 +26,7 @@ import { LinkType } from '@shared/AppEnums';
 @Component({
     selector: 'socials',
     templateUrl: './socials.component.html',
-    styleUrls: ['./socials.component.less'],
-    providers: [ DialogService ]
+    styleUrls: ['./socials.component.less']
 })
 export class SocialsComponent {
     @Input() isCompany;
@@ -52,7 +51,6 @@ export class SocialsComponent {
         private contactsService: ContactsService,
         private contactLinkService: ContactLinkServiceProxy,
         private organizationContactService: OrganizationContactServiceProxy,
-        private dialogService: DialogService,
         private permissionService: AppPermissionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService
@@ -80,7 +78,7 @@ export class SocialsComponent {
     getDialogPosition(event) {
         let shiftY = this.calculateShiftY(event);
         let parent = event.target.closest('li');
-        return this.dialogService.calculateDialogPosition(event, parent, 400, shiftY);
+        return DialogService.calculateDialogPosition(event, parent, 400, shiftY);
     }
 
     calculateShiftY(event) {

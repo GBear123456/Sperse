@@ -167,6 +167,7 @@
     "parse-address": "^0.0.10",
     "parse-full-name": "^1.2.3",
     "payment": "^2.3.0",
+    "pluralize": "^8.0.0",
     "popper.js": "^1.12.9",
     "primeng": "6.0.0-alpha.1",
     "print-js": "^1.0.52",
