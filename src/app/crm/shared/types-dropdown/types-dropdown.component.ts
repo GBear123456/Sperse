@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, EventEmitter, HostListener, Input, Output, ViewChild } from '@angular/core';
+import { Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -28,13 +28,6 @@ export class TypesDropdownComponent {
 
     constructor(private dialog: MatDialog) {}
 
-    @HostListener('click', ['$event']) onClick(e) {
-        if (e.target.closest('.edit')) {
-            e.stopPropagation();
-            e.preventDefault();
-        }
-    }
-
     valueChanged(e) {
         this.valueChange.emit(e.value);
         this.onValueChanged.emit(e);
@@ -51,10 +44,12 @@ export class TypesDropdownComponent {
         const dialogData: EditTypeItemDialogData = {
             name: itemName
         };
+        this.selectBox.instance['_popup'].option('closeOnOutsideClick', false);
         this.dialog.open(EditTypeItemDialogComponent, {
             data: dialogData,
             position: DialogService.calculateDialogPosition(e, e.target || document.body, -20)
         }).afterClosed().subscribe((newName: string) => {
+            this.selectBox.instance['_popup'].option('closeOnOutsideClick', true);
             if (newName) {
                 this.itemChanged(itemId, newName)
             }
@@ -65,14 +60,6 @@ export class TypesDropdownComponent {
 
     onOpened(e) {
         e.component._popup.option('elementAttr', { id: 'types-dropdown' });
-    }
-
-    itemClick(e) {
-        if (this.allowEdit && e.event.target.closest('.edit')) {
-            //this.selectBox.instance['__ignoreEvent'] = true;
-            e.event.preventDefault();
-            e.event.stopPropagation();
-        }
     }
 
 }

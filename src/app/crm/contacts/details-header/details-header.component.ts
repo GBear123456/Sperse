@@ -1,5 +1,14 @@
 /** Core imports */
-import { Component, OnInit, Injector, Input, Output, ViewChild, EventEmitter, OnDestroy } from '@angular/core';
+import {
+    Component,
+    EventEmitter,
+    Injector,
+    Input,
+    OnDestroy,
+    OnInit,
+    Output,
+    ViewChild
+} from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party import */
@@ -8,8 +17,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { CacheService } from 'ng2-cache-service';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import * as _ from 'underscore';
-import { BehaviorSubject, Observable, ReplaySubject, combineLatest, zip } from 'rxjs';
-import { filter, first, finalize, takeUntil, map, switchMap } from 'rxjs/operators';
+import { BehaviorSubject, combineLatest, Observable, ReplaySubject, zip } from 'rxjs';
+import { filter, finalize, first, map, switchMap, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -21,20 +30,20 @@ import { RelationCompaniesDialogComponent } from '../relation-companies-dialog/r
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import {
     ContactInfoDto,
-    PersonContactInfoDto,
     ContactPhotoServiceProxy,
     ContactServiceProxy,
     CreateContactPhotoInput,
-    OrganizationInfoDto,
+    LeadInfoDto,
+    OrganizationContactInfoDto,
     OrganizationContactServiceProxy,
+    OrganizationInfoDto,
+    PersonContactInfoDto,
     PersonContactServiceProxy,
     PersonOrgRelationServiceProxy,
     PersonOrgRelationShortInfo,
-    UpdatePersonOrgRelationInput,
     UpdateOrganizationInfoInput,
     UpdatePersonNameInput,
-    OrganizationContactInfoDto,
-    LeadInfoDto
+    UpdatePersonOrgRelationInput
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from '../notes/note-add-dialog/note-add-dialog.component';
@@ -125,7 +134,16 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     private readonly allContactGroups = _.values(ContactGroup);
     private readonly allContactGroupsExceptUser = this.allContactGroups.filter(v => v != ContactGroup.UserProfile);
 
-    manageAllowed;
+    manageAllowed$: Observable<boolean> = this.contactInfo$.pipe(
+        filter(Boolean),
+        map((contactInfo: ContactInfoDto) => this.permissionService.checkCGPermission(contactInfo.groupId))
+    );
+    manageAllowed: boolean;
+    propertyId$: Observable<number> = this.contactsService.leadInfo$.pipe(
+        filter(Boolean),
+        map((leadInfo: LeadInfoDto) => leadInfo.propertyId)
+    );
+    propertyId: number;
     addContextMenuItems: ContextMenuItem[] = [];
     addButtonTitle = '';
     isBankCodeLayout = this.userManagementService.checkBankCodeFeature();
@@ -136,7 +154,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     companyValidationRules = [
         { type: 'required', message: this.ls.l('CompanyNameIsRequired') }
     ];
-    propertyId: number;
 
     constructor(
         injector: Injector,
@@ -166,7 +183,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         this.contactsService.leadInfo$.pipe(takeUntil(this.lifeCycleService.destroy$))
             .subscribe((lead: LeadInfoDto) => {
                 this.leadId = lead && lead.id;
-                this.propertyId = lead && lead.propertyId;
             });
         this.personContactInfo$.pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(data => {
             this.initializePersonOrgRelationInfo(data);
@@ -179,16 +195,36 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 this.contactId = contactInfo.id;
                 this.contactGroup = contactInfo.groupId;
                 this.manageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
-                this.addContextMenuItems = this.getDefaultContextMenuItems().filter(menuItem => {
-                    return menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0;
-                });
+            }
+        );
+        this.manageAllowed$.pipe(
+            takeUntil(this.lifeCycleService.destroy$)
+        ).subscribe((manageIsAllowed: boolean) => {
+             this.manageAllowed = manageIsAllowed;
+        });
+        this.propertyId$.pipe(
+            takeUntil(this.lifeCycleService.destroy$)
+        ).subscribe((propertyId: number) => {
+            this.propertyId = propertyId;
+        });
+        combineLatest(
+            this.contactInfo$,
+            this.propertyId$,
+            this.manageAllowed$
+        ).pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(
+            ([contactInfo, propertyId, manageAllowed]: [ContactInfoDto, number, boolean]) => {
+                this.addContextMenuItems = this.getDefaultContextMenuItems(manageAllowed, !!propertyId)
+                    .filter((menuItem: ContextMenuItem) => {
+                        return menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0;
+                    });
                 this.addOptionsInit();
             }
         );
+
         /** Set initial selected organization id */
         zip(
-            this.contactInfo$.pipe(filter(contact => Boolean(contact.primaryOrganizationContactId))),
-            this.personContactInfo$.pipe(filter(contact => Boolean(contact && contact.orgRelations))),
+            this.contactInfo$.pipe(filter((contact: ContactInfoDto) => !!(contact.primaryOrganizationContactId))),
+            this.personContactInfo$.pipe(filter((contact: PersonContactInfoDto) => !!(contact && contact.orgRelations))),
             this.activatedRoute.params
         ).pipe(
             first()
@@ -224,14 +260,22 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             : 'url(' + this.profileService.getContactPhotoUrl(null, true, 'large') + ')';
     }
 
-    getDefaultContextMenuItems() {
+    getDefaultContextMenuItems(manageAllowed: boolean, showAddProperty: boolean): ContextMenuItem[] {
         return [
             {
                 type: ContextType.AddFiles,
                 text: this.ls.l('AddFiles'),
                 selected: false,
                 icon: 'files',
-                visible: this.manageAllowed,
+                visible: manageAllowed,
+                contactGroups: this.allContactGroups
+            },
+            {
+                type: ContextType.AddPropertyFiles,
+                text: this.ls.l('AddPropertyFiles'),
+                selected: false,
+                icon: 'files',
+                visible: manageAllowed && showAddProperty,
                 contactGroups: this.allContactGroups
             },
             {
@@ -239,7 +283,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 text: this.ls.l('AddNotes'),
                 selected: false,
                 icon: 'note',
-                visible: this.manageAllowed,
+                visible: manageAllowed,
                 contactGroups: this.allContactGroups
             },
             {
@@ -299,7 +343,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         let companyName = this.data['organizationContactInfo'].fullName;
         this.messageService.confirm(
             this.ls.l('ContactRelationRemovalConfirmationMessage', companyName),
-            (result) => {
+            (result: boolean) => {
                 if (result) {
                     let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;
                     this.showRemovingOrgRelationProgress = true;
@@ -516,7 +560,16 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             });
         else if (selectedMenuItem.type === ContextType.AddFiles)
             setTimeout(() => {
-                this.contactsService.showUploadDocumentsDialog(this.data.id);
+                this.contactsService.showUploadDocumentsDialog(
+                    this.data.id
+                );
+            });
+        else if (selectedMenuItem.type === ContextType.AddPropertyFiles)
+            setTimeout(() => {
+                this.contactsService.showUploadDocumentsDialog(
+                    this.propertyId,
+                    this.ls.l('UploadPropertyDocumentsDialogTitle')
+                );
             });
         else if (selectedMenuItem.type === ContextType.AddNotes)
             setTimeout(() => {

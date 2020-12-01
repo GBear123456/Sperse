@@ -64,6 +64,7 @@ import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 import { AddCompanyDialogData } from '@app/crm/contacts/add-company-dialog/add-company-dialog-data.interface';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
+import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
 
 @Injectable()
 export class ContactsService {
@@ -569,24 +570,27 @@ export class ContactsService {
 
     showTemplateDocumentsDialog(
         contactId: number, invalidate: () => void,
-        showDocuments = false, fullHeight = false
+        showDocuments: boolean = false, fullHeight: boolean = false,
+        title?: string
     ) {
+        const templateDocumentsDialogData: TemplateDocumentsDialogData = {
+            contactId: contactId,
+            fullHeight: fullHeight,
+            showDocuments: showDocuments,
+            invalidate: invalidate,
+            title: title
+        };
         return this.dialog.open(TemplateDocumentsDialogComponent, {
             panelClass: ['slider'],
             hasBackdrop: false,
             closeOnNavigation: true,
-            data: {
-                contactId: contactId,
-                fullHeight: fullHeight,
-                showDocuments: showDocuments,
-                invalidate: invalidate
-            }
+            data: templateDocumentsDialogData
         });
     }
 
-    showUploadDocumentsDialog(contactId: number) {
+    showUploadDocumentsDialog(contactId: number, title?: string) {
         this.showTemplateDocumentsDialog(
-            contactId, () => this.invalidate('documents')
+            contactId, () => this.invalidate('documents'), false, false, title
         ).afterClosed().subscribe(files => {
             if (files && files.length) {
                 abp.ui.setBusy();

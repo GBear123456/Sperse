@@ -270,8 +270,14 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.navLinks = [
             {
                 name: 'property-information',
-                label: this.l('PropertyInfo'),
+                label: this.capitalize(this.l('PropertyInfo')),
                 route: 'property-information',
+                hidden: !leadInfo || !leadInfo.propertyId
+            },
+            {
+                name: 'property-documents',
+                label: this.l('PropertyDocuments'),
+                route: 'property-documents',
                 hidden: !leadInfo || !leadInfo.propertyId
             },
             { name: 'contact-information', label: this.l('ContactInfo'), route: 'contact-information' },
