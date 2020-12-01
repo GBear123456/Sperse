@@ -9,6 +9,7 @@ import {
     OnInit,
     SimpleChanges
 } from '@angular/core';
+import { I18nPluralPipe } from '@angular/common';
 
 /** Third party imports */
 import { DxChartComponent } from 'devextreme-angular/ui/chart';
@@ -17,6 +18,7 @@ import { distinctUntilChanged } from 'rxjs/operators';
 import values from 'lodash/values';
 import capitalize from 'lodash/capitalize';
 import { getMarkup } from 'devextreme/viz/export';
+import pluralize from 'pluralize';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -32,6 +34,7 @@ import { ImageFormat } from '@shared/common/export/image-format.enum';
     selector: 'slice-chart',
     templateUrl: 'chart.component.html',
     styleUrls: [ './chart.component.less' ],
+    providers: [ I18nPluralPipe ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ChartComponent implements OnInit, OnChanges {
@@ -53,6 +56,7 @@ export class ChartComponent implements OnInit, OnChanges {
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         private exportService: ExportService,
+        private pluralPipe: I18nPluralPipe,
         public ls: AppLocalizationService
     ) {}
 
@@ -107,7 +111,15 @@ export class ChartComponent implements OnInit, OnChanges {
         }
         return {
             html: `<div style="text-align: center"><b>${firstItem}</b></div>
-                   </b>${arg.value}</b> ${this.itemsName ? ' ' + this.itemsName.toLowerCase() : ''}`
+                   </b>${arg.value}</b> 
+                   ${this.pluralPipe.transform(
+                        arg.value,
+                        {
+                            '=0': pluralize.plural(this.itemsName, 0),
+                            '=1': pluralize.singular(this.itemsName),
+                            'other': pluralize.plural(this.itemsName)
+                        })
+                   }`
         };
     }
 

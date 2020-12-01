@@ -8,23 +8,67 @@
             </tr>
             <tr>
                 <td>{{ls.l('Emails')}}</td>
-                <td><contacts-area [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo?.personContactInfo?.details" [showContactType]="'emails'"></contacts-area></td>
-                <td><contacts-area [isCompany]="true" [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details" [showContactType]="'emails'"></contacts-area></td>
+                <td>
+                    <contacts-area [contactInfo]="data?.contactInfo"
+                                   [contactInfoData]="data?.contactInfo?.personContactInfo?.details"
+                                   [showContactType]="'emails'">
+                    </contacts-area>
+                </td>
+                <td>
+                    <contacts-area [isCompany]="true"
+                                   [contactInfo]="data?.contactInfo"
+                                   [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details"
+                                   [showContactType]="'emails'">
+                    </contacts-area>
+                </td>
             </tr>
             <tr>
                 <td>{{ls.l('Phones')}}</td>
-                <td><contacts-area [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo?.personContactInfo?.details" [showContactType]="'phones'"></contacts-area></td>
-                <td><contacts-area [isCompany]="true" [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details" [showContactType]="'phones'"></contacts-area></td>
+                <td>
+                    <contacts-area [contactInfo]="data?.contactInfo"
+                                   [contactInfoData]="data?.contactInfo?.personContactInfo?.details"
+                                   [showContactType]="'phones'">
+                    </contacts-area>
+                </td>
+                <td>
+                    <contacts-area [isCompany]="true"
+                                   [contactInfo]="data?.contactInfo"
+                                   [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details"
+                                   [showContactType]="'phones'">
+                    </contacts-area>
+                </td>
             </tr>
             <tr>
                 <td>{{ls.l('Links')}}</td>
-                <td><socials [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo?.personContactInfo?.details"></socials></td>
-                <td><socials [isCompany]="true" [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details"></socials></td>
+                <td>
+                    <socials [contactInfo]="data?.contactInfo"
+                             [contactInfoData]="data?.contactInfo?.personContactInfo?.details">
+                    </socials>
+                </td>
+                <td>
+                    <socials [isCompany]="true"
+                             [contactInfo]="data?.contactInfo"
+                             [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details">
+                    </socials>
+                </td>
             </tr>
             <tr>
                 <td>{{ls.l('Addresses')}}</td>
-                <td><addresses [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo?.personContactInfo?.details"></addresses></td>
-                <td><addresses [isCompany]="true" [contactInfo]="data?.contactInfo" [contactInfoData]="data?.contactInfo['organizationContactInfo']?.details"></addresses></td>
+                <td>
+                    <addresses [contactInfo]="data?.contactInfo"
+                               [contactId]="data?.contactInfo?.personContactInfo?.details?.contactId"
+                               [addresses]="data?.contactInfo?.personContactInfo?.details?.addresses"
+                               (onAddressUpdate)="updateAddress($event, data?.contactInfo?.personContactInfo?.details?.addresses)">
+                    </addresses>
+                </td>
+                <td>
+                    <addresses [isCompany]="true"
+                               [contactInfo]="data?.contactInfo"
+                               [addresses]="data?.contactInfo['organizationContactInfo']?.details?.addresses"
+                               [contactId]="data?.contactInfo['organizationContactInfo']?.details?.contactId"
+                               (onAddressUpdate)="updateAddress($event, data?.contactInfo['organizationContactInfo']?.details?.addresses)">
+                    </addresses>
+                </td>
             </tr>
         </table>
     </div>

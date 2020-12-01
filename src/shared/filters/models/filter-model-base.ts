@@ -12,7 +12,7 @@ import { FilterComponent } from '@shared/filters/models/filter-component';
 
 export class FilterModelBase<T extends FilterItemModel> {
     component: Type<FilterComponent>;
-    operator: any;
+    operator: 'startswith' | 'contains' | { from: string, to: string };
     caption: string;
     field?: any;
     items?: { [item: string]: T; };

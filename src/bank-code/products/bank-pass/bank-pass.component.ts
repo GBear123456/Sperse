@@ -64,6 +64,7 @@ import { ContactDto } from '@root/bank-code/products/bank-pass/contact-dto.type'
 import { BankPassFields } from '@root/bank-code/products/bank-pass/bank-pass-fields.enum';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 
 @Component({
     selector: 'bank-pass',
@@ -321,26 +322,27 @@ export class BankPassComponent implements OnInit, OnDestroy {
     }
 
     openAddLeadDialog() {
+        const dialogData: CreateEntityDialogData = {
+            refreshParent: () => this.refresh(),
+            createMethod: this.bankCodeServiceProxy.createLead.bind(this.bankCodeServiceProxy),
+            createModel: CreateLeadInput,
+            isInLeadMode: true,
+            customerType: ContactGroup.Client,
+            hideToolbar: true,
+            hideCompanyField: true,
+            hideLinksField: true,
+            hideNotesField: true,
+            hidePhotoArea: true,
+            hideSaveAndExtend: true,
+            disallowMultipleItems: true,
+            dontCheckSimilarEntities: true
+        }
         this.dialog.open(CreateEntityDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             id: 'create-bank-code-lead-dialog',
-            data: {
-                refreshParent: () => this.refresh(),
-                createMethod: this.bankCodeServiceProxy.createLead.bind(this.bankCodeServiceProxy),
-                createModel: CreateLeadInput,
-                isInLeadMode: true,
-                customerType: ContactGroup.Client,
-                hideToolbar: true,
-                hideCompanyField: true,
-                hideLinksField: true,
-                hideNotesField: true,
-                hidePhotoArea: true,
-                hideSaveAndExtend: true,
-                disallowMultipleItems: true,
-                dontCheckSimilarEntities: true
-            }
+            data: dialogData
         });
     }
 

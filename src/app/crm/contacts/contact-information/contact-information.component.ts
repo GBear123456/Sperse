@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -7,10 +7,18 @@ import { debounceTime, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { ContactsService } from '../contacts.service';
-import { ContactServiceProxy, ContactInfoDto } from '@shared/service-proxies/service-proxies';
+import {
+    ContactServiceProxy,
+    ContactInfoDto,
+    UpdateContactAddressInput,
+    CreateContactAddressInput,
+    ContactAddressServiceProxy,
+    ContactAddressDto
+} from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { PersonalDetailsService } from '../personal-details/personal-details.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
+import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
 
 @Component({
     selector: 'contact-information',
@@ -18,7 +26,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
     styleUrls: ['./contact-information.component.less'],
     providers: [ LifecycleSubjectsService ]
 })
-export class ContactInformationComponent implements OnInit, AfterViewInit, OnDestroy {
+export class ContactInformationComponent implements AfterViewInit, OnDestroy {
     public data: {
         contactInfo: ContactInfoDto
     };
@@ -32,10 +40,11 @@ export class ContactInformationComponent implements OnInit, AfterViewInit, OnDes
         private contactService: ContactServiceProxy,
         private personalDetailsService: PersonalDetailsService,
         private lifeCycleService: LifecycleSubjectsService,
+        private addressServiceProxy: ContactAddressServiceProxy,
         public ls: AppLocalizationService
     ) {
         this.dialog.closeAll();
-        this.contactsService.contactInfoSubscribe(contactInfo => {
+        this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo)
                 setTimeout(() => this.updateToolbar());
         }, this.ident);
@@ -51,6 +60,29 @@ export class ContactInformationComponent implements OnInit, AfterViewInit, OnDes
             debounceTime(300)
         ).subscribe(opened => {
             this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, opened);
+        });
+    }
+
+    updateAddress({ address, dialogData }, addresses: ContactAddressDto[]) {
+        this.addressServiceProxy
+            [(address ? 'update' : 'create') + 'ContactAddress'](
+            (address ? UpdateContactAddressInput : CreateContactAddressInput).fromJS(dialogData)
+        ).subscribe(result => {
+            if (!result && address) {
+                address.city = dialogData.city;
+                address.country = dialogData.country;
+                address.isActive = dialogData.isActive;
+                address.isConfirmed = dialogData.isConfirmed;
+                address.stateId = dialogData.stateId;
+                address.stateName = dialogData.stateName;
+                address.streetAddress = dialogData.streetAddress;
+                address.comment = dialogData.comment;
+                address.usageTypeId = dialogData.usageTypeId;
+                address.zip = dialogData.zip;
+            } else if (result.id) {
+                addresses.push(AddressDto.fromJS(dialogData));
+            }
+            this.contactsService.verificationUpdate();
         });
     }
 

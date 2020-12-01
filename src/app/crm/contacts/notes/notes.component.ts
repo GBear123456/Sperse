@@ -18,6 +18,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     ContactInfoDto,
     ContactServiceProxy,
+    LeadInfoDto,
     NoteInfoDto,
     NotesServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -61,7 +62,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
             if (area === 'notes')
                 this.invalidate();
         }, this.ident);
-        clientService.leadInfoSubscribe(() => {
+        clientService.leadInfoSubscribe((leadInfo: LeadInfoDto) => {
             this.data = this.contactService['data'];
             this.loadData().subscribe(
                 (notes: NoteInfoDto[]) => this.notes = notes

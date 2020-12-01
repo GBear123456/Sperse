@@ -33,7 +33,8 @@ import {
     UpdatePersonOrgRelationInput,
     UpdateOrganizationInfoInput,
     UpdatePersonNameInput,
-    OrganizationContactInfoDto
+    OrganizationContactInfoDto,
+    LeadInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from '../notes/note-add-dialog/note-add-dialog.component';
@@ -54,8 +55,10 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
+import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
 
 @Component({
     selector: 'details-header',
@@ -84,8 +87,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     @Input() ratingId: number;
     private readonly ADD_OPTION_DEFAULT = ContextType.AddFiles;
-
-    @Output() onContactSelected: EventEmitter<any> = new EventEmitter();
     @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
 
     get isOrgUpdatable(): Boolean {
@@ -135,6 +136,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     companyValidationRules = [
         { type: 'required', message: this.ls.l('CompanyNameIsRequired') }
     ];
+    propertyId: number;
 
     constructor(
         injector: Injector,
@@ -148,7 +150,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private nameParserService: NameParserService,
         private appService: AppService,
-        private dialogService: DialogService,
         private cacheService: CacheService,
         private lifeCycleService: LifecycleSubjectsService,
         private cacheHelper: CacheHelper,
@@ -162,9 +163,11 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void {
-        this.contactsService.leadInfo$.pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(lead => {
-            this.leadId = lead && lead.id;
-        });
+        this.contactsService.leadInfo$.pipe(takeUntil(this.lifeCycleService.destroy$))
+            .subscribe((lead: LeadInfoDto) => {
+                this.leadId = lead && lead.id;
+                this.propertyId = lead && lead.propertyId;
+            });
         this.personContactInfo$.pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(data => {
             this.initializePersonOrgRelationInfo(data);
         });
@@ -422,7 +425,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         this.dialog.closeAll();
         this.dialog.open(PersonDialogComponent, {
             data: this.data,
-            position: this.dialogService.calculateDialogPosition(
+            position: DialogService.calculateDialogPosition(
                 event, event.target.closest('div'), 200, -12)
         });
         event.stopPropagation();
@@ -491,24 +494,23 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     addEntity(event?) {
         if (event && event.offsetX > event.target.offsetWidth - 32)
-            return this.addContextComponent
-                .instance.option('visible', true);
+            return this.addContextComponent.instance.option('visible', true);
 
         const selectedMenuItem = this.addContextMenuItems.find((contextMenuItem: ContextMenuItem) => {
             return contextMenuItem.selected === true;
         });
         if (selectedMenuItem.type === ContextType.AddContact)
             setTimeout(() => {
+                const dialogData: CreateEntityDialogData = {
+                    parentId: this.data.id,
+                    customerType: this.contactGroup
+                };
                 this.dialog.open(CreateEntityDialogComponent, {
                     panelClass: 'slider',
                     disableClose: true,
                     closeOnNavigation: false,
-                    data: {
-                        refreshParent: () => {},
-                        parentId: this.data.id,
-                        customerType: this.contactGroup
-                    }
-                }).afterClosed().subscribe(res => {
+                    data: dialogData
+                }).afterClosed().subscribe(() => {
                     this.contactsService.invalidate('sub-contacts');
                 });
             });
@@ -518,13 +520,15 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             });
         else if (selectedMenuItem.type === ContextType.AddNotes)
             setTimeout(() => {
+                const noteAddDialogData: NoteAddDialogData = {
+                    contactInfo: this.data,
+                    showPropertyType: !!this.propertyId
+                };
                 this.dialog.open(NoteAddDialogComponent, {
                     panelClass: 'slider',
                     hasBackdrop: false,
                     closeOnNavigation: true,
-                    data: {
-                        contactInfo: this.data,
-                    }
+                    data: noteAddDialogData
                 });
             });
         else if (selectedMenuItem.type === ContextType.AddInvoice)
@@ -577,7 +581,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         this.dialog.open(RelationCompaniesDialogComponent, {
             data: this.data,
             hasBackdrop: false,
-            position: this.dialogService.calculateDialogPosition(event, event.target)
+            position: DialogService.calculateDialogPosition(event, event.target)
         }).afterClosed().subscribe(result => {
             if (result == 'addContact')
                 this.addCompanyDialog(event);

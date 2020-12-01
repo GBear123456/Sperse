@@ -38,6 +38,9 @@ import {
     PartnerInfoDto,
     PartnerServiceProxy,
     PersonContactInfoDto,
+    PersonShortInfoDto,
+    PipelineDto,
+    StageDto,
     UpdatePartnerTypeInput,
     UserServiceProxy,
     LayoutType
@@ -58,6 +61,7 @@ import { ContextType } from '@app/crm/contacts/details-header/context-type.enum'
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
@@ -78,13 +82,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     assignedUsersSelector: (source$: Observable<any>) => Observable<any>;
     contactInfo: ContactInfoDto = new ContactInfoDto();
     personContactInfo: PersonContactInfoDto;
-    primaryContact: any;
+    primaryContact: PersonContactInfoDto;
     leadInfo: LeadInfoDto;
     leadId: number;
     leadStages = [];
     clientStageId: number;
     ratingId: number;
-    configMode: boolean;
     partnerInfo: PartnerInfoDto;
     partnerTypeId: string;
     partnerTypes: any[] = [];
@@ -111,7 +114,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     constructor(
         injector: Injector,
         private dialog: MatDialog,
-        private dialogService: DialogService,
         private userService: UserServiceProxy,
         private contactService: ContactServiceProxy,
         private appSessionService: AppSessionService,
@@ -264,8 +266,14 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         }
     }
 
-    private initNavLinks(contact) {
+    private initNavLinks(contact: PersonContactInfoDto, leadInfo?: LeadInfoDto) {
         this.navLinks = [
+            {
+                name: 'property-information',
+                label: this.l('PropertyInfo'),
+                route: 'property-information',
+                hidden: !leadInfo || !leadInfo.propertyId
+            },
             { name: 'contact-information', label: this.l('ContactInfo'), route: 'contact-information' },
             { name: 'personal-details', label: this.l('PersonalDetails'), route: 'personal-details'},
             {
@@ -295,7 +303,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             {
                 name: 'reseller-activity',
                 label: this.l('ResellerActivity'), route: 'reseller-activity',
-                hidden: !this.appSessionService.tenant || 
+                hidden: !this.appSessionService.tenant ||
                     this.appSessionService.tenant.customLayoutType != LayoutType.BankCode
             },
             { name: 'lead-information', label: this.l('LeadInformation'), route: 'lead-information', hidden: !!this.contactInfo.parentId },
@@ -306,9 +314,25 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 route: 'activity-logs',
                 disabled: !this.permission.isGranted(AppPermissions.PFMApplications)
             },
-            { name: 'referral-history', label: this.l('ReferralHistory'), route: 'referral-history', disabled: true },
-            { name: 'application-status', label: this.l('ApplicationStatus'), route: 'application-status', hidden: !!this.leadId, disabled: true },
-            { name: 'questionnaire', label: this.l('Questionnaire'), route: 'questionnaire', disabled: true }
+            {
+                name: 'referral-history',
+                label: this.l('ReferralHistory'),
+                route: 'referral-history',
+                disabled: true
+            },
+            {
+                name: 'application-status',
+                label: this.l('ApplicationStatus'),
+                route: 'application-status',
+                hidden: !!this.leadId,
+                disabled: true
+            },
+            {
+                name: 'questionnaire',
+                label: this.l('Questionnaire'),
+                route: 'questionnaire',
+                disabled: true
+            }
         ];
     }
 
@@ -331,20 +355,25 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         );
         contactId = contactId || result.personContactInfo.id;
         if (result['organizationContactInfo'] && result['organizationContactInfo'].contactPersons) {
-            result['organizationContactInfo'].contactPersons.map((contact) => {
-                return (contact.id == contactId ? result.personContactInfo : contact);
+            result['organizationContactInfo'].contactPersons.map((contact: PersonShortInfoDto) => {
+                return contact.id == contactId ? result.personContactInfo : contact;
             });
         }
 
-        this.isCommunicationHistoryAllowed = this.permission.checkCGPermission(this.contactGroupId.value, 'ViewCommunicationHistory');
-        this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(this.contactGroupId.value, 'ViewCommunicationHistory.SendSMSAndEmail');
+        this.isCommunicationHistoryAllowed = this.permission.checkCGPermission(
+            this.contactGroupId.value,
+            'ViewCommunicationHistory'
+        );
+        this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(
+            this.contactGroupId.value,
+            'ViewCommunicationHistory.SendSMSAndEmail'
+        );
 
         this.ratingId = result.ratingId;
         this.primaryContact = result.personContactInfo;
         this.contactInfo = result;
         this.personContactInfo = result.personContactInfo;
         this.contactsService.updatePersonContactInfo(this.personContactInfo);
-
         this.contactsService.updateUserId(
             this.userService['data'].userId = this.primaryContact.userId
         );
@@ -353,12 +382,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.storeInitialData();
     }
 
-    private fillLeadDetails(result) {
-        this.contactService['data'].leadInfo = this.leadInfo = result;
-        this.leadId = this.contactInfo['leadId'] = result.id;
+    private fillLeadDetails(leadInfo: LeadInfoDto) {
+        this.contactService['data'].leadInfo = this.leadInfo = leadInfo;
+        this.leadId = this.contactInfo['leadId'] = leadInfo.id;
         this.contactsService.leadInfoUpdate({
             ...this.params,
-            ...result
+            ...leadInfo
         });
 
         this.loadLeadsStages(() => {
@@ -464,7 +493,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     loadContactInfoForClient(contactId: number, leadId: number, companyId: number): Observable<ContactInfoDto> {
-        let contactInfo$ = of(new ContactInfoDto());
+        let contactInfo$: Observable<ContactInfoDto>;
         if (contactId) {
             if (!this.loading) this.startLoading(true);
             contactInfo$ = this.getContactInfoWithCompany(
@@ -478,8 +507,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 finalize(() => {
                     this.finishLoading(true);
                 }),
-                switchMap(result => {
-                    this.loadLeadData(result['personContactInfo']);
+                switchMap((result: ContactInfoDto) => {
+                    this.loadLeadData(result.personContactInfo);
                     this.fillContactDetails(result);
                     if (leadId)
                         this.loadLeadsStages();
@@ -494,11 +523,13 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 } else if (!this.contactInfo)
                     this.close(true);
             });
+        } else {
+            contactInfo$ = of(new ContactInfoDto());
         }
         return contactInfo$;
     }
 
-    loadLeadData(personContactInfo?: any, lastLeadCallback?) {
+    loadLeadData(personContactInfo?: PersonContactInfoDto, lastLeadCallback?) {
         let contactInfo = this.contactService['data'].contactInfo,
             leadInfo = this.contactService['data'].leadInfo;
         if ((contactInfo && (!leadInfo || !this.leadInfo || this.leadInfo.id != leadInfo.id)) || lastLeadCallback) {
@@ -508,10 +539,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     ? this.leadService.getLeadInfo(leadId)
                     : this.leadService.getLastLeadInfo(contactInfo.id);
 
-            let successCallback = (result) => {
+            let successCallback = (result: LeadInfoDto) => {
                 this.fillLeadDetails(result);
                 this.appHttpConfiguration.avoidErrorHandling = false;
-                personContactInfo && this.initNavLinks(personContactInfo);
+                personContactInfo && this.initNavLinks(personContactInfo, this.contactService['data'].leadInfo);
                 lastLeadCallback && lastLeadCallback();
             };
 
@@ -537,8 +568,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             callback && callback();
         else
             this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.contactGroupId.value)
-                .subscribe(result => {
-                    this.leadStages = result.stages.map((stage) => {
+                .subscribe((result: PipelineDto) => {
+                    this.leadStages = result.stages.map((stage: StageDto) => {
                         return {
                             id: stage.id,
                             name: stage.name,
@@ -612,7 +643,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     getDialogPosition(event, shiftX, shiftY) {
-        return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, shiftY);
+        return DialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, shiftY);
     }
 
     close(force: boolean = false) {
@@ -690,7 +721,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         let targetStage = this.pipelineService.getStageByName(pipelineId, $event.itemData.name, this.contactGroupId.value);
 
         if (this.pipelineService.updateEntityStage(pipelineId, this.contactGroupId.value, this.leadInfo, sourceStage, targetStage, () => {
-            this.toolbarComponent.stagesComponent.listComponent.option('selectedItemKeys', [this.clientStageId = targetStage.id]);
+            this.toolbarComponent.stagesComponent.listComponent.option(
+                'selectedItemKeys',
+                [this.clientStageId = targetStage.id]
+            );
         })) {
             this.leadInfo.stage = targetStage.name;
             this.notify.success(this.l('StageSuccessfullyUpdated'));
@@ -721,20 +755,13 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                         this.notify.success(this.l('TypeSuccessfullyUpdated'));
                     });
                 } else {
-                    this.toolbarComponent.partnerTypesComponent.listComponent.option('selectedItemKeys', [this.partnerInfo.typeId]);
+                    this.toolbarComponent.partnerTypesComponent.listComponent.option(
+                        'selectedItemKeys',
+                        [this.partnerInfo.typeId]
+                    );
                 }
             }
         );
-    }
-
-    toggleConfigMode() {
-        this.configMode = !this.configMode;
-    }
-
-    onContactSelected(contact) {
-        this.initNavLinks(contact);
-        this.contactsService.updateUserId(
-            this.userService['data'].userId = contact.userId);
     }
 
     getAssignmentsPermissionKey = () => {
@@ -752,17 +779,17 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         let companyInfo = this.contactInfo['organizationContactInfo'];
 
         this.dialog.closeAll();
+        const dialogData: CreateEntityDialogData = {
+            parentId: isSubContact ? this.contactInfo.id : undefined,
+            isInLeadMode: this.contactInfo.statusId == ContactStatus.Prospective,
+            company: isSubContact ? undefined : companyInfo && companyInfo.fullName,
+            customerType: this.contactGroupId.value || ContactGroup.Client
+        };
         this.dialog.open(CreateEntityDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: {
-                parentId: isSubContact ? this.contactInfo.id : undefined,
-                isInLeadMode: this.contactInfo.statusId == ContactStatus.Prospective,
-                company: isSubContact ? undefined : companyInfo && companyInfo.fullName,
-                customerType: this.contactGroupId.value || ContactGroup.Client,
-                refreshParent: () => {}
-            }
+            data: dialogData
         }).afterClosed().subscribe(() => {
             if (isSubContact)
                 this.contactsService.invalidate('sub-contacts');
