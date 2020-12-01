@@ -3,10 +3,12 @@ import { Component, OnInit, ViewChild, AfterViewInit, Inject, ElementRef, OnDest
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 /** Third party imports */
+import * as moment from 'moment-timezone';
 import { ClipboardService } from 'ngx-clipboard';
 import { CacheService } from 'ng2-cache-service';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, ReplaySubject, BehaviorSubject, combineLatest } from 'rxjs';
 import { first, map, takeUntil, finalize, switchMap, distinctUntilChanged, filter } from 'rxjs/operators';
@@ -40,6 +42,7 @@ import { AppService } from '@app/app.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { AffiliateHistoryDialogComponent } from './affiliate-history-dialog/affiliate-history-dialog.component';
 import { CrmService } from '@app/crm/crm.service';
 import { ContactGroup } from '@shared/AppEnums';
 
@@ -142,6 +145,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService,
         public dialogRef: MatDialogRef<PersonalDetailsDialogComponent>,
+        public dialog: MatDialog,
         public appService: AppService,
         public appSession: AppSessionService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -650,6 +654,19 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     removeSourceContact(event) {
         event.stopPropagation();
         this.onSourceContactChanged();
+    }
+
+    showAffiliateHistory(event) {
+        event.stopPropagation();
+        this.dialog.open(AffiliateHistoryDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                contactId: this.contactInfo.id
+            }
+        }).afterClosed().subscribe(() => {
+        });
     }
 
     ngOnDestroy() {

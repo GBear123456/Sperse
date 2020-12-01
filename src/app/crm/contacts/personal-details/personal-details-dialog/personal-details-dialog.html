@@ -8,6 +8,7 @@
                         <mat-expansion-panel class="affiliate-info" [expanded]="true">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
+                                <span class="dx-icon-hierarchy" (click)="showAffiliateHistory($event)"></span>
                             </mat-expansion-panel-header>
                             <div class="field affiliate-code" [ngClass]="{'zero': affiliateRate == 0, 'undefined': affiliateRate === null}">
                                 <inplace-edit [id]="contactInfo?.id"
@@ -300,8 +301,7 @@
                 </div>
             </dx-scroll-view>
         </mat-tab>
-        <mat-tab label="Activity" [disabled]="true">
-            Activity
+        <mat-tab [label]="ls.l('Activity')" [disabled]="true">
         </mat-tab>
     </mat-tab-group>
 </mat-dialog-content>
