@@ -95,7 +95,7 @@
             [disabled]="true"
         ></dx-tag-box>
     </div>
-    <div class="item width-percent-30">
+    <div class="item width-percent-40">
         <div class="title"><img src="./assets/common/icons/pen.svg" class="dx-icon" [alt]="ls.l('Tags')"> {{ls.l('Tags')}}:</div>
         <dx-tag-box
             [dataSource]="tags$ | async"
@@ -110,11 +110,11 @@
             [disabled]="true"
         ></dx-tag-box>
     </div>
-    <div class="item width-percent-20">
+    <div class="item width-percent-15">
         <div class="title"><img src="./assets/common/icons/flag-icon.svg" class="dx-icon" [alt]="ls.l('Rating')"> {{ls.l('Rating')}}:</div>
         <rating-bar [rating]="data?.contactInfo.ratingId || 0"></rating-bar>
     </div>
-    <div class="item width-percent-20">
+    <div class="item width-percent-15">
         <div class="title"><img src="./assets/common/icons/star-icon.svg" class="dx-icon" [alt]="ls.l('Star')"> {{ls.l('Star')}}:</div>
 
         <ng-container *ngIf="(star$ | async) as star">
