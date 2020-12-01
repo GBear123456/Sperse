@@ -436,11 +436,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         remoteOperations: true,
         load: (loadOptions) => {
             this.pivotGridDataIsLoading = true;
-            return this.crmService.loadSlicePivotGridData(
-                this.getODataUrl(this.groupDataSourceURI),
-                this.filters,
-                loadOptions
-            );
+            this.selectedContactGroup$.pipe(
+                first(),
+                switchMap((selectedContactGroup: ContactGroup) => {
+                    return this.crmService.loadSlicePivotGridData(
+                        this.getODataUrl(this.groupDataSourceURI),
+                        this.filters,
+                        loadOptions,
+                        { contactGroupId: selectedContactGroup.toString() }
+                    );
+                })
+            ).toPromise()
         },
         onChanged: () => {
             this.pivotGridDataIsLoading = false;
@@ -562,12 +568,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         load: () => {
             return this.odataRequestValues$.pipe(
                 first(),
-                switchMap((odataRequestValues: ODataRequestValues) => {
+                withLatestFrom(this.selectedContactGroup$),
+                switchMap(([odataRequestValues, selectedContactGroup]: [ODataRequestValues, ContactGroup]) => {
                     const chartDataUrl = this.chartDataUrl || this.crmService.getChartDataUrl(
                         this.getODataUrl(this.groupDataSourceURI),
                         odataRequestValues,
                         this.chartComponent.summaryBy.value,
-                        this.dateField
+                        this.dateField,
+                        { contactGroupId: selectedContactGroup.toString() }
                     );
                     return this.httpClient.get(chartDataUrl);
                 })
@@ -871,12 +879,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.listenForUpdate(DataLayoutType.Chart)
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$)
-        ).subscribe(([summaryBy, [odataRequestValues, ]]: [SummaryBy, [ODataRequestValues, ]]) => {
+        ).subscribe(([summaryBy, [odataRequestValues, contactGroup ]]: [SummaryBy, [ODataRequestValues, ContactGroup ]]) => {
             const chartDataUrl = this.crmService.getChartDataUrl(
                 this.getODataUrl(this.groupDataSourceURI),
                 odataRequestValues,
                 summaryBy,
-                this.dateField
+                this.dateField,
+                { contactGroupId: contactGroup.toString() }
             );
             if (!this.oDataService.requestLengthIsValid(chartDataUrl)) {
                 this.message.error(this.l('QueryStringIsTooLong'));
@@ -1008,6 +1017,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private listenForUpdate(layoutType: DataLayoutType) {
         return combineLatest(
             this.odataRequestValues$,
+            this.selectedContactGroup$,
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
@@ -1028,12 +1038,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.listenForUpdate(DataLayoutType.Map),
             this.selectedMapArea$
         ).pipe(
-            map(([[oDataRequestValues, pipelineId, ], mapArea]: [[ODataRequestValues, number, null], MapArea]) => {
+            map(([[oDataRequestValues, contactGroupId, ], mapArea]: [[ODataRequestValues, ContactGroup, null], MapArea]) => {
                 return this.mapService.getSliceMapUrl(
                     this.getODataUrl(this.groupDataSourceURI),
                     oDataRequestValues,
                     mapArea,
-                    this.dateField
+                    this.dateField,
+                    { contactGroupId: contactGroupId.toString() }
                 );
             }),
             filter((mapUrl: string) => {
