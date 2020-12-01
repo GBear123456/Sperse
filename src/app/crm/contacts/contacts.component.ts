@@ -290,14 +290,14 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices),
                 hidden: !!this.contactInfo.parentId
             },
+            { name: 'subscriptions', label: this.l('Subscriptions'), route: 'subscriptions', hidden: !!this.contactInfo.parentId || (!contact.userId && !this.isClientDetailPage()) },
+            { name: 'payment-information', label: this.l('PaymentInformation'), route: 'payment-information', hidden: !!this.contactInfo.parentId || !this.isClientDetailPage() },
             {
                 name: 'reseller-activity',
                 label: this.l('ResellerActivity'), route: 'reseller-activity',
                 hidden: !this.appSessionService.tenant || 
                     this.appSessionService.tenant.customLayoutType != LayoutType.BankCode
             },
-            { name: 'subscriptions', label: this.l('Subscriptions'), route: 'subscriptions', hidden: !!this.contactInfo.parentId || (!contact.userId && !this.isClientDetailPage()) },
-            { name: 'payment-information', label: this.l('PaymentInformation'), route: 'payment-information', hidden: !!this.contactInfo.parentId || !this.isClientDetailPage() },
             { name: 'lead-information', label: this.l('LeadInformation'), route: 'lead-information', hidden: !!this.contactInfo.parentId },
             { name: 'lead-related-contacts', label: this.l('LeadsRelatedContacts'), route: 'lead-related-contacts', hidden: !!this.contactInfo.parentId },
             {
