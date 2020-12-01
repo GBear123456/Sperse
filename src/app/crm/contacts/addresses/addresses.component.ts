@@ -66,6 +66,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
     @Input() addresses: AddressDto[];
     @Input() isAddAllowed = true;
     @Input() isDeleteAllowed = true;
+    @Input() isCopyAllowed = true;
     @Input() showType = true;
     @Input() editDialogTitle: string;
     @Output() onAddressUpdate: EventEmitter<AddressUpdate> = new EventEmitter();

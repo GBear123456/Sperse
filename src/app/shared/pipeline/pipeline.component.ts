@@ -53,6 +53,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { AppPermissions } from '@shared/AppPermissions';
+import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 
 @Component({
     selector: 'app-pipeline',
@@ -169,6 +170,30 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     detectChanges() {
         this.changeDetector.detectChanges();
+    }
+
+    getEntityName(entity: any): string {
+        let entityName: string;
+        if (entity) {
+            let prioritizedName = entity.Name;
+            if (this.pipeline.entityTypeSysId === EntityTypeSys.Acquisition) {
+                prioritizedName = entity.PropertyName;
+            }
+            entityName = prioritizedName || entity.Title || entity.Email || entity.Phone || entity.CompanyName;
+        }
+        return entityName;
+    }
+
+    getEntitySubtitle(entity: any): string {
+        let subtitle: string;
+        if (entity) {
+            let prioritizedSubtitle = entity && entity.Name;
+            if (this.pipeline.entityTypeSysId === EntityTypeSys.Management) {
+                prioritizedSubtitle = entity.PropertyName;
+            }
+            subtitle = prioritizedSubtitle || entity.CompanyName || entity.Description;
+        }
+        return subtitle;
     }
 
     private reinitPipeline() {
