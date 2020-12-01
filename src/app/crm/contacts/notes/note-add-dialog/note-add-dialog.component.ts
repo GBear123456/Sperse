@@ -27,7 +27,10 @@ import {
     PersonOrgRelationShortInfo,
     PersonShortInfoDto,
     OrganizationShortInfo,
-    NoteType
+    NoteType,
+    UserListDtoPagedResultDto,
+    UserListDto,
+    ContactPhoneInfo
 } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
@@ -37,6 +40,7 @@ import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { InvoiceDto } from '@app/crm/contacts/notes/note-add-dialog/invoice-dto.type';
 import { InvoiceFields } from '@app/crm/contacts/notes/note-add-dialog/invoice-fields.enum';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
 
 class PhoneNumber {
     id: any;
@@ -66,9 +70,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     summary: string;
     currentDate: any;
     followupDate: any;
-    phone: string;
+    phone: number;
     contactId: number;
-    addedBy: string;
+    addedBy: number;
     defaultType: string;
     type: string;
     companyContact: boolean;
@@ -93,7 +97,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private contactPhoneService: ContactPhoneServiceProxy,
         private store$: Store<AppStore.State>,
         public dialogRef: MatDialogRef<NoteAddDialogComponent>,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        @Inject(MAT_DIALOG_DATA) public data: NoteAddDialogData
     ) {
         super(injector);
 
@@ -193,17 +197,20 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         }
     }
 
-    initTypes(switchToDefault = true) {
+    initTypes(switchToDefault: boolean = true) {
         if (switchToDefault) {
             this.defaultType = NoteType.Note;
             this.type = this.defaultType;
         }
-
-        this.types = _.map(Object.keys(NoteType), x => {
-            let el = {};
-            el['id'] = x;
-            el['name'] = this.l(this.companyContact ? 'Company' : 'Client') + ' ' + this.l(x);
-            return el;
+        let types = Object.keys(NoteType);
+        if (this.data.showPropertyType) {
+            types.push('PropertyNote');
+        }
+        this.types = types.map((type: string) => {
+            return {
+                id: type,
+                name: this.l(this.companyContact ? 'Company' : 'Client') + ' ' + this.l(type)
+            };
         });
     }
 
@@ -217,7 +224,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 noteType: this.type,
                 followUpDateTime: this.getDateTime(this.followupDate),
                 dateTime: this.getDateTime(this.currentDate),
-                addedByUserId: parseInt(this.addedBy) || undefined,
+                addedByUserId: +this.addedBy || undefined,
                 orderId: this.orderId,
                 leadId: this._contactInfo['leadId']
             }, request;
@@ -248,7 +255,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     }
 
     onUserSearch($event) {
-        $event.customItem = {id: $event.text, fullName: $event.text};
+        $event.customItem = { id: $event.text, fullName: $event.text };
         clearTimeout(this.searchTimeout);
         this.searchTimeout = setTimeout(() => {
             if ($event.text)
@@ -262,8 +269,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                     undefined,
                     10,
                     0
-                ).subscribe((result) => {
-                    this.users = result.items.map((user) => {
+                ).subscribe((result: UserListDtoPagedResultDto) => {
+                    this.users = result.items.map((user: UserListDto) => {
                         return {
                             id: user.id,
                             fullName: user.name + ' ' + user.surname
@@ -290,12 +297,11 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 phoneNumber: this.phoneFormatPipe.transform(phone.phoneNumber, undefined)
             })),
             toArray()
-        ).subscribe(phones => {
+        ).subscribe((phones: ContactPhoneInfo[]) => {
             this.phones = phones;
             this.phone = this.phones[0] && this.phones[0].id;
         });
         this.contactId = contact.id;
-
         this.companyContact = contact instanceof OrganizationShortInfo;
 
         this.initTypes(false);

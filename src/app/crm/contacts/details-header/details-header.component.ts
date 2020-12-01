@@ -33,7 +33,8 @@ import {
     UpdatePersonOrgRelationInput,
     UpdateOrganizationInfoInput,
     UpdatePersonNameInput,
-    OrganizationContactInfoDto
+    OrganizationContactInfoDto,
+    LeadInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { NoteAddDialogComponent } from '../notes/note-add-dialog/note-add-dialog.component';
@@ -57,6 +58,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
+import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
 
 @Component({
     selector: 'details-header',
@@ -134,6 +136,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     companyValidationRules = [
         { type: 'required', message: this.ls.l('CompanyNameIsRequired') }
     ];
+    propertyId: number;
 
     constructor(
         injector: Injector,
@@ -160,9 +163,11 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     ) {}
 
     ngOnInit(): void {
-        this.contactsService.leadInfo$.pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(lead => {
-            this.leadId = lead && lead.id;
-        });
+        this.contactsService.leadInfo$.pipe(takeUntil(this.lifeCycleService.destroy$))
+            .subscribe((lead: LeadInfoDto) => {
+                this.leadId = lead && lead.id;
+                this.propertyId = lead && lead.propertyId;
+            });
         this.personContactInfo$.pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(data => {
             this.initializePersonOrgRelationInfo(data);
         });
@@ -489,8 +494,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     addEntity(event?) {
         if (event && event.offsetX > event.target.offsetWidth - 32)
-            return this.addContextComponent
-                .instance.option('visible', true);
+            return this.addContextComponent.instance.option('visible', true);
 
         const selectedMenuItem = this.addContextMenuItems.find((contextMenuItem: ContextMenuItem) => {
             return contextMenuItem.selected === true;
@@ -516,13 +520,15 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             });
         else if (selectedMenuItem.type === ContextType.AddNotes)
             setTimeout(() => {
+                const noteAddDialogData: NoteAddDialogData = {
+                    contactInfo: this.data,
+                    showPropertyType: !!this.propertyId
+                };
                 this.dialog.open(NoteAddDialogComponent, {
                     panelClass: 'slider',
                     hasBackdrop: false,
                     closeOnNavigation: true,
-                    data: {
-                        contactInfo: this.data,
-                    }
+                    data: noteAddDialogData
                 });
             });
         else if (selectedMenuItem.type === ContextType.AddInvoice)
