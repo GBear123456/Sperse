@@ -7,7 +7,8 @@
                itemTemplate="itemTemplate"
                [value]="value"
                (onValueChanged)="valueChanged($event)"
-               (onOpened)="onOpened($event)">
+               (onOpened)="onOpened($event)"
+               (onContentReady)="onContentReady($event)">
     <div *dxTemplate="let data of 'selectTemplate'">
         <div class="select-header">
             <span>{{data.text}}</span>
