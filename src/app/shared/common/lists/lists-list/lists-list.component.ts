@@ -30,11 +30,11 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() showSelection = false;
-    @Input() set selectedItems(value) {
+    @Input() set selectedItems(value: ContactListInput[]) {
         this.selectedLists = value;
     }
     get selectedItems() {
-        return this.selectedLists.map(item => {
+        return this.selectedLists.map((item: ContactListInput) => {
             return ContactListInput.fromJS(_.findWhere(this.list, {id: item}));
         }).filter(Boolean);
     }
@@ -130,9 +130,9 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     }
 
     refresh() {
-        this.store$.pipe(select(ListsStoreSelectors.getLists)).subscribe(lists => {
+        this.store$.pipe(select(ListsStoreSelectors.getLists)).subscribe((lists: ContactListInput[]) => {
             if (this.list && this.list.length)
-                this.selectedLists = this.selectedItems.map((item) => {
+                this.selectedLists = this.selectedItems.map((item: ContactListInput) => {
                     let selected = _.findWhere(lists, {name: item.name});
                     return selected && selected.id;
                 }).filter(Boolean);
