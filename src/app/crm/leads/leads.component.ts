@@ -1096,7 +1096,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         let userGroup = this.l('Pipeline_' + pipelineName + '_Plural');
         return userGroup !== 'Pipeline_' + pipelineName + '_Plural'
             ? userGroup
-            : pluralize.plural(userGroup);
+            : pluralize.plural(pipelineName);
     }
 
     getOrganizationUnitName = (e) => {
