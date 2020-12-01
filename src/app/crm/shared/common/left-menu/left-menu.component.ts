@@ -9,8 +9,10 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -31,6 +33,7 @@ export class LeftMenuComponent implements OnInit {
     constructor(
         private appSessionService: AppSessionService,
         private permission: PermissionCheckerService,
+        private feature: FeatureCheckerService,
         public appService: AppService,
         public ls: AppLocalizationService
     ) {}
@@ -78,7 +81,8 @@ export class LeftMenuComponent implements OnInit {
             {
                 caption: this.ls.l('CRMDashboardMenu_CommissionHistory'),
                 component: '/commission-history',
-                visible: this.permission.isGranted(AppPermissions.CRMOrdersInvoicesManage) 
+                visible: this.feature.isEnabled(AppFeatures.CRMCommissions)
+                    && this.permission.isGranted(AppPermissions.CRMCommissions) 
                     && this.appSessionService.tenant
                     && this.appSessionService.tenant.customLayoutType == LayoutType.BankCode,
                 iconSrc: './assets/common/icons/dollar.svg'

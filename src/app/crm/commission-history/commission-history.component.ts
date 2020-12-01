@@ -392,6 +392,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         })
     ];
+    
+    manageAllowed = this.isGranted(AppPermissions.CRMCommissionsManage) 
+        && this.isGranted(AppPermissions.CRMOrdersInvoicesManage);
 
     constructor(
         injector: Injector,
@@ -553,7 +556,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             options: {
                 text: this.l('Cancel' + (this.selectedViewType == this.LEDGER_VIEW ? 'Ledgers' : 'Commissions')),
                 visible: this.selectedViewType != this.RESELLERS_VIEW,
-                disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
+                disabled: !this.manageAllowed
                     || !this.selectedRecords.length
                     || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
                     || this.selectedRecords.every(item => item.Status !== CommissionStatus.Pending),
@@ -611,7 +614,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         widget: 'dxButton',
                         options: {
                             text: this.l('RequestWithdrawal'),
-                            disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+                            disabled: !this.manageAllowed,
                             onClick: this.requestWithdrawal.bind(this)
                         }
                     },
@@ -619,7 +622,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         widget: 'dxButton',
                         options: {
                             text: this.l('AddNewEarnings'),
-                            disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+                            disabled: !this.manageAllowed,
                             onClick: this.applyEarnings.bind(this)
                         }
                     },
@@ -627,7 +630,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         widget: 'dxButton',
                         options: {
                             text: this.l('ApproveLedger'),
-                            disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
+                            disabled: !this.manageAllowed
                                 || !this.selectedRecords.length
                                 || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
                                 || this.selectedRecords.every(item => item.Status !== LedgerStatus.Pending),
@@ -639,7 +642,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         widget: 'dxButton',
                         options: {
                             text: this.l('UpdatePaymentStatus'),
-                            disabled: !this.isGranted(AppPermissions.CRMOrdersInvoicesManage)
+                            disabled: !this.manageAllowed
                                 || !this.selectedRecords.length
                                 || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed
                                 || this.selectedRecords.every(item => !(item.Status == CommissionStatus.Approved && item.Type == LedgerType.Withdrawal)),
@@ -651,7 +654,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             text: this.l('ReassignCommissions'),
                             icon: './assets/common/icons/assign-icon.svg',
                             visible: this.selectedViewType == this.COMMISSION_VIEW,
-                            disabled: !this.selectedRecords.length
+                            disabled: !this.manageAllowed 
+                                || !this.selectedRecords.length
                                 || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
                             onClick: (e) => {
                                 this.sourceComponent.toggle();
@@ -662,7 +666,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         options: {
                             text: this.l('UpdateCommissionableAmount'),
                             visible: this.selectedViewType == this.COMMISSION_VIEW,
-                            disabled: !this.selectedRecords.length
+                            disabled: !this.manageAllowed
+                                || !this.selectedRecords.length
                                 || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
                             onClick: (e) => {
                                 this.dialog.open(UpdateCommissionableDialogComponent, {
@@ -680,7 +685,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         options: {
                             text: this.l('UpdateCommissionRate'),
                             visible: this.selectedViewType == this.COMMISSION_VIEW,
-                            disabled: !this.selectedRecords.length
+                            disabled: !this.manageAllowed
+                                || !this.selectedRecords.length
                                 || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
                             onClick: (e) => {
                                 this.dialog.open(UpdateCommissionRateDialogComponent, {

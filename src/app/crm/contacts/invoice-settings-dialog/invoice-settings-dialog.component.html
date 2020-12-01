@@ -27,6 +27,7 @@
                     [max]="99"
                     mode="number"
                     [showClearButton]="true"
+                    [disabled]="isRateDisabled"
                     [placeholder]="ls.l('Default') + ' ' + ls.l('AffiliateRate') + ', %'"
                     [(value)]="settings.defaultAffiliateRate"
                     [showSpinButtons]="true">
