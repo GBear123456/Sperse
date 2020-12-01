@@ -12,7 +12,9 @@ import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dia
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateType, InvoiceServiceProxy, InvoiceSettings, Currency } from '@shared/service-proxies/service-proxies';
 import { BankSettingsDialogComponent } from '@app/crm/shared/bank-settings-dialog/bank-settings-dialog.component';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { AppPermissions } from '@shared/AppPermissions';
 import { EmailTags } from '../contacts.const';
 
 @Component({
@@ -56,6 +58,8 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         EmailTags.SenderAffiliateCode
     ];
 
+    isRateDisabled = !this.permission.isGranted(AppPermissions.CRMCommissionsManage);
+
     constructor(
         public dialog: MatDialog,
         private notifyService: NotifyService,
@@ -63,6 +67,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         private dialogRef: MatDialogRef<InvoiceSettingsDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
         private invoiceProxy: InvoiceServiceProxy,
+        private permission: AppPermissionService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
