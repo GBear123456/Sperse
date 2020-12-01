@@ -51,7 +51,7 @@ export class TypesDropdownComponent {
         }).afterClosed().subscribe((newName: string) => {
             this.selectBox.instance['_popup'].option('closeOnOutsideClick', true);
             if (newName) {
-                this.itemChanged(itemId, newName)
+                this.itemChanged(itemId, newName);
             }
         });
         e.stopPropagation();
@@ -60,6 +60,25 @@ export class TypesDropdownComponent {
 
     onOpened(e) {
         e.component._popup.option('elementAttr', { id: 'types-dropdown' });
+        this.updatePopupWidth(e.component._popup);
+    }
+
+    onContentReady(e) {
+        this.updatePopupWidth(e.component._popup);
+    }
+
+    private updatePopupWidth(popup) {
+        /** Get the widest item and set popup width with its width */
+        const longestItemWidth: number = Array.prototype.reduce.call(
+            popup.content().querySelectorAll('.dx-scrollview-content .dx-item .types-dropdown-item span'),
+            (longestItemWidth: number, currentItem: HTMLElement) => {
+                if (!longestItemWidth || currentItem.offsetWidth > longestItemWidth) {
+                    longestItemWidth = currentItem.offsetWidth;
+                }
+                return longestItemWidth;
+            }, null
+        );
+        popup.option('width', longestItemWidth + 45);
     }
 
 }
