@@ -99,8 +99,7 @@ export class MapComponent implements OnChanges {
                       '=0': pluralize(this.contactGroupText, 0),
                       '=1': pluralize.singular(this.contactGroupText),
                       'other': pluralize.plural(this.contactGroupText)
-                  })
-            })
+                  })}
             </div>`
             : `<div>${this.ls.l('CRMDashboard_NoData')}</div>`;
         let node = `<div #gdp><h5>${arg.attribute('name')}</h5>${totalMarkupString}</div>`;

@@ -13,6 +13,7 @@ import { ContactsService } from '../../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { UploadDocumentsDialogData } from '@app/crm/contacts/documents/upload-documents-dialog/upload-documents-dialog-data.interface';
 
 @Component({
     templateUrl: 'upload-documents-dialog.html',
@@ -25,6 +26,7 @@ export class UploadDocumentsDialogComponent implements OnInit, AfterViewInit {
 
     uploadedCount = 0;
     totalCount    = 0;
+    title: string = this.data.title || this.ls.l('UploadDocumentsDialogTitle');
 
     constructor(
         private clientService: ContactsService,
@@ -33,7 +35,7 @@ export class UploadDocumentsDialogComponent implements OnInit, AfterViewInit {
         private notify: NotifyService,
         public dialogRef: MatDialogRef<UploadDocumentsDialogComponent>,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        @Inject(MAT_DIALOG_DATA) public data: UploadDocumentsDialogData,
     ) {
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({
@@ -72,7 +74,7 @@ export class UploadDocumentsDialogComponent implements OnInit, AfterViewInit {
 
     fileDropped(dropedFiles: NgxFileDropEntry[]) {
         let files = [];
-        dropedFiles.forEach((item) => {
+        dropedFiles.forEach((item: NgxFileDropEntry) => {
             (item.fileEntry as FileSystemFileEntry).file((file: File) => {
                 files.push(file);
                 if (dropedFiles.length == files.length)

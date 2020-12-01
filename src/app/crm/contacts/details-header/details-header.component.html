@@ -111,7 +111,7 @@
 <dx-context-menu
     *ngIf="addContextMenuItems && addContextMenuItems.length"
     [selectByClick]="true"
-    [selectionMode]="'single'"
+    selectionMode="single"
     [dataSource]="addContextMenuItems"
     [position]="{ my: 'top right', at: 'bottom right' }"
     (onSelectionChanged)="addOptionSelectionChanged($event)"

@@ -39,6 +39,7 @@ import { TemplateDocumentsDialogComponent } from '@app/crm/contacts/documents/te
 import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
 import { EmailAttachment } from '@app/crm/shared/email-template-dialog/email-attachment';
 import { EmailTags } from '@app/crm/contacts/contacts.const';
+  import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
 
 @Component({
     selector: 'email-template-dialog',
@@ -455,7 +456,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                 ), 600);
                 scroll.update();
             }
-            files.forEach(file => {
+            files.forEach((file: NgxFileDropEntry) => {
                 if (file.fileEntry)
                     file.fileEntry['file'](this.uploadFile.bind(this));
                 else
@@ -580,27 +581,27 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     openDocuments() {
+        const templateDocumentsDialogData: TemplateDocumentsDialogData = {
+            fullHeight: true,
+            contactId: this.data.contact && this.data.contact.id,
+            dropFiles: this.addAttachments.bind(this)
+        }
         this.dialog.open(TemplateDocumentsDialogComponent, {
             id: 'templateDialog',
             panelClass: ['slider'],
             hasBackdrop: true,
             closeOnNavigation: true,
-            data: {
-                fullHeight: true,
-                contactId: this.data.contact && this.data.contact.id,
-                dropFiles: this.addAttachments.bind(this)
-            }
+            data: templateDocumentsDialogData
         }).afterClosed().subscribe(data => {
             if (data && data.length) {
                 this.attachments = this.attachments.concat(
                     data.map(item => {
-                        let attachment = {
+                        return {
                             id: item.key,
                             name: item.name,
                             size: item.size,
                             progress: 0
                         };
-                        return attachment;
                     })
                 );
                 this.changeDetectorRef.detectChanges();
