@@ -64302,6 +64302,7 @@ export enum NoteType {
     Note = "Note", 
     IncomingCall = "IncomingCall", 
     OutcomingCall = "OutcomingCall", 
+    PropertyNote = "PropertyNote", 
 }
 
 export class NoteInfoDto implements INoteInfoDto {
