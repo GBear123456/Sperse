@@ -360,7 +360,7 @@
             <slice-chart [width]="contentWidth$ | async"
                          [height]="contentHeight$ | async"
                          [infoItems]="chartInfoItems"
-                         [itemsName]="userGroupText"
+                         [itemsName]="selectedPipelineName$ | async"
                          [title]="userGroupText + ' number'"
                          argumentField="creationDate"
                          valueField="count">

@@ -222,7 +222,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         area: undefined,
         yearBuilt: undefined,
         floor: undefined,
-        numberOfLevels: 1,
+        numberOfLevels: undefined,
         address: new Address()
     };
     similarCustomers: SimilarContactOutput[] = [];
@@ -950,7 +950,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             source: this.photoOriginalData,
             title: this.ls.l('AddLogo')
         };
-        console.log('ContactGroup_' + this.data.customerType + '_singular');
         this.dialog.open(UploadPhotoDialogComponent, {
             data: data,
             hasBackdrop: true

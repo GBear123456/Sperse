@@ -69,7 +69,6 @@ export class TypesDropdownComponent {
 
     itemClick(e) {
         if (this.allowEdit && e.event.target.closest('.edit')) {
-            console.log(e);
             //this.selectBox.instance['__ignoreEvent'] = true;
             e.event.preventDefault();
             e.event.stopPropagation();

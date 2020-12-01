@@ -200,8 +200,12 @@
                                         minZoomLevel: 'century',
                                         maxZoomLevel: 'decade'
                                      }"
+                                     dropDownButtonTemplate="dropDownButtonTemplate"
                                      displayFormat="year"
                                      [(value)]="property.yearBuilt">
+                            <div *dxTemplate="let data of 'dropDownButtonTemplate'">
+                                <img src="./assets/common/icons/calendar-date.svg">
+                            </div>
                         </dx-date-box>
                     </div>
                     <div>

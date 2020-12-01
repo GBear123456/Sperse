@@ -38,6 +38,7 @@ import {
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import cloneDeep from 'lodash/cloneDeep';
+import pluralize from 'pluralize';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -329,8 +330,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         map((pipeline: PipelineDto) => pipeline.contactGroupId)
     );
     selectedContactGroup: ContactGroup;
-    userGroupText$: Observable<string> = this.selectedPipeline$.pipe(
-        map((selectedPipeline: PipelineDto) => this.getUserGroup(selectedPipeline.name))
+    selectedPipelineName$: Observable<string> = this.selectedPipeline$.pipe(
+        map((selectedPipeline: PipelineDto) => selectedPipeline.name)
+    );
+    userGroupText$: Observable<string> = this.selectedPipelineName$.pipe(
+        map((selectedPipelineName: string) => this.getUserGroup(selectedPipelineName))
     );
     userGroupText: string;
 
@@ -414,7 +418,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             let localizedLabel = this.l('Pipeline_' + selectedPipeline.name + '_Single');
             localizedLabel = this.l('Pipeline_' + selectedPipeline.name + '_Single') !== localizedLabel
                 ? localizedLabel
-                : selectedPipeline.name.slice(0, -1)
+                : pluralize.singular(selectedPipeline.name)
             return [
                 {
                     enabled: this.permission.checkCGPermission(selectedPipeline.contactGroupId),
@@ -432,11 +436,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         remoteOperations: true,
         load: (loadOptions) => {
             this.pivotGridDataIsLoading = true;
-            return this.crmService.loadSlicePivotGridData(
-                this.getODataUrl(this.groupDataSourceURI),
-                this.filters,
-                loadOptions
-            );
+            this.selectedContactGroup$.pipe(
+                first(),
+                switchMap((selectedContactGroup: ContactGroup) => {
+                    return this.crmService.loadSlicePivotGridData(
+                        this.getODataUrl(this.groupDataSourceURI),
+                        this.filters,
+                        loadOptions,
+                        { contactGroupId: selectedContactGroup.toString() }
+                    );
+                })
+            ).toPromise()
         },
         onChanged: () => {
             this.pivotGridDataIsLoading = false;
@@ -558,12 +568,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         load: () => {
             return this.odataRequestValues$.pipe(
                 first(),
-                switchMap((odataRequestValues: ODataRequestValues) => {
+                withLatestFrom(this.selectedContactGroup$),
+                switchMap(([odataRequestValues, selectedContactGroup]: [ODataRequestValues, ContactGroup]) => {
                     const chartDataUrl = this.chartDataUrl || this.crmService.getChartDataUrl(
                         this.getODataUrl(this.groupDataSourceURI),
                         odataRequestValues,
                         this.chartComponent.summaryBy.value,
-                        this.dateField
+                        this.dateField,
+                        { contactGroupId: selectedContactGroup.toString() }
                     );
                     return this.httpClient.get(chartDataUrl);
                 })
@@ -629,6 +641,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             );
         })
     );
+    pluralize = pluralize;
 
     constructor(
         injector: Injector,
@@ -866,12 +879,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.listenForUpdate(DataLayoutType.Chart)
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$)
-        ).subscribe(([summaryBy, [odataRequestValues, ]]: [SummaryBy, [ODataRequestValues, ]]) => {
+        ).subscribe(([summaryBy, [odataRequestValues, contactGroup ]]: [SummaryBy, [ODataRequestValues, ContactGroup ]]) => {
             const chartDataUrl = this.crmService.getChartDataUrl(
                 this.getODataUrl(this.groupDataSourceURI),
                 odataRequestValues,
                 summaryBy,
-                this.dateField
+                this.dateField,
+                { contactGroupId: contactGroup.toString() }
             );
             if (!this.oDataService.requestLengthIsValid(chartDataUrl)) {
                 this.message.error(this.l('QueryStringIsTooLong'));
@@ -1003,6 +1017,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private listenForUpdate(layoutType: DataLayoutType) {
         return combineLatest(
             this.odataRequestValues$,
+            this.selectedContactGroup$,
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
@@ -1023,12 +1038,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.listenForUpdate(DataLayoutType.Map),
             this.selectedMapArea$
         ).pipe(
-            map(([[oDataRequestValues, pipelineId, ], mapArea]: [[ODataRequestValues, number, null], MapArea]) => {
+            map(([[oDataRequestValues, contactGroupId, ], mapArea]: [[ODataRequestValues, ContactGroup, null], MapArea]) => {
                 return this.mapService.getSliceMapUrl(
                     this.getODataUrl(this.groupDataSourceURI),
                     oDataRequestValues,
                     mapArea,
-                    this.dateField
+                    this.dateField,
+                    { contactGroupId: contactGroupId.toString() }
                 );
             }),
             filter((mapUrl: string) => {
@@ -1080,7 +1096,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         let userGroup = this.l('Pipeline_' + pipelineName + '_Plural');
         return userGroup !== 'Pipeline_' + pipelineName + '_Plural'
             ? userGroup
-            : userGroup.slice(0, -1);
+            : pluralize.plural(userGroup);
     }
 
     getOrganizationUnitName = (e) => {
@@ -1896,26 +1912,30 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             clientId = lead && lead.CustomerId;
         if (!leadId || !clientId)
             return;
-        if (!section && typeof lead.PropertyId === 'number') {
-            section = 'property-information';
-            queryParams = { ...queryParams, propertyId: lead.PropertyId };
-        }
+        this.selectedPipeline$.pipe(first()).subscribe((selectedPipeline: PipelineDto) => {
+            if (!section && typeof lead.PropertyId === 'number') {
+                if (selectedPipeline.entityTypeSysId === EntityTypeSys.Acquisition) {
+                    section = 'property-information';
+                }
+                queryParams = { ...queryParams, propertyId: lead.PropertyId };
+            }
 
-        this.searchClear = false;
-        let orgId = lead.OrganizationId;
-        event.component && event.component.cancelEditData();
-        this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, event.dataSource
-            || this.dataGrid.instance.getDataSource(), event.loadMethod);
-        setTimeout(() => {
-            this._router.navigate(
-                CrmService.getEntityDetailsLink(clientId, section, leadId, orgId),
-                { queryParams: {
-                    referrer: 'app/crm/leads',
-                    dataLayoutType: this.dataLayoutType.value,
-                    ...queryParams
-                }}
-            );
-        });
+            this.searchClear = false;
+            let orgId = lead.OrganizationId;
+            event.component && event.component.cancelEditData();
+            this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, event.dataSource
+                || this.dataGrid.instance.getDataSource(), event.loadMethod);
+            setTimeout(() => {
+                this._router.navigate(
+                    CrmService.getEntityDetailsLink(clientId, section, leadId, orgId),
+                    { queryParams: {
+                            referrer: 'app/crm/leads',
+                            dataLayoutType: this.dataLayoutType.value,
+                            ...queryParams
+                        }}
+                );
+            });
+        })
     }
 
     onCellClick($event) {

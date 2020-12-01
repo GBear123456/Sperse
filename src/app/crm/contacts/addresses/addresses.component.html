@@ -3,7 +3,7 @@
          class="address-wrapper"
          (click)="inPlaceEdit(address, $event, i)">
         <div *ngIf="isEditAllowed" class="actions">
-            <i class="copy save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, address)"></i>
+            <i *ngIf="isCopyAllowed" class="copy save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, address)"></i>
             <i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog(address, $event, i)"></i>
             <i *ngIf="isDeleteAllowed"
                class="delete fa fa-times"
