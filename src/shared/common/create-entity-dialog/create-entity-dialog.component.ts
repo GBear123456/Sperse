@@ -395,7 +395,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             dataObj.address = dataObj.addresses[0];
         }
         if (this.showPropertyFields) {
-            dataObj.propertyInfo = new PropertyInput({
+            dataObj.propertyInfo = PropertyInput.fromJS({
                 propertyId: this.propertyId,
                 name: this.property.name,
                 area: this.property.area,

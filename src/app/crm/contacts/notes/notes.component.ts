@@ -48,6 +48,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     public actionRecordData: any;
     public showGridView = false;
     notes: NoteInfoDto[];
+    propertyId: number;
 
     constructor(injector: Injector,
         private clientService: ContactsService,
@@ -64,10 +65,13 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         }, this.ident);
         clientService.leadInfoSubscribe((leadInfo: LeadInfoDto) => {
             this.data = this.contactService['data'];
-            this.loadData().subscribe(
-                (notes: NoteInfoDto[]) => this.notes = notes
-            );
-            this.updateToolbar();
+            if (leadInfo) {
+                this.propertyId = leadInfo.propertyId;
+                this.loadData().subscribe(
+                    (notes: NoteInfoDto[]) => this.notes = notes
+                );
+                this.updateToolbar();
+            }
         }, this.ident);
     }
 
@@ -139,7 +143,11 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
 
     loadData(): Observable<NoteInfoDto[]> {
         let contactId = this.data.contactInfo.id;
-        const notes$ = this.notesService.getNotes(contactId).pipe(publishReplay(), refCount());
+        const notes$ = this.notesService.getNotes([
+            contactId,
+            this.data.contactInfo.primaryOrganizationContactId,
+            this.propertyId
+        ].filter(Boolean)).pipe(publishReplay(), refCount());
         notes$.subscribe((result: NoteInfoDto[]) => {
             this.notesService['data'] = {
                 contactId: contactId,
