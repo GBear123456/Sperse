@@ -436,7 +436,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         remoteOperations: true,
         load: (loadOptions) => {
             this.pivotGridDataIsLoading = true;
-            this.selectedContactGroup$.pipe(
+            return this.selectedContactGroup$.pipe(
                 first(),
                 switchMap((selectedContactGroup: ContactGroup) => {
                     return this.crmService.loadSlicePivotGridData(
@@ -446,7 +446,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         { contactGroupId: selectedContactGroup.toString() }
                     );
                 })
-            ).toPromise()
+            ).toPromise();
         },
         onChanged: () => {
             this.pivotGridDataIsLoading = false;
