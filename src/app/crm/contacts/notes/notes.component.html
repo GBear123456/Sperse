@@ -1,97 +1,99 @@
-<div class="wrapper" *ngIf="notes && notes.length; else noData">
-    <action-menu width="150px"
-        [items]="actionMenuItems"
-        target=""
-        (onItemClick)="onMenuItemClick($event)">
-    </action-menu>
-    <div class="grid-view" *ngIf="showGridView">
-        <dx-data-grid            
-            height="100%"
-            class="main-component-view"
-            [dataSource]="notes"
-            [pager]="defaultGridPagerConfig"
-            [allowColumnReordering]="true"
-            [columnAutoWidth]="true"
-            [allowColumnResizing]="true"
-            [hoverStateEnabled]="true"
-            (onCellClick)="onCellClick($event)"
-            (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
-            (onToolbarPreparing)="onToolbarPreparing($event)">
-            <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
-            <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
+<ng-container *ngIf="notes$ | async as notes">
+    <div class="wrapper" *ngIf="notes && notes.length; else noData">
+        <action-menu width="150px"
+                     [items]="actionMenuItems"
+                     target=""
+                     (onItemClick)="onMenuItemClick($event)">
+        </action-menu>
+        <div class="grid-view" *ngIf="showGridView">
+            <dx-data-grid
+                    height="100%"
+                    class="main-component-view"
+                    [dataSource]="notes"
+                    [pager]="defaultGridPagerConfig"
+                    [allowColumnReordering]="true"
+                    [columnAutoWidth]="true"
+                    [allowColumnResizing]="true"
+                    [hoverStateEnabled]="true"
+                    (onCellClick)="onCellClick($event)"
+                    (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
+                    (onToolbarPreparing)="onToolbarPreparing($event)">
+                <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
+                <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 
-            <dxi-column alignment="center" width="40px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
-            <dxi-column dataField="text"
-                        [caption]="l('Note')"
-                        width="350px"
-                        cssClass="clipboard-holder"
-                        dataType="string"
-                        cellTemplate="textCell">
-            </dxi-column>
-            <dxi-column dataField="dateTime"
-                        [caption]="l('Date')"
-                        sortOrder="desc"
-                        cssClass="tabular clipboard-holder"
-                        [calculateCellValue]="calculateDateCellValue">
-            </dxi-column>
-            <dxi-column dataField="addedByUserName"
-                        [caption]="l('AddedBy')"
-                        cssClass="clipboard-holder">
-            </dxi-column>
-            <dxi-column dataField="noteTypeName"
-                        [caption]="l('Type')"
-                        cssClass="clipboard-holder">
-            </dxi-column>
-            <dxi-column dataField="contactPhoneNumber"
-                        [caption]="l('Phone')"
-                        cellTemplate="phoneCell"
-                        cssClass="tabular">
-            </dxi-column>
-            <dxi-column dataField="contactName"
-                        [caption]="l('Contact')"
-                        cssClass="clipboard-holder">
-            </dxi-column>
+                <dxi-column alignment="center" width="40px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
+                <dxi-column dataField="text"
+                            [caption]="l('Note')"
+                            width="350px"
+                            cssClass="clipboard-holder"
+                            dataType="string"
+                            cellTemplate="textCell">
+                </dxi-column>
+                <dxi-column dataField="dateTime"
+                            [caption]="l('Date')"
+                            sortOrder="desc"
+                            cssClass="tabular clipboard-holder"
+                            [calculateCellValue]="calculateDateCellValue">
+                </dxi-column>
+                <dxi-column dataField="addedByUserName"
+                            [caption]="l('AddedBy')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column dataField="noteTypeName"
+                            [caption]="l('Type')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column dataField="contactPhoneNumber"
+                            [caption]="l('Phone')"
+                            cellTemplate="phoneCell"
+                            cssClass="tabular">
+                </dxi-column>
+                <dxi-column dataField="contactName"
+                            [caption]="l('Contact')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
 
-            <div *dxTemplate="let cellData of 'actionsCellTemplate'">
-                <a *ngIf="showActonMenu(cellData.data)" class="dx-link dx-link-edit"></a>
-            </div>
-            <div *dxTemplate="let cellData of 'textCell'" class="text-wrap">
-                {{cellData.value}}            
-            </div>
+                <div *dxTemplate="let cellData of 'actionsCellTemplate'">
+                    <a *ngIf="showActonMenu(cellData.data)" class="dx-link dx-link-edit"></a>
+                </div>
+                <div *dxTemplate="let cellData of 'textCell'" class="text-wrap">
+                    {{cellData.value}}
+                </div>
 
-            <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
-                {{cellData.value | phone}}
-            </div>
+                <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
+                    {{cellData.value | phone}}
+                </div>
 
-            <div *dxTemplate="let data of 'title'">
-                <h2 class="title">{{l('Notes')}}</h2>
-            </div>
+                <div *dxTemplate="let data of 'title'">
+                    <h2 class="title">{{l('Notes')}}</h2>
+                </div>
 
-            <dxo-load-panel [enabled]="true"></dxo-load-panel>
-            <dxo-sorting mode="multiple"></dxo-sorting>
-            <dxo-group-panel [visible]="false"></dxo-group-panel>
-        </dx-data-grid>
-    </div>
-    <div class="chat-view" *ngIf="!showGridView">
-        <dx-scroll-view showScrollbar="onHover">                    
-            <div class="notes-wrapper">
-                <div *ngFor="let note of notes; let i = index" class="note-wrapper"
-                     [ngClass]="{
-                        current: note.addedByUserId == userId,
-                        another: note.addedByUserId != userId
-                     }"
-                     [attr.fullname]="note.addedByUserName">
-                    <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(note.addedByUserPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
-                    <a *ngIf="showActonMenu(note)" class="gear-icon" (click)="toggleActionsMenu(note, $event.target)"></a>
-                    <div class="body date" [attr.date]="note.dateTime | date: formatting.inboxDate : userTimezone">
-                        <i class="save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, note.text)"></i>
-                        <div [innerHtml]="note.text"></div>                        
+                <dxo-load-panel [enabled]="true"></dxo-load-panel>
+                <dxo-sorting mode="multiple"></dxo-sorting>
+                <dxo-group-panel [visible]="false"></dxo-group-panel>
+            </dx-data-grid>
+        </div>
+        <div class="chat-view" *ngIf="!showGridView">
+            <dx-scroll-view showScrollbar="onHover">
+                <div class="notes-wrapper">
+                    <div *ngFor="let note of notes; let i = index" class="note-wrapper"
+                         [ngClass]="{
+                            current: note.addedByUserId == userId,
+                            another: note.addedByUserId != userId
+                         }"
+                         [attr.fullname]="note.addedByUserName">
+                        <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(note.addedByUserPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
+                        <a *ngIf="showActonMenu(note)" class="gear-icon" (click)="toggleActionsMenu(note, $event.target)"></a>
+                        <div class="body date" [attr.date]="note.dateTime | date: formatting.inboxDate : userTimezone">
+                            <i class="save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, note.text)"></i>
+                            <div [innerHtml]="note.text"></div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </dx-scroll-view>        
+            </dx-scroll-view>
+        </div>
     </div>
-</div>
-<ng-template #noData>
-    <app-no-data></app-no-data>
-</ng-template>
+    <ng-template #noData>
+        <app-no-data></app-no-data>
+    </ng-template>
+</ng-container>
