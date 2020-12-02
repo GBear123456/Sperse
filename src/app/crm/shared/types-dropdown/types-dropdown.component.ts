@@ -70,7 +70,7 @@ export class TypesDropdownComponent {
     private updatePopupWidth(popup) {
         /** Get the widest item and set popup width with its width */
         const longestItemWidth: number = Array.prototype.reduce.call(
-            popup.content().querySelectorAll('.dx-scrollview-content .dx-item .types-dropdown-item span'),
+            popup.content().querySelectorAll('.dx-scrollview-content .dx-item span'),
             (longestItemWidth: number, currentItem: HTMLElement) => {
                 if (!longestItemWidth || currentItem.offsetWidth > longestItemWidth) {
                     longestItemWidth = currentItem.offsetWidth;
@@ -78,7 +78,9 @@ export class TypesDropdownComponent {
                 return longestItemWidth;
             }, null
         );
-        popup.option('width', longestItemWidth + 45);
+        if (longestItemWidth) {
+            popup.option('width', longestItemWidth + 20 + (this.allowEdit ? 25 : 0));
+        }
     }
 
 }
