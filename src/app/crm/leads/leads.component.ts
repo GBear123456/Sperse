@@ -762,28 +762,26 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private setInitialPipelineId() {
-        /** Get initial opened pipeline from queryParams or cache */
-        let pipelineId = this._activatedRoute.snapshot.queryParams.pipelineId || this.cacheService.get(this.cacheKey);
-        if (pipelineId) {
-            this.selectedPipelineId.next(+pipelineId);
-        } else {
-            /** If there is no pipelineId - then get the first pipeline */
-            this.pipelines$.subscribe((pipelines: PipelineDto[]) => {
-                let pipelineId = pipelines[0].id;
-                /** If there is contactGroup in query params - then find first pipeline with
-                 *  that contactGroup and set its id, else set first pipeline id */
-                const contactGroup = this._activatedRoute.snapshot.queryParams.contactGroup;
-                if (contactGroup) {
-                    const pipeline = pipelines.find((pipeline: PipelineDto) => {
-                        return pipeline.contactGroupId === ContactGroup[contactGroup];
-                    });
-                    if (pipeline) {
-                        pipelineId = pipeline.id;
-                    }
+        this.pipelines$.subscribe((pipelines: PipelineDto[]) => {
+            /** Get initial opened pipeline from queryParams or cache */
+            let pipelineId = this._activatedRoute.snapshot.queryParams.pipelineId || this.cacheService.get(this.cacheKey);
+            /** If cached pipeline id is not in the pipeline list - then it was deleted and we have to get the first pipeline */
+            if (!pipelineId || pipelines.every((pipeline: PipelineDto) => pipeline.id !== pipelineId)) {
+                pipelineId = pipelines[0].id;
+            }
+            /** If there is contactGroup in query params - then find first pipeline with
+             *  that contactGroup and set its id, else set first pipeline id */
+            const contactGroup = this._activatedRoute.snapshot.queryParams.contactGroup;
+            if (contactGroup) {
+                const pipeline = pipelines.find((pipeline: PipelineDto) => {
+                    return pipeline.contactGroupId === ContactGroup[contactGroup];
+                });
+                if (pipeline) {
+                    pipelineId = pipeline.id;
                 }
-                this.selectedPipelineId.next(pipelineId);
-            });
-        }
+            }
+            this.selectedPipelineId.next(pipelineId);
+        });
     }
 
     private listenAndUpdateContactGroup() {
