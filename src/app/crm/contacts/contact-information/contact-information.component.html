@@ -124,7 +124,9 @@
             <img src="./assets/common/icons/flag-icon.svg" class="dx-icon" [alt]="ls.l('Rating')">
             {{ls.l('Rating')}}:
         </div>
-        <rating-bar [rating]="data?.contactInfo.ratingId || 0"></rating-bar>
+        <ng-container *ngIf="data?.contactInfo.ratingId">
+            <rating-bar [rating]="data?.contactInfo.ratingId"></rating-bar>
+        </ng-container>
     </div>
     <div class="item width-percent-15">
         <div class="title">
