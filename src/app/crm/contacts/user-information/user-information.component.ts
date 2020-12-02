@@ -236,9 +236,10 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
         ).subscribe((contactInfo: ContactInfoDto) => {
             this.phones = contactInfo.personContactInfo.details.phones.filter(item => item.isActive);
             this.emails = contactInfo.personContactInfo.details.emails.filter(item => item.isActive);
+
+            this.inviteData.emailAddress = (this.emails[0] || {}).emailAddress;
+            this.inviteData.phoneNumber = (this.phones[0] || {}).phoneNumber;
         });
-        this.inviteData.emailAddress = undefined;
-        this.inviteData.phoneNumber = undefined;
 
         setTimeout(() => {
             let instance = this.emailAddressComponent && this.emailAddressComponent.instance;

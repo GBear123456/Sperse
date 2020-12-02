@@ -3,6 +3,8 @@
         <dx-validation-group #inviteValidationGroup>
             <div class="row">
                 <div class="invite-user-info col-md-4" *ngIf="emails || phones">
+                    <h2>{{ls.l('UserInfo')}}</h2>
+                    <p>{{ls.l('UserInfoDescription')}}</p>
                     <dx-select-box #emailAddress
                         width="300px"
                         name="emailAddress"
@@ -77,7 +79,8 @@
                     <dx-check-box [(value)]="inviteData.sendActivationEmail" [text]="ls.l('SendActivationEmail')"></dx-check-box>
                 </div>
                 <div class="col-md-4">
-                    <span>{{ls.l('Roles')}}:</span>
+                    <h2>{{ls.l('SelectRoles')}}</h2><span class="optional">({{ls.l('optional')}})</span>
+                    <p>{{ls.l('SelectRolesDescription')}}</p>
                     <ul class="items-list">
                         <li *ngFor="let role of roles" [title]="role.displayName">
                             <dx-check-box [disabled]="!isInviteAllowed"
