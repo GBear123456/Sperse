@@ -3,9 +3,9 @@ import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { debounceTime, takeUntil } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
-import { Observable, ReplaySubject } from 'rxjs';
+import { combineLatest, Observable } from 'rxjs';
+import { debounceTime, filter, map, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { ContactsService } from '../contacts.service';
@@ -39,10 +39,19 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
 
     private readonly ident = 'ContactInformation';
     private readonly settingsDialogId = 'contact-information-personal-details-dialog';
-    tags$: Observable<ContactTagInfoDto[]>;
-    lists$: Observable<ContactListInfoDto[]>;
-    _star: ReplaySubject<ContactStarInfoDto> = new ReplaySubject<ContactStarInfoDto>();
-    star$: Observable<ContactStarInfoDto> = this._star.asObservable();
+    tags$: Observable<ContactTagInfoDto[]> = this.store$.pipe(select(TagsStoreSelectors.getStoredTags));
+    lists$: Observable<ContactListInfoDto[]> = this.store$.pipe(select(ListsStoreSelectors.getStoredLists));
+    star$: Observable<ContactStarInfoDto> = combineLatest(
+        this.contactsService.contactInfo$.pipe(
+            filter(Boolean),
+            map((contactInfo: ContactInfoDto) => contactInfo.starId)
+        ),
+        this.store$.select(StarsStoreSelectors.getStars)
+    ).pipe(
+        map(([starId, stars]: [number, ContactStarInfoDto[]]) => {
+            return stars.find((star: ContactStarInfoDto) => star.id === starId);
+        })
+    );
 
     constructor(
         private dialog: MatDialog,
@@ -58,20 +67,11 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
         this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo)
                 setTimeout(() => this.updateToolbar());
-
-            this.store$.select(StarsStoreSelectors.getStars).pipe(
-                takeUntil(this.lifeCycleService.destroy$),
-            ).subscribe((data: ContactStarInfoDto[]) => {
-                console.log(data.filter(data => data.id == contactInfo.starId)[0]);
-                this._star.next(data.filter(data => data.id == contactInfo.starId)[0]);
-            })
         }, this.ident);
     }
 
     ngOnInit() {
         this.data = this.contactService['data'];
-        this.lists$ = this.store$.pipe(select(ListsStoreSelectors.getStoredLists));
-        this.tags$ = this.store$.pipe(select(TagsStoreSelectors.getStoredTags));
     }
 
     ngAfterViewInit() {

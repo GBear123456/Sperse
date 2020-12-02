@@ -51785,6 +51785,9 @@ export interface IContactStatusDto {
 
 export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
     affiliateContactId!: number | undefined;
+    affiliateContactName!: string | undefined;
+    affiliateContactAffiliateCode!: string | undefined;
+    affiliateContactPhotoPublicId!: string | undefined;
     affiliateCode!: string | undefined;
     affiliateRate!: number | undefined;
     dateTime!: moment.Moment | undefined;
@@ -51804,6 +51807,9 @@ export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
     init(data?: any) {
         if (data) {
             this.affiliateContactId = data["affiliateContactId"];
+            this.affiliateContactName = data["affiliateContactName"];
+            this.affiliateContactAffiliateCode = data["affiliateContactAffiliateCode"];
+            this.affiliateContactPhotoPublicId = data["affiliateContactPhotoPublicId"];
             this.affiliateCode = data["affiliateCode"];
             this.affiliateRate = data["affiliateRate"];
             this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
@@ -51823,6 +51829,9 @@ export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["affiliateContactId"] = this.affiliateContactId;
+        data["affiliateContactName"] = this.affiliateContactName;
+        data["affiliateContactAffiliateCode"] = this.affiliateContactAffiliateCode;
+        data["affiliateContactPhotoPublicId"] = this.affiliateContactPhotoPublicId;
         data["affiliateCode"] = this.affiliateCode;
         data["affiliateRate"] = this.affiliateRate;
         data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
@@ -51835,6 +51844,9 @@ export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
 
 export interface IAffiliateInfoHistoryInfo {
     affiliateContactId: number | undefined;
+    affiliateContactName: string | undefined;
+    affiliateContactAffiliateCode: string | undefined;
+    affiliateContactPhotoPublicId: string | undefined;
     affiliateCode: string | undefined;
     affiliateRate: number | undefined;
     dateTime: moment.Moment | undefined;
