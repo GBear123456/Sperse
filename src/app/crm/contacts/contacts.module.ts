@@ -88,8 +88,6 @@ import { UserInboxComponent } from './user-inbox/user-inbox.component';
 import { MergeContactDialogComponent } from './merge-contact-dialog/merge-contact-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { TemplateDocumentsDialogComponent } from './documents/template-documents-dialog/template-documents-dialog.component';
-import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
-import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { DocumentTypesListComponent } from './document-types-list/document-types-list.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 import { ContactsRoutingModule } from './contacts-routing.module';
