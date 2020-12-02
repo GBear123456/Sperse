@@ -255,12 +255,22 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 },
                 {
                     getText: (lead: LeadDto) => {
-                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, lead.Stage, this.selectedContactGroup);
+                        const stage: StageDto = this.pipelineService.getStageByName(
+                            this.pipelinePurposeId,
+                            lead.Stage,
+                            this.selectedContactGroup,
+                            this.selectedPipelineId
+                        );
                         return this.l('Checklist') + ' (' + lead.StageChecklistPointDoneCount + '/' + stage.checklistPoints.length + ')';
                     },
                     class: 'checklist',
                     checkVisible: (lead: LeadDto) => {
-                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, lead.Stage, this.selectedContactGroup);
+                        const stage = this.pipelineService.getStageByName(
+                            this.pipelinePurposeId,
+                            lead.Stage,
+                            this.selectedContactGroup,
+                            this.selectedPipelineId
+                        );
                         return !!(!stage.isFinal && stage.checklistPoints && stage.checklistPoints.length);
                     },
                     action: (data?) => {
@@ -313,8 +323,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     )
     private readonly CONTACT_GROUP_CACHE_KEY = 'SELECTED_PIPELINE_ID';
     private readonly cacheKey = this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY, this.dataSourceURI);
-    selectedPipelineId: ReplaySubject<number> = new ReplaySubject(1);
-    selectedPipelineId$: Observable<number> = this.selectedPipelineId.asObservable().pipe(
+    selectedPipelineId: number;
+    private _selectedPipelineId: ReplaySubject<number> = new ReplaySubject(1);
+    selectedPipelineId$: Observable<number> = this._selectedPipelineId.asObservable().pipe(
         distinctUntilChanged()
     );
     selectedPipeline$: Observable<PipelineDto> = combineLatest(
@@ -641,7 +652,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             );
         })
     );
-    pluralize = pluralize;
 
     constructor(
         injector: Injector,
@@ -749,6 +759,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     ngAfterViewInit() {
+        this.selectedPipelineId$.pipe(takeUntil(this.destroy$)).subscribe((selectedPipelineId: number) => {
+            this.selectedPipelineId = selectedPipelineId;
+        });
         this.selectedPipelineId$.pipe(first()).subscribe(() => {
             this.initDataSource();
         });
@@ -780,7 +793,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     pipelineId = pipeline.id;
                 }
             }
-            this.selectedPipelineId.next(pipelineId);
+            this._selectedPipelineId.next(pipelineId);
         });
     }
 
@@ -968,7 +981,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 return pipeline.contactGroupId === ContactGroup[contactGroup];
             });
             if (pipeline) {
-                this.selectedPipelineId.next(pipeline.id);
+                this._selectedPipelineId.next(pipeline.id);
             }
         });
     }
@@ -2080,7 +2093,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onSelectedPipelineChanged(event) {
         if (event.previousValue != event.value) {
-            this.selectedPipelineId.next(event.value);
+            this._selectedPipelineId.next(event.value);
             this.filterModelStages.clearFilterItems();
             this.filterModelStages.isSelected = false;
             this.pipelineFilter.items.PipelineId.value = +event.value;
