@@ -1,4 +1,11 @@
-<h2 mat-dialog-title>{{data.title}}<span class="close" (click)="close()"></span></h2>
+<div [hidden]="!data?.title" class="headline">
+    <h2>{{data?.title}}</h2>
+</div>
+<div [hidden]="data?.title" class="headline">
+    <h2>{{ls.l('SelectOrgUnit')}}</h2><span class="optional">({{ls.l('optional')}})</span>
+    <p>{{ls.l('Select the business units or departments this user can have visibility to. you cn leave this blank to limit the visibility to just their own activity, and not see the activity of other users.')}}</p>
+</div>
+<span class="close" (click)="close()"></span>
 <mat-dialog-content>
-    <organization-units-tree [selectionMode]="data.selectionMode"></organization-units-tree>
+    <organization-units-tree [selectionMode]="data?.selectionMode"></organization-units-tree>
 </mat-dialog-content>

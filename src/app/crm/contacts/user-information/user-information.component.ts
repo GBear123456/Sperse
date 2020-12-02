@@ -495,17 +495,14 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
         const dialog = this.dialog.getDialogById('user-organization-units-dialog');
         if (!dialog) {
             if (open) {
-                const dialogData: OrganizationUnitsDialogData = {
-                    title: this.ls.l('OrganizationUnits'),
-                    selectionMode: 'multiple'
-                };
                 this.dialog.open(OrganizationUnitsDialogComponent, {
                     id: 'user-organization-units-dialog',
                     panelClass: ['slider'],
                     disableClose: false,
                     hasBackdrop: false,
-                    closeOnNavigation: true,
-                    data: dialogData
+                    closeOnNavigation: true
+                }).afterClosed().subscribe(() => {
+                    this.contactsService.toggleSettingsDialog();
                 });
             }
         } else if (!open)
