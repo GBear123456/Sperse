@@ -10,4 +10,5 @@ export interface LedgerDto {
     Status: string;
     TotalAmount: number;
     Type: string;
+    PaymentSystem: string;
 }
