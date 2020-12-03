@@ -315,8 +315,34 @@
     .property-address {
         flex-grow: 1;
         padding-right: 10px;
+        position: relative;
         input {
             height: 35px;
+            font-size: 22px;
+            font-weight: 500;
+            letter-spacing: 0.4px;
+            color: #202b35;
+            background-color: #F3F7FA;
+            border-radius: 0;
+        }
+
+        input:focus ~ span.placeholder,
+        input:not(:focus):valid ~ span.placeholder {
+            top: -12px;
+            left: 0;
+            font-size: 11px;
+            opacity: 1;
+        }
+
+        span.placeholder {
+            position: absolute;
+            pointer-events: none;
+            left: 0;
+            top: 5px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #8a969b;
+            transition: 0.2s;
         }
     }
 

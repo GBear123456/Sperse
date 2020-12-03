@@ -59,17 +59,20 @@
             <input *ngIf="!googleAutoComplete"
                    type="text"
                    name="PropertyAddress"
-                   [placeholder]="ls.l('PropertyAddress')"
                    [(ngModel)]="property.name"
-                   class="dx-texteditor-input"/>
+                   placeholder=""
+                   class="dx-texteditor-input"
+                   required/>
             <input *ngIf="googleAutoComplete"
                    type="text"
                    name="Address"
-                   [placeholder]="ls.l('PropertyAddress')"
                    [(ngModel)]="property.name"
                    class="dx-texteditor-input"
+                   placeholder=""
                    (onAddressChange)="updatePropertyAddress($event)"
-                   ngx-google-places-autocomplete/>
+                   ngx-google-places-autocomplete
+                   required/>
+            <span class="placeholder">{{ ls.l('PropertyAddress') }}</span>
         </div>
     </ng-container>
 
