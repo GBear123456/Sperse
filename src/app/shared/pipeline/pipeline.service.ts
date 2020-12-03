@@ -136,8 +136,8 @@ export class PipelineService {
         }
     }
 
-    getStages(pipelinePurposeId: string, contactGroupId: ContactGroup): StageDto[] {
-        const pipeline = this.getPipeline(pipelinePurposeId, contactGroupId);
+    getStages(pipelinePurposeId: string, contactGroupId: ContactGroup, pipelineId?: number): StageDto[] {
+        const pipeline = this.getPipeline(pipelinePurposeId, contactGroupId, pipelineId);
         return pipeline && pipeline.stages;
     }
 
@@ -147,8 +147,8 @@ export class PipelineService {
         return pipelines && pipelines[String(id)];
     }
 
-    getStageByName(pipelinePurposeId: string, stageName: string, contactGroupId: ContactGroup): Stage {
-        return _.findWhere(this.getStages(pipelinePurposeId, contactGroupId), {name: stageName});
+    getStageByName(pipelinePurposeId: string, stageName: string, contactGroupId: ContactGroup, pipelineId?: number): Stage {
+        return _.findWhere(this.getStages(pipelinePurposeId, contactGroupId, pipelineId), { name: stageName });
     }
 
     updateEntityStage(pipelinePurposeId: string, contactGroupId: ContactGroup,

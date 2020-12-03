@@ -43,7 +43,8 @@ import {
     StageDto,
     UpdatePartnerTypeInput,
     UserServiceProxy,
-    LayoutType
+    LayoutType,
+    PartnerTypeDto
 } from '@shared/service-proxies/service-proxies';
 import { OperationsWidgetComponent } from './operations-widget/operations-widget.component';
 import { ContactsService } from './contacts.service';
@@ -589,7 +590,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     private loadPartnerTypes() {
         this.store$.pipe(select(PartnerTypesStoreSelectors.getPartnerTypes)).subscribe(
-            (partnerTypes: any) => {
+            (partnerTypes: PartnerTypeDto[]) => {
                 this.partnerTypes = partnerTypes && partnerTypes.length ?
                     partnerTypes.map(type => {
                         type['action'] = this.updatePartnerType.bind(this);
@@ -722,16 +723,23 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         if (!this.leadId || !this.leadInfo)
             return;
 
-        const pipelineId = AppConsts.PipelinePurposeIds.lead;
-        let sourceStage = this.pipelineService.getStageByName(pipelineId, this.leadInfo.stage, this.contactGroupId.value);
-        let targetStage = this.pipelineService.getStageByName(pipelineId, $event.itemData.name, this.contactGroupId.value);
+        const pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
+        let sourceStage = this.pipelineService.getStageByName(pipelinePurposeId, this.leadInfo.stage, this.contactGroupId.value);
+        let targetStage = this.pipelineService.getStageByName(pipelinePurposeId, $event.itemData.name, this.contactGroupId.value);
 
-        if (this.pipelineService.updateEntityStage(pipelineId, this.contactGroupId.value, this.leadInfo, sourceStage, targetStage, () => {
-            this.toolbarComponent.stagesComponent.listComponent.option(
-                'selectedItemKeys',
-                [this.clientStageId = targetStage.id]
-            );
-        })) {
+        if (this.pipelineService.updateEntityStage(
+            pipelinePurposeId,
+            this.contactGroupId.value,
+            this.leadInfo,
+            sourceStage,
+            targetStage,
+            () => {
+                this.toolbarComponent.stagesComponent.listComponent.option(
+                    'selectedItemKeys',
+                    [this.clientStageId = targetStage.id]
+                );
+            }
+        )) {
             this.leadInfo.stage = targetStage.name;
             this.notify.success(this.l('StageSuccessfullyUpdated'));
         } else
