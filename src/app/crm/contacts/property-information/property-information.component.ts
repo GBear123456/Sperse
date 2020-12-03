@@ -10,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { Observable, Subscription, merge, race } from 'rxjs';
-import { filter, map, switchMap, pluck, finalize, skip, tap } from 'rxjs/operators';
+import { filter, map, switchMap, pluck, finalize, skip } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
@@ -30,7 +30,6 @@ import { AddressUpdate } from '@app/crm/contacts/addresses/address-update.interf
     selector: 'property-information',
     templateUrl: 'property-information.component.html',
     styleUrls: [ 'property-information.component.less' ],
-    providers: [ PropertyServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PropertyInformationComponent implements OnInit {

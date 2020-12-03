@@ -29,7 +29,7 @@
                     </dx-text-area>
                 </div>
                 <div *ngIf="contacts.length > 1" class="field contact">
-                    <label>{{l('Contact') | uppercase }}</label>
+                    <label>{{l('NoteContact') | uppercase }}</label>
                     <dx-select-box
                         width="450px"
                         [dataSource]="contacts"
@@ -39,7 +39,7 @@
                         [(value)]="contactId">
                     </dx-select-box>
                 </div>
-                <div class="field" *ngIf="isCRMOrdersGranted">
+                <div class="field" *ngIf="isCRMOrdersGranted && showAdditionalFields">
                     <label>{{l('Orders') | uppercase }}</label>
                     <dx-select-box
                         width="450px"
@@ -50,7 +50,7 @@
                         [(value)]="orderId">
                     </dx-select-box>
                 </div>
-                <div class="field">
+                <div *ngIf="showAdditionalFields" class="field">
                     <label>{{l('FollowUpDate') | uppercase }}</label>
                     <dx-date-box
                         #followUpDateBox
@@ -59,7 +59,7 @@
                         [(value)]="followupDate">
                     </dx-date-box>
                 </div>
-                <div class="field phone">
+                <div *ngIf="showAdditionalFields" class="field phone">
                     <label>{{l('Phone') | uppercase }}</label>
                     <dx-select-box
                         width="420px"
