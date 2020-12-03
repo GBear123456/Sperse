@@ -110,7 +110,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     userId$: Observable<number> = this.contactsService.userId$;
     contactIsParent$: Observable<boolean> = this.contactsService.contactInfo$.pipe(
         filter(Boolean),
-        map((contactInfo: ContactInfoDto) => !!contactInfo.parentId)
+        map((contactInfo: ContactInfoDto) => !contactInfo.parentId)
     );
     contactStatusId: Observable<string> = this.contactsService.contactInfo$.pipe(
         filter(Boolean),
