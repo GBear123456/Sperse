@@ -303,12 +303,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pipelines$: Observable<PipelineDto[]> = this.store$.pipe(
         select(PipelinesStoreSelectors.getPipelines({
             purpose: this.pipelinePurposeId
-        })),
-        map((pipelines: PipelineDto[]) => {
-            return pipelines.filter((pipeline: PipelineDto) => {
-                return this.permission.checkCGPermission(pipeline.contactGroupId, '');
-            });
-        })
+        }))
     );
     pipelineTypes$: Observable<TypeItem[]> = this.pipelines$.pipe(
         filter(Boolean),

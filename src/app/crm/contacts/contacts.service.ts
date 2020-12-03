@@ -76,8 +76,8 @@ export class ContactsService {
     private organizationUnitsSave: Subject<any> = new Subject<any>();
     private invalidateSubject: Subject<any> = new Subject<any>();
     private loadLeadInfoSubject: Subject<any> =  new ReplaySubject<any>(1);
-    private leadInfoSubject: BehaviorSubject<any> = new BehaviorSubject<any>(undefined);
-    leadInfo$: Observable<any> = this.leadInfoSubject.asObservable();
+    private leadInfoSubject: BehaviorSubject<LeadInfoDto> = new BehaviorSubject<LeadInfoDto>(undefined);
+    leadInfo$: Observable<LeadInfoDto> = this.leadInfoSubject.asObservable();
     private contactInfo: ReplaySubject<ContactInfoDto> = new ReplaySubject<ContactInfoDto>(1);
     contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
     contactId: ReplaySubject<number> = new ReplaySubject<number>(1);

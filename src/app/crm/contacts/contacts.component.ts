@@ -7,6 +7,7 @@ import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { BehaviorSubject, combineLatest, forkJoin, Observable, of } from 'rxjs';
 import {
+    first,
     buffer,
     debounceTime,
     filter,
@@ -103,8 +104,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             'ViewCommunicationHistory'
         ))
     );
-    isPropertyContact$: Observable<boolean> = this.contactsService.leadInfo$.pipe(
-        filter(Boolean),
+    leadInfo$: Observable<LeadInfoDto> = this.contactsService.leadInfo$.pipe(
+        filter((leadInfo: LeadInfoDto) => !!leadInfo)
+    );
+    isPropertyContact$: Observable<boolean> = this.leadInfo$.pipe(
         map((leadInfo: LeadInfoDto) => !!leadInfo.propertyId)
     );
     userId$: Observable<number> = this.contactsService.userId$;
@@ -226,8 +229,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             name: 'application-status',
             label: this.l('ApplicationStatus'),
             route: 'application-status',
-            visible$: this.contactsService.leadInfo$.pipe(
-                filter(Boolean),
+            visible$: this.leadInfo$.pipe(
                 map((leadInfo: LeadInfoDto) => !!leadInfo.id)
             ),
             disabled: true
@@ -636,19 +638,29 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private loadLeadsStages(callback?: () => any) {
         if (this.leadStages && this.leadStages.length)
             callback && callback();
-        else
-            this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.contactGroupId.value)
-                .subscribe((result: PipelineDto) => {
-                    this.leadStages = result.stages.map((stage: StageDto) => {
-                        return {
-                            id: stage.id,
-                            name: stage.name,
-                            index: stage.sortOrder,
-                            action: this.updateLeadStage.bind(this)
-                        };
-                    });
-                    callback && callback();
+        else {
+            this.leadInfo$.pipe(
+                map((leadInfo: LeadInfoDto) => leadInfo.pipelineId),
+                first(),
+                switchMap((pipelineId: number) => {
+                    return this.pipelineService.getPipelineDefinitionObservable(
+                        AppConsts.PipelinePurposeIds.lead,
+                        this.contactGroupId.value,
+                        pipelineId
+                    );
+                })
+            ).subscribe((pipeline: PipelineDto) => {
+                this.leadStages = pipeline.stages.map((stage: StageDto) => {
+                    return {
+                        id: stage.id,
+                        name: stage.name,
+                        index: stage.sortOrder,
+                        action: this.updateLeadStage.bind(this)
+                    };
                 });
+                callback && callback();
+            });
+        }
     }
 
     private loadPartnerTypes() {
