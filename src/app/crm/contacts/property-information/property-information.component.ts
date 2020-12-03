@@ -15,7 +15,8 @@ import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
 import {
-    ContactInfoDto, CreateContactAddressInput,
+    BasementStatus,
+    ContactInfoDto, CreateContactAddressInput, FireplaceType, HeatingCoolingType, LayoutType,
     LeadInfoDto,
     PropertyDto,
     PropertyServiceProxy
@@ -25,6 +26,11 @@ import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AddressUpdate } from '@app/crm/contacts/addresses/address-update.interface';
+
+interface YesNoDropdown {
+    displayValue: string;
+    value: boolean | null;
+}
 
 @Component({
     selector: 'property-information',
@@ -38,6 +44,27 @@ export class PropertyInformationComponent implements OnInit {
     property: PropertyDto;
     propertyAddresses: AddressDto[];
     leadInfoSubscription: Subscription;
+    stylingMode = 'filled';
+
+    yesNoDropdowns: YesNoDropdown[] = [
+        { displayValue: 'Yes', value: true },
+        { displayValue: 'No', value: false },
+        // { displayValue: 'Unknown', value: null }
+    ];
+    receivedNA = [
+        { displayValue: 'Received', value: true },
+        { displayValue: 'N/A', value: false }
+    ];
+    parking: string[] = [
+        'Garage',
+        'Underground',
+        'OutdoorLot',
+        'DedicatedPad',
+        'Street'
+    ]; // need fix enum
+    basement: BasementStatus[] = Object.values(BasementStatus)
+    centralHeating: HeatingCoolingType[] = Object.values(HeatingCoolingType);
+    firePlace: FireplaceType[] = Object.values(FireplaceType);
 
     constructor(
         private contactsService: ContactsService,
@@ -152,6 +179,7 @@ export class PropertyInformationComponent implements OnInit {
     }
 
     valueChanged(successCallback?: () => void) {
+        console.log(this.elementRef.nativeElement);
         this.loadingService.startLoading(this.elementRef.nativeElement);
         this.propertyServiceProxy.updatePropertyDetails(this.property).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
