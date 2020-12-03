@@ -515,7 +515,7 @@ export class ContactsService {
             const noteAddDialogData: NoteAddDialogData = {
                 note: noteData,
                 contactInfo: contactInfo,
-                showPropertyType: !!propertyId
+                propertyId: propertyId
             };
             this.dialog.open(NoteAddDialogComponent, {
                 id: dialogId,
