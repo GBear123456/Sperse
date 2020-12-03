@@ -1,5 +1,12 @@
 <h3>{{ ls.l('GeneralDetails') }}</h3>
 <div class="fields" *ngIf="property">
+    <div class="property-name">
+        <label>{{ ls.l('PropertyName') }}</label>
+        <dx-text-box [(value)]="property.name"
+                       [placeholder]="ls.l('EditValuePlaceholder')"
+                       (onValueChanged)="valueChanged()">
+        </dx-text-box>
+    </div>
     <div class="address">
         <label>{{ ls.l('Address') }}</label>
         <addresses [contactInfo]="contactInfo$ | async"

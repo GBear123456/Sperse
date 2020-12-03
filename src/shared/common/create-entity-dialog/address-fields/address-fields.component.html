@@ -22,13 +22,15 @@
            name="Address"
            [placeholder]="ls.l('Street')"
            [(ngModel)]="address.address"
-           class="dx-texteditor-input"/>
+           class="dx-texteditor-input"
+           [ngClass]="{wide: !addressTypes}"/>
     <input *ngIf="googleAutoComplete" type="text"
            #addressInput
            name="Address"
            [placeholder]="ls.l('Street')"
            [(ngModel)]="address.address"
            class="dx-texteditor-input"
+           [ngClass]="{wide: !addressTypes}"
            (onAddressChange)="changeAddress($event)"
            ngx-google-places-autocomplete/>
     <span [class]="showClearButton" (click)="removeAddress()"><i class="minus-icon"></i></span>
