@@ -9,8 +9,8 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
-import { Observable, race, Subscription } from 'rxjs';
-import { filter, map, switchMap, pluck, finalize } from 'rxjs/operators';
+import { Observable, Subscription, merge, race } from 'rxjs';
+import { filter, map, switchMap, pluck, finalize, skip, tap } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
@@ -51,15 +51,22 @@ export class PropertyInformationComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.leadInfoSubscription = race(
-            this.contactsService.leadInfo$.pipe(
-                filter(Boolean),
-                map((leadInfo: LeadInfoDto) => leadInfo.propertyId)
+        const leadPropertyId$: Observable<number> = this.contactsService.leadInfo$.pipe(
+            filter(Boolean),
+            map((leadInfo: LeadInfoDto) => leadInfo.propertyId)
+        );
+        this.leadInfoSubscription = merge(
+            race(
+                /** Get property id from lead info */
+                leadPropertyId$,
+                /** Or from query params depends on fastest source */
+                this.route.queryParams.pipe(
+                    pluck('propertyId'),
+                    filter(Boolean)
+                )
             ),
-            this.route.queryParams.pipe(
-                pluck('propertyId'),
-                filter(Boolean)
-            )
+            /** Then listen only for lead info property id */
+            leadPropertyId$.pipe(skip(1))
         ).pipe(
             filter(Boolean),
             switchMap((propertyId: number) => {

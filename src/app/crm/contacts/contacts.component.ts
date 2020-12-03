@@ -227,6 +227,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             label: this.l('ApplicationStatus'),
             route: 'application-status',
             visible$: this.contactsService.leadInfo$.pipe(
+                filter(Boolean),
                 map((leadInfo: LeadInfoDto) => !!leadInfo.id)
             ),
             disabled: true
