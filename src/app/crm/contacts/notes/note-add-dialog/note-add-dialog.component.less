@@ -82,10 +82,15 @@
                 display: flex;
                 padding-right: 60px;
                 position: relative;
-                ::ng-deep input {
-                    border: none!important;
-                    font-size: 18px;
-                    font-weight: 600;
+                ::ng-deep dx-select-box {
+                    .dx-texteditor-container {
+                        padding-right: 35px;
+                    }
+                    input {
+                        border: none!important;
+                        font-size: 18px;
+                        font-weight: 600;
+                    }
                 }
             }
             .close {
