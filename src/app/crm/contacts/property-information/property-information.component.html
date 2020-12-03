@@ -16,6 +16,7 @@
     <div class="property-area">
         <label>{{ ls.l('PropertyArea') }}</label>
         <dx-number-box [(value)]="property.area"
+                       [placeholder]="ls.l('EditValuePlaceholder')"
                        (onValueChanged)="valueChanged()">
         </dx-number-box>
     </div>
