@@ -25672,6 +25672,61 @@ export class PipelineServiceProxy {
     }
 
     /**
+     * @id (optional) 
+     * @return Success
+     */
+    getPipelineDefinition(id: number | null | undefined): Observable<PipelineDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinition?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPipelineDefinition(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPipelineDefinition(<any>response_);
+                } catch (e) {
+                    return <Observable<PipelineDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PipelineDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPipelineDefinition(response: HttpResponseBase): Observable<PipelineDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PipelineDto.fromJS(resultData200) : new PipelineDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PipelineDto>(<any>null);
+    }
+
+    /**
      * @purposeId (optional) 
      * @contactGroupId (optional) 
      * @return Success
@@ -70294,6 +70349,7 @@ export interface IStageDto {
 export class PipelineDto implements IPipelineDto {
     id!: number | undefined;
     name!: string | undefined;
+    purposeId!: string | undefined;
     purpose!: string | undefined;
     contactGroupId!: string | undefined;
     entityTypeId!: number | undefined;
@@ -70313,6 +70369,7 @@ export class PipelineDto implements IPipelineDto {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.purposeId = data["purposeId"];
             this.purpose = data["purpose"];
             this.contactGroupId = data["contactGroupId"];
             this.entityTypeId = data["entityTypeId"];
@@ -70336,6 +70393,7 @@ export class PipelineDto implements IPipelineDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["purposeId"] = this.purposeId;
         data["purpose"] = this.purpose;
         data["contactGroupId"] = this.contactGroupId;
         data["entityTypeId"] = this.entityTypeId;
@@ -70352,6 +70410,7 @@ export class PipelineDto implements IPipelineDto {
 export interface IPipelineDto {
     id: number | undefined;
     name: string | undefined;
+    purposeId: string | undefined;
     purpose: string | undefined;
     contactGroupId: string | undefined;
     entityTypeId: number | undefined;
