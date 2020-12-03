@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, HostListener } from '@angular/core';
 import { Params } from '@angular/router';
 import { NavLink } from '@app/crm/contacts/nav-link.model';
+import { Observable, of } from 'rxjs';
 
 @Component({
     selector: 'item-details-layout',
@@ -29,6 +30,14 @@ export class ItemDetailsLayoutComponent implements OnInit {
 
     close() {
         this.onClose.emit();
+    }
+
+    isVisible(link: NavLink): Observable<boolean> {
+        return link.visible$ === undefined ? of(true) : link.visible$;
+    }
+
+    getLabel(link: NavLink): Observable<string> {
+        return link.label$ ? link.label$ : of(link.label);
     }
 
     navChanged(navLink: NavLink) {

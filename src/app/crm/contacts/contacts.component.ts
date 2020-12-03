@@ -95,7 +95,149 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     private initialData: string;
 
-    navLinks: NavLink[] = [];
+    public contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+    public contactGroupId$: Observable<string> = this.contactGroupId.asObservable().pipe(filter(Boolean)) as Observable<string>;
+    isCommunicationHistoryAllowed$: Observable<boolean> = this.contactGroupId$.pipe(
+        map((contactGroupId: string) => this.permission.checkCGPermission(
+            contactGroupId,
+            'ViewCommunicationHistory'
+        ))
+    );
+    isPropertyContact$: Observable<boolean> = this.contactsService.leadInfo$.pipe(
+        filter(Boolean),
+        map((leadInfo: LeadInfoDto) => !!leadInfo.propertyId)
+    );
+    userId$: Observable<number> = this.contactsService.userId$;
+    contactIsParent$: Observable<boolean> = this.contactsService.contactInfo$.pipe(
+        filter(Boolean),
+        map((contactInfo: ContactInfoDto) => !!contactInfo.parentId)
+    );
+    contactStatusId: Observable<string> = this.contactsService.contactInfo$.pipe(
+        filter(Boolean),
+        map((contactInfo: ContactInfoDto) => contactInfo.statusId)
+    );
+    showSubscriptionsSection$: Observable<boolean> = combineLatest(
+        this.contactIsParent$,
+        this.userId$,
+        this.contactStatusId
+    ).pipe(
+        map(([contactIsParent, userId, contactStatusId]:
+                    [boolean, number, string]) => {
+            return contactIsParent || (!userId && !this.isClientDetailPage(contactStatusId));
+        })
+    );
+    showPaymentInformationSection$: Observable<boolean> = combineLatest(
+        this.contactIsParent$,
+        this.contactStatusId
+    ).pipe(
+        map(([contactIsParent, contactStatusId]: [boolean, string]) => {
+            return contactIsParent || !this.isClientDetailPage(contactStatusId);
+        })
+    )
+
+    navLinks: NavLink[] = [
+        {
+            name: 'property-information',
+            label: this.capitalize(this.l('PropertyInfo')),
+            route: 'property-information',
+            visible$: this.isPropertyContact$
+        },
+        {
+            name: 'property-documents',
+            label: this.l('PropertyDocuments'),
+            route: 'property-documents',
+            visible$: this.isPropertyContact$
+        },
+        { name: 'contact-information', label: this.l('ContactInfo'), route: 'contact-information' },
+        { name: 'personal-details', label: this.l('PersonalDetails'), route: 'personal-details'},
+        {
+            name: 'user-information',
+            label$: this.userId$.pipe(map((userId: number) => userId
+                ? this.l('UserInformation')
+                : this.l('InviteUser'))),
+            visible$: this.userId$.pipe(
+                map((userId: number) => {
+                    return this.permission.isGranted(userId
+                        ? AppPermissions.AdministrationUsers
+                        : AppPermissions.AdministrationUsersCreate
+                    )
+                })
+            ),
+            route: 'user-information'
+        },
+        {
+            name: 'user-inbox',
+            label: this.l('CommunicationHistory'),
+            route: 'user-inbox',
+            visible$: this.isCommunicationHistoryAllowed$
+        },
+        { name: 'documents', label: this.l('Documents'), route: 'documents' },
+        { name: 'notes', label: this.l('Notes'), route: 'notes'},
+        {
+            name: 'invoices',
+            label: this.l('OrdersAndInvoices'),
+            route: 'invoices',
+            disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices),
+            visible$: this.contactIsParent$
+        },
+        {
+            name: 'subscriptions',
+            label: this.l('Subscriptions'),
+            route: 'subscriptions',
+            visible$: this.showSubscriptionsSection$
+        },
+        {
+            name: 'payment-information',
+            label: this.l('PaymentInformation'),
+            route: 'payment-information',
+            visible$: this.showPaymentInformationSection$
+        },
+        {
+            name: 'reseller-activity',
+            label: this.l('ResellerActivity'), route: 'reseller-activity',
+            visible$: of(this.appSessionService.tenant &&
+                this.appSessionService.tenant.customLayoutType != LayoutType.BankCode)
+        },
+        {
+            name: 'lead-information',
+            label: this.l('LeadInformation'),
+            route: 'lead-information',
+            visible$: this.contactIsParent$
+        },
+        {
+            name: 'lead-related-contacts',
+            label: this.l('LeadsRelatedContacts'),
+            route: 'lead-related-contacts',
+            visible$: this.contactIsParent$
+        },
+        {
+            name: 'activity-logs',
+            label: this.l('ActivityLogs'),
+            route: 'activity-logs',
+            disabled: !this.permission.isGranted(AppPermissions.PFMApplications)
+        },
+        {
+            name: 'referral-history',
+            label: this.l('ReferralHistory'),
+            route: 'referral-history',
+            disabled: true
+        },
+        {
+            name: 'application-status',
+            label: this.l('ApplicationStatus'),
+            route: 'application-status',
+            visible$: this.contactsService.leadInfo$.pipe(
+                map((leadInfo: LeadInfoDto) => !!leadInfo.id)
+            ),
+            disabled: true
+        },
+        {
+            name: 'questionnaire',
+            label: this.l('Questionnaire'),
+            route: 'questionnaire',
+            disabled: true
+        }
+    ];
     params: any;
     private rootComponent: any;
     queryParams: Params;
@@ -109,8 +251,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     isCommunicationHistoryAllowed = false;
     isSendSmsAndEmailAllowed = false;
-    public contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);
-    public contactGroupId$: Observable<string> = this.contactGroupId.asObservable().pipe(filter(Boolean)) as Observable<string>;
 
     constructor(
         injector: Injector,
@@ -267,84 +407,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         }
     }
 
-    private initNavLinks(contact: PersonContactInfoDto, leadInfo?: LeadInfoDto) {
-        this.navLinks = [
-            {
-                name: 'property-information',
-                label: this.capitalize(this.l('PropertyInfo')),
-                route: 'property-information',
-                hidden: !leadInfo || !leadInfo.propertyId
-            },
-            {
-                name: 'property-documents',
-                label: this.l('PropertyDocuments'),
-                route: 'property-documents',
-                hidden: !leadInfo || !leadInfo.propertyId
-            },
-            { name: 'contact-information', label: this.l('ContactInfo'), route: 'contact-information' },
-            { name: 'personal-details', label: this.l('PersonalDetails'), route: 'personal-details'},
-            {
-                name: 'user-information',
-                label: contact.userId ? this.l('UserInformation') : this.l('InviteUser'),
-                hidden: !this.permission.isGranted(contact.userId ?
-                    AppPermissions.AdministrationUsers : AppPermissions.AdministrationUsersCreate),
-                route: 'user-information'
-            },
-            {
-                name: 'user-inbox',
-                label: this.l('CommunicationHistory'),
-                route: 'user-inbox',
-                hidden: !this.isCommunicationHistoryAllowed
-            },
-            { name: 'documents', label: this.l('Documents'), route: 'documents' },
-            { name: 'notes', label: this.l('Notes'), route: 'notes'},
-            {
-                name: 'invoices',
-                label: this.l('OrdersAndInvoices'),
-                route: 'invoices',
-                disabled: !this.permission.isGranted(AppPermissions.CRMOrdersInvoices),
-                hidden: !!this.contactInfo.parentId
-            },
-            { name: 'subscriptions', label: this.l('Subscriptions'), route: 'subscriptions', hidden: !!this.contactInfo.parentId || (!contact.userId && !this.isClientDetailPage()) },
-            { name: 'payment-information', label: this.l('PaymentInformation'), route: 'payment-information', hidden: !!this.contactInfo.parentId || !this.isClientDetailPage() },
-            {
-                name: 'reseller-activity',
-                label: this.l('ResellerActivity'), route: 'reseller-activity',
-                hidden: !this.appSessionService.tenant ||
-                    this.appSessionService.tenant.customLayoutType != LayoutType.BankCode
-            },
-            { name: 'lead-information', label: this.l('LeadInformation'), route: 'lead-information', hidden: !!this.contactInfo.parentId },
-            { name: 'lead-related-contacts', label: this.l('LeadsRelatedContacts'), route: 'lead-related-contacts', hidden: !!this.contactInfo.parentId },
-            {
-                name: 'activity-logs',
-                label: this.l('ActivityLogs'),
-                route: 'activity-logs',
-                disabled: !this.permission.isGranted(AppPermissions.PFMApplications)
-            },
-            {
-                name: 'referral-history',
-                label: this.l('ReferralHistory'),
-                route: 'referral-history',
-                disabled: true
-            },
-            {
-                name: 'application-status',
-                label: this.l('ApplicationStatus'),
-                route: 'application-status',
-                hidden: !!this.leadId,
-                disabled: true
-            },
-            {
-                name: 'questionnaire',
-                label: this.l('Questionnaire'),
-                route: 'questionnaire',
-                disabled: true
-            }
-        ];
-    }
-
-    isClientDetailPage() {
-        return this.contactInfo.statusId != ContactStatus.Prospective;
+    isClientDetailPage(status: ContactStatus): boolean {
+        return status != ContactStatus.Prospective;
     }
 
     private storeInitialData() {
@@ -384,7 +448,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.contactsService.updateUserId(
             this.userService['data'].userId = this.primaryContact.userId
         );
-        this.initNavLinks(this.primaryContact);
         this.contactsService.toolbarUpdate();
         this.storeInitialData();
     }
@@ -549,7 +612,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             let successCallback = (result: LeadInfoDto) => {
                 this.fillLeadDetails(result);
                 this.appHttpConfiguration.avoidErrorHandling = false;
-                personContactInfo && this.initNavLinks(personContactInfo, this.contactService['data'].leadInfo);
                 lastLeadCallback && lastLeadCallback();
             };
 
