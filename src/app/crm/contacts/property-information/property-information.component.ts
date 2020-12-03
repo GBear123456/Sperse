@@ -76,7 +76,7 @@ export class PropertyInformationComponent implements OnInit {
             this.initialProperty = property;
             this.savePropertyInfo(property);
             this.changeDetectorRef.detectChanges();
-        })
+        });
     }
 
     savePropertyInfo(property: PropertyDto) {
@@ -98,7 +98,7 @@ export class PropertyInformationComponent implements OnInit {
                 id: null
             },
             property.address.countryId)
-        ]
+        ];
     }
 
     updateAddress({ address, dialogData }: AddressUpdate) {

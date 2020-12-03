@@ -59,16 +59,16 @@
             <input *ngIf="!googleAutoComplete"
                    type="text"
                    name="PropertyAddress"
-                   [placeholder]="ls.l('PropertyAddress')"
+                   [placeholder]="ls.l('PropertyName')"
                    [(ngModel)]="property.name"
                    class="dx-texteditor-input"/>
             <input *ngIf="googleAutoComplete"
                    type="text"
                    name="Address"
-                   [placeholder]="ls.l('PropertyAddress')"
+                   [placeholder]="ls.l('PropertyName')"
                    [(ngModel)]="property.name"
                    class="dx-texteditor-input"
-                   (onAddressChange)="updatePropertyAddress($event)"
+                   (onAddressChange)="updatePropertyAddress($event, true)"
                    ngx-google-places-autocomplete/>
         </div>
     </ng-container>
@@ -183,35 +183,21 @@
             <dx-validation-group *ngIf="showPropertyFields" class="property-info" #propertyValidationGroup>
                 <h3>{{ ls.l('PropertyInfo') }}:</h3>
                 <div class="field">
-                    <div>
-                        <label class="area-label">{{ ls.l('PropertyArea') }}</label>
-                        <dx-number-box [(value)]="property.area"></dx-number-box>
-                    </div>
-                    <div>
-                        <label class="floor-label">{{ ls.l('Floor') }}</label>
-                        <dx-number-box [(value)]="property.floor"></dx-number-box>
-                    </div>
+                    <label class="address-label">{{ls.l('Address')}}</label>
+                    <address-fields [address]="property.address"
+                                    [googleAutoComplete]="googleAutoComplete"
+                                    [showClearButton]="false"
+                                    (onAddressChanged)="updatePropertyAddress($event, this.property.address)">
+                    </address-fields>
                 </div>
                 <div class="field">
-                    <div>
-                        <label class="date-label">{{ ls.l('Year') }}</label>
-                        <dx-date-box type="date"
-                                     [calendarOptions]="{
-                                        minZoomLevel: 'century',
-                                        maxZoomLevel: 'decade'
-                                     }"
-                                     dropDownButtonTemplate="dropDownButtonTemplate"
-                                     displayFormat="year"
-                                     [(value)]="property.yearBuilt">
-                            <div *dxTemplate="let data of 'dropDownButtonTemplate'">
-                                <img src="./assets/common/icons/calendar-date.svg">
-                            </div>
-                        </dx-date-box>
-                    </div>
-                    <div>
-                        <label class="levels-label">{{ ls.l('Levels') }}</label>
-                        <dx-number-box [(value)]="property.numberOfLevels"></dx-number-box>
-                    </div>
+                    <label class="notes-label">{{ls.l('Notes')}}</label>
+                    <dx-text-area
+                        name="comment"
+                        width="570px"
+                        height="34px"
+                        [(value)]="property.note">
+                    </dx-text-area>
                 </div>
             </dx-validation-group>
             <dx-validation-group *ngIf="showPropertiesDropdown">
