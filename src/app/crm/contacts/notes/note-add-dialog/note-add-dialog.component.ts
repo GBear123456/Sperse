@@ -9,7 +9,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { Store, select } from '@ngrx/store';
 import { Observable, of } from 'rxjs';
-import { map, mergeAll, toArray } from 'rxjs/operators';
+import { filter, map, mergeAll, switchMap, toArray } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -45,6 +45,7 @@ import { InvoiceDto } from '@app/crm/contacts/notes/note-add-dialog/invoice-dto.
 import { InvoiceFields } from '@app/crm/contacts/notes/note-add-dialog/invoice-fields.enum';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 class PhoneNumber {
     id: any;
@@ -81,10 +82,20 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     addedBy: number;
     defaultType: string;
     type: string;
-    enableSaveButton = false;
+    enableSaveButton = !this.data.note || this.data.note.addedByUserId == this.appSession.userId
+        || this.permission.isGranted(AppPermissions.CRMManageOtherUsersNote);
 
     types = [];
-    users = [];
+    users$: Observable<UserInfoDto[]> = this.contactsService.contactInfo$.pipe(
+        filter(Boolean),
+        switchMap((contactInfo: ContactInfoDto) => {
+            return this.store$.pipe(
+                select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
+                { contactGroup: contactInfo.groupId }
+                )
+            );
+        })
+    );
     contacts: Contact[] = [];
     phones: PhoneNumber[];
     ordersDataSource: any;
@@ -103,30 +114,14 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private userService: UserServiceProxy,
         private contactPhoneService: ContactPhoneServiceProxy,
         private store$: Store<AppStore.State>,
+        private contactsService: ContactsService,
         private propertyServiceProxy: PropertyServiceProxy,
         public dialogRef: MatDialogRef<NoteAddDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: NoteAddDialogData
     ) {
         super(injector);
-
         this.initTypes();
         this._contactInfo = this.data.contactInfo;
-        this.getContacts().subscribe((contacts: Contact[]) => {
-            this.contacts = contacts;
-            this.onContactChanged({ value: this.data.contactInfo.id });
-        });
-        this.dialogRef.beforeClose().subscribe(() => {
-            this.dialogRef.updatePosition({
-                top: '75px',
-                right: '-100vw'
-            });
-        });
-
-        this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
-            { contactGroup: this._contactInfo.groupId })).subscribe((result: UserInfoDto[]) => {
-                this.users = result;
-        });
-
         this.ordersDataSource = new DataSource({
             sort: [{ selector: 'Date', desc: true }],
             select: Object.keys(this.invoicesFields),
@@ -141,11 +136,18 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 deserializeDates: false
             })
         });
-        this.applyOrdersFilter();
-        this.initNoteData();
-
-        this.enableSaveButton = !this.data.note || this.data.note.addedByUserId == this.appSession.userId
-            || this.permission.isGranted(AppPermissions.CRMManageOtherUsersNote);
+        this.getContacts().subscribe((contacts: Contact[]) => {
+            this.contacts = contacts;
+            this.onContactChanged({ value: this.data.contactInfo.id });
+            this.applyOrdersFilter();
+            this.initNoteData();
+        });
+        this.dialogRef.beforeClose().subscribe(() => {
+            this.dialogRef.updatePosition({
+                top: '75px',
+                right: '-100vw'
+            });
+        });
     }
 
     ngOnInit() {
@@ -275,32 +277,6 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         this.summary = null;
         this.followUpDateBox && this.followUpDateBox.instance.reset();
         this.currentDateBox && this.currentDateBox.instance.reset();
-    }
-
-    onUserSearch($event) {
-        $event.customItem = { id: $event.text, fullName: $event.text };
-        clearTimeout(this.searchTimeout);
-        this.searchTimeout = setTimeout(() => {
-            if ($event.text)
-                this.userService.getUsers(
-                    $event.text,
-                    [ AppPermissions.CRM ],
-                    undefined,
-                    false,
-                    undefined,
-                    undefined,
-                    undefined,
-                    10,
-                    0
-                ).subscribe((result: UserListDtoPagedResultDto) => {
-                    this.users = result.items.map((user: UserListDto) => {
-                        return {
-                            id: user.id,
-                            fullName: user.name + ' ' + user.surname
-                        };
-                    });
-                });
-        }, 500);
     }
 
     getContactById(id): Contact {

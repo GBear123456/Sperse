@@ -35,8 +35,12 @@
                         [dataSource]="contacts"
                         displayExpr="fullName"
                         valueExpr="id"
+                        fieldTemplate="fieldTemplate"
                         (onValueChanged)="onContactChanged($event)"
                         [(value)]="contactId">
+                        <div *dxTemplate="let data of 'fieldTemplate'">
+                            <dx-text-box [inputAttr]="{ title: data.fullName }" [value]="data.fullName"></dx-text-box>
+                        </div>
                     </dx-select-box>
                 </div>
                 <div class="field" *ngIf="isCRMOrdersGranted && showAdditionalFields">
@@ -86,7 +90,7 @@
                         <dx-select-box
                             width="450px"
                             [placeholder]="l('EditValuePlaceholder')"
-                            [dataSource]="users"
+                            [dataSource]="users$ | async"
                             displayExpr="name"
                             valueExpr="id"
                             [(value)]="addedBy">
