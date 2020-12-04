@@ -144,7 +144,7 @@ export class PropertyInformationComponent implements OnInit {
             usageTypeId: null,
             ownershipTypeId: null
         });
-        this.property.name = dialogData.formattedAddress || address.autoComplete;
+
         this.valueChanged(() => {
             this.propertyAddresses = [
                 new AddressDto({
