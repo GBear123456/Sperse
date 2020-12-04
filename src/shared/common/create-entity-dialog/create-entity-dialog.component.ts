@@ -219,10 +219,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     property: Property = {
         propertyId: undefined,
         name: undefined,
-        area: undefined,
-        yearBuilt: undefined,
-        floor: undefined,
-        numberOfLevels: undefined,
+        note: undefined,
         address: new Address()
     };
     similarCustomers: SimilarContactOutput[] = [];
@@ -395,26 +392,24 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             dataObj.address = dataObj.addresses[0];
         }
         if (this.showPropertyFields) {
+            let state = this.property.address.state;
             dataObj.propertyInfo = PropertyInput.fromJS({
                 propertyId: this.propertyId,
                 name: this.property.name,
-                area: this.property.area,
-                yearBuilt: this.property.yearBuilt && this.property.yearBuilt.getFullYear(),
-                floor: this.property.floor,
-                numberOfLevels: this.property.numberOfLevels,
+                note: this.property.note,
                 address: CreateContactAddressInput.fromJS({
                     streetAddress: this.property.address.streetAddress,
                     city: this.property.address.city,
-                    stateId: this.property.address.state.code,
-                    stateName: this.property.address.state.name,
+                    stateId: state && state.code,
+                    stateName: state && state.name,
                     zip: this.property.address.zip,
                     countryId: this.property.address.countryCode
                 })
-            })
+            });
         } else if (this.showPropertiesDropdown) {
             dataObj.propertyInfo = {
                 propertyId: this.propertyId,
-            }
+            };
         }
 
         this.clearSimilarCustomersCheck();
@@ -452,6 +447,11 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     save(): void {
+        if (this.showPropertyFields && !this.property.name) {
+            this.isTitleValid = false;
+            return this.notifyService.error(this.ls.l('RequiredField', this.ls.l('PropertyName')));
+        }
+
         if (!this.person.firstName && !this.person.lastName && (this.hideCompanyField || !this.company)
             && !this.contact.emails[0].email && !this.contact.phones[0].number
         ) {
@@ -680,15 +680,16 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         this.updateAddressFields(event, address);
     }
 
-    updatePropertyAddress(address: AutocompleteAddress) {
-        this.property.name = address.formatted_address;
+    updatePropertyAddress(address: AutocompleteAddress, applyForName = false) {
+        if (applyForName)
+            this.property.name = address.formatted_address;
         this.updateAddressFields(
             {
                 address: address,
                 addressInput: null
             },
             this.property.address
-        )
+        );
     }
 
     updateAddressFields(event: AddressChanged, address: Address) {

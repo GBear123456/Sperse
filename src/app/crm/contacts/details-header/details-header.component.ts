@@ -575,7 +575,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             setTimeout(() => {
                 const noteAddDialogData: NoteAddDialogData = {
                     contactInfo: this.data,
-                    showPropertyType: !!this.propertyId
+                    propertyId: this.propertyId
                 };
                 this.dialog.open(NoteAddDialogComponent, {
                     panelClass: 'slider',

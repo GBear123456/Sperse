@@ -18,7 +18,7 @@ import { CountriesStoreModule } from '@root/store/countries-store';
 
 /** For storing some entities in local storage */
 export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionReducer<any> {
-    const tenantSpecificFeatures = [ 'pipelines', 'stars', 'partnerTypes', 'currencies' ];
+    const tenantSpecificFeatures = [ 'stars', 'partnerTypes', 'currencies' ];
     return localStorageSync({
         /** entities keys for storing */
         keys: [
@@ -28,7 +28,6 @@ export function localStorageSyncReducer(reducer: ActionReducer<any>): ActionRedu
             'emailUsageTypes',
             'states',
             'phoneUsageTypes',
-            'pipelines',
             'stars',
             'ratings',
             'statuses',

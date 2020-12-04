@@ -47,7 +47,7 @@
                 {{ cellData.value | date: formatting.dateTime : userTimezone }}
             </div>
             <div *dxTemplate="let data of 'title'">
-                <h2 class="title">{{l('Documents')}}</h2>
+                <h2 class="title">{{ showPropertyDocuments ? l('PropertyDocuments') : l('Documents')}}</h2>
             </div>
             <div class="document-type" *dxTemplate="let data of 'typeCell'">
                 <p *ngIf="data.data.id != clickedCellKey && data.value">{{ data.value }}</p>

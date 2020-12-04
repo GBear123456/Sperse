@@ -8,7 +8,7 @@ import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
 import { Store, select } from '@ngrx/store';
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { map, mergeAll, toArray } from 'rxjs/operators';
 import * as _ from 'underscore';
 
@@ -30,7 +30,11 @@ import {
     NoteType,
     UserListDtoPagedResultDto,
     UserListDto,
-    ContactPhoneInfo
+    ContactPhoneInfo,
+    PropertyServiceProxy,
+    PropertyDto,
+    CreateContactPhoneOutput,
+    UserInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { EditContactDialog } from '../../edit-contact-dialog/edit-contact-dialog.component';
@@ -46,6 +50,8 @@ class PhoneNumber {
     id: any;
     phoneNumber: any;
 }
+
+type Contact = OrganizationShortInfo | PersonShortInfoDto | PropertyDto;
 
 @Component({
     templateUrl: './note-add-dialog.component.html',
@@ -75,18 +81,19 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     addedBy: number;
     defaultType: string;
     type: string;
-    companyContact: boolean;
     enableSaveButton = false;
 
     types = [];
     users = [];
-    contacts: (OrganizationShortInfo|PersonShortInfoDto)[] = [];
+    contacts: Contact[] = [];
     phones: PhoneNumber[];
     ordersDataSource: any;
     invoicesFields: KeysEnum<InvoiceDto> = InvoiceFields;
     noteId: number;
     isCRMOrdersGranted = this.permission.isGranted(AppPermissions.CRMOrdersInvoices);
-
+    showAdditionalFields = true;
+    private typePrefix: string;
+    
     constructor(
         injector: Injector,
         private dialog: MatDialog,
@@ -96,6 +103,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private userService: UserServiceProxy,
         private contactPhoneService: ContactPhoneServiceProxy,
         private store$: Store<AppStore.State>,
+        private propertyServiceProxy: PropertyServiceProxy,
         public dialogRef: MatDialogRef<NoteAddDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: NoteAddDialogData
     ) {
@@ -103,27 +111,10 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
         this.initTypes();
         this._contactInfo = this.data.contactInfo;
-        let personContactInfo = this._contactInfo.personContactInfo;
-        const relatedOrganizations: any[] = personContactInfo && personContactInfo.orgRelations ?
-            personContactInfo.orgRelations
-            .map((organizationRelation: PersonOrgRelationShortInfo) => {
-                organizationRelation.organization['fullName'] = organizationRelation.organization.name;
-                return organizationRelation.organization;
-            }) : [];
-        const relatedPersons: PersonShortInfoDto[] =
-            this._contactInfo['organizationContactInfo'] &&
-            this._contactInfo['organizationContactInfo'].contactPersons
-            ? this._contactInfo['organizationContactInfo'].contactPersons
-            : [{
-                   id: this._contactInfo.id,
-                   fullName: personContactInfo.fullName,
-                   jobTitle: personContactInfo.jobTitle,
-                   ratingId: this._contactInfo.ratingId,
-                   thumbnail: personContactInfo.primaryPhoto,
-                   phones: personContactInfo.details.phones
-               }];
-        this.contacts = relatedPersons.concat(relatedOrganizations);
-        this.onContactChanged({value: this.data.contactInfo.id});
+        this.getContacts().subscribe((contacts: Contact[]) => {
+            this.contacts = contacts;
+            this.onContactChanged({ value: this.data.contactInfo.id });
+        });
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '75px',
@@ -132,7 +123,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         });
 
         this.store$.pipe(select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
-            { contactGroup: this._contactInfo.groupId })).subscribe((result) => {
+            { contactGroup: this._contactInfo.groupId })).subscribe((result: UserInfoDto[]) => {
                 this.users = result;
         });
 
@@ -202,16 +193,48 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             this.defaultType = NoteType.Note;
             this.type = this.defaultType;
         }
-        let types = Object.keys(NoteType);
-        if (this.data.showPropertyType) {
-            types.push('PropertyNote');
-        }
-        this.types = types.map((type: string) => {
+        this.types = Object.keys(NoteType).map((type: string) => {
             return {
                 id: type,
-                name: this.l(this.companyContact ? 'Company' : 'Client') + ' ' + this.l(type)
+                name: this.typePrefix + ' ' + this.l(type)
             };
         });
+    }
+
+    private getContacts(): Observable<Contact[]> {
+        let contacts: Contact[] = [];
+        let personContactInfo = this._contactInfo.personContactInfo;
+        /** Add related organizations contacts */
+        contacts = contacts.concat(personContactInfo && personContactInfo.orgRelations ?
+            personContactInfo.orgRelations
+                .map((organizationRelation: PersonOrgRelationShortInfo) => {
+                    organizationRelation.organization['fullName'] = organizationRelation.organization.name;
+                    return organizationRelation.organization;
+                }) : []);
+        /** Add contact persons */
+        contacts = contacts.concat(
+            this._contactInfo['organizationContactInfo'] &&
+            this._contactInfo['organizationContactInfo'].contactPersons
+                ? this._contactInfo['organizationContactInfo'].contactPersons
+                : [{
+                    id: this._contactInfo.id,
+                    fullName: personContactInfo.fullName,
+                    jobTitle: personContactInfo.jobTitle,
+                    ratingId: this._contactInfo.ratingId,
+                    thumbnail: personContactInfo.primaryPhoto,
+                    phones: personContactInfo.details.phones
+                }]
+        );
+
+        return !!this.data.propertyId
+            ? this.propertyServiceProxy.getPropertyDetails(this.data.propertyId).pipe(
+                map((propertyDetails: PropertyDto) => {
+                    propertyDetails['fullName'] = propertyDetails.name;
+                    contacts = contacts.concat([propertyDetails]);
+                    return contacts;
+                })
+            )
+            : of(contacts);
     }
 
     saveNote() {
@@ -221,7 +244,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 contactId: this.contactId || this._contactInfo.id,
                 text: this.summary,
                 contactPhoneId: this.phone || undefined,
-                noteType: this.type === 'PropertyNote' ? NoteType.Note : this.type,
+                noteType: this.type,
                 followUpDateTime: this.getDateTime(this.followupDate),
                 dateTime: this.getDateTime(this.currentDate),
                 addedByUserId: +this.addedBy || undefined,
@@ -250,8 +273,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
 
     resetFields() {
         this.summary = null;
-        this.followUpDateBox.instance.reset();
-        this.currentDateBox.instance.reset();
+        this.followUpDateBox && this.followUpDateBox.instance.reset();
+        this.currentDateBox && this.currentDateBox.instance.reset();
     }
 
     onUserSearch($event) {
@@ -280,32 +303,45 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         }, 500);
     }
 
-    getContactById(id) {
+    getContactById(id): Contact {
         return _.findWhere(this.contacts, {id: id});
     }
 
     onContactChanged($event) {
-        let contact = this.getContactById($event.value);
-        const contactPhones$ = contact.phones ? of(contact.phones) :
-            this.contactPhoneService.getContactPhones(contact.id)
-                .pipe(map(phones => phones || []));
-
-        contactPhones$.pipe(
-            mergeAll(),
-            map((phone: ContactPhoneDto) => ({
-                id: phone.id,
-                phoneNumber: this.phoneFormatPipe.transform(phone.phoneNumber, undefined)
-            })),
-            toArray()
-        ).subscribe((phones: ContactPhoneInfo[]) => {
-            this.phones = phones;
-            this.phone = this.phones[0] && this.phones[0].id;
-        });
+        let contact: Contact = this.getContactById($event.value);
         this.contactId = contact.id;
-        this.companyContact = contact instanceof OrganizationShortInfo;
+        if (contact instanceof PropertyDto) {
+            this.showAdditionalFields = false;
+        } else {
+            this.showAdditionalFields = true;
+            const contactPhones$ = contact['phones'] ? of(contact['phones']) :
+                this.contactPhoneService.getContactPhones(contact.id)
+                    .pipe(map((phones: ContactPhoneInfo[]) => phones || []));
 
+            contactPhones$.pipe(
+                mergeAll(),
+                map((phone: ContactPhoneDto) => ({
+                    id: phone.id,
+                    phoneNumber: this.phoneFormatPipe.transform(phone.phoneNumber, undefined)
+                })),
+                toArray()
+            ).subscribe((phones: ContactPhoneInfo[]) => {
+                this.phones = phones;
+                this.phone = this.phones[0] && this.phones[0].id;
+            });
+            this.applyOrdersFilter();
+        }
+        this.updateTypePrefix(contact);
         this.initTypes(false);
-        this.applyOrdersFilter();
+    }
+
+    private updateTypePrefix(contact: Contact) {
+        this.typePrefix = contact instanceof PersonShortInfoDto
+            ? this.l('Client')
+            : (contact instanceof OrganizationShortInfo
+                ? this.l('Company')
+                : this.l('Property')
+            );
     }
 
     applyOrdersFilter() {
@@ -353,12 +389,12 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     addNewPhone(data) {
         this.contactPhoneService.createContactPhone(
             CreateContactPhoneInput.fromJS(data)
-        ).subscribe(result => {
+        ).subscribe((result: CreateContactPhoneOutput) => {
             if (result.id) {
                 data.id = result.id;
-                let contact = this.getContactById(this.contactId);
+                let contact: Contact = this.getContactById(this.contactId);
                 if (contact) {
-                    contact.details.phones.unshift(ContactPhoneDto.fromJS(data));
+                    contact['phones'].unshift(ContactPhoneDto.fromJS(data));
                     this.onContactChanged({value: this.contactId});
                 }
             }

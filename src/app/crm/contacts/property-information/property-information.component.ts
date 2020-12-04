@@ -9,13 +9,14 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
-import { Observable, race, Subscription } from 'rxjs';
-import { filter, map, switchMap, pluck, finalize } from 'rxjs/operators';
+import { Observable, Subscription, merge, race } from 'rxjs';
+import { filter, map, switchMap, pluck, finalize, skip } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
 import {
-    ContactInfoDto, CreateContactAddressInput,
+    BasementStatus,
+    ContactInfoDto, CreateContactAddressInput, FireplaceType, HeatingCoolingType, LayoutType,
     LeadInfoDto,
     PropertyDto,
     PropertyServiceProxy
@@ -26,11 +27,15 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AddressUpdate } from '@app/crm/contacts/addresses/address-update.interface';
 
+interface YesNoDropdown {
+    displayValue: string;
+    value: boolean | null;
+}
+
 @Component({
     selector: 'property-information',
     templateUrl: 'property-information.component.html',
     styleUrls: [ 'property-information.component.less' ],
-    providers: [ PropertyServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PropertyInformationComponent implements OnInit {
@@ -39,6 +44,27 @@ export class PropertyInformationComponent implements OnInit {
     property: PropertyDto;
     propertyAddresses: AddressDto[];
     leadInfoSubscription: Subscription;
+    stylingMode = 'filled';
+
+    yesNoDropdowns: YesNoDropdown[] = [
+        { displayValue: 'Yes', value: true },
+        { displayValue: 'No', value: false },
+        // { displayValue: 'Unknown', value: null }
+    ];
+    receivedNA = [
+        { displayValue: 'Received', value: true },
+        { displayValue: 'N/A', value: false }
+    ];
+    parking: string[] = [
+        this.ls.l('Garage'),
+        this.ls.l('Underground'),
+        this.ls.l('OutdoorLot'),
+        this.ls.l('DedicatedPad'),
+        this.ls.l('Street')
+    ]; // need fix enum
+    basement: BasementStatus[] = Object.values(BasementStatus);
+    centralHeating: HeatingCoolingType[] = Object.values(HeatingCoolingType);
+    firePlace: FireplaceType[] = Object.values(FireplaceType);
 
     constructor(
         private contactsService: ContactsService,
@@ -51,15 +77,22 @@ export class PropertyInformationComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.leadInfoSubscription = race(
-            this.contactsService.leadInfo$.pipe(
-                filter(Boolean),
-                map((leadInfo: LeadInfoDto) => leadInfo.propertyId)
+        const leadPropertyId$: Observable<number> = this.contactsService.leadInfo$.pipe(
+            filter(Boolean),
+            map((leadInfo: LeadInfoDto) => leadInfo.propertyId)
+        );
+        this.leadInfoSubscription = merge(
+            race(
+                /** Get property id from lead info */
+                leadPropertyId$,
+                /** Or from query params depends on fastest source */
+                this.route.queryParams.pipe(
+                    pluck('propertyId'),
+                    filter(Boolean)
+                )
             ),
-            this.route.queryParams.pipe(
-                pluck('propertyId'),
-                filter(Boolean)
-            )
+            /** Then listen only for lead info property id */
+            leadPropertyId$.pipe(skip(1))
         ).pipe(
             filter(Boolean),
             switchMap((propertyId: number) => {
@@ -69,7 +102,7 @@ export class PropertyInformationComponent implements OnInit {
             this.initialProperty = property;
             this.savePropertyInfo(property);
             this.changeDetectorRef.detectChanges();
-        })
+        });
     }
 
     savePropertyInfo(property: PropertyDto) {
@@ -91,7 +124,7 @@ export class PropertyInformationComponent implements OnInit {
                 id: null
             },
             property.address.countryId)
-        ]
+        ];
     }
 
     updateAddress({ address, dialogData }: AddressUpdate) {
@@ -146,6 +179,7 @@ export class PropertyInformationComponent implements OnInit {
     }
 
     valueChanged(successCallback?: () => void) {
+        console.log(this.elementRef.nativeElement);
         this.loadingService.startLoading(this.elementRef.nativeElement);
         this.propertyServiceProxy.updatePropertyDetails(this.property).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))

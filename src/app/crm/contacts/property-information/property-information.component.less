@@ -1,76 +1,132 @@
 :host {
-    padding: 25px 20px 20px 60px;
     display: block;
-    h3 {
-        margin-bottom: 60px;
-        &:before {
-            content: url("../../../../assets/common/icons/address-home.svg");
-            margin-right: 10px;
-            height: 22px;
+    height: 100%;
+
+    .container-fluid {
+        padding: 30px 60px;
+    }
+
+    .section {
+        &-title {
+            position: relative;
+            font-family: 'Montserrat', sans-serif;
+            text-transform: uppercase;
+            font-size: 14px;
+            font-weight: 600;
+            line-height: 1.71;
+            letter-spacing: 0.56px;
+            color: #202b35;
+            margin: 20px 0 25px;
+
+            &::before {
+                content: url("../../../../assets/common/icons/address-home.svg");
+                display: inline-block;
+                vertical-align: middle;
+                position: absolute;
+                left: -28px;
+            }
         }
     }
-    .fields {
-        & > div {
-            display: flex;
-            align-items: center;
-            &.address {
-                align-items: flex-start;
-                ::ng-deep addresses {
-                    width: 400px;
-                    .addresses .address {
+
+    .block {
+        border-radius: 5px;
+        padding: 20px 20px 15px;
+        margin-bottom: 15px;
+        background: #f7fbff;
+        // f3f7fa
+        // f8fbff
+
+        * {
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        h3 {
+            margin-bottom: 10px;
+            font-weight: 700 !important;
+            text-transform: uppercase;
+        }
+    }
+
+    .properties .fields {
+        .address {
+
+            &.filled {
+                .dx-field-value {
+                    background: #3333330d;
+                    padding: 8px;
+                    border-radius: 4px;
+                }
+            }
+
+            ::ng-deep addresses {
+                .addresses {
+                    .address {
                         padding-left: 0;
+                        width: 100%;
+
                         p {
                             margin-top: 0;
+                            margin-right: 0;
                         }
                     }
-                    .address-icons {
-                        display: none;
+
+                    .actions {
+                        right: 0 !important;
                     }
                 }
+
+                .address-icons {
+                    display: none;
+                }
             }
-            label {
+        }
+
+        label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #202b35;
+            letter-spacing: 0.3px;
+            display: flex;
+            margin-bottom: 0;
+        }
+
+        ::ng-deep dx-number-box,
+        ::ng-deep dx-date-box {
+            input {
+                font-size: 15px;
+                font-weight: 500;
+                letter-spacing: 0.3px;
+                color: #424c56;
+                //width: 200px;
+            }
+        }
+
+        ::ng-deep {
+            .dx-field-label {
                 font-size: 14px;
                 font-weight: 500;
-                font-style: normal;
-                font-stretch: normal;
                 color: #202b35;
                 letter-spacing: 0.3px;
-                width: 200px;
                 display: flex;
                 margin-bottom: 0;
-                &:before {
-                    margin-right: 10px;
-                }
+                padding-top: 12px;
+                padding-bottom: 12px;
             }
-            &.address label:before {
-                content: url("../../../../assets/common/icons/location.svg");
+
+            .dx-editor-filled .dx-texteditor-input,
+            .dx-placeholder {
+                font-size: 15px;
+                font-weight: normal;
+                border: 0;
             }
-            &.property-area label:before {
-                content: "";
-                background-image: url("../../../../assets/common/icons/area.png");
-                height: 18px;
-                width: 18px;
-                display: inline-block;
-                background-size: cover;
-            }
-            &.year label:before {
-                content: url("../../../../assets/common/icons/date.svg");
-            }
-            &.floor label:before {
-                content: url("../../../../assets/common/icons/floor.png");
-            }
-            &.levels label:before {
-                content: url("../../../../assets/common/icons/levels.png");
-            }
-            ::ng-deep dx-number-box,
-            ::ng-deep dx-date-box {
-                input {
-                    font-size: 15px;
-                    font-weight: 500;
-                    letter-spacing: 0.3px;
-                    color: #424c56;
-                    width: 200px;
-                }
+
+            //.dx-editor-filled .dx-texteditor-input {
+            //    padding: 8px;
+            //}
+
+            .dx-texteditor-empty.dx-state-focused .dx-placeholder {
+                font-size: 11px;
             }
         }
     }
