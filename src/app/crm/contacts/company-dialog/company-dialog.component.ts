@@ -123,7 +123,7 @@ export class CompanyDialogComponent implements OnInit {
             let size = _.find(
                 this.companySizes,
                 (size: CompanySize) => {
-                    return size.to === company.organization.sizeTo && size.from === company.organization.sizeFrom
+                    return size.to === company.organization.sizeTo && size.from === company.organization.sizeFrom;
                 }
             );
             this.company.sizeId = size ? size.id : null;
@@ -164,7 +164,11 @@ export class CompanyDialogComponent implements OnInit {
 
         this.modalDialog.startLoading();
         this.company.fullName = this.title;
-        let input = new UpdateOrganizationInfoInput(_.mapObject(this.company, val => {
+        let input = new UpdateOrganizationInfoInput(
+            _.mapObject({
+                ...this.company,
+                companyName: this.title
+            }, val => {
             return val || null;
         }));
         input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
