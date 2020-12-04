@@ -187,10 +187,11 @@
                 <h3>{{ ls.l('PropertyInfo') }}:</h3>
                 <div class="field">
                     <label class="address-label">{{ls.l('Address')}}</label>
-                    <address-fields [address]="property.address"
+                    <address-fields #propertyAddressComponent
+                                    [address]="property.address"
                                     [googleAutoComplete]="googleAutoComplete"
                                     [showClearButton]="false"
-                                    (onAddressChanged)="updatePropertyAddress($event, this.property.address)">
+                                    (onAddressChanged)="updateAddressFields($event, this.property.address)">
                     </address-fields>
                 </div>
                 <div class="field">
