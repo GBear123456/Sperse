@@ -7,7 +7,7 @@
     <div class="grid-view">
         <dx-data-grid height="100%"
             class="main-component-view"
-            [dataSource]="dataSource"
+            [dataSource]="documents$ | async"
             [allowColumnReordering]="true"
             [columnAutoWidth]="true"
             [allowColumnResizing]="true"

@@ -86,7 +86,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         || this.permission.isGranted(AppPermissions.CRMManageOtherUsersNote);
 
     types = [];
-    users$: Observable<UserInfoDto[]> = this.contactsService.contactInfo$.pipe(
+    users$: Observable<UserInfoDto[]> = this.data.contactsService.contactInfo$.pipe(
         filter(Boolean),
         switchMap((contactInfo: ContactInfoDto) => {
             return this.store$.pipe(
@@ -114,7 +114,6 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         private userService: UserServiceProxy,
         private contactPhoneService: ContactPhoneServiceProxy,
         private store$: Store<AppStore.State>,
-        private contactsService: ContactsService,
         private propertyServiceProxy: PropertyServiceProxy,
         public dialogRef: MatDialogRef<NoteAddDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: NoteAddDialogData
