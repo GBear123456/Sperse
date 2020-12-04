@@ -179,7 +179,6 @@ export class PropertyInformationComponent implements OnInit {
     }
 
     valueChanged(successCallback?: () => void) {
-        console.log(this.elementRef.nativeElement);
         this.loadingService.startLoading(this.elementRef.nativeElement);
         this.propertyServiceProxy.updatePropertyDetails(this.property).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
