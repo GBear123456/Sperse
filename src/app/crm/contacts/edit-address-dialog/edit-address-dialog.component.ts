@@ -125,8 +125,7 @@ export class EditAddressDialog {
     addressTypesLoad() {
         this.store$.dispatch(new AddressUsageTypesStoreActions.LoadRequestAction());
         this.store$.pipe(
-            select(AddressUsageTypesStoreSelectors.getAddressUsageTypes),
-            tap(console.log)
+            select(AddressUsageTypesStoreSelectors.getAddressUsageTypes)
         )
             .subscribe((types: AddressUsageTypeDto[]) => {
                 if (types)
