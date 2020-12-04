@@ -56,13 +56,13 @@ export class PropertyInformationComponent implements OnInit {
         { displayValue: 'N/A', value: false }
     ];
     parking: string[] = [
-        'Garage',
-        'Underground',
-        'OutdoorLot',
-        'DedicatedPad',
-        'Street'
+        this.ls.l('Garage'),
+        this.ls.l('Underground'),
+        this.ls.l('OutdoorLot'),
+        this.ls.l('DedicatedPad'),
+        this.ls.l('Street')
     ]; // need fix enum
-    basement: BasementStatus[] = Object.values(BasementStatus)
+    basement: BasementStatus[] = Object.values(BasementStatus);
     centralHeating: HeatingCoolingType[] = Object.values(HeatingCoolingType);
     firePlace: FireplaceType[] = Object.values(FireplaceType);
 
