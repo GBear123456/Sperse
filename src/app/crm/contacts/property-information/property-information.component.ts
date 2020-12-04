@@ -27,9 +27,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AddressUpdate } from '@app/crm/contacts/addresses/address-update.interface';
 
-interface YesNoDropdown {
+interface SelectBoxItem {
     displayValue: string;
-    value: boolean | null;
+    value: boolean | string | null;
 }
 
 @Component({
@@ -46,25 +46,33 @@ export class PropertyInformationComponent implements OnInit {
     leadInfoSubscription: Subscription;
     stylingMode = 'filled';
 
-    yesNoDropdowns: YesNoDropdown[] = [
+    yesNoDropdowns: SelectBoxItem[] = [
         { displayValue: 'Yes', value: true },
-        { displayValue: 'No', value: false },
-        // { displayValue: 'Unknown', value: null }
+        { displayValue: 'No', value: false }
     ];
-    receivedNA = [
+    receivedNA: SelectBoxItem[] = [
         { displayValue: 'Received', value: true },
         { displayValue: 'N/A', value: false }
     ];
-    parking: string[] = [
-        this.ls.l('Garage'),
-        this.ls.l('Underground'),
-        this.ls.l('OutdoorLot'),
-        this.ls.l('DedicatedPad'),
-        this.ls.l('Street')
-    ]; // need fix enum
-    basement: BasementStatus[] = Object.values(BasementStatus);
-    centralHeating: HeatingCoolingType[] = Object.values(HeatingCoolingType);
-    firePlace: FireplaceType[] = Object.values(FireplaceType);
+    parking: SelectBoxItem[] = [
+        { displayValue: this.ls.l('Garage'), value: 'Garage' },
+        { displayValue: this.ls.l('Underground'), value: 'Underground' },
+        { displayValue: this.ls.l('OutdoorLot'), value: 'OutdoorLot' },
+        { displayValue: this.ls.l('DedicatedPad'), value: 'DedicatedPad' },
+        { displayValue: this.ls.l('Street'), value: 'Street' },
+    ];
+    basement: SelectBoxItem[] = Object.values(BasementStatus).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    centralHeating: SelectBoxItem[] = Object.values(HeatingCoolingType).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    firePlace: SelectBoxItem[] = Object.values(FireplaceType).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
 
     constructor(
         private contactsService: ContactsService,

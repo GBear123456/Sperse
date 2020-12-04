@@ -52,6 +52,8 @@
         .address {
 
             &.filled {
+                align-items: flex-start;
+
                 .dx-field-value {
                     background: #3333330d;
                     padding: 8px;
@@ -103,15 +105,18 @@
         }
 
         ::ng-deep {
+            .dx-field {
+                display: flex;
+                align-items: center;
+            }
+
             .dx-field-label {
                 font-size: 14px;
                 font-weight: 500;
                 color: #202b35;
                 letter-spacing: 0.3px;
-                display: flex;
                 margin-bottom: 0;
-                padding-top: 12px;
-                padding-bottom: 12px;
+                white-space: normal;
             }
 
             .dx-editor-filled .dx-texteditor-input,
@@ -126,7 +131,8 @@
             //}
 
             .dx-texteditor-empty.dx-state-focused .dx-placeholder {
-                font-size: 11px;
+                font-size: 10px;
+                top: -15px;
             }
         }
     }

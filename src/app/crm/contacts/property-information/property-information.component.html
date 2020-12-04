@@ -112,6 +112,8 @@
                                             <div class="dx-field-value">
                                                 <dx-select-box
                                                     showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
                                                     [items]="parking"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.parking"
@@ -124,6 +126,8 @@
                                             <div class="dx-field-value">
                                                 <dx-select-box
                                                     showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="basement"
                                                     [(value)]="property.basement"
@@ -298,6 +302,8 @@
                                             <div class="dx-field-value">
                                                 <dx-select-box
                                                     showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="centralHeating"
                                                     [(value)]="property.centralHeating"
@@ -324,6 +330,7 @@
                                             <div class="dx-field-value">
                                                 <dx-number-box [(value)]="property.monthlyHeatingCost"
                                                                [stylingMode]="stylingMode"
+                                                               format="currency"
                                                                showClearButton="true"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
@@ -615,6 +622,8 @@
                                             <div class="dx-field-value">
                                                 <dx-select-box
                                                     showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="firePlace"
                                                     [(value)]="property.fireplace"
