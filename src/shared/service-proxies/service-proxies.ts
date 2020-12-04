@@ -70823,11 +70823,11 @@ export enum HeatingCoolingType {
 }
 
 export enum ParkingType {
-    _1 = 1, 
-    _2 = 2, 
-    _4 = 4, 
-    _8 = 8, 
-    _16 = 16, 
+    Garage = "Garage", 
+    Underground = "Underground", 
+    OutdoorLot = "OutdoorLot", 
+    DedicatedPad = "DedicatedPad", 
+    Street = "Street", 
 }
 
 export enum BasementStatus {
@@ -70858,18 +70858,18 @@ export class PropertyDto implements IPropertyDto {
     office!: boolean | undefined;
     microwave!: boolean | undefined;
     dishwasher!: boolean | undefined;
-    laundaryInSuite!: boolean | undefined;
+    laundryInSuite!: boolean | undefined;
     centralHeating!: HeatingCoolingType | undefined;
     ac!: boolean | undefined;
     monthlyHeatingCost!: number | undefined;
-    isHeatingIncludedInCondoFees!: boolean | undefined;
+    isHeatIncludedInCondoFees!: boolean | undefined;
     floorVinyl!: boolean | undefined;
     floorHardwood!: boolean | undefined;
     floorTile!: boolean | undefined;
     floorCarpet!: boolean | undefined;
     storageInSuite!: boolean | undefined;
     storageLocker!: number | undefined;
-    yearFenced!: boolean | undefined;
+    yardFenced!: boolean | undefined;
     yardBalcony!: boolean | undefined;
     yardAdditional!: boolean | undefined;
     parking!: ParkingType | undefined;
@@ -70931,18 +70931,18 @@ export class PropertyDto implements IPropertyDto {
             this.office = data["office"];
             this.microwave = data["microwave"];
             this.dishwasher = data["dishwasher"];
-            this.laundaryInSuite = data["laundaryInSuite"];
+            this.laundryInSuite = data["laundryInSuite"];
             this.centralHeating = data["centralHeating"];
             this.ac = data["ac"];
             this.monthlyHeatingCost = data["monthlyHeatingCost"];
-            this.isHeatingIncludedInCondoFees = data["isHeatingIncludedInCondoFees"];
+            this.isHeatIncludedInCondoFees = data["isHeatIncludedInCondoFees"];
             this.floorVinyl = data["floorVinyl"];
             this.floorHardwood = data["floorHardwood"];
             this.floorTile = data["floorTile"];
             this.floorCarpet = data["floorCarpet"];
             this.storageInSuite = data["storageInSuite"];
             this.storageLocker = data["storageLocker"];
-            this.yearFenced = data["yearFenced"];
+            this.yardFenced = data["yardFenced"];
             this.yardBalcony = data["yardBalcony"];
             this.yardAdditional = data["yardAdditional"];
             this.parking = data["parking"];
@@ -71004,18 +71004,18 @@ export class PropertyDto implements IPropertyDto {
         data["office"] = this.office;
         data["microwave"] = this.microwave;
         data["dishwasher"] = this.dishwasher;
-        data["laundaryInSuite"] = this.laundaryInSuite;
+        data["laundryInSuite"] = this.laundryInSuite;
         data["centralHeating"] = this.centralHeating;
         data["ac"] = this.ac;
         data["monthlyHeatingCost"] = this.monthlyHeatingCost;
-        data["isHeatingIncludedInCondoFees"] = this.isHeatingIncludedInCondoFees;
+        data["isHeatIncludedInCondoFees"] = this.isHeatIncludedInCondoFees;
         data["floorVinyl"] = this.floorVinyl;
         data["floorHardwood"] = this.floorHardwood;
         data["floorTile"] = this.floorTile;
         data["floorCarpet"] = this.floorCarpet;
         data["storageInSuite"] = this.storageInSuite;
         data["storageLocker"] = this.storageLocker;
-        data["yearFenced"] = this.yearFenced;
+        data["yardFenced"] = this.yardFenced;
         data["yardBalcony"] = this.yardBalcony;
         data["yardAdditional"] = this.yardAdditional;
         data["parking"] = this.parking;
@@ -71070,18 +71070,18 @@ export interface IPropertyDto {
     office: boolean | undefined;
     microwave: boolean | undefined;
     dishwasher: boolean | undefined;
-    laundaryInSuite: boolean | undefined;
+    laundryInSuite: boolean | undefined;
     centralHeating: HeatingCoolingType | undefined;
     ac: boolean | undefined;
     monthlyHeatingCost: number | undefined;
-    isHeatingIncludedInCondoFees: boolean | undefined;
+    isHeatIncludedInCondoFees: boolean | undefined;
     floorVinyl: boolean | undefined;
     floorHardwood: boolean | undefined;
     floorTile: boolean | undefined;
     floorCarpet: boolean | undefined;
     storageInSuite: boolean | undefined;
     storageLocker: number | undefined;
-    yearFenced: boolean | undefined;
+    yardFenced: boolean | undefined;
     yardBalcony: boolean | undefined;
     yardAdditional: boolean | undefined;
     parking: ParkingType | undefined;
