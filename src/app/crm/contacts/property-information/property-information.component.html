@@ -16,9 +16,14 @@
                                             <div class="dx-field-value">
                                                 <dx-text-box [(value)]="property.name"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             showClearButton="true"
                                                              [stylingMode]="stylingMode"
-                                                             (onValueChanged)="valueChanged()">
+                                                             (onValueChanged)="validateProperty($event)">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule
+                                                            type="required"
+                                                            [message]="ls.l('ThisFieldIsRequired')">
+                                                        </dxi-validation-rule>
+                                                    </dx-validator>
                                                 </dx-text-box>
                                             </div>
                                         </div>

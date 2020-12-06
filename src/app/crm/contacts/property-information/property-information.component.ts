@@ -200,6 +200,11 @@ export class PropertyInformationComponent implements OnInit {
         );
     }
 
+    validateProperty(event): void {
+        if (event.value)
+            this.valueChanged();
+    }
+
     ngOnDestroy() {
         this.leadInfoSubscription.unsubscribe();
     }
