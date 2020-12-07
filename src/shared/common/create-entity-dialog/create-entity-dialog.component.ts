@@ -457,7 +457,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         if (!this.person.firstName && !this.person.lastName && (this.hideCompanyField || !this.company)
             && !this.contact.emails[0].email && !this.contact.phones[0].number
         ) {
-            this.isTitleValid = false;
+            this.isTitleValid = this.showPropertyFields || false;
             return this.notifyService.error(this.ls.l('RequiredContactInfoIsMissing'));
         }
 
