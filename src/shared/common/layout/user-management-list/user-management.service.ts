@@ -112,7 +112,8 @@ export class UserManagementService {
             iconClass: 'flaticon-info',
             onClick: () => {
                 window.open(this.helpLink, '_blank');
-            }
+            },
+            visible: !this.isLayout(LayoutType.BankCode)
         },
         {
             type: UserDropdownMenuItemType.Separator,
