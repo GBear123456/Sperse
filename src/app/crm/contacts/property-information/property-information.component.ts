@@ -115,24 +115,29 @@ export class PropertyInformationComponent implements OnInit {
 
     savePropertyInfo(property: PropertyDto) {
         this.property = cloneDeep(property);
+        let addr = this.property.address;
         this.propertyAddresses = [
             new AddressDto({
-                streetAddress: property.address.streetAddress,
-                city: property.address.city,
-                stateId: property.address.stateId,
-                stateName: property.address.stateName,
-                zip: property.address.zip,
-                isActive: property.address.isActive,
-                isConfirmed: property.address.isConfirmed,
-                usageTypeId: property.address.usageTypeId,
-                comment: property.address.comment,
-                contactId: property.address.contactId,
+                streetAddress: addr.streetAddress,
+                city: addr.city,
+                stateId: addr.stateId,
+                stateName: addr.stateName,
+                zip: addr.zip,
+                isActive: addr.isActive,
+                isConfirmed: addr.isConfirmed,
+                usageTypeId: addr.usageTypeId,
+                comment: addr.comment,
+                contactId: addr.contactId,
                 confirmationDate: null,
                 country: null,
                 id: null
             },
             property.address.countryId)
         ];
+    }
+
+    isAddressDefined(addr: AddressDto) {
+        return addr && (addr.streetAddress || addr.city || addr.stateName || addr.zip);
     }
 
     updateAddress({ address, dialogData }: AddressUpdate) {

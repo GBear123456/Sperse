@@ -64,6 +64,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
     }
     @Input() contactId: number;
     @Input() addresses: AddressDto[];
+    @Input() isPlaceEditAllowed = true;
     @Input() isAddAllowed = true;
     @Input() isDeleteAllowed = true;
     @Input() isCopyAllowed = true;
@@ -212,7 +213,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
                     });
                 }
             });
-        })
+        });
 
         if (event.stopPropagation)
             event.stopPropagation();
@@ -238,7 +239,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
     }
 
     inPlaceEdit(address: AddressDto, event, index) {
-        if (address.inplaceEdit)
+        if (!this.isPlaceEditAllowed || address.inplaceEdit)
             return ;
 
         this.clickCounter++;
@@ -335,7 +336,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
                                 stateId: this.statesService.getAdjustedStateCode(this.stateCode, this.stateName),
                                 zip: address.zip
                             }
-                        })
+                        });
                         this.clearInplaceData();
                     }
                 });
@@ -381,15 +382,18 @@ export class AddressesComponent implements OnInit, OnDestroy {
     }
 
     getCountryName(address: AddressDto): Observable<string> {
-        return address.country
-            ? of(address.country)
-            : this.getCountries().pipe(
-                first()
-            ).pipe(
-                map((countries: CountryDto[]) => {
-                    const country = countries.find((country: CountryDto) => country.code == address.countryCode);
-                    return country && country.name;
-                })
-            )
+        if (address)
+            return address.country
+                ? of(address.country)
+                : this.getCountries().pipe(
+                    first()
+                ).pipe(
+                    map((countries: CountryDto[]) => {
+                        const country = countries.find((country: CountryDto) => country.code == address.countryCode);
+                        return country && country.name;
+                    })
+                );
+        else
+            return of(AppConsts.defaultCountryName);
     }
 }
