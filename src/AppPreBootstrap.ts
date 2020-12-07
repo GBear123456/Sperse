@@ -213,9 +213,6 @@ export class AppPreBootstrap {
         AppConsts.recaptchaSiteKey = abp.setting.get('Recaptcha.SiteKey');
         AppConsts.subscriptionExpireNootifyDayCount = parseInt(abp.setting.get('App.TenantManagement.SubscriptionExpireNotifyDayCount'));
 
-abp.setting.values['Integrations:Google:CloudTranslationApiKey'] = "AIzaSyBytGuM-2qAe6tEACQ45Y1nCVo5IhUtj84";
-abp.setting.values['Integrations:Google:MapsJavascriptApiKey'] = "AIzaSyBfNMXTm_pWQO0larMpwzp4OOkoAq42upc";
-
         loadThemeResources ? LocalizedResourcesHelper.loadResources(callback) : callback();
         return of(true);
     }

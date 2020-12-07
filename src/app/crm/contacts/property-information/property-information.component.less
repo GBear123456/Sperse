@@ -62,6 +62,9 @@
             }
 
             ::ng-deep addresses {
+                &.empty .address-wrapper {
+                    display: none;
+                }
                 .addresses {
                     .address {
                         padding-left: 0;
@@ -78,6 +81,10 @@
                     }
                 }
 
+                .add-address {
+                    padding: 0!important;
+                }
+    
                 .address-icons {
                     display: none;
                 }
