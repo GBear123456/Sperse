@@ -26573,6 +26573,58 @@ export class ProductServiceProxy {
         }
         return _observableOf<ProductInfo[]>(<any>null);
     }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateProductGroups(body: UpdateProductGroupInput[] | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Product/UpdateProductGroups";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateProductGroups(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateProductGroups(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateProductGroups(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -71638,6 +71690,46 @@ export interface IProductInfo {
     rate: number | undefined;
 }
 
+export class UpdateProductGroupInput implements IUpdateProductGroupInput {
+    code!: string;
+    groupName!: string | undefined;
+
+    constructor(data?: IUpdateProductGroupInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.code = data["code"];
+            this.groupName = data["groupName"];
+        }
+    }
+
+    static fromJS(data: any): UpdateProductGroupInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateProductGroupInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["groupName"] = this.groupName;
+        return data; 
+    }
+}
+
+export interface IUpdateProductGroupInput {
+    code: string;
+    groupName: string | undefined;
+}
+
 export class GetCurrentUserProfileEditDto implements IGetCurrentUserProfileEditDto {
     qrCodeSetupImageUrl!: string | undefined;
     isGoogleAuthenticatorEnabled!: boolean | undefined;
@@ -73009,12 +73101,11 @@ export enum ReportPeriod {
     Annual = "Annual", 
 }
 
-export class SendReportNotificationInput implements ISendReportNotificationInput {
-    reportId!: string | undefined;
-    recipientUserEmailAddress!: string | undefined;
-    sendReportInAttachments!: boolean | undefined;
+export class ReportNotificationInfoInput implements IReportNotificationInfoInput {
+    recipientUserEmailAddress!: string;
+    sendReportInAttachments!: boolean;
 
-    constructor(data?: ISendReportNotificationInput) {
+    constructor(data?: IReportNotificationInfoInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -73025,32 +73116,29 @@ export class SendReportNotificationInput implements ISendReportNotificationInput
 
     init(data?: any) {
         if (data) {
-            this.reportId = data["reportId"];
             this.recipientUserEmailAddress = data["recipientUserEmailAddress"];
             this.sendReportInAttachments = data["sendReportInAttachments"];
         }
     }
 
-    static fromJS(data: any): SendReportNotificationInput {
+    static fromJS(data: any): ReportNotificationInfoInput {
         data = typeof data === 'object' ? data : {};
-        let result = new SendReportNotificationInput();
+        let result = new ReportNotificationInfoInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["reportId"] = this.reportId;
         data["recipientUserEmailAddress"] = this.recipientUserEmailAddress;
         data["sendReportInAttachments"] = this.sendReportInAttachments;
         return data; 
     }
 }
 
-export interface ISendReportNotificationInput {
-    reportId: string | undefined;
-    recipientUserEmailAddress: string | undefined;
-    sendReportInAttachments: boolean | undefined;
+export interface IReportNotificationInfoInput {
+    recipientUserEmailAddress: string;
+    sendReportInAttachments: boolean;
 }
 
 export class GenerateInput implements IGenerateInput {
@@ -73062,7 +73150,7 @@ export class GenerateInput implements IGenerateInput {
     businessEntityIds!: number[] | undefined;
     bankAccountIds!: number[] | undefined;
     departments!: string[] | undefined;
-    notificationData!: SendReportNotificationInput | undefined;
+    notificationData!: ReportNotificationInfoInput | undefined;
 
     constructor(data?: IGenerateInput) {
         if (data) {
@@ -73095,7 +73183,7 @@ export class GenerateInput implements IGenerateInput {
                 for (let item of data["departments"])
                     this.departments.push(item);
             }
-            this.notificationData = data["notificationData"] ? SendReportNotificationInput.fromJS(data["notificationData"]) : <any>undefined;
+            this.notificationData = data["notificationData"] ? ReportNotificationInfoInput.fromJS(data["notificationData"]) : <any>undefined;
         }
     }
 
@@ -73142,7 +73230,51 @@ export interface IGenerateInput {
     businessEntityIds: number[] | undefined;
     bankAccountIds: number[] | undefined;
     departments: string[] | undefined;
-    notificationData: SendReportNotificationInput | undefined;
+    notificationData: ReportNotificationInfoInput | undefined;
+}
+
+export class SendReportNotificationInput implements ISendReportNotificationInput {
+    reportId!: string;
+    recipientUserEmailAddress!: string;
+    sendReportInAttachments!: boolean;
+
+    constructor(data?: ISendReportNotificationInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.reportId = data["reportId"];
+            this.recipientUserEmailAddress = data["recipientUserEmailAddress"];
+            this.sendReportInAttachments = data["sendReportInAttachments"];
+        }
+    }
+
+    static fromJS(data: any): SendReportNotificationInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendReportNotificationInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["reportId"] = this.reportId;
+        data["recipientUserEmailAddress"] = this.recipientUserEmailAddress;
+        data["sendReportInAttachments"] = this.sendReportInAttachments;
+        return data; 
+    }
+}
+
+export interface ISendReportNotificationInput {
+    reportId: string;
+    recipientUserEmailAddress: string;
+    sendReportInAttachments: boolean;
 }
 
 export class RoleListDto implements IRoleListDto {

@@ -29,7 +29,7 @@ import { GenerateReportStep } from './generate-report-step.enum';
 import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppConsts } from '@shared/AppConsts';
-import { SendReportNotificationInput } from '@shared/service-proxies/service-proxies';
+import { ReportNotificationInfoInput } from '@shared/service-proxies/service-proxies';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppFeatures } from '@shared/AppFeatures';
 
@@ -124,7 +124,7 @@ export class GenerateReportDialogComponent implements OnInit {
             this.cfoService.instanceType as InstanceType,
             this.cfoService.instanceId
         ).subscribe((ownerEmail: string) => {
-            this.notificationToEmail = ownerEmail;
+            this.notificationToEmail = ownerEmail.length ? ownerEmail : undefined;
         });
         this.bankAccountsService.load();
     }
@@ -146,9 +146,8 @@ export class GenerateReportDialogComponent implements OnInit {
             departments: departments.map(item => item == this.noDepartmentItem ? null : item),
             businessEntityIds: businessEntityIds,
             bankAccountIds: [],
-            notificationData: !this.dontSendEmailNotification && !this.cfoService.isMainInstanceType && this.emailIsValidAndNotEmpty
-                ? new SendReportNotificationInput({
-                    reportId: null,
+            notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
+                ? new ReportNotificationInfoInput({
                     recipientUserEmailAddress: this.notificationToEmail,
                     sendReportInAttachments: this.sendReportInAttachments
                 })
@@ -311,7 +310,7 @@ export class GenerateReportDialogComponent implements OnInit {
     }
 
     get submitButtonDisabled() {
-        return this.generatingStarted || !this.dontSendEmailNotification && !this.cfoService.isMainInstanceType && !this.emailIsValid;
+        return this.generatingStarted || !this.dontSendEmailNotification && !this.emailIsValid;
     }
 
     onInitialized(event) {
