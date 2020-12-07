@@ -1,5 +1,6 @@
 /** Core imports */
 import {
+    ChangeDetectorRef,
     ChangeDetectionStrategy,
     Component, ElementRef,
     EventEmitter,
@@ -54,6 +55,7 @@ export class AddressFieldsComponent {
 
     constructor(
         private store$: Store<RootStore.State>,
+        public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {}
 

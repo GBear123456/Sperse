@@ -6,8 +6,8 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
 import { Store, select } from '@ngrx/store';
-import { Subject } from 'rxjs';
-import { filter, first, takeUntil } from 'rxjs/operators';
+import { Subject, of, Observable } from 'rxjs';
+import { filter, first, takeUntil, map } from 'rxjs/operators';
 import * as _ from 'underscore';
 import { Address } from 'ngx-google-places-autocomplete/objects/address';
 
@@ -32,7 +32,7 @@ import {
     CountryDto,
     CreatePersonOrgRelationOutput,
     OrganizationContactInfoDto,
-    OrganizationContactServiceProxy
+    OrganizationContactServiceProxy, UpdateBankAccountDto
 } from '@shared/service-proxies/service-proxies';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -174,43 +174,46 @@ export class AddressesComponent implements OnInit, OnDestroy {
     }
 
     showAddressDialog(address: AddressDto, event, index) {
-        const dialogData: EditAddressDialogData = {
-            id: address && address.id,
-            groupId: this.contactInfo.groupId,
-            contactId: this.contactId,
-            isCompany: this.isCompany,
-            deleteItem: (event: MouseEvent) => {
-                this.deleteAddress(address, event, index);
-            },
-            city: address && address.city,
-            comment: address && address.comment,
-            country: address && address.country,
-            countryCode: address && address.countryCode,
-            isActive: address ? address.isActive : true,
-            isConfirmed: address ? address.isConfirmed : false,
-            stateId: address && address.stateId,
-            stateName: address && address.stateName,
-            streetAddress: address && address.streetAddress,
-            usageTypeId: address && address.usageTypeId,
-            zip: address && address.zip,
-            isDeleteAllowed: this.isDeleteAllowed,
-            showType: this.showType,
-            editDialogTitle: this.editDialogTitle
-        };
-        this.dialog.closeAll();
-        this.dialog.open(EditAddressDialog, {
-            data: dialogData,
-            hasBackdrop: false,
-            position: this.getDialogPosition(event)
-        }).afterClosed().subscribe((saved: boolean) => {
-            scrollTo(0, 0);
-            if (saved) {
-                this.onAddressUpdate.emit({
-                    address: address,
-                    dialogData: dialogData
-                });
-            }
-        });
+        this.getCountryName(address).subscribe((countryName: string) => {
+            const dialogData: EditAddressDialogData = {
+                id: address && address.id,
+                groupId: this.contactInfo.groupId,
+                contactId: this.contactId,
+                isCompany: this.isCompany,
+                deleteItem: (event: MouseEvent) => {
+                    this.deleteAddress(address, event, index);
+                },
+                city: address && address.city,
+                comment: address && address.comment,
+                country: countryName,
+                countryCode: address && address.countryCode,
+                isActive: address ? address.isActive : true,
+                isConfirmed: address ? address.isConfirmed : false,
+                stateId: address && address.stateId,
+                stateName: address && address.stateName,
+                streetAddress: address && address.streetAddress,
+                usageTypeId: address && address.usageTypeId,
+                zip: address && address.zip,
+                isDeleteAllowed: this.isDeleteAllowed,
+                showType: this.showType,
+                editDialogTitle: this.editDialogTitle
+            };
+            this.dialog.closeAll();
+            this.dialog.open(EditAddressDialog, {
+                data: dialogData,
+                hasBackdrop: false,
+                position: this.getDialogPosition(event)
+            }).afterClosed().subscribe((saved: boolean) => {
+                scrollTo(0, 0);
+                if (saved) {
+                    this.onAddressUpdate.emit({
+                        address: address,
+                        dialogData: dialogData
+                    });
+                }
+            });
+        })
+
         if (event.stopPropagation)
             event.stopPropagation();
     }
@@ -375,5 +378,18 @@ export class AddressesComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.destroy.next();
+    }
+
+    getCountryName(address: AddressDto): Observable<string> {
+        return address.country
+            ? of(address.country)
+            : this.getCountries().pipe(
+                first()
+            ).pipe(
+                map((countries: CountryDto[]) => {
+                    const country = countries.find((country: CountryDto) => country.code == address.countryCode);
+                    return country && country.name;
+                })
+            )
     }
 }

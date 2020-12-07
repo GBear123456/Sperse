@@ -15,9 +15,9 @@
         <div class="address">
             <h4 *ngIf="showType && types[address.usageTypeId] as type">{{ type }}</h4>
             <p *ngIf="!address.inplaceEdit">
-                <i>{{address | address:address.streetAddress}}</i>
-                <i>{{address | address:address.city:address.stateName:address.zip}}</i>
-                <i>{{address.country | address:address.country}}</i>
+                <i>{{ address | address:address.streetAddress }}</i>
+                <i>{{ address | address:address.city:address.stateName:address.zip }}</i>
+                <i>{{ getCountryName(address) | async }}</i>
             </p>
             <div *ngIf="address.inplaceEdit">
                 <input type="text"

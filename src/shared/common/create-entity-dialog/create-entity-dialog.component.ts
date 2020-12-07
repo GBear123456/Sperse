@@ -111,6 +111,7 @@ import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { LeadDto } from '@app/crm/leads/lead-dto.interface';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
+import { AddressFieldsComponent } from './address-fields/address-fields.component';
 
 @Component({
     templateUrl: 'create-entity-dialog.component.html',
@@ -138,6 +139,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
     @ViewChild('propertyValidationGroup', { static: false }) propertyValidationGroup: DxValidationGroupComponent;
+    @ViewChild('propertyAddressComponent', { static: false }) propertyAddressComponent: AddressFieldsComponent;
     @ViewChildren('linksComponent') linkComponents: QueryList<DxTextBoxComponent>;
 
     showPropertyFields: boolean = this.data.entityTypeSysId === EntityTypeSys.Acquisition;
@@ -224,7 +226,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     };
     similarCustomers: SimilarContactOutput[] = [];
     similarCustomersDialog: any;
-    contactName: string = '';
+    contactName = '';
     get title(): string {
         return this.showPropertyFields ? undefined : this.contactName;
     }
@@ -690,6 +692,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             },
             this.property.address
         );
+        this.propertyAddressComponent.changeDetectorRef.detectChanges();
     }
 
     updateAddressFields(event: AddressChanged, address: Address) {

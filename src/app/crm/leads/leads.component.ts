@@ -303,10 +303,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pipelines$: Observable<PipelineDto[]> = this.store$.pipe(
         select(PipelinesStoreSelectors.getPipelines({
             purpose: this.pipelinePurposeId
-        }))
+        })),
+        filter((pipelines: PipelineDto[]) => !!pipelines)
     );
     pipelineTypes$: Observable<TypeItem[]> = this.pipelines$.pipe(
-        filter(Boolean),
         map((pipelines: PipelineDto[]) => {
             return pipelines.map((pipeline: PipelineDto) => {
                 return {
@@ -735,14 +735,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             ).pipe(
                 filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues)
             );
+            this.handleTotalCountUpdate();
+            this.handlePipelineUpdate();
         });
         this.addBankCodeField();
     }
 
     ngOnInit() {
         this.loadOrganizationUnits();
-        this.handleTotalCountUpdate();
-        this.handlePipelineUpdate();
         this.handleDataGridUpdate();
         this.handlePivotGridUpdate();
         this.handleChartUpdate();
