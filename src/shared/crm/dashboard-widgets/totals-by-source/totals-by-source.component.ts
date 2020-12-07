@@ -87,8 +87,9 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
                     valueField: 'count',
                     getColor: (item) => {
                         const stage: StageDto = this.pipelineService.getStageByName(
-                            AppConsts.PipelinePurposeIds.lead, item.argument, this.selectedContactGroupId);
-                        return this.pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder);
+                            AppConsts.PipelinePurposeIds.lead, item.argument, this.selectedContactGroupId
+                        );
+                        return stage && this.pipelineService.getStageDefaultColorByStageSortOrder(stage.sortOrder);
                     }
                 },
                 {

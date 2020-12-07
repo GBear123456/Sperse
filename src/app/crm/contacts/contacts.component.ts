@@ -799,28 +799,32 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             return;
 
         const pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
-        let sourceStage = this.pipelineService.getStageByName(pipelinePurposeId, this.leadInfo.stage, this.contactGroupId.value);
-        let targetStage = this.pipelineService.getStageByName(pipelinePurposeId, $event.itemData.name, this.contactGroupId.value);
+        this.leadInfo$.pipe(
+            first(),
+            map((leadInfo: LeadInfoDto) => leadInfo.pipelineId)
+        ).subscribe((pipelineId: number) => {
+            let sourceStage = this.pipelineService.getStageByName(pipelinePurposeId, this.leadInfo.stage, this.contactGroupId.value, pipelineId);
+            let targetStage = this.pipelineService.getStageByName(pipelinePurposeId, $event.itemData.name, this.contactGroupId.value, pipelineId);
+            if (this.pipelineService.updateEntityStage(
+                pipelinePurposeId,
+                this.contactGroupId.value,
+                this.leadInfo,
+                sourceStage,
+                targetStage,
+                () => {
+                    this.toolbarComponent.stagesComponent.listComponent.option(
+                        'selectedItemKeys',
+                        [this.clientStageId = targetStage.id]
+                    );
+                }
+            )) {
+                this.leadInfo.stage = targetStage.name;
+                this.notify.success(this.l('StageSuccessfullyUpdated'));
+            } else
+                this.message.warn(this.l('CannotChangeLeadStage', sourceStage.name, targetStage.name));
 
-        if (this.pipelineService.updateEntityStage(
-            pipelinePurposeId,
-            this.contactGroupId.value,
-            this.leadInfo,
-            sourceStage,
-            targetStage,
-            () => {
-                this.toolbarComponent.stagesComponent.listComponent.option(
-                    'selectedItemKeys',
-                    [this.clientStageId = targetStage.id]
-                );
-            }
-        )) {
-            this.leadInfo.stage = targetStage.name;
-            this.notify.success(this.l('StageSuccessfullyUpdated'));
-        } else
-            this.message.warn(this.l('CannotChangeLeadStage', sourceStage.name, targetStage.name));
-
-        this.toolbarComponent.refresh();
+            this.toolbarComponent.refresh();
+        });
         $event.event.stopPropagation();
     }
 

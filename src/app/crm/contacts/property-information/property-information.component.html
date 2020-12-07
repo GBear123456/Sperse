@@ -1,5 +1,6 @@
 <mat-tab-group *ngIf="property">
     <mat-tab [label]="ls.l('GeneralDetails')">
+
         <dx-scroll-view showScrollbar="onHover">
             <div class="container-fluid properties">
                 <div class="row">
@@ -10,13 +11,30 @@
                                 <div class="block">
                                     <h3>{{ ls.l('General') }}</h3>
                                     <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('PropertyName') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box [(value)]="property.name"
+                                                             [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [stylingMode]="stylingMode"
+                                                             (onValueChanged)="validateProperty($event)">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule
+                                                            type="required"
+                                                            [message]="ls.l('ThisFieldIsRequired')">
+                                                        </dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-text-box>
+                                            </div>
+                                        </div>
+
                                         <div class="dx-field address" [ngClass]="stylingMode">
                                             <div class="dx-field-label">{{ ls.l('Address') }}</div>
                                             <div class="dx-field-value">
                                                 <addresses [contactInfo]="contactInfo$ | async"
                                                            [addresses]="propertyAddresses"
                                                            [isAddAllowed]="false"
-                                                           [isCopyAllowed]="false"
+                                                           [isCopyAllowed]="true"
                                                            [isDeleteAllowed]="false"
                                                            [showType]="false"
                                                            [editDialogTitle]="ls.l('EditAddress')"
@@ -88,7 +106,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
-                                                    [(value)]="property.laundaryInSuite"
+                                                    [(value)]="property.laundryInSuite"
                                                     (onValueChanged)="valueChanged()"
                                                     showClearButton="true"
                                                 ></dx-select-box>
@@ -99,6 +117,8 @@
                                             <div class="dx-field-value">
                                                 <dx-select-box
                                                     showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
                                                     [items]="parking"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.parking"
@@ -111,6 +131,8 @@
                                             <div class="dx-field-value">
                                                 <dx-select-box
                                                     showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="basement"
                                                     [(value)]="property.basement"
@@ -285,6 +307,8 @@
                                             <div class="dx-field-value">
                                                 <dx-select-box
                                                     showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="centralHeating"
                                                     [(value)]="property.centralHeating"
@@ -311,6 +335,7 @@
                                             <div class="dx-field-value">
                                                 <dx-number-box [(value)]="property.monthlyHeatingCost"
                                                                [stylingMode]="stylingMode"
+                                                               format="currency"
                                                                showClearButton="true"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
@@ -325,7 +350,7 @@
                                                     valueExpr="value"
                                                     showClearButton="true"
                                                     [items]="yesNoDropdowns"
-                                                    [(value)]="property.isHeatingIncludedInCondoFees"
+                                                    [(value)]="property.isHeatIncludedInCondoFees"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
                                             </div>
@@ -407,7 +432,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
-                                                    [(value)]="property.yearFenced"
+                                                    [(value)]="property.yardFenced"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
                                             </div>
@@ -601,9 +626,9 @@
                                             <div class="dx-field-label">{{ ls.l('Fireplace') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-select-box
+                                                    showClearButton="true"
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
-                                                    showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="firePlace"
                                                     [(value)]="property.fireplace"

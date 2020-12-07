@@ -517,7 +517,8 @@ export class ContactsService {
             const noteAddDialogData: NoteAddDialogData = {
                 note: noteData,
                 contactInfo: contactInfo,
-                propertyId: propertyId
+                propertyId: propertyId,
+                contactsService: this
             };
             this.dialog.open(NoteAddDialogComponent, {
                 id: dialogId,
@@ -583,6 +584,7 @@ export class ContactsService {
             title: title
         };
         return this.dialog.open(TemplateDocumentsDialogComponent, {
+            id: 'template-documents-dialog',
             panelClass: ['slider'],
             hasBackdrop: false,
             closeOnNavigation: true,
