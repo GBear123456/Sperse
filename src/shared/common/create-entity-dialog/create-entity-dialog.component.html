@@ -55,13 +55,15 @@
               (onTitleKeyUp)="onFullNameKeyUp($event)"
               (onContextItemChanged)="onSaveOptionSelectionChanged()">
     <ng-container headerContent>
-        <div *ngIf="showPropertyFields" class="property-address">
+        <div *ngIf="showPropertyFields" class="property-address" [ngClass]="{'invalid': !isTitleValid}">
             <input *ngIf="!googleAutoComplete"
                    type="text"
                    name="PropertyAddress"
                    [(ngModel)]="property.name"
                    placeholder=""
                    class="dx-texteditor-input"
+                   (focus)="isTitleValid = true"
+                   (focusout)="checkPropertyNameValid($event)"
                    required/>
             <input *ngIf="googleAutoComplete"
                    type="text"
@@ -69,6 +71,8 @@
                    [(ngModel)]="property.name"
                    class="dx-texteditor-input"
                    placeholder=""
+                   (focus)="isTitleValid = true"
+                   (focusout)="checkPropertyNameValid($event)"
                    (onAddressChange)="updatePropertyAddress($event, true)"
                    ngx-google-places-autocomplete
                    required/>

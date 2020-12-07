@@ -33,10 +33,11 @@
                                             <div class="dx-field-value">
                                                 <addresses [contactInfo]="contactInfo$ | async"
                                                            [addresses]="propertyAddresses"
-                                                           [isAddAllowed]="false"
+                                                           [isAddAllowed]="!isAddressDefined(propertyAddresses[0])"
                                                            [isCopyAllowed]="true"
                                                            [isDeleteAllowed]="false"
                                                            [showType]="false"
+                                                           [isPlaceEditAllowed]="false"
                                                            [editDialogTitle]="ls.l('EditAddress')"
                                                            [contactId]="property.address.contactId"
                                                            (onAddressUpdate)="updateAddress($event)">
