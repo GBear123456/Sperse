@@ -136,7 +136,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         map(([contactIsParent, contactStatusId]: [boolean, string]) => {
             return contactIsParent || !this.isClientDetailPage(contactStatusId);
         })
-    )
+    );
 
     navLinks: NavLink[] = [
         {
@@ -163,7 +163,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     return this.permission.isGranted(userId
                         ? AppPermissions.AdministrationUsers
                         : AppPermissions.AdministrationUsersCreate
-                    )
+                    );
                 })
             ),
             route: 'user-information'
