@@ -31,7 +31,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() hideButtons = false;
     @Input() showSelection = false;
     @Input() set selectedItems(value: ContactListInput[]) {
-        this.selectedLists = value;
+        this.selectedLists = value && value.slice();
     }
     get selectedItems() {
         return this.selectedLists.map((item: ContactListInput) => {
@@ -39,6 +39,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         }).filter(Boolean);
     }
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdated: EventEmitter<any> = new EventEmitter();
 
     private _prevClickDate = new Date();
     selectedLists = [];
@@ -100,10 +101,12 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         let lists = this.selectedItems;
         if (contactIds.length > 1) {
             if (isRemove)
-                this._listsService.removeContactsFromLists(contactIds, this.selectedLists
+                return this._listsService.removeContactsFromLists(
+                    contactIds, this.selectedLists
                 ).pipe(finalize(() => {
                     this.listComponent.deselectAll();
                 })).subscribe(() => {
+                    this.onUpdated.emit();
                     this.notify.success(this.l('ListsUnassigned'));
                 });
             else {
@@ -113,12 +116,6 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                     successMessage: this.l('ListsAssigned'),
                     serviceMethodName: 'addContactsToLists'
                 }));
-
-                this.actions$.pipe(
-                    ofType(ListsStoreActions.ActionTypes.REMOVE_LIST_SUCCESS),
-                    first(),
-                    finalize(() => { this.listComponent.deselectAll(); })
-                ).subscribe();
             }
         } else
             this.store$.dispatch(new ListsStoreActions.AddList({
@@ -127,6 +124,11 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 successMessage: this.l('CustomerListsUpdated'),
                 serviceMethodName: 'updateContactLists'
             }));
+
+        this.actions$.pipe(
+            ofType(ListsStoreActions.ActionTypes.ADD_LIST_SUCCESS), first(),
+            finalize(() => this.listComponent && this.listComponent.deselectAll())
+        ).subscribe(() => this.onUpdated.emit());
     }
 
     refresh() {

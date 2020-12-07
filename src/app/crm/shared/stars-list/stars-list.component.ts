@@ -39,6 +39,8 @@ export class StarsListComponent implements OnInit {
 
     @Input() targetSelector = '[aria-label=\'star-icon\']';
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdated: EventEmitter<any> = new EventEmitter();
+
     list: any;
     layoutType = LayoutType;
     listComponent: any;
@@ -92,6 +94,7 @@ export class StarsListComponent implements OnInit {
             })).pipe(finalize(() => {
                 this.listComponent.unselectAll();
             })).subscribe(() => {
+                this.onUpdated.emit();
                 this.notifyService.success(this.ls.l('CustomersMarked'));
             });
         else
@@ -99,6 +102,7 @@ export class StarsListComponent implements OnInit {
                 contactId: this.selectedKeys[0],
                 starId: this.selectedItemKey
             })).subscribe((result) => {
+                this.onUpdated.emit();
                 this.notifyService.success(this.ls.l('CustomersMarked'));
             });
     }

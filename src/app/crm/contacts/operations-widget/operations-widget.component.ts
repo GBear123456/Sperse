@@ -45,7 +45,7 @@ import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 })
 export class OperationsWidgetComponent extends AppComponentBase implements AfterViewInit, OnChanges {
     @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: false }) listsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
     @ViewChild(TypesListComponent, { static: false }) partnerTypesComponent: TypesListComponent;
     @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
@@ -93,7 +93,6 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     @Output() onUpdateStage: EventEmitter<any> = new EventEmitter();
     @Output() onUpdatePartnerType: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStatus: EventEmitter<Status> = new EventEmitter();
-    @Output() onUpdateRating: EventEmitter<any> = new EventEmitter();
     @Output() print: EventEmitter<any> = new EventEmitter();
 
     private initTimeout;
@@ -494,8 +493,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         this.onUpdatePartnerType.emit(event);
     }
 
-    updateRating(event) {
-        this.onUpdateRating.emit(event);
+    invalidateContact() {
+        this.contactService.invalidate();
     }
 
     refresh() {

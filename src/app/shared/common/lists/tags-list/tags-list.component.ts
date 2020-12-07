@@ -35,7 +35,7 @@ export class TagsListComponent implements OnInit {
     @Input() managePermission = AppPermissions.CRMCustomersManage;
     @Input() showSelection = false;
     @Input() set selectedItems(value) {
-        this.selectedTags = value;
+        this.selectedTags = value && value.slice();
     }
     get selectedItems() {
         return this.selectedTags.map(item => {
@@ -43,6 +43,7 @@ export class TagsListComponent implements OnInit {
         }).filter(Boolean);
     }
     @Output() onSelectedChanged: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdated: EventEmitter<any> = new EventEmitter();
 
     private _prevClickDate = new Date();
     selectedTags = [];
@@ -104,12 +105,13 @@ export class TagsListComponent implements OnInit {
         let tags = this.selectedItems;
         if (contactIds.length > 1) {
             if (isRemove)
-                this.tagsService.untagContacts(UntagContactsInput.fromJS({
+                return this.tagsService.untagContacts(UntagContactsInput.fromJS({
                     contactIds: contactIds,
                     tagIds: this.selectedTags
                 })).pipe(finalize(() => {
                     this.listComponent.deselectAll();
                 })).subscribe(() => {
+                    this.onUpdated.emit();
                     this.notifyService.success(this.ls.l('TagsUnassigned'));
                 });
             else {
@@ -119,12 +121,6 @@ export class TagsListComponent implements OnInit {
                     successMessage: this.ls.l('TagsAssigned'),
                     serviceMethodName: 'tagContacts'
                 }));
-
-                this.actions$.pipe(
-                    ofType(TagsStoreActions.ActionTypes.ADD_TAG_SUCCESS),
-                    first(),
-                    finalize(() => { this.listComponent.deselectAll(); })
-                ).subscribe();
             }
         } else
             this.store$.dispatch(new TagsStoreActions.AddTag({
@@ -133,6 +129,13 @@ export class TagsListComponent implements OnInit {
                 successMessage: this.ls.l('CustomerTagsUpdated'),
                 serviceMethodName: 'updateContactTags'
             }));
+
+        this.actions$.pipe(
+            ofType(TagsStoreActions.ActionTypes.ADD_TAG_SUCCESS), first(),
+            finalize(() => this.listComponent && this.listComponent.deselectAll())
+        ).subscribe(() => {
+            this.onUpdated.emit();
+        });
     }
 
     clear() {

@@ -89,7 +89,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     leadId: number;
     leadStages = [];
     clientStageId: number;
-    ratingId: number;
     partnerInfo: PartnerInfoDto;
     partnerTypeId: string;
     partnerTypes: any[] = [];
@@ -443,7 +442,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             'ViewCommunicationHistory.SendSMSAndEmail'
         );
 
-        this.ratingId = result.ratingId;
         this.primaryContact = result.personContactInfo;
         this.contactInfo = result;
         this.personContactInfo = result.personContactInfo;
@@ -788,10 +786,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     updateStatus(status: Status) {
         this.showConfirmationDialog(status);
-    }
-
-    updateRating(ratingId: number) {
-        this.ratingId = ratingId;
     }
 
     updateLeadStage($event) {
