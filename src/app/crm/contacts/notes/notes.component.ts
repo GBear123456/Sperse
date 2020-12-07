@@ -138,7 +138,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
 
     loadData(): Observable<NoteInfoDto[]> {
         let contactId = this.data.contactInfo.id;
-        const notes$ = this.notesService.getNotes(contactId).pipe(publishReplay(), refCount());
+        const notes$ = this.notesService.getNotes([contactId]).pipe(publishReplay(), refCount());
         notes$.subscribe((result: NoteInfoDto[]) => {
             this.notesService['data'] = {
                 contactId: contactId,

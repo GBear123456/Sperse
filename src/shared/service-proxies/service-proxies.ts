@@ -21768,13 +21768,13 @@ export class NotesServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
+     * @contactIds (optional) 
      * @return Success
      */
-    getNotes(contactId: number | null | undefined): Observable<NoteInfoDto[]> {
+    getNotes(contactIds: number[] | null | undefined): Observable<NoteInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Notes/GetNotes?";
-        if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (contactIds !== undefined)
+            contactIds && contactIds.forEach(item => { url_ += "contactIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -26113,6 +26113,61 @@ export class PipelineServiceProxy {
     }
 
     /**
+     * @id (optional) 
+     * @return Success
+     */
+    getPipelineDefinition(id: number | null | undefined): Observable<PipelineDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/GetPipelineDefinition?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPipelineDefinition(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPipelineDefinition(<any>response_);
+                } catch (e) {
+                    return <Observable<PipelineDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PipelineDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPipelineDefinition(response: HttpResponseBase): Observable<PipelineDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PipelineDto.fromJS(resultData200) : new PipelineDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PipelineDto>(<any>null);
+    }
+
+    /**
      * @purposeId (optional) 
      * @contactGroupId (optional) 
      * @return Success
@@ -26517,6 +26572,58 @@ export class ProductServiceProxy {
             }));
         }
         return _observableOf<ProductInfo[]>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateProductGroups(body: UpdateProductGroupsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Product/UpdateProductGroups";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateProductGroups(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateProductGroups(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateProductGroups(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -43724,9 +43831,62 @@ export interface ICashFlowCommentThreadDto {
     categorization: { [key: string] : string; } | undefined;
 }
 
+export class BudgetDto implements IBudgetDto {
+    businessEntityId!: number | undefined;
+    categoryId!: number | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    amount!: number | undefined;
+
+    constructor(data?: IBudgetDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.businessEntityId = data["businessEntityId"];
+            this.categoryId = data["categoryId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.amount = data["amount"];
+        }
+    }
+
+    static fromJS(data: any): BudgetDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BudgetDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["businessEntityId"] = this.businessEntityId;
+        data["categoryId"] = this.categoryId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["amount"] = this.amount;
+        return data; 
+    }
+}
+
+export interface IBudgetDto {
+    businessEntityId: number | undefined;
+    categoryId: number | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    amount: number | undefined;
+}
+
 export class CashFlowStatsDto implements ICashFlowStatsDto {
     transactionStats!: TransactionStatsDto[] | undefined;
     commentThreads!: CashFlowCommentThreadDto[] | undefined;
+    budgets!: BudgetDto[] | undefined;
 
     constructor(data?: ICashFlowStatsDto) {
         if (data) {
@@ -43748,6 +43908,11 @@ export class CashFlowStatsDto implements ICashFlowStatsDto {
                 this.commentThreads = [];
                 for (let item of data["commentThreads"])
                     this.commentThreads.push(CashFlowCommentThreadDto.fromJS(item));
+            }
+            if (data["budgets"] && data["budgets"].constructor === Array) {
+                this.budgets = [];
+                for (let item of data["budgets"])
+                    this.budgets.push(BudgetDto.fromJS(item));
             }
         }
     }
@@ -43771,6 +43936,11 @@ export class CashFlowStatsDto implements ICashFlowStatsDto {
             for (let item of this.commentThreads)
                 data["commentThreads"].push(item.toJSON());
         }
+        if (this.budgets && this.budgets.constructor === Array) {
+            data["budgets"] = [];
+            for (let item of this.budgets)
+                data["budgets"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -43778,6 +43948,7 @@ export class CashFlowStatsDto implements ICashFlowStatsDto {
 export interface ICashFlowStatsDto {
     transactionStats: TransactionStatsDto[] | undefined;
     commentThreads: CashFlowCommentThreadDto[] | undefined;
+    budgets: BudgetDto[] | undefined;
 }
 
 export class BankDto implements IBankDto {
@@ -50712,10 +50883,7 @@ export class PropertyInput implements IPropertyInput {
     propertyId!: number | undefined;
     name!: string | undefined;
     address!: CreateContactAddressInput | undefined;
-    area!: number | undefined;
-    yearBuilt!: number | undefined;
-    floor!: number | undefined;
-    numberOfLevels!: number | undefined;
+    note!: string | undefined;
 
     constructor(data?: IPropertyInput) {
         if (data) {
@@ -50731,10 +50899,7 @@ export class PropertyInput implements IPropertyInput {
             this.propertyId = data["propertyId"];
             this.name = data["name"];
             this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
-            this.area = data["area"];
-            this.yearBuilt = data["yearBuilt"];
-            this.floor = data["floor"];
-            this.numberOfLevels = data["numberOfLevels"];
+            this.note = data["note"];
         }
     }
 
@@ -50750,10 +50915,7 @@ export class PropertyInput implements IPropertyInput {
         data["propertyId"] = this.propertyId;
         data["name"] = this.name;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
-        data["area"] = this.area;
-        data["yearBuilt"] = this.yearBuilt;
-        data["floor"] = this.floor;
-        data["numberOfLevels"] = this.numberOfLevels;
+        data["note"] = this.note;
         return data; 
     }
 }
@@ -50762,10 +50924,7 @@ export interface IPropertyInput {
     propertyId: number | undefined;
     name: string | undefined;
     address: CreateContactAddressInput | undefined;
-    area: number | undefined;
-    yearBuilt: number | undefined;
-    floor: number | undefined;
-    numberOfLevels: number | undefined;
+    note: string | undefined;
 }
 
 export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
@@ -51785,6 +51944,9 @@ export interface IContactStatusDto {
 
 export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
     affiliateContactId!: number | undefined;
+    affiliateContactName!: string | undefined;
+    affiliateContactAffiliateCode!: string | undefined;
+    affiliateContactPhotoPublicId!: string | undefined;
     affiliateCode!: string | undefined;
     affiliateRate!: number | undefined;
     dateTime!: moment.Moment | undefined;
@@ -51804,6 +51966,9 @@ export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
     init(data?: any) {
         if (data) {
             this.affiliateContactId = data["affiliateContactId"];
+            this.affiliateContactName = data["affiliateContactName"];
+            this.affiliateContactAffiliateCode = data["affiliateContactAffiliateCode"];
+            this.affiliateContactPhotoPublicId = data["affiliateContactPhotoPublicId"];
             this.affiliateCode = data["affiliateCode"];
             this.affiliateRate = data["affiliateRate"];
             this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
@@ -51823,6 +51988,9 @@ export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["affiliateContactId"] = this.affiliateContactId;
+        data["affiliateContactName"] = this.affiliateContactName;
+        data["affiliateContactAffiliateCode"] = this.affiliateContactAffiliateCode;
+        data["affiliateContactPhotoPublicId"] = this.affiliateContactPhotoPublicId;
         data["affiliateCode"] = this.affiliateCode;
         data["affiliateRate"] = this.affiliateRate;
         data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
@@ -51835,6 +52003,9 @@ export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
 
 export interface IAffiliateInfoHistoryInfo {
     affiliateContactId: number | undefined;
+    affiliateContactName: string | undefined;
+    affiliateContactAffiliateCode: string | undefined;
+    affiliateContactPhotoPublicId: string | undefined;
     affiliateCode: string | undefined;
     affiliateRate: number | undefined;
     dateTime: moment.Moment | undefined;
@@ -71330,6 +71501,7 @@ export interface IStageDto {
 export class PipelineDto implements IPipelineDto {
     id!: number | undefined;
     name!: string | undefined;
+    purposeId!: string | undefined;
     purpose!: string | undefined;
     contactGroupId!: string | undefined;
     entityTypeId!: number | undefined;
@@ -71349,6 +71521,7 @@ export class PipelineDto implements IPipelineDto {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.purposeId = data["purposeId"];
             this.purpose = data["purpose"];
             this.contactGroupId = data["contactGroupId"];
             this.entityTypeId = data["entityTypeId"];
@@ -71372,6 +71545,7 @@ export class PipelineDto implements IPipelineDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["purposeId"] = this.purposeId;
         data["purpose"] = this.purpose;
         data["contactGroupId"] = this.contactGroupId;
         data["entityTypeId"] = this.entityTypeId;
@@ -71388,6 +71562,7 @@ export class PipelineDto implements IPipelineDto {
 export interface IPipelineDto {
     id: number | undefined;
     name: string | undefined;
+    purposeId: string | undefined;
     purpose: string | undefined;
     contactGroupId: string | undefined;
     entityTypeId: number | undefined;
@@ -71569,6 +71744,90 @@ export interface IProductInfo {
     description: string | undefined;
     unitId: InvoiceLineUnit | undefined;
     rate: number | undefined;
+}
+
+export class UpdateProductGroupInput implements IUpdateProductGroupInput {
+    code!: string;
+    groupName!: string | undefined;
+
+    constructor(data?: IUpdateProductGroupInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.code = data["code"];
+            this.groupName = data["groupName"];
+        }
+    }
+
+    static fromJS(data: any): UpdateProductGroupInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateProductGroupInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["groupName"] = this.groupName;
+        return data; 
+    }
+}
+
+export interface IUpdateProductGroupInput {
+    code: string;
+    groupName: string | undefined;
+}
+
+export class UpdateProductGroupsInput implements IUpdateProductGroupsInput {
+    updateProductGroupInfos!: UpdateProductGroupInput[] | undefined;
+
+    constructor(data?: IUpdateProductGroupsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["updateProductGroupInfos"] && data["updateProductGroupInfos"].constructor === Array) {
+                this.updateProductGroupInfos = [];
+                for (let item of data["updateProductGroupInfos"])
+                    this.updateProductGroupInfos.push(UpdateProductGroupInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateProductGroupsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateProductGroupsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.updateProductGroupInfos && this.updateProductGroupInfos.constructor === Array) {
+            data["updateProductGroupInfos"] = [];
+            for (let item of this.updateProductGroupInfos)
+                data["updateProductGroupInfos"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IUpdateProductGroupsInput {
+    updateProductGroupInfos: UpdateProductGroupInput[] | undefined;
 }
 
 export class GetCurrentUserProfileEditDto implements IGetCurrentUserProfileEditDto {
@@ -72043,6 +72302,31 @@ export interface IUpdateMonthlyGoalInput {
     monthlyGoal: number | undefined;
 }
 
+export enum HeatingCoolingType {
+    Water = "Water", 
+    Gas = "Gas", 
+}
+
+export enum ParkingType {
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
+    _8 = 8, 
+    _16 = 16, 
+}
+
+export enum BasementStatus {
+    Unfinished = "Unfinished", 
+    PartiallyFinished = "PartiallyFinished", 
+    Finished = "Finished", 
+}
+
+export enum FireplaceType {
+    Gas = "Gas", 
+    Wood = "Wood", 
+    Electric = "Electric", 
+}
+
 export class PropertyDto implements IPropertyDto {
     id!: number;
     name!: string;
@@ -72051,6 +72335,60 @@ export class PropertyDto implements IPropertyDto {
     yearBuilt!: number | undefined;
     floor!: number | undefined;
     numberOfLevels!: number | undefined;
+    corner!: boolean | undefined;
+    end!: boolean | undefined;
+    bedCount!: number | undefined;
+    bathCount!: number | undefined;
+    den!: boolean | undefined;
+    office!: boolean | undefined;
+    microwave!: boolean | undefined;
+    dishwasher!: boolean | undefined;
+    laundaryInSuite!: boolean | undefined;
+    centralHeating!: HeatingCoolingType | undefined;
+    ac!: boolean | undefined;
+    monthlyHeatingCost!: number | undefined;
+    isHeatingIncludedInCondoFees!: boolean | undefined;
+    floorVinyl!: boolean | undefined;
+    floorHardwood!: boolean | undefined;
+    floorTile!: boolean | undefined;
+    floorCarpet!: boolean | undefined;
+    storageInSuite!: boolean | undefined;
+    storageLocker!: number | undefined;
+    yearFenced!: boolean | undefined;
+    yardBalcony!: boolean | undefined;
+    yardAdditional!: boolean | undefined;
+    parking!: ParkingType | undefined;
+    basement!: BasementStatus | undefined;
+    dogs!: boolean | undefined;
+    cats!: boolean | undefined;
+    petsSizeLimit!: string | undefined;
+    petsBreedRestriction!: string | undefined;
+    condoDocuments!: boolean | undefined;
+    additionalKeys!: boolean | undefined;
+    garageRemote!: boolean | undefined;
+    garageKey!: boolean | undefined;
+    garageCode!: string | undefined;
+    parkadeFob!: boolean | undefined;
+    parkingStall!: number | undefined;
+    visitorParkingPass!: boolean | undefined;
+    mailbox!: number | undefined;
+    mailboxKey!: boolean | undefined;
+    garbageDay!: boolean | undefined;
+    firepit!: boolean | undefined;
+    secure!: boolean | undefined;
+    onSiteManager!: boolean | undefined;
+    wheelchairAccessible!: boolean | undefined;
+    walkOut!: boolean | undefined;
+    elevator!: boolean | undefined;
+    ceilingFan!: boolean | undefined;
+    fireplace!: FireplaceType | undefined;
+    petPark!: boolean | undefined;
+    communitySpace!: boolean | undefined;
+    pool!: boolean | undefined;
+    exerciseRoom!: boolean | undefined;
+    partyRoom!: boolean | undefined;
+    guestSuite!: boolean | undefined;
+    other!: string | undefined;
 
     constructor(data?: IPropertyDto) {
         if (data) {
@@ -72070,6 +72408,60 @@ export class PropertyDto implements IPropertyDto {
             this.yearBuilt = data["yearBuilt"];
             this.floor = data["floor"];
             this.numberOfLevels = data["numberOfLevels"];
+            this.corner = data["corner"];
+            this.end = data["end"];
+            this.bedCount = data["bedCount"];
+            this.bathCount = data["bathCount"];
+            this.den = data["den"];
+            this.office = data["office"];
+            this.microwave = data["microwave"];
+            this.dishwasher = data["dishwasher"];
+            this.laundaryInSuite = data["laundaryInSuite"];
+            this.centralHeating = data["centralHeating"];
+            this.ac = data["ac"];
+            this.monthlyHeatingCost = data["monthlyHeatingCost"];
+            this.isHeatingIncludedInCondoFees = data["isHeatingIncludedInCondoFees"];
+            this.floorVinyl = data["floorVinyl"];
+            this.floorHardwood = data["floorHardwood"];
+            this.floorTile = data["floorTile"];
+            this.floorCarpet = data["floorCarpet"];
+            this.storageInSuite = data["storageInSuite"];
+            this.storageLocker = data["storageLocker"];
+            this.yearFenced = data["yearFenced"];
+            this.yardBalcony = data["yardBalcony"];
+            this.yardAdditional = data["yardAdditional"];
+            this.parking = data["parking"];
+            this.basement = data["basement"];
+            this.dogs = data["dogs"];
+            this.cats = data["cats"];
+            this.petsSizeLimit = data["petsSizeLimit"];
+            this.petsBreedRestriction = data["petsBreedRestriction"];
+            this.condoDocuments = data["condoDocuments"];
+            this.additionalKeys = data["additionalKeys"];
+            this.garageRemote = data["garageRemote"];
+            this.garageKey = data["garageKey"];
+            this.garageCode = data["garageCode"];
+            this.parkadeFob = data["parkadeFob"];
+            this.parkingStall = data["parkingStall"];
+            this.visitorParkingPass = data["visitorParkingPass"];
+            this.mailbox = data["mailbox"];
+            this.mailboxKey = data["mailboxKey"];
+            this.garbageDay = data["garbageDay"];
+            this.firepit = data["firepit"];
+            this.secure = data["secure"];
+            this.onSiteManager = data["onSiteManager"];
+            this.wheelchairAccessible = data["wheelchairAccessible"];
+            this.walkOut = data["walkOut"];
+            this.elevator = data["elevator"];
+            this.ceilingFan = data["ceilingFan"];
+            this.fireplace = data["fireplace"];
+            this.petPark = data["petPark"];
+            this.communitySpace = data["communitySpace"];
+            this.pool = data["pool"];
+            this.exerciseRoom = data["exerciseRoom"];
+            this.partyRoom = data["partyRoom"];
+            this.guestSuite = data["guestSuite"];
+            this.other = data["other"];
         }
     }
 
@@ -72089,6 +72481,60 @@ export class PropertyDto implements IPropertyDto {
         data["yearBuilt"] = this.yearBuilt;
         data["floor"] = this.floor;
         data["numberOfLevels"] = this.numberOfLevels;
+        data["corner"] = this.corner;
+        data["end"] = this.end;
+        data["bedCount"] = this.bedCount;
+        data["bathCount"] = this.bathCount;
+        data["den"] = this.den;
+        data["office"] = this.office;
+        data["microwave"] = this.microwave;
+        data["dishwasher"] = this.dishwasher;
+        data["laundaryInSuite"] = this.laundaryInSuite;
+        data["centralHeating"] = this.centralHeating;
+        data["ac"] = this.ac;
+        data["monthlyHeatingCost"] = this.monthlyHeatingCost;
+        data["isHeatingIncludedInCondoFees"] = this.isHeatingIncludedInCondoFees;
+        data["floorVinyl"] = this.floorVinyl;
+        data["floorHardwood"] = this.floorHardwood;
+        data["floorTile"] = this.floorTile;
+        data["floorCarpet"] = this.floorCarpet;
+        data["storageInSuite"] = this.storageInSuite;
+        data["storageLocker"] = this.storageLocker;
+        data["yearFenced"] = this.yearFenced;
+        data["yardBalcony"] = this.yardBalcony;
+        data["yardAdditional"] = this.yardAdditional;
+        data["parking"] = this.parking;
+        data["basement"] = this.basement;
+        data["dogs"] = this.dogs;
+        data["cats"] = this.cats;
+        data["petsSizeLimit"] = this.petsSizeLimit;
+        data["petsBreedRestriction"] = this.petsBreedRestriction;
+        data["condoDocuments"] = this.condoDocuments;
+        data["additionalKeys"] = this.additionalKeys;
+        data["garageRemote"] = this.garageRemote;
+        data["garageKey"] = this.garageKey;
+        data["garageCode"] = this.garageCode;
+        data["parkadeFob"] = this.parkadeFob;
+        data["parkingStall"] = this.parkingStall;
+        data["visitorParkingPass"] = this.visitorParkingPass;
+        data["mailbox"] = this.mailbox;
+        data["mailboxKey"] = this.mailboxKey;
+        data["garbageDay"] = this.garbageDay;
+        data["firepit"] = this.firepit;
+        data["secure"] = this.secure;
+        data["onSiteManager"] = this.onSiteManager;
+        data["wheelchairAccessible"] = this.wheelchairAccessible;
+        data["walkOut"] = this.walkOut;
+        data["elevator"] = this.elevator;
+        data["ceilingFan"] = this.ceilingFan;
+        data["fireplace"] = this.fireplace;
+        data["petPark"] = this.petPark;
+        data["communitySpace"] = this.communitySpace;
+        data["pool"] = this.pool;
+        data["exerciseRoom"] = this.exerciseRoom;
+        data["partyRoom"] = this.partyRoom;
+        data["guestSuite"] = this.guestSuite;
+        data["other"] = this.other;
         return data; 
     }
 }
@@ -72101,6 +72547,60 @@ export interface IPropertyDto {
     yearBuilt: number | undefined;
     floor: number | undefined;
     numberOfLevels: number | undefined;
+    corner: boolean | undefined;
+    end: boolean | undefined;
+    bedCount: number | undefined;
+    bathCount: number | undefined;
+    den: boolean | undefined;
+    office: boolean | undefined;
+    microwave: boolean | undefined;
+    dishwasher: boolean | undefined;
+    laundaryInSuite: boolean | undefined;
+    centralHeating: HeatingCoolingType | undefined;
+    ac: boolean | undefined;
+    monthlyHeatingCost: number | undefined;
+    isHeatingIncludedInCondoFees: boolean | undefined;
+    floorVinyl: boolean | undefined;
+    floorHardwood: boolean | undefined;
+    floorTile: boolean | undefined;
+    floorCarpet: boolean | undefined;
+    storageInSuite: boolean | undefined;
+    storageLocker: number | undefined;
+    yearFenced: boolean | undefined;
+    yardBalcony: boolean | undefined;
+    yardAdditional: boolean | undefined;
+    parking: ParkingType | undefined;
+    basement: BasementStatus | undefined;
+    dogs: boolean | undefined;
+    cats: boolean | undefined;
+    petsSizeLimit: string | undefined;
+    petsBreedRestriction: string | undefined;
+    condoDocuments: boolean | undefined;
+    additionalKeys: boolean | undefined;
+    garageRemote: boolean | undefined;
+    garageKey: boolean | undefined;
+    garageCode: string | undefined;
+    parkadeFob: boolean | undefined;
+    parkingStall: number | undefined;
+    visitorParkingPass: boolean | undefined;
+    mailbox: number | undefined;
+    mailboxKey: boolean | undefined;
+    garbageDay: boolean | undefined;
+    firepit: boolean | undefined;
+    secure: boolean | undefined;
+    onSiteManager: boolean | undefined;
+    wheelchairAccessible: boolean | undefined;
+    walkOut: boolean | undefined;
+    elevator: boolean | undefined;
+    ceilingFan: boolean | undefined;
+    fireplace: FireplaceType | undefined;
+    petPark: boolean | undefined;
+    communitySpace: boolean | undefined;
+    pool: boolean | undefined;
+    exerciseRoom: boolean | undefined;
+    partyRoom: boolean | undefined;
+    guestSuite: boolean | undefined;
+    other: string | undefined;
 }
 
 export class OptionDto implements IOptionDto {

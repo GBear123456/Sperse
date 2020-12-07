@@ -91,6 +91,12 @@ export class UploadBudgetDialogComponent implements OnInit {
         this.bankAccountsService.load();
     }
 
+    get budgetTemplateLink(): string {
+        return AppConsts.remoteServiceBaseUrl + `/budgettemplate/get?InstanceType=${this.data.instanceType}
+            &CurrencyId=${this.currencyId}&Year=${this.selectedYear.getUTCFullYear()}
+            &businessEntityId=${this.selectedBusinessEntityIds[0]}`;
+    }
+
     private prev() {
         this.currentStep--;
         this.processStep();
@@ -132,7 +138,7 @@ export class UploadBudgetDialogComponent implements OnInit {
                     ).pipe(finalize(() => {
                         this.finishUploading(progressInterval);
                     })).subscribe(() => {
-                        this.dialogRef.close();
+                        this.dialogRef.close(true);
                     })
                 );
             } else

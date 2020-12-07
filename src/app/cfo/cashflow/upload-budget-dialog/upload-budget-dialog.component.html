@@ -23,11 +23,15 @@
                 [(value)]="selectedYear">
             </dx-calendar>
             <div class="download">
-                <a target="_blank" href="/budgettemplate/get?InstanceType={{data.instanceType}}">{{ls.l('Download Excel Template')}}</a><br>
+                <a target="_blank"
+                   [href]="budgetTemplateLink">
+                    {{ls.l('Download Excel Template')}}
+                </a><br>
                 {{ls.l('for your Budget')}}
             </div>
             <div class="drop-down" *ngIf="!totalCount">
-                <ngx-file-drop (onFileDrop)="data.dropFiles ? data.dropFiles($event) : fileDropped($event)" [ngClass]="{'full-height': data.fullHeight}">
+                <ngx-file-drop [ngClass]="{'full-height': data.fullHeight}"
+                               (onFileDrop)="data.dropFiles ? data.dropFiles($event) : fileDropped($event)">
                     <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
                         <img src="./assets/common/icons/upload-file.svg">
                         <p>{{ls.l('DragAndDrop')}}</p>
@@ -46,9 +50,13 @@
                         <ng-container *ngFor="let file of files; let i = index">
                             <div class="file-progress-wrapper"
                                 [ngStyle]="{ background: 'linear-gradient(to right, #00aeef21 ' + file.progress + '%, #f3f7fa 0%)' }">
-                                <img width="16px" height="16px" src="./assets/common/icons/file-types/{{file.type}}.svg" onError="this.src='./assets/common/icons/files.svg';">
+                                <img width="16px" height="16px"
+                                     src="./assets/common/icons/file-types/{{file.type}}.svg"
+                                     onError="this.src='./assets/common/icons/files.svg';">
                                 <span class="file-name">{{file.name}}</span>
-                                <span (click)="cancelUpload()" [ngClass]="{ cancel: file.progress < 100, completed: file.progress >= 100 }"></span>
+                                <span [ngClass]="{ cancel: file.progress < 100, completed: file.progress >= 100 }"
+                                      (click)="cancelUpload()">
+                                </span>
                             </div>
                         </ng-container>
                     </div>

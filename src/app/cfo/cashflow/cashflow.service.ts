@@ -20,12 +20,14 @@ import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
 import {
     AdjustmentType,
     BankAccountDto,
+    BudgetDto,
     CashFlowGridSettingsDto,
     CashFlowInitialData,
     CategoryDto,
     GetCategoryTreeOutput,
     GetReportTemplateDefinitionOutput,
     GroupByPeriod,
+    IBudgetDto,
     SectionGroup,
     StatsDetailFilter,
     StatsFilter,
@@ -134,7 +136,7 @@ export class CashflowService {
         Reconciliation,
         Total
     ];
-    cashflowData;
+    cashflowData: TransactionStatsDtoExtended[];
     cashflowGridSettings: CashFlowGridSettingsDto;
 
     selectedForecastModelId;
@@ -178,6 +180,7 @@ export class CashflowService {
     reportSections: GetReportTemplateDefinitionOutput;
     statsCategoryTree = {};
     statsCategoriesLevelsCount: number = 0;
+    budgets: { [budgetKey: string]: number } = {};
 
     constructor(
         private cfoPreferencesService: CfoPreferencesService,
@@ -2250,6 +2253,22 @@ export class CashflowService {
             });
         }
         return this.addCategorizationLevels({ ...stubTransaction, ...stubObj });
+    }
+
+    saveBudgets(budgets: BudgetDto[]) {
+        budgets.forEach((budget: BudgetDto) => {
+            this.budgets[this.getBudgetKey(budget)] = budget.amount;
+        });
+    }
+
+    private getBudgetKey(budget: Omit<IBudgetDto, 'amount'>): string {
+        return budget.businessEntityId + '-' + budget.categoryId + '-'
+               + budget.startDate.format('DD-MM-YYYY') + '-'
+               + budget.endDate.format('DD-MM-YYYY');
+    }
+
+    getCellBudget(budget: Omit<IBudgetDto, 'amount'>): number {
+        return this.budgets[this.getBudgetKey(budget)];
     }
 
 }

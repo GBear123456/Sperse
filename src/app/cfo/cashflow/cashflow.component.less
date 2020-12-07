@@ -938,6 +938,22 @@
                                     cursor: default;
                                 }
                             }
+
+                            .budget-info {
+                                width: 6px;
+                                height: 6px;
+                                border-radius: 50%;
+                                position: absolute;
+                                top: 3px;
+                                left: 3px;
+                                cursor: pointer;
+                                &.within-budget {
+                                    background-color: #61C670;
+                                }
+                                &.out-of-budget {
+                                    background-color: #E7326A;
+                                }
+                            }
                         }
 
                         &.iRow td {

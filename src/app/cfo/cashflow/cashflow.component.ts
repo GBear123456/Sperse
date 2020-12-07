@@ -101,7 +101,9 @@ import {
     SyncAccountBankDto,
     ReportTemplate,
     GetReportTemplateDefinitionOutput,
-    CashFlowGridSettingsDto
+    CashFlowGridSettingsDto,
+    CashFlowStatsDto,
+    BusinessEntityDto
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
@@ -202,7 +204,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private noRefreshedAfterSync: boolean;
 
     /** The main data for cashflow table */
-    stubsCashflowDataForEmptyCategories: TransactionStatsDto[];
+    stubsCashflowDataForEmptyCategories: TransactionStatsDtoExtended[];
 
     private activeBankAccounts: BankAccountDto[];
 
@@ -978,11 +980,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.cashflowService.cashflowData.push) {
             this.cashflowService.cashflowData.push = cashflowItem => {
                 if (cashflowItem.cashflowTypeId === Income || cashflowItem.cashflowTypeId === Expense) {
-                    let totalObject = { ...cashflowItem };
+                    let totalObject = { ...cashflowItem } as TransactionStatsDtoExtended;
                     totalObject.cashflowTypeId = Total;
                     [].push.call(this.cashflowService.cashflowData, this.cashflowService.addCategorizationLevels(totalObject));
                     if (this.cashflowService.cashflowGridSettings.general.showNetChangeRow) {
-                        let netChangeObject = { ...cashflowItem };
+                        let netChangeObject = { ...cashflowItem } as TransactionStatsDtoExtended;
                         netChangeObject.cashflowTypeId = NetChange;
                         [].push.call(this.cashflowService.cashflowData, this.cashflowService.addCategorizationLevels(netChangeObject));
                     }
@@ -1167,8 +1169,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                         instanceType: this.instanceType,
                                         instanceId: this.instanceId
                                     }
-                                }).afterClosed().subscribe(() => {
-
+                                }).afterClosed().subscribe((uploaded: boolean) => {
+                                    if (uploaded) {
+                                        this.refreshDataGrid();
+                                    }
                                 });
                             }
                         }
@@ -1539,6 +1543,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.cashflowService.requestFilter.forecastModelId = forecastModelId;
                 return this.cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.cashflowService.requestFilter);
             }),
+            tap((stats: CashFlowStatsDto) => this.cashflowService.saveBudgets(stats.budgets)),
             pluck('transactionStats'),
             finalize(() => this.finishLoading())
         ).subscribe(
@@ -1595,7 +1600,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    handleDailyCashflowData(transactions, startDate, endDate) {
+    handleDailyCashflowData(transactions: TransactionStatsDto[], startDate, endDate) {
 
         /** Remove old month transactions */
         if (this.cashflowService.cashflowData && this.cashflowService.cashflowData.length) {
@@ -1618,25 +1623,25 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.cashflowService.updateZeroAdjustmentsList();
         }
 
-        transactions = this.getCashflowDataFromTransactions(transactions, false);
+        let extendedTransactions: TransactionStatsDtoExtended[] = this.getCashflowDataFromTransactions(transactions, false);
         let existingPeriods = [];
-        transactions.forEach(transaction => {
+        extendedTransactions.forEach(transaction => {
             /** Move the year to the years array if it is unique */
             let formattedDate = transaction.initialDate.format('YYYY-MM-DD');
             if (existingPeriods.indexOf(formattedDate) === -1) existingPeriods.push(formattedDate);
         });
-        let accountId: number = transactions[0] ? +transactions[0].accountId : this.cashflowService.bankAccounts[0].id;
+        let accountId: number = extendedTransactions[0] ? +extendedTransactions[0].accountId : this.cashflowService.bankAccounts[0].id;
         let stubCashflowDataForAllDays = this.cashflowService.createStubsForPeriod(startDate, endDate, GroupByPeriod.Daily, accountId, existingPeriods);
-        let stubCashflowDataForAccounts = this.getStubsCashflowDataForAccounts(transactions);
+        let stubCashflowDataForAccounts = this.getStubsCashflowDataForAccounts(extendedTransactions);
 
         /** concat initial data and stubs from the different hacks */
-        transactions = transactions.concat(
+        extendedTransactions = extendedTransactions.concat(
             stubCashflowDataForAccounts,
             stubCashflowDataForAllDays
         );
 
         /** Simple arrays concat doesn't work with reload, so forEach is used*/
-        transactions.forEach(transaction => {
+        extendedTransactions.forEach((transaction: TransactionStatsDtoExtended) => {
             this.cashflowService.cashflowData.push(transaction);
         });
     }
@@ -1695,7 +1700,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return stubCashflowDataForAccounts;
     }
 
-    getStubsCashflowDataForEmptyCategories(date, initialDate) {
+    getStubsCashflowDataForEmptyCategories(date, initialDate): TransactionStatsDtoExtended[] {
         let stubs = [];
         for (let categoryId in this.cashflowService.categoryTree.categories) {
             const category: CategoryDto = this.cashflowService.categoryTree.categories[categoryId];
@@ -1739,7 +1744,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @return {TransactionStatsDto[]}
      */
     /** @todo refactor */
-    getCashflowDataFromTransactions(transactions: TransactionStatsDto[], reset: boolean = true) {
+    getCashflowDataFromTransactions(transactions: TransactionStatsDto[], reset: boolean = true): TransactionStatsDtoExtended[] {
         if (reset) {
             this.transactionsAmount = 0;
             this.transactionsTotal = 0;
@@ -1833,8 +1838,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         return stubCashflowDataForEndingCashPosition;
     }
 
-    getStubForNetChange(cashflowData: TransactionStatsDto[]) {
-        let stubCashflowDataForEndingCashPosition: TransactionStatsDto[] = [];
+    getStubForNetChange(cashflowData: TransactionStatsDto[]): TransactionStatsDtoExtended[] {
+        let stubCashflowDataForEndingCashPosition: TransactionStatsDtoExtended[] = [];
         if (!cashflowData.some(item => item.cashflowTypeId === NetChange)) {
             cashflowData.forEach(cashflowDataItem => {
                 if (cashflowDataItem.cashflowTypeId === Income || cashflowDataItem.cashflowTypeId === Expense) {
@@ -2541,6 +2546,62 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
         }
 
+        /** Add budget dot for month data cells */
+        if (e.area === 'data' && e.cell.columnPath) {
+            let fieldObj = this.getFieldObjectByPath(e.cell.columnPath);
+            let fieldName = fieldObj.groupInterval;
+            if (fieldName === 'month') {
+                const categoryId = this.cashflowService.getCategoryValueByPrefix(e.cell.rowPath, CategorizationPrefixes.Category);
+                if (categoryId) {
+                    const businessEntityIds$: Observable<number[]> = this.bankAccountsService.selectedBusinessEntitiesIds$.pipe(
+                        first(),
+                        switchMap((selectedBusinessEntitiesIds: number[]) => {
+                            if (!selectedBusinessEntitiesIds || !selectedBusinessEntitiesIds.length) {
+                                return this.bankAccountsService.businessEntities$.pipe(
+                                    first(),
+                                    map((businessEntities: BusinessEntityDto[]) => {
+                                        return businessEntities.map((businessEntity: BusinessEntityDto) => {
+                                            return businessEntity.id;
+                                        })
+                                    })
+                                )
+                            }
+                            return of(selectedBusinessEntitiesIds);
+                        })
+                    );
+                    businessEntityIds$.subscribe((businessEntityIds: number[]) => {
+                        let monthBudget = 0;
+                        const allSelectedEntitiesHaveBudgets = businessEntityIds.every((businessEntityId: number) => {
+                            const datePeriod = this.cashflowService.formattingDate(e.cell.columnPath);
+                            const cellBudget = this.cashflowService.getCellBudget({
+                                businessEntityId: businessEntityId,
+                                categoryId: categoryId,
+                                startDate: datePeriod.startDate,
+                                endDate: datePeriod.endDate
+                            });
+                            if (cellBudget) {
+                                monthBudget += cellBudget
+                            } else {
+                                return false;
+                            }
+                            return true;
+                        });
+                        if (allSelectedEntitiesHaveBudgets && monthBudget > 0) {
+                            const dot: HTMLElement = this.document.createElement('div');
+                            dot.className = 'budget-info ' + (
+                                (e.cell.value > 0 && e.cell.value >= monthBudget)
+                                || (e.cell.value < 0 && Math.abs(e.cell.value) <= monthBudget)
+                                    ? 'within-budget' : 'out-of-budget'
+                            );
+                            dot.setAttribute('data-budget', monthBudget.toString());
+                            dot.setAttribute('data-value', e.cell.value);
+                            e.cellElement.appendChild(dot);
+                        }
+                    })
+                }
+            }
+        }
+
         if (e.area === 'column' && e.cell.type !== GrandTotal && e.cell.path) {
             let fieldObj = this.getFieldObjectByPath(e.cell.path);
             let fieldName = fieldObj.groupInterval;
@@ -2863,24 +2924,52 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     }
 
     onMouseOver(e) {
-        let targetCell = this.getCellElementFromTarget(e.target);
-        let relatedTargetCell = e.relatedTarget && this.getCellElementFromTarget(e.relatedTarget);
-        if (targetCell && this.cashflowService.elementIsDataCell(targetCell) && targetCell !== relatedTargetCell) {
-            let infoButton = targetCell.getElementsByClassName('dx-link-info');
-            if (infoButton.length) {
-                let sum = parseFloat(infoButton[0].getAttribute('data-sum'));
-                let infoTooltip = this.document.createElement('div');
-                infoTooltip.className = 'tootipWrapper';
-                this.infoTooltip = new Tooltip(infoTooltip, {
-                    target: targetCell,
-                    contentTemplate: `
-                        <div>New account ${targetCell.classList.contains('starting-balance-info') ? 'included' : 'added' }: ${this.cashflowService.formatAsCurrencyWithLocale(sum)}</div>
-                    `,
-                });
-                targetCell.appendChild(infoTooltip);
-                this.infoTooltip.show();
+        if (e.target.classList.contains('budget-info')) {
+            const budget = e.target.getAttribute('data-budget');
+            const value = e.target.getAttribute('data-value');
+            const variance = budget - Math.abs(value);
+            this.showTooltip(e.target,
+                `<div>${this.l('Value')}: ${this.currencyPipe.transform(
+                    value,
+                    this.cfoPreferencesService.selectedCurrencyId,
+                    this.cfoPreferencesService.selectedCurrencySymbol
+                )}</div>
+                <div>${this.l('Budget')}: ${this.currencyPipe.transform(
+                    budget,
+                    this.cfoPreferencesService.selectedCurrencyId,
+                    this.cfoPreferencesService.selectedCurrencySymbol
+                )}</div>
+                <div>${this.l('Variance')}: ${this.currencyPipe.transform(
+                    variance,
+                    this.cfoPreferencesService.selectedCurrencyId,
+                    this.cfoPreferencesService.selectedCurrencySymbol
+                )}</div>
+                <div>${this.l('Percent')}: ${(Math.abs(value)/budget * 100).toFixed(2)}%</div>`
+            );
+        } else {
+            let targetCell = this.getCellElementFromTarget(e.target);
+            let relatedTargetCell = e.relatedTarget && this.getCellElementFromTarget(e.relatedTarget);
+            if (targetCell && this.cashflowService.elementIsDataCell(targetCell) && targetCell !== relatedTargetCell) {
+                let infoButton = targetCell.getElementsByClassName('dx-link-info');
+                if (infoButton.length) {
+                    const sum = parseFloat(infoButton[0].getAttribute('data-sum'));
+                    this.showTooltip(targetCell, `
+                       <div>New account ${targetCell.classList.contains('starting-balance-info') ? 'included' : 'added' }: ${this.cashflowService.formatAsCurrencyWithLocale(sum)}</div>
+                    `);
+                }
             }
         }
+    }
+
+    private showTooltip(targetCell: HTMLElement, contentTemplate: string) {
+        let infoTooltip = this.document.createElement('div');
+        infoTooltip.className = 'tootipWrapper';
+        this.infoTooltip = new Tooltip(infoTooltip, {
+            target: targetCell,
+            contentTemplate: contentTemplate,
+        });
+        targetCell.appendChild(infoTooltip);
+        this.infoTooltip.show();
     }
 
     onMouseOut(e) {
@@ -3391,12 +3480,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     /** Prevent default expanding */
                     this.cashflowServiceProxy
                         .getStats(InstanceType[this.instanceType], this.instanceId, requestFilter)
-                        .pipe(pluck('transactionStats'))
                         .subscribe(
-                            (transactions: any) => {
+                            (stats: CashFlowStatsDto) => {
 
                                 /** Update cashflow data with the daily transactions */
-                                this.handleDailyCashflowData(transactions, requestFilter.startDate, requestFilter.endDate);
+                                this.handleDailyCashflowData(stats.transactionStats, requestFilter.startDate, requestFilter.endDate);
 
                                 /** Reload the cashflow */
                                 this.pivotGrid.instance.getDataSource().reload();
