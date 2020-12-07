@@ -29762,8 +29762,8 @@ export class SyncServiceProxy {
      * @syncTypeId (optional) 
      * @return Success
      */
-    getSetupAccountsLink(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<GetSetupAccountsLinkOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSetupAccountsLink?";
+    getConnectionInfo(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<GetConnectionInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/GetConnectionInfo?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -29782,20 +29782,20 @@ export class SyncServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSetupAccountsLink(response_);
+            return this.processGetConnectionInfo(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetSetupAccountsLink(<any>response_);
+                    return this.processGetConnectionInfo(<any>response_);
                 } catch (e) {
-                    return <Observable<GetSetupAccountsLinkOutput>><any>_observableThrow(e);
+                    return <Observable<GetConnectionInfoOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetSetupAccountsLinkOutput>><any>_observableThrow(response_);
+                return <Observable<GetConnectionInfoOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetSetupAccountsLink(response: HttpResponseBase): Observable<GetSetupAccountsLinkOutput> {
+    protected processGetConnectionInfo(response: HttpResponseBase): Observable<GetConnectionInfoOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -29806,7 +29806,7 @@ export class SyncServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetSetupAccountsLinkOutput.fromJS(resultData200) : new GetSetupAccountsLinkOutput();
+            result200 = resultData200 ? GetConnectionInfoOutput.fromJS(resultData200) : new GetConnectionInfoOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -29814,7 +29814,7 @@ export class SyncServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetSetupAccountsLinkOutput>(<any>null);
+        return _observableOf<GetConnectionInfoOutput>(<any>null);
     }
 
     /**
@@ -30436,64 +30436,6 @@ export class SyncAccountServiceProxy {
             }));
         }
         return _observableOf<boolean>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @return Success
-     */
-    getPlaidConfig(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined): Observable<PlaidConfig> {
-        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/GetPlaidConfig?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPlaidConfig(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetPlaidConfig(<any>response_);
-                } catch (e) {
-                    return <Observable<PlaidConfig>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<PlaidConfig>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetPlaidConfig(response: HttpResponseBase): Observable<PlaidConfig> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PlaidConfig.fromJS(resultData200) : new PlaidConfig();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<PlaidConfig>(<any>null);
     }
 }
 
@@ -74510,10 +74452,15 @@ export interface ISetupSyncUserApplicationInput {
     clientSecret: string | undefined;
 }
 
-export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
-    setupAccountsLink!: string | undefined;
+export class GetConnectionInfoOutput implements IGetConnectionInfoOutput {
+    connectUrl!: string | undefined;
+    scope!: string[] | undefined;
+    clientName!: string | undefined;
+    environment!: string | undefined;
+    publicKey!: string | undefined;
+    webhookUrl!: string | undefined;
 
-    constructor(data?: IGetSetupAccountsLinkOutput) {
+    constructor(data?: IGetConnectionInfoOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -74524,26 +74471,49 @@ export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
 
     init(data?: any) {
         if (data) {
-            this.setupAccountsLink = data["setupAccountsLink"];
+            this.connectUrl = data["connectUrl"];
+            if (data["scope"] && data["scope"].constructor === Array) {
+                this.scope = [];
+                for (let item of data["scope"])
+                    this.scope.push(item);
+            }
+            this.clientName = data["clientName"];
+            this.environment = data["environment"];
+            this.publicKey = data["publicKey"];
+            this.webhookUrl = data["webhookUrl"];
         }
     }
 
-    static fromJS(data: any): GetSetupAccountsLinkOutput {
+    static fromJS(data: any): GetConnectionInfoOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new GetSetupAccountsLinkOutput();
+        let result = new GetConnectionInfoOutput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["setupAccountsLink"] = this.setupAccountsLink;
+        data["connectUrl"] = this.connectUrl;
+        if (this.scope && this.scope.constructor === Array) {
+            data["scope"] = [];
+            for (let item of this.scope)
+                data["scope"].push(item);
+        }
+        data["clientName"] = this.clientName;
+        data["environment"] = this.environment;
+        data["publicKey"] = this.publicKey;
+        data["webhookUrl"] = this.webhookUrl;
         return data; 
     }
 }
 
-export interface IGetSetupAccountsLinkOutput {
-    setupAccountsLink: string | undefined;
+export interface IGetConnectionInfoOutput {
+    connectUrl: string | undefined;
+    scope: string[] | undefined;
+    clientName: string | undefined;
+    environment: string | undefined;
+    publicKey: string | undefined;
+    webhookUrl: string | undefined;
 }
 
 export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
@@ -74924,66 +74894,6 @@ export class ChangeAutoSyncInput implements IChangeAutoSyncInput {
 export interface IChangeAutoSyncInput {
     syncAccountIds: number[] | undefined;
     autoSyncTime: string | undefined;
-}
-
-export class PlaidConfig implements IPlaidConfig {
-    clientName!: string | undefined;
-    evn!: string | undefined;
-    key!: string | undefined;
-    product!: string[] | undefined;
-    webhook!: string | undefined;
-
-    constructor(data?: IPlaidConfig) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.clientName = data["clientName"];
-            this.evn = data["evn"];
-            this.key = data["key"];
-            if (data["product"] && data["product"].constructor === Array) {
-                this.product = [];
-                for (let item of data["product"])
-                    this.product.push(item);
-            }
-            this.webhook = data["webhook"];
-        }
-    }
-
-    static fromJS(data: any): PlaidConfig {
-        data = typeof data === 'object' ? data : {};
-        let result = new PlaidConfig();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["clientName"] = this.clientName;
-        data["evn"] = this.evn;
-        data["key"] = this.key;
-        if (this.product && this.product.constructor === Array) {
-            data["product"] = [];
-            for (let item of this.product)
-                data["product"].push(item);
-        }
-        data["webhook"] = this.webhook;
-        return data; 
-    }
-}
-
-export interface IPlaidConfig {
-    clientName: string | undefined;
-    evn: string | undefined;
-    key: string | undefined;
-    product: string[] | undefined;
-    webhook: string | undefined;
 }
 
 export class TenantListDto implements ITenantListDto {
