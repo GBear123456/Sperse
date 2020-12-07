@@ -319,6 +319,32 @@
         flex-grow: 1;
         padding-right: 10px;
         position: relative;
+        &.invalid {
+            &:after {
+                pointer-events: none;
+                font-weight: bold;
+                position: absolute;
+                top: 50%;
+                right: 20px;
+                margin-top: -9px;
+                width: 18px;
+                height: 18px;
+                text-align: center;
+                line-height: 18px;
+                font-size: 13px;
+                background-color: #d9534f;
+                color: #fff;
+                content: '!';
+                border-radius: 50%;
+            }
+            .placeholder {
+                color: #d9534f;
+            }
+            input {
+                border-bottom: 1px solid #d9534f;
+            }
+        }
+
         input {
             height: 35px;
             font-size: 22px;

@@ -1115,4 +1115,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.sourceContactId = undefined;
         this.togglePartnerSource();
     }
+
+    checkPropertyNameValid(event) {
+        this.isTitleValid = Boolean(event.target.value);
+    }
 }
