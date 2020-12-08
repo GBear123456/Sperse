@@ -1260,7 +1260,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 this.dialog.open(RuleDialogComponent, {
                     panelClass: 'slider',
                     data: {
-                        categoryId: $event.column.dataField == this.transactionFields.CashflowCategoryName ? transaction.CashflowCategoryId : transaction.CashflowSubCategoryId,
+                        categoryId: $event.column.dataField == this.transactionFields.CashflowCategoryName
+                            ? transaction.CashflowCategoryId
+                            : transaction.CashflowSubCategoryId,
                         categoryCashflowTypeId: $event.CashFlowTypeId,
                         transactions: [transaction],
                         transactionIds: [transaction.Id],

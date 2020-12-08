@@ -199,7 +199,7 @@ export class BankAccountsService {
             );
 
         this.selectedBusinessEntitiesIds$ = this.selectedBusinessEntities$.pipe(
-            map(businessEntities => businessEntities.reduce((entitiesIds, entity) => {
+            map(businessEntities => businessEntities.reduce((entitiesIds, entity: BusinessEntityDto) => {
                 return entitiesIds.concat(entity.id);
             }, [])),
             distinctUntilChanged((oldIds, newIds) => !ArrayHelper.dataChanged(oldIds, newIds))
