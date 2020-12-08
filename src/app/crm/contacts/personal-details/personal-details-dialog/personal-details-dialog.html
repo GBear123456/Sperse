@@ -8,7 +8,7 @@
                         <mat-expansion-panel class="affiliate-info" [expanded]="true">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
-                                <span class="dx-icon-hierarchy" (click)="showAffiliateHistory($event)" [title]="ls.l('AffiliateHistory')"></span>
+                                <span class="dx-icon-clock history-icon" (click)="showAffiliateHistory($event)" [title]="ls.l('AffiliateHistory')"></span>
                             </mat-expansion-panel-header>
                             <div class="field affiliate-code" [ngClass]="{'zero': affiliateRate == 0, 'undefined': affiliateRate === null}">
                                 <inplace-edit [id]="contactInfo?.id"

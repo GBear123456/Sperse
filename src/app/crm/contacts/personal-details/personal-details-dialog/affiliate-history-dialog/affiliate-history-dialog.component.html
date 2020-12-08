@@ -10,11 +10,12 @@
                              [title]="affiliate.userName || ''" 
                              class="m--img-rounded m--marginless m--img-centered" 
                              width="50" height="50">
+                        <p [title]="affiliate.userName || ''">{{affiliate.userName || ''}}</p>
                     </div>
                     <div class="m-alert__text">
                         <div class="row">
                             <label class="control-label col-sm-2 text-right">{{ls.l('AffiliateCode')}}:</label>
-                            <p class="form-control-static" [title]="affiliate.affiliateCode">
+                            <p class="form-control-static" [title]="affiliate.affiliateCode || ''">
                                 {{affiliate.affiliateCode}}
                             </p>
                         </div>
@@ -28,7 +29,7 @@
                     <div class="m-alert__text">
                         <div class="row">
                             <label class="control-label col-sm-2 text-right">{{ls.l('PersonalSettings.Contact1')}}:</label>
-                            <p class="form-control-static" [title]="affiliate.affiliateContactName">
+                            <p class="form-control-static" [title]="affiliate.affiliateContactName || ''">
                                 <img *ngIf="affiliate.affiliateContactName" [src]="profileService.getContactPhotoUrl(affiliate.affiliateContactPhotoPublicId, false)" class="m--img-rounded m--marginless m--img-centered" width="20px" height="20px">
                                 {{affiliate.affiliateContactName}}
                             </p>
