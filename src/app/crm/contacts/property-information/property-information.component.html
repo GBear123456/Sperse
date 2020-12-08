@@ -31,7 +31,8 @@
                                         <div class="dx-field address" [ngClass]="stylingMode">
                                             <div class="dx-field-label">{{ ls.l('Address') }}</div>
                                             <div class="dx-field-value">
-                                                <addresses [contactInfo]="contactInfo$ | async"
+                                                <addresses [ngClass]="{empty: !isAddressDefined(propertyAddresses[0])}"
+                                                           [contactInfo]="contactInfo$ | async"
                                                            [addresses]="propertyAddresses"
                                                            [isAddAllowed]="!isAddressDefined(propertyAddresses[0])"
                                                            [isCopyAllowed]="true"
