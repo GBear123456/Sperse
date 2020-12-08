@@ -6,7 +6,6 @@
                     <dx-select-box
                         width="320px"
                         [dataSource]="types"
-                        [dropDownButtonTemplate]="''"
                         displayExpr="name"
                         valueExpr="id"
                         [(value)]="type">
@@ -23,27 +22,31 @@
                 </div>
                 <div class="field">
                     <label>{{l('Summary') | uppercase }}</label>
-                    <dx-text-area width="355px" [height]="'100px'" [(value)]="summary">
+                    <dx-text-area width="450px" height="100px" [(value)]="summary">
                         <dx-validator>
                             <dxi-validation-rule type="required" [message]="l('NoteIsRequired')"></dxi-validation-rule>
                         </dx-validator>
                     </dx-text-area>
                 </div>
                 <div *ngIf="contacts.length > 1" class="field contact">
-                    <label>{{l('Contact') | uppercase }}</label>
+                    <label>{{l('NoteContact') | uppercase }}</label>
                     <dx-select-box
-                        width="355px"
+                        width="450px"
                         [dataSource]="contacts"
                         displayExpr="fullName"
                         valueExpr="id"
+                        fieldTemplate="fieldTemplate"
                         (onValueChanged)="onContactChanged($event)"
                         [(value)]="contactId">
+                        <div *dxTemplate="let data of 'fieldTemplate'">
+                            <dx-text-box [inputAttr]="{ title: data.fullName }" [value]="data.fullName"></dx-text-box>
+                        </div>
                     </dx-select-box>
                 </div>
-                <div class="field" *ngIf="isCRMOrdersGranted">
+                <div class="field" *ngIf="isCRMOrdersGranted && showAdditionalFields">
                     <label>{{l('Orders') | uppercase }}</label>
                     <dx-select-box
-                        width="355px"
+                        width="450px"
                         [showClearButton]="true"
                         [dataSource]="ordersDataSource"
                         [displayExpr]="orderDisplayValue"
@@ -51,19 +54,19 @@
                         [(value)]="orderId">
                     </dx-select-box>
                 </div>
-                <div class="field">
+                <div *ngIf="showAdditionalFields" class="field">
                     <label>{{l('FollowUpDate') | uppercase }}</label>
                     <dx-date-box
                         #followUpDateBox
-                        width="355px"
+                        width="450px"
                         type="datetime"
                         [(value)]="followupDate">
                     </dx-date-box>
                 </div>
-                <div class="field phone">
+                <div *ngIf="showAdditionalFields" class="field phone">
                     <label>{{l('Phone') | uppercase }}</label>
                     <dx-select-box
-                        width="320px"
+                        width="420px"
                         [dataSource]="phones"
                         displayExpr="phoneNumber"
                         valueExpr="id"
@@ -77,7 +80,7 @@
                         <label>{{l('Date') | uppercase }}</label>
                         <dx-date-box
                             #currentDateBox
-                            width="355px"
+                            width="450px"
                             type="datetime"
                             [(value)]="currentDate">
                         </dx-date-box>
@@ -85,9 +88,9 @@
                     <div class="field">
                         <label>{{l('AddedBy') | uppercase }}</label>
                         <dx-select-box
-                            width="355px"
+                            width="450px"
                             [placeholder]="l('EditValuePlaceholder')"
-                            [dataSource]="users"
+                            [dataSource]="users$ | async"
                             displayExpr="name"
                             valueExpr="id"
                             [(value)]="addedBy">

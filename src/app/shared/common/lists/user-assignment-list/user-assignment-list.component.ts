@@ -10,7 +10,11 @@ import * as _ from 'underscore';
 /** Application imports */
 import { AppStore } from '@app/store';
 import { FiltersService } from '@shared/filters/filters.service';
-import { AssignUserInput, AssignUserForEachInput } from '@shared/service-proxies/service-proxies';
+import {
+    AssignUserInput,
+    AssignUserForEachInput,
+    UserInfoDto
+} from '@shared/service-proxies/service-proxies';
 import { AppStoreService } from '@app/store/app-store.service';
 import { ContactGroup } from '@shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -58,7 +62,7 @@ export class UserAssignmentComponent implements OnDestroy {
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
     selectedItemKeys = [];
     private affectedKeys = [];
-    list: any = [];
+    list: UserInfoDto[] = [];
     relatedUsers;
     listComponent: any;
     tooltipVisible = false;
@@ -96,7 +100,7 @@ export class UserAssignmentComponent implements OnDestroy {
     private disableInactiveUsers() {
         this.list && this.list.forEach(el => {
             if (!el.isActive)
-                el.disabled = true;
+                el['disabled'] = true;
         });
     }
 
@@ -174,15 +178,16 @@ export class UserAssignmentComponent implements OnDestroy {
     refreshList(assignedUsersSelector) {
         this.subscription = this.store$.pipe(assignedUsersSelector)
             .pipe(filter(Boolean))
-            .subscribe(assignableUsers => {
-                if (assignableUsers && assignableUsers instanceof Array) {
-                    this.list = assignableUsers.slice(0);
+            .subscribe((assignedUsers: UserInfoDto[]) => {
+                if (assignedUsers && assignedUsers instanceof Array) {
+                    this.list = assignedUsers.slice(0);
                     this.sortAssignableList();
                     if (!this.relatedUsers && this.selectedKeys && this.selectedKeys[0] && this.proxyService)
-                        this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true).subscribe(relatedUsers => {
-                            this.relatedUsers = relatedUsers;
-                            this.initRelatedUsers();
-                        });
+                        this.proxyService.getRelatedAssignableUsers(this.selectedKeys[0], true)
+                            .subscribe((relatedUsers: UserInfoDto[]) => {
+                                this.relatedUsers = relatedUsers;
+                                this.initRelatedUsers();
+                            });
                     else
                         this.initRelatedUsers();
                 } else

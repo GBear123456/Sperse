@@ -52,7 +52,8 @@ import {
     ContactInfoDto,
     ContactInfoDetailsDto,
     PersonContactInfoDto,
-    EntityAddressInfo,
+    EntityAddressInfo,
+
     ProductServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -73,6 +74,7 @@ import { ContextMenuItem } from '@shared/common/dialogs/modal/context-menu-item.
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 import { CreateInvoiceDialogData } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog-data.interface';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -204,7 +206,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         private permission: AppPermissionService,
         private contactsService: ContactsService,
         private statesService: StatesService,
-        private dialogService: DialogService,
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -694,7 +695,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     openContactListDialog(event) {
         this.dialog.open(CustomerListDialogComponent, {
             minWidth: 350,
-            position: this.dialogService.calculateDialogPosition(event, event.target)
+            position: DialogService.calculateDialogPosition(event, event.target)
         }).afterClosed().subscribe((customer: EntityContactInfo) => {
             if (customer) {
                 this.selectContact(customer);
@@ -769,14 +770,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     createClient() {
-        if (!this.disabledForUpdate)
+        if (!this.disabledForUpdate) {
+            const dialogData: CreateEntityDialogData = {
+                customerType: ContactGroup.Client
+            };
             this.dialog.open(CreateEntityDialogComponent, {
                 panelClass: 'slider',
                 disableClose: true,
                 closeOnNavigation: false,
-                data: {
-                    customerType: ContactGroup.Client
-                }
+                data: dialogData
             }).afterClosed().subscribe(data => {
                 if (data) {
                     this.initContactInfo(ContactInfoDto.fromJS({
@@ -792,6 +794,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.changeDetectorRef.detectChanges();
                 }
             });
+        }
     }
 
     openInvoiceSettings() {

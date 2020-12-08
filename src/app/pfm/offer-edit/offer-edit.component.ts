@@ -68,6 +68,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { OfferNotifyDialogComponent } from '@app/pfm/offer-edit/offer-notify-dialog/offer-notify-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
+import { NavLink } from '@app/crm/contacts/nav-link.model';
 
 @Component({
     selector: 'offer-edit',
@@ -78,7 +79,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 })
 export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
     rootComponent: RootComponent;
-    navLinks = [
+    navLinks: NavLink[] = [
         {
             label: 'General',
             route: '../general'

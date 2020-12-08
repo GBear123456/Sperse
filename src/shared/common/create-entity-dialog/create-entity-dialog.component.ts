@@ -1,72 +1,73 @@
 /** Core imports */
 import {
-    Component,
+    AfterViewInit,
     ChangeDetectionStrategy,
-    OnInit,
-    ViewChild,
-    ViewChildren,
+    ChangeDetectorRef,
+    Component,
+    HostBinding,
     Inject,
     OnDestroy,
-    ChangeDetectorRef,
-    ElementRef,
+    OnInit,
     QueryList,
-    AfterViewInit,
-    HostBinding
+    ViewChild,
+    ViewChildren
 } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
-import { Store, select } from '@ngrx/store';
+import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
 import { Observable, Subscription } from 'rxjs';
-import { finalize, filter, first, map } from 'rxjs/operators';
+import { filter, finalize, first, map, switchMap, pluck } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
-import { Address } from 'ngx-google-places-autocomplete/objects/address';
+import { Address as AutocompleteAddress } from 'ngx-google-places-autocomplete/objects/address';
 
 /** Application imports */
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
-import { CountriesStoreActions, CountriesStoreSelectors, RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import {
-    ContactAssignedUsersStoreSelectors,
-    ContactLinkTypesStoreActions,
-    ContactLinkTypesStoreSelectors
-} from '@app/store';
 import {
     AddressUsageTypesStoreActions,
     AddressUsageTypesStoreSelectors,
     EmailUsageTypesStoreActions,
     EmailUsageTypesStoreSelectors,
     PhoneUsageTypesStoreActions,
-    PhoneUsageTypesStoreSelectors
+    PhoneUsageTypesStoreSelectors,
+    RootStore
 } from '@root/store';
+import {
+    ContactAssignedUsersStoreSelectors,
+    ContactLinkTypesStoreActions,
+    ContactLinkTypesStoreSelectors
+} from '@app/store';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroup } from '@shared/AppEnums';
-import { ContactStatus } from '@shared/AppEnums';
+import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import {
-    ContactServiceProxy,
-    CreateOrUpdateContactInput,
+    AddressUsageTypeDto,
     ContactAddressServiceProxy,
-    CreateContactEmailInput,
-    CreateContactPhoneInput,
-    ContactPhotoServiceProxy,
-    CreateContactAddressInput,
     ContactEmailServiceProxy,
-    ContactPhoneServiceProxy,
-    SimilarContactOutput,
-    ContactPhotoInput,
-    OrganizationContactServiceProxy,
-    PersonInfoDto,
-    CreateContactLinkInput,
-    TrackingInfo,
-    CountryStateDto,
-    OrganizationShortInfo,
-    EmailUsageTypeDto,
-    PhoneUsageTypeDto,
     ContactLinkTypeDto,
-    CountryDto
+    ContactPhoneServiceProxy,
+    ContactPhotoInput,
+    ContactPhotoServiceProxy,
+    ContactServiceProxy,
+    CreateContactAddressInput,
+    CreateContactEmailInput,
+    CreateContactLinkInput,
+    CreateContactPhoneInput,
+    CreateOrUpdateContactInput,
+    CreateOrUpdateContactOutput,
+    EmailUsageTypeDto,
+    OrganizationContactServiceProxy,
+    OrganizationShortInfo,
+    PersonInfoDto,
+    PhoneUsageTypeDto,
+    PipelineDto,
+    PropertyInput,
+    SimilarContactOutput,
+    StageDto,
+    TrackingInfo
 } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarEntitiesDialogComponent } from './similar-entities-dialog/similar-entities-dialog.component';
@@ -92,8 +93,25 @@ import { SourceContactListComponent } from '@shared/common/source-contact-list/s
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { StatesService } from '@root/store/states-store/states.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
+import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
+import { DxValidationGroupComponent } from 'devextreme-angular';
+import { AddressChanged } from '@shared/common/create-entity-dialog/address-fields/address-changed.interface';
+import { Property } from '@shared/common/create-entity-dialog/models/property.type';
+import { Address } from '@shared/common/create-entity-dialog/models/address.model';
+import { Contact } from '@shared/common/create-entity-dialog/models/contact.interface';
+import { Phone } from '@shared/common/create-entity-dialog/models/phone.model';
+import { Link } from '@shared/common/create-entity-dialog/models/link.model';
+import { Email } from '@shared/common/create-entity-dialog/models/email.model';
+import { HttpClient } from '@angular/common/http';
+import { ODataService } from '@shared/common/odata/odata.service';
+import { LeadFields } from '@app/crm/leads/lead-fields.enum';
+import { PipelinesStoreSelectors } from '@app/crm/store';
+import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
+import { LeadDto } from '@app/crm/leads/lead-dto.interface';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
+import { AddressFieldsComponent } from './address-fields/address-fields.component';
 
 @Component({
     templateUrl: 'create-entity-dialog.component.html',
@@ -102,7 +120,13 @@ import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload
         '../../../app/shared/common/toolbar/toolbar.component.less',
         'create-entity-dialog.component.less'
     ],
-    providers: [ CacheHelper, ContactServiceProxy, ContactPhotoServiceProxy, DialogService, GooglePlaceService, ToolbarService ],
+    providers: [
+        CacheHelper,
+        ContactServiceProxy,
+        ContactPhotoServiceProxy,
+        GooglePlaceService,
+        ToolbarService
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDestroy {
@@ -114,9 +138,14 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     @ViewChild(TypesListComponent, { static: false }) partnerTypesComponent: TypesListComponent;
     @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
     @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
-    @ViewChildren('addressInput') addressInputs: QueryList<ElementRef>;
+    @ViewChild('propertyValidationGroup', { static: false }) propertyValidationGroup: DxValidationGroupComponent;
+    @ViewChild('propertyAddressComponent', { static: false }) propertyAddressComponent: AddressFieldsComponent;
     @ViewChildren('linksComponent') linkComponents: QueryList<DxTextBoxComponent>;
-    @HostBinding('class.hidePhotoArea') hidePhotoArea: boolean = this.data.hidePhotoArea;
+
+    showPropertyFields: boolean = this.data.entityTypeSysId === EntityTypeSys.Acquisition;
+    showPropertiesDropdown: boolean = this.data.entityTypeSysId === EntityTypeSys.Management;
+
+    @HostBinding('class.hidePhotoArea') hidePhotoArea: boolean = this.data.hidePhotoArea || this.showPropertyFields;
     @HostBinding('class.hideToolbar') hideToolbar: boolean = this.data.hideToolbar;
 
     currentUserId = abp.session.userId;
@@ -141,7 +170,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     emailRegEx = AppConsts.regexPatterns.email;
     urlRegEx = AppConsts.regexPatterns.url;
     companies: OrganizationShortInfo[] = [];
-    company: string;
+    company: string = this.data.company;
     notes = '';
     ratingValue;
     sourceContactId: number;
@@ -153,7 +182,10 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     phonesTypeDefault = 'M';
     linksTypeDefault = '-';
     addressesTypeDefault = 'H';
-    addressTypes: any = [];
+    addressTypes$: Observable<AddressUsageTypeDto[]> = this.store$.pipe(
+        select(AddressUsageTypesStoreSelectors.getAddressUsageTypes),
+        filter(types => !!types)
+    );
     phoneTypes$: Observable<PhoneUsageTypeDto[]> = this.store$.pipe(
         select(PhoneUsageTypesStoreSelectors.getPhoneUsageTypes),
         filter(types => !!types)
@@ -170,7 +202,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             return entity;
         }))
     );
-    countries: any;
     googleAutoComplete: boolean = Boolean(window['google']);
     photoOriginalData: string;
     photoThumbnailData: string;
@@ -181,15 +212,24 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         links: false,
         addresses: false
     };
-    contacts: any = {
-        emails: [{type: this.emailsTypeDefault}],
-        phones: [{type: this.phonesTypeDefault}],
-        links: [{type: this.linksTypeDefault}],
-        addresses: [{type: this.addressesTypeDefault}]
+    contact: Contact = {
+        emails: [ new Email(this.emailsTypeDefault) ],
+        phones: [ new Phone(this.phonesTypeDefault) ],
+        links: [ new Link(this.linksTypeDefault) ],
+        addresses: [ new Address(this.addressesTypeDefault) ]
+    };
+    property: Property = {
+        propertyId: undefined,
+        name: undefined,
+        note: undefined,
+        address: new Address()
     };
     similarCustomers: SimilarContactOutput[] = [];
     similarCustomersDialog: any;
-    title = '';
+    contactName = '';
+    get title(): string {
+        return this.showPropertyFields ? undefined : this.contactName;
+    }
     jobTitle: string;
     isTitleValid = true;
     buttons: IDialogButton[] = [
@@ -220,9 +260,12 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     isRatingSelected = true;
     isSourceSelected = false;
 
-    isAssignDisabled = true;
-    isListAndTagsDisabled = true;
-    isRatingAndStarsDisabled = true;
+    isAssignDisabled: boolean = !this.permissionService.checkCGPermission(
+        this.data.customerType,
+        'ManageAssignments'
+    );
+    isListAndTagsDisabled: boolean = !this.permissionService.checkCGPermission(this.data.customerType);
+    isRatingAndStarsDisabled: boolean = !this.permissionService.checkCGPermission(this.data.customerType);
     assignedUsersSelector = this.getAssignedUsersSelector();
     hideCompanyField: boolean = this.data.hideCompanyField;
     hideLinksField: boolean = this.data.hideLinksField;
@@ -231,6 +274,33 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     showBankCodeField: boolean = this.userManagementService.checkBankCodeFeature();
     dontCheckSimilarEntities: boolean = this.data.dontCheckSimilarEntities;
     bankCode: string;
+    today: Date = new Date();
+    readonly leadFields: KeysEnum<LeadDto> = LeadFields;
+    properties$: Observable<{ PropertyId: number, PropertyName: string }[]> = this.store$.pipe(
+        select(PipelinesStoreSelectors.getPropertiesPipeline()),
+        switchMap((propertiesPipeline: PipelineDto) => {
+            const finalStage = propertiesPipeline && propertiesPipeline.stages.filter((stage: StageDto) => {
+                return stage.isFinal;
+            }).pop();
+            return this.httpClient.get(
+                this.oDataService.getODataUrl('Lead', {
+                    [this.leadFields.PipelineId]: propertiesPipeline && propertiesPipeline.id,
+                    [this.leadFields.StageId]: finalStage && finalStage.id
+                }),
+                {
+                    headers: {
+                        Authorization: 'Bearer ' + abp.auth.getToken()
+                    },
+                    params: {
+                        $select: [ this.leadFields.PropertyId, this.leadFields.PropertyName ].join(',')
+                    }
+                }
+            );
+        }),
+        pluck('value')
+    );
+    nameRegex = AppConsts.regexPatterns.fullName;
+    propertyId: number;
 
     constructor(
         public dialog: MatDialog,
@@ -243,7 +313,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         private contactAddressService: ContactAddressServiceProxy,
         private nameParser: NameParserService,
         private pipelineService: PipelineService,
-        private dialogService: DialogService,
         private orgServiceProxy: OrganizationContactServiceProxy,
         private notifyService: NotifyService,
         private messageService: MessageService,
@@ -254,18 +323,14 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         private statesService: StatesService,
         private permissionService: AppPermissionService,
         private userManagementService: UserManagementService,
+        private httpClient: HttpClient,
+        private oDataService: ODataService,
         public ls: AppLocalizationService,
         public toolbarService: ToolbarService,
-        @Inject(MAT_DIALOG_DATA) public data: any
-    ) {
-        this.company = this.data.company;
-        this.isAssignDisabled = !this.permissionService.checkCGPermission(data.customerType, 'ManageAssignments');
-        this.isListAndTagsDisabled = !permissionService.checkCGPermission(data.customerType);
-        this.isRatingAndStarsDisabled = !permissionService.checkCGPermission(data.customerType);
-    }
+        @Inject(MAT_DIALOG_DATA) public data: CreateEntityDialogData
+    ) {}
 
     ngOnInit() {
-        this.countriesStateLoad();
         this.addressTypesLoad();
         this.phoneTypesLoad();
         this.emailTypesLoad();
@@ -278,17 +343,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     ngAfterViewInit() {
         if (this.sourceComponent)
             this.sourceComponent.loadSourceContacts();
-    }
-
-    getCountryCode(name: string): string {
-        let country = this.countries && this.countries.find(country => country.name === name);
-        return country && country['code'];
-    }
-
-    getCountryStates(countryCode: string): Observable<CountryStateDto[]> {
-        return this.store$.pipe(
-            select(StatesStoreSelectors.getCountryStates, { countryCode: countryCode })
-        );
     }
 
     private createEntity(): void {
@@ -331,12 +385,33 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             sourceContactId: this.sourceContactId,
             trackingInfo: trackingInfo,
             parentContactId: this.data.parentId,
-            bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null
+            bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null,
+            leadTypeId: this.data.entityTypeId
         };
         if (this.disallowMultipleItems) {
             dataObj.emailAddress = dataObj.emailAddresses[0];
             dataObj.phoneNumber = dataObj.phoneNumbers[0];
             dataObj.address = dataObj.addresses[0];
+        }
+        if (this.showPropertyFields) {
+            let state = this.property.address.state;
+            dataObj.propertyInfo = PropertyInput.fromJS({
+                propertyId: this.propertyId,
+                name: this.property.name,
+                note: this.property.note,
+                address: CreateContactAddressInput.fromJS({
+                    streetAddress: this.property.address.streetAddress,
+                    city: this.property.address.city,
+                    stateId: state && state.code,
+                    stateName: state && state.name,
+                    zip: this.property.address.zip,
+                    countryId: this.property.address.countryCode
+                })
+            });
+        } else if (this.showPropertiesDropdown) {
+            dataObj.propertyInfo = {
+                propertyId: this.propertyId,
+            };
         }
 
         this.clearSimilarCustomersCheck();
@@ -344,11 +419,13 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         saveButton.disabled = true;
         const createModel = this.data.createModel || CreateOrUpdateContactInput;
         let createContactInput = createModel.fromJS(dataObj);
-        createContactInput.statusId = this.data.isInLeadMode && !this.data.parentId ? ContactStatus.Prospective : ContactStatus.Active;
+        createContactInput.statusId = this.data.isInLeadMode && !this.data.parentId
+            ? ContactStatus.Prospective
+            : ContactStatus.Active;
         const createMethod = this.data.createMethod || this.contactProxy.createOrUpdateContact.bind(this.contactProxy);
         createMethod(createContactInput).pipe(
             finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); })
-        ).subscribe(result => {
+        ).subscribe((result: CreateOrUpdateContactOutput) => {
             dataObj.id = result.contactId;
             dataObj.leadId = result.leadId;
             this.afterSave(dataObj);
@@ -361,30 +438,36 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         } else if (this.buttons[0].contextMenu.items[0].selected) {
             this.resetFullDialog();
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
-            this.data.refreshParent(true, this.stageId);
+            this.data.refreshParent();
         } else if (this.buttons[0].contextMenu.items[1].selected) {
             this.redirectToClientDetails(data.id, data.leadId);
-            this.data.refreshParent(true, this.stageId);
+            this.data.refreshParent();
         } else {
-            this.data.refreshParent(false, this.stageId);
+            this.data.refreshParent();
             this.close();
         }
     }
 
     save(): void {
-        if (!this.person.firstName && !this.person.lastName && (this.hideCompanyField || !this.company)
-            && !this.contacts.emails[0].email && !this.contacts.phones[0].number
-        ) {
+        if (this.showPropertyFields && !this.property.name) {
             this.isTitleValid = false;
+            return this.notifyService.error(this.ls.l('RequiredField', this.ls.l('PropertyName')));
+        }
+
+        if (!this.person.firstName && !this.person.lastName && (this.hideCompanyField || !this.company)
+            && !this.contact.emails[0].email && !this.contact.phones[0].number
+        ) {
+            this.isTitleValid = this.showPropertyFields || false;
             return this.notifyService.error(this.ls.l('RequiredContactInfoIsMissing'));
         }
 
-        if (this.title && !ValidationHelper.ValidateName(this.title)) {
+        if (this.contactName && !ValidationHelper.ValidateName(this.contactName)) {
             this.isTitleValid = false;
             return this.notifyService.error(this.ls.l('FullNameIsNotValid'));
         }
 
-        if (!this.validateMultiple(this.emailValidators) ||
+        if ((this.propertyValidationGroup && !this.propertyValidationGroup.instance.validate().isValid) ||
+            !this.validateMultiple(this.emailValidators) ||
             !this.validateMultiple(this.phoneValidators) ||
             (!this.hideCompanyField && !this.validateCompanyName()) ||
             (!this.hideLinksField && !this.validateMultiple(this.linkValidators))
@@ -392,7 +475,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             return;
 
         if (!this.disallowMultipleItems) {
-            if (['emails', 'phones', 'links', 'addresses'].some((type) => {
+            if (['emails', 'phones', 'links', 'addresses'].some((type: string) => {
                 let result = this.checkDuplicateContact(type);
                 if (result)
                     this.notifyService.error(this.ls.l('DuplicateContactDetected', this.ls.l(type)));
@@ -410,7 +493,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     getEmailContactInput() {
-        return this.contacts.emails.filter((obj) => obj.email).map((val) => {
+        return this.contact.emails.filter((obj: Email) => obj.email).map((val: Email) => {
             return {
                 emailAddress: val.email,
                 usageTypeId: val.type,
@@ -420,7 +503,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     getPhoneContactInput() {
-        return this.contacts.phones.map((val) => {
+        return this.contact.phones.map((val: Phone) => {
             return val.number && val.number != val.code ? {
                 phoneNumber: val.number,
                 phoneExtension: val.ext,
@@ -431,7 +514,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     getLinkContactInput() {
-        return this.contacts.links.filter((obj) => obj.url).map((val) => {
+        return this.contact.links.filter((obj: Link) => obj.url).map((val: Link) => {
             return {
                 url: val.url,
                 isActive: true,
@@ -442,7 +525,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     getAddressContactInput() {
-        return this.contacts.addresses.map((address) => {
+        return this.contact.addresses.map((address) => {
             let streetAddressParts = [];
             if (address.streetAddress)
                 streetAddressParts.push(address.streetAddress);
@@ -505,7 +588,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     getDialogPosition(event, shiftX) {
-        return this.dialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
+        return DialogService.calculateDialogPosition(event, event.target.closest('div'), shiftX, -12);
     }
 
     toggleStages() {
@@ -541,7 +624,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             let person = this.person,
                 isPhone =  field == 'phones',
                 isAddress = field == 'addresses',
-                contact = field && this.contacts[field][index];
+                contact = field && this.contact[field][index];
             if (isPhone && contact.number == contact.code)
                 return false;
             this.clearSimilarCustomersCheck();
@@ -560,7 +643,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
                     isAddress && contact.stateCode || undefined,
                     isAddress && contact.zip || undefined,
                     isAddress && contact.countryCode || undefined,
-                    this.data.customerType
+                    this.data.customerType.toString()
                 ).subscribe(response => {
                     if (response) {
                         if (field)
@@ -581,7 +664,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     getSimilarCustomers(field) {
-        return this.contacts[field].reduce((similar, fields) => {
+        return this.contact[field].reduce((similar, fields) => {
             return fields.similarCustomers ? similar.concat(fields.similarCustomers) : similar;
         }, []);
     }
@@ -594,61 +677,72 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         return event.element.getElementsByTagName('input')[0].value;
     }
 
-    onAddressChanged(address: Address, i: number) {
+    updateContactAddressFields(event: AddressChanged, address: Address, i: number) {
         this.checkAddressControls(i);
-        let number = GooglePlaceService.getStreetNumber(address.address_components);
-        let street = GooglePlaceService.getStreet(address.address_components);
-        const countryCode = GooglePlaceService.getCountryCode(address.address_components);
-        const stateCode = GooglePlaceService.getStateCode(address.address_components);
-        const stateName = GooglePlaceService.getStateName(address.address_components);
+        this.updateAddressFields(event, address);
+    }
+
+    updatePropertyAddress(address: AutocompleteAddress, applyForName = false) {
+        if (applyForName)
+            this.property.name = address.formatted_address;
+        this.updateAddressFields(
+            {
+                address: address,
+                addressInput: null
+            },
+            this.property.address
+        );
+        this.propertyAddressComponent.changeDetectorRef.detectChanges();
+    }
+
+    updateAddressFields(event: AddressChanged, address: Address) {
+        let number = GooglePlaceService.getStreetNumber(event.address.address_components);
+        let street = GooglePlaceService.getStreet(event.address.address_components);
+        const countryCode = GooglePlaceService.getCountryCode(event.address.address_components);
+        const stateCode = GooglePlaceService.getStateCode(event.address.address_components);
+        const stateName = GooglePlaceService.getStateName(event.address.address_components);
         this.statesService.updateState(countryCode, stateCode, stateName);
-        this.contacts.addresses[i].state = {
+        address.state = {
             code: stateCode,
             name: stateName
         };
-        const countryName = GooglePlaceService.getCountryName(address.address_components);
-        this.contacts.addresses[i].country = countryName === 'United States'
+        const countryName = GooglePlaceService.getCountryName(event.address.address_components);
+        address.country = countryName === 'United States'
             ? AppConsts.defaultCountryName
             : countryName;
-        this.contacts.addresses[i].zip = GooglePlaceService.getZipCode(address.address_components);
-        this.contacts.addresses[i].street = GooglePlaceService.getStreet(address.address_components);
-        this.contacts.addresses[i].streetNumber = GooglePlaceService.getStreetNumber(address.address_components);
-        this.contacts.addresses[i].countryCode = countryCode;
-        this.contacts.addresses[i].address = this.addressInputs.toArray()[i].nativeElement.value = number
-            ? number + ' ' + street
-            : street;
-        this.contacts.addresses[i].city = GooglePlaceService.getCity(address.address_components);
+        address.zip = GooglePlaceService.getZipCode(event.address.address_components);
+        address.streetAddress = GooglePlaceService.getStreet(event.address.address_components);
+        address.streetNumber = GooglePlaceService.getStreetNumber(event.address.address_components);
+        address.countryCode = countryCode;
+        address.address =  number ? number + ' ' + street : street;
+        if (event.addressInput) {
+            event.addressInput.nativeElement.value = address.address;
+        }
+        address.city = GooglePlaceService.getCity(event.address.address_components);
         this.changeDetectorRef.detectChanges();
     }
 
     onCustomStateCreate(e, i: number) {
-        this.contacts.addresses[i].state = {
+        this.contact.addresses[i].state = {
             code: null,
             name: e.text
         };
-        this.statesService.updateState(this.contacts.addresses[i].countryCode, null, e.text);
+        this.statesService.updateState(this.contact.addresses[i].countryCode, null, e.text);
         e.customItem = {
             code: null,
             name: e.text
         };
     }
 
-    countriesStateLoad(): void {
-        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
-        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe(
-            (countries: CountryDto[]) => this.countries = countries
-        );
+    updateCountryInfo(countryName: string, addressIndex: number) {
+        this.contact.addresses[addressIndex]['country'] = countryName == 'United States'
+            ? AppConsts.defaultCountryName
+            : countryName;
+        this.changeDetectorRef.detectChanges();
     }
 
     addressTypesLoad() {
         this.store$.dispatch(new AddressUsageTypesStoreActions.LoadRequestAction());
-        this.store$.pipe(
-            select(AddressUsageTypesStoreSelectors.getAddressUsageTypes),
-            filter(types => !!types)
-        ).subscribe(types => {
-            this.addressTypes = types;
-            this.changeDetectorRef.detectChanges();
-        });
     }
 
     phoneTypesLoad() {
@@ -665,9 +759,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     onCountryChange(event, index) {
         this.checkAddressControls(index);
-        if (event.value) {
-            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(event.value));
-        }
     }
 
     checkAddressControls(index: number) {
@@ -684,19 +775,19 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     checkDuplicateContact(field) {
-        return this.contacts[field].some((checkItem, checkIndex) => {
-            return !this.contacts[field].every((item, index) => {
+        return this.contact[field].some((checkItem, checkIndex) => {
+            return !this.contact[field].every((item, index) => {
                 return (index == checkIndex) || JSON.stringify(checkItem) != JSON.stringify(item);
             });
         });
     }
 
-    addNewContact(field) {
+    addNewContact(field: string) {
         if (this.addButtonVisible[field] &&
             this.checkEveryFieldItemValid(field) &&
             !this.checkDuplicateContact(field)
         ) {
-            this.contacts[field].push({
+            this.contact[field].push({
                 type: this[field + 'TypeDefault']
             });
             this.addButtonVisible[field] = false;
@@ -704,7 +795,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         }
     }
 
-    checkFieldValid(field, item) {
+    checkFieldValid(field: string, item) {
         let isObject = typeof(item) == 'object';
         if (field == 'emails')
             return this.validateEmailAddress(isObject ? item.email : item);
@@ -718,8 +809,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             return false;
     }
 
-    checkEveryFieldItemValid(field) {
-        return this.contacts[field].every((item) => {
+    checkEveryFieldItemValid(field: string) {
+        return this.contact[field].every((item) => {
             if (item.type)
                 return this.checkFieldValid(field, item);
             else
@@ -728,12 +819,12 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     emptyOrRemoveInput(field, index) {
-        if (index || this.contacts[field].length > 1) {
-            this.contacts[field].splice(index, 1);
+        if (index || this.contact[field].length > 1) {
+            this.contact[field].splice(index, 1);
             this.addButtonVisible[field] = this.checkEveryFieldItemValid(field)
                 && !this.checkDuplicateContact(field);
         } else {
-            this.contacts[field][index] = {type: this[field + 'TypeDefault']};
+            this.contact[field][index] = {type: this[field + 'TypeDefault']};
             this.addButtonVisible[field] = false;
         }
         this.validateCompanyName();
@@ -774,7 +865,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     onPhoneChanged(component, i) {
         setTimeout(() => {
             let field = 'phones';
-            this.contacts[field][i].code = component.getCountryCode();
+            this.contact[field][i].code = component.getCountryCode();
             this.addButtonVisible[field] = !component.isEmpty() &&
                 component.isValid() && !this.checkDuplicateContact(field);
             if (this.addButtonVisible[field]) {
@@ -818,7 +909,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
         clearTimeout(this.lookupTimeout);
         this.lookupTimeout = setTimeout(() => {
-            this.orgServiceProxy.getOrganizations(search, this.data.customerType || ContactGroup.Client, 10)
+            this.orgServiceProxy.getOrganizations(search, this.data.customerType.toString() || ContactGroup.Client, 10)
                 .subscribe((res: OrganizationShortInfo[]) => {
                     if (search == this.company)
                         this.companies = res;
@@ -835,14 +926,14 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     companyValidation = (options) => {
         return options.value
                || (!this.jobTitle
-                  && !this.contacts.emails.some(email => email.type === 'C' && email.email)
-                  && !this.contacts.phones.some(phone => phone.type === 'C' && phone.number && phone.number !== phone.code)
-                  && !this.contacts.links.some(link => link.isCompany && link.url)
-                  && !this.contacts.addresses.some(address => address.type === 'C' && address.address)
+                  && !this.contact.emails.some(email => email.type === 'C' && email.email)
+                  && !this.contact.phones.some(phone => phone.type === 'C' && phone.number && phone.number !== phone.code)
+                  && !this.contact.links.some(link => link.isCompany && link.url)
+                  && !this.contact.addresses.some(address => address.type === 'C' && address.address)
                );
     }
 
-    companyOptionChanged($event, forced = false) {
+    companyOptionChanged($event, forced: boolean = false) {
         if (!this.company || !this.companies.length || forced)
             $event.component.option('opened', Boolean(this.companies.length));
     }
@@ -863,7 +954,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             source: this.photoOriginalData,
             title: this.ls.l('AddLogo')
         };
-        console.log('ContactGroup_' + this.data.customerType + '_singular');
         this.dialog.open(UploadPhotoDialogComponent, {
             data: data,
             hasBackdrop: true
@@ -887,7 +977,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         this.phonesComponent = component;
     }
 
-    resetFullDialog(forced = true) {
+    resetFullDialog(forced: boolean = true) {
         let resetInternal = () => {
             this.resetComponent(this.emailsComponent);
             this.phonesComponent.reset();
@@ -895,10 +985,10 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.addButtonVisible['phones'] = false;
             this.addButtonVisible['links'] = false;
             this.addButtonVisible['addresses'] = false;
-            this.contacts.emails = [{type: this.emailsTypeDefault}];
-            this.contacts.phones = [{type: this.phonesTypeDefault}];
-            this.contacts.links = [{type: this.linksTypeDefault}];
-            this.contacts.addresses = [{type: this.addressesTypeDefault}];
+            this.contact.emails = [ new Email(this.emailsTypeDefault) ];
+            this.contact.phones = [ new Phone(this.phonesTypeDefault) ];
+            this.contact.links = [ new Link(this.linksTypeDefault) ];
+            this.contact.addresses = [ new Address(this.addressesTypeDefault) ];
             this.sourceContactId = undefined;
             this.notes = undefined;
             this.bankCode = '????';
@@ -911,14 +1001,16 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;
             this.photoSourceData = undefined;
-            this.title = '';
+            this.contactName = '';
             this.tagsComponent && this.tagsComponent.reset();
             this.listsComponent && this.listsComponent.reset();
             this.partnerTypesComponent && this.partnerTypesComponent.reset();
             if (this.userAssignmentComponent) {
                 this.userAssignmentComponent.selectedItemKey = this.currentUserId;
             }
-            this.stageId = this.stages.length ? this.stages.find(v => v.index === this.defaultStageSortOrder).id : undefined;
+            this.stageId = this.stages.length
+                ? this.stages.find(v => v.index === this.defaultStageSortOrder).id
+                : undefined;
             this.ratingComponent && this.ratingComponent.reset();
             this.changeDetectorRef.detectChanges();
         };
@@ -937,8 +1029,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     onFullNameKeyUp(inputValue: string) {
-        this.title = inputValue;
-        this.nameParser.parseIntoPerson(this.title, this.person);
+        this.contactName = inputValue;
+        this.nameParser.parseIntoPerson(this.contactName, this.person);
         this.checkSimilarEntities();
     }
 
@@ -949,23 +1041,26 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     leadStagesLoad() {
         this.modalDialog.startLoading();
-        this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.data.customerType)
-            .pipe(first(), finalize(() => this.modalDialog.finishLoading())).subscribe(
-                result => {
-                    this.stages = result.stages.map((stage) => {
-                        if (stage.sortOrder === this.defaultStageSortOrder) {
-                            this.stageId = stage.id;
-                        }
-                        return {
-                            id: stage.id,
-                            name: stage.name,
-                            index: stage.sortOrder
-                        };
-                    });
-                    this.changeDetectorRef.detectChanges();
-                },
-                () => this.modalDialog.finishLoading()
-            );
+        this.pipelineService.getPipelineDefinitionObservable(
+            AppConsts.PipelinePurposeIds.lead,
+            this.data.customerType,
+            this.data.pipelineId
+        ).pipe(first(), finalize(() => this.modalDialog.finishLoading())).subscribe(
+            (pipeline: PipelineDto) => {
+                this.stages = pipeline.stages.map((stage: StageDto) => {
+                    if (stage.sortOrder === this.defaultStageSortOrder) {
+                        this.stageId = stage.id;
+                    }
+                    return {
+                        id: stage.id,
+                        name: stage.name,
+                        index: stage.sortOrder
+                    };
+                });
+                this.changeDetectorRef.detectChanges();
+            },
+            () => this.modalDialog.finishLoading()
+        );
     }
 
     onStagesChanged(event) {
@@ -1019,5 +1114,9 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         else
             this.sourceContactId = undefined;
         this.togglePartnerSource();
+    }
+
+    checkPropertyNameValid(event) {
+        this.isTitleValid = Boolean(event.target.value);
     }
 }

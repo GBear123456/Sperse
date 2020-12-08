@@ -14,21 +14,26 @@ import {
     CreatePersonOrgRelationOutput,
     OrganizationContactInfoDto,
     OrganizationContactServiceProxy,
+    OrganizationShortInfo,
     PersonOrgRelationServiceProxy,
     PersonOrgRelationShortInfo
 } from '@shared/service-proxies/service-proxies';
 import { CrmStore, OrganizationUnitsStoreActions } from '@app/crm/store';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AddCompanyDialogData } from '@app/crm/contacts/add-company-dialog/add-company-dialog-data.interface';
 
 @Component({
     templateUrl: 'add-company-dialog.html',
     styleUrls: ['add-company-dialog.less']
 })
 export class AddCompanyDialogComponent {
-    companies: any = [];
+    companies: OrganizationShortInfo[] = [];
     private lookupTimeout: any;
     private latestSearchPhrase: string;
+    title: string;
+    id: any;
+    company: any;
     constructor(
         private elementRef: ElementRef,
         private relationServiceProxy: PersonOrgRelationServiceProxy,
@@ -37,7 +42,7 @@ export class AddCompanyDialogComponent {
         private loadingService: LoadingService,
         public dialogRef: MatDialogRef<AddCompanyDialogComponent>,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) public data: any
+        @Inject(MAT_DIALOG_DATA) public data: AddCompanyDialogData
     ) {}
 
     lookupCompanies(search?: string) {
@@ -55,9 +60,9 @@ export class AddCompanyDialogComponent {
         this.lookupTimeout = setTimeout(() => {
             $event.component.option('opened', true);
             $event.component.option('noDataText', this.ls.l('LookingForItems'));
-            this.lookupCompanies(search).subscribe((res) => {
+            this.lookupCompanies(search).subscribe((companies: OrganizationShortInfo[]) => {
                 if (search == this.latestSearchPhrase) {
-                    this.companies = res;
+                    this.companies = companies;
                     setTimeout(() => { $event.event.target.value = search; });
                     $event.component.option('opened', Boolean(this.companies.length));
                 }
@@ -66,11 +71,11 @@ export class AddCompanyDialogComponent {
     }
 
     lookupFocusOut($event) {
-        if (isNaN(this.data.company))
-            this.data.company = this.latestSearchPhrase;
+        if (isNaN(this.company))
+            this.company = this.latestSearchPhrase;
         else {
-            this.data.id = this.data.company;
-            this.data.company = $event.event.target.value;
+            this.id = this.company;
+            this.company = $event.event.target.value;
         }
     }
 
@@ -91,8 +96,8 @@ export class AddCompanyDialogComponent {
                 contactInfo.personContactInfo['personOrgRelationInfo'] = PersonOrgRelationShortInfo.fromJS({
                     id: response.id,
                     isActive: true,
-                    jobTitle: this.data.title,
-                    organization: {id: orgId, name: this.data.company, thumbnail: ''},
+                    jobTitle: this.title,
+                    organization: {id: orgId, name: this.company, thumbnail: ''},
                     relationType: {id: PersonOrgRelationType.Employee, name: 'Employee'}
                 })
             );
@@ -111,14 +116,14 @@ export class AddCompanyDialogComponent {
         this.relationServiceProxy.create(
             CreatePersonOrgRelationInput.fromJS({
                 personId: this.data.contactId,
-                organizationId: this.data.id,
-                organizationName: this.data.company,
+                organizationId: this.id,
+                organizationName: this.company,
                 relationshipType: PersonOrgRelationType.Employee,
-                jobTitle: this.data.title
+                jobTitle: this.title
             }
         )).pipe(
             finalize(() => {
-                this.data.id = undefined;
+                this.id = undefined;
                 this.loadingService.finishLoading();
             }),
             switchMap((response: CreatePersonOrgRelationOutput) => {

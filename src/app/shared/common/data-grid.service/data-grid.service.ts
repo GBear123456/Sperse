@@ -71,7 +71,7 @@ export class DataGridService {
         dataGrid,
         requiredFields?: string[],
         fieldsDependencies?: FieldDependencies
-    ) {
+    ): string[] {
         let selectFields = requiredFields || [];
         const visibleColumns = dataGrid.instance.getVisibleColumns();
         visibleColumns.forEach((column: dxDataGridColumn) => {

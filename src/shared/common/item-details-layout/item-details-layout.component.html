@@ -9,11 +9,13 @@
             <ng-content select="[aboveNavigation]"></ng-content>
             <dx-scroll-view showScrollbar="onHover" height="calc(100% - 50px)">
                 <nav mat-tab-nav-bar>
-                    <a mat-tab-link *ngFor="let link of navLinks" [hidden]="link.hidden" [disabled]="link.disabled"
-                       [routerLink]="link.route" routerLinkActive="active" [queryParams]="queryParams"
-                       (click)="navChanged(link)">
-                        {{link.label}}
-                    </a>
+                    <ng-container *ngFor="let link of navLinks">
+                        <a *ngIf="isVisible(link) | async" mat-tab-link [disabled]="link.disabled"
+                           [routerLink]="link.route" routerLinkActive="active" [queryParams]="queryParams"
+                           (click)="navChanged(link)">
+                            {{ getLabel(link) | async }}
+                        </a>
+                    </ng-container>
                 </nav>
             </dx-scroll-view>
         </mat-sidenav>

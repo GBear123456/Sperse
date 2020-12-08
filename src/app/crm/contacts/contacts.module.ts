@@ -88,8 +88,6 @@ import { UserInboxComponent } from './user-inbox/user-inbox.component';
 import { MergeContactDialogComponent } from './merge-contact-dialog/merge-contact-dialog.component';
 import { ContactPersonsDialogComponent } from './contact-persons-dialog/contact-persons-dialog.component';
 import { TemplateDocumentsDialogComponent } from './documents/template-documents-dialog/template-documents-dialog.component';
-import { UploadDocumentDialogComponent } from './upload-document-dialog/upload-document-dialog.component';
-import { UploadDocumentsDialogComponent } from './documents/upload-documents-dialog/upload-documents-dialog.component';
 import { DocumentTypesListComponent } from './document-types-list/document-types-list.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 import { ContactsRoutingModule } from './contacts-routing.module';
@@ -107,7 +105,8 @@ import {
     NotesServiceProxy,
     OrderSubscriptionServiceProxy,
     CustomerServiceProxy,
-    ContactPhotoServiceProxy
+    ContactPhotoServiceProxy,
+    PropertyServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
@@ -148,6 +147,7 @@ import { ResellerActivityComponent } from './reseller-activity/reseller-activity
 import { AddServiceProductDialogComponent } from './subscriptions/add-subscription-dialog/add-service-product-dialog/add-service-product-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
+import { PropertyInformationComponent } from '@app/crm/contacts/property-information/property-information.component';
 
 @NgModule({
     declarations: [
@@ -182,8 +182,6 @@ import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete'
         ContactPersonsDialogComponent,
         NoteAddDialogComponent,
         DocumentsComponent,
-        UploadDocumentDialogComponent,
-        UploadDocumentsDialogComponent,
         DocumentTypesListComponent,
         PermissionTreeComponent,
         AddContactDialogComponent,
@@ -210,6 +208,7 @@ import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete'
         AddServiceProductDialogComponent,
         TemplateDocumentsDialogComponent,
         CustomerListDialogComponent,
+        PropertyInformationComponent,
         ResellerActivityComponent
     ],
     imports: [
@@ -282,8 +281,6 @@ import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete'
         CompanyDialogComponent,
         PersonDialogComponent,
         ContactPersonsDialogComponent,
-        UploadDocumentDialogComponent,
-        UploadDocumentsDialogComponent,
         AddContactDialogComponent,
         AddCompanyDialogComponent,
         NoteAddDialogComponent,
@@ -320,6 +317,7 @@ import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete'
         DocumentTypeServiceProxy,
         OrderSubscriptionServiceProxy,
         ContactCommunicationServiceProxy,
+        PropertyServiceProxy,
         PersonalDetailsService,
         DocumentsService,
         InvoicesService,

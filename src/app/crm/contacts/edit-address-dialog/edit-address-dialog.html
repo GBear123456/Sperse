@@ -1,9 +1,10 @@
-<h2 mat-dialog-title (mousedown)="mouseDown($event)" *ngIf="data.title">{{data.title}}</h2>
-<h2 mat-dialog-title (mousedown)="mouseDown($event)" *ngIf="!data.title">{{ls.l('ContactInfoDialogTitle', ls.l(action), ls.l('Address'))}}</h2>
+<h2 mat-dialog-title (mousedown)="mouseDown($event)">
+    {{ ls.l('ContactInfoDialogTitle', ls.l(action), ls.l('Address'))}}
+</h2>
 <dx-scroll-view showScrollbar="always">
     <mat-dialog-content>
         <dx-validation-group (onInitialized)="initValidationGroup($event)">
-            <div *ngIf="!data.editAddressOnly">
+            <div *ngIf="data.showType">
                 <label>{{ls.l('Type')}}</label>
                 <dx-select-box
                     name="usageType"
@@ -24,14 +25,13 @@
                         </div>
                     </div>
                     <div *dxTemplate="let item of 'itemTemplate'">
-                        <div title="{{getUsageTypeHint(item)}}">{{item.name}}</div>
+                        <div [title]="getUsageTypeHint(item)">{{item.name}}</div>
                     </div>
                     <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('TypeRequired')}}"></dxi-validation-rule>
+                        <dxi-validation-rule type="required" [message]="ls.l('TypeRequired')"></dxi-validation-rule>
                     </dx-validator>
                 </dx-select-box>
             </div>
-
             <div>
                 <label>{{ls.l('Address')}}</label>
                 <input *ngIf="!googleAutoComplete"
@@ -117,7 +117,7 @@
                 </dx-text-box>
             </div>
 
-            <div *ngIf="!data.editAddressOnly">
+            <div>
                 <label>{{ls.l('Comment')}}</label>
                 <dx-text-box
                     name="comment"
@@ -126,7 +126,7 @@
                 </dx-text-box>
             </div>
 
-            <p *ngIf="!data.editAddressOnly">
+            <p>
                 <dx-check-box
                     text="{{ls.l('ActiveContact')}}"
                     [disabled]="!isEditAllowed"
@@ -142,7 +142,10 @@
     </mat-dialog-content>
 </dx-scroll-view>
 <mat-dialog-actions>
-    <button *ngIf="isEditAllowed && data.deleteItem && (action=='Edit')" mat-button class="button-layout button-clean-red" (click)="data.deleteItem($event)">
+    <button *ngIf="isEditAllowed && data.isDeleteAllowed && data.deleteItem && action === 'Edit'"
+            mat-button
+            class="button-layout button-clean-red"
+            (click)="data.deleteItem($event)">
         <i class="delete fa fa-times" aria-hidden="true"></i>{{ls.l('Delete')}}
     </button>
     <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>
