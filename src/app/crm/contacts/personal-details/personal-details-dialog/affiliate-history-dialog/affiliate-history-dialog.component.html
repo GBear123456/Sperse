@@ -19,7 +19,7 @@
                                 {{affiliate.affiliateCode}}
                             </p>
                         </div>
-                        <div class="row">
+                        <div *ngIf="hasCommissionsFeature" class="row">
                             <label class="control-label col-sm-2 text-right">{{ls.l('AffiliateRate')}}:</label>
                             <p class="form-control-static">
                                 {{affiliate.affiliateRate === null ? '' : (affiliate.affiliateRate * 100).toFixed(2) + '%'}}

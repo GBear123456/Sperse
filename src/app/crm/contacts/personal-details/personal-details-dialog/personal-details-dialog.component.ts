@@ -45,6 +45,8 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { AffiliateHistoryDialogComponent } from './affiliate-history-dialog/affiliate-history-dialog.component';
 import { CrmService } from '@app/crm/crm.service';
 import { ContactGroup } from '@shared/AppEnums';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -122,6 +124,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     defaultAffiliateRate;
     affiliateRateInitil;
     affiliateRate;
+    hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
+    hasCommissionsPermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMCommissions);
 
     constructor(
         private route: ActivatedRoute,
@@ -140,6 +144,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private loadingService: LoadingService,
         private orderProxy: OrderServiceProxy,
         private itemDetailsService: ItemDetailsService,
+        private featureCheckerService: FeatureCheckerService,
+        private permissionCheckerService: PermissionCheckerService,
         public invoicesService: InvoicesService,
         public permissionChecker: AppPermissionService,
         public ls: AppLocalizationService,
