@@ -90,6 +90,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         {
             id: 'saveTemplateOptions',
             title: this.data.saveTitle,
+            disabled: this.data.saveDisabled,
             class: 'primary',
             action: this.save.bind(this),
             contextMenu: {
