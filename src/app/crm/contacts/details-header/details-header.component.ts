@@ -158,7 +158,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     constructor(
         injector: Injector,
         private activatedRoute: ActivatedRoute,
-        private contactsService: ContactsService,
         private contactServiceProxy: ContactServiceProxy,
         private personOrgRelationService: PersonOrgRelationServiceProxy,
         private orgContactService: OrganizationContactServiceProxy,
@@ -175,8 +174,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         private permissionChecker: PermissionCheckerService,
         private profileService: ProfileService,
         private permissionService: AppPermissionService,
-        public dialog: MatDialog,
-        public ls: AppLocalizationService
+        public contactsService: ContactsService,
+        public ls: AppLocalizationService,
+        public dialog: MatDialog
     ) {}
 
     ngOnInit(): void {
@@ -315,12 +315,6 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                     personContactInfo.orgRelations.find(orgRelation => orgRelation.id === personContactInfo.orgRelationId);
         }
         return personContactInfo;
-    }
-
-    bankCodeStarIdChange(starId: number) {
-        const data = this.data;
-        data.starId = starId;
-        this.data = data;
     }
 
     updateJobTitle(value) {

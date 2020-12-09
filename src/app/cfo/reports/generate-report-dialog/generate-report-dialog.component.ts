@@ -29,7 +29,7 @@ import { GenerateReportStep } from './generate-report-step.enum';
 import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppConsts } from '@shared/AppConsts';
-import { ReportNotificationInfoInput } from '@shared/service-proxies/service-proxies';
+import { SendReportNotificationInfo } from '@shared/service-proxies/service-proxies';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppFeatures } from '@shared/AppFeatures';
 
@@ -147,7 +147,7 @@ export class GenerateReportDialogComponent implements OnInit {
             businessEntityIds: businessEntityIds,
             bankAccountIds: [],
             notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
-                ? new ReportNotificationInfoInput({
+                ? new SendReportNotificationInfo({
                     recipientUserEmailAddress: this.notificationToEmail,
                     sendReportInAttachments: this.sendReportInAttachments
                 })
@@ -310,7 +310,7 @@ export class GenerateReportDialogComponent implements OnInit {
     }
 
     get submitButtonDisabled() {
-        return this.generatingStarted || !this.dontSendEmailNotification && !this.emailIsValid;
+        return this.generatingStarted || !this.dontSendEmailNotification && !this.emailIsValidAndNotEmpty;
     }
 
     onInitialized(event) {

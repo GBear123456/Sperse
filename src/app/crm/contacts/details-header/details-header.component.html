@@ -32,7 +32,7 @@
                                    [showDescriptionsOnHover]="true"
                                    [showReportLink]="data?.personContactInfo?.person?.bankCode"
                                    reportIconName="blue"
-                                   (onBankCodeStarIdChange)="bankCodeStarIdChange($event)">
+                                   (bankCodeChange)="contactsService.invalidate()">
                 </bank-code-letters>
             </div>
         </ng-template>
