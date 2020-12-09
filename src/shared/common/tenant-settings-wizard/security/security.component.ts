@@ -2,12 +2,17 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 
 /** Third party imports */
-import { Observable, of } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 
 /** Application imports */
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { SecuritySettingsEditDto } from '@shared/service-proxies/service-proxies';
+import {
+    PasswordComplexitySetting,
+    TenantSettingsServiceProxy,
+    TwoFactorLoginSettingsEditDto,
+    UserLockOutSettingsEditDto
+} from '@shared/service-proxies/service-proxies';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { AppService } from '@app/app.service';
 
@@ -18,17 +23,24 @@ import { AppService } from '@app/app.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SecurityComponent implements ITenantSettingsStepComponent {
-    @Input() settings: SecuritySettingsEditDto;
+    @Input() passwordComplexitySettings: PasswordComplexitySetting;
+    @Input() userLockOutSettings: UserLockOutSettingsEditDto;
+    @Input() twoFactorLoginSettings: TwoFactorLoginSettingsEditDto;
     isMultiTenancyEnabled: boolean = this.multiTenancyService.isEnabled;
     isHost: boolean = this.appService.isHostTenant;
 
     constructor(
         private appService: AppService,
         private multiTenancyService: AbpMultiTenancyService,
+        private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         public ls: AppLocalizationService
     ) {}
 
-    save(): Observable<any> {
-        return of(null);
+    save(): Observable<[void, void, void]> {
+        return forkJoin(
+            this.tenantSettingsServiceProxy.updatePasswordComplexitySettings(this.passwordComplexitySettings),
+            this.tenantSettingsServiceProxy.updateUserLockOutSettings(this.userLockOutSettings),
+            this.tenantSettingsServiceProxy.updateTwoFactorLoginSettings(this.twoFactorLoginSettings)
+        );
     }
 }

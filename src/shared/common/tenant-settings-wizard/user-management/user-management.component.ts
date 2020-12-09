@@ -1,9 +1,11 @@
 import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
+    HostSettingsServiceProxy,
     HostUserManagementSettingsEditDto,
+    TenantSettingsServiceProxy,
     TenantUserManagementSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
 
@@ -17,10 +19,14 @@ export class UserManagementComponent implements ITenantSettingsStepComponent {
     @Input() tenantSettings: TenantUserManagementSettingsEditDto;
     @Input() hostSettings: HostUserManagementSettingsEditDto;
     constructor(
+        private hostSettingsServiceProxy: HostSettingsServiceProxy,
+        private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         public ls: AppLocalizationService
     ) {}
 
-    save(): Observable<any> {
-        return of(null);
+    save(): Observable<void> {
+        return this.tenantSettings
+            ? this.tenantSettingsServiceProxy.updateUserManagementSettings(this.tenantSettings)
+            : this.hostSettingsServiceProxy.updateUserManagementSettings(this.hostSettings);
     }
 }

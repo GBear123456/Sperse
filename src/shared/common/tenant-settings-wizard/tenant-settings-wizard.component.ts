@@ -12,7 +12,7 @@ import {
 import { MatVerticalStepper } from '@angular/material/stepper';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
-import { finalize, publishReplay, refCount, map } from 'rxjs/operators';
+import { finalize, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -20,16 +20,16 @@ import {
     CommonLookupServiceProxy,
     EmailSettingsEditDto,
     GeneralSettingsEditDto,
-    HostSettingsEditDto,
     HostSettingsServiceProxy,
     HostUserManagementSettingsEditDto,
-    SecuritySettingsEditDto,
+    PasswordComplexitySetting,
     SubscribableEditionComboboxItemDto,
     SubscribableEditionComboboxItemDtoListResultDto,
     TenantManagementSettingsEditDto,
-    TenantSettingsEditDto,
     TenantSettingsServiceProxy,
-    TenantUserManagementSettingsEditDto
+    TenantUserManagementSettingsEditDto,
+    TwoFactorLoginSettingsEditDto,
+    UserLockOutSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -58,33 +58,14 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     hasHostPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings);
     hasTenantPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings);
     steps: TenantSettingsStep[];
-    hostSettings$: Observable<HostSettingsEditDto> = this.hasHostPermission
-        ? this.hostSettingsService.getAllSettings().pipe(
-            publishReplay(),
-            refCount()
-        )
+    generalSettings$: Observable<GeneralSettingsEditDto> = this.tenantSettingsService.getGeneralSettings();
+    tenantManagementSettings$: Observable<TenantManagementSettingsEditDto> = this.hostSettingsService.getTenantManagementSettings();
+    hostUserManagementSettings$: Observable<HostUserManagementSettingsEditDto> = this.hasHostPermission
+        ? this.hostSettingsService.getUserManagementSettings()
         : of(null);
-    tenantSettings$: Observable<TenantSettingsEditDto> = this.hasTenantPermission
-        ? this.tenantSettingsService.getAllSettings().pipe(
-            publishReplay(),
-            refCount()
-        )
+    tenantUserManagementSettings$: Observable<TenantUserManagementSettingsEditDto> = this.hasTenantPermission
+        ? this.tenantSettingsService.getUserManagementSettings()
         : of(null);
-    settings$: Observable<TenantSettingsEditDto | HostSettingsEditDto> = this.hasHostPermission
-        ? this.hostSettings$
-        : this.tenantSettings$;
-    generalSettings$: Observable<GeneralSettingsEditDto> = this.settings$.pipe(
-        map((settings: TenantSettingsEditDto) => settings.general)
-    );
-    tenantManagementSettings$: Observable<TenantManagementSettingsEditDto> = this.hostSettings$.pipe(
-        map((settings: HostSettingsEditDto) => settings && settings.tenantManagement)
-    );
-    hostUserManagementSettings$: Observable<HostUserManagementSettingsEditDto> = this.hostSettings$.pipe(
-        map((settings: HostSettingsEditDto) => settings && settings.userManagement)
-    );
-    tenantUserManagementSettings$: Observable<TenantUserManagementSettingsEditDto> = this.tenantSettings$.pipe(
-        map((settings: TenantSettingsEditDto) => settings && settings.userManagement)
-    );
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     editions$: Observable<SubscribableEditionComboboxItemDto[]> = this.commonLookupServiceProxy.getEditionsForCombobox(false).pipe(
         map((result: SubscribableEditionComboboxItemDtoListResultDto) => {
@@ -96,12 +77,10 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             return result.items;
         })
     );
-    securitySettings$: Observable<SecuritySettingsEditDto> = this.settings$.pipe(
-        map((settings: TenantSettingsEditDto | HostSettingsEditDto) => settings && settings.security)
-    );
-    emailSettings$: Observable<EmailSettingsEditDto> = this.settings$.pipe(
-        map((settings: TenantSettingsEditDto | HostSettingsEditDto) => settings && settings.email)
-    );
+    passwordComplexitySettings$: Observable<PasswordComplexitySetting> = this.tenantSettingsService.getPasswordComplexitySettings();
+    userLockOutSettings$: Observable<UserLockOutSettingsEditDto> = this.tenantSettingsService.getUserLockOutSettings();
+    twoFactorLogin$: Observable<TwoFactorLoginSettingsEditDto> = this.tenantSettingsService.getTwoFactorLoginSettings();
+    emailSettings$: Observable<EmailSettingsEditDto> = this.tenantSettingsService.getEmailSettings();
 
     constructor(
         private permissionCheckerService: PermissionCheckerService,
@@ -166,7 +145,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
 
     next() {
         const newIndex = this.stepper.selectedIndex + 1;
-        if (newIndex === this.visibleSteps.length - 1) {
+        if (newIndex > this.visibleSteps.length - 1) {
             this.dialogRef.close();
         } else {
             this.stepper.selectedIndex = newIndex;

@@ -15,25 +15,38 @@
     </ul>
 </div>
 <div class="right">
-    <mat-vertical-stepper>
-        <mat-step *ngIf="showTimezoneSelection">
-            <general-settings [settings]="generalSettings$ | async"></general-settings>
+    <mat-vertical-stepper #stepper>
+        <mat-step *ngIf="showTimezoneSelection" #generalSettingsStep>
+            <ng-container *ngIf="stepper.selected === null || stepper.selected === generalSettingsStep">
+                <general-settings [settings]="generalSettings$ | async"></general-settings>
+            </ng-container>
         </mat-step>
-        <mat-step *ngIf="hasHostPermission">
-            <tenant-management [settings]="tenantManagementSettings$ | async"
-                               [editions]="editions$ | async">
-            </tenant-management>
+        <mat-step *ngIf="hasHostPermission" #tenantManagementStep>
+            <ng-container *ngIf="stepper.selected === tenantManagementStep">
+                <tenant-management [settings]="tenantManagementSettings$ | async"
+                                   [editions]="editions$ | async">
+                </tenant-management>
+            </ng-container>
         </mat-step>
-        <mat-step>
-            <user-management [hostSettings]="hostUserManagementSettings$ | async"
-                             [tenantSettings]="tenantUserManagementSettings$ | async">
-            </user-management>
+        <mat-step #userManagementStep>
+            <ng-container *ngIf="stepper.selected === userManagementStep">
+                <user-management [hostSettings]="hostUserManagementSettings$ | async"
+                                 [tenantSettings]="tenantUserManagementSettings$ | async">
+                </user-management>
+            </ng-container>
         </mat-step>
-        <mat-step>
-            <security [settings]="securitySettings$ | async"></security>
+        <mat-step #securityStep>
+            <ng-container *ngIf="stepper.selected === securityStep">
+                <security [passwordComplexitySettings]="passwordComplexitySettings$ | async"
+                          [userLockOutSettings]="userLockOutSettings$ | async"
+                          [twoFactorLoginSettings]="twoFactorLogin$ | async">
+                </security>
+            </ng-container>
         </mat-step>
-        <mat-step>
-            <email [settings]="emailSettings$ | async"></email>
+        <mat-step #emailStep>
+            <ng-container *ngIf="stepper.selected === emailStep">
+                <email [settings]="emailSettings$ | async"></email>
+            </ng-container>
         </mat-step>
     </mat-vertical-stepper>
     <div mat-dialog-actions>

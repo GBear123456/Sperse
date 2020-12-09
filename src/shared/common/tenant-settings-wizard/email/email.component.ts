@@ -34,14 +34,14 @@ export class EmailComponent implements ITenantSettingsStepComponent {
 
     sendTestEmail(): void {
         (this.appService.isHostTenant ? this.hostSettingsServiceProxy : this.tenantSettingsServiceProxy)
-        .sendTestEmail(new SendTestEmailInput({
-            emailAddress: this.testEmailAddress
-        })).subscribe(() => {
-            this.notifyService.info(this.ls.l('TestEmailSentSuccessfully'));
-        });
+            .sendTestEmail(new SendTestEmailInput({
+                emailAddress: this.testEmailAddress
+            })).subscribe(() => {
+                this.notifyService.info(this.ls.l('TestEmailSentSuccessfully'));
+            });
     }
 
-    save(): Observable<any> {
-        return of(null);
+    save(): Observable<void> {
+        return this.tenantSettingsServiceProxy.updateEmailSettings(this.settings);
     }
 }

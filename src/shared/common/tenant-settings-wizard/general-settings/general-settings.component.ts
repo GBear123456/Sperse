@@ -18,6 +18,7 @@ import {
     GeneralSettingsEditDto,
     SettingScopes,
     TenantLoginInfoDto,
+    TenantSettingsServiceProxy,
     TimingServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppTimezoneScope } from '@shared/AppEnums';
@@ -50,21 +51,15 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     constructor(
         private timingService: TimingServiceProxy,
         private appSession: AppSessionService,
+        private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {}
 
     save(): Observable<any> {
-        const generalSettings: any = {
-            general: {
-                timezone: this.settings.timezone,
-                zendeskAccountUrl: this.settings.zendeskAccountUrl,
-                publicSiteUrl: this.settings.publicSiteUrl
-            }
-        };
         if (!this.publicSiteUrl || this.publicSiteUrl.valid) {
             return forkJoin(
-                //this.settingsService.updateAllSettings(generalSettings),
+                this.tenantSettingsServiceProxy.updateGeneralSettings(this.settings),
                 this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),
                 this.tosUploader ? this.tosUploader.uploadFile() : of(null)
             );
