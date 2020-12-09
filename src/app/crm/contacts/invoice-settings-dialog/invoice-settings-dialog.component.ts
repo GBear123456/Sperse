@@ -60,7 +60,8 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         EmailTags.SenderAffiliateCode
     ];
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
-    isRateDisabled = !this.permission.isGranted(AppPermissions.CRMCommissionsManage);
+    isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
+    isRateDisabled = this.isManageUnallowed || !this.permission.isGranted(AppPermissions.CRMCommissionsManage);
 
     constructor(
         public dialog: MatDialog,
@@ -76,6 +77,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     ) {
         this.invoicesService.invalidateSettings();
         data.templateType = EmailTemplateType.Invoice;
+        data.saveDisabled = this.isManageUnallowed;
         data.title = ls.l('Invoice Settings');
         data.saveTitle = ls.l('Save');
     }

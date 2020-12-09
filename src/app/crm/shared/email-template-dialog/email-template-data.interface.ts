@@ -5,6 +5,7 @@ export interface EmailTemplateData {
     contact: ContactInfoDto;
     title: string;
     saveTitle: string;
+    saveDisabled: boolean;
     suggestionEmails: string[];
     attachments: Partial<EmailAttachment>[];
     from: string;

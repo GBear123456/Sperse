@@ -196,9 +196,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         },
         {
             name: 'reseller-activity',
-            label: this.l('ResellerActivity'), route: 'reseller-activity',
-            visible$: of(this.appSessionService.tenant &&
-                this.appSessionService.tenant.customLayoutType != LayoutType.BankCode)
+            label: this.l('ResellerActivity'), route: 'reseller-activity'
         },
         {
             name: 'lead-information',

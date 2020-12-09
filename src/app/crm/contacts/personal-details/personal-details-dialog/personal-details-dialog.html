@@ -36,7 +36,7 @@
                                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateRate'))"
                                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateRate').toLowerCase())"
                                               [validationRules]="affiliateRateValidationRules"
-                                              [isReadOnlyField]="!manageAllowed"
+                                              [isReadOnlyField]="!hasCommissionsPermission || !manageAllowed"
                                               (valueChanged)="updateAffiliateRate($event)"
                                               (itemDeleted)="deleteItem(ls.l('AffiliateRate'))">
                                 </inplace-edit>

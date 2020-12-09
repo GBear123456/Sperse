@@ -11,16 +11,20 @@
                 <dx-text-box 
                     [placeholder]="ls.l('LegalName')"
                     [(value)]="settings.legalName"
+                    [readOnly]="isManageUnallowed"
                     [maxLength]="150">
                 </dx-text-box>
                 <dx-text-area 
                     height="90px"
                     [placeholder]="ls.l('Address')"
                     [(value)]="settings.address"
+                    [readOnly]="isManageUnallowed"
                     [maxLength]="500">
                 </dx-text-area>
-                <dx-text-area [placeholder]="ls.l('Invoice_DefaultNote')"
-                              [(value)]="settings.defaultNote">
+                <dx-text-area
+                    [readOnly]="isManageUnallowed"
+                    [placeholder]="ls.l('Invoice_DefaultNote')"
+                    [(value)]="settings.defaultNote">
                 </dx-text-area>
                 <dx-number-box
                     *ngIf="hasCommissionsFeature"
@@ -28,7 +32,7 @@
                     [max]="99"
                     mode="number"
                     [showClearButton]="true"
-                    [disabled]="isRateDisabled"
+                    [readOnly]="isRateDisabled"
                     [placeholder]="ls.l('Default') + ' ' + ls.l('AffiliateRate') + ', %'"
                     [(value)]="settings.defaultAffiliateRate"
                     [showSpinButtons]="true">
@@ -40,23 +44,30 @@
                     name="currency"
                     displayExpr="text"
                     valueExpr="id"
+                    [readOnly]="isManageUnallowed"
                     [placeholder]="ls.l('Currency')"
                     [(value)]="settings.currency"
                     [dataSource]="currencies">
                 </dx-select-box>
-                <a (click)="showBankSettingsDialog()" href="javascript:void(0)">{{ls.l('InvoiceEmail_BankTransferSettings')}}</a>
+                <a (click)="showBankSettingsDialog()" 
+                    href="javascript:void(0)" [hidden]="isManageUnallowed">
+                    {{ls.l('InvoiceEmail_BankTransferSettings')}}
+                </a>
                 <dx-check-box
+                    [readOnly]="isManageUnallowed"
                     [text]="ls.l('InvoiceEmail_ShowShippingAddress')"
                     [(value)]="settings.showShippingAddress">
                 </dx-check-box>
                 <dx-check-box
+                    [readOnly]="isManageUnallowed"
                     [text]="ls.l('InvoiceEmail_AttachPDF')"
                     [(value)]="settings.attachPDF">
                 </dx-check-box>
                 <dx-text-box
-                        [placeholder]="ls.l('Tax/VatNo')"
-                        [(value)]="settings.taxVatNo"
-                        [maxLength]="20">
+                    [readOnly]="isManageUnallowed"
+                    [placeholder]="ls.l('Tax/VatNo')"
+                    [(value)]="settings.taxVatNo"
+                    [maxLength]="20">
                 </dx-text-box>
             </div>
         </div>
