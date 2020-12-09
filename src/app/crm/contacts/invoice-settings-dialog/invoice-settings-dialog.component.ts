@@ -16,6 +16,8 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { EmailTags } from '../contacts.const';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: 'invoice-settings-dialog.component.html',
@@ -57,7 +59,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         EmailTags.SenderCalendly,
         EmailTags.SenderAffiliateCode
     ];
-
+    hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     isRateDisabled = !this.permission.isGranted(AppPermissions.CRMCommissionsManage);
 
     constructor(
@@ -68,6 +70,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         private changeDetectorRef: ChangeDetectorRef,
         private invoiceProxy: InvoiceServiceProxy,
         private permission: AppPermissionService,
+        private featureCheckerService: FeatureCheckerService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
