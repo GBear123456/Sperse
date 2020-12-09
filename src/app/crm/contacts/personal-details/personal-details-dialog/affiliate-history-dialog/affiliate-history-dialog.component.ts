@@ -44,7 +44,7 @@ export class AffiliateHistoryDialogComponent implements OnInit {
         this.contactProxy.getAffiliateHistory(this.data.contactId)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe((result: AffiliateInfoHistoryInfo[]) => {
-                this.affiliateHistory = result;
+                this.affiliateHistory = result.reverse();
                 this.changeDetectorRef.detectChanges();
             });
     }
