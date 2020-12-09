@@ -73101,11 +73101,11 @@ export enum ReportPeriod {
     Annual = "Annual", 
 }
 
-export class ReportNotificationInfoInput implements IReportNotificationInfoInput {
+export class SendReportNotificationInfo implements ISendReportNotificationInfo {
     recipientUserEmailAddress!: string;
     sendReportInAttachments!: boolean;
 
-    constructor(data?: IReportNotificationInfoInput) {
+    constructor(data?: ISendReportNotificationInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -73121,9 +73121,9 @@ export class ReportNotificationInfoInput implements IReportNotificationInfoInput
         }
     }
 
-    static fromJS(data: any): ReportNotificationInfoInput {
+    static fromJS(data: any): SendReportNotificationInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new ReportNotificationInfoInput();
+        let result = new SendReportNotificationInfo();
         result.init(data);
         return result;
     }
@@ -73136,7 +73136,7 @@ export class ReportNotificationInfoInput implements IReportNotificationInfoInput
     }
 }
 
-export interface IReportNotificationInfoInput {
+export interface ISendReportNotificationInfo {
     recipientUserEmailAddress: string;
     sendReportInAttachments: boolean;
 }
@@ -73150,7 +73150,7 @@ export class GenerateInput implements IGenerateInput {
     businessEntityIds!: number[] | undefined;
     bankAccountIds!: number[] | undefined;
     departments!: string[] | undefined;
-    notificationData!: ReportNotificationInfoInput | undefined;
+    notificationData!: SendReportNotificationInfo | undefined;
 
     constructor(data?: IGenerateInput) {
         if (data) {
@@ -73183,7 +73183,7 @@ export class GenerateInput implements IGenerateInput {
                 for (let item of data["departments"])
                     this.departments.push(item);
             }
-            this.notificationData = data["notificationData"] ? ReportNotificationInfoInput.fromJS(data["notificationData"]) : <any>undefined;
+            this.notificationData = data["notificationData"] ? SendReportNotificationInfo.fromJS(data["notificationData"]) : <any>undefined;
         }
     }
 
@@ -73230,7 +73230,7 @@ export interface IGenerateInput {
     businessEntityIds: number[] | undefined;
     bankAccountIds: number[] | undefined;
     departments: string[] | undefined;
-    notificationData: ReportNotificationInfoInput | undefined;
+    notificationData: SendReportNotificationInfo | undefined;
 }
 
 export class SendReportNotificationInput implements ISendReportNotificationInput {
