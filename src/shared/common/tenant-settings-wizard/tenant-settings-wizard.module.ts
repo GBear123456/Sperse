@@ -51,7 +51,6 @@ import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/u
         TenantManagementComponent,
         UserManagementComponent
     ],
-    providers: [],
     entryComponents: [ TenantSettingsWizardComponent ]
 })
 export class TenantSettingsWizardModule {}

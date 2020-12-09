@@ -3,63 +3,63 @@
     <h5>{{ls.l("PasswordComplexity")}}</h5>
     <div class="columns">
         <div>
-            <!--<div class="form-group">
+            <div class="form-group">
                 <dx-check-box id="Setting_PasswordComplexity_UseDefaultSettings"
                               [text]="ls.l('UseDefaultSettings')"
-                              [(value)]="passwordComplexitySettings.useDefaultPasswordComplexitySettings">
+                              [(value)]="passwordComplexitySettings.isDefaultUsed">
                 </dx-check-box>
             </div>
             <div class="form-group">
                 <dx-check-box id="Setting_PasswordComplexity_RequireDigit"
-                              [disabled]="passwordComplexitySettings.useDefaultPasswordComplexitySettings"
+                              [disabled]="passwordComplexitySettings.isDefaultUsed"
                               [text]="ls.l('PasswordComplexity_RequireDigit')"
-                              [(value)]="passwordComplexitySettings.useDefaultPasswordComplexitySettings
-                                 ? passwordComplexitySettings.defaultPasswordComplexity.requireDigit
-                                 : passwordComplexitySettings.requireDigit">
+                              [(value)]="passwordComplexitySettings.isDefaultUsed
+                                 ? passwordComplexitySettings.default.requireDigit
+                                 : passwordComplexitySettings.current.requireDigit">
                 </dx-check-box>
             </div>
             <div class="form-group">
                 <dx-check-box id="Setting_PasswordComplexity_RequireLowercase"
                               [text]="ls.l('PasswordComplexity_RequireLowercase')"
-                              [disabled]="passwordComplexitySettings.useDefaultPasswordComplexitySettings"
-                              [(value)]="passwordComplexitySettings.useDefaultPasswordComplexitySettings
-                                 ? passwordComplexitySettings.defaultPasswordComplexity.requireLowercase
-                                 : passwordComplexitySettings.requireLowercase">
+                              [disabled]="passwordComplexitySettings.isDefaultUsed"
+                              [(value)]="passwordComplexitySettings.isDefaultUsed
+                                 ? passwordComplexitySettings.default.requireLowercase
+                                 : passwordComplexitySettings.current.requireLowercase">
                 </dx-check-box>
-            </div>-->
+            </div>
         </div>
         <div>
-            <!--<div class="form-group">
+            <div class="form-group">
                 <dx-check-box id="Setting_PasswordComplexity_RequireNonAlphanumeric"
-                              [disabled]="settings.useDefaultPasswordComplexitySettings"
+                              [disabled]="passwordComplexitySettings.isDefaultUsed"
                               [text]="ls.l('PasswordComplexity_RequireNonAlphanumeric')"
-                              [(value)]="settings.useDefaultPasswordComplexitySettings
-                                 ? settings.defaultPasswordComplexity.requireNonAlphanumeric
-                                 : passwordComplexitySettings.requireNonAlphanumeric">
+                              [(value)]="passwordComplexitySettings.isDefaultUsed
+                                 ? passwordComplexitySettings.default.requireNonAlphanumeric
+                                 : passwordComplexitySettings.current.requireNonAlphanumeric">
                 </dx-check-box>
             </div>
             <div class="form-group require-uppercase">
                 <dx-check-box id="Setting_PasswordComplexity_RequireUppercase"
-                              [disabled]="settings.useDefaultPasswordComplexitySettings"
+                              [disabled]="passwordComplexitySettings.isDefaultUsed"
                               [text]="ls.l('PasswordComplexity_RequireUppercase')"
-                              [(value)]="settings.useDefaultPasswordComplexitySettings
-                                 ? settings.defaultPasswordComplexity.requireUppercase
-                                 : passwordComplexitySettings.requireUppercase">
+                              [(value)]="passwordComplexitySettings.isDefaultUsed
+                                 ? passwordComplexitySettings.default.requireUppercase
+                                 : passwordComplexitySettings.current.requireUppercase">
                 </dx-check-box>
             </div>
             <div class="form-group require-length">
                 <label>{{ls.l("PasswordComplexity_RequiredLength")}}</label>
                 <input type="number" name="RequiredLength" class="form-control"
                        [ngClass]="{
-                            'edited': settings.useDefaultPasswordComplexitySettings
-                              ? settings.defaultPasswordComplexity.requiredLength
-                              : passwordComplexitySettings.requiredLength
+                            'edited': passwordComplexitySettings.isDefaultUsed
+                              ? passwordComplexitySettings.default.requiredLength
+                              : passwordComplexitySettings.current.requiredLength
                        }"
-                       [disabled]="settings.useDefaultPasswordComplexitySettings"
-                       [(ngModel)]="settings.useDefaultPasswordComplexitySettings
-                            ? settings.defaultPasswordComplexity.requiredLength
-                            : passwordComplexitySettings.requiredLength">
-            </div>-->
+                       [disabled]="passwordComplexitySettings.isDefaultUsed"
+                       [(ngModel)]="passwordComplexitySettings.isDefaultUsed
+                            ? passwordComplexitySettings.default.requiredLength
+                            : passwordComplexitySettings.current.requiredLength">
+            </div>
         </div>
     </div>
 </div>

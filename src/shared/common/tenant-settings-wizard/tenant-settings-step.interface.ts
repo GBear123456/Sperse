@@ -3,7 +3,7 @@ import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wiz
 export interface TenantSettingsStep {
     name: string;
     text: string;
-    component: ITenantSettingsStepComponent;
+    getComponent: () => ITenantSettingsStepComponent;
     saved: boolean;
     visible: boolean;
 }

@@ -8,7 +8,7 @@ import { Observable, forkJoin } from 'rxjs';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
-    PasswordComplexitySetting,
+    PasswordComplexitySettingsEditDto,
     TenantSettingsServiceProxy,
     TwoFactorLoginSettingsEditDto,
     UserLockOutSettingsEditDto
@@ -23,7 +23,7 @@ import { AppService } from '@app/app.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SecurityComponent implements ITenantSettingsStepComponent {
-    @Input() passwordComplexitySettings: PasswordComplexitySetting;
+    @Input() passwordComplexitySettings: PasswordComplexitySettingsEditDto;
     @Input() userLockOutSettings: UserLockOutSettingsEditDto;
     @Input() twoFactorLoginSettings: TwoFactorLoginSettingsEditDto;
     isMultiTenancyEnabled: boolean = this.multiTenancyService.isEnabled;
@@ -38,7 +38,11 @@ export class SecurityComponent implements ITenantSettingsStepComponent {
 
     save(): Observable<[void, void, void]> {
         return forkJoin(
-            this.tenantSettingsServiceProxy.updatePasswordComplexitySettings(this.passwordComplexitySettings),
+            this.tenantSettingsServiceProxy.updatePasswordComplexitySettings(
+                this.passwordComplexitySettings.isDefaultUsed
+                ? this.passwordComplexitySettings.default
+                : this.passwordComplexitySettings.current
+            ),
             this.tenantSettingsServiceProxy.updateUserLockOutSettings(this.userLockOutSettings),
             this.tenantSettingsServiceProxy.updateTwoFactorLoginSettings(this.twoFactorLoginSettings)
         );

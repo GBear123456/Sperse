@@ -22,7 +22,7 @@ import {
     GeneralSettingsEditDto,
     HostSettingsServiceProxy,
     HostUserManagementSettingsEditDto,
-    PasswordComplexitySetting,
+    PasswordComplexitySettingsEditDto,
     SubscribableEditionComboboxItemDto,
     SubscribableEditionComboboxItemDtoListResultDto,
     TenantManagementSettingsEditDto,
@@ -41,6 +41,7 @@ import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard
 import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/user-management/user-management.component';
 import { SecurityComponent } from '@shared/common/tenant-settings-wizard/security/security.component';
 import { EmailComponent } from '@shared/common/tenant-settings-wizard/email/email.component';
+import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 
 @Component({
     selector: 'tenant-settings-wizard',
@@ -77,7 +78,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             return result.items;
         })
     );
-    passwordComplexitySettings$: Observable<PasswordComplexitySetting> = this.tenantSettingsService.getPasswordComplexitySettings();
+    passwordComplexitySettings$: Observable<PasswordComplexitySettingsEditDto> = this.tenantSettingsService.getPasswordComplexitySettings();
     userLockOutSettings$: Observable<UserLockOutSettingsEditDto> = this.tenantSettingsService.getUserLockOutSettings();
     twoFactorLogin$: Observable<TwoFactorLoginSettingsEditDto> = this.tenantSettingsService.getTwoFactorLoginSettings();
     emailSettings$: Observable<EmailSettingsEditDto> = this.tenantSettingsService.getEmailSettings();
@@ -104,35 +105,35 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             {
                 name: 'general-settings',
                 text: this.ls.l('GeneralSettings'),
-                component: this.generalSettingsComponent,
+                getComponent: () => this.generalSettingsComponent,
                 saved: false,
                 visible: true
             },
             {
                 name: 'tenant-management',
                 text: this.ls.l('TenantManagement'),
-                component: this.tenantManagementComponent,
+                getComponent: () => this.tenantManagementComponent,
                 saved: false,
                 visible: this.hasHostPermission
             },
             {
                 name: 'user-management',
                 text: this.ls.l('UserManagement'),
-                component: this.userManagementComponent,
+                getComponent: () => this.userManagementComponent,
                 saved: false,
                 visible: true
             },
             {
                 name: 'security',
                 text: this.ls.l('Security'),
-                component: this.securityComponent,
+                getComponent: () => this.securityComponent,
                 saved: false,
                 visible: true
             },
             {
                 name: 'email',
                 text: this.ls.l('EmailSMTP'),
-                component: this.emailComponent,
+                getComponent: () => this.emailComponent,
                 saved: false,
                 visible: true
             }
@@ -154,9 +155,10 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
 
     saveAndNext() {
         const currentStep = this.visibleSteps[this.stepper.selectedIndex];
-        if (currentStep.component) {
+        const currentStepComponent: ITenantSettingsStepComponent = currentStep.getComponent();
+        if (currentStepComponent) {
             this.loadingService.startLoading(this.elementRef.nativeElement);
-            currentStep.component.save().pipe(
+            currentStepComponent.save().pipe(
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
             ).subscribe(
                 () => {
