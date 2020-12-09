@@ -25,14 +25,14 @@
                                               (itemDeleted)="deleteItem(ls.l('Affiliate'))">
                                 </inplace-edit>
                             </div>
-                            <div class="field">
+                            <div class="field" *ngIf="hasCommissionsFeature">
                                 <label>{{ ls.l('AffiliateRate') }}, %:</label>
                                 <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
                                               [editPlaceholder]="defaultAffiliateRate !== undefined ? ls.l('DefaultRate') + ' ' + defaultAffiliateRate : ''"
                                               [value]="affiliateRate === null ? '' : affiliateRate + ''"
-                                              [showInlineEditButton]="true"
-                                              [isDeleteEnabled]="true"
+                                              [showInlineEditButton]="hasCommissionsPermission"
+                                              [isDeleteEnabled]="hasCommissionsPermission"
                                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateRate'))"
                                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateRate').toLowerCase())"
                                               [validationRules]="affiliateRateValidationRules"
