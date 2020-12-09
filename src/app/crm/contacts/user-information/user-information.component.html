@@ -81,7 +81,7 @@
                 <div class="col-md-4">
                     <h2>{{ls.l('SelectRoles')}}</h2><span class="optional">({{ls.l('optional')}})</span>
                     <p>{{ls.l('SelectRolesDescription')}}</p>
-                    <ul class="items-list">
+                    <ul class="items-list roles">
                         <li *ngFor="let role of roles" [title]="role.displayName">
                             <dx-check-box [disabled]="!isInviteAllowed"
                                         [text]="role.displayName"
@@ -101,7 +101,9 @@
         <mat-tab label="General">
             <dx-scroll-view showScrollbar="onHover">
                 <div class="user-info row" #row>
-                    <div class="col-md-5" [ngClass]="{ onecolum: row.offsetWidth < 600 }">
+                    <div class="col-md-4" [ngClass]="{ onecolum: row.offsetWidth < 600 }">
+                        <h2>{{ls.l('UserInfo')}}</h2>
+                        <p>{{ls.l('UserInfoDescription')}}</p>
                         <div class="section-item clearfix">
                             <div class="item-edit-label">{{ls.l("EmailAddress")}}:</div>
                             <inplace-edit #InPlaceEmail
@@ -130,7 +132,7 @@
                         <div class="title">
                             {{ls.l('Options') + ':'}}
                         </div>
-                        <ul *ngIf="data && data?.user" class="items-list">
+                        <ul *ngIf="data && data?.user" class="items-list options">
                             <li>
                                 <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isActive" [text]="ls.l('Active')" (onValueChanged)="isActiveChanged($event)"></dx-check-box>
                             </li>
@@ -143,12 +145,15 @@
                         </ul>
                     </div>
                     <div class="col-md-4">
-                        <div class="title">
-                            {{ls.l('Roles') + ':'}}
-                        </div>
-                        <ul class="items-list">
+                        <h2>{{ls.l('SelectRoles')}}</h2><span class="optional">({{ls.l('optional')}})</span>
+                        <p>{{ls.l('SelectRolesDescription')}}</p>
+                        <ul class="items-list roles">
                             <li *ngFor="let role of data?.roles">
-                                <dx-check-box [disabled]="!changeRolesAllowed" [(value)]="role.isAssigned" text="{{role.roleDisplayName}}" (onValueChanged)="roleUpdate($event, role)"></dx-check-box>
+                                <dx-check-box [disabled]="!changeRolesAllowed" 
+                                    [(value)]="role.isAssigned" 
+                                    text="{{role.roleDisplayName}}" 
+                                    (onValueChanged)="roleUpdate($event, role)">
+                                </dx-check-box>
                             </li>
                         </ul>
                     </div>
