@@ -143,6 +143,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         onLoadingChanged: () => {
             this.isDataLoaded = true;
         },
+        onError: () => {
+            this.isDataLoaded = true;
+        },
         fields: [
             {
                 area: 'column',
@@ -225,31 +228,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             }
         }
     };
-    filters = [
-        new FilterModel({
-            component: FilterCheckBoxesComponent,
-            caption: 'SourceOrganizationUnitId',
-            hidden: this.appSessionService.userIsMember,
-            field: 'sourceOrganizationUnits',
-            items: {
-                element: new FilterCheckBoxesModel(
-                    {
-                        dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
-                        dispatch: () => this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false)),
-                        nameField: 'displayName',
-                        keyExpr: 'id'
-                    })
-            }
-        }),
-        new FilterModel({
-            component: FilterCalendarComponent,
-            caption: 'date',
-            operator: { from: 'startDate', to: 'endDate' },
-            field: 'date',
-            items: { from: new FilterItemModel(), to: new FilterItemModel() },
-            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
-        })
-    ];
     deactivate$: Subject<null> = new Subject<null>();
     totalCount: number;
     isDataLoaded = false;
@@ -319,9 +297,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     }
 
     activate() {
+        this.initFilterConfig();
         this.initToolbarConfig();
         this.document.body.classList.add('overflow-hidden');
-        this.filtersService.setup(this.filters);
         this.filtersService.checkIfAnySelected();
         this.filtersService.filtersValues$.pipe(
             takeUntil(this.deactivate$)
@@ -340,6 +318,43 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
         this.initDataSource();
+    }
+
+    initFilterConfig() {
+        this.filters = this.selectedReportType != ReportType.SalesReport ? [
+            new FilterModel({
+                component: FilterCheckBoxesComponent,
+                caption: 'SourceOrganizationUnitId',
+                hidden: this.appSessionService.userIsMember,
+                field: 'sourceOrganizationUnits',
+                items: {
+                    element: new FilterCheckBoxesModel(
+                        {
+                            dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
+                            dispatch: () => this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false)),
+                            nameField: 'displayName',
+                            keyExpr: 'id'
+                        })
+                }
+            }),
+            new FilterModel({
+                component: FilterCalendarComponent,
+                caption: this.ls.l('Date'),
+                operator: { from: 'startDate', to: 'endDate' },
+                field: 'date',
+                items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+            })] : [
+            new FilterModel({
+                component: FilterCalendarComponent,
+                caption: this.ls.l('Date'),
+                field: 'TransactionDate',
+                operator: {from: 'ge', to: 'le'}, 
+                items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+            })
+        ];
+        this.filtersService.setup(this.filters);
     }
 
     initToolbarConfig() {
@@ -515,6 +530,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         if (event.previousValue != event.value) {
             this.totalCount = null;
             this.isDataLoaded = false;
+            this.initFilterConfig();
             this.initToolbarConfig();
             this.changeDetectorRef.detectChanges();
              setTimeout(() => {
