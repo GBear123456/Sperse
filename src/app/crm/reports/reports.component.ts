@@ -311,10 +311,11 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     }
 
     refresh() {
-        if (this.selectedReportType == ReportType.SalesReport) {
+        if (this.selectedReportType == ReportType.SalesReport)
             this.dataGrid.instance.getDataSource().reload().then(
                 () => this.dataGrid.instance.repaint()
-            ); else
+            ); 
+        else
             (this.dataGrid as DxDataGridComponent).instance.refresh();
     }
 
