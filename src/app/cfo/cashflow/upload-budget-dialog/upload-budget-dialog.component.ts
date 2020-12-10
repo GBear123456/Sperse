@@ -17,7 +17,7 @@ import {
     BudgetImportInput,
     BudgetServiceProxy,
     InstanceServiceProxy,
-    InvoiceServiceProxy,
+    TenantPaymentSettingsServiceProxy,
     InvoiceSettings,
     InstanceType
 } from '@root/shared/service-proxies/service-proxies';
@@ -78,11 +78,11 @@ export class UploadBudgetDialogComponent implements OnInit {
         private dialogRef: MatDialogRef<UploadBudgetDialogComponent>,
         private instanceAppService: InstanceServiceProxy,
         private budgetProxy: BudgetServiceProxy,
-        private invoiceProxy: InvoiceServiceProxy,
+        private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
         public bankAccountsService: BankAccountsService,
         public ls: AppLocalizationService
     ) {
-        this.invoiceProxy.getSettings().subscribe((settings: InvoiceSettings) => {
+        this.tenantPaymentSettingsProxy.getInvoiceSettings().subscribe((settings: InvoiceSettings) => {
             this.currencyId = settings.currency;
         });
     }
