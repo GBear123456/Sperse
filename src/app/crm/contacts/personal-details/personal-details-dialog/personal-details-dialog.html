@@ -8,7 +8,7 @@
                         <mat-expansion-panel class="affiliate-info" [expanded]="true">
                             <mat-expansion-panel-header>
                                 <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
-                                <span class="dx-icon-hierarchy" (click)="showAffiliateHistory($event)"></span>
+                                <span class="dx-icon-clock history-icon" (click)="showAffiliateHistory($event)" [title]="ls.l('AffiliateHistory')"></span>
                             </mat-expansion-panel-header>
                             <div class="field affiliate-code" [ngClass]="{'zero': affiliateRate == 0, 'undefined': affiliateRate === null}">
                                 <inplace-edit [id]="contactInfo?.id"
@@ -25,18 +25,18 @@
                                               (itemDeleted)="deleteItem(ls.l('Affiliate'))">
                                 </inplace-edit>
                             </div>
-                            <div class="field">
+                            <div class="field" *ngIf="hasCommissionsFeature">
                                 <label>{{ ls.l('AffiliateRate') }}, %:</label>
                                 <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
                                               [editPlaceholder]="defaultAffiliateRate !== undefined ? ls.l('DefaultRate') + ' ' + defaultAffiliateRate : ''"
                                               [value]="affiliateRate === null ? '' : affiliateRate + ''"
-                                              [showInlineEditButton]="true"
-                                              [isDeleteEnabled]="true"
+                                              [showInlineEditButton]="hasCommissionsManagePermission"
+                                              [isDeleteEnabled]="hasCommissionsManagePermission"
                                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateRate'))"
                                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateRate').toLowerCase())"
                                               [validationRules]="affiliateRateValidationRules"
-                                              [isReadOnlyField]="!manageAllowed"
+                                              [isReadOnlyField]="!hasCommissionsManagePermission || !manageAllowed"
                                               (valueChanged)="updateAffiliateRate($event)"
                                               (itemDeleted)="deleteItem(ls.l('AffiliateRate'))">
                                 </inplace-edit>

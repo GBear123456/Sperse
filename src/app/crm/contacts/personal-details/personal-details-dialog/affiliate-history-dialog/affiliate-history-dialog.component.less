@@ -4,6 +4,7 @@
         padding-right: 15px;
         padding-top: 10px;
         .alert-info {
+            width: 100%;
             color: #000;
             border-color: rgba(55, 215, 73, 0.1);
             &.zero {
@@ -19,15 +20,27 @@
                 }
             }
             #code-color {
+                width: 105px;
+                padding: 20px 5px 0px 5px;
                 background: rgba(55, 215, 73, 0.1);
+                p {
+                    max-width: 95px;
+                    height: 18px;
+                    white-space: nowrap;
+                    padding-top: 10px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                }
             }
         }
+        .m-alert__text {
+            padding: 5px 15px;
+        }
         .control-label {
+            display: inline-table;
             font-weight: 600;
-            padding: 0 10px 0 0;
-            min-width: 125px;
             white-space: nowrap;
-            line-height: 30px;
+            line-height: 20px;
         }
         .form-control-static {
             max-width: 250px;
@@ -35,10 +48,18 @@
             text-overflow: ellipsis;
             white-space: nowrap;
             padding: 5px 0 0;
-            line-height: 18px;
-            img {    
+            line-height: 12px;
+            margin: 0;
+            img {
+                vertical-align: top;
                 position: relative;
-                bottom: 3px;
+                bottom: 5px;
+            }
+            &.code {
+                width: 100px;
+            }
+            &.login-attempt-date {
+                min-width: 280px;                
             }
         }
     }

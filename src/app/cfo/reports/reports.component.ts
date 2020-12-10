@@ -94,8 +94,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         {
             text: this.l('Reports_SendNotification'),
             class: 'send-notification',
-            action: this.openSendNotificationDialog.bind(this),
-            visible: !this._cfoService.isMainInstanceType
+            action: this.openSendNotificationDialog.bind(this)
         },
         {
             text: this.l('Delete'),

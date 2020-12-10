@@ -12,6 +12,8 @@ import { ContactServiceProxy, AffiliateInfoHistoryInfo } from '@shared/service-p
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: 'affiliate-history-dialog.component.html',
@@ -25,11 +27,13 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 export class AffiliateHistoryDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     affiliateHistory: AffiliateInfoHistoryInfo[] = [];
+    hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public data: any,
         private changeDetectorRef: ChangeDetectorRef,
         private contactProxy: ContactServiceProxy,
+        private featureCheckerService: FeatureCheckerService,
         public dialogRef: MatDialogRef<AffiliateHistoryDialogComponent>,
         public profileService: ProfileService,
         public ls: AppLocalizationService
@@ -39,8 +43,8 @@ export class AffiliateHistoryDialogComponent implements OnInit {
         this.modalDialog.startLoading();
         this.contactProxy.getAffiliateHistory(this.data.contactId)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
-            .subscribe(result => {
-                this.affiliateHistory = result;
+            .subscribe((result: AffiliateInfoHistoryInfo[]) => {
+                this.affiliateHistory = result.reverse();
                 this.changeDetectorRef.detectChanges();
             });
     }

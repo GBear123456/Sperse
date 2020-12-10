@@ -196,9 +196,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         },
         {
             name: 'reseller-activity',
-            label: this.l('ResellerActivity'), route: 'reseller-activity',
-            visible$: of(this.appSessionService.tenant &&
-                this.appSessionService.tenant.customLayoutType != LayoutType.BankCode)
+            label: this.l('ResellerActivity'), route: 'reseller-activity'
         },
         {
             name: 'lead-information',
@@ -418,6 +416,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private fillContactDetails(result: ContactInfoDto, contactId = null) {
+        this.contactsService.toolbarUpdate();
         this.contactService['data'].contactInfo = result;
         this.contactsService.contactInfoUpdate(result);
         this.contactGroupId.next(result.groupId);
@@ -449,7 +448,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.contactsService.updateUserId(
             this.userService['data'].userId = this.primaryContact.userId
         );
-        this.contactsService.toolbarUpdate();
         this.storeInitialData();
     }
 

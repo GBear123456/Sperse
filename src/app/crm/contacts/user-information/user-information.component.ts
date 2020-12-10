@@ -209,7 +209,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
                     checkPressed: () => this.contactsService.settingsDialogOpened.value
                 },
                 action: () => {
-                    this.contactsService.toggleSettingsDialog(); 
+                    this.contactsService.toggleSettingsDialog();
                 }
             }
         }));

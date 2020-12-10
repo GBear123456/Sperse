@@ -29,6 +29,8 @@ export class LedgerCompleteDialogComponent extends ConfirmDialogComponent {
     paymentSystem = PaymentSystem.PayQuicker;
     today: Date = DateHelper.addTimezoneOffset(new Date(), true);
     payDate: Date = this.today;
+    minDate = this.data.entities.length > 1 ? undefined :
+        DateHelper.addTimezoneOffset(new Date(this.data.entities[0].StartDate), true);
 
     constructor(
         injector: Injector,
