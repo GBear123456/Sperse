@@ -18887,110 +18887,6 @@ export class InvoiceServiceProxy {
     }
 
     /**
-     * @return Success
-     */
-    getSettings(): Observable<InvoiceSettings> {
-        let url_ = this.baseUrl + "/api/services/CRM/Invoice/GetSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<InvoiceSettings>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<InvoiceSettings>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetSettings(response: HttpResponseBase): Observable<InvoiceSettings> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? InvoiceSettings.fromJS(resultData200) : new InvoiceSettings();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<InvoiceSettings>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
-    updateSettings(body: InvoiceSettings | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Invoice/UpdateSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateSettings(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
      * @id (optional) 
      * @regenerateNew (optional) 
      * @return Success
@@ -32598,6 +32494,110 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     protected processUpdateBankTransferSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getInvoiceSettings(): Observable<InvoiceSettings> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetInvoiceSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetInvoiceSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetInvoiceSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<InvoiceSettings>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<InvoiceSettings>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetInvoiceSettings(response: HttpResponseBase): Observable<InvoiceSettings> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? InvoiceSettings.fromJS(resultData200) : new InvoiceSettings();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<InvoiceSettings>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateInvoiceSettings(body: InvoiceSettings | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdateInvoiceSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateInvoiceSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateInvoiceSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateInvoiceSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -62448,92 +62448,6 @@ export interface IGetNewInvoiceInfoOutput {
     nextInvoiceNumber: string | undefined;
 }
 
-export enum Currency {
-    USD = "USD", 
-    CAD = "CAD", 
-    EUR = "EUR", 
-    GBP = "GBP", 
-    AUD = "AUD", 
-    NZD = "NZD", 
-    SGD = "SGD", 
-    HKD = "HKD", 
-    UAH = "UAH", 
-    INR = "INR", 
-    JPY = "JPY", 
-    ILS = "ILS", 
-    CHF = "CHF", 
-    MXN = "MXN", 
-    RUB = "RUB", 
-}
-
-export class InvoiceSettings implements IInvoiceSettings {
-    legalName!: string | undefined;
-    address!: string | undefined;
-    taxVatNo!: string | undefined;
-    defaultTemplateId!: number | undefined;
-    attachPDF!: boolean | undefined;
-    defaultNote!: string | undefined;
-    currency!: Currency | undefined;
-    showShippingAddress!: boolean | undefined;
-    defaultAffiliateRate!: number | undefined;
-
-    constructor(data?: IInvoiceSettings) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.legalName = data["legalName"];
-            this.address = data["address"];
-            this.taxVatNo = data["taxVatNo"];
-            this.defaultTemplateId = data["defaultTemplateId"];
-            this.attachPDF = data["attachPDF"];
-            this.defaultNote = data["defaultNote"];
-            this.currency = data["currency"];
-            this.showShippingAddress = data["showShippingAddress"];
-            this.defaultAffiliateRate = data["defaultAffiliateRate"];
-        }
-    }
-
-    static fromJS(data: any): InvoiceSettings {
-        data = typeof data === 'object' ? data : {};
-        let result = new InvoiceSettings();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["legalName"] = this.legalName;
-        data["address"] = this.address;
-        data["taxVatNo"] = this.taxVatNo;
-        data["defaultTemplateId"] = this.defaultTemplateId;
-        data["attachPDF"] = this.attachPDF;
-        data["defaultNote"] = this.defaultNote;
-        data["currency"] = this.currency;
-        data["showShippingAddress"] = this.showShippingAddress;
-        data["defaultAffiliateRate"] = this.defaultAffiliateRate;
-        return data; 
-    }
-}
-
-export interface IInvoiceSettings {
-    legalName: string | undefined;
-    address: string | undefined;
-    taxVatNo: string | undefined;
-    defaultTemplateId: number | undefined;
-    attachPDF: boolean | undefined;
-    defaultNote: string | undefined;
-    currency: Currency | undefined;
-    showShippingAddress: boolean | undefined;
-    defaultAffiliateRate: number | undefined;
-}
-
 export class BankCardInput implements IBankCardInput {
     holderName!: string | undefined;
     cardNumber!: string;
@@ -76364,6 +76278,92 @@ export interface IBankTransferSettings {
     bankRoutingNumber: string | undefined;
     swiftCodeForUSDollar: string | undefined;
     swiftCode: string | undefined;
+}
+
+export enum Currency {
+    USD = "USD", 
+    CAD = "CAD", 
+    EUR = "EUR", 
+    GBP = "GBP", 
+    AUD = "AUD", 
+    NZD = "NZD", 
+    SGD = "SGD", 
+    HKD = "HKD", 
+    UAH = "UAH", 
+    INR = "INR", 
+    JPY = "JPY", 
+    ILS = "ILS", 
+    CHF = "CHF", 
+    MXN = "MXN", 
+    RUB = "RUB", 
+}
+
+export class InvoiceSettings implements IInvoiceSettings {
+    legalName!: string | undefined;
+    address!: string | undefined;
+    taxVatNo!: string | undefined;
+    defaultTemplateId!: number | undefined;
+    attachPDF!: boolean | undefined;
+    defaultNote!: string | undefined;
+    currency!: Currency | undefined;
+    showShippingAddress!: boolean | undefined;
+    defaultAffiliateRate!: number | undefined;
+
+    constructor(data?: IInvoiceSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.legalName = data["legalName"];
+            this.address = data["address"];
+            this.taxVatNo = data["taxVatNo"];
+            this.defaultTemplateId = data["defaultTemplateId"];
+            this.attachPDF = data["attachPDF"];
+            this.defaultNote = data["defaultNote"];
+            this.currency = data["currency"];
+            this.showShippingAddress = data["showShippingAddress"];
+            this.defaultAffiliateRate = data["defaultAffiliateRate"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["legalName"] = this.legalName;
+        data["address"] = this.address;
+        data["taxVatNo"] = this.taxVatNo;
+        data["defaultTemplateId"] = this.defaultTemplateId;
+        data["attachPDF"] = this.attachPDF;
+        data["defaultNote"] = this.defaultNote;
+        data["currency"] = this.currency;
+        data["showShippingAddress"] = this.showShippingAddress;
+        data["defaultAffiliateRate"] = this.defaultAffiliateRate;
+        return data; 
+    }
+}
+
+export interface IInvoiceSettings {
+    legalName: string | undefined;
+    address: string | undefined;
+    taxVatNo: string | undefined;
+    defaultTemplateId: number | undefined;
+    attachPDF: boolean | undefined;
+    defaultNote: string | undefined;
+    currency: Currency | undefined;
+    showShippingAddress: boolean | undefined;
+    defaultAffiliateRate: number | undefined;
 }
 
 export class TenantUserManagementSettingsEditDto implements ITenantUserManagementSettingsEditDto {

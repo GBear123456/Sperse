@@ -9,7 +9,8 @@ import {
     UpdateInvoiceStatusInput,
     InvoiceServiceProxy,
     InvoiceSettings,
-    InvoiceStatus
+    InvoiceStatus,
+    TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -21,7 +22,8 @@ export class InvoicesService {
 
     constructor(
         private invoiceProxy: InvoiceServiceProxy,
-        private permissionService: AppPermissionService
+        private permissionService: AppPermissionService,
+        private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy
     ) {
         this.invalidateSettings();
     }
@@ -29,7 +31,7 @@ export class InvoicesService {
     invalidateSettings(settings?) {
         this.settings.next(settings);
         if (!settings && this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices))
-            this.invoiceProxy.getSettings().subscribe(res => {
+            this.tenantPaymentSettingsProxy.getInvoiceSettings().subscribe(res => {
                 this.settings.next(res);
             });
     }
