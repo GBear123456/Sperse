@@ -94,6 +94,18 @@
         padding: 20px 0 20px;
         display: block;
 
+        .invite-field {
+            & > div, dx-select-box {
+                display: inline-block;
+            }
+            ::ng-deep dx-select-box {
+                max-width: 450px;
+                input, .dx-placeholder {
+                    font-size: 16px;
+                }
+            }
+        }
+
         .invite-user-info .dx-checkbox {
             margin: 15px 0;
         }
@@ -152,7 +164,7 @@
 
     .item-edit-label {
         display: block;
-        width: 120px;
+        width: 50px;
         font-size: 13px;
         font-weight: normal;
         line-height: 35px;

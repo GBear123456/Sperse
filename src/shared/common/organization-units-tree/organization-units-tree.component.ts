@@ -36,7 +36,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
     public searchEnabled = false;
     public sortTreeDesc = false;
     public isEditAllowed: boolean = this.permissionChecker.isGranted(AppPermissions.AdministrationOrganizationUnitsManageMembers);
-    private userId: number;
+    public userId: number;
     private organizationUnitsData: OrganizationUnitDto[];
     private lastSelectedItemId: number;
     private ident = _.uniqueId('OrganizationUnitsTree');

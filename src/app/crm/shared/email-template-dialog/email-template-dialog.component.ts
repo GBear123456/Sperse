@@ -39,7 +39,9 @@ import { TemplateDocumentsDialogComponent } from '@app/crm/contacts/documents/te
 import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
 import { EmailAttachment } from '@app/crm/shared/email-template-dialog/email-attachment';
 import { EmailTags } from '@app/crm/contacts/contacts.const';
-  import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
+import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'email-template-dialog',
@@ -80,6 +82,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     @Output() onTagItemClick: EventEmitter<number> = new EventEmitter<number>();
     @Output() onTemplateDelete: EventEmitter<number> = new EventEmitter<number>();
 
+    isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
+
     buttons: IDialogButton[] = [
         {
             id: 'cancelTemplateOptions',
@@ -90,7 +94,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         {
             id: 'saveTemplateOptions',
             title: this.data.saveTitle,
-            disabled: this.data.saveDisabled,
+            disabled: this.isManageUnallowed,
             class: 'primary',
             action: this.save.bind(this),
             contextMenu: {
@@ -123,6 +127,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
         private sessionService: AppSessionService,
+        private permission: AppPermissionService,
         private communicationProxy: ContactCommunicationServiceProxy,
         private documentsService: DocumentsService,
         public changeDetectorRef: ChangeDetectorRef,
