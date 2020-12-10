@@ -77,7 +77,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     ) {
         this.invoicesService.invalidateSettings();
         data.templateType = EmailTemplateType.Invoice;
-        data.saveDisabled = this.isManageUnallowed;
         data.title = ls.l('Invoice Settings');
         data.saveTitle = ls.l('Save');
     }
@@ -99,6 +98,9 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     }
 
     save() {
+        if (this.isManageUnallowed)
+            return ;
+
         this.modalDialog.startLoading();
         if (this.settings.defaultAffiliateRate !== null)
             this.settings.defaultAffiliateRate = parseFloat(
