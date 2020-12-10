@@ -24,10 +24,10 @@
             </dx-validator>
             <div *dxTemplate="let item of 'itemTemplate'" class="email-templates-select-box">
                 {{ item.name }}
-                <i class="delete fa fa-times" [title]="ls.l('DeleteTemplate')" (click)="deleteTemplate($event, item.id)"></i>
+                <i *ngIf="!isManageUnallowed" class="delete fa fa-times" [title]="ls.l('DeleteTemplate')" (click)="deleteTemplate($event, item.id)"></i>
             </div>
         </dx-select-box>
-        <div class="buttons" *ngIf="data.contact && onTemplateCreate.observers.length">
+        <div class="buttons" *ngIf="!isManageUnallowed && data.contact && onTemplateCreate.observers.length">
             <i class="create-template" [title]="ls.l('CreateTemplate')" (click)="createTemplate()"></i>
             <i *ngIf="data.templateId" [title]="ls.l('EditTemplate')" class="edit-template fa fa-pencil" (click)="editTemplate(data)"></i>
         </div>

@@ -121,7 +121,9 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: {}
+            data: {
+                isManageUnallowed: this.isManageUnallowed
+            }
         });
     }
 
