@@ -138,13 +138,13 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             );
         },
         onChanged: (event) => {
-            this.isDataLoaded = false;
+            this.isDataLoaded = true;
             this.totalCount = undefined;
         },
-        onLoadingChanged: () => {
-            this.isDataLoaded = true;
+        onLoadingChanged: (loading) => {
+            this.isDataLoaded = !loading;
         },
-        onError: () => {
+        onLoadError: () => {
             this.isDataLoaded = true;
         },
         fields: [
@@ -311,9 +311,10 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     }
 
     refresh() {
-        if (this.selectedReportType == ReportType.SalesReport)
-            this.dataGrid.instance.getDataSource().reload();
-        else
+        if (this.selectedReportType == ReportType.SalesReport) {
+            this.dataGrid.instance.getDataSource().reload().then(
+                () => this.dataGrid.instance.repaint()
+            ); else
             (this.dataGrid as DxDataGridComponent).instance.refresh();
     }
 
@@ -350,7 +351,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 component: FilterCalendarComponent,
                 caption: this.ls.l('Date'),
                 field: 'TransactionDate',
-                operator: {from: 'ge', to: 'le'}, 
+                operator: {from: 'ge', to: 'le'},
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
                 options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
             })
@@ -364,6 +365,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 location: 'before', items: [
                     {
                         name: 'filters',
+                        disabled: this.selectedReportType == ReportType.SalesReport,
                         action: () => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
