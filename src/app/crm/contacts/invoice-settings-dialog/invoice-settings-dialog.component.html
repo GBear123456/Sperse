@@ -50,7 +50,8 @@
                     [dataSource]="currencies">
                 </dx-select-box>
                 <a (click)="showBankSettingsDialog()" 
-                    href="javascript:void(0)" [hidden]="isManageUnallowed">
+                    href="javascript:void(0)" 
+                    [ngClass]="{disabled: isManageUnallowed}">
                     {{ls.l('InvoiceEmail_BankTransferSettings')}}
                 </a>
                 <dx-check-box
