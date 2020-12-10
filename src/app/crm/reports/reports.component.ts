@@ -75,6 +75,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     @ViewChild('subscriptionTrackerGrid', { static: false }) subscriptionTrackerGrid: DxDataGridComponent;
     @ViewChild(PivotGridComponent, { static: false }) salesReportComponent: PivotGridComponent;
     toolbarConfig: ToolbarGroupModel[];
+    filters = [];
     filtersValues = {
         sourceOrganizationUnits: undefined,
         date: {
