@@ -31,12 +31,12 @@
                                               lEntityName="Name"
                                               [editPlaceholder]="defaultAffiliateRate !== undefined ? ls.l('DefaultRate') + ' ' + defaultAffiliateRate : ''"
                                               [value]="affiliateRate === null ? '' : affiliateRate + ''"
-                                              [showInlineEditButton]="hasCommissionsPermission"
-                                              [isDeleteEnabled]="hasCommissionsPermission"
+                                              [showInlineEditButton]="hasCommissionsManagePermission"
+                                              [isDeleteEnabled]="hasCommissionsManagePermission"
                                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateRate'))"
                                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateRate').toLowerCase())"
                                               [validationRules]="affiliateRateValidationRules"
-                                              [isReadOnlyField]="!hasCommissionsPermission || !manageAllowed"
+                                              [isReadOnlyField]="!hasCommissionsManagePermission || !manageAllowed"
                                               (valueChanged)="updateAffiliateRate($event)"
                                               (itemDeleted)="deleteItem(ls.l('AffiliateRate'))">
                                 </inplace-edit>

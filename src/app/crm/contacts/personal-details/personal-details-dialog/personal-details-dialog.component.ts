@@ -125,7 +125,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     affiliateRateInitil;
     affiliateRate;
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
-    hasCommissionsPermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMCommissions);
+    hasCommissionsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMCommissionsManage);
 
     constructor(
         private route: ActivatedRoute,
