@@ -5,7 +5,7 @@
         <ng-template #affiliateTemplate let-affiliate="affiliate">
             <div class="row">
                 <label class="control-label col-sm-2">{{ls.l('PersonalSettings.Contact1')}}:</label>
-                <p class="form-control-static" [title]="affiliateContactName || ''">
+                <p class="form-control-static" [title]="affiliate.affiliateContactName || ''">
                     <img *ngIf="affiliate.affiliateContactName" [src]="profileService.getContactPhotoUrl(affiliate.affiliateContactPhotoPublicId, false)" class="m--img-rounded m--marginless m--img-centered" width="20px" height="20px">
                     {{affiliate.affiliateContactName}}
                 </p>
