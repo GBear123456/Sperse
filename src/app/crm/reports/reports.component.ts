@@ -184,16 +184,16 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             {
                 area: 'data',
                 dataType: 'number',
-                dataField: 'Amount',
-                format: 'currency',
-                summaryType: 'sum'
-            },
-            {
-                area: 'filter',
-                dataType: 'number',
                 name: 'count',
                 isMeasure: true,
                 summaryType: 'count'
+            },
+            {
+                area: 'data',
+                dataType: 'number',
+                dataField: 'Amount',
+                format: 'currency',
+                summaryType: 'sum'
             }
         ]
     };
