@@ -1,7 +1,10 @@
+import { Observable } from 'rxjs';
+
 export interface NavLink {
-    name: string;
-    label: string;
+    name?: string;
+    label?: string;
+    label$?: Observable<string>;
     route: string;
-    hidden?: boolean;
     disabled?: boolean;
+    visible$?: Observable<boolean>;
 }

@@ -43,8 +43,7 @@ import { ActivityDto as InternalActivityDto } from '@app/crm/activity/activity-d
     providers: [
         ActivityServiceProxy,
         CacheHelper,
-        ContactServiceProxy,
-        DialogService
+        ContactServiceProxy
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -106,7 +105,6 @@ export class CreateActivityDialogComponent implements OnInit {
 
     constructor(
         private cacheService: CacheService,
-        private dialogService: DialogService,
         private cacheHelper: CacheHelper,
         private notifyService: NotifyService,
         private messageService: MessageService,
@@ -352,8 +350,7 @@ export class CreateActivityDialogComponent implements OnInit {
             this.buttons[0].contextMenu.items[0].selected) {
             this.resetFullDialog();
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
-            this.data.refreshParent(true,
-                this.appointment.StageId);
+            this.data.refreshParent(true, this.appointment.StageId);
             // } else if (this.saveContextMenuItems[1].selected) {
             // @Todo: after add new button uncomment else if and update it, there can be bug with 'Save' button, but I can't reproduce it
         } else {

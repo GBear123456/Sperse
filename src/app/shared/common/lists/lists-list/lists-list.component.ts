@@ -30,15 +30,16 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
     @Input() showSelection = false;
-    @Input() set selectedItems(value) {
-        this.selectedLists = value;
+    @Input() set selectedItems(value: ContactListInput[]) {
+        this.selectedLists = value && value.slice();
     }
     get selectedItems() {
-        return this.selectedLists.map(item => {
+        return this.selectedLists.map((item: ContactListInput) => {
             return ContactListInput.fromJS(_.findWhere(this.list, {id: item}));
         }).filter(Boolean);
     }
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
+    @Output() onUpdated: EventEmitter<any> = new EventEmitter();
 
     private _prevClickDate = new Date();
     selectedLists = [];
@@ -100,10 +101,12 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
         let lists = this.selectedItems;
         if (contactIds.length > 1) {
             if (isRemove)
-                this._listsService.removeContactsFromLists(contactIds, this.selectedLists
+                return this._listsService.removeContactsFromLists(
+                    contactIds, this.selectedLists
                 ).pipe(finalize(() => {
                     this.listComponent.deselectAll();
                 })).subscribe(() => {
+                    this.onUpdated.emit();
                     this.notify.success(this.l('ListsUnassigned'));
                 });
             else {
@@ -113,12 +116,6 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                     successMessage: this.l('ListsAssigned'),
                     serviceMethodName: 'addContactsToLists'
                 }));
-
-                this.actions$.pipe(
-                    ofType(ListsStoreActions.ActionTypes.REMOVE_LIST_SUCCESS),
-                    first(),
-                    finalize(() => { this.listComponent.deselectAll(); })
-                ).subscribe();
             }
         } else
             this.store$.dispatch(new ListsStoreActions.AddList({
@@ -127,12 +124,17 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 successMessage: this.l('CustomerListsUpdated'),
                 serviceMethodName: 'updateContactLists'
             }));
+
+        this.actions$.pipe(
+            ofType(ListsStoreActions.ActionTypes.ADD_LIST_SUCCESS), first(),
+            finalize(() => this.listComponent && this.listComponent.deselectAll())
+        ).subscribe(() => this.onUpdated.emit());
     }
 
     refresh() {
-        this.store$.pipe(select(ListsStoreSelectors.getLists)).subscribe(lists => {
+        this.store$.pipe(select(ListsStoreSelectors.getLists)).subscribe((lists: ContactListInput[]) => {
             if (this.list && this.list.length)
-                this.selectedLists = this.selectedItems.map((item) => {
+                this.selectedLists = this.selectedItems.map((item: ContactListInput) => {
                     let selected = _.findWhere(lists, {name: item.name});
                     return selected && selected.id;
                 }).filter(Boolean);

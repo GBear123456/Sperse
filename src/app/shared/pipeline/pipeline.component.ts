@@ -1,7 +1,7 @@
 /** Core imports */
 import {
     ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, EventEmitter,
-    Output, Input, OnInit, OnDestroy, ViewChildren, QueryList
+    Output, Input, OnInit, OnDestroy, ViewChildren, QueryList, SimpleChanges
 } from '@angular/core';
 
 /** Third party imports */
@@ -12,7 +12,7 @@ import ODataStore from 'devextreme/data/odata/store';
 import oDataUtils from 'devextreme/data/odata/utils';
 import dxTooltip from 'devextreme/ui/tooltip';
 import { Observable, Subject, from, of, forkJoin } from 'rxjs';
-import { filter, finalize, delayWhen, map, mergeMap, pluck, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, finalize, delayWhen, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
 import { DragulaService } from 'ng2-dragula';
 import * as moment from 'moment';
 import extend from 'lodash/extend';
@@ -50,12 +50,10 @@ import { StageWidth } from '@app/shared/pipeline/stage-width.enum';
 import { InstanceModel } from '@shared/cfo/instance.model';
 import { Param } from '@shared/common/odata/param.model';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { ImpersonationService } from '@admin/users/impersonation.service';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
-import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
-import { Params } from '@angular/router';
+import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 
 @Component({
     selector: 'app-pipeline',
@@ -70,7 +68,7 @@ import { Params } from '@angular/router';
 })
 export class PipelineComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChildren('bankCodeTooltip') bankCodeTooltips: QueryList<DxoTooltipComponent>;
-    @Output() onStagesLoaded: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onStagesLoaded: EventEmitter<PipelineDto> = new EventEmitter<PipelineDto>();
     @Output() onCardClick: EventEmitter<any> = new EventEmitter<any>();
     @Output() onEntityStageChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() onTotalChange: EventEmitter<number> = new EventEmitter<number>();
@@ -109,17 +107,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.dataSource$.next(dataSource);
     }
     @Input() pipelinePurposeId: string;
-    @Input() get contactGroupId(): ContactGroup {
-        return this._contactGroupId;
-    }
+    @Input() pipelineId: number;
+    @Input() contactGroupId: ContactGroup;
     @Input() dateField: string;
-    set contactGroupId(value: ContactGroup) {
-        if (this._contactGroupId && this._contactGroupId != value) {
-            this.destroyPipeline();
-            setTimeout(this.initPipeline.bind(this), 100);
-        }
-        this._contactGroupId = value;
-    }
 
     pipeline: PipelineDto;
     stages: Stage[];
@@ -135,7 +125,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     compactView: boolean;
     private stagePageCount;
     private subscribers = [];
-    private _contactGroupId: ContactGroup;
     stageWidths = StageWidth;
     stageColumnWidths: string[] = Object.keys(StageWidth);
     private readonly COLUMN_WIDTHS_CACHE_KEY = 'COLUMN_WIDTHS';
@@ -153,8 +142,6 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         private filtersService: FiltersService,
         private store$: Store<CrmStore.State>,
         private cacheService: CacheService,
-        private contactService: ContactsService,
-        private impersonationService: ImpersonationService,
         public userManagementService: UserManagementService,
         public dialog: MatDialog
     ) {
@@ -171,8 +158,48 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         this.initPipeline();
     }
 
+    ngOnChanges(changes: SimpleChanges) {
+        if ((changes.pipelineId && !changes.pipelineId.firstChange
+            && changes.pipelineId.currentValue !== changes.pipelineId.previousValue
+            ) || (changes.contactGroupId && !changes.contactGroupId.firstChange
+            && changes.contactGroupId.currentValue !== changes.contactGroupId.previousValue)
+        ) {
+            this.reinitPipeline();
+        }
+    }
+
     detectChanges() {
         this.changeDetector.detectChanges();
+    }
+
+    getEntityName(entity: any): string {
+        let entityName: string;
+        if (entity) {
+            let prioritizedName = entity.Name;
+            if (this.pipeline.entityTypeSysId === EntityTypeSys.Acquisition) {
+                prioritizedName = entity.PropertyName;
+            }
+            entityName = prioritizedName || entity.Title || entity.Email || entity.Phone || entity.CompanyName;
+        }
+        return entityName;
+    }
+
+    getEntitySubtitle(entity: any): string {
+        let subtitle: string;
+        if (entity) {
+            let prioritizedSubtitle = entity && (entity.Name || entity.Title
+                || entity.Email || entity.Phone) ? entity.CompanyName : '';
+            if (this.pipeline.entityTypeSysId === EntityTypeSys.Management) {
+                prioritizedSubtitle = entity.PropertyName || prioritizedSubtitle;
+            }
+            subtitle = prioritizedSubtitle || entity.Description;
+        }
+        return subtitle;
+    }
+
+    private reinitPipeline() {
+        this.destroyPipeline();
+        setTimeout(this.initPipeline.bind(this), 100);
     }
 
     private initPipeline() {
@@ -183,9 +210,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     private handleDataSource() {
         this.subscribers.push(this.pipelineService.dataLayoutType$.pipe(
-            filter(() => !this.pipeline || this.pipeline.contactGroupId != this.contactGroupId),
-            switchMap(() => this.pipelineService.getPipelineDefinitionObservable(this.pipelinePurposeId, this.contactGroupId)),
-            map(pipeline => {
+            filter(() => !this.pipeline || this.pipeline.contactGroupId != this.contactGroupId
+                || (this.pipelineId && this.pipeline.id !== this.pipelineId)),
+            switchMap(() => this.pipelineService.getPipelineDefinitionObservable(
+                this.pipelinePurposeId,
+                this.contactGroupId,
+                this.pipelineId
+            )),
+            map((pipeline: PipelineDto) => {
                 return this._dataSource ?
                     of(pipeline) :
                     of(pipeline).pipe(delayWhen(() => this.dataSource$));
@@ -1006,7 +1038,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 pipelinePurposeId: this.pipelinePurposeId,
                 contactGroupId: this.contactGroupId
             }
-        }).afterClosed().subscribe(isUpdated => {
+        }).afterClosed().subscribe(() => {
             this.stages.some(item => {
                 if (item.id == stage.id) {
                     item.checklistPoints = stage.checklistPoints;

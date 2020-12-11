@@ -47,7 +47,7 @@
                 <dxo-sorting mode="multiple"></dxo-sorting>
             </dx-data-grid>
         </mat-tab>
-        <mat-tab [label]="ls.l('Commissions')" *ngIf="isOrdersManageAllowed">
+        <mat-tab [label]="ls.l('Commissions')" *ngIf="isCommissionsAllowed">
             <dx-data-grid #commissionDataGrid
                 height="calc(100vh - 270px)"
                 class="main-component-view"
@@ -167,7 +167,7 @@
                 <dxo-sorting mode="multiple"></dxo-sorting>
             </dx-data-grid>
         </mat-tab>
-        <mat-tab [label]="ls.l('LedgerBalance')" *ngIf="isOrdersManageAllowed">
+        <mat-tab [label]="ls.l('LedgerBalance')" *ngIf="isCommissionsAllowed">
             <dx-data-grid #ledgerDataGrid
                 height="calc(100vh - 270px)"
                 class="main-component-view"

@@ -15,6 +15,7 @@
                         width="630px"
                         height="40px"
                         placeholder=""
+                        [readOnly]="data.isManageUnallowed"
                         [(value)]="settings.bankAccountNumber">
                     </dx-text-box>
                 </div>
@@ -25,6 +26,7 @@
                         width="628px"
                         height="40px"
                         placeholder=""
+                        [readOnly]="data.isManageUnallowed"
                         [inputAttr]="{maxlength:9}"
                         [(value)]="settings.bankRoutingNumber">
                     </dx-number-box>
@@ -36,6 +38,7 @@
                         width="512px"
                         height="40px"
                         placeholder=""
+                        [readOnly]="data.isManageUnallowed"
                         [inputAttr]="{maxlength:9}"
                         [(value)]="settings.bankRoutingNumberForACH">
                     </dx-number-box>
@@ -48,6 +51,7 @@
                         width="230px"
                         height="40px"
                         placeholder=""
+                        [readOnly]="data.isManageUnallowed"
                         [(value)]="settings.beneficiaryBank.name">
                     </dx-text-box>
                     <label class="caption">{{ls.l('City')}}:</label> 
@@ -56,6 +60,7 @@
                         width="170px"
                         height="40px"
                         placeholder=""
+                        [readOnly]="data.isManageUnallowed"
                         [(value)]="settings.beneficiaryBank.cityAddress">
                     </dx-text-box>
                     <label class="caption">{{ls.l('Address')}}:</label> 
@@ -64,6 +69,7 @@
                         width="180px"
                         height="40px"
                         placeholder=""
+                        [readOnly]="data.isManageUnallowed"
                         [(value)]="settings.beneficiaryBank.streetAddress">
                     </dx-text-box>
                 </div>
@@ -74,6 +80,7 @@
                         width="185px"
                         height="40px"
                         placeholder=""
+                        [readOnly]="data.isManageUnallowed"
                         [(value)]="settings.beneficiaryInfo.name">
                     </dx-text-box>
                     <label class="caption">{{ls.l('City')}}:</label> 
@@ -82,6 +89,7 @@
                         width="170px"
                         height="40px"
                         placeholder=""
+                        [readOnly]="data.isManageUnallowed"
                         [(value)]="settings.beneficiaryInfo.cityAddress">
                     </dx-text-box>
                     <label class="caption">{{ls.l('Address')}}:</label> 
@@ -90,6 +98,7 @@
                         width="180px"
                         height="40px"
                         placeholder=""
+                        [readOnly]="data.isManageUnallowed"
                         [(value)]="settings.beneficiaryInfo.streetAddress">
                     </dx-text-box>
                 </div>
@@ -102,6 +111,7 @@
                         height="40px"
                         placeholder=""
                         [maxLength]="11"
+                        [readOnly]="data.isManageUnallowed"
                         [(value)]="settings.swiftCode">
                     </dx-text-box>
                     <label class="caption">{{ls.l('SWIFT_CodeForUSDollar')}}</label> 
@@ -111,6 +121,7 @@
                         height="40px"
                         placeholder=""
                         [maxLength]="11"
+                        [readOnly]="data.isManageUnallowed"
                         [(value)]="settings.swiftCodeForUSDollar">
                     </dx-text-box>
                 </div>

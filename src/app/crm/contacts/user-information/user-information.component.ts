@@ -209,7 +209,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
                     checkPressed: () => this.contactsService.settingsDialogOpened.value
                 },
                 action: () => {
-                    this.contactsService.toggleSettingsDialog(); 
+                    this.contactsService.toggleSettingsDialog();
                 }
             }
         }));
@@ -236,9 +236,10 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
         ).subscribe((contactInfo: ContactInfoDto) => {
             this.phones = contactInfo.personContactInfo.details.phones.filter(item => item.isActive);
             this.emails = contactInfo.personContactInfo.details.emails.filter(item => item.isActive);
+
+            this.inviteData.emailAddress = (this.emails[0] || {}).emailAddress;
+            this.inviteData.phoneNumber = (this.phones[0] || {}).phoneNumber;
         });
-        this.inviteData.emailAddress = undefined;
-        this.inviteData.phoneNumber = undefined;
 
         setTimeout(() => {
             let instance = this.emailAddressComponent && this.emailAddressComponent.instance;
@@ -494,17 +495,14 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
         const dialog = this.dialog.getDialogById('user-organization-units-dialog');
         if (!dialog) {
             if (open) {
-                const dialogData: OrganizationUnitsDialogData = {
-                    title: this.ls.l('OrganizationUnits'),
-                    selectionMode: 'multiple'
-                };
                 this.dialog.open(OrganizationUnitsDialogComponent, {
                     id: 'user-organization-units-dialog',
                     panelClass: ['slider'],
                     disableClose: false,
                     hasBackdrop: false,
-                    closeOnNavigation: true,
-                    data: dialogData
+                    closeOnNavigation: true
+                }).afterClosed().subscribe(() => {
+                    this.contactsService.toggleSettingsDialog();
                 });
             }
         } else if (!open)

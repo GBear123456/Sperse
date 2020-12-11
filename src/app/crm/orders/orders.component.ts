@@ -1059,7 +1059,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         text: this.l('Settings'),
                         hint: this.l('Settings')
                     },
-                    visible: this.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+                    visible: this.isGranted(AppPermissions.CRMOrdersInvoices) ||
+                        this.isGranted(AppPermissions.CRMSettingsConfigure),
                     action: this.invoiceSettings.bind(this)
                 }]
             },
@@ -1740,8 +1741,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             closeOnNavigation: true,
             data: {
                 entity: entity,
-                pipelinePurposeId: this.pipelinePurposeId,
-                contactGroupId: entity.contactGroupId
+                pipelinePurposeId: this.pipelinePurposeId
             }
         });
     }

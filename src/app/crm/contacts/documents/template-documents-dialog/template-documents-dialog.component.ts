@@ -18,6 +18,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { DocumentServiceProxy, UploadDocumentInput, DocumentInfo } from '@shared/service-proxies/service-proxies';
 import { StringHelper } from '@shared/helpers/StringHelper';
+import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
 
 @Component({
     templateUrl: 'template-documents-dialog.component.html',
@@ -38,7 +39,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
 
     layout = this.VIEW_MODE_THUMBNAILS;
     documentsFileProvider = new CustomFileProvider({
-        getItems: (pathInfo: string) => {
+        getItems: () => {
             return this.documentService.getAll(this.data.contactId).pipe(
                 map((documents: DocumentInfo[]) => {
                     return documents.map((item: DocumentInfo) => {
@@ -55,7 +56,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     templatesFileProvider = new RemoteFileProvider({
         endpointUrl: AppConsts.remoteServiceBaseUrl + '/api/services/CRM/DocumentTemplates/FileSystem'
     });
-    isDocumentsVisible = this.data.showDocuments && this.data.contactId;
+    isDocumentsVisible = !!(this.data.showDocuments && this.data.contactId);
     isTemplatesVisible = this.permission.isGranted(AppPermissions.CRMFileStorageTemplates);
     folderTabs = [
         {
@@ -78,6 +79,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         }
     ];
     selectedIndex = 0;
+    title: string = this.data.title || this.ls.l('UploadDocumentsDialogTitle');
 
     constructor(
         private documentService: DocumentServiceProxy,
@@ -87,7 +89,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         private permission: PermissionCheckerService,
         public dialogRef: MatDialogRef<TemplateDocumentsDialogComponent>,
         public ls: AppLocalizationService,
-        @Inject(MAT_DIALOG_DATA) public data: any,
+        @Inject(MAT_DIALOG_DATA) public data: TemplateDocumentsDialogData,
     ) {
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({

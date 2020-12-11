@@ -49,7 +49,7 @@ import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload
         '../../../shared/common/styles/form.less',
         'create-user-dialog.component.less'
     ],
-    providers: [ CacheHelper, DialogService, ToolbarService ],
+    providers: [ CacheHelper, ToolbarService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateUserDialogComponent implements OnInit {
@@ -112,7 +112,6 @@ export class CreateUserDialogComponent implements OnInit {
         private profileService: ProfileServiceProxy,
         private cacheService: CacheService,
         private notifyService: NotifyService,
-        private dialogService: DialogService,
         private dialogRef: MatDialogRef<CreateUserDialogComponent>,
         private messageService: MessageService,
         private settingService: SettingService,

@@ -70,6 +70,7 @@ export class ListsStoreEffects {
             return request.pipe(
                 map(() => {
                     this.notifyService.success(payload.successMessage);
+                    this.store$.dispatch(new listsActions.AddListSuccess(payload));
                     /** Reload data from server */
                     return new listsActions.LoadRequestAction(true);
                 }),

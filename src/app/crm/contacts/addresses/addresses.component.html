@@ -1,14 +1,24 @@
 <div class="addresses">
-    <div *ngFor="let address of contactInfoData?.addresses; let i = index" class="address-wrapper" (click)="inPlaceEdit(address, $event, i)">
+    <div *ngFor="let address of addresses; let i = index"
+         class="address-wrapper"
+         (click)="inPlaceEdit(address, $event, i)">
         <div *ngIf="isEditAllowed" class="actions">
-            <i class="copy save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, address)"></i>
+            <i *ngIf="isCopyAllowed" class="copy save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, address)"></i>
             <i class="edit fa fa-pencil" aria-hidden="true" (click)="showDialog(address, $event, i)"></i>
-            <i class="delete fa fa-times" aria-hidden="true" (click)="deleteAddress(address, $event, i)"></i>
+            <i *ngIf="isDeleteAllowed"
+               class="delete fa fa-times"
+               aria-hidden="true"
+               (click)="deleteAddress(address, $event, i)">
+            </i>
         </div>
         <i class="address-icons type-{{address.usageTypeId || 'H'}}"></i>
         <div class="address">
-            <h4>{{types[address.usageTypeId] || ls.l("Undefined")}}</h4>
-            <p *ngIf="!address.inplaceEdit"><i>{{address | address:address.streetAddress}}</i><i>{{address | address:address.city:address.stateName:address.zip}}</i><i>{{address.country | address:address.country}}</i></p>
+            <h4 *ngIf="showType && types[address.usageTypeId] as type">{{ type }}</h4>
+            <p *ngIf="!address.inplaceEdit">
+                <i>{{ address | address:address.streetAddress }}</i>
+                <i>{{ address | address:address.city:address.stateName:address.zip }}</i>
+                <i>{{ getCountryName(address) | async }}</i>
+            </p>
             <div *ngIf="address.inplaceEdit">
                 <input type="text"
                        name="Address"
@@ -16,12 +26,16 @@
                        [(ngModel)]="address.autoComplete"
                        [disabled]="false"
                        class="dx-texteditor-input"
-                       (onAddressChange)="addressChanged(address, $event)"
+                       (onAddressChange)="addressChanged($event, address)"
                        ngx-google-places-autocomplete/>
                 <dx-button class="update" icon="todo" (onClick)="updateItem(address, $event, i)"></dx-button>
                 <dx-button class="exit" icon="refresh" (onClick)="closeInPlaceEdit(address, $event)"></dx-button>
             </div>
         </div>
     </div>
-    <div *ngIf="isEditAllowed" class="add-address" (click)="showDialog(null, $event)">+ {{ls.l('Add') + ' ' + ls.l('Address')}}</div>
+    <div *ngIf="isEditAllowed && isAddAllowed"
+         class="add-address"
+         (click)="showDialog(null, $event)">
+        + {{ls.l('Add') + ' ' + ls.l('Address')}}
+    </div>
 </div>

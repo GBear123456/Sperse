@@ -12,8 +12,8 @@ export const getTags = createSelector(
 
 export const getStoredTags = createSelector(
     getTagsState,
-    (state: State) => _.map(
-        _.filter(state.tags, function(tag){ return Number.isInteger(tag.id); })
+    (state: State) => _.map(        
+        _.filter(state.tags, tag => Number.isInteger(tag.id))
     )
 );
 

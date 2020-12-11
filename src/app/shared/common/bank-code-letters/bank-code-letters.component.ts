@@ -25,7 +25,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     selector: 'bank-code-letters',
     templateUrl: './bank-code-letters.component.html',
     styleUrls: ['./bank-code-letters.component.less'],
-    providers: [ DialogService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankCodeLettersComponent implements OnChanges, OnDestroy {
@@ -95,7 +94,6 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     selectedReportType = this.reportTypes[0];
 
     constructor(
-        private dialogService: DialogService,
         private changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
         public bankCodeService: BankCodeService,
@@ -123,7 +121,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
             const editDialog = this.dialog.open(BankCodeLettersEditorDialogComponent, {
                 id: 'bankCodeLettersEditorDialog',
                 hasBackdrop: false,
-                position: this.dialogService.calculateDialogPosition(
+                position: DialogService.calculateDialogPosition(
                     e,
                     e.target.closest('div'),
                     this.editDialogPosition && this.editDialogPosition.x || 200,

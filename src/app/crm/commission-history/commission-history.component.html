@@ -271,7 +271,7 @@
                                     [sortIndex]="0">
                         </dxi-column>
                         <dxi-column [dataField]="ledgerFields.ContactId"
-                                    [caption]="l('ResellerContactId')"
+                                    [caption]="l('Contact ID')"
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
@@ -316,6 +316,11 @@
                                     [caption]="l('TotalAmount')" 
                                     [format]="currencyFormat$ | async"
                                     cssClass="clipboard-holder padding-right">
+                        </dxi-column>
+                        <dxi-column [dataField]="ledgerFields.PaymentSystem"
+                                    [caption]="l('PaymentSystem')"
+                                    cssClass="clipboard-holder"
+                                    [visible]="false">
                         </dxi-column>
 
                         <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">

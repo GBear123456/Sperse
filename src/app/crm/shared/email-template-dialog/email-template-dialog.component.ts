@@ -39,6 +39,9 @@ import { TemplateDocumentsDialogComponent } from '@app/crm/contacts/documents/te
 import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
 import { EmailAttachment } from '@app/crm/shared/email-template-dialog/email-attachment';
 import { EmailTags } from '@app/crm/contacts/contacts.const';
+import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'email-template-dialog',
@@ -79,28 +82,9 @@ export class EmailTemplateDialogComponent implements OnInit {
     @Output() onTagItemClick: EventEmitter<number> = new EventEmitter<number>();
     @Output() onTemplateDelete: EventEmitter<number> = new EventEmitter<number>();
 
-    buttons: IDialogButton[] = [
-        {
-            id: 'cancelTemplateOptions',
-            title: this.ls.l('Cancel'),
-            class: 'default',
-            action: () => this.close()
-        },
-        {
-            id: 'saveTemplateOptions',
-            title: this.data.saveTitle,
-            class: 'primary',
-            action: this.save.bind(this),
-            contextMenu: {
-                hidden: this.data.hideContextMenu,
-                items: [
-                    { text: this.ls.l('Save'), selected: false },
-                    { text: this.ls.l('SaveAsNew'), selected: false }
-                ],
-                defaultIndex: 0
-            }
-        }
-    ];
+    isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
+
+    buttons: IDialogButton[];
     _refresh: Subject<null> = new Subject<null>();
     refresh$: Observable<null> = this._refresh.asObservable();
     templates$: Observable<GetTemplatesResponse[]> = this.refresh$.pipe(
@@ -121,6 +105,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
         private sessionService: AppSessionService,
+        private permission: AppPermissionService,
         private communicationProxy: ContactCommunicationServiceProxy,
         private documentsService: DocumentsService,
         public changeDetectorRef: ChangeDetectorRef,
@@ -150,7 +135,35 @@ export class EmailTemplateDialogComponent implements OnInit {
         });
         this.showCC = Boolean(this.data.cc && this.data.cc.length);
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
+
+        this.initDialogButtons();
         this.changeDetectorRef.detectChanges();
+    }
+
+    initDialogButtons() {
+        this.buttons = [
+            {
+                id: 'cancelTemplateOptions',
+                title: this.ls.l('Cancel'),
+                class: 'default',
+                action: () => this.close()
+            },
+            {
+                id: 'saveTemplateOptions',
+                title: this.data.saveTitle,
+                disabled: this.templateEditMode && this.isManageUnallowed,
+                class: 'primary',
+                action: this.save.bind(this),
+                contextMenu: {
+                    hidden: this.data.hideContextMenu,
+                    items: [
+                        { text: this.ls.l('Save'), selected: false },
+                        { text: this.ls.l('SaveAsNew'), selected: false }
+                    ],
+                    defaultIndex: 0
+                }
+            }
+        ];
     }
 
     save() {
@@ -455,7 +468,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                 ), 600);
                 scroll.update();
             }
-            files.forEach(file => {
+            files.forEach((file: NgxFileDropEntry) => {
                 if (file.fileEntry)
                     file.fileEntry['file'](this.uploadFile.bind(this));
                 else
@@ -580,27 +593,27 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     openDocuments() {
+        const templateDocumentsDialogData: TemplateDocumentsDialogData = {
+            fullHeight: true,
+            contactId: this.data.contact && this.data.contact.id,
+            dropFiles: this.addAttachments.bind(this)
+        }
         this.dialog.open(TemplateDocumentsDialogComponent, {
             id: 'templateDialog',
             panelClass: ['slider'],
             hasBackdrop: true,
             closeOnNavigation: true,
-            data: {
-                fullHeight: true,
-                contactId: this.data.contact && this.data.contact.id,
-                dropFiles: this.addAttachments.bind(this)
-            }
+            data: templateDocumentsDialogData
         }).afterClosed().subscribe(data => {
             if (data && data.length) {
                 this.attachments = this.attachments.concat(
                     data.map(item => {
-                        let attachment = {
+                        return {
                             id: item.key,
                             name: item.name,
                             size: item.size,
                             progress: 0
                         };
-                        return attachment;
                     })
                 );
                 this.changeDetectorRef.detectChanges();

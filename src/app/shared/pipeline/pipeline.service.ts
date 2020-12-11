@@ -36,7 +36,7 @@ interface StageColor {
 export class PipelineService {
     private stageChange: Subject<any> = new Subject<any>();
     stageChange$: Observable<any> = this.stageChange.asObservable();
-    private pipelineDefinitions: any = {};
+    private pipelineDefinitions: { [pipelinePurposeId: string]: { [id: string]: PipelineDto } } = {};
     private defaultStagesColors: { [layoutType: string]: StageColor } = {
         [LayoutType.Default]: {
             '-4': '#f02929',
@@ -67,7 +67,7 @@ export class PipelineService {
     compactView$: Observable<boolean> = this.compactView.asObservable();
     private lastIgnoreChecklist$: Observable<boolean>;
     private lastEntityData$: Observable<any>;
-    private pipelineObservables = {};
+    private pipelineObservables: { [pipelinePurposeId: string]: { [id: string]: Observable<PipelineDto> }} = {};
 
     constructor(
         injector: Injector,
@@ -92,25 +92,27 @@ export class PipelineService {
         this.compactView.next(!this.compactView.value);
     }
 
-    getPipelineDefinitionObservable(pipelinePurposeId: string, contactGroupId: ContactGroup): Observable<PipelineDto> {
-        let pipeline = this.pipelineObservables[pipelinePurposeId] || {};
-        if (pipeline[String(contactGroupId)])
-            return pipeline[String(contactGroupId)];
+    getPipelineDefinitionObservable(pipelinePurposeId: string, contactGroupId: ContactGroup, pipelineId?: number): Observable<PipelineDto> {
+        let pipelines = this.pipelineObservables[pipelinePurposeId] || {};
+        const id = String(pipelineId || contactGroupId);
+        if (pipelines[id])
+            return pipelines[id];
         else {
-            this.pipelineObservables[pipelinePurposeId] = pipeline;
-            return pipeline[String(contactGroupId)] = this.store$.pipe(
+            this.pipelineObservables[pipelinePurposeId] = pipelines;
+            return pipelines[id] = this.store$.pipe(
                 select(PipelinesStoreSelectors.getSortedPipeline({
                     purpose: pipelinePurposeId,
-                    contactGroupId: contactGroupId
+                    contactGroupId: contactGroupId,
+                    id: pipelineId
                 })),
                 filter((pipelineDefinition: PipelineDto) => {
                     if (pipelineDefinition) {
-                        let oldDefinition = this.pipelineDefinitions[pipelinePurposeId];
-                        oldDefinition = oldDefinition && oldDefinition[String(contactGroupId)];
+                        let oldDefinition: PipelineDto = this.pipelineDefinitions[pipelinePurposeId]
+                            && this.pipelineDefinitions[pipelinePurposeId][id];
                         if (!oldDefinition || pipelineDefinition.stages.length != oldDefinition.stages.length)
                             return true;
 
-                        return pipelineDefinition.stages.some(stage => {
+                        return pipelineDefinition.stages.some((stage: StageDto) => {
                             let oldStage = _.findWhere(oldDefinition.stages, {id: stage.id});
                             return !oldStage || oldStage.name != stage.name || oldStage.sortOrder != stage.sortOrder
                                 || (oldStage.checklistPoints || []).length != (stage.checklistPoints || []).length;
@@ -121,29 +123,32 @@ export class PipelineService {
                 map((pipelineDefinition: PipelineDto) => {
                     if (!this.pipelineDefinitions[pipelinePurposeId])
                         this.pipelineDefinitions[pipelinePurposeId] = {};
-                    this.pipelineDefinitions[pipelinePurposeId][String(contactGroupId)] = pipelineDefinition;
+                    this.pipelineDefinitions[pipelinePurposeId][id] = pipelineDefinition;
                     pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
-                        (stage) => {
+                        (stage: StageDto) => {
                             return stage.sortOrder;
                         });
                     return pipelineDefinition;
-                }), publishReplay(1), refCount()
+                }),
+                publishReplay(1),
+                refCount()
             ) as Observable<PipelineDto>;
         }
     }
 
-    getStages(pipelinePurposeId: string, contactGroupId: ContactGroup): StageDto[] {
-        const pipeline = this.getPipeline(pipelinePurposeId, contactGroupId);
+    getStages(pipelinePurposeId: string, contactGroupId: ContactGroup, pipelineId?: number): StageDto[] {
+        const pipeline = this.getPipeline(pipelinePurposeId, contactGroupId, pipelineId);
         return pipeline && pipeline.stages;
     }
 
-    getPipeline(pipelinePurposeId: string, contactGroupId: ContactGroup): PipelineDto {
+    getPipeline(pipelinePurposeId: string, contactGroupId: ContactGroup, pipelineId?: number): PipelineDto {
+        const id = pipelineId || contactGroupId;
         let pipelines = this.pipelineDefinitions[pipelinePurposeId];
-        return pipelines && pipelines[String(contactGroupId)];
+        return pipelines && pipelines[String(id)];
     }
 
-    getStageByName(pipelinePurposeId: string, stageName: string, contactGroupId: ContactGroup): Stage {
-        return _.findWhere(this.getStages(pipelinePurposeId, contactGroupId), {name: stageName});
+    getStageByName(pipelinePurposeId: string, stageName: string, contactGroupId: ContactGroup, pipelineId?: number): Stage {
+        return _.findWhere(this.getStages(pipelinePurposeId, contactGroupId, pipelineId), { name: stageName });
     }
 
     updateEntityStage(pipelinePurposeId: string, contactGroupId: ContactGroup,
@@ -285,7 +290,7 @@ export class PipelineService {
                     AppConsts.PipelinePurposeIds.order,
                     null
                 ).pipe(first(),
-                    switchMap(pipeline => {
+                    switchMap((pipeline: PipelineDto) => {
                         return this.dialog.open(LeadCompleteDialogComponent, {
                             data: {
                                 stages: pipeline.stages

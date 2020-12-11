@@ -15,7 +15,7 @@
             [placeholder]="ls.l('PayDate')"
             [(value)]="payDate" 
             [max]="today"
-            [min]="data.entities.length > 1 ? undefined : data.entities[0].StartDate">
+            [min]="minDate">
         </dx-date-box>
     </dx-scroll-view>
 </mat-dialog-content>

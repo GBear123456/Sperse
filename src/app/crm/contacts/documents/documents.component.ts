@@ -18,8 +18,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { ImageViewerComponent } from 'ng2-image-viewer';
-import { Observable, from, of } from 'rxjs';
-import { finalize, flatMap, tap, pluck, map, takeUntil } from 'rxjs/operators';
+import { Observable, BehaviorSubject, combineLatest, from, of } from 'rxjs';
+import { first, filter, finalize, flatMap, tap, pluck, map, takeUntil, switchMap } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as xmlJs from 'xml-js';
 import values from 'lodash/values';
@@ -33,8 +33,17 @@ import { PapaParseResult } from 'ngx-papaparse/lib/interfaces/papa-parse-result'
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ContactServiceProxy, ContactInfoDto, DocumentServiceProxy, DocumentInfo, DocumentTypeServiceProxy,
-    DocumentTypeInfo, UpdateTypeInput, WopiRequestOutcoming } from '@shared/service-proxies/service-proxies';
+import {
+    ContactServiceProxy,
+    ContactInfoDto,
+    DocumentServiceProxy,
+    DocumentInfo,
+    DocumentTypeServiceProxy,
+    DocumentTypeInfo,
+    UpdateTypeInput,
+    WopiRequestOutcoming,
+    LeadInfoDto
+} from '@shared/service-proxies/service-proxies';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { PrinterService } from '@shared/common/printer/printer.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
@@ -96,6 +105,40 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     archiveFiles$: Observable<any[]>;
     manageAllowed = false;
     private readonly ident = 'Documents';
+    showPropertyDocuments: boolean = this._activatedRoute.snapshot.data.property;
+    propertyId: number;
+    private refresh: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
+    refresh$: Observable<boolean> = this.refresh.asObservable();
+    documents$: Observable<DocumentInfo[]> = combineLatest(
+        (this.showPropertyDocuments
+            ? this.clientService.leadInfo$.pipe(
+                filter(Boolean),
+                map((leadInfo: LeadInfoDto) => leadInfo.propertyId),
+                tap((propertyId: number) => this.propertyId = propertyId)
+            )
+            : this.clientService.contactInfo$.pipe(
+                filter(Boolean),
+                map((contactInfo: ContactInfoDto) => contactInfo.id)
+            )
+        ),
+        this.refresh$
+    ).pipe(
+        /** Save to cache and get from cache next time if it's not a hard refresh */
+        switchMap(([id, hardRefresh]: [number, boolean]) => {
+            return hardRefresh || !this.documentProxy['data'] || this.documentProxy['data'].contactId !== id
+                   ? this.documentProxy.getAll(id).pipe(
+                       tap((documents: DocumentInfo[]) => {
+                           this.documentProxy['data'] = {
+                               contactId: id,
+                               source: documents
+                           };
+                           /** Clear hard refresh for next refreshes */
+                           this.refresh.next(false);
+                       })
+                   )
+                   : of(this.documentProxy['data'].source)
+        })
+    );
 
     constructor(injector: Injector,
         private dialog: MatDialog,
@@ -114,9 +157,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         this.data = this.contactService['data'];
         clientService.invalidateSubscribe(
             (area: string) => {
-                if (area === 'documents') {
+                if (area === 'documents' || area === 'property-documents') {
                     this.documentProxy['data'] = undefined;
-                    this.loadDocuments();
+                    this.refresh.next(true);
                 }
             },
             this.ident
@@ -128,12 +171,16 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngAfterViewInit() {
+        this.documents$.pipe(takeUntil(this.destroy$), first()).subscribe((documents: DocumentInfo[]) => {
+            if (!documents || !documents.length)
+                setTimeout(() => this.openDocumentAddDialog());
+        });
         this.clientService.contactInfo$.pipe(
-            takeUntil(this.destroy$)
-        ).subscribe(contactInfo => {
-            this.manageAllowed = this.permission.checkCGPermission(contactInfo.groupId);
+            takeUntil(this.destroy$),
+            filter(Boolean)
+        ).subscribe((contactInfo: ContactInfoDto) => {
+            this.manageAllowed = contactInfo && this.permission.checkCGPermission(contactInfo.groupId);
             this.initActionMenuItems();
-            this.loadDocuments();
         });
     }
 
@@ -315,32 +362,17 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         super.finishLoading(false, this.dataGrid.instance.element());
     }
 
-    loadDocuments(callback = null) {
-        let documentData = this.documentProxy['data'], groupId = this.data.contactInfo.id;
-        const dataSource$: Observable<DocumentInfo[]> = !callback && documentData && documentData.groupId == groupId
-                            ? of(documentData.source)
-                            : this.documentProxy.getAll(groupId).pipe(tap((documents: DocumentInfo[]) => {
-                                this.documentProxy['data'] = {
-                                    groupId: groupId,
-                                    source: documents
-                                };
-                            }));
-        dataSource$.subscribe((documents: DocumentInfo[]) => {
-            if (this.componentIsActivated) {
-                this.dataSource = documents;
-                if (!this.dataSource || !this.dataSource.length)
-                    setTimeout(() => this.openDocumentAddDialog());
-                callback && callback();
-            }
-        });
-    }
-
     downloadDocument() {
         this.documentsService.downloadDocument(this.currentDocumentInfo.id);
     }
 
     openDocumentAddDialog() {
-        this.clientService.showUploadDocumentsDialog(this.data.contactInfo.id);
+        if (!this.dialog.getDialogById('template-documents-dialog')) {
+            this.clientService.showUploadDocumentsDialog(
+                this.contactId,
+                this.showPropertyDocuments ? this.l('UploadPropertyDocumentsDialogTitle') : null
+            );
+        }
     }
 
     onToolbarPreparing($event) {
@@ -394,6 +426,10 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     getFileType(fileName): string {
         const fileExtension = this.getFileExtensionByFileName(fileName);
         return this.getViewerType(fileExtension);
+    }
+
+    get contactId(): number {
+        return this.showPropertyDocuments ? this.propertyId : this.data.contactInfo.id;
     }
 
     private getFileExtensionByFileName(fileName: string): string {
@@ -611,7 +647,10 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                     this.documentProxy.delete(this.currentDocumentInfo.id)
                         .pipe(finalize(() => super.finishLoading(true)))
                         .subscribe(() => {
-                            this.loadDocuments(() => {
+                            this.refresh.next(true);
+                            this.documents$.pipe(
+                                first()
+                            ).subscribe(() => {
                                 if (this.actionMenu && this.actionMenu.visible) {
                                     this.hideActionsMenu();
                                 }
@@ -683,5 +722,6 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
         if (this.openDocumentMode) {
             this.closeDocument();
         }
+        super.ngOnDestroy();
     }
 }

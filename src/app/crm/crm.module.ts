@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 
 /** Third party imports */
 import { MatSidenavModule } from '@angular/material/sidenav';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -41,6 +43,7 @@ import { DxPopoverModule } from 'devextreme-angular/ui/popover';
 import { DxCalendarModule } from 'devextreme-angular/ui/calendar';
 import { DxFileManagerModule } from 'devextreme-angular';
 import { FileUploadModule } from 'ng2-file-upload';
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -95,9 +98,9 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
 import { LedgerCompleteDialogComponent } from '@app/crm/commission-history/ledger-complete-dialog/ledger-complete-dialog.component';
 import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/request-withdrawal-dialog/request-withdrawal-dialog.component';
-import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
+import { EditTypeItemDialogComponent } from '@app/crm/shared/types-dropdown/edit-type-item-dialog/edit-type-item-dialog.component';
 
 @NgModule({
     imports: [
@@ -159,7 +162,9 @@ import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history
         CountryPhoneNumberModule,
         ModalDialogModule,
         ListsModule,
-        GooglePlaceModule
+        GooglePlaceModule,
+        MatInputModule,
+        MatButtonModule
     ],
     declarations: [
         ClientsComponent,
@@ -185,7 +190,8 @@ import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history
         LedgerCompleteDialogComponent,
         RequestWithdrawalDialogComponent,
         UpdateCommissionableDialogComponent,
-        UpdateCommissionRateDialogComponent
+        UpdateCommissionRateDialogComponent,
+        EditTypeItemDialogComponent
     ],
     providers: [
         ImportServiceProxy,
@@ -206,7 +212,8 @@ import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history
         LedgerCompleteDialogComponent,
         RequestWithdrawalDialogComponent,
         UpdateCommissionableDialogComponent,
-        UpdateCommissionRateDialogComponent
+        UpdateCommissionRateDialogComponent,
+        EditTypeItemDialogComponent
     ]
 })
 export class CrmModule {

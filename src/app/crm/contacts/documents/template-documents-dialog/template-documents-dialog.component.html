@@ -1,12 +1,12 @@
-<h2 mat-dialog-title>{{ls.l('UploadDocumentsDialogTitle')}}<span class="close" (click)="close()"></span></h2>
+<h2 mat-dialog-title>{{ title }}<span class="close" (click)="close()"></span></h2>
 <mat-dialog-content>
     <div class="wrapper">
         <dx-tabs 
             width="300px"
             [visible]="isDocumentsVisible || isTemplatesVisible"
             [dataSource]="folderTabs"
-            [(selectedIndex)]="selectedIndex"
-        ></dx-tabs>
+            [(selectedIndex)]="selectedIndex">
+        </dx-tabs>
         <div *ngIf="selectedIndex">
             <i class="layout-view dx-icon-{{layout == VIEW_MODE_DETAILS ? 'smalliconslayout' : 'contentlayout'}}" (click)="onLayoutToogle()"></i>
             <dx-file-manager

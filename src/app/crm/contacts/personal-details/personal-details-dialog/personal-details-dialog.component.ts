@@ -3,10 +3,12 @@ import { Component, OnInit, ViewChild, AfterViewInit, Inject, ElementRef, OnDest
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 /** Third party imports */
+import * as moment from 'moment-timezone';
 import { ClipboardService } from 'ngx-clipboard';
 import { CacheService } from 'ng2-cache-service';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
+import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Observable, ReplaySubject, BehaviorSubject, combineLatest } from 'rxjs';
 import { first, map, takeUntil, finalize, switchMap, distinctUntilChanged, filter } from 'rxjs/operators';
@@ -40,8 +42,11 @@ import { AppService } from '@app/app.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { AffiliateHistoryDialogComponent } from './affiliate-history-dialog/affiliate-history-dialog.component';
 import { CrmService } from '@app/crm/crm.service';
 import { ContactGroup } from '@shared/AppEnums';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -119,6 +124,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     defaultAffiliateRate;
     affiliateRateInitil;
     affiliateRate;
+    hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
+    hasCommissionsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMCommissionsManage);
 
     constructor(
         private route: ActivatedRoute,
@@ -137,11 +144,14 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private loadingService: LoadingService,
         private orderProxy: OrderServiceProxy,
         private itemDetailsService: ItemDetailsService,
+        private featureCheckerService: FeatureCheckerService,
+        private permissionCheckerService: PermissionCheckerService,
         public invoicesService: InvoicesService,
         public permissionChecker: AppPermissionService,
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService,
         public dialogRef: MatDialogRef<PersonalDetailsDialogComponent>,
+        public dialog: MatDialog,
         public appService: AppService,
         public appSession: AppSessionService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -650,6 +660,19 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     removeSourceContact(event) {
         event.stopPropagation();
         this.onSourceContactChanged();
+    }
+
+    showAffiliateHistory(event) {
+        event.stopPropagation();
+        this.dialog.open(AffiliateHistoryDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                contactId: this.contactInfo.id
+            }
+        }).afterClosed().subscribe(() => {
+        });
     }
 
     ngOnDestroy() {

@@ -10,13 +10,14 @@ import {
     SimpleChanges,
     ViewChild
 } from '@angular/core';
-import { DecimalPipe } from '@angular/common';
+import { DecimalPipe, I18nPluralPipe } from '@angular/common';
 import { Params } from '@angular/router';
 
 /** Third party imports */
 import { DxVectorMapComponent } from 'devextreme-angular/ui/vector-map';
 import { Observable } from 'rxjs';
 import { pluck } from 'rxjs/operators';
+import pluralize from 'pluralize';
 
 /** Application imports */
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -30,15 +31,12 @@ import { MapService } from '@app/shared/common/slice/map/map.service';
 import { MapAreaItem } from '@app/shared/common/slice/map/map-area-item.model';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { MapArea } from './map-area.enum';
-import { DataLayoutType } from '../../../layout/data-layout-type';
-import { FiltersService } from '../../../../../shared/filters/filters.service';
-import { ContactGroup } from '../../../../../shared/AppEnums';
 
 @Component({
     selector: 'slice-map',
     templateUrl: './map.component.html',
     styleUrls: ['./map.component.less'],
-    providers: [ LifecycleSubjectsService ],
+    providers: [ LifecycleSubjectsService, I18nPluralPipe ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MapComponent implements OnChanges {
@@ -80,7 +78,8 @@ export class MapComponent implements OnChanges {
         private ls: AppLocalizationService,
         private exportService: ExportService,
         private mapService: MapService,
-        private userManagementService: UserManagementService
+        private userManagementService: UserManagementService,
+        private pluralPipe: I18nPluralPipe
     ) {}
 
     ngOnChanges(changes: SimpleChanges) {
@@ -93,7 +92,15 @@ export class MapComponent implements OnChanges {
     customizeTooltip = (arg) => {
         let total = this.getElementTotal(arg);
         let totalMarkupString = total
-            ? `<div id="nominal"><b>${total}</b> ${total === 1 ? this.contactGroupText.slice(0, -1) : this.contactGroupText}</div>`
+            ? `<div id="nominal"><b>${total}</b>
+              ${this.pluralPipe.transform(
+                  total,
+                  {
+                      '=0': pluralize(this.contactGroupText, 0),
+                      '=1': pluralize.singular(this.contactGroupText),
+                      'other': pluralize.plural(this.contactGroupText)
+                  })}
+            </div>`
             : `<div>${this.ls.l('CRMDashboard_NoData')}</div>`;
         let node = `<div #gdp><h5>${arg.attribute('name')}</h5>${totalMarkupString}</div>`;
         return { html: node };
@@ -118,7 +125,8 @@ export class MapComponent implements OnChanges {
                     ? this.data[element.attribute('iso_a2')]
                     : this.data[element.attribute('postal')]
                   )
-                : this.data[element.attribute('iso_a2')][element.attribute('postal')];
+                : this.data[element.attribute('iso_a2')]
+                  && this.data[element.attribute('iso_a2')][element.attribute('postal')]
             total = +(stateData && stateData.total);
         }
         return total;
