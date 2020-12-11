@@ -16,7 +16,6 @@ export enum AppFeatures {
     CFOPartner = 'CFO.Partner',
     CRM = 'CRM',
     CRMBANKCode = 'CRM.BANKCode',
-    CRMCommissions = 'CRM.Commissions',
     CRMMaxActiveContactCount = 'CRM.MaxActiveContactCount',
     CRMMaxActivePartnerCount = 'CRM.MaxActivePartnerCount',
     CRMMaxUserCount = 'CRM.MaxUserCount',
