@@ -14,6 +14,7 @@ import { CurrencyPipe, DatePipe, DOCUMENT } from '@angular/common';
 import { select, Store } from '@ngrx/store';
 import { DxComponent } from 'devextreme-angular/core/component';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { Subject } from 'rxjs';
@@ -186,6 +187,13 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 dataField: 'Amount',
                 format: 'currency',
                 summaryType: 'sum'
+            },
+            {
+                area: 'filter',
+                dataType: 'number',
+                name: 'count',
+                isMeasure: true,
+                summaryType: 'count'
             }
         ]
     };
@@ -398,14 +406,17 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',
-                        visible: this.dataGrid instanceof DxDataGridComponent,
                         options: {
                             hint: this.ls.l('Download'),
                             items: [
                                 {
                                     action: (options) => {
                                         this.dataGrid.instance.option('export.fileName', this.reportTypes[this.selectedReportType].text);
-                                        this.exportService.exportToXLS(options, this.dataGrid as DxDataGridComponent);
+                                        if (this.dataGrid instanceof DxDataGridComponent) {
+                                            this.exportService.exportToXLS(options, this.dataGrid as DxDataGridComponent);
+                                        } else {
+                                            this.dataGrid.instance.exportToExcel();
+                                        }
                                     },
                                     text: this.ls.l('Export to Excel'),
                                     icon: 'xls',
@@ -425,10 +436,12 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                                         this.exportService.exportToGoogleSheet(options, this.dataGrid as DxDataGridComponent);
                                     },
                                     text: this.ls.l('Export to Google Sheets'),
-                                    icon: 'sheet'
+                                    icon: 'sheet',
+                                    visible: this.dataGrid instanceof DxDataGridComponent
                                 },
                                 {
-                                    type: 'downloadOptions'
+                                    type: 'downloadOptions',
+                                    visible: this.dataGrid instanceof DxDataGridComponent
                                 }
                             ]
                         }
@@ -457,7 +470,11 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     }
 
     toggleColumnChooser() {
-        DataGridService.showColumnChooser(this.dataGrid);
+        if (this.dataGrid instanceof DxDataGridComponent) {
+            DataGridService.showColumnChooser(this.dataGrid);
+        } else if (this.dataGrid instanceof DxPivotGridComponent) {
+            this.salesReportComponent.toggleFieldPanel();
+        }
     }
 
     toggleContactView() {

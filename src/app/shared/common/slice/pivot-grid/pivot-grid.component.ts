@@ -91,21 +91,20 @@ export class PivotGridComponent implements OnInit {
     updateTotalCellsSizes() {
         setTimeout(() => {
             this.fixedCells = [];
-            this.dataGrid.instance.element().querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal').forEach((grandTotalCell: HTMLTableCellElement, index) => {
-                if (grandTotalCell.parentElement.previousSibling &&
-                    grandTotalCell.getBoundingClientRect().bottom > window.innerHeight
-                ) {
-                    const cellWidth = grandTotalCell.getBoundingClientRect().width + (index === 0 ? 1 : 0) + 'px';
-                    this.fixedCells.push({
-                        value: grandTotalCell.innerText,
-                        width: cellWidth
-                    });
-                }
-            });
-            if (this.fixedCells.length) {
-                this.changeDetectorRef.detectChanges();
-            }
-        });
+            this.dataGrid.instance.element().querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal')
+                .forEach((grandTotalCell: HTMLTableCellElement, index: number) => {
+                    if (grandTotalCell.parentElement.previousSibling &&
+                        grandTotalCell.getBoundingClientRect().bottom > window.innerHeight
+                    ) {
+                        const cellWidth = grandTotalCell.getBoundingClientRect().width + (index === 0 ? 1 : 0) + 'px';
+                        this.fixedCells.push({
+                            value: grandTotalCell.innerText,
+                            width: cellWidth
+                        });
+                    }
+                });
+            this.changeDetectorRef.detectChanges();
+         });
     }
 
     toggleFieldPanel() {
