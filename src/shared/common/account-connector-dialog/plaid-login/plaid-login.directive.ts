@@ -58,7 +58,8 @@ export class PlaidLoginDirective {
                     this.syncAccount.create(this.cfoService.instanceType, this.cfoService.instanceId, new CreateSyncAccountInput({
                         isSyncBankAccountsEnabled: true,
                         typeId: SyncTypeIds.Plaid,
-                        publicToken: public_token
+                        publicToken: public_token,
+                        syncAccountRef: undefined
                     })).subscribe(() => {
                         this.onComplete.emit();
                         this.syncProgressService.runSynchProgress();

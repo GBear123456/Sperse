@@ -74813,6 +74813,7 @@ export interface ISyncAccountDto {
 export class CreateSyncAccountInput implements ICreateSyncAccountInput {
     typeId!: string;
     publicToken!: string | undefined;
+    syncAccountRef!: string | undefined;
     isSyncBankAccountsEnabled!: boolean | undefined;
 
     constructor(data?: ICreateSyncAccountInput) {
@@ -74828,6 +74829,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
         if (data) {
             this.typeId = data["typeId"];
             this.publicToken = data["publicToken"];
+            this.syncAccountRef = data["syncAccountRef"];
             this.isSyncBankAccountsEnabled = data["isSyncBankAccountsEnabled"];
         }
     }
@@ -74843,6 +74845,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
         data = typeof data === 'object' ? data : {};
         data["typeId"] = this.typeId;
         data["publicToken"] = this.publicToken;
+        data["syncAccountRef"] = this.syncAccountRef;
         data["isSyncBankAccountsEnabled"] = this.isSyncBankAccountsEnabled;
         return data; 
     }
@@ -74851,6 +74854,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
 export interface ICreateSyncAccountInput {
     typeId: string;
     publicToken: string | undefined;
+    syncAccountRef: string | undefined;
     isSyncBankAccountsEnabled: boolean | undefined;
 }
 
