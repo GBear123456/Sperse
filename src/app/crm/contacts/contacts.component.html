@@ -7,7 +7,7 @@
     <ng-container topHeader>
         <details-header [data]="contactInfo"
                         [personContactInfo]="personContactInfo"
-                        [ratingId]="ratingId"
+                        [ratingId]="contactInfo.ratingId"
                         (onInvalidate)="reloadCurrentSection($event)">
         </details-header>
     </ng-container>
@@ -34,7 +34,6 @@
             [selectedPartnerTypeId]="partnerTypeId"
             (print)="printMainArea()"
             (onUpdateStatus)="updateStatus($event)"
-            (onUpdateRating)="updateRating($event)"
             (onDelete)="deleteContact()"
             [getProxyService]="getProxyService"
             [assignedUsersSelector]="assignedUsersSelector"

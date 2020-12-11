@@ -78,8 +78,8 @@ export class RequestWithdrawalDialogComponent extends ConfirmDialogComponent {
                         this.commissionProxy.requestWithdrawal(new RequestWithdrawalInput({
                             contactId: this.selectedContact.Id,
                             amount: this.withdrawalAmount,
-                            date: DateHelper.isSameDateWithoutTime(this.date, this.today) ?
-                                this.date : DateHelper.removeTimezoneOffset(this.date, true, 'from')
+                            date: DateHelper.removeTimezoneOffset(this.date, true,
+                                DateHelper.isSameDateWithoutTime(this.date, this.today) ? undefined : 'from')
                         })).pipe(finalize(
                             () => this.loadingService.finishLoading(this.elementRef.nativeElement)
                         )).subscribe(() => {

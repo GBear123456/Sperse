@@ -187,11 +187,12 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     getEntitySubtitle(entity: any): string {
         let subtitle: string;
         if (entity) {
-            let prioritizedSubtitle = entity && entity.Name;
+            let prioritizedSubtitle = entity && (entity.Name || entity.Title
+                || entity.Email || entity.Phone) ? entity.CompanyName : '';
             if (this.pipeline.entityTypeSysId === EntityTypeSys.Management) {
-                prioritizedSubtitle = entity.PropertyName;
+                prioritizedSubtitle = entity.PropertyName || prioritizedSubtitle;
             }
-            subtitle = prioritizedSubtitle || entity.CompanyName || entity.Description;
+            subtitle = prioritizedSubtitle || entity.Description;
         }
         return subtitle;
     }

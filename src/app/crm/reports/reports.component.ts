@@ -12,17 +12,22 @@ import { CurrencyPipe, DatePipe, DOCUMENT } from '@angular/common';
 
 /** Third party imports */
 import { select, Store } from '@ngrx/store';
+import { DxComponent } from 'devextreme-angular/core/component';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 import DataSource from 'devextreme/data/data_source';
+import ODataStore from 'devextreme/data/odata/store';
 import { Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
 
 /** Application imports */
+import { CrmService } from '@app/crm/crm.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppService } from '@app/app.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
+import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -48,9 +53,9 @@ import { ReportType } from '@app/crm/reports/report-type.enum';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
-import { AppSessionService } from "@shared/common/session/app-session.service";
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { SubscriptionTrackerDto } from '@app/crm/reports/subscription-tracker-dto';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { SubscriptionTrackerFields } from '@app/crm/reports/subscription-tracker-fields.enum';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { TransactionDto } from '@app/crm/reports/transction-dto';
@@ -69,79 +74,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     @ViewChild('subscribersDataGrid', { static: false }) subscribersDataGrid: DxDataGridComponent;
     @ViewChild('statsDataGrid', { static: false }) statsDataGrid: DxDataGridComponent;
     @ViewChild('subscriptionTrackerGrid', { static: false }) subscriptionTrackerGrid: DxDataGridComponent;
-    toolbarConfig: ToolbarGroupModel[] = [
-        {
-            location: 'before', items: [
-                {
-                    name: 'filters',
-                    action: () => {
-                        setTimeout(() => {
-                            this.dataGrid.instance.repaint();
-                        }, 1000);
-                        this.filtersService.fixed = !this.filtersService.fixed;
-                    },
-                    options: {
-                        checkPressed: () => {
-                            return this.filtersService.fixed;
-                        },
-                        mouseover: () => {
-                            this.filtersService.enable();
-                        },
-                        mouseout: () => {
-                            if (!this.filtersService.fixed)
-                                this.filtersService.disable();
-                        }
-                    },
-                    attr: {
-                        'filter-selected': this.filtersService.hasFilterSelected
-                    }
-                }
-            ]
-        },
-        {
-            location: 'after',
-            locateInMenu: 'auto',
-            items: [
-                {
-                    name: 'download',
-                    widget: 'dxDropDownMenu',
-                    options: {
-                        hint: this.ls.l('Download'),
-                        items: [
-                            {
-                                action: (options) => {
-                                    this.dataGrid.instance.option('export.fileName', this.reportTypes[this.selectedReportType].text);
-                                    this.exportService.exportToXLS(options, this.dataGrid);
-                                },
-                                text: this.ls.l('Export to Excel'),
-                                icon: 'xls',
-                            },
-                            {
-                                action: (options) => {
-                                    this.dataGrid.instance.option('export.fileName', this.reportTypes[this.selectedReportType].text);
-                                    this.exportService.exportToCSV(options, this.dataGrid);
-                                },
-                                visible: false,
-                                text: this.ls.l('Export to CSV'),
-                                icon: 'sheet'
-                            },
-                            {
-                                action: (options) => {
-                                    this.dataGrid.instance.option('export.fileName', this.reportTypes[this.selectedReportType].text);
-                                    this.exportService.exportToGoogleSheet(options, this.dataGrid);
-                                },
-                                text: this.ls.l('Export to Google Sheets'),
-                                icon: 'sheet'
-                            },
-                            {
-                                type: 'downloadOptions'
-                            }
-                        ]
-                    }
-                }
-            ]
-        }
-    ];
+    @ViewChild(PivotGridComponent, { static: false }) salesReportComponent: PivotGridComponent;
+    toolbarConfig: ToolbarGroupModel[];
+    filters = [];
     filtersValues = {
         sourceOrganizationUnits: undefined,
         date: {
@@ -187,6 +122,81 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             });
         }
     });
+    salesReportDataSourceURI = 'SalesSlice';
+    sliceStorageKey = [
+        'CRM',
+        this.salesReportDataSourceURI,
+        this.appSessionService.tenantId,
+        this.appSessionService.userId
+    ].join('_');
+    salesReportDataSource = {
+        remoteOperations: true,
+        load: (loadOptions) => {
+            return this.crmService.loadSlicePivotGridData(
+                this.oDataService.getODataUrl('SalesSlice'),
+                this.filters,
+                loadOptions
+            );
+        },
+        onChanged: (event) => {
+            this.isDataLoaded = true;
+            this.totalCount = undefined;
+        },
+        onLoadingChanged: (loading) => {
+            this.isDataLoaded = !loading;
+        },
+        onLoadError: () => {
+            this.isDataLoaded = true;
+        },
+        fields: [
+            {
+                area: 'column',
+                caption: 'Group',
+                dataType: 'string',
+                dataField: 'ProductGroup'
+            },
+            {
+                area: 'row',
+                caption: 'Year',
+                dataField: 'TransactionDate',
+                dataType: 'date',
+                groupInterval: 'year',
+                name: 'year',
+                expanded: true,
+                showTotals: false
+            },
+            {
+                area: 'row',
+                caption: 'Month',
+                dataField: 'TransactionDate',
+                dataType: 'date',
+                groupInterval: 'month',
+                showTotals: false
+            },
+            {
+                area: 'row',
+                caption: 'Day',
+                dataField: 'TransactionDate',
+                dataType: 'date',
+                groupInterval: 'day',
+                showTotals: false
+            },
+            {
+                area: 'data',
+                dataType: 'number',
+                name: 'count',
+                isMeasure: true,
+                summaryType: 'count'
+            },
+            {
+                area: 'data',
+                dataType: 'number',
+                dataField: 'Amount',
+                format: 'currency',
+                summaryType: 'sum'
+            }
+        ]
+    };
     readonly subscriptionTrackerFields: KeysEnum<SubscriptionTrackerDto> = SubscriptionTrackerFields;
     transactionMonthsObj = {};
     transactionMonths: string[];
@@ -211,7 +221,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                     contact['TransactionNetCollected'] = {};
                     contact.Transactions.forEach((transaction: TransactionDto) => {
                         const month: moment.Moment = moment(transaction.Date);
-                        const monthString: string = month.format(monthFormat)
+                        const monthString: string = month.format(monthFormat);
                         this.transactionMonthsObj[monthString] = month;
                         if (transaction.Amount > 0) {
                             contact['TransactionRevenues'][monthString] = (contact['TransactionRevenues'][monthString] || 0) + transaction.Amount;
@@ -227,31 +237,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             }
         }
     };
-    filters = [
-        new FilterModel({
-            component: FilterCheckBoxesComponent,
-            caption: 'SourceOrganizationUnitId',
-            hidden: this.appSessionService.userIsMember,
-            field: 'sourceOrganizationUnits',
-            items: {
-                element: new FilterCheckBoxesModel(
-                    {
-                        dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
-                        dispatch: () => this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false)),
-                        nameField: 'displayName',
-                        keyExpr: 'id'
-                    })
-            }
-        }),
-        new FilterModel({
-            component: FilterCalendarComponent,
-            caption: 'date',
-            operator: { from: 'startDate', to: 'endDate' },
-            field: 'date',
-            items: { from: new FilterItemModel(), to: new FilterItemModel() },
-            options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
-        })
-    ];
     deactivate$: Subject<null> = new Subject<null>();
     totalCount: number;
     isDataLoaded = false;
@@ -264,6 +249,10 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         {
             text: this.ls.l('Subscribers'),
             value: ReportType.Subscribers
+        },
+        {
+            text: this.ls.l('SalesReport'),
+            value: ReportType.SalesReport
         },
         {
             text: this.ls.l('SubscriberDailyStats'),
@@ -300,6 +289,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         public ui: AppUiCustomizationService,
         public ls: AppLocalizationService,
         public appService: AppService,
+        public crmService: CrmService,
         public httpInterceptor: AppHttpInterceptor,
         @Inject(DOCUMENT) private document
     ) {}
@@ -316,39 +306,175 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     }
 
     activate() {
+        this.initFilterConfig();
+        this.initToolbarConfig();
         this.document.body.classList.add('overflow-hidden');
-        this.filtersService.setup(this.filters);
         this.filtersService.checkIfAnySelected();
         this.filtersService.filtersValues$.pipe(
             takeUntil(this.deactivate$)
         ).subscribe((filtersValues) => {
             this.filtersValues = filtersValues;
-            this.dataGrid.instance.refresh();
+            this.refresh();
         });
+    }
+
+    refresh() {
+        if (this.selectedReportType == ReportType.SalesReport)
+            this.dataGrid.instance.getDataSource().reload().then(
+                () => this.dataGrid.instance.repaint()
+            ); 
+        else
+            (this.dataGrid as DxDataGridComponent).instance.refresh();
     }
 
     ngAfterViewInit() {
         this.initDataSource();
     }
 
+    initFilterConfig() {
+        this.filters = this.selectedReportType != ReportType.SalesReport ? [
+            new FilterModel({
+                component: FilterCheckBoxesComponent,
+                caption: 'SourceOrganizationUnitId',
+                hidden: this.appSessionService.userIsMember,
+                field: 'sourceOrganizationUnits',
+                items: {
+                    element: new FilterCheckBoxesModel(
+                        {
+                            dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
+                            dispatch: () => this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false)),
+                            nameField: 'displayName',
+                            keyExpr: 'id'
+                        })
+                }
+            }),
+            new FilterModel({
+                component: FilterCalendarComponent,
+                caption: this.ls.l('Date'),
+                operator: { from: 'startDate', to: 'endDate' },
+                field: 'date',
+                items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+            })] : [
+            new FilterModel({
+                component: FilterCalendarComponent,
+                caption: this.ls.l('Date'),
+                field: 'TransactionDate',
+                operator: {from: 'ge', to: 'le'},
+                items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+            })
+        ];
+        this.filtersService.setup(this.filters);
+    }
+
+    initToolbarConfig() {
+        this.toolbarConfig = [
+            {
+                location: 'before', items: [
+                    {
+                        name: 'filters',
+                        disabled: this.selectedReportType == ReportType.SalesReport,
+                        action: () => {
+                            setTimeout(() => {
+                                this.dataGrid.instance.repaint();
+                            }, 1000);
+                            this.filtersService.fixed = !this.filtersService.fixed;
+                        },
+                        options: {
+                            checkPressed: () => {
+                                return this.filtersService.fixed;
+                            },
+                            mouseover: () => {
+                                this.filtersService.enable();
+                            },
+                            mouseout: () => {
+                                if (!this.filtersService.fixed)
+                                    this.filtersService.disable();
+                            }
+                        },
+                        attr: {
+                            'filter-selected': this.filtersService.hasFilterSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'download',
+                        widget: 'dxDropDownMenu',
+                        options: {
+                            hint: this.ls.l('Download'),
+                            items: [
+                                {
+                                    action: (options) => {
+                                        this.dataGrid.instance.option('export.fileName', this.reportTypes[this.selectedReportType].text);
+                                        if (this.dataGrid instanceof DxDataGridComponent) {
+                                            this.exportService.exportToXLS(options, this.dataGrid as DxDataGridComponent);
+                                        } else {
+                                            this.dataGrid.instance.exportToExcel();
+                                        }
+                                    },
+                                    text: this.ls.l('Export to Excel'),
+                                    icon: 'xls',
+                                },
+                                {
+                                    action: (options) => {
+                                        this.dataGrid.instance.option('export.fileName', this.reportTypes[this.selectedReportType].text);
+                                        this.exportService.exportToCSV(options, this.dataGrid as DxDataGridComponent);
+                                    },
+                                    visible: false,
+                                    text: this.ls.l('Export to CSV'),
+                                    icon: 'sheet'
+                                },
+                                {
+                                    action: (options) => {
+                                        this.dataGrid.instance.option('export.fileName', this.reportTypes[this.selectedReportType].text);
+                                        this.exportService.exportToGoogleSheet(options, this.dataGrid as DxDataGridComponent);
+                                    },
+                                    text: this.ls.l('Export to Google Sheets'),
+                                    icon: 'sheet',
+                                    visible: this.dataGrid instanceof DxDataGridComponent
+                                },
+                                {
+                                    type: 'downloadOptions',
+                                    visible: this.dataGrid instanceof DxDataGridComponent
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }
+        ];
+    }
+
     get dataSource() {
-        return this.selectedReportType === ReportType.Subscribers
-            ? this.subscribersDataSource
-            : (this.selectedReportType === ReportType.SubscribersStats
-               ? this.statsDataSource
-               : this.subscriptionTrackerDataSource);
+        return {
+            [ReportType.Subscribers]: this.subscribersDataSource,
+            [ReportType.SubscribersStats]: this.statsDataSource,
+            [ReportType.SubscriptionTracker]: this.subscriptionTrackerDataSource,
+            [ReportType.SalesReport]: this.salesReportDataSource
+        }[this.selectedReportType];
     }
 
     get dataGrid() {
-        return this.selectedReportType === ReportType.Subscribers
-                ? this.subscribersDataGrid
-                : (this.selectedReportType === ReportType.SubscribersStats
-                   ? this.statsDataGrid
-                   : this.subscriptionTrackerGrid);
+        return {
+            [ReportType.Subscribers]: this.subscribersDataGrid,
+            [ReportType.SubscribersStats]: this.statsDataGrid,
+            [ReportType.SubscriptionTracker]: this.subscriptionTrackerGrid,
+            [ReportType.SalesReport]: this.salesReportComponent && this.salesReportComponent.dataGrid
+        }[this.selectedReportType];
     }
 
     toggleColumnChooser() {
-        DataGridService.showColumnChooser(this.dataGrid);
+        if (this.dataGrid instanceof DxDataGridComponent) {
+            DataGridService.showColumnChooser(this.dataGrid);
+        } else if (this.dataGrid instanceof DxPivotGridComponent) {
+            this.salesReportComponent.toggleFieldPanel();
+        }
     }
 
     toggleContactView() {
@@ -364,16 +490,15 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     onContentReady(saveCount = false) {
         this.isDataLoaded = true;
-        if (saveCount) {
+        if (this.selectedReportType != ReportType.SalesReport) {
             let gridInstance = this.dataGrid && this.dataGrid.instance;
-            if (gridInstance) {
-                let dataSource = gridInstance.getDataSource && gridInstance.getDataSource();
+            if (gridInstance && saveCount) {
+                let dataSource: any = gridInstance.getDataSource && gridInstance.getDataSource();
                 if (dataSource) {
                     this.totalCount = dataSource.totalCount();
                 }
             }
         }
-
         this.changeDetectorRef.detectChanges();
     }
 
@@ -415,7 +540,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.setDataGridInstance(this.dataGrid);
     }
 
-    private setDataGridInstance(dataGrid: DxDataGridComponent) {
+    private setDataGridInstance(dataGrid: DxComponent) {
         let instance = dataGrid && dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
             instance.option('dataSource', this.dataSource);
@@ -426,10 +551,12 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         if (event.previousValue != event.value) {
             this.totalCount = null;
             this.isDataLoaded = false;
+            this.initFilterConfig();
+            this.initToolbarConfig();
             this.changeDetectorRef.detectChanges();
              setTimeout(() => {
                  this.initDataSource();
-                 this.reload();
+                 this.refresh();
             });
         }
     }
@@ -449,16 +576,11 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     }
 
     trackerGridCellClick(cell) {
-        //console.log(cell);
         /** Expand/collapse parent columns */
         if (cell.event.target.classList.contains('toggle-button')) {
             this.subscriptionTrackerColumnsVisibility[cell.column.name] = !this.subscriptionTrackerColumnsVisibility[cell.column.name];
             cell.event.stopPropagation();
         }
-    }
-
-    reload() {
-        this.dataGrid.instance.refresh();
     }
 
     deactivate() {

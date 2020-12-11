@@ -146,6 +146,7 @@ import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-relat
 import { ResellerActivityComponent } from './reseller-activity/reseller-activity.component';
 import { AddServiceProductDialogComponent } from './subscriptions/add-subscription-dialog/add-service-product-dialog/add-service-product-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
+import { AffiliateHistoryDialogComponent } from './personal-details/personal-details-dialog/affiliate-history-dialog/affiliate-history-dialog.component';
 import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 import { PropertyInformationComponent } from '@app/crm/contacts/property-information/property-information.component';
 
@@ -207,6 +208,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         LeadRelatedContactsComponent,
         AddServiceProductDialogComponent,
         TemplateDocumentsDialogComponent,
+        AffiliateHistoryDialogComponent,
         CustomerListDialogComponent,
         PropertyInformationComponent,
         ResellerActivityComponent
@@ -297,6 +299,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         MarkAsPaidDialogComponent,
         AddServiceProductDialogComponent,
         TemplateDocumentsDialogComponent,
+        AffiliateHistoryDialogComponent,
         CustomerListDialogComponent
     ],
     providers: [

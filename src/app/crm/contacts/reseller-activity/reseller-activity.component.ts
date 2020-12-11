@@ -35,6 +35,8 @@ import { CommissionFields } from '@app/crm/commission-history/commission-fields.
 import { LedgerFields } from '@app/crm/commission-history/ledger-fields.enum';
 import { ClientFields } from '@app/crm/clients/client-fields.enum';
 import { AppPermissions } from '@shared/AppPermissions';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     selector: 'reseller-activity',
@@ -87,7 +89,9 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     isCGManageAllowed = false;
-    isOrdersManageAllowed = this.permissionService.isGranted(AppPermissions.CRMOrdersInvoicesManage);
+    isCommissionsAllowed = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions)
+        && this.permissionService.isGranted(AppPermissions.CRMCommissions);
+
     currencyFormat$: Observable<DevExpress.ui.format> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => {
             return {
@@ -107,6 +111,7 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
         private contactsService: ContactsService,
         private lifeCycleService: LifecycleSubjectsService,
         private itemDetailsService: ItemDetailsService,
+        private featureCheckerService: FeatureCheckerService,
         private permissionCheckerService: PermissionCheckerService,
         private permissionService: AppPermissionService,
         private oDataService: ODataService,

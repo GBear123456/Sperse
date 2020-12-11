@@ -6,7 +6,8 @@ import { Params, Router } from '@angular/router';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject, of, BehaviorSubject, Subscriber, forkJoin } from 'rxjs';
-import { filter, first, finalize, tap, switchMap, catchError, map, mapTo, distinctUntilChanged } from 'rxjs/operators';
+import { filter, first, finalize, tap, switchMap, catchError,
+    map, mapTo, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 
 /** Application imports */
 import { ContactStatus } from '@root/shared/AppEnums';
@@ -96,6 +97,7 @@ export class ContactsService {
     settingsDialogOpened$: Observable<boolean> = this.settingsDialogOpened.asObservable().pipe(
         distinctUntilChanged()
     );
+    toolbarSubject$ = this.toolbarSubject.asObservable().pipe(debounceTime(200));
     isPrevDisabled = false;
     isNextDisabled = false;
     prev: Subject<any> = new Subject();
@@ -139,7 +141,7 @@ export class ContactsService {
     }
 
     toolbarSubscribe(callback, ident?: string) {
-        return this.subscribe(this.toolbarSubject.asObservable().subscribe(callback), ident);
+        return this.subscribe(this.toolbarSubject$.subscribe(callback), ident);
     }
 
     toolbarUpdate(config = null) {

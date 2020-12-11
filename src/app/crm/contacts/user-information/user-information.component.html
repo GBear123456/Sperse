@@ -3,55 +3,63 @@
         <dx-validation-group #inviteValidationGroup>
             <div class="row">
                 <div class="invite-user-info col-md-4" *ngIf="emails || phones">
-                    <dx-select-box #emailAddress
-                        width="300px"
-                        name="emailAddress"
-                        [placeholder]="ls.l('EmailAddress')"
-                        [disabled]="!isInviteAllowed"
-                        [showClearButton]="true"
-                        [acceptCustomValue]="true"
-                        [dataSource]="emails"
-                        displayExpr="emailAddress"
-                        valueExpr="emailAddress"
-                        [(value)]="inviteData.emailAddress"
-                        (onCustomItemCreating)="onCustomItemCreating($event, 'emailAddress')"
-                        itemTemplate="emailItemTemplate">
-                        <div *dxTemplate="let item of 'emailItemTemplate'">
-                            <div class="email-item-wrapper">
-                                <span>{{item?.emailAddress}}</span>
+                    <h2>{{ls.l('UserInfo')}}</h2>
+                    <p>{{ls.l('UserInfoDescription')}}</p>
+                    <div class="invite-field">
+                        <div class="item-edit-label">{{ls.l("Email")}}:</div>
+                        <dx-select-box #emailAddress
+                            width="calc(100% - 50px)"
+                            name="emailAddress"
+                            [placeholder]="ls.l('SelectOrEnterNew')"
+                            [disabled]="!isInviteAllowed"
+                            [showClearButton]="true"
+                            [acceptCustomValue]="true"
+                            [dataSource]="emails"
+                            displayExpr="emailAddress"
+                            valueExpr="emailAddress"
+                            [(value)]="inviteData.emailAddress"
+                            (onCustomItemCreating)="onCustomItemCreating($event, 'emailAddress')"
+                            itemTemplate="emailItemTemplate">
+                            <div *dxTemplate="let item of 'emailItemTemplate'">
+                                <div class="email-item-wrapper">
+                                    <span>{{item?.emailAddress}}</span>
+                                </div>
                             </div>
-                        </div>
-                        <dx-validator>
-                            <dxi-validation-rule type="required" [message]="ls.l('EmailIsRequired')"></dxi-validation-rule>
-                            <dxi-validation-rule type="pattern" [pattern]="emailRegEx" [message]="ls.l('InvalidEmailAddress')"></dxi-validation-rule>
-                        </dx-validator>
-                    </dx-select-box>
-                    <dx-select-box #phoneNumber
-                        width="300px"
-                        name="phoneNumber"
-                        [placeholder]="ls.l('PhoneNumber')"
-                        [disabled]="!isInviteAllowed"
-                        [showClearButton]="true"
-                        [acceptCustomValue]="true"
-                        [dataSource]="phones"
-                        displayExpr="phoneNumber"
-                        valueExpr="phoneNumber"
-                        [(value)]="inviteData.phoneNumber"
-                        (onCustomItemCreating)="onCustomItemCreating($event, 'phoneNumber')"
-                        itemTemplate="phoneItemTemplate">
-                        <div *dxTemplate="let item of 'phoneItemTemplate'">
-                            <div class="phone-item-wrapper">
-                                <span>{{phoneFormatPipe.transform(item?.phoneNumber)}}</span>
+                            <dx-validator>
+                                <dxi-validation-rule type="required" [message]="ls.l('EmailIsRequired')"></dxi-validation-rule>
+                                <dxi-validation-rule type="pattern" [pattern]="emailRegEx" [message]="ls.l('InvalidEmailAddress')"></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-select-box>
+                    </div>
+                    <div class="invite-field">
+                        <div class="item-edit-label">{{ls.l("PhoneNumber")}}:</div>
+                        <dx-select-box #phoneNumber
+                            width="calc(100% - 50px)"
+                            name="phoneNumber"
+                            [placeholder]="ls.l('SelectOrEnterNew')"
+                            [disabled]="!isInviteAllowed"
+                            [showClearButton]="true"
+                            [acceptCustomValue]="true"
+                            [dataSource]="phones"
+                            displayExpr="phoneNumber"
+                            valueExpr="phoneNumber"
+                            [(value)]="inviteData.phoneNumber"
+                            (onCustomItemCreating)="onCustomItemCreating($event, 'phoneNumber')"
+                            itemTemplate="phoneItemTemplate">
+                            <div *dxTemplate="let item of 'phoneItemTemplate'">
+                                <div class="phone-item-wrapper">
+                                    <span>{{phoneFormatPipe.transform(item?.phoneNumber)}}</span>
+                                </div>
                             </div>
-                        </div>
-                        <dx-validator>
-                            <dxi-validation-rule type="stringLength" max="24"></dxi-validation-rule>
-                            <dxi-validation-rule type="pattern"
-                                                 [pattern]="phonePattern"
-                                                 [message]="ls.l('PhoneValidationError')">
-                            </dxi-validation-rule>
-                        </dx-validator>
-                    </dx-select-box>
+                            <dx-validator>
+                                <dxi-validation-rule type="stringLength" max="24"></dxi-validation-rule>
+                                <dxi-validation-rule type="pattern"
+                                                     [pattern]="phonePattern"
+                                                     [message]="ls.l('PhoneValidationError')">
+                                </dxi-validation-rule>
+                            </dx-validator>
+                        </dx-select-box>
+                    </div>
                     <dx-check-box [(value)]="inviteSetRandomPassword" [text]="ls.l('SetRandomPassword')"></dx-check-box>
                     <dx-text-box *ngIf="!inviteSetRandomPassword"
                         width="300px"
@@ -77,8 +85,9 @@
                     <dx-check-box [(value)]="inviteData.sendActivationEmail" [text]="ls.l('SendActivationEmail')"></dx-check-box>
                 </div>
                 <div class="col-md-4">
-                    <span>{{ls.l('Roles')}}:</span>
-                    <ul class="items-list">
+                    <h2>{{ls.l('SelectRoles')}}</h2><span class="optional">({{ls.l('optional')}})</span>
+                    <p>{{ls.l('SelectRolesDescription')}}</p>
+                    <ul class="items-list roles">
                         <li *ngFor="let role of roles" [title]="role.displayName">
                             <dx-check-box [disabled]="!isInviteAllowed"
                                         [text]="role.displayName"
@@ -98,9 +107,11 @@
         <mat-tab label="General">
             <dx-scroll-view showScrollbar="onHover">
                 <div class="user-info row" #row>
-                    <div class="col-md-5" [ngClass]="{ onecolum: row.offsetWidth < 600 }">
+                    <div class="col-md-4" [ngClass]="{ onecolum: row.offsetWidth < 600 }">
+                        <h2>{{ls.l('UserInfo')}}</h2>
+                        <p>{{ls.l('UserInfoDescription')}}</p>
                         <div class="section-item clearfix">
-                            <div class="item-edit-label">{{ls.l("EmailAddress")}}:</div>
+                            <div class="item-edit-label">{{ls.l("Email")}}:</div>
                             <inplace-edit #InPlaceEmail
                                           [id]="null"
                                           [value]="data && data.user && data.user[EMAIL_FIELD]"
@@ -127,7 +138,7 @@
                         <div class="title">
                             {{ls.l('Options') + ':'}}
                         </div>
-                        <ul *ngIf="data && data?.user" class="items-list">
+                        <ul *ngIf="data && data?.user" class="items-list options">
                             <li>
                                 <dx-check-box [disabled]="!isEditAllowed" [(value)]="data.user.isActive" [text]="ls.l('Active')" (onValueChanged)="isActiveChanged($event)"></dx-check-box>
                             </li>
@@ -140,12 +151,15 @@
                         </ul>
                     </div>
                     <div class="col-md-4">
-                        <div class="title">
-                            {{ls.l('Roles') + ':'}}
-                        </div>
-                        <ul class="items-list">
+                        <h2>{{ls.l('UserRoles')}}</h2>
+                        <p>{{ls.l('SelectRolesDescription')}}</p>
+                        <ul class="items-list roles">
                             <li *ngFor="let role of data?.roles">
-                                <dx-check-box [disabled]="!changeRolesAllowed" [(value)]="role.isAssigned" text="{{role.roleDisplayName}}" (onValueChanged)="roleUpdate($event, role)"></dx-check-box>
+                                <dx-check-box [disabled]="!changeRolesAllowed" 
+                                    [(value)]="role.isAssigned" 
+                                    text="{{role.roleDisplayName}}" 
+                                    (onValueChanged)="roleUpdate($event, role)">
+                                </dx-check-box>
                             </li>
                         </ul>
                     </div>

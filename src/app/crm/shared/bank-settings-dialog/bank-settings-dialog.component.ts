@@ -37,6 +37,7 @@ export class BankSettingsDialogComponent {
             id: 'saveOption',
             title: this.ls.l('Save'),
             class: 'primary',
+            disabled: this.data.isManageUnallowed,
             action: this.save.bind(this)
         }
     ];

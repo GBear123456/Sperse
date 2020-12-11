@@ -16,7 +16,7 @@ export class GooglePlaceService {
     }
 
     static getCountryCode(components: AddressComponent[]): string {
-        return this.normalize(GooglePlaceService.getFieldValue(components, 'country', 'short_name'));
+        return GooglePlaceService.normalize(GooglePlaceService.getFieldValue(components, 'country', 'short_name'));
     }
 
     static getStateCode(components: AddressComponent[]): string {
@@ -29,8 +29,7 @@ export class GooglePlaceService {
     }
 
     static getStreet(components: AddressComponent[]): string {
-        const street = GooglePlaceService.getStateName(components);
-        return street && GooglePlaceService.normalize(street);
+        return GooglePlaceService.normalize(GooglePlaceService.getFieldValue(components, 'route', 'long_name'));
     }
 
     static getStreetNumber(components: AddressComponent[]) {

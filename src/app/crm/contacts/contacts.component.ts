@@ -89,7 +89,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     leadId: number;
     leadStages = [];
     clientStageId: number;
-    ratingId: number;
     partnerInfo: PartnerInfoDto;
     partnerTypeId: string;
     partnerTypes: any[] = [];
@@ -136,7 +135,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         map(([contactIsParent, contactStatusId]: [boolean, string]) => {
             return contactIsParent || !this.isClientDetailPage(contactStatusId);
         })
-    )
+    );
 
     navLinks: NavLink[] = [
         {
@@ -163,7 +162,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     return this.permission.isGranted(userId
                         ? AppPermissions.AdministrationUsers
                         : AppPermissions.AdministrationUsersCreate
-                    )
+                    );
                 })
             ),
             route: 'user-information'
@@ -197,9 +196,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         },
         {
             name: 'reseller-activity',
-            label: this.l('ResellerActivity'), route: 'reseller-activity',
-            visible$: of(this.appSessionService.tenant &&
-                this.appSessionService.tenant.customLayoutType != LayoutType.BankCode)
+            label: this.l('ResellerActivity'), route: 'reseller-activity'
         },
         {
             name: 'lead-information',
@@ -419,6 +416,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private fillContactDetails(result: ContactInfoDto, contactId = null) {
+        this.contactsService.toolbarUpdate();
         this.contactService['data'].contactInfo = result;
         this.contactsService.contactInfoUpdate(result);
         this.contactGroupId.next(result.groupId);
@@ -443,7 +441,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             'ViewCommunicationHistory.SendSMSAndEmail'
         );
 
-        this.ratingId = result.ratingId;
         this.primaryContact = result.personContactInfo;
         this.contactInfo = result;
         this.personContactInfo = result.personContactInfo;
@@ -451,7 +448,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.contactsService.updateUserId(
             this.userService['data'].userId = this.primaryContact.userId
         );
-        this.contactsService.toolbarUpdate();
         this.storeInitialData();
     }
 
@@ -788,10 +784,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     updateStatus(status: Status) {
         this.showConfirmationDialog(status);
-    }
-
-    updateRating(ratingId: number) {
-        this.ratingId = ratingId;
     }
 
     updateLeadStage($event) {

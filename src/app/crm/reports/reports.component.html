@@ -5,7 +5,7 @@
               [showToggleColumnSelectorButton]="true"
               (onToggleCompactView)="toggleContactView()"
               (onToggleToolbar)="toggleToolbar()"
-              (onReload)="reload()"
+              (onReload)="refresh()"
               (onToggleColumnSelector)="toggleColumnChooser()">
     <types-dropdown [items]="reportTypes"
                     [totalCount]="totalCount"
@@ -377,8 +377,14 @@
             </div>
         </dx-data-grid>
     </div>
+    <div [hidden]="selectedReportType !== reportTypesEnum.SalesReport">
+        <slice-pivot-grid [storageKey]="sliceStorageKey"
+                          [isLoading]="!isDataLoaded"
+                          [height]="crmService.contentHeight$ | async">
+        </slice-pivot-grid>
+    </div>
     <app-no-data
-        [hidden]="!isDataLoaded || totalCount"
+        [hidden]="!isDataLoaded || totalCount || selectedReportType == reportTypesEnum.SalesReport"
         [showLink]="false">
     </app-no-data>
 </div>

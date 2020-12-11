@@ -13,7 +13,7 @@ export const getLists = createSelector(
 export const getStoredLists = createSelector(
     getListsState,
     (state: State) => _.map(
-        _.filter(state.lists, function(list: ContactListInfoDto){ return Number.isInteger(list.id); })
+        _.filter(state.lists, (list: ContactListInfoDto) => Number.isInteger(list.id))
     )
 );
 

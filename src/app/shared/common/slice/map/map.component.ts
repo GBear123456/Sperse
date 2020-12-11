@@ -125,7 +125,8 @@ export class MapComponent implements OnChanges {
                     ? this.data[element.attribute('iso_a2')]
                     : this.data[element.attribute('postal')]
                   )
-                : this.data[element.attribute('iso_a2')][element.attribute('postal')];
+                : this.data[element.attribute('iso_a2')]
+                  && this.data[element.attribute('iso_a2')][element.attribute('postal')]
             total = +(stateData && stateData.total);
         }
         return total;

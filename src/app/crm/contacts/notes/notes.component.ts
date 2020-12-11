@@ -64,10 +64,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                                 source: notes
                             };
                         })
-                    )
-        }),
-        tap(() => {
-            this.updateToolbar();
+                    );
         })
     );
 
@@ -96,9 +93,12 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                     contactInfo.id, contactInfo.primaryOrganizationContactId, leadInfo.propertyId
                 ].filter(Boolean);
             }),
+            tap(() => {
+                this.updateToolbar();
+            }),
             distinctUntilChanged((prevIds: number[], nextIds: number[]) => !ArrayHelper.dataChanged(prevIds, nextIds)),
         );
-    };
+    }
 
     ngOnInit() {
         this.notes$.pipe(first()).subscribe((notes: NoteInfoDto[]) => {

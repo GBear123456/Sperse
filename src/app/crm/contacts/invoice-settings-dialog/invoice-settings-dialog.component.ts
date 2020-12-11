@@ -12,8 +12,12 @@ import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dia
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateType, TenantPaymentSettingsServiceProxy, InvoiceSettings, Currency } from '@shared/service-proxies/service-proxies';
 import { BankSettingsDialogComponent } from '@app/crm/shared/bank-settings-dialog/bank-settings-dialog.component';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { AppPermissions } from '@shared/AppPermissions';
 import { EmailTags } from '../contacts.const';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: 'invoice-settings-dialog.component.html',
@@ -55,6 +59,9 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         EmailTags.SenderCalendly,
         EmailTags.SenderAffiliateCode
     ];
+    hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
+    isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
+    isRateDisabled = this.isManageUnallowed || !this.permission.isGranted(AppPermissions.CRMCommissionsManage);
 
     constructor(
         public dialog: MatDialog,
@@ -63,6 +70,8 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         private dialogRef: MatDialogRef<InvoiceSettingsDialogComponent>,
         private changeDetectorRef: ChangeDetectorRef,
         private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
+        private permission: AppPermissionService,
+        private featureCheckerService: FeatureCheckerService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
@@ -89,6 +98,9 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     }
 
     save() {
+        if (this.isManageUnallowed)
+            return ;
+
         this.modalDialog.startLoading();
         if (this.settings.defaultAffiliateRate !== null)
             this.settings.defaultAffiliateRate = parseFloat(
@@ -109,7 +121,9 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
-            data: {}
+            data: {
+                isManageUnallowed: this.isManageUnallowed
+            }
         });
     }
 

@@ -1,11 +1,12 @@
 :host {
     display: block;
-    height: 99%;
+    height: 100%;
+    overflow: hidden;
 
     .table-wrapper {
         width: 100%;
-        padding: 0px 30px 25px 25px;
-        table { 
+        padding: 0 30px 25px 25px;
+        table {
             height: 100%;
             min-height: 500px;
             tr {
@@ -18,7 +19,7 @@
                         padding-top: 25px;
                     }
                 }
-  
+
                 &:not(:last-child) {
                     td {
                         &:not(:first-child) {
@@ -46,7 +47,7 @@
                     &:not(:first-child) {
                         width: 40%;
                     }
-  
+
                     letter-spacing: 0.6px;
                     text-transform: uppercase;
                 }
@@ -57,6 +58,56 @@
             }
         }
     }
+
+    .additional-info {
+        height: 120px;
+        display: flex;
+        flex-flow: row wrap;
+        background: #f3f7fa;
+        padding: 10px;
+        //align-items: center;
+        align-items: flex-start;
+
+        dx-tag-box {
+            opacity: 1 !important;
+        }
+
+        .item {
+            padding: 0 10px;
+            min-width: 15%;
+
+            img {
+                margin-right: 5px;
+            }
+        }
+
+        .title {
+            font-weight: 700;
+            display: block;
+            padding-bottom: 6px;
+        }
+
+        .item-row {
+            display: flex;
+            align-items: center;
+        }
+
+        rating-bar {
+            display: block;
+            margin-top: 10px;
+        }
+
+        ::ng-deep {
+            mat-progress-bar {
+                width: 140px !important;
+                height: 8px !important;
+            }
+        }
+    }
+}
+
+::ng-deep .dx-tag-remove-button {
+    display: none;
 }
 
 ::ng-deep .right-side-opened .socials {
@@ -66,5 +117,5 @@
         @media all and (max-width: 1440px) {
             max-width: 275px !important;
         }
-    }   
+    }
 }

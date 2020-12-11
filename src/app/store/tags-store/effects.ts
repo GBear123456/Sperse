@@ -72,6 +72,7 @@ export class TagsStoreEffects {
             return request.pipe(
                 map(() => {
                     this.notifyService.success(payload.successMessage);
+                    this.store$.dispatch(new tagsActions.AddTagSuccess(payload));
                     /** Reload data from server */
                     return new tagsActions.LoadRequestAction(true);
                 }),

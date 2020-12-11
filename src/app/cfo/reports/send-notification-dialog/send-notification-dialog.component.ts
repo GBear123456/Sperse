@@ -51,8 +51,8 @@ export class SendNotificationDialogComponent implements OnInit {
         this.instanceAppService.getInstanceOwnerEmailAddress(
             this.cfoService.instanceType as InstanceType,
             this.cfoService.instanceId
-        ).subscribe((ownerEmail: string) => {
-            this.notificationToEmail = ownerEmail;
+        ).subscribe((ownerEmail) => {
+            this.notificationToEmail = ownerEmail.length ? ownerEmail : undefined;
         });
     }
 
@@ -87,7 +87,7 @@ export class SendNotificationDialogComponent implements OnInit {
     }
 
     get submitButtonDisabled() {
-        return !this.cfoService.isMainInstanceType && !this.emailIsValidAndNotEmpty;
+        return !this.emailIsValidAndNotEmpty;
     }
 
 }
