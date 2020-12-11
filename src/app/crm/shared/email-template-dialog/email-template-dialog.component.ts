@@ -84,29 +84,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
 
-    buttons: IDialogButton[] = [
-        {
-            id: 'cancelTemplateOptions',
-            title: this.ls.l('Cancel'),
-            class: 'default',
-            action: () => this.close()
-        },
-        {
-            id: 'saveTemplateOptions',
-            title: this.data.saveTitle,
-            disabled: this.isManageUnallowed,
-            class: 'primary',
-            action: this.save.bind(this),
-            contextMenu: {
-                hidden: this.data.hideContextMenu,
-                items: [
-                    { text: this.ls.l('Save'), selected: false },
-                    { text: this.ls.l('SaveAsNew'), selected: false }
-                ],
-                defaultIndex: 0
-            }
-        }
-    ];
+    buttons: IDialogButton[];
     _refresh: Subject<null> = new Subject<null>();
     refresh$: Observable<null> = this._refresh.asObservable();
     templates$: Observable<GetTemplatesResponse[]> = this.refresh$.pipe(
@@ -157,7 +135,35 @@ export class EmailTemplateDialogComponent implements OnInit {
         });
         this.showCC = Boolean(this.data.cc && this.data.cc.length);
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
+
+        this.initDialogButtons();
         this.changeDetectorRef.detectChanges();
+    }
+
+    initDialogButtons() {
+        this.buttons = [
+            {
+                id: 'cancelTemplateOptions',
+                title: this.ls.l('Cancel'),
+                class: 'default',
+                action: () => this.close()
+            },
+            {
+                id: 'saveTemplateOptions',
+                title: this.data.saveTitle,
+                disabled: this.templateEditMode && this.isManageUnallowed,
+                class: 'primary',
+                action: this.save.bind(this),
+                contextMenu: {
+                    hidden: this.data.hideContextMenu,
+                    items: [
+                        { text: this.ls.l('Save'), selected: false },
+                        { text: this.ls.l('SaveAsNew'), selected: false }
+                    ],
+                    defaultIndex: 0
+                }
+            }
+        ];
     }
 
     save() {
