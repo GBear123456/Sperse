@@ -3,19 +3,30 @@
     <h3>{{ ls.l('ConnectFinancialDataSubtitle') }}</h3>
 </div>
 <ul class="connectors">
-    <li *ngFor="let connector of connectors" (click)="selectConnector(connector, true)" [ngClass]="{
-        disabled: connector.disabled,
-        selected: connector === selectedConnector
-    }">
+    <li *ngFor="let connector of connectors"
+        [ngClass]="{
+            disabled: connector.disabled,
+            selected: connector === selectedConnector
+        }"
+        (click)="selectConnector(connector, true)">
         <div><img width="93px" [src]="'assets/common/icons/' + connector.iconName + '.svg'"></div>
         <div>
-            <h2>{{ connector.title }}</h2>
+            <header>
+                <h2>{{ connector.title }}</h2>
+                <mat-slide-toggle *ngIf="connector.switcher"
+                                  color="primary"
+                                  [checked]="connector.checked"
+                                  [title]="ls.l('Using') + ' ' + connector.getName() + ' ' + ls.l('provider')"
+                                  (click)="$event.stopPropagation()"
+                                  (toggleChange)="connector.checked = !connector.checked">
+                </mat-slide-toggle>
+            </header>
             <h3>{{ connector.description }}</h3>
         </div>
     </li>
 </ul>
 
 <div class="footer">
-<!--    <div class="sync-date-picker"><span>{{l('SynchronizeYourData')}}</span><sync-date-picker></sync-date-picker></div>-->
+    <!--    <div class="sync-date-picker"><span>{{l('SynchronizeYourData')}}</span><sync-date-picker></sync-date-picker></div>-->
     <button (click)="next()" [disabled]="!selectedConnector">{{ ls.l('Next') }}</button>
 </div>

@@ -1,13 +1,13 @@
 /** Core imports */
 import {
-    Component,
     ChangeDetectionStrategy,
-    EventEmitter,
+    Component,
     ElementRef,
-    ViewEncapsulation,
+    EventEmitter,
     Inject,
     OnInit,
-    Output
+    Output,
+    ViewEncapsulation
 } from '@angular/core';
 
 /** Third party imports */
@@ -26,7 +26,7 @@ import { AccountConnectorDialogData } from '@shared/common/account-connector-dia
 })
 export class AccountConnectorDialogComponent implements OnInit {
     static defaultConfig: MatDialogConfig = {
-        height: '662px',
+        height: '680px',
         width: '900px',
         id: 'account-connector-dialog',
         panelClass: ['account-connector-dialog']
@@ -62,7 +62,9 @@ export class AccountConnectorDialogComponent implements OnInit {
         this.elementRef.nativeElement.closest(
             '#' + this.dialogRef.id
         ).style.padding = 0;
-        this.dialogRef.updateSize('0', '0');
+        if (connector !== AccountConnectors.SaltEdge) {
+            this.dialogRef.updateSize('0', '0');
+        }
         this.selectedConnector = connector;
     }
 
@@ -70,7 +72,7 @@ export class AccountConnectorDialogComponent implements OnInit {
         this.dialogRef.close(e);
     }
 
-    complete(startLoading = false) {
+    complete(startLoading: boolean = false) {
         this.onComplete.emit(startLoading);
         this.closeDialog();
     }
