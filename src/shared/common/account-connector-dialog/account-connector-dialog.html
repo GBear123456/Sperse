@@ -14,7 +14,7 @@
         </plaid-login>
     </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.SaltEdge">
-        <salt-edge (onComplete)="complete()"></salt-edge>
+        <salt-edge (onComplete)="complete()" (onClose)="closeDialog()"></salt-edge>
     </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.QuickBook">
         <quick-book-login [loadingContainerElement]="data?.loadingContainerElement"
