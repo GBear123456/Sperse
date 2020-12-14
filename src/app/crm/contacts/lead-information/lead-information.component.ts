@@ -175,9 +175,13 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                 leadService.updateSourceOrganizationUnit(new UpdateLeadSourceOrganizationUnitInput({
                     leadId: this.data.leadInfo.id,
                     sourceOrganizationUnitId: orgUnitId
-                })).subscribe(() =>
-                    this.notifyService.info(this.ls.l('SavedSuccessfully'))
-                );
+                })).subscribe(() => {
+                    this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                    this.contactsService.orgUnitsUpdate({
+                        allOrganizationUnits: this.organizationUnits,
+                        selectedOrgUnits: [orgUnitId]
+                    });
+                });
             }
         }, this.ident);
     }
@@ -362,7 +366,9 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                     hasBackdrop: false,
                     closeOnNavigation: true,
                     data: dialogData
-                });
+                }).afterClosed().subscribe(
+                    () => this.contactsService.closeSettingsDialog()
+                );
             }
         } else if (!open)
             dialog.close();

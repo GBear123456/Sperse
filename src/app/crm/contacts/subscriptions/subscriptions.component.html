@@ -22,9 +22,9 @@
     <dxi-column dataField="id" [visible]="false" cssClass="clipboard-holder"></dxi-column>
     <dxi-column dataField="serviceType" [caption]="ls.l('Subscriptions.ServiceType')" cssClass="clipboard-holder"></dxi-column>
     <dxi-column dataField="serviceName" [caption]="ls.l('Subscriptions.ServiceName')" cssClass="clipboard-holder"></dxi-column>
-    <dxi-column dataField="startDate" cellTemplate="dateTemplate" [width]="appService.isHostTenant ? 180 : 215"></dxi-column>
-    <dxi-column dataField="endDate" cellTemplate="dateTemplate" [width]="appService.isHostTenant ? 180 : 215"></dxi-column>
-    <dxi-column dataField="trialEndDate" dataType="date" cssClass="clipboard-holder"></dxi-column>
+    <dxi-column dataField="startDate" cellTemplate="dateTimeTemplate" [width]="appService.isHostTenant ? 180 : 215" cssClass="tabular"></dxi-column>
+    <dxi-column dataField="endDate" cellTemplate="dateTimeTemplate" [width]="appService.isHostTenant ? 180 : 215" cssClass="tabular"></dxi-column>
+    <dxi-column dataField="trialEndDate" cellTemplate="dateTemplate" cssClass="tabular"></dxi-column>
     <dxi-column dataField="fee" cellTemplate="amountTemplate"></dxi-column>
     <dxi-column dataField="status" [caption]="ls.l('Status')" cellTemplate="statusCell"></dxi-column>
     <dxi-column caption="" [width]="220" cellTemplate="actionsTemplate"></dxi-column>
@@ -34,11 +34,14 @@
         <!-- <br /> -->
         <button class="btn-link" *ngIf="cell.data.statusCode === 'A' && permission.isGranted(permissions.CRMOrdersManage)" (click)="cancelSubscription(cell.data.id, $event)">{{ls.l('cancel')}}</button>
     </div>
-    <div *dxTemplate="let cellData of 'dateTemplate'" 
+    <div *dxTemplate="let cellData of 'dateTemplate'" class="clipboard-holder">
+        <span class="date-time" title="{{cellData.value | date: formatting.date : userTimezone }}">{{cellData.value | date: formatting.date : userTimezone}}</span>
+    </div>
+
+    <div *dxTemplate="let cellData of 'dateTimeTemplate'" 
         class="clipboard-holder"
         (mouseenter)="onDateHover($event)"  
         (mouseleave)="onDateLeave($event)">
-        <span title="{{cellData.value | date: formatting.dateTime : userTimezone }}">{{cellData.value | date: formatting.date : userTimezone}}</span>
         <dx-date-box width="33px"
             applyValueMode="useButtons"
             [visible]="!appService.isHostTenant"
@@ -47,6 +50,7 @@
             [value]="cellData.value | date: formatting.dateTime : userTimezone"
             (onValueChanged)="onDateChanged($event, cellData)"
         ></dx-date-box>
+        <span class="date-time" title="{{cellData.value | date: formatting.dateTime : userTimezone }}">{{cellData.value | date: formatting.date : userTimezone}}</span>
     </div>
     <div *dxTemplate="let cellData of 'statusCell'" class="clipboard-holder">
         <span [matTooltip]="'Cancellation Reason: ' + cellData.data.cancelationReason"

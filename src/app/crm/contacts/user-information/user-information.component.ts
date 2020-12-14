@@ -165,6 +165,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
                             })['code']
                         );
                     });
+                    this.update();
                 }
             },
             this.ident
