@@ -39,6 +39,7 @@ import { SourceContactListModule } from '@shared/common/source-contact-list/sour
 import { FilterStatesService } from './states/filter-states.service';
 import { FilterMultilineInputComponent } from './multiline-input/filter-multiline-input.component';
 import { ServerCacheService } from '@shared/common/server-cache-service/server-cache.service';
+import { DocumentServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @NgModule({
     imports: [
@@ -106,7 +107,8 @@ export class FiltersModule {
             providers: [
                 FiltersService,
                 ServerCacheService,
-                FilterStatesService
+                FilterStatesService,
+                DocumentServiceProxy
             ]
         };
     }

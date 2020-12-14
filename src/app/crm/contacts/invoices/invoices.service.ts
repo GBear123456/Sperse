@@ -30,7 +30,10 @@ export class InvoicesService {
 
     invalidateSettings(settings?) {
         this.settings.next(settings);
-        if (!settings && this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices))
+        if (!settings && (
+            this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices) ||
+            this.permissionService.isGranted(AppPermissions.CRMSettingsConfigure)
+        ))
             this.tenantPaymentSettingsProxy.getInvoiceSettings().subscribe(res => {
                 this.settings.next(res);
             });
