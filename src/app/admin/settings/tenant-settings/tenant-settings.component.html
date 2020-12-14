@@ -2,7 +2,6 @@
     <app-headline [names]="[ l('Settings') ]"
                   [buttons]="headlineButtons">
     </app-headline>
-
     <div class="wrapper">
         <mat-tab-group *ngIf="settings">
             <mat-tab [label]="l('General')" *ngIf="showTimezoneSelection">
@@ -16,19 +15,40 @@
                     </div>
                     <div class="form-group">
                         <label for="PublicSiteUrl">{{l("PublicSiteUrl")}}</label>
-                        <input #publicSiteUrl="ngModel" (change)="changeDetection.detectChanges()" id="PublicSiteUrl" type="url" name="PublicSiteUrl" class="form-control" [(ngModel)]="settings.general.publicSiteUrl" maxlength="128" [pattern]="siteUrlRegexPattern">
+                        <input #publicSiteUrl="ngModel"
+                               id="PublicSiteUrl"
+                               type="url"
+                               name="PublicSiteUrl"
+                               class="form-control"
+                               [(ngModel)]="settings.general.publicSiteUrl"
+                               maxlength="128"
+                               [pattern]="siteUrlRegexPattern"
+                               (change)="changeDetection.detectChanges()">
                     </div>
                     <div>
-                        <span class="help-block text-danger" *ngIf="!publicSiteUrl.valid && !publicSiteUrl.pristine">{{l("Invalid_PublicSiteUrl")}}</span>
+                        <span class="help-block text-danger"
+                              *ngIf="!publicSiteUrl.valid && !publicSiteUrl.pristine">
+                            {{l("Invalid_PublicSiteUrl")}}
+                        </span>
                     </div>
                     <div class="form-group">
                         <label for="ZendeskAccountUrl">{{l("ZendeskAccountUrl")}}</label>
-                        <input id="ZendeskAccountUrl" type="text" name="ZendeskAccountUrl" class="form-control" [(ngModel)]="settings.general.zendeskAccountUrl" maxlength="128">
+                        <input id="ZendeskAccountUrl"
+                               type="text"
+                               name="ZendeskAccountUrl"
+                               class="form-control"
+                               [(ngModel)]="settings.general.zendeskAccountUrl"
+                               maxlength="128">
                     </div>
                     <div class="row m-form" *ngIf="isAdminCustomizations">
                         <div class="col-md-6">
                             <h5>{{l("PrivacyPolicy")}}</h5>
-                            <p *ngIf="appSession.tenant.customPrivacyPolicyDocumentId"><a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + appSession.tenant.id" target="_blank">{{l('Download')}}</a></p>
+                            <p *ngIf="appSession.tenant.customPrivacyPolicyDocumentId">
+                                <a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetPrivacyPolicyDocument?tenantId=' + appSession.tenant.id"
+                                   target="_blank">
+                                    {{l('Download')}}
+                                </a>
+                            </p>
                             <form #privacyPolicyUploadForm>
                                 <div class="form-group row">
                                     <input type="file" ng2FileSelect [uploader]="customPrivacyPolicyUploader" class="col-lg-12" required accept=".html" #privacyInput />
@@ -258,8 +278,11 @@
                                 <span></span>
                             </label>
                             <label for="Setting_TwoFactorLogin_IsRememberBrowserEnabled" class="m-checkbox" *ngIf="settings.security.twoFactorLogin.isEnabled">
-                                <input id="Setting_TwoFactorLogin_IsRememberBrowserEnabled" type="checkbox" name="Setting_TwoFactorLogin_IsRememberBrowserEnabled" [(ngModel)]="settings.security.twoFactorLogin.isRememberBrowserEnabled">
-                                {{l("AllowToRememberBrowserForTwoFactorLogin")}}
+                                <input id="Setting_TwoFactorLogin_IsRememberBrowserEnabled"
+                                       type="checkbox"
+                                       name="Setting_TwoFactorLogin_IsRememberBrowserEnabled"
+                                       [(ngModel)]="settings.security.twoFactorLogin.isRememberBrowserEnabled">
+                                {{l("AllowToRememberBrowserForTwoFactorLogin")}}. {{ l('AllowToRememberBrowserForTwoFactorLoginDescription') }}
                                 <span></span>
                             </label>
                         </div>
@@ -286,13 +309,18 @@
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">
                         <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
-                        <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control" [ngClass]="{'edited':settings.email.defaultFromAddress}"
-                               (change)="sendGridSettings.defaultFromAddress = $event.target.value" [(ngModel)]="settings.email.defaultFromAddress" maxlength="128">
+                        <input id="DefaultFromAddress" type="email" name="DefaultFromAddress"
+                               class="form-control"
+                               [ngClass]="{'edited':settings.email.defaultFromAddress}"
+                               (change)="sendGridSettings.defaultFromAddress = $event.target.value"
+                               [(ngModel)]="settings.email.defaultFromAddress" maxlength="128">
                     </div>
                     <div class="form-group">
                         <label for="DefaultFromDisplayName">{{l("DefaultFromDisplayName")}}</label>
-                        <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control" [ngClass]="{'edited':settings.email.defaultFromDisplayName}"
-                               (change)="sendGridSettings.defaultFromDisplayName = $event.target.value" [(ngModel)]="settings.email.defaultFromDisplayName" maxlength="128">
+                        <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName"
+                               class="form-control" [ngClass]="{'edited':settings.email.defaultFromDisplayName}"
+                               (change)="sendGridSettings.defaultFromDisplayName = $event.target.value"
+                               [(ngModel)]="settings.email.defaultFromDisplayName" maxlength="128">
                     </div>
                     <div class="form-group">
                         <label for="SmtpHost">{{l("SmtpHost")}}</label>
@@ -322,7 +350,7 @@
                         <label for="SmtpUserName">{{l("UserName")}}</label>
                         <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control" [ngClass]="{'edited':settings.email.smtpUserName}" [(ngModel)]="settings.email.smtpUserName" maxlength="128">
                     </div>
-                    <div class="form-group" *ngIf="!setRandomPassword" [hidden]="settings.email.smtpUseDefaultCredentials">
+                    <div class="form-group" [hidden]="settings.email.smtpUseDefaultCredentials">
                         <label for="SmtpPassword">{{l("Password")}}</label>
                         <input type="text" class="hidden-field">
                         <input type="password" class="hidden-field">

@@ -26,6 +26,7 @@ import { ImportServiceProxy, ImportFieldInfoDto, CountryDto } from '@shared/serv
 import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
+import { PapaParseResult } from '@node_modules/ngx-papaparse/lib/interfaces/papa-parse-result';
 
 @Component({
     selector: 'import-wizard',
@@ -423,7 +424,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     parse(content) {
         this.fileContent = content;
         this.parser.parse(this.fileContent, {
-            complete: (results) => {
+            complete: (results: PapaParseResult) => {
                 this.fileData = results;
                 if (!this.checkFileDataValid())
                     this.message.error(this.l('IncorrectFileFormatError'));

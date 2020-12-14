@@ -21,8 +21,7 @@ import {
     CommonUserInfoServiceProxy,
     LayoutType,
     LinkedUserDto,
-    MemberSettingsServiceProxy,
-    UpdateUserAffiliateCodeDto
+    MemberSettingsServiceProxy
 } from 'shared/service-proxies/service-proxies';
 import { UserManagementService } from 'shared/common/layout/user-management-list/user-management.service';
 import { UserDropdownMenuItemType } from 'shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';

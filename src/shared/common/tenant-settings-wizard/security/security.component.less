@@ -1,0 +1,51 @@
+:host {
+    .columns {
+        display: flex;
+        & > div {
+            width: 47%;
+        }
+    }
+    .form-group {
+        display: flex;
+        margin-bottom: 18px;
+        &.require-uppercase {
+            margin-bottom: 13px;
+        }
+        &.require-length {
+            height: 33px;
+        }
+        &.remember-browser {
+            flex-direction: column;
+        }
+        input {
+            width: 65px;
+        }
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+    .lock-out {
+        margin-top: 15px;
+        .form-group {
+            label {
+                width: 400px;
+            }
+            input {
+                width: 125px;
+            }
+            &.login-attempts {
+                margin-bottom: 11px;
+            }
+            &.max-failed-attempts {
+                margin-bottom: 9px;
+                height: 51px;
+            }
+            &.lockdown-duration {
+                height: 36px;
+            }
+        }
+    }
+    .two-factor-login {
+        margin-top: 32px;
+    }
+}

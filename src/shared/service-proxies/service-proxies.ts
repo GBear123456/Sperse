@@ -33203,7 +33203,7 @@ export class TenantSettingsServiceProxy {
     /**
      * @return Success
      */
-    getPasswordComplexitySettings(): Observable<PasswordComplexitySetting> {
+    getPasswordComplexitySettings(): Observable<PasswordComplexitySettingsEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetPasswordComplexitySettings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -33223,14 +33223,14 @@ export class TenantSettingsServiceProxy {
                 try {
                     return this.processGetPasswordComplexitySettings(<any>response_);
                 } catch (e) {
-                    return <Observable<PasswordComplexitySetting>><any>_observableThrow(e);
+                    return <Observable<PasswordComplexitySettingsEditDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<PasswordComplexitySetting>><any>_observableThrow(response_);
+                return <Observable<PasswordComplexitySettingsEditDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetPasswordComplexitySettings(response: HttpResponseBase): Observable<PasswordComplexitySetting> {
+    protected processGetPasswordComplexitySettings(response: HttpResponseBase): Observable<PasswordComplexitySettingsEditDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -33241,7 +33241,7 @@ export class TenantSettingsServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PasswordComplexitySetting.fromJS(resultData200) : new PasswordComplexitySetting();
+            result200 = resultData200 ? PasswordComplexitySettingsEditDto.fromJS(resultData200) : new PasswordComplexitySettingsEditDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -33249,7 +33249,7 @@ export class TenantSettingsServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<PasswordComplexitySetting>(<any>null);
+        return _observableOf<PasswordComplexitySettingsEditDto>(<any>null);
     }
 
     /**
@@ -76781,6 +76781,50 @@ export class RapidSettingsDto implements IRapidSettingsDto {
 export interface IRapidSettingsDto {
     username: string | undefined;
     password: string | undefined;
+}
+
+export class PasswordComplexitySettingsEditDto implements IPasswordComplexitySettingsEditDto {
+    current!: PasswordComplexitySetting | undefined;
+    default!: PasswordComplexitySetting | undefined;
+    isDefaultUsed!: boolean | undefined;
+
+    constructor(data?: IPasswordComplexitySettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.current = data["current"] ? PasswordComplexitySetting.fromJS(data["current"]) : <any>undefined;
+            this.default = data["default"] ? PasswordComplexitySetting.fromJS(data["default"]) : <any>undefined;
+            this.isDefaultUsed = data["isDefaultUsed"];
+        }
+    }
+
+    static fromJS(data: any): PasswordComplexitySettingsEditDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PasswordComplexitySettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["current"] = this.current ? this.current.toJSON() : <any>undefined;
+        data["default"] = this.default ? this.default.toJSON() : <any>undefined;
+        data["isDefaultUsed"] = this.isDefaultUsed;
+        return data; 
+    }
+}
+
+export interface IPasswordComplexitySettingsEditDto {
+    current: PasswordComplexitySetting | undefined;
+    default: PasswordComplexitySetting | undefined;
+    isDefaultUsed: boolean | undefined;
 }
 
 export class MemberPortalSettingsDto implements IMemberPortalSettingsDto {

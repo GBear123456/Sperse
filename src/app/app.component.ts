@@ -15,6 +15,11 @@ import { SignalRHelper } from 'shared/helpers/SignalRHelper';
 import { AppService } from './app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
+import { CacheService } from '@node_modules/ng2-cache-service';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './app.component.html',
@@ -48,6 +53,10 @@ export class AppComponent implements OnInit {
         private router: Router,
         private chatSignalrService: ChatSignalrService,
         private fullScreenService: FullScreenService,
+        private cacheService: CacheService,
+        private cacheHelper: CacheHelper,
+        private userManagementService: UserManagementService,
+        private permissionCheckerService: PermissionCheckerService,
         public ls: AppLocalizationService,
         public appSession: AppSessionService,
         public appService: AppService,
@@ -86,6 +95,18 @@ export class AppComponent implements OnInit {
                     }, 2000);
                 }
             });
+            /** Show tenant settings dialog to admins who come the first time */
+            if (this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantHosts)
+                && (
+                    this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings)
+                    || this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings)
+                )) {
+                const tenantSettingsDialogCacheKey: string = this.cacheHelper.getCacheKey('TenantSettingsDialog');
+                if (!this.cacheService.exists(tenantSettingsDialogCacheKey)) {
+                    this.userManagementService.openProfileTenantSettingsDialog();
+                    this.cacheService.set(tenantSettingsDialogCacheKey, 1);
+                }
+            }
         }
     }
 
