@@ -95,18 +95,6 @@ export class AppComponent implements OnInit {
                     }, 2000);
                 }
             });
-            /** Show tenant settings dialog to admins who come the first time */
-            if (this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantHosts)
-                && (
-                    this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings)
-                    || this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings)
-                )) {
-                const tenantSettingsDialogCacheKey: string = this.cacheHelper.getCacheKey('TenantSettingsDialog');
-                if (!this.cacheService.exists(tenantSettingsDialogCacheKey)) {
-                    this.userManagementService.openProfileTenantSettingsDialog();
-                    this.cacheService.set(tenantSettingsDialogCacheKey, 1);
-                }
-            }
         }
     }
 
