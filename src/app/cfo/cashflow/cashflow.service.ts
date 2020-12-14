@@ -2263,8 +2263,8 @@ export class CashflowService {
 
     private getBudgetKey(budget: Omit<IBudgetDto, 'amount'>): string {
         return budget.businessEntityId + '-' + budget.categoryId + '-'
-               + budget.startDate.format('DD-MM-YYYY') + '-'
-               + budget.endDate.format('DD-MM-YYYY');
+               + budget.startDate.utc().format('DD-MM-YYYY') + '-'
+               + budget.endDate.utc().format('DD-MM-YYYY');
     }
 
     getCellBudget(budget: Omit<IBudgetDto, 'amount'>): number {
