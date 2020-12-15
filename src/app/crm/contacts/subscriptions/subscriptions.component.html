@@ -48,6 +48,7 @@
             [min]="cellData.column.dataField == 'endDate' ? (cellData.data.startDate | date: formatting.date : userTimezone) : undefined"
             [max]="cellData.column.dataField == 'startDate' ? (cellData.data.endDate | date: formatting.date : userTimezone) : undefined"
             [value]="cellData.value | date: formatting.dateTime : userTimezone"
+            (onOpened)="onCallendarOpened($event)"
             (onValueChanged)="onDateChanged($event, cellData)"
         ></dx-date-box>
         <span class="date-time" title="{{cellData.value | date: formatting.dateTime : userTimezone }}">{{cellData.value | date: formatting.date : userTimezone}}</span>

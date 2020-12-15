@@ -265,6 +265,12 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         });
     }
 
+    onCallendarOpened(event) {
+        let popup = event.component['_popup']['_$content'][0];
+        if (popup.offsetHeight * 2 > innerHeight)
+            popup.style.transform = 'translate(0px, -200px)';
+    }
+
     ngOnDestroy() {
         this.contactsService.unsubscribe(this.ident);
     }
