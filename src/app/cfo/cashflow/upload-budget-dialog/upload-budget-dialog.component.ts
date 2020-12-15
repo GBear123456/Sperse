@@ -117,7 +117,7 @@ export class UploadBudgetDialogComponent implements OnInit {
             this.buttons[this.NEXT_BTN_INDEX].disabled = false;
             this.buttons[this.BACK_BTN_INDEX].disabled = true;
         } else {
-            this.title = this.ls.l('UploadBudget');
+            this.title = this.ls.l('UploadBudgetFor');
             this.buttons[this.NEXT_BTN_INDEX].title = this.ls.l('Upload');
             this.buttons[this.NEXT_BTN_INDEX].disabled = true;
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
