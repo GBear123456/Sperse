@@ -1,5 +1,14 @@
-<modal-dialog [title]="title"
-              [buttons]="buttons">
+<modal-dialog [buttons]="buttons">
+    <ng-container headerContent>
+        <label class="header-title">{{title}}</label>
+        <dx-calendar *ngIf="currentStep == uploadBudgetSteps.Upload"
+            zoomLevel="year" 
+            maxZoomLevel="year"
+            minZoomLevel="year"
+            [(value)]="selectedYear">
+        </dx-calendar>
+    </ng-container>
+
     <dx-scroll-view showScrollbar="onHover">
         <div *ngIf="currentStep == uploadBudgetSteps.BusinessEntities" class="businessEntities-container">
             <dx-tree-list keyExpr="id"
@@ -15,13 +24,6 @@
             </dx-tree-list>
         </div>
         <div *ngIf="currentStep == uploadBudgetSteps.Upload" class="upload-container">
-            <dx-calendar
-                width="100%"
-                zoomLevel="year" 
-                maxZoomLevel="year"
-                minZoomLevel="year"
-                [(value)]="selectedYear">
-            </dx-calendar>
             <div class="download">
                 <a target="_blank"
                    [href]="budgetTemplateLink">
@@ -62,11 +64,9 @@
                     </div>
                 </dx-scroll-view>
             </div>
-            <div class="override">
-                <dx-check-box 
-                    [(value)]="overrideAccounts"
-                    [text]="ls.l('OverrideChartOfAccounts')">
-                </dx-check-box>
+            <div class="info-text">
+                <dx-check-box [text]="ls.l('Override')" [(value)]="overrideAccounts" class="override-checkbox"> </dx-check-box>
+                {{ls.l('OverrideChartOfAccounts')}}
             </div>
         </div>
     </dx-scroll-view>

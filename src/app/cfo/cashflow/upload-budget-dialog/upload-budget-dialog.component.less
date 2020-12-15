@@ -1,6 +1,14 @@
 :host {
     height: calc(100% - 85px);
     display: block;
+    .header-title {
+        font-size: 22px;
+        font-weight: 500;
+        line-height: 1.09;
+        letter-spacing: .4px;
+        padding: 13px 13px 0;
+        color: #202b35;
+    }
     .businessEntities-container, .upload-container {
         height: 100%;
         padding: 20px 30px 30px 30px;
@@ -32,6 +40,11 @@
 
     ::ng-deep dx-calendar {
         display: inline;
+        min-width: 150px;
+        min-height: 40px;
+        margin-top: 8px;
+        width: 150px;
+        height: 40px;
         .dx-calendar-body {
             display: none;
         }
@@ -62,7 +75,6 @@
             color: #dedede;
         }
         ::ng-deep .ngx-file-drop__drop-zone {
-            width: 620px;
             height: calc(~"100vh - 350px");
             border: 1px dashed #00aeef;
             background-color: #F5FCFE;
@@ -192,18 +204,28 @@
         }
     }
 
-    .override {
-        ::ng-deep dx-check-box {
-            .dx-checkbox-text {
-                white-space: break-spaces;
-                display: inline-block;
-                padding-top: 15px;
-            }
+    .info-text {
+        background-color: #f3f7fa;
+        font-size: 14px;
+        font-weight: 400;
+        color: #677380;
+        line-height: 1.36;
+        letter-spacing: 0.3px;
+        margin: 25px -25px -25px;
+        padding: 25px;
+
+        .override-checkbox {
+            font-size: 14px;
+            font-weight: 400;
+            color: #677380;
+            line-height: 1.36;
+            letter-spacing: 0.3px;
+            width: 100%;
+            margin-bottom: 10px;
         }
     }
 
     ::ng-deep .mat-dialog-content {
         max-height: 100%;
-        width: 680px;
     }
 }
