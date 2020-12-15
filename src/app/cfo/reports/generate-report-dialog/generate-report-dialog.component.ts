@@ -59,14 +59,15 @@ export class GenerateReportDialogComponent implements OnInit {
             title: this.ls.l('Next'),
             class: 'primary saveButton',
             action: this.next.bind(this),
-            disabled: true
+            disabled: false
         }
     ];
+    budgetReportDate: Date;
     departmentsEntities: string[] = [];
     selectedDepartments: string[] = [];
     noDepartmentItem = this.ls.l('NoDepartment');
     buttons: IDialogButton[] = this.initButtons;
-    currentStep = GenerateReportStep.BusinessEntities;
+    currentStep = GenerateReportStep.ReportTemplate;
     generateReportSteps = GenerateReportStep;
     selectedBusinessEntityIds: any = [];
     selectedBusinessEntities$ = this.bankAccountsService.businessEntities$.pipe(
@@ -92,8 +93,13 @@ export class GenerateReportDialogComponent implements OnInit {
     dontSendEmailNotification = false;
     generatingStarted = false;
     reportTemplate: ReportTemplate = ReportTemplate.Personal;
-    reportTemplateItems: any[] = Object.keys(ReportTemplate);
-    firstReportTemplateVisit: boolean = true;
+    reportTemplateItems: any[] = Object.keys(ReportTemplate).map(item => {
+        return {
+            name: this.ls.l(item),
+            value: item
+        };
+    }).concat({name: 'IncomeStatementAndBudget', value: undefined});
+    firstReportTemplateVisit = true;
 
     private readonly BACK_BTN_INDEX = 0;
     private readonly NEXT_BTN_INDEX = 1;
@@ -169,22 +175,23 @@ export class GenerateReportDialogComponent implements OnInit {
     private prev() {
         this.currentStep--;
         if (this.currentStep == GenerateReportStep.Departments
-            && this.departmentsEntities.length <= 1
+            && (!this.reportTemplate || this.departmentsEntities.length <= 1)
         ) this.currentStep--;
         this.processStep();
     }
 
     private next() {
         this.currentStep++;
-        if (this.currentStep == GenerateReportStep.Departments) {
+        if (this.currentStep == GenerateReportStep.Calendar) {
             this.applyBusinessEntity();
-            if (this.departmentsEntities.length <= 1)
+            if (this.firstReportTemplateVisit && this.reportTemplate == ReportTemplate.Suspense) {
+                this.setSuspenseReportDates();
+                this.firstReportTemplateVisit = false;
+            }
+        } else if (this.currentStep == GenerateReportStep.Departments) {
+            if (this.departmentsEntities.length <= 1 || !this.reportTemplate)
                 this.currentStep++;
-        } else if (this.currentStep == GenerateReportStep.Calendar && this.firstReportTemplateVisit && this.reportTemplate == ReportTemplate.Suspense) {
-            this.setSuspenseReportDates();
-            this.firstReportTemplateVisit = false;
-        }
-        else if (this.currentStep == GenerateReportStep.Final) {
+        } else if (this.currentStep == GenerateReportStep.Final) {
             this.applyDateRange();
         }
         this.processStep();
@@ -194,13 +201,14 @@ export class GenerateReportDialogComponent implements OnInit {
         this.buttons = this.initButtons;
         if (this.currentStep == GenerateReportStep.BusinessEntities) {
             this.title = this.ls.l('SelectBusinessEntity');
-            this.buttons[this.BACK_BTN_INDEX].disabled = true;
+            this.buttons[this.NEXT_BTN_INDEX].disabled = true;
+            this.buttons[this.BACK_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.Departments) {
             this.title = this.ls.l('SelectDepartments');
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.ReportTemplate) {
             this.title = this.ls.l('SelectReportTemplate');
-            this.buttons[this.BACK_BTN_INDEX].disabled = false;
+            this.buttons[this.BACK_BTN_INDEX].disabled = true;
         } else if (this.currentStep == GenerateReportStep.Calendar) {
             this.title = this.ls.l('SelectDateRange');
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
@@ -214,10 +222,9 @@ export class GenerateReportDialogComponent implements OnInit {
         let todayDay = new Date().getDate();
         if (todayDay >= 16) { // from 1 to 15 of current month
             this.dateFrom = moment.utc().startOf('month');
-            this.dateTo = moment.utc().set("date", 15);
-        }
-        else { // from 16 to end of previous month
-            this.dateFrom = moment.utc().subtract(1, 'month').set("date", 16);
+            this.dateTo = moment.utc().set('date', 15);
+        } else { // from 16 to end of previous month
+            this.dateFrom = moment.utc().subtract(1, 'month').set('date', 16);
             this.dateTo = moment.utc().subtract(1, 'month').endOf('month');
         }
 
@@ -304,8 +311,11 @@ export class GenerateReportDialogComponent implements OnInit {
     }
 
     onSelectionChanged(event) {
+        if (!this.reportTemplate && event.selectedRowKeys.length != 1 && event.component)
+            event.component.selectRows(event.currentDeselectedRowKeys.concat(event.currentSelectedRowKeys));
+
         if (this.currentStep === GenerateReportStep.BusinessEntities) {
-            this.buttons[this.NEXT_BTN_INDEX].disabled = !event.selectedRowKeys.length;
+            this.buttons[this.NEXT_BTN_INDEX].disabled = this.reportTemplate ? !event.selectedRowKeys.length : false;
         }
     }
 
