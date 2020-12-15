@@ -109,18 +109,6 @@ export class UserManagementService {
             onClick: (e) => this.changeMySettings(e)
         },
         {
-            name: this.permissionChecker.isGranted(AppPermissions.AdministrationHostSettings)
-                  ? this.ls.l('HostSettings')
-                  : this.ls.l('TenantSettings'),
-            id: 'UserProfileTenantSettings',
-            iconClass: 'flaticon-cogwheel',
-            visible: this.permissionChecker.isGranted(AppPermissions.AdministrationHostSettings)
-                     || this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSettings),
-            onClick: () => {
-                this.openProfileTenantSettingsDialog();
-            }
-        },
-        {
             name: this.ls.l('Help'),
             iconClass: 'flaticon-info',
             onClick: () => {
