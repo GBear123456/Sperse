@@ -11,7 +11,7 @@
                           (onContentReady)="onContentReady($event)"
                           (onSelectionChanged)="onSelectionChanged($event)"
                           (onInitialized)="onInitialized($event)">
-                <dxo-selection [allowSelectAll]="true" mode="multiple" [recursive]="true"></dxo-selection>
+                <dxo-selection [allowSelectAll]="true" mode="multiple" [recursive]="!!reportTemplate"></dxo-selection>
                 <dxi-column dataField="name" [caption]="ls.l('BusinessEntityName') | uppercase"></dxi-column>
                 <dxo-scrolling mode="virtual"></dxo-scrolling>
             </dx-tree-list>
@@ -27,16 +27,27 @@
             </dx-list>
         </div>
         <div *ngIf="currentStep == generateReportSteps.ReportTemplate" class="reportTemplate-container">
-            <dx-radio-group [(value)]="reportTemplate"
-                            [items]="reportTemplateItems">
+            <dx-radio-group 
+                valueExpr="value"
+                displayExpr="name"
+                [(value)]="reportTemplate"
+                [items]="reportTemplateItems">
             </dx-radio-group>
         </div>
         <div *ngIf="currentStep == generateReportSteps.Calendar" class="calendar-container">
-            <calendar [values]="calendarData" [options]="calendarData.options"></calendar>
+            <dx-calendar *ngIf="!reportTemplate; else default"
+                zoomLevel="year" 
+                maxZoomLevel="year"
+                minZoomLevel="year"
+                [(value)]="budgetReportDate">
+            </dx-calendar>
+            <ng-template #default>
+                <calendar [values]="calendarData" [options]="calendarData.options"></calendar>
+            </ng-template>
         </div>
         <div *ngIf="currentStep == generateReportSteps.Final" class="final-container">
             <div class="container">
-                <div class="row">
+                <div *ngIf="reportTemplate" class="row">
                     <div class="text-left">{{ ls.l('Reports_ReportsGrouping') }}</div>
                     <div class="custom-radio-2-btn">
                         <dx-radio-group [dataSource]="radioGroupGrouping"
@@ -52,18 +63,23 @@
                 <div class="row">
                     <div class="text-left">{{ ls.l('Reports_ReportTemplate') }}</div>
                     <div class="text-right">
-                        {{ reportTemplate }}
+                        {{ reportTemplate || ls.l('IncomeStatementAndBudget')}}
                         <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.ReportTemplate)" [class.disabled]="generatingStarted">&nbsp;</i>
                     </div>
                 </div>
                 <div class="row date-range">
                     <div class="text-left">{{ ls.l('Reports_DateRange') }}</div>
-                    <div class="text-right">
+                    <div *ngIf="reportTemplate; else budgetDate" class="text-right">
                         <span class="date">{{dateFrom | date : 'MM/dd/yyyy' : 'UTC' }}</span>
                         <img class="arrow" src="./assets/common/icons/date-arrow-right.svg">
                         <span class="date">{{dateTo | date : 'MM/dd/yyyy' : 'UTC' }}</span>
                         <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
                     </div>
+                    <ng-template #budgetDate>
+                        <div class="text-right">
+                            <span class="date">{{budgetReportDate | date : 'MM/yyyy' : 'UTC' }}</span>                
+                        </div>
+                    </ng-template>
                 </div>
                 <div class="row business-entities">
                     <div class="text-left">{{ ls.l('BusinessEntities') }}</div>
