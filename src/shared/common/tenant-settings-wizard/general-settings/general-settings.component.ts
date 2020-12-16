@@ -43,7 +43,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     @Input() settings: GeneralSettingsEditDto;
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
-    siteUrlRegexPattern = AppConsts.regexPatterns.url;
+    siteUrlRegexPattern = AppConsts.regexPatterns.siteUrl;
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
