@@ -179,7 +179,7 @@ export class CashflowService {
 
     reportSections: GetReportTemplateDefinitionOutput;
     statsCategoryTree = {};
-    statsCategoriesLevelsCount: number = 0;
+    statsCategoriesLevelsCount = 0;
     budgets: { [budgetKey: string]: number } = {};
 
     constructor(

@@ -290,14 +290,14 @@ describe('CashflowService', () => {
             accountId: 88188,
             adjustmentType: undefined,
             amount: -54.92,
-            cashflowTypeId: "I",
+            cashflowTypeId: 'I',
             categoryId: 52113,
             comment: undefined,
             count: 1,
-            currencyId: "USD",
-            date: "2020-05-01T00:00:00Z",
+            currencyId: 'USD',
+            date: '2020-05-01T00:00:00Z',
             forecastId: undefined,
-            initialDate: "2020-05-01T00:00:00Z",
+            initialDate: '2020-05-01T00:00:00Z',
             transactionDescriptor: undefined
         });
         /** Bug levels: {level0: "CTI", level1: "CA52107", level2: "CA52109", level3: "CA52113"} */
@@ -306,8 +306,8 @@ describe('CashflowService', () => {
             accountingTypes: {
                 5525: new AccountingTypeDto({
                     isSystem: false,
-                    name: "Income",
-                    typeId: "I"
+                    name: 'Income',
+                    typeId: 'I'
                 })
             },
             categories: {
@@ -315,7 +315,7 @@ describe('CashflowService', () => {
                     accountingTypeId: 5525,
                     coAID: null,
                     isActive: false,
-                    name: "Plants and Soil",
+                    name: 'Plants and Soil',
                     parentId: 52109,
                     reportingCategoryId: null
                 }),
@@ -323,7 +323,7 @@ describe('CashflowService', () => {
                     accountingTypeId: 5525,
                     coAID: null,
                     isActive: false,
-                    name: "Job Materials",
+                    name: 'Job Materials',
                     parentId: 52107,
                     reportingCategoryId: null
                 }),
@@ -331,7 +331,7 @@ describe('CashflowService', () => {
                     accountingTypeId: 5525,
                     coAID: null,
                     isActive: false,
-                    name: "Landscaping Services",
+                    name: 'Landscaping Services',
                     parentId: null,
                     reportingCategoryId: null
                 })

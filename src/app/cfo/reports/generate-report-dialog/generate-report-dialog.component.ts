@@ -100,7 +100,9 @@ export class GenerateReportDialogComponent implements OnInit {
             name: this.ls.l(item),
             value: item
         };
-    }).concat({name: 'IncomeStatementAndBudget', value: undefined});
+    }).concat(this.feature.isEnabled(AppFeatures.CFOBudgets) 
+        ? {name: 'IncomeStatementAndBudget', value: undefined} : []
+    );
     firstReportTemplateVisit = true;
 
     private readonly BACK_BTN_INDEX = 0;
