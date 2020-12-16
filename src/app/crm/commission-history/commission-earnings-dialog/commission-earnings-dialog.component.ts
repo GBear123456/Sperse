@@ -45,7 +45,8 @@ export class CommissionEarningsDialogComponent extends ConfirmDialogComponent {
 
     confirm() {
         if (this.selectedContactIds && this.selectedContactIds.length &&
-            (this.selectedContactIds.length == 1 || this.data.bulkUpdateAllowed)
+            (this.selectedContactIds.length == 1 || this.data.bulkUpdateAllowed) ||
+            (!this.selectedContactIds && this.data.bulkUpdateAllowed)
         ) {
             ContactsHelper.showConfirmMessage(
                 this.ls.l('NewEarningsAdd'),

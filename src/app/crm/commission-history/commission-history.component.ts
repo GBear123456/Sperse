@@ -393,8 +393,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         })
     ];
     
-    manageAllowed = this.isGranted(AppPermissions.CRMCommissionsManage) 
-        && this.isGranted(AppPermissions.CRMOrdersInvoicesManage);
+    manageAllowed = this.isGranted(AppPermissions.CRMCommissionsManage);
 
     constructor(
         injector: Injector,
