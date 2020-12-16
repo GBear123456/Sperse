@@ -32,7 +32,7 @@
                 {{ls.l('for your Budget')}}
             </div>
             <div class="drop-down" *ngIf="!totalCount">
-                <ngx-file-drop [ngClass]="{'full-height': data.fullHeight}"
+                <ngx-file-drop [ngClass]="{'full-height': data.fullHeight}" accept=".xlsx" [multiple]="false"
                                (onFileDrop)="data.dropFiles ? data.dropFiles($event) : fileDropped($event)">
                     <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
                         <img src="./assets/common/icons/upload-file.svg">
