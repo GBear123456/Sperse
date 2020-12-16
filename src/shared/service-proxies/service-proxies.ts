@@ -12272,74 +12272,6 @@ export class ContactTagsServiceProxy {
 }
 
 @Injectable()
-export class ContactUserServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    requestAutoLoginToken(userKey: string): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/CRM/ContactUser/RequestAutoLoginToken?";
-        if (userKey === undefined || userKey === null)
-            throw new Error("The parameter 'userKey' must be defined and cannot be null.");
-        else
-            url_ += "userKey=" + encodeURIComponent("" + userKey) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processRequestAutoLoginToken(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processRequestAutoLoginToken(<any>response_);
-                } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<string>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processRequestAutoLoginToken(response: HttpResponseBase): Observable<string> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<string>(<any>null);
-    }
-}
-
-@Injectable()
 export class CountryServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -51186,7 +51118,6 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     inviteUser!: boolean | undefined;
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
-    changeNewUserPasswordOnNextLogin!: boolean | undefined;
     noWelcomeEmail!: boolean | undefined;
     propertyInfo!: PropertyInput | undefined;
     bypassValidation!: boolean | undefined;
@@ -51274,7 +51205,6 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.inviteUser = data["inviteUser"];
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
-            this.changeNewUserPasswordOnNextLogin = data["changeNewUserPasswordOnNextLogin"];
             this.noWelcomeEmail = data["noWelcomeEmail"];
             this.propertyInfo = data["propertyInfo"] ? PropertyInput.fromJS(data["propertyInfo"]) : <any>undefined;
             this.bypassValidation = data["bypassValidation"];
@@ -51362,7 +51292,6 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["inviteUser"] = this.inviteUser;
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
-        data["changeNewUserPasswordOnNextLogin"] = this.changeNewUserPasswordOnNextLogin;
         data["noWelcomeEmail"] = this.noWelcomeEmail;
         data["propertyInfo"] = this.propertyInfo ? this.propertyInfo.toJSON() : <any>undefined;
         data["bypassValidation"] = this.bypassValidation;
@@ -51415,7 +51344,6 @@ export interface ICreateOrUpdateContactInput {
     inviteUser: boolean | undefined;
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
-    changeNewUserPasswordOnNextLogin: boolean | undefined;
     noWelcomeEmail: boolean | undefined;
     propertyInfo: PropertyInput | undefined;
     bypassValidation: boolean | undefined;
@@ -63615,7 +63543,6 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     inviteUser!: boolean | undefined;
     generateAutoLoginLink!: boolean | undefined;
     newUserPassword!: string | undefined;
-    changeNewUserPasswordOnNextLogin!: boolean | undefined;
     noWelcomeEmail!: boolean | undefined;
     propertyInfo!: PropertyInput | undefined;
     bypassValidation!: boolean | undefined;
@@ -63700,7 +63627,6 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.inviteUser = data["inviteUser"];
             this.generateAutoLoginLink = data["generateAutoLoginLink"];
             this.newUserPassword = data["newUserPassword"];
-            this.changeNewUserPasswordOnNextLogin = data["changeNewUserPasswordOnNextLogin"];
             this.noWelcomeEmail = data["noWelcomeEmail"];
             this.propertyInfo = data["propertyInfo"] ? PropertyInput.fromJS(data["propertyInfo"]) : <any>undefined;
             this.bypassValidation = data["bypassValidation"];
@@ -63785,7 +63711,6 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["inviteUser"] = this.inviteUser;
         data["generateAutoLoginLink"] = this.generateAutoLoginLink;
         data["newUserPassword"] = this.newUserPassword;
-        data["changeNewUserPasswordOnNextLogin"] = this.changeNewUserPasswordOnNextLogin;
         data["noWelcomeEmail"] = this.noWelcomeEmail;
         data["propertyInfo"] = this.propertyInfo ? this.propertyInfo.toJSON() : <any>undefined;
         data["bypassValidation"] = this.bypassValidation;
@@ -63835,7 +63760,6 @@ export interface ICreateOrUpdateLeadInput {
     inviteUser: boolean | undefined;
     generateAutoLoginLink: boolean | undefined;
     newUserPassword: string | undefined;
-    changeNewUserPasswordOnNextLogin: boolean | undefined;
     noWelcomeEmail: boolean | undefined;
     propertyInfo: PropertyInput | undefined;
     bypassValidation: boolean | undefined;

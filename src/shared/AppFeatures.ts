@@ -8,6 +8,7 @@ export enum AppFeatures {
     AppChatFeatureTenantToTenant = 'App.ChatFeature.TenantToTenant',
     AppMaxUserCount = 'App.MaxUserCount',
     CFO = 'CFO',
+    CFOBudgets = 'CFO.Budgets',
     CFODepartmentsManagement = 'CFO.DepartmentsManagement',
     CFOFinancialAccountMaxCount = 'CFO.FinancialAccountMaxCount',
     CFOFutureForecastsYearCount = 'CFO.FutureForecastsYearCount',
