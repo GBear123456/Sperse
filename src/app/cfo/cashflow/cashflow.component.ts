@@ -2558,7 +2558,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         first(),
                         switchMap((selectedBusinessEntitiesIds: number[]) => {
                             if (!selectedBusinessEntitiesIds || !selectedBusinessEntitiesIds.length) {
-                                return this.bankAccountsService.businessEntities$.pipe(
+                                return this.bankAccountsService.sortedBusinessEntities$.pipe(
                                     first(),
                                     map((businessEntities: BusinessEntityDto[]) => {
                                         return businessEntities.map((businessEntity: BusinessEntityDto) => {
