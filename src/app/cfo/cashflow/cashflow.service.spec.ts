@@ -27,7 +27,8 @@ import {
     TypeDto,
     ReportSectionDto,
     SectionGroup,
-    CategoryDto
+    CategoryDto,
+    TenantHostServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -44,6 +45,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { RootStoreModule } from '@root/store/root-store.module';
 import { SummaryCell } from 'devextreme/ui/pivot_grid/ui.pivot_grid.summary_display_modes.js';
 import { TransactionStatsDtoExtended } from '@app/cfo/cashflow/models/transaction-stats-dto-extended';
+import { CategorizationPrefixes } from '@app/cfo/cashflow/enums/categorization-prefixes.enum';
 
 describe('CashflowService', () => {
     beforeEach(() => {
@@ -78,7 +80,8 @@ describe('CashflowService', () => {
                 ContactServiceProxy,
                 CashflowServiceProxy,
                 CfoPreferencesService,
-                CurrencyPipe
+                CurrencyPipe,
+                TenantHostServiceProxy
             ]
         });
         abp.timing['timeZoneInfo'] = {
@@ -922,7 +925,11 @@ describe('CashflowService', () => {
             }
         });
         const categoryFullPath = service.getCategoryFullPath(77, category, categoryTree);
-        console.log(categoryFullPath);
         expect(categoryFullPath).toEqual([ 'CTE', 'CA86', 'CA67', 'CA77' ]);
     }));
+
+    it('getCategoryValueByPrefix should return the deepest category in path', inject([ CashflowService ], (service: CashflowService) => {
+        const categoryPath = [ 'CTE', 'AT5906', 'CA53944', 'CA53953' ];
+        expect(service.getCategoryValueByPrefix(categoryPath, CategorizationPrefixes.Category)).toEqual('53953');
+    }))
 });

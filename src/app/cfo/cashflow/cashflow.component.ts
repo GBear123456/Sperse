@@ -2558,7 +2558,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         first(),
                         switchMap((selectedBusinessEntitiesIds: number[]) => {
                             if (!selectedBusinessEntitiesIds || !selectedBusinessEntitiesIds.length) {
-                                return this.bankAccountsService.businessEntities$.pipe(
+                                return this.bankAccountsService.sortedBusinessEntities$.pipe(
                                     first(),
                                     map((businessEntities: BusinessEntityDto[]) => {
                                         return businessEntities.map((businessEntity: BusinessEntityDto) => {
@@ -2931,22 +2931,36 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             const value = e.target.getAttribute('data-value');
             const variance = budget - Math.abs(value);
             this.showTooltip(e.target,
-                `<div>${this.l('Value')}: ${this.currencyPipe.transform(
-                    value,
-                    this.cfoPreferencesService.selectedCurrencyId,
-                    this.cfoPreferencesService.selectedCurrencySymbol
-                )}</div>
-                <div>${this.l('Budget')}: ${this.currencyPipe.transform(
-                    budget,
-                    this.cfoPreferencesService.selectedCurrencyId,
-                    this.cfoPreferencesService.selectedCurrencySymbol
-                )}</div>
-                <div>${this.l('Variance')}: ${this.currencyPipe.transform(
-                    variance,
-                    this.cfoPreferencesService.selectedCurrencyId,
-                    this.cfoPreferencesService.selectedCurrencySymbol
-                )}</div>
-                <div>${this.l('Percent')}: ${(Math.abs(value) / budget * 100).toFixed(2)}%</div>`
+                `
+                <div>
+                    <span>${this.l('Value')}:</span>
+                    <span>${this.currencyPipe.transform(
+                        value,
+                        this.cfoPreferencesService.selectedCurrencyId,
+                        this.cfoPreferencesService.selectedCurrencySymbol
+                    )}</span>
+                 </div>
+                <div>
+                    <span>${this.l('Budget')}:</span>
+                    <span>${this.currencyPipe.transform(
+                        budget,
+                        this.cfoPreferencesService.selectedCurrencyId,
+                        this.cfoPreferencesService.selectedCurrencySymbol
+                    )}</span>
+                </div>
+                <hr>
+                <div>
+                    <span>${this.l('Variance')}:</span> 
+                    <span>${this.currencyPipe.transform(variance,
+                        this.cfoPreferencesService.selectedCurrencyId,
+                        this.cfoPreferencesService.selectedCurrencySymbol
+                    )}</span>
+                </div>
+                <div>
+                    <span>${this.l('Percent')}:</span>
+                    <span>${(Math.abs(value) / budget * 100).toFixed(2)}%</span>
+                </div>`,
+                'budget-tooltip'
             );
         } else {
             let targetCell = this.getCellElementFromTarget(e.target);
@@ -2963,9 +2977,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
     }
 
-    private showTooltip(targetCell: HTMLElement, contentTemplate: string) {
+    private showTooltip(targetCell: HTMLElement, contentTemplate: string, className?: string) {
         let infoTooltip = this.document.createElement('div');
-        infoTooltip.className = 'tootipWrapper';
+        infoTooltip.className = 'tootipWrapper' + (className ? ' ' + className : '');
         this.infoTooltip = new Tooltip(infoTooltip, {
             target: targetCell,
             contentTemplate: contentTemplate,
