@@ -269,12 +269,12 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         let container = event.component['_$container'][0],
             position = container.getBoundingClientRect(),
             popup = event.component['_popup']['_$content'][0],
-            isHeightOverflow = popup.offsetHeight * 2 > innerHeight,
+            isHeightOverflow = innerHeight - position.y < popup.offsetHeight,
             isWidthOverflow = innerWidth - position.x < popup.offsetWidth;
         if (isWidthOverflow || isHeightOverflow)
             popup.style.transform = 'translate(' +
                 (isWidthOverflow ? -300 : 0) + 'px, ' +
-                (isHeightOverflow ? -200 : 0) + 'px)';
+                (isHeightOverflow ? -300 : 0) + 'px)';
     }
 
     ngOnDestroy() {
