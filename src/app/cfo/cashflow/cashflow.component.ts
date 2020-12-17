@@ -1544,7 +1544,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 this.cashflowService.requestFilter.forecastModelId = forecastModelId;
                 return this.cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.cashflowService.requestFilter);
             }),
-            tap((stats: CashFlowStatsDto) => this.cashflowService.saveBudgets(stats.budgets)),
+            tap((stats: CashFlowStatsDto) => {
+                if (this.feature.isEnabled(AppFeatures.CFOBudgets))
+                    this.cashflowService.saveBudgets(stats.budgets);
+            }),
             pluck('transactionStats'),
             finalize(() => this.finishLoading())
         ).subscribe(
