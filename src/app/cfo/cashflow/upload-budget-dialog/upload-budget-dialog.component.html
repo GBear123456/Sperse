@@ -5,7 +5,7 @@
             zoomLevel="year" 
             maxZoomLevel="year"
             minZoomLevel="year"
-            [(value)]="selectedYear">
+            (onOptionChanged)="onCalendarOptionChanged($event)">
         </dx-calendar>
     </ng-container>
 

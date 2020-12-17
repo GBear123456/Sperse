@@ -125,7 +125,6 @@ export class UploadBudgetDialogComponent implements OnInit {
                 let progressInterval = setInterval(
                     this.updateUploadProgress.bind(this), 1000
                 );
-
                 this.uploadSubscribers.push(
                     this.budgetProxy.import(this.data.instanceType,
                         this.data.instanceId, new BudgetImportInput({
@@ -144,6 +143,11 @@ export class UploadBudgetDialogComponent implements OnInit {
             } else
                 this.applyBusinessEntity();
         }
+    }
+
+    onCalendarOptionChanged(event) {
+        if (event.name == 'currentDate')
+            this.selectedYear = event.value;
     }
 
     private applyBusinessEntity() {
