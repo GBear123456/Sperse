@@ -492,7 +492,7 @@ export class CashflowService {
      */
     getCategoryValueByPrefix(path: any[], prefix: CategorizationPrefixes): any {
         let value;
-        path.some(pathItem => {
+        [].concat(path).reverse().some((pathItem: string) => {
             if (pathItem && pathItem.slice(0, 2) === prefix) {
                 value = pathItem !== CategorizationPrefixes.CashflowType + CashflowTypes.CashflowTypeTotal ? pathItem.slice(2) : undefined;
                 return true;
@@ -2256,6 +2256,7 @@ export class CashflowService {
     }
 
     saveBudgets(budgets: BudgetDto[]) {
+        this.budgets = {};
         budgets.forEach((budget: BudgetDto) => {
             this.budgets[this.getBudgetKey(budget)] = budget.amount;
         });
