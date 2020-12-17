@@ -13,7 +13,7 @@
 <div class="wrapper" [ngClass]="{ leftMenuOpened: !leftMenu.collapsed }">
     <cfo-left-menu #leftMenu
                    [items]="menuItems"
-                   [selectedItemIndex]="0"
+                   [selectedItemIndex]="selectedPeriodIndex"
                    headerTitle="">
     </cfo-left-menu>
     <action-menu [items]="actionMenuItems"

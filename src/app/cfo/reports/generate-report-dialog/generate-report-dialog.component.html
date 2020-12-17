@@ -39,7 +39,8 @@
                 zoomLevel="year" 
                 maxZoomLevel="year"
                 minZoomLevel="year"
-                [(value)]="budgetReportDate">
+                [value]="budgetReportDate"
+                (onOptionChanged)="onCalendarOptionChanged($event)">
             </dx-calendar>
             <ng-template #default>
                 <calendar [values]="calendarData" [options]="calendarData.options"></calendar>
@@ -68,7 +69,7 @@
                     </div>
                 </div>
                 <div class="row date-range">
-                    <div class="text-left">{{ ls.l('Reports_DateRange') }}</div>
+                    <div class="text-left">{{ reportTemplate ? ls.l('Reports_DateRange') : ls.l('Selected') + ' ' + ls.l('Year') }}</div>
                     <div *ngIf="reportTemplate; else budgetDate" class="text-right">
                         <span class="date">{{dateFrom | date : 'MM/dd/yyyy' : 'UTC' }}</span>
                         <img class="arrow" src="./assets/common/icons/date-arrow-right.svg">
@@ -77,7 +78,7 @@
                     </div>
                     <ng-template #budgetDate>
                         <div class="text-right">
-                            <span class="date">{{budgetReportDate | date : 'MM/yyyy' : 'UTC' }}</span>                
+                            <span class="date">{{budgetReportDate | date : 'yyyy' : 'UTC' }}</span>                
                         </div>
                     </ng-template>
                 </div>

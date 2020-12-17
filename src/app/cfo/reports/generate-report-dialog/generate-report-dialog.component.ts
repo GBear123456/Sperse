@@ -48,7 +48,7 @@ export class GenerateReportDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
     @ViewChild('notificationToEmailTextBox', { static: false }) notificationToEmailTextBox: DxTextBoxComponent;
 
-    title = this.ls.l('SelectBusinessEntity');
+    title = this.ls.l('SelectReportTemplate');
     initButtons: IDialogButton[] = [
         {
             title: this.ls.l('Back'),
@@ -101,7 +101,7 @@ export class GenerateReportDialogComponent implements OnInit {
             value: item
         };
     }).concat(this.feature.isEnabled(AppFeatures.CFOBudgets) 
-        ? {name: 'IncomeStatementAndBudget', value: undefined} : []
+        ? {name: this.ls.l('IncomeStatementAndBudget'), value: undefined} : []
     );
     firstReportTemplateVisit = true;
 
@@ -215,7 +215,8 @@ export class GenerateReportDialogComponent implements OnInit {
             this.title = this.ls.l('SelectReportTemplate');
             this.buttons[this.BACK_BTN_INDEX].disabled = true;
         } else if (this.currentStep == GenerateReportStep.Calendar) {
-            this.title = this.ls.l('SelectDateRange');
+            this.title = this.reportTemplate ? this.ls.l('SelectDateRange') : 
+                this.ls.l('Select') + ' ' + this.ls.l('Year');
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.Final) {
             this.title = this.ls.l('ReportGenerationOptions');
@@ -305,7 +306,7 @@ export class GenerateReportDialogComponent implements OnInit {
             })
         ).subscribe(
             () => {
-                this.data.reportGenerated();
+                this.data.reportGenerated(this.reportTemplate);
                 this.modalDialog.close(true);
                 this.notify.info(this.ls.l('SuccessfullyGenerated'));
             },
@@ -340,13 +341,18 @@ export class GenerateReportDialogComponent implements OnInit {
             event.component.selectRows(currentKeys);
 
         if (this.currentStep === GenerateReportStep.BusinessEntities) {
-            this.buttons[this.NEXT_BTN_INDEX].disabled = !(this.reportTemplate ?
-                event.selectedRowKeys : currentKeys).length;
+            this.buttons[this.NEXT_BTN_INDEX].disabled = !(this.reportTemplate || 
+                !event.currentSelectedRowKeys ? event.selectedRowKeys : currentKeys).length;
         }
     }
 
     get submitButtonDisabled() {
         return this.generatingStarted || !this.dontSendEmailNotification && !this.emailIsValidAndNotEmpty;
+    }
+
+    onCalendarOptionChanged(event) {
+        if (event.name == 'currentDate')
+            this.budgetReportDate = event.value;
     }
 
     onInitialized(event) {
