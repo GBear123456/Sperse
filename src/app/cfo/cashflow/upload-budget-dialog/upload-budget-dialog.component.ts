@@ -163,20 +163,19 @@ export class UploadBudgetDialogComponent implements OnInit {
 
     fileDropped(dropedFiles: NgxFileDropEntry[]) {
         let files = [];
-        dropedFiles.forEach((item) => {
+        dropedFiles.some((item) => {
             (item.fileEntry as FileSystemFileEntry).file((file: File) => {
-                files.push(file);
-                if (dropedFiles.length == files.length)
+                if (!files.length && this.getFileTypeByExt(file.name) == 'xlsx') {
+                    files.push(file);
                     this.uploadFiles(files);
+                }
             });
+            return files.length;
         });
     }
 
     getFileTypeByExt(fileName) {
-        let ext = fileName.split('.').pop();
-        if (['xdoc', 'doc', 'txt'].indexOf(ext) >= 0)
-            return 'doc';
-        return ext;
+        return fileName.split('.').pop();
     }
 
     uploadFiles(files) {

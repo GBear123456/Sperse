@@ -2971,6 +2971,64 @@ export class BudgetServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    generateReport(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: GenerateBudgetReportInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Budget/GenerateReport?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGenerateReport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGenerateReport(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGenerateReport(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -42878,6 +42936,94 @@ export interface IBudgetImportInput {
     override: boolean | undefined;
 }
 
+export class SendReportNotificationInfo implements ISendReportNotificationInfo {
+    recipientUserEmailAddress!: string;
+    sendReportInAttachments!: boolean;
+
+    constructor(data?: ISendReportNotificationInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.recipientUserEmailAddress = data["recipientUserEmailAddress"];
+            this.sendReportInAttachments = data["sendReportInAttachments"];
+        }
+    }
+
+    static fromJS(data: any): SendReportNotificationInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendReportNotificationInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["recipientUserEmailAddress"] = this.recipientUserEmailAddress;
+        data["sendReportInAttachments"] = this.sendReportInAttachments;
+        return data; 
+    }
+}
+
+export interface ISendReportNotificationInfo {
+    recipientUserEmailAddress: string;
+    sendReportInAttachments: boolean;
+}
+
+export class GenerateBudgetReportInput implements IGenerateBudgetReportInput {
+    businessEntityId!: number;
+    year!: number;
+    currencyId!: string;
+    notificationData!: SendReportNotificationInfo | undefined;
+
+    constructor(data?: IGenerateBudgetReportInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.businessEntityId = data["businessEntityId"];
+            this.year = data["year"];
+            this.currencyId = data["currencyId"];
+            this.notificationData = data["notificationData"] ? SendReportNotificationInfo.fromJS(data["notificationData"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GenerateBudgetReportInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GenerateBudgetReportInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["businessEntityId"] = this.businessEntityId;
+        data["year"] = this.year;
+        data["currencyId"] = this.currencyId;
+        data["notificationData"] = this.notificationData ? this.notificationData.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGenerateBudgetReportInput {
+    businessEntityId: number;
+    year: number;
+    currencyId: string;
+    notificationData: SendReportNotificationInfo | undefined;
+}
+
 export class BusinessEntityDto implements IBusinessEntityDto {
     id!: number | undefined;
     name!: string | undefined;
@@ -73077,46 +73223,6 @@ export enum ReportPeriod {
     Monthly = "Monthly", 
     Quarterly = "Quarterly", 
     Annual = "Annual", 
-}
-
-export class SendReportNotificationInfo implements ISendReportNotificationInfo {
-    recipientUserEmailAddress!: string;
-    sendReportInAttachments!: boolean;
-
-    constructor(data?: ISendReportNotificationInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.recipientUserEmailAddress = data["recipientUserEmailAddress"];
-            this.sendReportInAttachments = data["sendReportInAttachments"];
-        }
-    }
-
-    static fromJS(data: any): SendReportNotificationInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new SendReportNotificationInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["recipientUserEmailAddress"] = this.recipientUserEmailAddress;
-        data["sendReportInAttachments"] = this.sendReportInAttachments;
-        return data; 
-    }
-}
-
-export interface ISendReportNotificationInfo {
-    recipientUserEmailAddress: string;
-    sendReportInAttachments: boolean;
 }
 
 export class GenerateInput implements IGenerateInput {

@@ -1157,6 +1157,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 items: [
                     {
                         widget: 'dxButton',
+                        visible: this.feature.isEnabled(AppFeatures.CFOBudgets),
                         options: {
                             text: this.l('UploadBudget'),
                             onClick: () => {
@@ -2436,7 +2437,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (!source || (!source.children && !source.rows))
             return;
         let rows = source.rows ? source.rows : source.children;
-        for (let child of rows){
+        for (let child of rows) {
             let childPath = path.slice();
             childPath.push(child.value);
             if (this.hasChildsByPath(childPath)) {
@@ -2562,42 +2563,43 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                                     map((businessEntities: BusinessEntityDto[]) => {
                                         return businessEntities.map((businessEntity: BusinessEntityDto) => {
                                             return businessEntity.id;
-                                        })
+                                        });
                                     })
-                                )
+                                );
                             }
                             return of(selectedBusinessEntitiesIds);
                         })
                     );
-                    businessEntityIds$.subscribe((businessEntityIds: number[]) => {
-                        let monthBudget = 0;
-                        const allSelectedEntitiesHaveBudgets = businessEntityIds.every((businessEntityId: number) => {
-                            const datePeriod = this.cashflowService.formattingDate(e.cell.columnPath);
-                            const cellBudget = this.cashflowService.getCellBudget({
-                                businessEntityId: businessEntityId,
-                                categoryId: categoryId,
-                                startDate: datePeriod.startDate,
-                                endDate: datePeriod.endDate
+                    if (this.feature.isEnabled(AppFeatures.CFOBudgets))
+                        businessEntityIds$.subscribe((businessEntityIds: number[]) => {
+                            let monthBudget = 0;
+                            const allSelectedEntitiesHaveBudgets = businessEntityIds.every((businessEntityId: number) => {
+                                const datePeriod = this.cashflowService.formattingDate(e.cell.columnPath);
+                                const cellBudget = this.cashflowService.getCellBudget({
+                                    businessEntityId: businessEntityId,
+                                    categoryId: categoryId,
+                                    startDate: datePeriod.startDate,
+                                    endDate: datePeriod.endDate
+                                });
+                                if (cellBudget) {
+                                    monthBudget += cellBudget;
+                                } else {
+                                    return false;
+                                }
+                                return true;
                             });
-                            if (cellBudget) {
-                                monthBudget += cellBudget
-                            } else {
-                                return false;
+                            if (allSelectedEntitiesHaveBudgets && monthBudget > 0) {
+                                const dot: HTMLElement = this.document.createElement('div');
+                                dot.className = 'budget-info ' + (
+                                    (e.cell.value > 0 && e.cell.value >= monthBudget)
+                                    || (e.cell.value < 0 && Math.abs(e.cell.value) <= monthBudget)
+                                        ? 'within-budget' : 'out-of-budget'
+                                );
+                                dot.setAttribute('data-budget', monthBudget.toString());
+                                dot.setAttribute('data-value', e.cell.value);
+                                e.cellElement.appendChild(dot);
                             }
-                            return true;
                         });
-                        if (allSelectedEntitiesHaveBudgets && monthBudget > 0) {
-                            const dot: HTMLElement = this.document.createElement('div');
-                            dot.className = 'budget-info ' + (
-                                (e.cell.value > 0 && e.cell.value >= monthBudget)
-                                || (e.cell.value < 0 && Math.abs(e.cell.value) <= monthBudget)
-                                    ? 'within-budget' : 'out-of-budget'
-                            );
-                            dot.setAttribute('data-budget', monthBudget.toString());
-                            dot.setAttribute('data-value', e.cell.value);
-                            e.cellElement.appendChild(dot);
-                        }
-                    })
                 }
             }
         }
@@ -2944,7 +2946,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.cfoPreferencesService.selectedCurrencyId,
                     this.cfoPreferencesService.selectedCurrencySymbol
                 )}</div>
-                <div>${this.l('Percent')}: ${(Math.abs(value)/budget * 100).toFixed(2)}%</div>`
+                <div>${this.l('Percent')}: ${(Math.abs(value) / budget * 100).toFixed(2)}%</div>`
             );
         } else {
             let targetCell = this.getCellElementFromTarget(e.target);

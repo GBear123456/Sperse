@@ -17,6 +17,9 @@ import { IDialogButton } from '@root/shared/common/dialogs/modal/dialog-button.i
 import { ModalDialogComponent } from '@root/shared/common/dialogs/modal/modal-dialog.component';
 import { BankAccountsService } from '@root/shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import {
+    BudgetServiceProxy,
+    SendReportNotificationInfo,
+    GenerateBudgetReportInput,
     DepartmentsServiceProxy,
     ReportsServiceProxy,
     GenerateInput,
@@ -29,7 +32,6 @@ import { GenerateReportStep } from './generate-report-step.enum';
 import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppConsts } from '@shared/AppConsts';
-import { SendReportNotificationInfo } from '@shared/service-proxies/service-proxies';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppFeatures } from '@shared/AppFeatures';
 
@@ -39,7 +41,7 @@ import { AppFeatures } from '@shared/AppFeatures';
         '../report-dialog.less',
         'generate-report-dialog.component.less'
     ],
-    providers: [ DepartmentsServiceProxy, ReportsServiceProxy ]
+    providers: [ DepartmentsServiceProxy, ReportsServiceProxy, BudgetServiceProxy ]
 })
 export class GenerateReportDialogComponent implements OnInit {
     @ViewChild(DxTreeListComponent, { static: false }) treeList: DxTreeListComponent;
@@ -98,7 +100,9 @@ export class GenerateReportDialogComponent implements OnInit {
             name: this.ls.l(item),
             value: item
         };
-    }).concat({name: 'IncomeStatementAndBudget', value: undefined});
+    }).concat(this.feature.isEnabled(AppFeatures.CFOBudgets) 
+        ? {name: 'IncomeStatementAndBudget', value: undefined} : []
+    );
     firstReportTemplateVisit = true;
 
     private readonly BACK_BTN_INDEX = 0;
@@ -113,6 +117,7 @@ export class GenerateReportDialogComponent implements OnInit {
         private dialogRef: MatDialogRef<GenerateReportDialogComponent>,
         private instanceAppService: InstanceServiceProxy,
         private feature: FeatureCheckerService,
+        private budgetProxy: BudgetServiceProxy,
         public cfoService: CFOService,
         public bankAccountsService: BankAccountsService,
         public ls: AppLocalizationService
@@ -261,6 +266,9 @@ export class GenerateReportDialogComponent implements OnInit {
             first(),
             tap(() => this.notify.info(this.ls.l('GeneratingStarted'))),
             switchMap((currencyId: string) => {
+                if (!this.reportTemplate)
+                    return this.getBudgetReportRequest(currencyId);
+
                 if (this.isSeparateGrouping) {
                     let observables: Observable<void>[] = [];
                     this.selectedBusinessEntityIds.map(param => {
@@ -290,7 +298,8 @@ export class GenerateReportDialogComponent implements OnInit {
                         this.getGenerateInput(currencyId, this.selectedBusinessEntityIds, this.selectedDepartments)
                     );
                 }
-            }),
+            })
+        ).pipe(
             finalize(() => {
                 this.generatingStarted = false;
             })
@@ -306,16 +315,33 @@ export class GenerateReportDialogComponent implements OnInit {
         );
     }
 
+    getBudgetReportRequest(currencyId: string) {
+        return this.budgetProxy.generateReport(<any>this.data.instanceType, this.data.instanceId,
+            new GenerateBudgetReportInput({
+                businessEntityId: this.selectedBusinessEntityIds[0],
+                year: this.budgetReportDate.getUTCFullYear(),
+                currencyId: currencyId,
+                notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
+                    ? new SendReportNotificationInfo({
+                        recipientUserEmailAddress: this.notificationToEmail,
+                        sendReportInAttachments: this.sendReportInAttachments
+                    }) : null
+        }));
+    }
+
     onContentReady(event) {
         this.onSelectionChanged({ selectedRowKeys: event.component.getSelectedRowKeys() });
     }
 
     onSelectionChanged(event) {
+        let currentKeys = !event.currentDeselectedRowKeys ? [] :
+            event.currentDeselectedRowKeys.concat(event.currentSelectedRowKeys);
         if (!this.reportTemplate && event.selectedRowKeys.length != 1 && event.component)
-            event.component.selectRows(event.currentDeselectedRowKeys.concat(event.currentSelectedRowKeys));
+            event.component.selectRows(currentKeys);
 
         if (this.currentStep === GenerateReportStep.BusinessEntities) {
-            this.buttons[this.NEXT_BTN_INDEX].disabled = this.reportTemplate ? !event.selectedRowKeys.length : false;
+            this.buttons[this.NEXT_BTN_INDEX].disabled = !(this.reportTemplate ?
+                event.selectedRowKeys : currentKeys).length;
         }
     }
 
