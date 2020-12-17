@@ -85,7 +85,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     ];
 
     get selectedPeriodIndex(): number {
-        return findIndex(<any>this.menuItems, item => item.data.period == this.selectedPeriod);
+        return findIndex(<any>this.menuItems, (item: LeftMenuItem) => item.data.period == this.selectedPeriod);
     }
 
     visibleReports: ReportDto[];
