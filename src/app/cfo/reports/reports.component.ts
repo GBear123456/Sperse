@@ -11,6 +11,7 @@ import { CacheService } from 'ng2-cache-service';
 import { ImageViewerComponent } from 'ng2-image-viewer';
 import 'ng2-image-viewer/imageviewer.js';
 import { flatMap, finalize, map } from 'rxjs/operators';
+import findIndex from 'lodash/findIndex';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -82,6 +83,10 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             onClick: this.onMenuClick.bind(this)
         }
     ];
+
+    get selectedPeriodIndex(): number {
+        return findIndex(<any>this.menuItems, item => item.data.period == this.selectedPeriod);
+    }
 
     visibleReports: ReportDto[];
     viewerToolbarConfig: any = [];
@@ -366,7 +371,14 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 instanceType: this.instanceType,
                 instanceId: this.instanceId,
                 period: this.selectedPeriod,
-                reportGenerated: () => this.invalidate()
+                reportGenerated: (templateType) => {
+                    if (templateType)
+                        this.invalidate();
+                    else
+                        this.onMenuClick(this.menuItems.find(
+                            item => item.data.period == ReportPeriod.Annual)
+                        );
+                }
             }
         });
     }
