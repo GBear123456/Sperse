@@ -17,6 +17,7 @@ import { NgxFileDropModule } from 'ngx-file-drop';
 
 /** Application imports */
 import { TenantSettingsWizardComponent } from './tenant-settings-wizard.component';
+import { AppearanceComponent } from '@shared/common/tenant-settings-wizard/appearance/appearance.component';
 import { GeneralSettingsComponent } from '@shared/common/tenant-settings-wizard/general-settings/general-settings.component';
 import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.module';
 import { UploaderComponent } from '@shared/common/tenant-settings-wizard/general-settings/uploader/uploader.component';
@@ -44,6 +45,7 @@ import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/u
     exports: [ TenantSettingsWizardComponent ],
     declarations: [
         TenantSettingsWizardComponent,
+        AppearanceComponent,
         GeneralSettingsComponent,
         UploaderComponent,
         EmailComponent,

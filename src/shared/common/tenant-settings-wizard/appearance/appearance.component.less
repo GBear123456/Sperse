@@ -1,0 +1,31 @@
+:host {
+    .form-group {
+        display: flex;
+        height: 30px;
+        &.zendesk {
+            margin-top: 51px;
+        }
+    }
+    .file-uploads {
+        margin-top: 55px;
+    }
+    ::ng-deep timezone-combo {
+        flex-grow: 1;
+        .form-control {
+            border: none;
+            border-bottom: 1px solid #dfdfdf;
+            padding: 5px;
+            height: 30px;
+            border-radius: 0;
+            font-size: 15px;
+            font-family: Montserrat;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: #424c56;
+            &:focus {
+                border-color: #dfdfdf;
+                outline: none;
+            }
+        }
+    }
+}

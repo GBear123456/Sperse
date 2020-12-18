@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, EventEmitter, Component, Input, Output } from '@angular/core';
 
 /** Third party imports */
 import { NgxFileDropEntry } from 'ngx-file-drop';
@@ -22,7 +22,9 @@ export class UploaderComponent {
     @Input() documentId: string;
     @Input() documentLink: string;
     @Input() uploadButtonText: string;
+    @Input() uploadInfoText: string;
     @Input() uploadUrl: string;
+    @Output() onDocumentClear: EventEmitter<any> = new EventEmitter();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     file: NgxFileDropEntry;
@@ -63,5 +65,10 @@ export class UploaderComponent {
                 xhr.send(formData);
             });
         });
+    }
+
+    clear() {
+        this.file = undefined;
+        this.onDocumentClear.emit();
     }
 }

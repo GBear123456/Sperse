@@ -33,6 +33,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppearanceComponent } from '@shared/common/tenant-settings-wizard/appearance/appearance.component';
 import { GeneralSettingsComponent } from '@shared/common/tenant-settings-wizard/general-settings/general-settings.component';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppService } from '@app/app.service';
@@ -42,6 +43,8 @@ import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/u
 import { SecurityComponent } from '@shared/common/tenant-settings-wizard/security/security.component';
 import { EmailComponent } from '@shared/common/tenant-settings-wizard/email/email.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     selector: 'tenant-settings-wizard',
@@ -51,11 +54,13 @@ import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wiz
 })
 export class TenantSettingsWizardComponent implements AfterViewInit {
     @ViewChild(MatVerticalStepper, { static: true }) stepper: MatVerticalStepper;
+    @ViewChild(AppearanceComponent, { static: false }) appearanceComponent: AppearanceComponent;
     @ViewChild(GeneralSettingsComponent, { static: false }) generalSettingsComponent: GeneralSettingsComponent;
     @ViewChild(TenantManagementComponent, { static: false }) tenantManagementComponent: TenantManagementComponent;
     @ViewChild(UserManagementComponent, { static: false }) userManagementComponent: UserManagementComponent;
     @ViewChild(SecurityComponent, { static: false }) securityComponent: SecurityComponent;
     @ViewChild(EmailComponent, { static: false }) emailComponent: EmailComponent;
+    hasCustomizationsFeture = this.featureCheckerService.isEnabled(AppFeatures.AdminCustomizations);
     hasHostPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings);
     hasTenantPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings);
     steps: TenantSettingsStep[];
@@ -84,6 +89,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     emailSettings$: Observable<EmailSettingsEditDto> = this.tenantSettingsService.getEmailSettings();
 
     constructor(
+        private featureCheckerService: FeatureCheckerService,
         private permissionCheckerService: PermissionCheckerService,
         private changeDetectorRef: ChangeDetectorRef,
         private dialogRef: MatDialogRef<TenantSettingsWizardComponent>,
@@ -91,9 +97,9 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
         private tenantSettingsService: TenantSettingsServiceProxy,
         private loadingService: LoadingService,
         private elementRef: ElementRef,
-        private appService: AppService,
         private commonLookupServiceProxy: CommonLookupServiceProxy,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        public appService: AppService
     ) {}
 
     get visibleSteps() {
@@ -108,6 +114,13 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 getComponent: () => this.generalSettingsComponent,
                 saved: false,
                 visible: true
+            },
+            {
+                name: 'appearance',
+                text: this.ls.l('Appearance'),
+                getComponent: () => this.appearanceComponent,
+                saved: false,
+                visible: !this.appService.isHostTenant && this.hasCustomizationsFeture
             },
             {
                 name: 'tenant-management',
