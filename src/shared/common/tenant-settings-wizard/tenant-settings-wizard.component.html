@@ -51,6 +51,9 @@
                 <email [settings]="emailSettings$ | async"></email>
             </ng-container>
         </mat-step>
+        <mat-step *ngIf="!appService.isHostTenant && hasCustomizationsFeture" #memberPortalStep>
+            <member-portal></member-portal>
+        </mat-step>
     </mat-vertical-stepper>
     <div mat-dialog-actions>
         <button mat-button class="skip" (click)="next()">{{ ls.l('SkipForNow') }}</button>

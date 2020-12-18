@@ -340,8 +340,11 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.tenantSettingsService.updateSendGridSettings(this.sendGridSettings),
             this.tenantSettingsService.updateYTelSettings(this.yTelSettings)
         ];
-        if (this.isAdminCustomizations)
+        if (this.isAdminCustomizations) {
+            if (!this.memberPortalSettings.url)
+                this.memberPortalSettings.url = undefined;
             requests.push(this.tenantSettingsService.updateMemberPortalSettings(this.memberPortalSettings));
+        }
         if (this.isCreditReportFeatureEnabled)
             requests.push(this.tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
         if (this.isPFMApplicationsFeatureEnabled)

@@ -25,6 +25,7 @@ import { EmailComponent } from '@shared/common/tenant-settings-wizard/email/emai
 import { SecurityComponent } from '@shared/common/tenant-settings-wizard/security/security.component';
 import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard/tenant-management/tenant-management.component';
 import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/user-management/user-management.component';
+import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/member-portal/member-portal.component';
 
 @NgModule({
     imports: [
@@ -51,6 +52,7 @@ import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/u
         EmailComponent,
         SecurityComponent,
         TenantManagementComponent,
+        MemberPortalComponent,
         UserManagementComponent
     ],
     entryComponents: [ TenantSettingsWizardComponent ]

@@ -37,6 +37,7 @@ import { AppearanceComponent } from '@shared/common/tenant-settings-wizard/appea
 import { GeneralSettingsComponent } from '@shared/common/tenant-settings-wizard/general-settings/general-settings.component';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppService } from '@app/app.service';
+import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/member-portal/member-portal.component';
 import { TenantSettingsStep } from '@shared/common/tenant-settings-wizard/tenant-settings-step.interface';
 import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard/tenant-management/tenant-management.component';
 import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/user-management/user-management.component';
@@ -60,6 +61,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     @ViewChild(UserManagementComponent, { static: false }) userManagementComponent: UserManagementComponent;
     @ViewChild(SecurityComponent, { static: false }) securityComponent: SecurityComponent;
     @ViewChild(EmailComponent, { static: false }) emailComponent: EmailComponent;
+    @ViewChild(MemberPortalComponent, { static: false }) memberPortalComponent: MemberPortalComponent;
     hasCustomizationsFeture = this.featureCheckerService.isEnabled(AppFeatures.AdminCustomizations);
     hasHostPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings);
     hasTenantPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings);
@@ -149,6 +151,13 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                 getComponent: () => this.emailComponent,
                 saved: false,
                 visible: true
+            },
+            {
+                name: 'member-portal',
+                text: this.ls.l('MemberPortal'),
+                getComponent: () => this.memberPortalComponent,
+                saved: false,
+                visible: !this.appService.isHostTenant && this.hasCustomizationsFeture
             }
         ];
     }
