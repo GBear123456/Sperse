@@ -21,6 +21,9 @@
                 <general-settings [settings]="generalSettings$ | async"></general-settings>
             </ng-container>
         </mat-step>
+        <mat-step *ngIf="!appService.isHostTenant && hasCustomizationsFeture" #appearanceStep>
+            <appearance></appearance>
+        </mat-step>
         <mat-step *ngIf="hasHostPermission" #tenantManagementStep>
             <ng-container *ngIf="stepper.selected === tenantManagementStep">
                 <tenant-management [settings]="tenantManagementSettings$ | async"
@@ -47,6 +50,9 @@
             <ng-container *ngIf="stepper.selected === emailStep">
                 <email [settings]="emailSettings$ | async"></email>
             </ng-container>
+        </mat-step>
+        <mat-step *ngIf="!appService.isHostTenant && hasCustomizationsFeture" #memberPortalStep>
+            <member-portal></member-portal>
         </mat-step>
     </mat-vertical-stepper>
     <div mat-dialog-actions>

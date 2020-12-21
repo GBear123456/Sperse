@@ -1,9 +1,8 @@
 <h5>{{ title }}</h5>
-<p *ngIf="documentId">
-    <a [href]="documentLink"
-       target="_blank">
-        {{ls.l('Download')}}
-    </a>
+<p>
+    <a [ngClass]="{disabled: !documentId}" [href]="documentLink" target="_blank">{{ls.l('Download')}}</a>&nbsp;&nbsp;&nbsp;
+    <a href="javascript:void(0)" *ngIf="documentId && onDocumentClear?.observers?.length" (click)="clear()">{{ls.l('Clear')}}</a>
+    <span *ngIf="uploadInfoText" class="m-form__help">{{uploadInfoText}}</span>
 </p>
 <form #privacyPolicyUploadForm>
     <div class="form-group">
