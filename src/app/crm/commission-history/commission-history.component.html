@@ -94,7 +94,8 @@
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.OrderDate"
                                     [caption]="l('OrderDate')" 
-                                    cellTemplate="dateCell"                                     
+                                    cellTemplate="dateCell"
+                                    [visible]="false"
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.EarnedDate"
@@ -149,7 +150,8 @@
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.BuyerEmailAddress"
                                     [caption]="l('BuyerEmailAddress')"
-                                    cssClass="clipboard-holder clipboard-holder">
+                                    cssClass="clipboard-holder clipboard-holder"
+                                    [visible]="false">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.BuyerAffiliateCode"
                                     [caption]="l('BuyerAffiliateCode')"
@@ -163,6 +165,7 @@
                         <dxi-column width="200px"
                                     cellTemplate="staticWidthCell"
                                     [dataField]="commissionFields.ResellerEmailAddress"
+                                    [visible]="false"
                                     [caption]="l('ResellerEmailAddress')">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.ResellerAffiliateCode"
@@ -176,11 +179,13 @@
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.TransactionId"
                                     dataType="string"
+                                    [visible]="false"
                                     [caption]="l('TransactionId')"
                                     cssClass="tabular clipboard-holder">
                         </dxi-column>
                         <dxi-column dataField="TransactionAuthCode"
                                     [caption]="l('TransactionAuthCode')"
+                                    [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column width="140px"

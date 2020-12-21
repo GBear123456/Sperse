@@ -17,9 +17,9 @@
                 <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
             </div>
         </div>
-        <div *dxTemplate="let data of 'itemTemplate'">
+        <div *dxTemplate="let data of 'itemTemplate'" class="types-dropdown-item">
             <div *ngIf="allowEdit; else default">
-                <div class="types-dropdown-item">
+                <div class="edit-mode">
                     <span>{{ data.text }}</span>
                     <i class="edit fa fa-pencil"
                        (click)="openEditDialog($event, data.value, data.text)">
