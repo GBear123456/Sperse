@@ -251,7 +251,7 @@
                 </div>
                 <div *dxTemplate="let cell of 'amountTemplate'">
                     <ng-container>
-                        <span [class]="'clipboard-holder ' + (cell.value < 0 ? 'negative-values' : 'positive-values')"> {{ cell.text | currency:_cfoPreferencesService.selectedCurrencyId:_cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }} </span>
+                        <span [class]="'clipboard-holder ' + (cell.value < 0 ? 'negative-values' : 'positive-values')"> {{ cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }} </span>
                     </ng-container>
                 </div>
                 <div *dxTemplate="let data of 'CategoryNameTemplate'">
@@ -307,7 +307,7 @@
                 </dx-pivot-grid>
             </div>
         </dx-scroll-view>
-        <div class="sidebar-calculator-widget" [ngClass]="{'calculatorHidden': !calculatorShowed}">
+        <div class="sidebar-calculator-widget" [ngClass]="{ 'calculatorHidden': !calculatorShowed }">
             <div class="calculator-title">
                 <h3>{{l( 'Cell Calculator')}}</h3>
                 <span class="close" (click)="closeCalculator()"></span>

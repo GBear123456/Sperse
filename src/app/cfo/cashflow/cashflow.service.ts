@@ -570,12 +570,12 @@ export class CashflowService {
                cellInterval.startDate.isBefore(allowedForecastsInterval.endDate);
     }
 
-    getCategoryFullPath(categoryId: number, category: CategoryDto, categoryTree: GetCategoryTreeOutput): string[] {
+    getCategoryFullPath(categoryId: number, categoryTree: GetCategoryTreeOutput): string[] {
         const allCategoriesInPath: string[] = this.getCategoryPath(categoryId, categoryTree);
         const highestCategory: CategoryDto = categoryTree.categories[allCategoriesInPath[0].slice(2)];
         const accountingTypeId: number = highestCategory && highestCategory.accountingTypeId;
         return [
-            ...(accountingTypeId
+            ...(accountingTypeId && categoryTree.accountingTypes[accountingTypeId].typeId
                 ? [CategorizationPrefixes.CashflowType + categoryTree.accountingTypes[accountingTypeId].typeId]
                 : []),
             ...allCategoriesInPath
@@ -2258,17 +2258,18 @@ export class CashflowService {
     saveBudgets(budgets: BudgetDto[]) {
         this.budgets = {};
         budgets.forEach((budget: BudgetDto) => {
-            this.budgets[this.getBudgetKey(budget)] = budget.amount;
+            const budgetKey = this.getBudgetKey(budget);
+            this.budgets[budgetKey] = (this.budgets[budgetKey] || 0) + budget.amount;
         });
     }
 
-    private getBudgetKey(budget: Omit<IBudgetDto, 'amount'>): string {
-        return budget.businessEntityId + '-' + budget.categoryId + '-'
+    private getBudgetKey(budget: Omit<IBudgetDto, 'amount' | 'businessEntityId'>): string {
+        return budget.categoryId + '-'
                + budget.startDate.utc().format('DD-MM-YYYY') + '-'
                + budget.endDate.utc().format('DD-MM-YYYY');
     }
 
-    getCellBudget(budget: Omit<IBudgetDto, 'amount'>): number {
+    getCellBudget(budget: Omit<IBudgetDto, 'amount' | 'businessEntityId'>): number {
         return this.budgets[this.getBudgetKey(budget)];
     }
 

@@ -924,8 +924,34 @@ describe('CashflowService', () => {
                 86: new CategoryDto({ parentId: null, name: 'Parent category', accountingTypeId: 2, coAID: null, isActive: true, reportingCategoryId: null })
             }
         });
-        const categoryFullPath = service.getCategoryFullPath(77, category, categoryTree);
+        const categoryFullPath = service.getCategoryFullPath(77, categoryTree);
         expect(categoryFullPath).toEqual([ 'CTE', 'CA86', 'CA67', 'CA77' ]);
+    }));
+
+    it('getCategoryFullPath should work', inject([ CashflowService ], (service: CashflowService) => {
+        const categoryTree: GetCategoryTreeOutput = new GetCategoryTreeOutput ({
+            types: { I: new TypeDto({ name: 'Inflows'}), E: new TypeDto({name: 'Outflows'})},
+            accountingTypes: {
+                2: new AccountingTypeDto({
+                    isSystem: false,
+                    name: "Income",
+                    typeId: "I"
+                })
+            },
+            categories: {
+                53997: new CategoryDto({
+                    accountingTypeId: 2,
+                    coAID: null,
+                    isActive: true,
+                    name: "Design income",
+                    parentId: null,
+                    reportingCategoryId: null
+                })
+            }
+        });
+        service.userPreferencesService.localPreferences.value.showAccountingTypeTotals = true;
+        const categoryFullPath = service.getCategoryFullPath(53997, categoryTree);
+        expect(categoryFullPath).toEqual([ 'CTI', 'CA53997' ]);
     }));
 
     it('getCategoryValueByPrefix should return the deepest category in path', inject([ CashflowService ], (service: CashflowService) => {
