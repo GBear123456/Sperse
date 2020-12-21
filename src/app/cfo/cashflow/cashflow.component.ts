@@ -103,7 +103,7 @@ import {
     GetReportTemplateDefinitionOutput,
     CashFlowGridSettingsDto,
     CashFlowStatsDto,
-    BusinessEntityDto
+    BudgetDto
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { BankAccountFilterModel } from 'shared/filters/bank-account-filter/bank-account-filter.model';
@@ -725,6 +725,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     private bankAccountCount: string;
     public toolbarConfig: ToolbarGroupModel[];
     gridIsEmpty = false;
+    hasBudgetsFeature: boolean = this.feature.isEnabled(AppFeatures.CFOBudgets);
 
     constructor(injector: Injector,
         private cashflowServiceProxy: CashflowServiceProxy,
@@ -1545,14 +1546,13 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 return this.cashflowServiceProxy.getStats(InstanceType[this.instanceType], this.instanceId, this.cashflowService.requestFilter);
             }),
             tap((stats: CashFlowStatsDto) => {
-                if (this.feature.isEnabled(AppFeatures.CFOBudgets))
+                if (this.hasBudgetsFeature)
                     this.cashflowService.saveBudgets(stats.budgets);
             }),
-            pluck('transactionStats'),
             finalize(() => this.finishLoading())
         ).subscribe(
-            (transactions: TransactionStatsDto[]) => {
-                this.handleCashflowData(transactions, period);
+            (stats: CashFlowStatsDto) => {
+                this.handleCashflowData(stats.transactionStats, period, this.hasBudgetsFeature ? stats.budgets : []);
                 /** override cashflow data push method to add totals and net change automatically after adding of cashflow */
                 this.overrideCashflowDataPushMethod();
             },
@@ -1575,12 +1575,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         );
     }
 
-    handleCashflowData(transactions: TransactionStatsDto[], period: GroupByPeriod = GroupByPeriod.Monthly) {
+    handleCashflowData(
+        transactions: TransactionStatsDto[],
+        period: GroupByPeriod = GroupByPeriod.Monthly,
+        budgets: BudgetDto[]
+    ) {
         if (transactions && transactions.length) {
             this.cashflowService.updateStatsCategoryTree(transactions);
             this.cashflowService.addCategoriesLevelsToCategorizationConfig();
             /** Сategories - object with categories */
-            this.cashflowService.cashflowData = this.getCashflowDataFromTransactions(transactions);
+            this.cashflowService.cashflowData = this.getCashflowDataFromTransactions(transactions, true, budgets);
             /** Make a copy of cashflow data to display it in custom total group on the top level */
             const stubsCashflowDataForEndingCashPosition = this.getStubsCashflowDataForEndingCashPosition(this.cashflowService.cashflowData);
             const stubsCashflowDataForAllDays = this.cashflowService.getStubsCashflowDataForAllPeriods(this.cashflowService.cashflowData, period);
@@ -1600,7 +1604,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 stubsCashflowDataForAllDays
             );
         } else {
-            this.cashflowService.cashflowData = this.getCashflowDataFromTransactions(transactions);
+            this.cashflowService.cashflowData = this.getCashflowDataFromTransactions(transactions, true, budgets);
         }
     }
 
@@ -1709,7 +1713,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         for (let categoryId in this.cashflowService.categoryTree.categories) {
             const category: CategoryDto = this.cashflowService.categoryTree.categories[categoryId];
             /** Get category path in tree */
-            const categoryPath: string[] = this.cashflowService.getCategoryFullPath(+categoryId, category, this.cashflowService.categoryTree);
+            const categoryPath: string[] = this.cashflowService.getCategoryFullPath(+categoryId, this.cashflowService.categoryTree);
             if (!this.cashflowService.categoryHasTransactions(this.cashflowService.treePathes, categoryPath)) {
                 const cashflowTypeId = this.cashflowService.categoryTree.accountingTypes[category.accountingTypeId].typeId;
                 if (cashflowTypeId) {
@@ -1748,7 +1752,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
      * @return {TransactionStatsDto[]}
      */
     /** @todo refactor */
-    getCashflowDataFromTransactions(transactions: TransactionStatsDto[], reset: boolean = true): TransactionStatsDtoExtended[] {
+    getCashflowDataFromTransactions(
+        transactions: TransactionStatsDto[],
+        reset: boolean = true,
+        budgets: BudgetDto[] = []
+    ): TransactionStatsDtoExtended[] {
         if (reset) {
             this.transactionsAmount = 0;
             this.transactionsTotal = 0;
@@ -1786,6 +1794,16 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             result.push(extendedTransaction);
             return result;
         }, []);
+
+        if (budgets && budgets.length) {
+            budgets.forEach((budget: BudgetDto) => {
+                const path: string[] = this.cashflowService.getCategoryFullPath(budget.categoryId, this.cashflowService.categoryTree);
+                data.push(this.cashflowService.createStubTransaction({
+                    'date': budget.startDate.utc(),
+                    'initialDate': moment(budget.startDate)
+                }, path));
+            });
+        }
 
         this.cashflowService.updateZeroAdjustmentsList();
         this.transactionsTotal = +this.transactionsTotal.toFixed(2);
@@ -2556,53 +2574,24 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let fieldName = fieldObj.groupInterval;
             if (fieldName === 'month') {
                 const categoryId = this.cashflowService.getCategoryValueByPrefix(e.cell.rowPath, CategorizationPrefixes.Category);
-                if (categoryId) {
-                    const businessEntityIds$: Observable<number[]> = this.bankAccountsService.selectedBusinessEntitiesIds$.pipe(
-                        first(),
-                        switchMap((selectedBusinessEntitiesIds: number[]) => {
-                            if (!selectedBusinessEntitiesIds || !selectedBusinessEntitiesIds.length) {
-                                return this.bankAccountsService.sortedBusinessEntities$.pipe(
-                                    first(),
-                                    map((businessEntities: BusinessEntityDto[]) => {
-                                        return businessEntities.map((businessEntity: BusinessEntityDto) => {
-                                            return businessEntity.id;
-                                        });
-                                    })
-                                );
-                            }
-                            return of(selectedBusinessEntitiesIds);
-                        })
-                    );
-                    if (this.feature.isEnabled(AppFeatures.CFOBudgets))
-                        businessEntityIds$.subscribe((businessEntityIds: number[]) => {
-                            let monthBudget = 0;
-                            const allSelectedEntitiesHaveBudgets = businessEntityIds.every((businessEntityId: number) => {
-                                const datePeriod = this.cashflowService.formattingDate(e.cell.columnPath);
-                                const cellBudget = this.cashflowService.getCellBudget({
-                                    businessEntityId: businessEntityId,
-                                    categoryId: categoryId,
-                                    startDate: datePeriod.startDate,
-                                    endDate: datePeriod.endDate
-                                });
-                                if (cellBudget) {
-                                    monthBudget += cellBudget;
-                                } else {
-                                    return false;
-                                }
-                                return true;
-                            });
-                            if (allSelectedEntitiesHaveBudgets && monthBudget > 0) {
-                                const dot: HTMLElement = this.document.createElement('div');
-                                dot.className = 'budget-info ' + (
-                                    (e.cell.value > 0 && e.cell.value >= monthBudget)
-                                    || (e.cell.value < 0 && Math.abs(e.cell.value) <= monthBudget)
-                                        ? 'within-budget' : 'out-of-budget'
-                                );
-                                dot.setAttribute('data-budget', monthBudget.toString());
-                                dot.setAttribute('data-value', e.cell.value);
-                                e.cellElement.appendChild(dot);
-                            }
-                        });
+                if (categoryId && this.feature.isEnabled(AppFeatures.CFOBudgets)) {
+                    const datePeriod = this.cashflowService.formattingDate(e.cell.columnPath);
+                    const cellBudget = this.cashflowService.getCellBudget({
+                        categoryId: categoryId,
+                        startDate: datePeriod.startDate,
+                        endDate: datePeriod.endDate
+                    });
+                    if (cellBudget > 0) {
+                        const dot: HTMLElement = this.document.createElement('div');
+                        dot.className = 'budget-info ' + (
+                            (e.cell.value > 0 && e.cell.value >= cellBudget)
+                            || (e.cell.value < 0 && Math.abs(e.cell.value) <= cellBudget)
+                                ? 'within-budget' : 'out-of-budget'
+                        );
+                        dot.setAttribute('data-budget', cellBudget.toString());
+                        dot.setAttribute('data-value', e.cell.value);
+                        e.cellElement.appendChild(dot);
+                    }
                 }
             }
         }
