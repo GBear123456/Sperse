@@ -260,6 +260,17 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             filterMethod: FiltersService.filterBySource
         }),
         new FilterModel({
+            component: FilterSourceComponent,
+            caption: 'Buyer',
+            items: {
+                element: new SourceContactFilterModel({
+                    contactFieldExpr: this.commissionFields.BuyerContactId,
+                    ls: this.localizationService
+                })
+            },
+            filterMethod: FiltersService.filterBySource
+        }),
+        new FilterModel({
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'OrderDate',

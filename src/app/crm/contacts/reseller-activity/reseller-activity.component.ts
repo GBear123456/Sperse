@@ -47,6 +47,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 export class ResellerActivityComponent implements OnInit, OnDestroy {
     @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
     @ViewChild('commissionDataGrid', {static: false}) commissionDataGrid: DxDataGridComponent;
+    @ViewChild('generatedCommissionDataGrid', {static: false}) generatedCommissionDataGrid: DxDataGridComponent;
     @ViewChild('contactDataGrid', {static: false}) contactDataGrid: DxDataGridComponent;
     @ViewChild('ledgerDataGrid', {static: false}) ledgerDataGrid: DxDataGridComponent;
 
@@ -61,6 +62,7 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     private readonly contactDataSourceURI = 'Contact';
     private readonly ident = 'ResellerActivity';
     private readonly COMMISSION_TAB_INDEX = 1;
+    private readonly GENERATED_TAB_INDEX  = 2;
     private _selectedTabIndex = 0;
 
     readonly clientFields = ClientFields;
@@ -77,6 +79,8 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
         if (val) {
             if (val == this.COMMISSION_TAB_INDEX)
                 this.initCommissionDataSource();
+            else if (val == this.GENERATED_TAB_INDEX)
+                this.initGeneratedCommissionDataSource();
             else
                 this.initLedgerDataSource();
         } else
@@ -86,6 +90,7 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     ledgerDataSource;
     contactDataSource;
     commissionDataSource;
+    generatedCommissionDataSource;
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     isCGManageAllowed = false;
@@ -205,31 +210,44 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
         });
     }
 
+    getCommissionDataGrid(dataGrid, filter) {
+        new DataSource({
+            requireTotalCount: true,
+            store: new ODataStore({
+                key: this.commissionFields.Id,
+                url: this.oDataService.getODataUrl(this.commissionDataSourceURI, filter),
+                version: AppConsts.ODataVersion,
+                deserializeDates: false,
+                beforeSend: (request) => {
+                    this.loadingService.startLoading();
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                    request.params.$select = DataGridService.getSelectFields(
+                        dataGrid,
+                        [
+                            this.commissionFields.Id,
+                            this.commissionFields.ResellerContactId
+                        ]
+                    );
+                }
+            })
+        });
+    }
+
     initCommissionDataSource() {
         if (this.data.contactInfo.id)
-            this.commissionDataSource = new DataSource({
-                requireTotalCount: true,
-                store: new ODataStore({
-                    key: this.commissionFields.Id,
-                    url: this.oDataService.getODataUrl(this.commissionDataSourceURI,
-                        {[this.commissionFields.ResellerContactId]: this.data.contactInfo.id}
-                    ),
-                    version: AppConsts.ODataVersion,
-                    deserializeDates: false,
-                    beforeSend: (request) => {
-                        this.loadingService.startLoading();
-                        request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                        request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
-                        request.params.$select = DataGridService.getSelectFields(
-                            this.commissionDataGrid,
-                            [
-                                this.commissionFields.Id,
-                                this.commissionFields.ResellerContactId
-                            ]
-                        );
-                    }
-                })
-            });
+            this.commissionDataSource = this.getCommissionDataGrid(
+                this.commissionDataGrid,
+                {[this.commissionFields.ResellerContactId]: this.data.contactInfo.id}
+            );
+    }
+
+    initGeneratedCommissionDataSource() {
+        if (this.data.contactInfo.id)
+            this.generatedCommissionDataSource = this.getCommissionDataGrid(
+                this.generatedCommissionDataGrid,
+                {[this.commissionFields.BuyerContactId]: this.data.contactInfo.id}
+            );
     }
 
     removeTabQueryParam() {
