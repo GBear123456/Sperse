@@ -1,9 +1,9 @@
 /*!
 * DevExtreme (dx.messages.hu.js)
-* Version: 19.2.5
-* Build date: Mon Dec 16 2019
+* Version: 19.2.7
+* Build date: Thu Mar 26 2020
 *
-* Copyright (c) 2012 - 2019 Developer Express Inc. ALL RIGHTS RESERVED
+* Copyright (c) 2012 - 2020 Developer Express Inc. ALL RIGHTS RESERVED
 * Read about DevExtreme licensing here: https://js.devexpress.com/Licensing/
 */
 "use strict";
@@ -148,6 +148,7 @@
             "dxDataGrid-columnFixingRightPosition": "Jobbra",
             "dxDataGrid-exportTo": "Export\xe1l\xe1s",
             "dxDataGrid-exportToExcel": "Export\xe1l\xe1s Excel f\xe1jlba",
+            "dxDataGrid-exporting": "Export\xe1l\xe1s...",
             "dxDataGrid-excelFormat": "Excel f\xe1jl",
             "dxDataGrid-selectedRows": "Kiv\xe1lasztott sorok",
             "dxDataGrid-exportSelectedRows": "Kiv\xe1lasztott sorok export\xe1l\xe1sa",
