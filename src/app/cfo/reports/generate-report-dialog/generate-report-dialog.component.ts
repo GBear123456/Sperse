@@ -64,7 +64,7 @@ export class GenerateReportDialogComponent implements OnInit {
             disabled: false
         }
     ];
-    budgetReportDate: Date;
+    budgetReportDate: Date = DateHelper.addTimezoneOffset(new Date(), true);
     departmentsEntities: string[] = [];
     selectedDepartments: string[] = [];
     noDepartmentItem = this.ls.l('NoDepartment');
@@ -100,7 +100,7 @@ export class GenerateReportDialogComponent implements OnInit {
             name: this.ls.l(item),
             value: item
         };
-    }).concat(this.feature.isEnabled(AppFeatures.CFOBudgets) 
+    }).concat(this.feature.isEnabled(AppFeatures.CFOBudgets)
         ? {name: this.ls.l('IncomeStatementAndBudget'), value: undefined} : []
     );
     firstReportTemplateVisit = true;
@@ -215,7 +215,7 @@ export class GenerateReportDialogComponent implements OnInit {
             this.title = this.ls.l('SelectReportTemplate');
             this.buttons[this.BACK_BTN_INDEX].disabled = true;
         } else if (this.currentStep == GenerateReportStep.Calendar) {
-            this.title = this.reportTemplate ? this.ls.l('SelectDateRange') : 
+            this.title = this.reportTemplate ? this.ls.l('SelectDateRange') :
                 this.ls.l('Select') + ' ' + this.ls.l('Year');
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.Final) {
@@ -341,7 +341,7 @@ export class GenerateReportDialogComponent implements OnInit {
             event.component.selectRows(currentKeys);
 
         if (this.currentStep === GenerateReportStep.BusinessEntities) {
-            this.buttons[this.NEXT_BTN_INDEX].disabled = !(this.reportTemplate || 
+            this.buttons[this.NEXT_BTN_INDEX].disabled = !(this.reportTemplate ||
                 !event.currentSelectedRowKeys ? event.selectedRowKeys : currentKeys).length;
         }
     }
