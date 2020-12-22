@@ -1797,7 +1797,11 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
         if (budgets && budgets.length) {
             budgets.forEach((budget: BudgetDto) => {
-                const path: string[] = this.cashflowService.getCategoryFullPath(budget.categoryId, this.cashflowService.categoryTree);
+                const path: string[] = this.cashflowService.getCategoryFullPath(
+                    budget.categoryId,
+                    this.cashflowService.categoryTree,
+                    budget.amount >= 0 ? 'I' : 'E'
+                );
                 data.push(this.cashflowService.createStubTransaction({
                     'date': budget.startDate.utc(),
                     'initialDate': moment(budget.startDate)

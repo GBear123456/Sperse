@@ -570,13 +570,14 @@ export class CashflowService {
                cellInterval.startDate.isBefore(allowedForecastsInterval.endDate);
     }
 
-    getCategoryFullPath(categoryId: number, categoryTree: GetCategoryTreeOutput): string[] {
+    getCategoryFullPath(categoryId: number, categoryTree: GetCategoryTreeOutput, defaultTypeId?: 'I' | 'E'): string[] {
         const allCategoriesInPath: string[] = this.getCategoryPath(categoryId, categoryTree);
         const highestCategory: CategoryDto = categoryTree.categories[allCategoriesInPath[0].slice(2)];
         const accountingTypeId: number = highestCategory && highestCategory.accountingTypeId;
+        const typeId: string = categoryTree.accountingTypes[accountingTypeId].typeId || defaultTypeId;
         return [
-            ...(accountingTypeId && categoryTree.accountingTypes[accountingTypeId].typeId
-                ? [CategorizationPrefixes.CashflowType + categoryTree.accountingTypes[accountingTypeId].typeId]
+            ...(accountingTypeId && typeId
+                ? [CategorizationPrefixes.CashflowType + typeId]
                 : []),
             ...allCategoriesInPath
         ];
