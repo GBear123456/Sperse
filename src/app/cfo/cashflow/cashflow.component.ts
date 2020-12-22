@@ -1158,7 +1158,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 items: [
                     {
                         widget: 'dxButton',
-                        visible: this.feature.isEnabled(AppFeatures.CFOBudgets),
+                        visible: this.hasBudgetsFeature,
                         options: {
                             text: this.l('UploadBudget'),
                             onClick: () => {
@@ -2574,14 +2574,14 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let fieldName = fieldObj.groupInterval;
             if (fieldName === 'month') {
                 const categoryId = this.cashflowService.getCategoryValueByPrefix(e.cell.rowPath, CategorizationPrefixes.Category);
-                if (categoryId && this.feature.isEnabled(AppFeatures.CFOBudgets)) {
+                if (categoryId && this.hasBudgetsFeature) {
                     const datePeriod = this.cashflowService.formattingDate(e.cell.columnPath);
                     const cellBudget = this.cashflowService.getCellBudget({
                         categoryId: categoryId,
                         startDate: datePeriod.startDate,
                         endDate: datePeriod.endDate
                     });
-                    if (cellBudget > 0) {
+                    if (cellBudget) {
                         const dot: HTMLElement = this.document.createElement('div');
                         dot.className = 'budget-info ' + (
                             (e.cell.value > 0 && e.cell.value >= cellBudget)
