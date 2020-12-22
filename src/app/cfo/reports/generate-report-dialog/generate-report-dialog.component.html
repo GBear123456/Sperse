@@ -79,6 +79,7 @@
                     <ng-template #budgetDate>
                         <div class="text-right">
                             <span class="date">{{budgetReportDate | date : 'yyyy' : 'UTC' }}</span>                
+                            <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
                         </div>
                     </ng-template>
                 </div>
