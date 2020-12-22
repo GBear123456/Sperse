@@ -205,6 +205,7 @@ export class GenerateReportDialogComponent implements OnInit {
     private processStep() {
         this.buttons = this.initButtons;
         if (this.currentStep == GenerateReportStep.BusinessEntities) {
+            this.selectedBusinessEntityIds = [];
             this.title = this.ls.l('SelectBusinessEntity');
             this.buttons[this.NEXT_BTN_INDEX].disabled = true;
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
