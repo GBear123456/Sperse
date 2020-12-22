@@ -17,10 +17,10 @@ import {
     BudgetImportInput,
     BudgetServiceProxy,
     InstanceServiceProxy,
-    TenantPaymentSettingsServiceProxy,
     InvoiceSettings,
     InstanceType
 } from '@root/shared/service-proxies/service-proxies';
+import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { UploadBudgetStep } from './upload-budget-step.enum';
 import { AppConsts } from '@shared/AppConsts';
@@ -78,12 +78,12 @@ export class UploadBudgetDialogComponent implements OnInit {
         private dialogRef: MatDialogRef<UploadBudgetDialogComponent>,
         private instanceAppService: InstanceServiceProxy,
         private budgetProxy: BudgetServiceProxy,
-        private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
+        private userPreferencesService: UserPreferencesService,
         public bankAccountsService: BankAccountsService,
         public ls: AppLocalizationService
     ) {
-        this.tenantPaymentSettingsProxy.getInvoiceSettings().subscribe((settings: InvoiceSettings) => {
-            this.currencyId = settings.currency;
+        this.userPreferencesService.userPreferences$.subscribe(result => {
+            this.currencyId = result.localizationAndCurrency.currency;
         });
     }
 
