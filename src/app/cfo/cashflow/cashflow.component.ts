@@ -2921,16 +2921,18 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (e.target.classList.contains('budget-info')) {
             const budget = e.target.getAttribute('data-budget');
             const value = e.target.getAttribute('data-value');
-            const variance = budget - Math.abs(value);
+            const absValue = Math.abs(value);
+            const variance = absValue - budget;
             this.showTooltip(e.target,
                 `
                 <div>
-                    <span>${this.l('Value')}:</span>
+                    <span>${this.l('Actual')}:</span>
                     <span>${this.currencyPipe.transform(
                         value,
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
+                    <span class="percent">${(absValue / budget * 100).toFixed(2)}%</span>
                  </div>
                 <div>
                     <span>${this.l('Budget')}:</span>
@@ -2939,6 +2941,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
+                    <span class="percent">100%</span>
                 </div>
                 <hr>
                 <div>
@@ -2947,10 +2950,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
-                </div>
-                <div>
-                    <span>${this.l('Percent')}:</span>
-                    <span>${(Math.abs(value) / budget * 100).toFixed(2)}%</span>
+                    <span class="percent">${(variance / budget * 100).toFixed(2)}%</span>
                 </div>`,
                 'budget-tooltip'
             );
