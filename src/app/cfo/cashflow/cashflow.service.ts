@@ -875,7 +875,6 @@ export class CashflowService {
                     transactionObj['levels'][`level${levelNumber++}`] = key;
                     return true;
                 }
-
                 const isUnclassified = !transactionObj[level.statsKeyName];
                 /**
                  * If user wants to hide categories - avoid adding level for them
@@ -888,7 +887,7 @@ export class CashflowService {
                     return true;
                 }
 
-                if (level.prefix === CategorizationPrefixes.Category) {
+                if (level.prefix === CategorizationPrefixes.Category && !isAccountTransaction) {
                     let transactionCategoriesIds = this.getTransactionCategoriesIds(transactionObj.categoryId, this.categoryTree);
                     if (this.userPreferencesService.localPreferences.value.showAccountingTypeTotals) {
                         const highestCategory = transactionCategoriesIds && transactionCategoriesIds[0]
@@ -909,15 +908,16 @@ export class CashflowService {
                 /** Add categorization level to show */
                 key = isUnclassified ? transactionObj[level.statsKeyName] : level.prefix + transactionObj[level.statsKeyName];
                 transactionObj['levels'][`level${levelNumber++}`] = key;
+            } else if (isAccountTransaction && level.prefix === CategorizationPrefixes.AccountName) {
+                return false;
             }
             return true;
         });
 
         /** Don't show items only with one level in the second level */
-        if (Object.keys(transactionObj.levels).length === 1) {
+        if (Object.keys(transactionObj.levels).length === 1 && !isAccountTransaction) {
             transactionObj.levels.level1 = 'hidden';
         }
-
         this.updateTreePathes(transactionObj);
         return transactionObj;
     }
