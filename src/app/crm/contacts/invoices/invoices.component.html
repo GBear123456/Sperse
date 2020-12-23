@@ -1,101 +1,199 @@
-<div [@routerTransition]>
-    <div [hidden]="isDataLoaded && !totalRowCount" class="portlet light no-padding margin-bottom-0">
-        <div class="portlet-body">
-              <div>
-                    <div id="InvoicesTable">
-                        <dx-tooltip width="300px"
-                                    height="265px"
-                                    (onContentReady)="onTooltipReady($event)">
-                            <div *dxTemplate="let data of 'content'">
-                                <div class="invoice-actions-container">
-                                    <div class="list">
-                                        <div class="link" [ngClass]="{disabled: markAsPaidDisabled}" (click)="onMenuItemClick(markAsPaidDialog)"><i class="s-check"></i>{{l('Invoice_MarkAsPaid')}}</div>
-                                        <div class="link" [ngClass]="{disabled: markAsDraftDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Draft))"><i class="i-check"></i>{{l('Invoice_MarkAsDraft')}}</div>
-                                        <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Sent))"><i class="check-list"></i>{{l('Invoice_MarkAsSent')}}</div>
-                                        <div class="link disabled" [hidden]="true"><i class="time-alarm"></i>{{l('Send Reminder')}}</div>
-                                        <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(sendInvoice)"><i class="respond-arrow"></i>{{l('Resend Invoice')}}</div>
-                                        <div class="link" [ngClass]="{disabled: downloadPdfDisabled}" (click)="onMenuItemClick(downloadInvoicePdf)"><i class="move-layer-down"></i>{{l('Download as PDF')}}</div>
-                                        <div class="link" (click)="onMenuItemClick(showHistory)"><i class="bullet-list-69"></i>{{l('OrderActivity')}}</div>
-                                        <div class="link" [ngClass]="{disabled: duplicateInvoiceDisabled}" (click)="onMenuItemClick(duplicateInvoice)"><i class="ungroup"></i>{{l('Duplicate Invoice')}}</div>
-                                    </div>
-                                    <div class="list" [hidden]="true">
-                                        <div class="link disabled"><i class="f-chat"></i>{{l('Post Comment')}}</div>
-                                        <div class="link disabled"><i class="check-list"></i>{{l('Manage Payments')}}</div>
-                                        <div class="link disabled"><i class="ungroup"></i>{{l('Duplicate Invoice')}}</div>
-                                        <div class="link disabled"><i class="ungroup"></i>{{l('Duplicate as Recurring')}}</div>
-                                    </div>
-                                    <div class="list">
-                                        <div class="link" [ngClass]="{disabled: markAsCancelledDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Canceled))"><i class="e-remove"></i>{{l('Cancel')}}</div>
-                                        <div class="link disabled" [hidden]="true"><i class="folder-13"></i>{{l('Archive')}}</div>
-                                        <div class="link" [ngClass]="{disabled: deleteDisabled}" (click)="onMenuItemClick(deleteInvoice)"><i class="bin"></i>{{l('Delete')}}</div>
-                                        <div class="link" [ngClass]="{disabled: deleteDisabled}" (click)="onMenuItemClick(editInvoice)"><i style="font-size: 18px;" class="fa fa-edit"></i>{{l('Edit')}}</div>
-                                        <div class="link" [ngClass]="{disabled: previewDisabled}" (click)="onMenuItemClick(previewInvoice)"><i class="preview"></i>{{l('Preview')}}</div>
-                                        <div class="link" (click)="onMenuItemClick(addInvoice)"><i class="add"></i>{{l('Add Invoice')}}</div>
-                                    </div>
-                                </div>
-                            </div>
-                        </dx-tooltip>
-                        <dx-data-grid id="gridContainer"
-                                      width="100%"
-                                      [dataSource]="dataSource"
-                                      [allowColumnReordering]="true"
-                                      [columnAutoWidth]="true"
-                                      [allowColumnResizing]="true"
-                                      [hoverStateEnabled]="true"
-                                      [pager]="defaultGridPagerConfig"
-                                      (onCellClick)="onCellClick($event)"
-                                      (onOptionChanged)="onGridOptionChanged($event)"
-                                      (onContentReady)="onContentReady()"
-                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                            <dxi-column alignment="center" width="50px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
-                            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
-
-                            <dxi-column [dataField]="invoiceFields.OrderNumber" [caption]="l('OrderNumber')" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="invoiceFields.InvoiceId" [caption]="l('Invoice')"></dxi-column>
-                            <dxi-column [dataField]="invoiceFields.Amount" dataType="string" [caption]="l('Amount')" cellTemplate="amountCell"></dxi-column>
-                            <dxi-column [dataField]="invoiceFields.OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
-                            <dxi-column [dataField]="invoiceFields.InvoiceStatus" [caption]="l('Status')" alignment="center" cellTemplate="statusCell"></dxi-column>
-                            <dxi-column [dataField]="invoiceFields.OrderStage" [caption]="l('Stage')" name="stage" cellTemplate="stageCell" width="160px"></dxi-column>
-                            <dxi-column [dataField]="invoiceFields.Date" [caption]="l('Date')" cellTemplate="datetimeCell"></dxi-column>
-                            <dxi-column [dataField]="invoiceFields.InvoiceDueDate" [caption]="l('Due Date')" cellTemplate="dueDateCell"></dxi-column>
-                            <dxi-column [dataField]="invoiceFields.AffiliateContactName" [caption]="l('AffiliateContactName')"></dxi-column>
-                            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">&nbsp;</a>
-
-                            <div *dxTemplate="let cellData of 'stageCell'">
-                                <dx-select-box
-                                    displayExpr="name"
-                                    valueExpr="name"
-                                    [(value)]="cellData.value"
-                                    [dataSource]="stages$ | async"
-                                    (onOptionChanged)="onStageOptionChanged(cellData, $event)"
-                                    (onValueChanged)="updateOrderStage(cellData)">
-                                </dx-select-box>
-                            </div>
-                            <div *dxTemplate="let cellData of 'statusCell'" class="status-wrapper">
-                                <div *ngIf="cellData.value" class="status {{ cellData.value | lowercase }}">{{ startCase(cellData.value) }}</div>
-                            </div>
-                            <div *dxTemplate="let cellData of 'dueDateCell'" class="clipboard-holder">
-                                {{ (cellData.value | date: formatting.date) || l('Invoice_DueOnReceipt') }}
-                            </div>
-                            <div *dxTemplate="let cellData of 'datetimeCell'" class="clipboard-holder">
-                                {{ cellData.value | date: formatting.date : userTimezone }}
-                            </div>
-                            <div *dxTemplate="let cellData of 'amountCell'" class="clipboard-holder">
-                                {{ cellData.value | currency: settings.currency }}
-                            </div>
-
-                            <dxo-paging [pageSize]="20"></dxo-paging>
-                            <dxo-sorting mode="multiple"></dxo-sorting>
-                            <dxo-load-panel [enabled]="false"></dxo-load-panel>
-                            <dxo-group-panel [visible]="false"></dxo-group-panel>
-                            <dxo-selection mode="multiple" showCheckBoxesMode="always"></dxo-selection>
-                        </dx-data-grid>
+<div>
+    <ng-template #invoicesTemplate let-height="height">
+        <dx-tooltip width="300px"
+                    height="265px"
+                    (onContentReady)="onTooltipReady($event)">
+            <div *dxTemplate="let data of 'content'">
+                <div class="invoice-actions-container">
+                    <div class="list">
+                        <div class="link" [ngClass]="{disabled: markAsPaidDisabled}" (click)="onMenuItemClick(markAsPaidDialog)"><i class="s-check"></i>{{l('Invoice_MarkAsPaid')}}</div>
+                        <div class="link" [ngClass]="{disabled: markAsDraftDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Draft))"><i class="i-check"></i>{{l('Invoice_MarkAsDraft')}}</div>
+                        <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Sent))"><i class="check-list"></i>{{l('Invoice_MarkAsSent')}}</div>
+                        <div class="link disabled" [hidden]="true"><i class="time-alarm"></i>{{l('Send Reminder')}}</div>
+                        <div class="link" [ngClass]="{disabled: resendInvoiceDisabled}" (click)="onMenuItemClick(sendInvoice)"><i class="respond-arrow"></i>{{l('Resend Invoice')}}</div>
+                        <div class="link" [ngClass]="{disabled: downloadPdfDisabled}" (click)="onMenuItemClick(downloadInvoicePdf)"><i class="move-layer-down"></i>{{l('Download as PDF')}}</div>
+                        <div class="link" (click)="onMenuItemClick(showHistory)"><i class="bullet-list-69"></i>{{l('OrderActivity')}}</div>
+                        <div class="link" [ngClass]="{disabled: duplicateInvoiceDisabled}" (click)="onMenuItemClick(duplicateInvoice)"><i class="ungroup"></i>{{l('Duplicate Invoice')}}</div>
                     </div>
-              </div>
-        </div>
-    </div>
-    <app-no-data
-        [hidden]="!isDataLoaded || totalRowCount"
-        [showLink]="false">
-    </app-no-data>
+                    <div class="list" [hidden]="true">
+                        <div class="link disabled"><i class="f-chat"></i>{{l('Post Comment')}}</div>
+                        <div class="link disabled"><i class="check-list"></i>{{l('Manage Payments')}}</div>
+                        <div class="link disabled"><i class="ungroup"></i>{{l('Duplicate Invoice')}}</div>
+                        <div class="link disabled"><i class="ungroup"></i>{{l('Duplicate as Recurring')}}</div>
+                    </div>
+                    <div class="list">
+                        <div class="link" [ngClass]="{disabled: markAsCancelledDisabled}" (click)="onMenuItemClick(updateStatus.bind(this, invoiceStatus.Canceled))"><i class="e-remove"></i>{{l('Cancel')}}</div>
+                        <div class="link disabled" [hidden]="true"><i class="folder-13"></i>{{l('Archive')}}</div>
+                        <div class="link" [ngClass]="{disabled: deleteDisabled}" (click)="onMenuItemClick(deleteInvoice)"><i class="bin"></i>{{l('Delete')}}</div>
+                        <div class="link" [ngClass]="{disabled: deleteDisabled}" (click)="onMenuItemClick(editInvoice)"><i style="font-size: 18px;" class="fa fa-edit"></i>{{l('Edit')}}</div>
+                        <div class="link" [ngClass]="{disabled: previewDisabled}" (click)="onMenuItemClick(previewInvoice)"><i class="preview"></i>{{l('Preview')}}</div>
+                        <div class="link" (click)="onMenuItemClick(addInvoice)"><i class="add"></i>{{l('Add Invoice')}}</div>
+                    </div>
+                </div>
+            </div>
+        </dx-tooltip>
+        <dx-data-grid #invoicesDataGrid
+            [height]="height"
+            accessKey="narrowHeaderPanel"
+            class="main-component-view"
+            [dataSource]="dataSource"
+            [allowColumnReordering]="true"
+            [columnAutoWidth]="true"
+            [allowColumnResizing]="true"
+            [hoverStateEnabled]="true"
+            [pager]="defaultGridPagerConfig"
+            (onCellClick)="onCellClick($event)"
+            (onOptionChanged)="onGridOptionChanged($event)"
+            (onContentReady)="onContentReady()"
+            (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+            <dxi-column alignment="center" width="50px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
+            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">Edit</a>
+
+            <dxi-column [dataField]="invoiceFields.OrderNumber" [caption]="l('OrderNumber')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="invoiceFields.InvoiceId" [caption]="l('Invoice')" width="80px"></dxi-column>
+            <dxi-column [dataField]="invoiceFields.Amount" [caption]="l('Amount')" [format]="currencyFormat" cssClass="clipboard-holder padding-right"></dxi-column>
+            <dxi-column [dataField]="invoiceFields.OrderType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="invoiceFields.InvoiceStatus" [caption]="l('Status')" alignment="center" cellTemplate="statusCell"></dxi-column>
+            <dxi-column [dataField]="invoiceFields.OrderStage" [caption]="l('Stage')" name="stage" cellTemplate="stageCell" width="160px"></dxi-column>
+            <dxi-column [dataField]="invoiceFields.Date" [caption]="l('Date')" cellTemplate="datetimeCell"></dxi-column>
+            <dxi-column [dataField]="invoiceFields.InvoiceDueDate" [caption]="l('Due Date')" cellTemplate="dueDateCell"></dxi-column>
+            <dxi-column [dataField]="invoiceFields.AffiliateContactName" [caption]="l('AffiliateContactName')"></dxi-column>
+            <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'">&nbsp;</a>
+
+            <div *dxTemplate="let cellData of 'stageCell'">
+                <dx-select-box
+                    displayExpr="name"
+                    valueExpr="name"
+                    [(value)]="cellData.value"
+                    [dataSource]="stages$ | async"
+                    (onOptionChanged)="onStageOptionChanged(cellData, $event)"
+                    (onValueChanged)="updateOrderStage(cellData)">
+                </dx-select-box>
+            </div>
+            <div *dxTemplate="let cellData of 'statusCell'" class="status-wrapper">
+                <div *ngIf="cellData.value" class="status {{ cellData.value | lowercase }}">{{ startCase(cellData.value) }}</div>
+            </div>
+            <div *dxTemplate="let cellData of 'dueDateCell'" class="clipboard-holder">
+                {{ (cellData.value | date: formatting.date) || l('Invoice_DueOnReceipt') }}
+            </div>
+            <div *dxTemplate="let cellData of 'datetimeCell'" class="clipboard-holder">
+                {{ cellData.value | date: formatting.date : userTimezone }}
+            </div>
+
+            <dxo-paging [pageSize]="20"></dxo-paging>
+            <dxo-sorting mode="multiple"></dxo-sorting>
+            <dxo-load-panel [enabled]="false"></dxo-load-panel>
+            <dxo-group-panel [visible]="false"></dxo-group-panel>
+            <dxo-selection mode="multiple" showCheckBoxesMode="always"></dxo-selection>
+        </dx-data-grid>
+    </ng-template>
+
+   <ng-template #invoices>
+       <ng-container *ngTemplateOutlet="invoicesTemplate;context:{height: 'calc(100vh - 210px)'}"></ng-container>
+   </ng-template>
+
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" *ngIf="isCommissionsAllowed; else invoices">
+        <mat-tab [label]="l('OrdersAndInvoices')">
+            <ng-container *ngTemplateOutlet="invoicesTemplate;context:{height: 'calc(100vh - 270px)'}"></ng-container>
+        </mat-tab>
+        <mat-tab [label]="l('GeneratedCommissions')">
+            <dx-data-grid #generatedCommissionDataGrid
+                height="calc(100vh - 270px)"
+                class="main-component-view"
+                accessKey="narrowHeaderPanel"
+                noDataText=""
+                [renderAsync]="true"
+                [loadPanel]="{enabled: false}"
+                [dataSource]="generatedCommissionDataSource"
+                [allowColumnReordering]="true"
+                [columnAutoWidth]="true"
+                [cacheEnabled]="false"
+                [remoteOperations]="{
+                    filtering: false,
+                    grouping: false,
+                    groupPaging: true,
+                    paging: true,
+                    sorting: true,
+                    summary: true
+                }"
+                [allowColumnResizing]="true"
+                [hoverStateEnabled]="true"
+                [pager]="defaultGridPagerConfig"
+                (onCellClick)="onCellClick($event)"
+                (onContentReady)="loadingService.finishLoading()"
+                (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                <dxo-selection mode="none"></dxo-selection>
+                <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+
+                <dxi-column [width]="40"
+                            [showInColumnChooser]="false"
+                            [allowExporting]="false">
+                </dxi-column>
+                <dxi-column width="200px"
+                            cellTemplate="staticWidthCell"
+                            dataField="BuyerName"
+                            [caption]="l('BuyerName')">
+                </dxi-column>
+                <dxi-column width="180px"
+                            dataField="OrderNumber"
+                            [caption]="l('OrderNumber')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column width="180px"
+                            dataField="EarnedDate"
+                            [caption]="l('EarnedDate')" 
+                            cellTemplate="dateCell"                                     
+                            cssClass="tabular">
+                </dxi-column> 
+                <dxi-column width="120px"
+                            dataField="ProductAmount"
+                            [caption]="l('Price')"
+                            [format]="currencyFormat"
+                            cssClass="clipboard-holder padding-right">
+                </dxi-column>
+                <dxi-column width="120px"
+                            dataField="CommissionableAmount"
+                            [caption]="l('CV')"
+                            [format]="currencyFormat"
+                            cssClass="clipboard-holder padding-right">
+                </dxi-column>
+                <dxi-column width="200px"
+                            cellTemplate="staticWidthCell"
+                            dataField="ProductName"
+                            [caption]="l('ProductName')">
+                </dxi-column>
+                <dxi-column width="100px"
+                            dataField="CommissionRate"
+                            [caption]="l('Rate')"
+                            format="percent"
+                            cssClass="clipboard-holder padding-right">
+                </dxi-column>
+                <dxi-column width="140px"
+                            dataField="CommissionAmount"
+                            [caption]="l('Commission')"
+                            [format]="currencyFormat"
+                            cssClass="clipboard-holder padding-right">
+                </dxi-column>
+                <dxi-column width="120px"
+                            dataField="Status"
+                            [caption]="l('Status')" 
+                            cssClass="clipboard-holder padding-right">
+                </dxi-column>
+                
+                <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
+                    {{cellData.value}}
+                </div>
+
+                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                    {{cellData.value | date: formatting.dateTime : userTimezone}}
+                </div>
+
+                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                    {{cellData.value | date: formatting.dateTime : userTimezone}}
+                </div>
+                <dxo-group-panel [visible]="true"></dxo-group-panel>
+                <dxo-sorting mode="multiple"></dxo-sorting>
+            </dx-data-grid>
+        </mat-tab>
+    </mat-tab-group>
 </div>
