@@ -2925,8 +2925,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (e.target.classList.contains('budget-info')) {
             const budget = e.target.getAttribute('data-budget');
             const value = e.target.getAttribute('data-value');
-            const absValue = Math.abs(value);
-            const variance = absValue - budget;
+            const variance = value - budget;
             this.showTooltip(e.target,
                 `
                 <div>
@@ -2936,7 +2935,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
-                    <span class="percent">${(absValue / budget * 100).toFixed(2)}%</span>
+                    <span class="percent">${(value / budget * 100).toFixed(2)}%</span>
                  </div>
                 <div>
                     <span>${this.l('Budget')}:</span>
@@ -2988,7 +2987,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.infoTooltip) {
             let targetCell = this.getCellElementFromTarget(e.target);
             let relatedTargetCell = e.relatedTarget && this.getCellElementFromTarget(e.relatedTarget);
-            if (targetCell && targetCell !== relatedTargetCell) {
+            if (targetCell && targetCell !== relatedTargetCell || e.target.classList.contains('budget-info')) {
                 let infoTooltipParent = this.infoTooltip.element().parentElement;
                 this.infoTooltip.dispose();
                 this.infoTooltip = undefined;
