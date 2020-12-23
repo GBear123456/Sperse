@@ -1801,10 +1801,29 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     this.cashflowService.categoryTree,
                     budget.amount >= 0 ? 'I' : 'E'
                 );
-                data.push(this.cashflowService.createStubTransaction({
-                    'date': budget.startDate.utc(),
-                    'initialDate': moment(budget.startDate)
-                }, path));
+                const date = budget.startDate.utc();
+                const initialDate = moment(budget.startDate);
+                data.push(
+                    this.cashflowService.createStubTransaction({
+                        date: date,
+                        initialDate: initialDate,
+                        cashflowTypeId: CashflowTypes.StartedBalance
+                    }),
+                    this.cashflowService.createStubTransaction({
+                        date: date,
+                        initialDate: initialDate
+                    }, path),
+                    this.cashflowService.createStubTransaction({
+                        date: date,
+                        initialDate: initialDate,
+                        cashflowTypeId: CashflowTypes.NetChange
+                    }),
+                    this.cashflowService.createStubTransaction({
+                        date: date,
+                        initialDate: initialDate,
+                        cashflowTypeId: CashflowTypes.Total
+                    })
+                );
             });
         }
 

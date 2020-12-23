@@ -46,6 +46,7 @@ import { RootStoreModule } from '@root/store/root-store.module';
 import { SummaryCell } from 'devextreme/ui/pivot_grid/ui.pivot_grid.summary_display_modes.js';
 import { TransactionStatsDtoExtended } from '@app/cfo/cashflow/models/transaction-stats-dto-extended';
 import { CategorizationPrefixes } from '@app/cfo/cashflow/enums/categorization-prefixes.enum';
+import { CashflowTypes } from '@app/cfo/cashflow/enums/cashflow-types.enum';
 
 describe('CashflowService', () => {
     beforeEach(() => {
@@ -279,7 +280,6 @@ describe('CashflowService', () => {
         });
         service.userPreferencesService.localPreferences.value.showReportingSectionTotals = true;
         let levels = service.addCategorizationLevels(transaction).levels;
-        console.log(levels);
         expect(levels).toEqual({
             level0: 'CTI',
             level1: 'RGN/A',
@@ -341,7 +341,6 @@ describe('CashflowService', () => {
             }
         });
         let levels = service.addCategorizationLevels(transaction).levels;
-        console.log(levels);
         expect(levels).toEqual({
             level0: 'CTI',
             level1: 'AT5525',
@@ -349,6 +348,28 @@ describe('CashflowService', () => {
             level3: 'CA52109',
             level4: 'CA52113'
         });
+    }));
+
+    it('addCategorizationLevels should return levels for cashflowType only', inject([CashflowService], (service: CashflowService) => {
+        const transaction = new TransactionStatsDtoExtended({
+            adjustmentType: null,
+            accountId: null,
+            currencyId: 'USD',
+            amount: 0,
+            comment: null,
+            date: null,
+            initialDate: null,
+            forecastId: null,
+            isStub: true,
+            cashflowTypeId: CashflowTypes.StartedBalance
+        });
+        service.categoryTree = new GetCategoryTreeOutput({
+            types: {},
+            accountingTypes: {},
+            categories: {}
+        });
+        const updatedTransaction: TransactionStatsDtoExtended = service.addCategorizationLevels(transaction);
+        expect(Object.keys(updatedTransaction.levels).length).toBe(1);
     }));
 
     it('customizeFieldText should return text', inject([ CashflowService ], (service: CashflowService) => {
