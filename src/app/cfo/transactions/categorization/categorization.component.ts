@@ -660,7 +660,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         }
     }
 
-    refreshCategories(expandInitial: boolean = false, refreshTransactionsCount = true) {
+    refreshCategories(expandInitial: boolean = false, refreshTransactionsCount: boolean = true) {
         this.startLoading();
         this.categoryTreeServiceProxy.get(
             InstanceType[this._cfoService.instanceType],
@@ -670,7 +670,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             let categories: Category[] = [];
             this.categorization = data;
             if (this.settings.showAT && data.accountingTypes) {
-                _.mapObject(data.accountingTypes, (item, key) => {
+                _.mapObject(data.accountingTypes, (item: AccountingTypeDto, key: string) => {
                     categories.push({
                         key: key + item.typeId,
                         parent: 'root',
@@ -694,7 +694,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                         });
                     }
                 });
-
             this.categories = categories;
 
             if (expandInitial) {
@@ -1068,10 +1067,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     onNodesInitialized() {
-        this.sortByColumnIndex(
+        setTimeout(() => this.sortByColumnIndex(
             this.settings.sorting.field,
             this.settings.sorting.order
-        );
+        ));
     }
 
     addAccountingTypeRow(typeId) {
