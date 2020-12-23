@@ -226,12 +226,12 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     }
 
     onDateHover(event) {
-        let target = event.target.children[0];
+        let target = event.target.children[1];
         target.innerText = target.title;
     }
 
     onDateLeave(event) {
-        let target = event.target.children[0];
+        let target = event.target.children[1];
         target.innerText = target.title.split(' ').shift();
     }
 
@@ -263,6 +263,18 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             this.refreshData(true);
             abp.notify.info(this.ls.l('SavedSuccessfully'));
         });
+    }
+
+    onCallendarOpened(event) {
+        let container = event.component['_$container'][0],
+            position = container.getBoundingClientRect(),
+            popup = event.component['_popup']['_$content'][0],
+            isHeightOverflow = innerHeight - position.y < popup.offsetHeight,
+            isWidthOverflow = innerWidth - position.x < popup.offsetWidth;
+        if (isWidthOverflow || isHeightOverflow)
+            popup.style.transform = 'translate(' +
+                (isWidthOverflow ? -300 : 0) + 'px, ' +
+                (isHeightOverflow ? -300 : 0) + 'px)';
     }
 
     ngOnDestroy() {

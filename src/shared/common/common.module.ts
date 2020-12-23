@@ -34,6 +34,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { GhostListModule } from '@app/shared/common/ghost-list/ghost-list.module';
 import { ModalDialogModule } from './dialogs/modal/modal-dialog.module';
 import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.module';
+import { DateTimePipe } from './pipes/datetime.pipe';
 
 @NgModule({
     declarations: [
@@ -43,6 +44,7 @@ import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.m
         AddressFormatPipe,
         FileSizePipe,
         ZipCodeFormatterPipe,
+        DateTimePipe,
         InfoComponent,
         TitleCasePipe,
         RegisterConfirmComponent,
@@ -57,13 +59,14 @@ import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.m
         AddressFormatPipe,
         FileSizePipe,
         ZipCodeFormatterPipe,
+        DateTimePipe,
         InfoComponent,
         TitleCasePipe,
         DxDataGridDirective,
         ConditionsModalComponent,
         NoDataModule,
         InlineSVGModule,
-        GhostListModule
+        GhostListModule       
     ],
     imports: [
         ngCommon.CommonModule,
@@ -82,6 +85,7 @@ import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.m
         ConditionsModalComponent
     ],
     providers: [
+        DateTimePipe,
         AppUrlService,
         CellsCopyingService,
         CacheHelper,

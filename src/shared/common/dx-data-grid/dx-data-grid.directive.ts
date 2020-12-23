@@ -1,6 +1,5 @@
 /** Core imports */
 import { Directive, OnInit, OnDestroy, Renderer2 } from '@angular/core';
-import { DatePipe } from '@angular/common';
 
 /** Third party imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -8,6 +7,7 @@ import { ClipboardService } from 'ngx-clipboard';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from '@abp/notify/notify.service';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
+import { DateTimePipe } from '@shared/common/pipes/datetime.pipe.ts';
 import { on } from 'devextreme/events';
 
 /** Application imports */
@@ -15,8 +15,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 
 @Directive({
-    selector: 'dx-data-grid',
-    providers: [ DatePipe ]
+    selector: 'dx-data-grid'
 })
 export class DxDataGridDirective implements OnInit, OnDestroy {
     private clipboardIcon;
@@ -32,7 +31,7 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
     exporting = false;
 
     constructor(
-        private datePipe: DatePipe,
+        private dateTimePipe: DateTimePipe,
         private renderer: Renderer2,
         private ls: AppLocalizationService,
         private notifyService: NotifyService,
@@ -153,8 +152,8 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
     }
 
     getDateFormatted(value: string, withoutTime = true) {
-        let date = value && this.datePipe.transform(
-            value, AppConsts.formatting.dateTime, this.timezone);
+        let date = value && this.dateTimePipe.transform(
+            value, AppConsts.formatting.dateTimeMoment);
         if (withoutTime)
             date = date && date.split(' ').shift();
         return date || '';

@@ -115,6 +115,23 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             items: []
         }
     ];
+    reconciliationFilter: FilterModel = new FilterModel({
+        component: null,
+        caption: 'Reconciliation',
+        items: {
+            element: new FilterItemModel({
+                dataSource: {
+                    rate: this.commissionFields.CommissionRate + ' ne ' + this.commissionFields.ResellerAffiliateRate,
+                    mentor: this.commissionFields.ResellerContactId + ' ne ' + this.commissionFields.BuyerContactId
+                }
+            }, true)
+        },
+        filterMethod: (filter) => {
+            if (filter.items.element)
+                return filter.items.element.value;
+            return '';
+        }
+    });
     permissions = AppPermissions;
     searchValueChanged = false;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
@@ -260,6 +277,17 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             filterMethod: FiltersService.filterBySource
         }),
         new FilterModel({
+            component: FilterSourceComponent,
+            caption: 'Buyer',
+            items: {
+                element: new SourceContactFilterModel({
+                    contactFieldExpr: this.commissionFields.BuyerContactId,
+                    ls: this.localizationService
+                })
+            },
+            filterMethod: FiltersService.filterBySource
+        }),
+        new FilterModel({
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'OrderDate',
@@ -392,9 +420,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         })
     ];
-    
-    manageAllowed = this.isGranted(AppPermissions.CRMCommissionsManage) 
-        && this.isGranted(AppPermissions.CRMOrdersInvoicesManage);
+
+    manageAllowed = this.isGranted(AppPermissions.CRMCommissionsManage);
 
     constructor(
         injector: Injector,
@@ -654,7 +681,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             text: this.l('ReassignCommissions'),
                             icon: './assets/common/icons/assign-icon.svg',
                             visible: this.selectedViewType == this.COMMISSION_VIEW,
-                            disabled: !this.manageAllowed 
+                            disabled: !this.manageAllowed
                                 || !this.selectedRecords.length
                                 || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
                             onClick: (e) => {
@@ -662,47 +689,84 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             }
                         }
                     }, cancelButton, {
-                        widget: 'dxButton',
+                        widget: 'dxDropDownButton',
+                        visible: this.selectedViewType == this.COMMISSION_VIEW,
+                        disabled: !this.manageAllowed
+                            || !this.selectedRecords.length
+                            || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
                         options: {
-                            text: this.l('UpdateCommissionableAmount'),
-                            visible: this.selectedViewType == this.COMMISSION_VIEW,
-                            disabled: !this.manageAllowed
-                                || !this.selectedRecords.length
-                                || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
-                            onClick: (e) => {
-                                this.dialog.open(UpdateCommissionableDialogComponent, {
-                                    disableClose: true,
-                                    closeOnNavigation: false,
-                                    data: {
-                                        entityIds: this.selectedRecords.map(item => item.Id),
-                                        bulkUpdateAllowed: this.bulkUpdateAllowed
+                            displayExpr: 'text',
+                            text: this.l('Update'),
+                            onButtonClick: (e) => {
+                                setTimeout(() => {
+                                    e.component['_popup']['_$content'][0].style.width = '210px';
+                                });
+                            },
+                            items: [
+                                {
+                                    text: this.l('CommissionableAmount'),
+                                    onClick: (e) => {
+                                        this.dialog.open(UpdateCommissionableDialogComponent, {
+                                            disableClose: true,
+                                            closeOnNavigation: false,
+                                            data: {
+                                                entityIds: this.selectedRecords.map(item => item.Id),
+                                                bulkUpdateAllowed: this.bulkUpdateAllowed
+                                            }
+                                        }).afterClosed().subscribe(() => this.refresh());
                                     }
-                                }).afterClosed().subscribe(() => this.refresh());
-                            }
-                        }
-                    }, {
-                        widget: 'dxButton',
-                        options: {
-                            text: this.l('UpdateCommissionRate'),
-                            visible: this.selectedViewType == this.COMMISSION_VIEW,
-                            disabled: !this.manageAllowed
-                                || !this.selectedRecords.length
-                                || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
-                            onClick: (e) => {
-                                this.dialog.open(UpdateCommissionRateDialogComponent, {
-                                    disableClose: true,
-                                    closeOnNavigation: false,
-                                    data: {
-                                        entityIds: this.selectedRecords.map(item => item.Id),
-                                        bulkUpdateAllowed: this.bulkUpdateAllowed
+                                },
+                                {
+                                    text: this.l('CommissionRate'),
+                                    onClick: (e) => {
+                                        this.dialog.open(UpdateCommissionRateDialogComponent, {
+                                            disableClose: true,
+                                            closeOnNavigation: false,
+                                            data: {
+                                                entityIds: this.selectedRecords.map(item => item.Id),
+                                                bulkUpdateAllowed: this.bulkUpdateAllowed
+                                            }
+                                        }).afterClosed().subscribe(() => this.refresh());
                                     }
-                                }).afterClosed().subscribe(() => this.refresh());
-                            }
+                                }
+                            ]
                         }
                     }
                 ]
-            },
-            {
+            }, {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        widget: 'dxDropDownButton',
+                        attr: {
+                            'filter-selected': this.reconciliationFilter.items.element.value
+                        },
+                        visible: this.selectedViewType == this.COMMISSION_VIEW,
+                        options: {
+                            activeStateEnabled: true,
+                            displayExpr: 'text',
+                            text: this.l('Reconciliation'),
+                            onItemClick: (e) => {
+                                    let isClear = !this.reconciliationFilter.items.element.value;
+                                    e.component.element().setAttribute('filter-selected', !isClear);
+                                    if (isClear)
+                                        e.component.repaint();
+                            },
+                            items: [
+                                {
+                                    onClick: () => this.applyReconciliationFilter('rate'),
+                                    text: this.l('CommissionRate')
+                                },
+                                {
+                                    onClick: () => this.applyReconciliationFilter('mentor'),
+                                    text: this.l('Mentor')
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }, {
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
@@ -744,6 +808,13 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             }
         ];
         this.changeDetectorRef.detectChanges();
+    }
+
+    applyReconciliationFilter(field) {
+        let target = this.reconciliationFilter.items.element,
+            source = target.dataSource[field];
+        target.value = target.value && target.value == source ? null : source;
+        this.processFilterInternal();
     }
 
     requestWithdrawal() {
@@ -869,7 +940,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.processODataFilter(
                 this.dataGrid.instance,
                 this.dataSourceURI,
-                this.filters,
+                this.filters.concat(this.reconciliationFilter),
                 this.filtersService.getCheckCustom
             );
         }

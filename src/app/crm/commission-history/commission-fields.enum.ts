@@ -19,6 +19,7 @@ export const CommissionFields: KeysEnum<CommissionDto> = {
     ProductAmount: 'ProductAmount',
     ProductCode: 'ProductCode',
     ProductName: 'ProductName',
+    ResellerAffiliateRate: 'ResellerAffiliateRate',
     ResellerAffiliateCode: 'ResellerAffiliateCode',
     ResellerContactId: 'ResellerContactId',
     ResellerEmailAddress: 'ResellerEmailAddress',
