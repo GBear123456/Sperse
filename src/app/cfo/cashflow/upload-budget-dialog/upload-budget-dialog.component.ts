@@ -6,7 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 import { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
-import { map, finalize } from 'rxjs/operators';
+import { map, finalize, first } from 'rxjs/operators';
 
 /** Application imports */
 import { StringHelper } from '@shared/helpers/StringHelper';
@@ -82,7 +82,7 @@ export class UploadBudgetDialogComponent implements OnInit {
         public bankAccountsService: BankAccountsService,
         public ls: AppLocalizationService
     ) {
-        this.userPreferencesService.userPreferences$.subscribe(result => {
+        this.userPreferencesService.userPreferences$.pipe(first()).subscribe(result => {
             this.currencyId = result.localizationAndCurrency.currency;
         });
     }
@@ -92,9 +92,13 @@ export class UploadBudgetDialogComponent implements OnInit {
     }
 
     get budgetTemplateLink(): string {
-        return AppConsts.remoteServiceBaseUrl + `/budgettemplate/get?InstanceType=${this.data.instanceType}
-            &CurrencyId=${this.currencyId}&Year=${this.selectedYear.getUTCFullYear()}
-            &businessEntityId=${this.selectedBusinessEntityIds[0]}`;
+        return [
+            AppConsts.remoteServiceBaseUrl,
+            '/budgettemplate/get?InstanceType=', this.data.instanceType,
+            '&CurrencyId=', this.currencyId,
+            '&Year=', this.selectedYear.getUTCFullYear(),
+            '&businessEntityId=', this.selectedBusinessEntityIds[0]
+        ].join('');
     }
 
     private prev() {
