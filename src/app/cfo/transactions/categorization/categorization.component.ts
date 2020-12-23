@@ -702,7 +702,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 if (expanded)
                     this.categoryList.expandedRowKeys = expanded;
                 else
-                    this.processExpandTree(true, false);
+                    setTimeout(() => this.processExpandTree(true, false));
             }
 
             if (this.categoryId) {

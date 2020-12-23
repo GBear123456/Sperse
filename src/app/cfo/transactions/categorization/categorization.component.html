@@ -7,7 +7,8 @@
         </h3>
         <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
     </div>
-    <dx-tree-list [width]="width"
+    <dx-tree-list *ngIf="categories"
+                  [width]="width"
                   [height]="height"
                   keyExpr="key"
                   parentIdExpr="parent"
