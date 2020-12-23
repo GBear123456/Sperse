@@ -12,7 +12,8 @@ import { map, first } from 'rxjs/operators';
 
 /** Application imports */
 import {
-    ContactInfoDto, ContactServiceProxy,
+    ContactInfoDto, 
+    ContactServiceProxy,
     InvoiceSettings
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -62,13 +63,11 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     private readonly contactDataSourceURI = 'Contact';
     private readonly ident = 'ResellerActivity';
     private readonly COMMISSION_TAB_INDEX = 1;
-    private readonly GENERATED_TAB_INDEX  = 2;
     private _selectedTabIndex = 0;
 
     readonly clientFields = ClientFields;
     readonly commissionFields = CommissionFields;
     readonly ledgerFields = LedgerFields;
-
 
     get selectedTabIndex(): number {
         return this._selectedTabIndex;
@@ -79,8 +78,6 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
         if (val) {
             if (val == this.COMMISSION_TAB_INDEX)
                 this.initCommissionDataSource();
-            else if (val == this.GENERATED_TAB_INDEX)
-                this.initGeneratedCommissionDataSource();
             else
                 this.initLedgerDataSource();
         } else
@@ -211,7 +208,7 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     }
 
     getCommissionDataGrid(dataGrid, filter) {
-        new DataSource({
+        return new DataSource({
             requireTotalCount: true,
             store: new ODataStore({
                 key: this.commissionFields.Id,
@@ -239,14 +236,6 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
             this.commissionDataSource = this.getCommissionDataGrid(
                 this.commissionDataGrid,
                 {[this.commissionFields.ResellerContactId]: this.data.contactInfo.id}
-            );
-    }
-
-    initGeneratedCommissionDataSource() {
-        if (this.data.contactInfo.id)
-            this.generatedCommissionDataSource = this.getCommissionDataGrid(
-                this.generatedCommissionDataGrid,
-                {[this.commissionFields.BuyerContactId]: this.data.contactInfo.id}
             );
     }
 
