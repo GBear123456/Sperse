@@ -21,7 +21,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
     selector: 'preferences-modal',
     templateUrl: 'preferences-dialog.component.html',
     styleUrls: ['preferences-dialog.component.less'],
-    providers: [ CashflowServiceProxy, UserPreferencesService ],
+    providers: [ CashflowServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PreferencesDialogComponent implements OnInit {

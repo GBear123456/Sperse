@@ -183,7 +183,6 @@ export class CellOptions {
         CashFlowForecastServiceProxy,
         CategoryTreeServiceProxy,
         ClassificationServiceProxy,
-        UserPreferencesService,
         BankAccountsServiceProxy,
         CellsCopyingService,
         CashflowService,
