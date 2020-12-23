@@ -4,6 +4,7 @@ import { ChangeDetectionStrategy, EventEmitter, Component, Input, Output } from 
 /** Third party imports */
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { Observable, Subscriber, of } from 'rxjs';
+import { MessageService } from '@abp/message/message.service';
 
 /** Application import s*/
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -24,19 +25,27 @@ export class UploaderComponent {
     @Input() uploadButtonText: string;
     @Input() uploadInfoText: string;
     @Input() uploadUrl: string;
+    @Input() acceptFileExt = '.html';
+    @Input() maxFileSize: number;
     @Output() onDocumentClear: EventEmitter<any> = new EventEmitter();
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     file: NgxFileDropEntry;
 
     constructor(
+        private message: MessageService,
         private appSession: AppSessionService,
         public ls: AppLocalizationService
     ) {}
 
     fileDropped(files: NgxFileDropEntry[]) {
         if (files.length)
-            this.file = files[0];
+            files[0].fileEntry['file']((file: File) => {
+                if (this.maxFileSize && file.size > this.maxFileSize)
+                    this.message.warn(this.ls.l('File_SizeLimit_Error'));
+                else
+                    this.file = files[0];
+            });
     }
 
     uploadFile(): Observable<any> {

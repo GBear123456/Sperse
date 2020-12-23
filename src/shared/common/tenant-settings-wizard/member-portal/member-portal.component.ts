@@ -32,7 +32,7 @@ import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wiz
 })
 export class MemberPortalComponent implements ITenantSettingsStepComponent {
     @ViewChild('memberPortalUrl', { static: false }) memberPortalUrl: AbstractControlDirective;
-    siteUrlRegexPattern = AppConsts.regexPatterns.url;
+    siteUrlRegexPattern = AppConsts.regexPatterns.siteUrl;
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     memberPortalSettings: MemberPortalSettingsDto = new MemberPortalSettingsDto();
 

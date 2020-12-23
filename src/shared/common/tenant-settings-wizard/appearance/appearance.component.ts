@@ -38,6 +38,8 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     @ViewChild('faviconsUploader', { static: false }) faviconsUploader: UploaderComponent;
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
+    maxCssFileSize = 1024 * 1024 /* 1MB */;
+    maxLogoFileSize = 1024 * 30 /* 30KB */;
 
     constructor(
         private notify: NotifyService,
@@ -56,7 +58,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
             })),
             this.cssUploader.uploadFile().pipe(tap((res: any) => {
                 this.tenant.customCssId = res.result && res.result.id;
-                this.changeDetectorRef.detectChanges();    
+                this.changeDetectorRef.detectChanges();
             })),
             this.faviconsUploader.uploadFile()
         );

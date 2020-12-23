@@ -10,6 +10,8 @@
                           [uploadInfoText]="ls.l('UploadLogo_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
                           [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo'"
+                          acceptFileExt=".jpg,.jpeg,.png,.gif"
+                          [maxFileSize]="maxLogoFileSize"
                           (onDocumentClear)="clearLogo()">
                 </uploader>
             </div>
@@ -21,6 +23,8 @@
                           [uploadInfoText]="ls.l('UploadCSS_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
                           [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss'"
+                          acceptFileExt=".css"
+                          [maxFileSize]="maxCssFileSize"
                           (onDocumentClear)="clearCustomCss()">
                 </uploader>
             </div>
@@ -32,6 +36,7 @@
                           [uploadInfoText]="ls.l('UploadFavicons_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
                           [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons'"
+                          acceptFileExt=".zip"
                           (onDocumentClear)="clearFavicons()">
                 </uploader>
             </div>
