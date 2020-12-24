@@ -689,23 +689,18 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             }
                         }
                     }, cancelButton, {
-                        widget: 'dxDropDownButton',
+                        name: 'menu',
+                        widget: 'dxDropDownMenu',
                         visible: this.selectedViewType == this.COMMISSION_VIEW,
                         disabled: !this.manageAllowed
                             || !this.selectedRecords.length
                             || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
                         options: {
-                            displayExpr: 'text',
-                            text: this.l('Update'),
-                            onButtonClick: (e) => {
-                                setTimeout(() => {
-                                    e.component['_popup']['_$content'][0].style.width = '210px';
-                                });
-                            },
+                            hint: this.l('Update'),
                             items: [
                                 {
                                     text: this.l('CommissionableAmount'),
-                                    onClick: (e) => {
+                                    action: (e) => {
                                         this.dialog.open(UpdateCommissionableDialogComponent, {
                                             disableClose: true,
                                             closeOnNavigation: false,
@@ -718,7 +713,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                                 },
                                 {
                                     text: this.l('CommissionRate'),
-                                    onClick: (e) => {
+                                    action: (e) => {
                                         this.dialog.open(UpdateCommissionRateDialogComponent, {
                                             disableClose: true,
                                             closeOnNavigation: false,
@@ -738,28 +733,25 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 locateInMenu: 'auto',
                 items: [
                     {
-                        widget: 'dxDropDownButton',
+                        name: 'menu',
+                        widget: 'dxDropDownMenu',
                         attr: {
                             'filter-selected': this.reconciliationFilter.items.element.value
                         },
                         visible: this.selectedViewType == this.COMMISSION_VIEW,
                         options: {
-                            activeStateEnabled: true,
-                            displayExpr: 'text',
-                            text: this.l('Reconciliation'),
+                            hint: this.l('Reconciliation'),
                             onItemClick: (e) => {
-                                    let isClear = !this.reconciliationFilter.items.element.value;
-                                    e.component.element().setAttribute('filter-selected', !isClear);
-                                    if (isClear)
-                                        e.component.repaint();
+                                let isClear = !this.reconciliationFilter.items.element.value;
+                                e.component.element().setAttribute('filter-selected', !isClear);
                             },
                             items: [
                                 {
-                                    onClick: () => this.applyReconciliationFilter('rate'),
+                                    action: () => this.applyReconciliationFilter('rate'),
                                     text: this.l('CommissionRate')
                                 },
                                 {
-                                    onClick: () => this.applyReconciliationFilter('mentor'),
+                                    action: () => this.applyReconciliationFilter('mentor'),
                                     text: this.l('Mentor')
                                 }
                             ]
