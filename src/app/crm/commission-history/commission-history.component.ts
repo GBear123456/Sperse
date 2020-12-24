@@ -122,7 +122,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             element: new FilterItemModel({
                 dataSource: {
                     rate: this.commissionFields.CommissionRate + ' ne ' + this.commissionFields.ResellerAffiliateRate,
-                    mentor: this.commissionFields.ResellerContactId + ' ne ' + this.commissionFields.BuyerContactId
+                    mentor: this.commissionFields.ResellerContactId + ' ne ' + this.commissionFields.BuyerAffiliateContactId
                 }
             }, true)
         },

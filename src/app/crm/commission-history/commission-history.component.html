@@ -82,9 +82,26 @@
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
+                        <dxi-column [dataField]="commissionFields.ResellerAffiliateRate"
+                                    [caption]="l('ResellerAffiliateRate')"
+                                    format="percent"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder padding-right">
+                        </dxi-column>
                         <dxi-column [dataField]="commissionFields.BuyerContactId"
                                     [caption]="l('BuyerContactId')"
                                     cssClass="tabular clipboard-holder"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column [dataField]="commissionFields.BuyerAffiliateContactId"
+                                    [caption]="l('BuyerAffiliateContactId')"
+                                    cssClass="tabular clipboard-holder"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="commissionFields.BuyerAffiliateName"
+                                    [caption]="l('BuyerAffiliateName')"
                                     [visible]="false">
                         </dxi-column>
                         <dxi-column width="180px"
