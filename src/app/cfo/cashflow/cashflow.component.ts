@@ -766,7 +766,6 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             });
         }
         this.hasStaticInstance = this._cfoService.hasStaticInstance;
-        window['t'] = this;
     }
 
     ngOnInit() {
