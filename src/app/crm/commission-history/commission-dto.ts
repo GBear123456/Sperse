@@ -1,4 +1,6 @@
 export interface CommissionDto {
+    BuyerAffiliateContactId: string;
+    BuyerAffiliateName: string;
     BuyerAffiliateCode: string;
     BuyerContactId: number;
     BuyerEmailAddress: string;
