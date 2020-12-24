@@ -105,18 +105,22 @@ export class InplaceEditComponent extends AppComponentBase {
     }
 
     deleteItem(event) {
-        if (!this.isReadOnlyField)
-            this.dialog.open(ConfirmDialogComponent, {
-                data: {
-                  title: this.l(this.lDeleteConfirmTitle, this.l(this.lEntityName)),
-                  message: this.l(this.lDeleteConfirmMessage, this.l(this.lEntityName).toLowerCase())
-                }
-            }).afterClosed().subscribe(result => {
-                if (result) {
-                    if (this.itemDeleted)
-                        this.itemDeleted.emit(this.id);
-                }
-            });
+        if (!this.isReadOnlyField && this.itemDeleted) {
+            if (this.lDeleteConfirmMessage)
+                this.dialog.open(ConfirmDialogComponent, {
+                    data: {
+                      title: this.l(this.lDeleteConfirmTitle, this.l(this.lEntityName)),
+                      message: this.l(this.lDeleteConfirmMessage, this.l(this.lEntityName).toLowerCase())
+                    }
+                }).afterClosed().subscribe(result => {
+                    if (result) {
+                        if (this.itemDeleted)
+                            this.itemDeleted.emit(this.id);
+                    }
+                });
+            else
+                this.itemDeleted.emit(this.id);
+        }
         event.stopPropagation();
     }
 
