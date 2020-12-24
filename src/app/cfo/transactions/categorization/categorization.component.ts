@@ -15,15 +15,15 @@ import { AppConsts } from '@shared/AppConsts';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import {
+    AccountingTypeDto,
+    CategoryDto,
     CategoryTreeServiceProxy,
-    InstanceType,
-    UpdateCategoryInput,
+    CreateAccountingTypeInput,
     CreateCategoryInput,
     GetCategoryTreeOutput,
+    InstanceType,
     UpdateAccountingTypeInput,
-    CreateAccountingTypeInput,
-    CategoryDto,
-    AccountingTypeDto
+    UpdateCategoryInput
 } from '@shared/service-proxies/service-proxies';
 import { CategoryDeleteDialogComponent } from './category-delete-dialog/category-delete-dialog.component';
 import { Category } from '@app/cfo/transactions/categorization/category.model';
@@ -150,6 +150,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             this.categoryList.editing.allowUpdating = true;
             this.categoryList.instance.refresh();
         }
+        this.onNodesInitialized();
     }
 
     private initTransactionsTotalCount() {
@@ -1067,10 +1068,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     onNodesInitialized() {
-        setTimeout(() => this.sortByColumnIndex(
+        this.sortByColumnIndex(
             this.settings.sorting.field,
             this.settings.sorting.order
-        ));
+        );
     }
 
     addAccountingTypeRow(typeId) {
