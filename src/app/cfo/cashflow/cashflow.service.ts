@@ -2259,19 +2259,21 @@ export class CashflowService {
     saveBudgets(budgets: BudgetDto[]) {
         this.budgets = {};
         budgets.forEach((budget: BudgetDto) => {
-            const budgetKey = this.getBudgetKey(budget);
+            const cashflowTypeId: string = this.getCashFlowTypeByCategory(budget.categoryId, this.categoryTree)
+                || (budget.amount >= 0 ? 'I' : 'E');
+            const budgetKey = this.getBudgetKey(budget, cashflowTypeId);
             this.budgets[budgetKey] = (this.budgets[budgetKey] || 0) + budget.amount;
         });
     }
 
-    private getBudgetKey(budget: Omit<IBudgetDto, 'amount' | 'businessEntityId'>): string {
-        return budget.categoryId + '-'
-               + budget.startDate.utc().format('DD-MM-YYYY') + '-'
+    private getBudgetKey(budget: Omit<IBudgetDto, 'amount' | 'businessEntityId'>, cashflowTypeId: string): string {
+        return cashflowTypeId + budget.categoryId
+               + budget.startDate.utc().format('DD-MM-YYYY')
                + budget.endDate.utc().format('DD-MM-YYYY');
     }
 
-    getCellBudget(budget: Omit<IBudgetDto, 'amount' | 'businessEntityId'>): number {
-        return this.budgets[this.getBudgetKey(budget)];
+    getCellBudget(budget: Omit<IBudgetDto, 'amount' | 'businessEntityId'>, cashflowTypeId: string): number {
+        return this.budgets[this.getBudgetKey(budget, cashflowTypeId)];
     }
 
 }

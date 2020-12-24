@@ -10,7 +10,7 @@ import {
     HostListener,
     HostBinding
 } from '@angular/core';
-import { DOCUMENT, CurrencyPipe } from '@angular/common';
+import { DOCUMENT, CurrencyPipe, PercentPipe } from '@angular/common';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -34,7 +34,6 @@ import {
     finalize,
     first,
     filter,
-    pluck,
     mergeMap,
     mergeAll,
     map,
@@ -187,7 +186,8 @@ export class CellOptions {
         CellsCopyingService,
         CashflowService,
         CurrencyPipe,
-        LifecycleSubjectsService
+        LifecycleSubjectsService,
+        PercentPipe
     ]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
@@ -744,6 +744,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         private lifecycleService: LifecycleSubjectsService,
         private fullscreenService: FullScreenService,
         private calendarService: CalendarService,
+        private percentPipe: PercentPipe,
         public cashflowService: CashflowService,
         public bankAccountsService: BankAccountsService,
         public dialog: MatDialog,
@@ -765,6 +766,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             });
         }
         this.hasStaticInstance = this._cfoService.hasStaticInstance;
+        window['t'] = this;
     }
 
     ngOnInit() {
@@ -2598,16 +2600,17 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 const categoryId = this.cashflowService.getCategoryValueByPrefix(e.cell.rowPath, CategorizationPrefixes.Category);
                 if (categoryId && this.hasBudgetsFeature) {
                     const datePeriod = this.cashflowService.formattingDate(e.cell.columnPath);
+                    const cashflowTypeId: string = e.cell.rowPath[0][2];
                     const cellBudget = this.cashflowService.getCellBudget({
                         categoryId: categoryId,
                         startDate: datePeriod.startDate,
                         endDate: datePeriod.endDate
-                    });
+                    }, cashflowTypeId);
                     if (cellBudget) {
                         const dot: HTMLElement = this.document.createElement('div');
                         dot.className = 'budget-info ' + (
                             (e.cell.value > 0 && e.cell.value >= cellBudget)
-                            || (e.cell.value < 0 && Math.abs(e.cell.value) <= cellBudget)
+                            || (e.cell.value < 0 && Math.abs(e.cell.value) <= Math.abs(cellBudget))
                                 ? 'within-budget' : 'out-of-budget'
                         );
                         dot.setAttribute('data-budget', cellBudget.toString());
@@ -2953,7 +2956,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
-                    <span class="percent">${(value / budget * 100).toFixed(2)}%</span>
+                    <span class="percent">${this.percentPipe.transform(value / budget, '1.2-2')}</span>
                  </div>
                 <div>
                     <span>${this.l('Budget')}:</span>
@@ -2962,16 +2965,15 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
-                    <span class="percent">100%</span>
+                    <span class="percent">100.00%</span>
                 </div>
-                <hr>
                 <div>
                     <span>${this.l('Variance')}:</span> 
                     <span>${this.currencyPipe.transform(variance,
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
-                    <span class="percent">${(variance / budget * 100).toFixed(2)}%</span>
+                    <span class="percent">${this.percentPipe.transform(variance / budget, '1.2-2')}</span>
                 </div>`,
                 'budget-tooltip'
             );
