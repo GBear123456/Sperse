@@ -47,6 +47,7 @@ import { CrmService } from '@app/crm/crm.service';
 import { ContactGroup } from '@shared/AppEnums';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Component({
     templateUrl: 'personal-details-dialog.html',
@@ -249,16 +250,25 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     updateAffiliateRate(value?) {
-        this.affiliateRate = value == '' || isNaN(value) ? null : parseFloat(value);
-        this.contactProxy.updateAffiliateRate(new UpdateContactAffiliateRateInput({
-            contactId: this.contactInfo.id,
-            affiliateRate: this.affiliateRate == null ? null : parseFloat((this.affiliateRate / 100).toFixed(4))
-        })).subscribe(() => {
-            this.affiliateRateInitil = this.affiliateRate;
-            this.notifyService.info(this.ls.l('SavedSuccessfully'));
-        }, () => {
-            this.affiliateRate = this.affiliateRateInitil;
-        });
+        ContactsHelper.showConfirmMessage('',
+            (isConfirmed: boolean, [ updatePending ]: boolean[]) => {
+                if (isConfirmed) {
+                    this.affiliateRate = value == '' || isNaN(value) ? null : parseFloat(value);
+                    this.contactProxy.updateAffiliateRate(new UpdateContactAffiliateRateInput({
+                        contactId: this.contactInfo.id,
+                        updatePendingCommissions: updatePending,
+                        affiliateRate: this.affiliateRate == null ? null : parseFloat((this.affiliateRate / 100).toFixed(4))
+                    })).subscribe(() => {
+                        this.affiliateRateInitil = this.affiliateRate;
+                        this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                    }, () => {
+                        this.affiliateRate = this.affiliateRateInitil;
+                    });
+                } else
+                    this.affiliateRate = this.affiliateRateInitil;
+            },
+            [ { text: this.ls.l('AssignCommissionRateForPending'), visible: true, checked: true }]
+        );
     }
 
     initChecklistByOrder(order: any): Observable<any> {
@@ -640,15 +650,23 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     onSourceContactChanged(contact?) {
-        this.contactProxy.updateAffiliateContact(
-            new UpdateAffiliateContactInput({
-                contactId: this.contactInfo.id,
-                affiliateContactId: contact ? contact.id : null
-            })
-        ).subscribe(() => {
-            this.refreshSourceContactInfo.next(null);
-            this.notifyService.info(this.ls.l('SavedSuccessfully'));
-        });
+        ContactsHelper.showConfirmMessage('',
+            (isConfirmed: boolean, [ updatePending ]: boolean[]) => {
+                if (isConfirmed) {
+                    this.contactProxy.updateAffiliateContact(
+                        new UpdateAffiliateContactInput({
+                            contactId: this.contactInfo.id,
+                            updatePendingCommissions: updatePending,
+                            affiliateContactId: contact ? contact.id : null
+                        })
+                    ).subscribe(() => {
+                        this.refreshSourceContactInfo.next(null);
+                        this.notifyService.info(this.ls.l('SavedSuccessfully'));
+                    });
+                }
+            },
+            [ { text: this.ls.l('AssignAffiliateContactForPending'), visible: true, checked: true }]
+        );
         contact && this.sourceComponent.toggle();
     }
 
