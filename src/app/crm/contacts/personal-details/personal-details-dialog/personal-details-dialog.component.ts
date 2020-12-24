@@ -250,7 +250,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     updateAffiliateRate(value?) {
-        ContactsHelper.showConfirmMessage('',
+        ContactsHelper.showConfirmMessage(
+            this.ls.l(value ? 'ChangeCommissionRate' : 'ClearCommissionRate'),
             (isConfirmed: boolean, [ updatePending ]: boolean[]) => {
                 if (isConfirmed) {
                     this.affiliateRate = value == '' || isNaN(value) ? null : parseFloat(value);
@@ -267,7 +268,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 } else
                     this.affiliateRate = this.affiliateRateInitil;
             },
-            [ { text: this.ls.l('AssignCommissionRateForPending'), visible: true, checked: true }]
+            [ { text: this.ls.l('AssignCommissionRateForPending'), visible: !!value, checked: !!value }]
         );
     }
 
@@ -650,7 +651,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     onSourceContactChanged(contact?) {
-        ContactsHelper.showConfirmMessage('',
+        ContactsHelper.showConfirmMessage(
+            this.ls.l(contact ? 'ReassignAffiliateContact' : 'ClearAffiliateContact'),
             (isConfirmed: boolean, [ updatePending ]: boolean[]) => {
                 if (isConfirmed) {
                     this.contactProxy.updateAffiliateContact(
@@ -665,7 +667,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     });
                 }
             },
-            [ { text: this.ls.l('AssignAffiliateContactForPending'), visible: true, checked: true }]
+            [ { text: this.ls.l('AssignAffiliateContactForPending'), visible: !!contact, checked: !!contact }]
         );
         contact && this.sourceComponent.toggle();
     }
