@@ -1580,9 +1580,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         period: GroupByPeriod = GroupByPeriod.Monthly,
         budgets: BudgetDto[]
     ) {
+        this.cashflowService.updateStatsCategoryTree(transactions || []);
+        this.cashflowService.addCategoriesLevelsToCategorizationConfig();
         if (transactions && transactions.length) {
-            this.cashflowService.updateStatsCategoryTree(transactions);
-            this.cashflowService.addCategoriesLevelsToCategorizationConfig();
             /** Сategories - object with categories */
             this.cashflowService.cashflowData = this.getCashflowDataFromTransactions(transactions, true, budgets);
             /** Make a copy of cashflow data to display it in custom total group on the top level */
