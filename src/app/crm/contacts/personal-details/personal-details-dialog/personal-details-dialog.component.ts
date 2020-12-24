@@ -268,7 +268,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 } else
                     this.affiliateRate = this.affiliateRateInitil;
             },
-            [ { text: this.ls.l('AssignCommissionRateForPending'), visible: !!value, checked: !!value }]
+            [ { text: this.ls.l('AssignCommissionRateForPending'), visible: true, checked: true }]
         );
     }
 
