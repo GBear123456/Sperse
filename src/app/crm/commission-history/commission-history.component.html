@@ -82,12 +82,6 @@
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
-                        <dxi-column [dataField]="commissionFields.ResellerAffiliateRate"
-                                    [caption]="l('ResellerAffiliateRate')"
-                                    format="percent"
-                                    [visible]="false"
-                                    cssClass="clipboard-holder padding-right">
-                        </dxi-column>
                         <dxi-column [dataField]="commissionFields.BuyerContactId"
                                     [caption]="l('BuyerContactId')"
                                     cssClass="tabular clipboard-holder"
@@ -176,7 +170,15 @@
                         </dxi-column>
                         <dxi-column width="200px"
                                     cellTemplate="staticWidthCell"
+                                    [dataField]="commissionFields.BuyerAffiliateName"
+                                    [caption]="l('BuyerAffiliateName')"
+                                    [cssClass]="isReconciliationMentorSelected ? 'highlight' : ''"
+                                    [visible]="isReconciliationMentorSelected">
+                        </dxi-column>
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
                                     [dataField]="commissionFields.ResellerName"
+                                    [cssClass]="isReconciliationMentorSelected ? 'highlight' : ''"
                                     [caption]="l('ResellerName')">
                         </dxi-column>
                         <dxi-column width="200px"
@@ -189,10 +191,16 @@
                                     [caption]="l('ResellerAffiliateCode')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
+                        <dxi-column [dataField]="commissionFields.ResellerAffiliateRate"
+                                    [caption]="l('ResellerAffiliateRate')"
+                                    format="percent"
+                                    [visible]="isReconciliationRateSelected"
+                                    cssClass="clipboard-holder padding-right {{isReconciliationRateSelected ? 'highlight' : ''}}">
+                        </dxi-column>
                         <dxi-column [dataField]="commissionFields.CommissionRate"
                                     [caption]="l('Rate')"
                                     format="percent"
-                                    cssClass="clipboard-holder padding-right">
+                                    cssClass="clipboard-holder padding-right {{isReconciliationRateSelected ? 'highlight' : ''}}">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.TransactionId"
                                     dataType="string"

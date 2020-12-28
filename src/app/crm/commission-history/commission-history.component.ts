@@ -132,6 +132,14 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             return '';
         }
     });
+    get isReconciliationRateSelected(): Boolean {
+        let element = this.reconciliationFilter.items.element;
+        return element.value == element.dataSource.rate;
+    }
+    get isReconciliationMentorSelected(): Boolean {
+        let element = this.reconciliationFilter.items.element;
+        return element.value == element.dataSource.mentor;
+    }
     permissions = AppPermissions;
     searchValueChanged = false;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
@@ -436,6 +444,15 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         private changeDetectorRef: ChangeDetectorRef
     ) {
         super(injector);
+
+        this.invoicesService.settings$.pipe(
+            filter(Boolean), first()
+        ).subscribe((res: InvoiceSettings) => {
+            this.reconciliationFilter.items.element.dataSource.rate =
+                this.commissionFields.ResellerAffiliateRate + ' ne null and ' +
+                this.commissionFields.CommissionRate + ' ne ' + res.defaultAffiliateRate +
+                ' and ' + this.reconciliationFilter.items.element.dataSource.rate;
+        });
     }
 
     ngOnInit() {
@@ -736,23 +753,25 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         name: 'menu',
                         widget: 'dxDropDownMenu',
                         attr: {
-                            'filter-selected': this.reconciliationFilter.items.element.value
+                            'filter-selected': this.isReconciliationMentorSelected || this.isReconciliationRateSelected
                         },
                         visible: this.selectedViewType == this.COMMISSION_VIEW,
                         options: {
                             hint: this.l('Reconciliation'),
                             onItemClick: (e) => {
-                                let isClear = !this.reconciliationFilter.items.element.value;
-                                e.component.element().setAttribute('filter-selected', !isClear);
+                                e.component.element().setAttribute('filter-selected',
+                                    this.isReconciliationMentorSelected || this.isReconciliationRateSelected);
                             },
                             items: [
                                 {
+                                    icon: this.getReconciliationIcon('rate'),
                                     action: () => this.applyReconciliationFilter('rate'),
-                                    text: this.l('CommissionRate')
+                                    text: this.l('ReconciliationCommissionRate')
                                 },
                                 {
+                                    icon: this.getReconciliationIcon('mentor'),
                                     action: () => this.applyReconciliationFilter('mentor'),
-                                    text: this.l('Mentor')
+                                    text: this.l('ReconciliationCommissionMentor')
                                 }
                             ]
                         }
@@ -802,11 +821,17 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         this.changeDetectorRef.detectChanges();
     }
 
+    getReconciliationIcon(field) {
+        let element = this.reconciliationFilter.items.element;
+        return element.value == element.dataSource[field] ? 'check' : 'filter';
+    }
+
     applyReconciliationFilter(field) {
         let target = this.reconciliationFilter.items.element,
             source = target.dataSource[field];
         target.value = target.value && target.value == source ? null : source;
         this.processFilterInternal();
+        this.initToolbarConfig();
     }
 
     requestWithdrawal() {
