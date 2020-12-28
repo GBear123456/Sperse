@@ -658,7 +658,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     this.contactProxy.updateAffiliateContact(
                         new UpdateAffiliateContactInput({
                             contactId: this.contactInfo.id,
-                            updatePendingCommissions: updatePending,
+                            updatePendingCommissions: this.hasCommissionsFeature
+                                && hasCommissionsManagePermission && updatePending,
                             affiliateContactId: contact ? contact.id : null
                         })
                     ).subscribe(() => {
@@ -667,7 +668,11 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     });
                 }
             },
-            [ { text: this.ls.l('AssignAffiliateContactForPending'), visible: !!contact, checked: !!contact }]
+            [ {
+                text: this.ls.l('AssignAffiliateContactForPending'),
+                visible: this.hasCommissionsFeature && this.hasCommissionsManagePermission && !!contact,
+                checked: !!contact
+            }]
         );
         contact && this.sourceComponent.toggle();
     }
