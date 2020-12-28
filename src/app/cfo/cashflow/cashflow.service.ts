@@ -181,6 +181,7 @@ export class CashflowService {
     statsCategoryTree = {};
     statsCategoriesLevelsCount = 0;
     budgets: { [budgetKey: string]: number } = {};
+    forecasts: { [forecastKey: string]: number } = {};
 
     constructor(
         private cfoPreferencesService: CfoPreferencesService,
@@ -2256,24 +2257,40 @@ export class CashflowService {
         return this.addCategorizationLevels({ ...stubTransaction, ...stubObj });
     }
 
+    saveForecast(forecast: TransactionStatsDtoExtended) {
+        const cashflowTypeId: string = this.getCashFlowTypeByCategory(forecast.categoryId, this.categoryTree)
+            || (forecast.amount >= 0 ? 'I' : 'E');
+        const forecastKey = this.getItemKey(
+            cashflowTypeId,
+            forecast.categoryId,
+            forecast.initialDate.clone().startOf('month'),
+            forecast.initialDate.clone().endOf('month')
+        );
+        this.forecasts[forecastKey] = (this.forecasts[forecastKey] || 0) + forecast.amount;
+    }
+
     saveBudgets(budgets: BudgetDto[]) {
         this.budgets = {};
         budgets.forEach((budget: BudgetDto) => {
             const cashflowTypeId: string = this.getCashFlowTypeByCategory(budget.categoryId, this.categoryTree)
                 || (budget.amount >= 0 ? 'I' : 'E');
-            const budgetKey = this.getBudgetKey(budget, cashflowTypeId);
+            const budgetKey = this.getItemKey(cashflowTypeId, budget.categoryId, budget.startDate, budget.endDate);
             this.budgets[budgetKey] = (this.budgets[budgetKey] || 0) + budget.amount;
         });
     }
 
-    private getBudgetKey(budget: Omit<IBudgetDto, 'amount' | 'businessEntityId'>, cashflowTypeId: string): string {
-        return cashflowTypeId + budget.categoryId
-               + budget.startDate.utc().format('DD-MM-YYYY')
-               + budget.endDate.utc().format('DD-MM-YYYY');
+    getItemKey(cashflowTypeId: string, categoryId: number, startDate: moment.Moment, endDate: moment.Moment): string {
+        return cashflowTypeId + categoryId
+               + startDate.utc().format('DD-MM-YYYY')
+               + endDate.utc().format('DD-MM-YYYY');
     }
 
-    getCellBudget(budget: Omit<IBudgetDto, 'amount' | 'businessEntityId'>, cashflowTypeId: string): number {
-        return this.budgets[this.getBudgetKey(budget, cashflowTypeId)];
+    getCellBudget(cashflowTypeId: string, categoryId: number, startDate: moment.Moment, endDate: moment.Moment): number {
+        return this.budgets[this.getItemKey(cashflowTypeId, categoryId, startDate, endDate)];
+    }
+
+    getCellForecastsValue(cashflowTypeId: string, categoryId: number, startDate: moment.Moment, endDate: moment.Moment): number {
+        return this.forecasts[this.getItemKey(cashflowTypeId, categoryId, startDate, endDate)];
     }
 
 }
