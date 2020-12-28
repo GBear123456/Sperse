@@ -659,7 +659,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                         new UpdateAffiliateContactInput({
                             contactId: this.contactInfo.id,
                             updatePendingCommissions: this.hasCommissionsFeature
-                                && hasCommissionsManagePermission && updatePending,
+                                && this.hasCommissionsManagePermission && updatePending,
                             affiliateContactId: contact ? contact.id : null
                         })
                     ).subscribe(() => {
