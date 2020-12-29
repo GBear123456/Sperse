@@ -2611,7 +2611,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         datePeriod.startDate,
                         datePeriod.endDate
                     );
-                    if (cellBudget) {
+                    if (cellBudget !== undefined) {
                         const cellForecastsValue: number = this.cashflowService.getCellForecastsValue(
                             cashflowTypeId,
                             categoryId,
@@ -2968,7 +2968,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
-                    <span class="percent">${this.percentPipe.transform(value / budget, '1.2-2')}</span>
+                    ${budget != 0 ? `<span class="percent">${this.percentPipe.transform(value / budget, '1.2-2')}</span>` : ''}
                  </div>
                 <div>
                     <span>${this.l('Budget')}:</span>
@@ -2977,7 +2977,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
-                    <span class="percent">100.00%</span>
+                    ${budget != 0? `<span class="percent">100.00%</span>` : ''}
                 </div>
                 <div>
                     <span>${this.l('Variance')}:</span>
@@ -2985,7 +2985,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
-                    <span class="percent">${this.percentPipe.transform(variance / budget, '1.2-2')}</span>
+                    ${budget != 0 ? `<span class="percent">${this.percentPipe.transform(variance / budget, '1.2-2')}</span>` : ''}
                 </div>`,
                 'budget-tooltip'
             );
