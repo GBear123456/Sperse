@@ -2597,7 +2597,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** Add budget dot for month data cells */
-        if (e.area === 'data' && e.cell.columnPath) {
+        if (e.area === 'data' && e.cell.columnPath
+            && e.cell.rowPath[e.cell.rowPath.length - 1].indexOf(CategorizationPrefixes.TransactionDescriptor) !== 0) {
             let fieldObj = this.getFieldObjectByPath(e.cell.columnPath);
             let fieldName = fieldObj.groupInterval;
             if (fieldName === 'month') {
