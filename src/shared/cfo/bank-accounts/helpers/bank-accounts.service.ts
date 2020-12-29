@@ -63,11 +63,12 @@ export class BankAccountsService {
         this.cfoService.instanceId ||
         this.cfoService.instanceType
     ].join('_');
+    isAdvicePeriod = this.appSessionService.layoutType == LayoutType.AdvicePeriod;
     state: BankAccountsState = {
         selectedBankAccountIds: [],
-        statuses: [
+        statuses: this.isAdvicePeriod ? [
             BankAccountStatus.Active
-        ],
+        ] : [],
         usedBankAccountIds: [],
         visibleBankAccountIds: [],
         selectedBusinessEntitiesIds: [],
@@ -558,7 +559,7 @@ export class BankAccountsService {
                 const firstUserLogin = !cachedState || !cachedState.selectedBankAccountTypes;
                 if (firstUserLogin) {
                     this._selectedBankAccountTypes.next(
-                        (this.appSessionService.layoutType != LayoutType.AdvicePeriod ? list :
+                        (!this.isAdvicePeriod ? list :
                             list.filter(item => item.name != 'Bill.com' && item.name != 'Accounting')
                         ).map(item => item.id)
                     );
