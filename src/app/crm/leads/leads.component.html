@@ -304,7 +304,7 @@
                                 {{cellData.value | phone}}
                             </div>
                             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                                {{cellData.value | date: formatting.dateTime : userTimezone}}
+                                {{cellData.value | datetime: formatting.dateTimeMoment}}
                             </div>
                             <div *dxTemplate="let cellData of 'bankCodeCell'">
                                 <bank-code-letters [bankCode]="cellData.value"

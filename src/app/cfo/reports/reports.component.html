@@ -54,10 +54,10 @@
             <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
 
             <div *dxTemplate="let cellData of 'dateTimeCell'" class="clipboard-holder">
-                {{ cellData.value | date: formatting.dateTime : userTimezone }}
+                {{ cellData.value | datetime: formatting.dateTimeMoment }}
             </div>
             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                {{ cellData.value | date: formatting.date }}
+                {{ cellData.value | datetime: formatting.dateMoment }}
             </div>
             <div *dxTemplate="let cellData of 'deptCell'" class="deptCell clipboard-holder" [title]="formatDepartments(cellData.value)">
                 {{ formatDepartments(cellData.value) }}

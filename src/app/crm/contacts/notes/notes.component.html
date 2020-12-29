@@ -84,7 +84,7 @@
                          [attr.fullname]="note.addedByUserName">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(note.addedByUserPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
                         <a *ngIf="showActonMenu(note)" class="gear-icon" (click)="toggleActionsMenu(note, $event.target)"></a>
-                        <div class="body date" [attr.date]="note.dateTime | date: formatting.inboxDate : userTimezone">
+                        <div class="body date" [attr.date]="note.dateTime | datetime: formatting.fieldDateTime">
                             <i class="save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, note.text)"></i>
                             <div [innerHtml]="note.text"></div>
                         </div>

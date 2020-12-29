@@ -43,7 +43,7 @@
         </dxi-column>
 
         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-            {{cellData.value | date: formatting.date : userTimezone }}
+            {{cellData.value | datetime: formatting.dateTimeMoment }}
         </div>
         <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
             {{cellData.value | phone}}

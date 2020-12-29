@@ -20,24 +20,24 @@
             (onContentReady)="onContentReady($event)"
             (onItemClick)="initActiveMessage($event.itemData)">
                 <div *dxTemplate="let item of 'group'" class="group-item" [ngClass]="{selected: item.id == activeMessage?.id, 'has-children': item.hasChildren, expanded: item.expanded}" (click)="expandGroup(item)">
-                    <div class="email" title="{{item.date | date: formatting.inboxDate : userTimezone}}">
+                    <div class="email" title="{{item.date | datetime: formatting.fieldDateTime}}">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(item?.fromUserContactPhotoPublicId) + ')'}" class="img-circle"></div>
                         <div class="details">
                             <span class="from">{{item.fromUserName}}</span>
                             <span class="subject">{{item.subject}}</span>
                         </div>
-                        <div class="date">{{item.creationTime | date: formatting.monthDay : userTimezone}}</div>
+                        <div class="date">{{item.creationTime | datetime: formatting.monthDay.toUpperCase()}}</div>
                         <div class="status {{item.status | lowercase}}">{{item.status}}</div>
                     </div>
                 </div>
                 <div *dxTemplate="let item of 'item'" class="sub-item" [ngClass]="{selected: item.id == activeMessage?.id}">
-                    <div class="email" title="{{item.date | date: formatting.inboxDate : userTimezone}}">
+                    <div class="email" title="{{item.date | datetime: formatting.fieldDateTime}}">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(item?.fromUserContactPhotoPublicId) + ')'}" class="img-circle"></div>
                         <div class="details">
                             <span class="from">{{item.fromUserName}}</span>
                             <span class="subject">{{item.subject}}</span>
                         </div>
-                        <div class="date">{{item.creationTime | date: formatting.monthDay : userTimezone}}</div>
+                        <div class="date">{{item.creationTime | datetime: formatting.monthDay.toUpperCase()}}</div>
                     </div>
                 </div>
         </dx-list>
@@ -57,7 +57,7 @@
                         <dxi-column dataField="deliveryDate" width="170px" cellTemplate="dateCell"></dxi-column>
                         <dxi-column dataField="openDate" width="170px" cellTemplate="dateCell"></dxi-column>
                         <div *dxTemplate="let cellData of 'dateCell'">
-                            {{cellData.value | date: formatting.inboxDate : userTimezone }}
+                            {{cellData.value | datetime: formatting.fieldDateTime }}
                         </div>
                         <div *dxTemplate="let cellData of 'statusCell'">
                             <span class="delivery-status {{cellData.value | lowercase}}">{{cellData.value}}</span>
@@ -74,7 +74,7 @@
                             <span class="from">{{activeMessage?.fromUserName}}</span>
                             <span class="to">{{activeMessage?.to}}</span>
                         </div>
-                        <div class="date">{{activeMessage?.creationTime | date: formatting.inboxDate : userTimezone}}</div>
+                        <div class="date">{{activeMessage?.creationTime | datetime: formatting.fieldDateTime}}</div>
                         <div class="status {{activeMessage?.status | lowercase}}">{{activeMessage?.status}}</div>
                     </div>                
                 </ng-container>
@@ -86,7 +86,7 @@
                             <span class="subject">{{activeMessage?.subject}}</span>
                             <span class="to" (click)="activeMessage.showTooltip = true">{{ls.l('to')}} {{activeMessage?.to}} <i class="info dx-icon-info"></i></span>
                         </div>
-                        <div class="date">{{activeMessage?.creationTime | date: formatting.inboxDate : userTimezone}}</div>
+                        <div class="date">{{activeMessage?.creationTime | datetime: formatting.fieldDateTime}}</div>
                         <div class="status {{activeMessage?.status | lowercase}}">{{activeMessage?.status}}</div>
                     </div>
                 </ng-container>
@@ -96,12 +96,12 @@
                 <dx-scroll-view *ngIf="!isActiveEmilType" showScrollbar="onHover">                    
                     <div class="message-wrapper">
                         <div [ngClass]="{to: activeMessage.isInbound}" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(activeMessage?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar small"></div>                        
-                        <div [ngClass]="{from: !activeMessage.isInbound, to: activeMessage.isInbound}" class="body date" [innerHtml]="activeMessage?.body" [attr.date]="activeMessage?.creationTime | date: formatting.inboxDate : userTimezone"></div>
+                        <div [ngClass]="{from: !activeMessage.isInbound, to: activeMessage.isInbound}" class="body date" [innerHtml]="activeMessage?.body" [attr.date]="activeMessage?.creationTime | datetime: formatting.fieldDateTime"></div>
                     </div>
                     <div class="children-wrapper">
                         <div *ngFor="let child of activeMessage?.items; let i = index" class="message-wrapper">
                             <div *ngIf="!activeMessage?.items[i + 1] || activeMessage?.items[i + 1].isInbound != child.isInbound" [ngClass]="{to: child.isInbound}" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(child?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
-                            <div class="body" [ngClass]="{from: !child.isInbound, to: child.isInbound, date: !activeMessage?.items[i + 1] || activeMessage?.items[i + 1].isInbound != child.isInbound}" [attr.date]="child.creationTime | date: formatting.inboxDate : userTimezone">
+                            <div class="body" [ngClass]="{from: !child.isInbound, to: child.isInbound, date: !activeMessage?.items[i + 1] || activeMessage?.items[i + 1].isInbound != child.isInbound}" [attr.date]="child.creationTime | datetime: formatting.fieldDateTime">
                                 <div [innerHtml]="child.body || child.subject"></div>
                                 <div class="body-attachments">
                                     <div *ngFor="let attachment of child?.attachments" class="attachment">

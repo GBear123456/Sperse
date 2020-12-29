@@ -74,10 +74,10 @@
                 <div *ngIf="cellData.value" class="status {{ cellData.value | lowercase }}">{{ startCase(cellData.value) }}</div>
             </div>
             <div *dxTemplate="let cellData of 'dueDateCell'" class="clipboard-holder">
-                {{ (cellData.value | date: formatting.date) || l('Invoice_DueOnReceipt') }}
+                {{ (cellData.value | datetime: formatting.dateMoment) || l('Invoice_DueOnReceipt') }}
             </div>
             <div *dxTemplate="let cellData of 'datetimeCell'" class="clipboard-holder">
-                {{ cellData.value | date: formatting.date : userTimezone }}
+                {{ cellData.value | datetime: formatting.dateMoment }}
             </div>
 
             <dxo-paging [pageSize]="20"></dxo-paging>
@@ -185,11 +185,11 @@
                 </div>
 
                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                    {{cellData.value | date: formatting.dateTime : userTimezone}}
+                    {{cellData.value | datetime: formatting.dateTimeMoment}}
                 </div>
 
                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                    {{cellData.value | date: formatting.dateTime : userTimezone}}
+                    {{cellData.value | datetime: formatting.dateTimeMoment}}
                 </div>
                 <dxo-group-panel [visible]="true"></dxo-group-panel>
                 <dxo-sorting mode="multiple"></dxo-sorting>
