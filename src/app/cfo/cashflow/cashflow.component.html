@@ -37,11 +37,34 @@
                          (onSelectionChanged)="changeDetailsTab($event)">
                 </dx-tabs>
                 <div class="detailsButtons">
-                    <dx-button *ngIf="!hasStaticInstance" [text]="'+ ' + l('AddForecastTransaction')" (onClick)="addNewForecast()" [disabled]="!isInstanceAdmin || disableAddForecastButton"></dx-button>
-                    <dx-button *ngIf="detailsContainsForecasts" [disabled]="!isInstanceAdmin || !detailsSomeForecastsItemsSelected" [text]="'x ' + l('DeleteSelectedForecasts')" (onClick)="deleteSelectedForecasts()"></dx-button>
-                    <dx-button *ngIf="searchValue?.length" class="search-value-btn" [text]="searchValue" [visible]="!cashflowService.showAllVisible" (onClick)="refreshTransactionDetail(false)"></dx-button>
-                    <dx-button class="showall-btn" [text]="l('Show all')" [visible]="cashflowService.showAllVisible" (onClick)="refreshTransactionDetail(true)" [disabled]="cashflowService.showAllDisable"></dx-button>
-                    <dx-button *ngIf="!hasStaticInstance" class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!_cfoService.classifyTransactionsAllowed() || !detailsSomeHistoricalItemsSelected" (onClick)="reclassifyTransactions()"></dx-button>
+                    <dx-button *ngIf="!hasStaticInstance"
+                               [text]="'+ ' + l('AddForecastTransaction')"
+                               (onClick)="addNewForecast()"
+                               [disabled]="!isInstanceAdmin || disableAddForecastButton">
+                    </dx-button>
+                    <dx-button *ngIf="detailsContainsForecasts"
+                               [disabled]="!isInstanceAdmin || !detailsSomeForecastsItemsSelected"
+                               [text]="'x ' + l('DeleteSelectedForecasts')"
+                               (onClick)="deleteSelectedForecasts()">
+                    </dx-button>
+                    <dx-button *ngIf="searchValue?.length"
+                               class="search-value-btn"
+                               [text]="searchValue"
+                               [visible]="!cashflowService.showAllVisible"
+                               (onClick)="refreshTransactionDetail(false)">
+                    </dx-button>
+                    <dx-button class="showall-btn"
+                               [text]="l('Show all')"
+                               [visible]="cashflowService.showAllVisible"
+                               (onClick)="refreshTransactionDetail(true)"
+                               [disabled]="cashflowService.showAllDisable">
+                    </dx-button>
+                    <dx-button *ngIf="!hasStaticInstance"
+                               class="reclassify-btn"
+                               [text]="l('Reclassify')"
+                               [disabled]="!_cfoService.classifyTransactionsAllowed() || !detailsSomeHistoricalItemsSelected"
+                               (onClick)="reclassifyTransactions()">
+                    </dx-button>
                 </div>
             </div>
 
@@ -82,7 +105,10 @@
                             [allowEditing]="false"
                             [minWidth]="30"
                             [caption]="l('DetailsHeaders_ForecastDate')">
-                    <dxi-validation-rule type="custom" [message]="l('ForecastDateUpdating_validation_message')" [validationCallback]="validateForecastDate"></dxi-validation-rule>
+                    <dxi-validation-rule type="custom"
+                                         [message]="l('ForecastDateUpdating_validation_message')"
+                                         [validationCallback]="validateForecastDate">
+                    </dxi-validation-rule>
                 </dxi-column>
                 <dxi-column dataField="date"
                             dataType="date"
@@ -207,7 +233,7 @@
                             [minWidth]="30"
                             [allowFiltering]="false"
                             cellTemplate="amountTemplate"
-                            caption="{{l('Transactions_Amount')}}"
+                            [caption]="l('Transactions_Amount')"
                             cssClass="tabular">
                 </dxi-column>
                 <dxi-column *ngIf="hasStaticInstance"
@@ -215,7 +241,7 @@
                             alignment="left"
                             [minWidth]="30"
                             [allowFiltering]="false"
-                            caption="{{l('Transactions_BankAccountNumber')}}"
+                            [caption]="l('Transactions_BankAccountNumber')"
                             cssClass="tabular clipboard-holder">
                 </dxi-column>
                 <dxi-column *ngIf="hasStaticInstance"
@@ -225,7 +251,7 @@
                             [minWidth]="30"
                             [allowFiltering]="false"
                             cssClass="clipboard-holder"
-                            caption="{{l('Transactions_Comments')}}">
+                            [caption]="l('Transactions_Comments')">
                 </dxi-column>
 
                 <dxo-load-panel [enabled]="false"></dxo-load-panel>

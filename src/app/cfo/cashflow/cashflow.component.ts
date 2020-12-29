@@ -4732,9 +4732,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.updateRequestFilter(this.dateFilter);
     }
 
-    setBankAccountsFilter(emitFilterChange = false) {
+    setBankAccountsFilter(emitFilterChange: boolean = false) {
         this.bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
-        this.allowChangingForecast = this.bankAccountsService.state.statuses.indexOf(BankAccountStatus.Active) >= 0;
+        this.allowChangingForecast = !this.bankAccountsService.state.statuses.length
+            || this.bankAccountsService.state.statuses.indexOf(BankAccountStatus.Active) >= 0;
     }
 
     discardDiscrepancy(cellObj) {
