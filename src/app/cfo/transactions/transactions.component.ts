@@ -98,6 +98,57 @@ import { RequestHelper } from '../../../shared/helpers/RequestHelper';
     ]
 })
 export class TransactionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
+    public set categoriesShowed(value: boolean) {
+        this.categoriesShowedBefore = this._categoriesShowed;
+        if (this._categoriesShowed = value) {
+            this.filtersService.fixed = false;
+            this.filtersService.disable();
+        }
+    }
+
+    public get isHeaderFilterVisible() {
+        return DataGridService.getGridOption(this.dataGrid, 'filterRow.visible');
+    }
+
+    public get categoriesShowed(): boolean {
+        return !this.isAdvicePeriod && this._categoriesShowed;
+    }
+
+    constructor(injector: Injector,
+        private transactionsServiceProxy: TransactionsServiceProxy,
+        private classificationServiceProxy: ClassificationServiceProxy,
+        private changeDetectionRef: ChangeDetectorRef,
+        private cacheService: CacheService,
+        private lifecycleService: LifecycleSubjectsService,
+        private store$: Store<RootStore.State>,
+        private route: ActivatedRoute,
+        private datePipe: DatePipe,
+        private currencyPipe: CurrencyPipe,
+        private calendarService: CalendarService,
+        public appService: AppService,
+        public cfoPreferencesService: CfoPreferencesService,
+        public filtersService: FiltersService,
+        public dialog: MatDialog,
+        public bankAccountsService: BankAccountsService
+    ) {
+        super(injector);
+        if (filtersService.fixed || this.isAdvicePeriod)
+            this._categoriesShowed = false;
+
+        this.searchColumns = [
+            this.transactionFields.Description,
+            this.transactionFields.CashflowSubCategoryName,
+            this.transactionFields.CashflowCategoryName,
+            this.transactionFields.Descriptor
+        ];
+        this.searchValue = '';
+    }
+
+    get gridHeight() {
+        return window.innerHeight -
+            (this.isFullscreenMode ? 0 : (AppConsts.isMobile ? 160 : 150)) -
+            (this.appService.toolbarIsHidden.value ? 0 : 62) + 'px';
+    }
     @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild('categoriesPanel', { static: false }) categorizationComponent: CategorizationComponent;
@@ -307,21 +358,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     private categoriesShowedBefore = !AppConsts.isMobile;
     private _categoriesShowed = this.categoriesShowedBefore;
-    public set categoriesShowed(value: boolean) {
-        this.categoriesShowedBefore = this._categoriesShowed;
-        if (this._categoriesShowed = value) {
-            this.filtersService.fixed = false;
-            this.filtersService.disable();
-        }
-    }
-
-    public get isHeaderFilterVisible() {
-        return DataGridService.getGridOption(this.dataGrid, 'filterRow.visible');
-    }
-
-    public get categoriesShowed(): boolean {
-        return !this.isAdvicePeriod && this._categoriesShowed;
-    }
     private syncAccounts: any;
     isAdvicePeriod = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.AdvicePeriod;
     private updateAfterActivation: boolean;
@@ -331,6 +367,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     showToggleCompactViewButton: boolean = !this._cfoService.hasStaticInstance;
     toolbarConfig: ToolbarGroupModel[];
     showFilterRow: boolean = this.instanceId && this.isAdvicePeriod;
+    readonly transactionFields: KeysEnum<TransactionDto> = TransactionFields;
+    private fieldsDependencies: FieldDependencies = {
+        cashflowCategoryName: [ this.transactionFields.CashflowCategoryId ],
+        cashflowSubCategoryName: [ this.transactionFields.CashflowSubCategoryId ]
+    };
     amountCustomizer = (value) => {
         return this.currencyPipe.transform(
             value,
@@ -338,41 +379,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.cfoPreferencesService.selectedCurrencySymbol,
             '1.2-2'
         ) || '';
-    }
-    readonly transactionFields: KeysEnum<TransactionDto> = TransactionFields;
-    private fieldsDependencies: FieldDependencies = {
-        cashflowCategoryName: [ this.transactionFields.CashflowCategoryId ],
-        cashflowSubCategoryName: [ this.transactionFields.CashflowSubCategoryId ]
-    }
-
-    constructor(injector: Injector,
-        private transactionsServiceProxy: TransactionsServiceProxy,
-        private classificationServiceProxy: ClassificationServiceProxy,
-        private changeDetectionRef: ChangeDetectorRef,
-        private cacheService: CacheService,
-        private lifecycleService: LifecycleSubjectsService,
-        private store$: Store<RootStore.State>,
-        private route: ActivatedRoute,
-        private datePipe: DatePipe,
-        private currencyPipe: CurrencyPipe,
-        private calendarService: CalendarService,
-        public appService: AppService,
-        public cfoPreferencesService: CfoPreferencesService,
-        public filtersService: FiltersService,
-        public dialog: MatDialog,
-        public bankAccountsService: BankAccountsService
-    ) {
-        super(injector);
-        if (filtersService.fixed || this.isAdvicePeriod)
-            this._categoriesShowed = false;
-
-        this.searchColumns = [
-            this.transactionFields.Description,
-            this.transactionFields.CashflowSubCategoryName,
-            this.transactionFields.CashflowCategoryName,
-            this.transactionFields.Descriptor
-        ];
-        this.searchValue = '';
     }
 
     ngOnInit(): void {
@@ -402,7 +408,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     const orderBy = request.params.$orderby;
-                    request.params.$orderby = orderBy ? orderBy + (orderBy === 'Id desc' ? '' : ',Id desc') : 'Id desc';
+                    request.params.$orderby = orderBy ? orderBy + (orderBy.match(/\b(Id)\b/i) ? '' : ',Id desc') : 'Id desc';
                     request.params.$select = DataGridService.getSelectFields(
                         this.dataGrid,
                         [ this.transactionFields.Id ],
@@ -1106,7 +1112,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 || _.has(x, 'CashflowSubCategoryId')
             );
             this.changeDetectionRef.detectChanges();
-        })
+        });
     }
 
     getODataUrl(uri: string, filter?: Object) {
@@ -1539,12 +1545,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             selectedBankAccountIds: selectedBankAccountIds
         });
         this.bankAccountsService.applyFilter();
-    }
-
-    get gridHeight() {
-        return window.innerHeight -
-            (this.isFullscreenMode ? 0 : (AppConsts.isMobile ? 160 : 150)) -
-            (this.appService.toolbarIsHidden.value ? 0 : 62) + 'px';
     }
 
     calculateTransactionsAmountDisplayValue = (data) => this.amountCustomizer(data['Amount']);
