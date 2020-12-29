@@ -1617,6 +1617,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     item.adjustmentType != AdjustmentType._2
                 ) {
                     this.cashflowService.cashflowData.splice(this.cashflowService.cashflowData.indexOf(item), 1);
+                    this.cashflowService.removeForecastFromCache(item);
                 }
             });
         }
@@ -1775,7 +1776,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             extendedTransaction.initialDate = moment(transactionObj.date);
             extendedTransaction.date.add(extendedTransaction.date.toDate().getTimezoneOffset(), 'minutes');
             if (transactionObj.forecastId) {
-                this.cashflowService.saveForecast(extendedTransaction);
+                this.cashflowService.saveForecastToCache(extendedTransaction);
             }
             let isAccountTransaction = transactionObj.cashflowTypeId === StartedBalance || transactionObj.cashflowTypeId === Reconciliation;
             /** change the second level for started balance and reconciliations for the account id */
@@ -3169,8 +3170,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (!forecastInCashflow.date.isSame(correctedDate)) {
                 this.cashflowService.cashflowData.forEach(item => {
                     if (item.forecastId === forecastInCashflow.forecastId) {
+                        this.cashflowService.removeForecastFromCache(item);
                         item.date = correctedDate;
                         item.initialDate = targetData.date.startDate.utc();
+                        this.cashflowService.saveForecastToCache(item);
                     }
                 });
             }
@@ -3195,7 +3198,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             let categorizationData = this.cashflowService.getCategorizationFromForecastAndTarget(sourceData, forecast['target']);
             const stubForecast = this.cashflowService.createStubTransaction({...data, ...categorizationData});
             this.cashflowService.cashflowData.push(stubForecast);
-            this.cashflowService.saveForecast(stubForecast);
+            this.cashflowService.saveForecastToCache(stubForecast);
         });
     }
 
@@ -3799,13 +3802,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
 
                     if (underscore.contains(forecastIds, item.forecastId)) {
                         this.cashflowService.cashflowData.splice(i, 1);
-                        const forecastKey = this.cashflowService.getItemKey(
-                            item.cashflowTypeId,
-                            item.categoryId,
-                            item.initialDate.clone().startOf('month'),
-                            item.initialDate.clone().endOf('month')
-                        );
-                        this.cashflowService.forecasts[forecastKey] -= item.amount;
+                        this.cashflowService.removeForecastFromCache(item);
                         if (!temp[item.forecastId])
                             temp[item.forecastId] = { 'affectedTransactions': [] };
 
@@ -4061,7 +4058,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         forecastId: res
                     }, savedCellObj.cell.rowPath);
                     this.cashflowService.cashflowData.push(stubForecast);
-                    this.cashflowService.saveForecast(stubForecast);
+                    this.cashflowService.saveForecastToCache(stubForecast);
                     this.getApiDataSource();
                     this.pivotGrid.instance.getDataSource().reload()
                         .then(() => {
@@ -4444,7 +4441,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }));
 
                 this.cashflowService.cashflowData.push(localForecastData);
-                this.cashflowService.saveForecast(localForecastData);
+                this.cashflowService.saveForecastToCache(localForecastData);
                 this.getCellOptionsFromCell.cache = {};
                 this.pivotGrid.instance.getDataSource().reload()
                     .then(() => {
@@ -4652,6 +4649,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (item.forecastId == key) {
                 if (hideFromCashflow) {
                     this.cashflowService.cashflowData.splice(i, 1);
+                    this.cashflowService.removeForecastFromCache(item);
                 }
                 affectedTransactions.push(item);
             } else if (paramNameForUpdateInput == 'date' && moment(oldDataDate).utc().isSame(item.date)) {
@@ -4678,12 +4676,24 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             }
 
             if (paramNameForUpdateInput == 'date') {
+                if (item.forecastId) {
+                    this.cashflowService.removeForecastFromCache(item);
+                }
                 item[paramNameForUpdateInput] = moment(paramValue).utc();
                 item['initialDate'] = moment(paramValue).utc().subtract((<Date>paramValue).getTimezoneOffset(), 'minutes');
+                if (item.forecastId) {
+                    this.cashflowService.saveForecastToCache(item);
+                }
             } else {
+                const updateForecastCache = paramNameForUpdateInput === 'amount' && item.forecastId;
+                if (updateForecastCache) {
+                    this.cashflowService.removeForecastFromCache(item);
+                }
                 item[paramNameForUpdateInput] = paramValue;
+                if (updateForecastCache) {
+                    this.cashflowService.saveForecastToCache(item);
+                }
             }
-
             if (paramNameForUpdateInput == 'transactionDescriptor') {
                 this.cashflowService.addCategorizationLevels(item);
             }
