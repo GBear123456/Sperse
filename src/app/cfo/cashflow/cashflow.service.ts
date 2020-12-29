@@ -926,7 +926,7 @@ export class CashflowService {
     getHighestCategoryParentId(categoryId: number, categoryTree: GetCategoryTreeOutput): number {
         let highestCategoryId = categoryId;
         const category: CategoryDto = categoryTree.categories[categoryId];
-        if (category.parentId) {
+        if (category && category.parentId) {
             highestCategoryId = this.getHighestCategoryParentId(category.parentId, categoryTree);
         }
         return highestCategoryId;
@@ -1424,7 +1424,7 @@ export class CashflowService {
     }
 
     getCurrentValueForStartingBalanceCell(summaryCell) {
-        const cellData = <any>this.getCellData(summaryCell, summaryCell.value(summaryCell.field('row')).slice(2), StartedBalance);
+        const cellData = <any>this.getCellData(summaryCell, (summaryCell.value(summaryCell.field('row')) || '').slice(2), StartedBalance);
         return this.calculateCellValue(cellData, this.zeroAdjustmentsList, true);
     }
 
@@ -1525,7 +1525,7 @@ export class CashflowService {
     getCellValue(summaryCell, target, isCalculatedValue = underscore.contains([StartedBalance, Reconciliation], target)) {
 
         let targetPeriodAccountCachedValue;
-        const accountId = summaryCell.value(summaryCell.field('row'), true).slice(2);
+        const accountId = (summaryCell.value(summaryCell.field('row'), true) || '').slice(2);
         const targetPeriodCell = summaryCell.parent('row') ? summaryCell.parent('row').slice(0, CategorizationPrefixes.CashflowType + target) : null;
         const targetPeriodAccountCell = targetPeriodCell ? targetPeriodCell.child('row', CategorizationPrefixes.AccountName + accountId) : null;
 
@@ -2257,16 +2257,32 @@ export class CashflowService {
         return this.addCategorizationLevels({ ...stubTransaction, ...stubObj });
     }
 
-    saveForecast(forecast: TransactionStatsDtoExtended) {
-        const cashflowTypeId: string = this.getCashFlowTypeByCategory(forecast.categoryId, this.categoryTree)
-            || (forecast.amount >= 0 ? 'I' : 'E');
-        const forecastKey = this.getItemKey(
-            cashflowTypeId,
-            forecast.categoryId,
-            forecast.initialDate.clone().startOf('month'),
-            forecast.initialDate.clone().endOf('month')
-        );
-        this.forecasts[forecastKey] = (this.forecasts[forecastKey] || 0) + forecast.amount;
+    saveForecastToCache(forecast: TransactionStatsDtoExtended) {
+        if (forecast.categoryId) {
+            const cashflowTypeId: string = this.getCashFlowTypeByCategory(forecast.categoryId, this.categoryTree)
+                || (forecast.amount >= 0 ? 'I' : 'E');
+            const forecastKey = this.getItemKey(
+                cashflowTypeId,
+                forecast.categoryId,
+                forecast.initialDate.clone().startOf('month'),
+                forecast.initialDate.clone().endOf('month')
+            );
+            this.forecasts[forecastKey] = (this.forecasts[forecastKey] || 0) + forecast.amount;
+        }
+    }
+
+    removeForecastFromCache(forecast: TransactionStatsDtoExtended) {
+        if (forecast.categoryId) {
+            const forecastKey = this.getItemKey(
+                forecast.cashflowTypeId,
+                forecast.categoryId,
+                forecast.initialDate.clone().startOf('month'),
+                forecast.initialDate.clone().endOf('month')
+            );
+            if (this.forecasts[forecastKey]) {
+                this.forecasts[forecastKey] -= forecast.amount;
+            }
+        }
     }
 
     saveBudgets(budgets: BudgetDto[]) {
@@ -2292,5 +2308,4 @@ export class CashflowService {
     getCellForecastsValue(cashflowTypeId: string, categoryId: number, startDate: moment.Moment, endDate: moment.Moment): number {
         return this.forecasts[this.getItemKey(cashflowTypeId, categoryId, startDate, endDate)];
     }
-
 }
