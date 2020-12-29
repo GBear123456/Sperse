@@ -1424,7 +1424,7 @@ export class CashflowService {
     }
 
     getCurrentValueForStartingBalanceCell(summaryCell) {
-        const cellData = <any>this.getCellData(summaryCell, summaryCell.value(summaryCell.field('row')).slice(2), StartedBalance);
+        const cellData = <any>this.getCellData(summaryCell, (summaryCell.value(summaryCell.field('row')) || '').slice(2), StartedBalance);
         return this.calculateCellValue(cellData, this.zeroAdjustmentsList, true);
     }
 
@@ -1525,7 +1525,7 @@ export class CashflowService {
     getCellValue(summaryCell, target, isCalculatedValue = underscore.contains([StartedBalance, Reconciliation], target)) {
 
         let targetPeriodAccountCachedValue;
-        const accountId = summaryCell.value(summaryCell.field('row'), true).slice(2);
+        const accountId = (summaryCell.value(summaryCell.field('row'), true) || '').slice(2);
         const targetPeriodCell = summaryCell.parent('row') ? summaryCell.parent('row').slice(0, CategorizationPrefixes.CashflowType + target) : null;
         const targetPeriodAccountCell = targetPeriodCell ? targetPeriodCell.child('row', CategorizationPrefixes.AccountName + accountId) : null;
 
@@ -2308,5 +2308,4 @@ export class CashflowService {
     getCellForecastsValue(cashflowTypeId: string, categoryId: number, startDate: moment.Moment, endDate: moment.Moment): number {
         return this.forecasts[this.getItemKey(cashflowTypeId, categoryId, startDate, endDate)];
     }
-
 }

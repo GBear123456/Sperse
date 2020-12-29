@@ -955,8 +955,8 @@ describe('CashflowService', () => {
             accountingTypes: {
                 2: new AccountingTypeDto({
                     isSystem: false,
-                    name: "Income",
-                    typeId: "I"
+                    name: 'Income',
+                    typeId: 'I'
                 })
             },
             categories: {
@@ -964,7 +964,7 @@ describe('CashflowService', () => {
                     accountingTypeId: 2,
                     coAID: null,
                     isActive: true,
-                    name: "Design income",
+                    name: 'Design income',
                     parentId: null,
                     reportingCategoryId: null
                 })
@@ -990,7 +990,7 @@ describe('CashflowService', () => {
                     accountingTypeId: 2,
                     coAID: null,
                     isActive: true,
-                    name: "Design income",
+                    name: 'Design income',
                     parentId: null,
                     reportingCategoryId: null
                 })
@@ -1004,5 +1004,5 @@ describe('CashflowService', () => {
     it('getCategoryValueByPrefix should return the deepest category in path', inject([ CashflowService ], (service: CashflowService) => {
         const categoryPath = [ 'CTE', 'AT5906', 'CA53944', 'CA53953' ];
         expect(service.getCategoryValueByPrefix(categoryPath, CategorizationPrefixes.Category)).toEqual('53953');
-    }))
+    }));
 });
