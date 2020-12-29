@@ -2621,9 +2621,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         const cellValueWithoutForecasts: number = e.cell.value - (cellForecastsValue || 0);
                         const dot: HTMLElement = this.document.createElement('div');
                         dot.className = 'budget-info ' + (
-                            (cellValueWithoutForecasts > 0 && cellValueWithoutForecasts >= cellBudget)
-                            || (cellValueWithoutForecasts < 0 && Math.abs(cellValueWithoutForecasts) <= Math.abs(cellBudget))
-                                ? 'within-budget' : 'out-of-budget'
+                            cellValueWithoutForecasts - cellBudget >= 0
+                                ? 'within-budget'
+                                : 'out-of-budget'
                         );
                         dot.setAttribute('data-budget', cellBudget.toString());
                         dot.setAttribute('data-value', cellValueWithoutForecasts.toString());
