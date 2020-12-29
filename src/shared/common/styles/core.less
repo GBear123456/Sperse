@@ -143,6 +143,37 @@
     z-index: 10000000000;
 }
 
+.tootipWrapper.budget-tooltip .dx-popup-content {
+    min-width: 125px;
+    display: table;
+    & > div {
+        display: table-row;
+        span {
+            display: table-cell;
+            padding: 0 5px;
+            text-align: right;
+            &:first-child {
+                text-align: left;
+            }
+            &.percent {
+                font-weight: 700;
+            }
+            &:nth-child(2),
+            &.percent {
+                font-family: Kameron;
+                font-size: 13px;
+            }
+        }
+        &:nth-child(2) span {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+        }
+        &:last-child span {
+            padding-top: 5px;
+        }
+    }
+}
+
 /* Portlet */
 .portlet {
     box-shadow: none !important;
