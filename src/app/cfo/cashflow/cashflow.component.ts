@@ -2978,7 +2978,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
-                    ${budget != 0? `<span class="percent">100.00%</span>` : ''}
+                    ${budget != 0 ? `<span class="percent">100.00%</span>` : ''}
                 </div>
                 <div>
                     <span>${this.l('Variance')}:</span>
