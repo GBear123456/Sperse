@@ -153,6 +153,7 @@ export class AppPreBootstrap {
             requestHeaders['.AspNetCore.Culture'] = 'c=' + cookieLangValue + '|uic=' + cookieLangValue;
         }
 
+        abp.auth.clearToken();
         return abp.ajax({
             url: AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/LinkedAccountAuthenticate?switchAccountToken=' + switchAccountToken,
             method: 'POST',
