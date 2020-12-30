@@ -4371,7 +4371,9 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         data.descriptor = this.statsDetailFilter.transactionDescriptor;
 
         let currentDate = this.cashflowService.getUtcCurrentDate();
-        data.forecastDate = this.statsDetailFilter.startDate.isSameOrAfter(currentDate) ? moment(this.statsDetailFilter.startDate).utc() : currentDate;
+        data.forecastDate = this.statsDetailFilter.startDate.isSameOrAfter(currentDate)
+            ? moment(this.statsDetailFilter.startDate).utc()
+            : currentDate;
         data.currencyId = this.cfoPreferencesService.selectedCurrencyId;
 
         let activeBankAccountsIds = this.cashflowService.getActiveAccountIds(this.cashflowService.bankAccounts, this.statsDetailFilter.accountIds);
