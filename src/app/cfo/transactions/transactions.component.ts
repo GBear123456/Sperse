@@ -1093,9 +1093,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 if (filter.caption && filter.caption.toLowerCase() === 'account')
                     this.bankAccountsService.applyFilter();
 
-                let filterMethod = FiltersService['filterBy' + this.capitalize(filter.caption)];
-                if (filterMethod)
-                    return filterMethod.call(this, filter);
+                if (!filter.options || !filter.options.method) {
+                    let filterMethod = FiltersService['filterBy' + this.capitalize(filter.caption)];
+                    if (filterMethod)
+                        return filterMethod.call(this, filter);
+                }
             }
         );
 
