@@ -99,7 +99,7 @@
                 <dxi-column *ngIf="!hasStaticInstance" dataField="forecastDate"
                             dataType="date"
                             [cssClass]="'forecastDate ' + tabularFontName"
-                            cellTemplate="dateCell"
+                            cellTemplate="dateCellTemplate"
                             headerCellTemplate="twoRowsHeaderCellTemplate"
                             alignment="left"
                             [allowEditing]="false"
@@ -113,7 +113,7 @@
                 <dxi-column dataField="date"
                             dataType="date"
                             [cssClass]="tabularFontName"
-                            cellTemplate="dateCell"
+                            cellTemplate="dateCellTemplate"
                             headerCellTemplate="twoRowsHeaderCellTemplate"
                             alignment="left"
                             [caption]="l('DetailsHeaders_ActualDate')"
@@ -126,7 +126,7 @@
                             alignment="left"
                             [minWidth]="30"
                             [allowFiltering]="false"
-                            caption="{{l('BusinessEntities')}}"
+                            [caption]="l('BusinessEntities')"
                             [cssClass]="tabularFontName + ' clipboard-holder'">
                 </dxi-column>
                 <dxi-column *ngIf="hasStaticInstance"
@@ -136,7 +136,7 @@
                             [minWidth]="30"
                             [allowFiltering]="false"
                             cellTemplate="CategoryNameTemplate"
-                            caption="{{l('Transactions_CashflowCategoryName')}}"
+                            [caption]="l('Transactions_CashflowCategoryName')"
                             cssClass="category">
                 </dxi-column>
                 <dxi-column *ngIf="hasStaticInstance"
@@ -146,7 +146,7 @@
                             [minWidth]="30"
                             [allowFiltering]="false"
                             cssClass="clipboard-holder"
-                            caption="{{l('Transactions_Vendor')}}">
+                            [caption]="l('Transactions_Vendor')">
                 </dxi-column>
                 <dxi-column *ngIf="!hasStaticInstance"
                             dataField="status"
@@ -257,7 +257,7 @@
                 <dxo-load-panel [enabled]="false"></dxo-load-panel>
                 <dxo-scrolling mode="virtual"></dxo-scrolling>
 
-                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">{{cellData.value | date: 'MM/dd/yyyy'}}</div>
+                <div *dxTemplate="let cellData of 'dateCellTemplate'" class="clipboard-holder">{{cellData.value | date: 'MM/dd/yyyy'}}</div>
                 <div *dxTemplate="let cellData of 'typeCell'">{{cashflowService.cashflowTypes[cellData.value]}}</div>
                 <div *dxTemplate="let cellData of 'descriptionTemplate'">
                     <span id="transactionDetailTarget-{{cellData.data.id}}" class="clipboard-holder">{{cellData.text}}</span>
