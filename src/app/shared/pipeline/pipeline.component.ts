@@ -44,7 +44,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { FiltersService } from '@shared/filters/filters.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { DxoTooltipComponent } from '@root/node_modules/devextreme-angular/ui/nested/tooltip';
+import { DxoTooltipComponent } from 'devextreme-angular/ui/nested/tooltip';
 import { Stage } from '@app/shared/pipeline/stage.model';
 import { StageWidth } from '@app/shared/pipeline/stage-width.enum';
 import { InstanceModel } from '@shared/cfo/instance.model';

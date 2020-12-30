@@ -13,15 +13,15 @@ import {
     DxResizableComponent, DxScrollViewComponent, DxSelectBoxComponent,
     DxTabsComponent, DxTagBoxComponent, DxTemplateDirective, DxToolbarComponent, DxTooltipComponent
 } from 'devextreme-angular';
-import { DxoEditingComponent } from '@root/node_modules/devextreme-angular/ui/nested/editing';
-import { DxoHeaderFilterComponent } from '@root/node_modules/devextreme-angular/ui/nested/header-filter';
-import { DxoSelectionComponent } from '@root/node_modules/devextreme-angular/ui/nested/selection';
-import { DxoStateStoringComponent } from '@root/node_modules/devextreme-angular/ui/nested/state-storing';
-import { DxiValidationRuleComponent } from '@root/node_modules/devextreme-angular/ui/nested/validation-rule-dxi';
-import { DxiColumnComponent } from '@root/node_modules/devextreme-angular/ui/nested/column-dxi';
-import { DxoLoadPanelComponent } from '@root/node_modules/devextreme-angular/ui/nested/load-panel';
+import { DxoEditingComponent } from 'devextreme-angular/ui/nested/editing';
+import { DxoHeaderFilterComponent } from 'devextreme-angular/ui/nested/header-filter';
+import { DxoSelectionComponent } from 'devextreme-angular/ui/nested/selection';
+import { DxoStateStoringComponent } from 'devextreme-angular/ui/nested/state-storing';
+import { DxiValidationRuleComponent } from 'devextreme-angular/ui/nested/validation-rule-dxi';
+import { DxiColumnComponent } from 'devextreme-angular/ui/nested/column-dxi';
+import { DxoLoadPanelComponent } from 'devextreme-angular/ui/nested/load-panel';
 import { NoDataComponent } from '@shared/common/widgets/no-data/no-data.component';
-import { DxoScrollingComponent } from '@root/node_modules/devextreme-angular/ui/nested/scrolling';
+import { DxoScrollingComponent } from 'devextreme-angular/ui/nested/scrolling';
 import { CalculatorComponent } from '@app/cfo/shared/calculator-widget/calculator-widget.component';
 import { RoundProgressComponent } from 'angular-svg-round-progressbar';
 import { RouterModule } from '@angular/router';

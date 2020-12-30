@@ -6,7 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import moment from 'moment-timezone';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
-import { DxTextBoxComponent } from '@root/node_modules/devextreme-angular';
+import { DxTextBoxComponent } from 'devextreme-angular';
 import { forkJoin, Observable } from 'rxjs';
 import { first, switchMap, tap, map, finalize } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';

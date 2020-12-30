@@ -2,7 +2,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 /** Third party imports */
-import DataSource from '@root/node_modules/devextreme/data/data_source';
+import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 
 /** Application imports */
