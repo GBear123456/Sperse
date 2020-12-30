@@ -1,5 +1,5 @@
-import { Component, OnInit, Injector } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { PackageServiceProxy, PackageDtoListResultDto } from '@shared/service-proxies/service-proxies';
 import { PackageIdService } from './package-id.service';
 
@@ -9,22 +9,20 @@ import { PackageIdService } from './package-id.service';
     styleUrls: ['./packages.component.less'],
     providers: [PackageServiceProxy]
 })
-export class PackagesComponent extends AppComponentBase implements OnInit {
+export class PackagesComponent implements OnInit {
     packageList: PackageDtoListResultDto;
     constructor(
-        injector: Injector,
         private data: PackageIdService,
-        private _packageListService: PackageServiceProxy
-    ) {
-        super(injector);
-    }
+        private packageListService: PackageServiceProxy,
+        private router: Router
+    ) {}
 
     ngOnInit() {
         this.getPackageList();
     }
 
     getPackageList(): void {
-        this._packageListService
+        this.packageListService
             .getAll()
             .subscribe(result => {
                 this.packageList = result;
@@ -33,6 +31,6 @@ export class PackagesComponent extends AppComponentBase implements OnInit {
 
     choosePackage(packageVal: number) {
         this.data.packageId = packageVal;
-        this._router.navigate(['personal-finance/signup']);
+        this.router.navigate(['personal-finance/signup']);
     }
 }

@@ -33,6 +33,7 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
 import { CommonModule as BankCodeCommonModule} from '@root/bank-code/shared/common/common.module';
 import { CreateEntityModule } from '@shared/common/create-entity-dialog/create-entity.module';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
+import { DateTimeModule } from '@shared/common/pipes/datetime/datetime.module';
 
 @NgModule({
     imports: [
@@ -52,7 +53,8 @@ import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog
         NgCircleProgressModule,
         InplaceEditModule,
         NoDataModule,
-        CreateEntityModule
+        CreateEntityModule,
+        DateTimeModule
     ],
     declarations: [
         CodeBreakerAiComponent,

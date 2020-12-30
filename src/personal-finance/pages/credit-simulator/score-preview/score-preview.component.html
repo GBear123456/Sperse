@@ -1,5 +1,5 @@
 <div class="sub-title">
-    <h2>{{l("yourScoreSimulation")}}</h2>
+    <h2>{{ls.l("yourScoreSimulation")}}</h2>
 </div>
 <div class="score-preview container-fluid">
     <div class="row">
@@ -27,18 +27,18 @@
                 </span>
                 <span class="max-score">850</span>
                 <ng-container *ngIf="actualCreditScore.initialScore <= 549">
-                    <span class="text-score">{{l("poor")}}</span>
+                    <span class="text-score">{{ls.l("poor")}}</span>
                 </ng-container>
                 <ng-container *ngIf="actualCreditScore.initialScore >= 550 && actualCreditScore.initialScore <= 649">
-                    <span class="text-score">{{l("fair")}}</span>
+                    <span class="text-score">{{ls.l("fair")}}</span>
                 </ng-container>
                 <ng-container *ngIf="actualCreditScore.initialScore >= 650 && actualCreditScore.initialScore <= 749">
-                    <span class="text-score">{{l("good")}}</span>
+                    <span class="text-score">{{ls.l("good")}}</span>
                 </ng-container>
                 <ng-container *ngIf="actualCreditScore.initialScore >= 750">
-                    <span class="text-score">{{l("excellent")}}</span>
+                    <span class="text-score">{{ls.l("excellent")}}</span>
                 </ng-container>
-                <span class="text-label">{{l("yourCurrentScore")}}</span>
+                <span class="text-label">{{ls.l("yourCurrentScore")}}</span>
             </div>
         </div>
         <div class="col-md-2 text-center separator">
@@ -72,22 +72,22 @@
                 <span class="max-score">850</span>
                 <span class="text-score">
                     <ng-container *ngIf="!calculatedCreditScore">
-                        {{l("unknown")}}
+                        {{ls.l("unknown")}}
                     </ng-container>
                     <ng-container *ngIf="calculatedCreditScore <= 549">
-                        {{l("poor")}}
+                        {{ls.l("poor")}}
                     </ng-container>
                     <ng-container *ngIf="calculatedCreditScore >= 550 && calculatedCreditScore <= 649">
-                        {{l("fair")}}
+                        {{ls.l("fair")}}
                     </ng-container>
                     <ng-container *ngIf="calculatedCreditScore >= 650 && calculatedCreditScore <= 749">
-                        {{l("good")}}
+                        {{ls.l("good")}}
                     </ng-container>
                     <ng-container *ngIf="calculatedCreditScore >= 750">
-                        {{l("excellent")}}
+                        {{ls.l("excellent")}}
                     </ng-container>
                 </span>
-                <span class="text-label">{{l("yourEstimatedScore")}} <img src="assets/images/credit-report/rank-info-icon.svg" alt="info" width="16" height="16" class="tooltip-img"></span>
+                <span class="text-label">{{ls.l("yourEstimatedScore")}} <img src="assets/images/credit-report/rank-info-icon.svg" alt="info" width="16" height="16" class="tooltip-img"></span>
             </div>
 
         </div>

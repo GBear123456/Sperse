@@ -12,7 +12,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { ClipboardService } from 'ngx-clipboard';
 import { NotifyService } from '@abp/notify/notify.service';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { DateTimePipe } from '@shared/common/pipes/datetime.pipe.ts';
+import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe.ts';
 import { on } from 'devextreme/events';
 
 /** Application imports */

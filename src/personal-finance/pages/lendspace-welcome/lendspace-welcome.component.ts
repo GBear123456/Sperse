@@ -1,13 +1,14 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { AppComponentBase } from '@shared/common/app-component-base';
+import { Component } from '@angular/core';
 import { AppFeatures } from '@shared/AppFeatures';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
   selector: 'app-lendspace-welcome',
   templateUrl: './lendspace-welcome.component.html',
   styleUrls: ['./lendspace-welcome.component.less']
 })
-export class LendspaceWelcomeComponent extends AppComponentBase implements OnInit {
+export class LendspaceWelcomeComponent {
     categoryItems = [
         {
             imgName: 'personal-loans',
@@ -39,15 +40,13 @@ export class LendspaceWelcomeComponent extends AppComponentBase implements OnIni
             title: 'Personal Finances',
             text: 'Track your combined',
             router: '/personal-finance/my-finances',
-            hidden: !this.feature.isEnabled(AppFeatures.CFOPartner),
+            hidden: !this.featureCheckerService.isEnabled(AppFeatures.CFOPartner),
         }
     ];
 
-    constructor(injector: Injector) {
-        super(injector);
-    }
-
-    ngOnInit() {
-    }
+    constructor(
+        private featureCheckerService: FeatureCheckerService,
+        public ls: AppLocalizationService
+    ) {}
 
 }

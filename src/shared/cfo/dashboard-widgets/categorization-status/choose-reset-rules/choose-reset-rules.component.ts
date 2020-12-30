@@ -1,24 +1,21 @@
-import {AppComponentBase} from '@shared/common/app-component-base';
-import {Component, Inject, Injector} from '@angular/core';
-import {MatDialogRef, MAT_DIALOG_DATA} from '@angular/material/dialog';
-import {AppConsts} from '@shared/AppConsts';
-import {ResetClassificationDto} from '@shared/service-proxies/service-proxies';
+import { Component, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { ResetClassificationDto } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-choose-reset-rules',
     templateUrl: './choose-reset-rules.component.html',
     styleUrls: ['./choose-reset-rules.component.less']
 })
-export class ChooseResetRulesComponent extends AppComponentBase {
+export class ChooseResetRulesComponent {
     resetRules = new ResetClassificationDto();
 
     constructor(
-        injector: Injector,
         public dialogRef: MatDialogRef<ChooseResetRulesComponent>,
+        public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        super(injector);
-
         this.resetRules.unclassify = true;
     }
 
