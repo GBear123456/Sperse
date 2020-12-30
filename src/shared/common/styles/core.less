@@ -145,40 +145,42 @@
 
 .tootipWrapper.budget-tooltip .dx-popup-content {
     min-width: 125px;
-    display: table;
-    & > div {
-        display: table-row;
-        & > span {
-            display: table-cell;
-            padding: 0 5px;
-            text-align: right;
-            .asterisk {
-                font-weight: 500;
+    .table-content {
+        display: table;
+        & > div {
+            display: table-row;
+            & > span {
+                display: table-cell;
+                padding: 0 5px;
+                text-align: right;
+                .asterisk {
+                    font-weight: 500;
+                }
+                &:first-child {
+                    text-align: left;
+                }
+                &.percent {
+                    font-weight: 700;
+                }
+                &:nth-child(2),
+                &.percent {
+                    font-family: Kameron;
+                    font-size: 13px;
+                }
             }
-            &:first-child {
-                text-align: left;
+            &:nth-child(2) span {
+                border-bottom: 1px solid #ddd;
+                padding-bottom: 5px;
             }
-            &.percent {
-                font-weight: 700;
-            }
-            &:nth-child(2),
-            &.percent {
-                font-family: Kameron;
-                font-size: 13px;
+            &:last-child span {
+                padding-top: 5px;
             }
         }
-        &:nth-child(2) span {
-            border-bottom: 1px solid #ddd;
-            padding-bottom: 5px;
-        }
-        &:last-child span {
-            padding-top: 5px;
-        }
-        &.asterisk-description {
-            font-style: italic;
-            padding: 0 5px;
-            display: block;
-        }
+    }
+    .asterisk-description {
+        font-style: italic;
+        padding: 0 5px;
+        display: block;
     }
 }
 

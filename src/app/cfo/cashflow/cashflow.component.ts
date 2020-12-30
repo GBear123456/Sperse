@@ -2955,32 +2955,34 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 }, 0);
             this.showTooltip(e.target,
                 `
-                <div>
-                    <span>${this.l('Actual')}${ forecastsAmount ? '<span class="asterisk">*</span>' : '' }:</span>
-                    <span>${this.currencyPipe.transform(
+                <div class="table-content">
+                    <div>
+                        <span>${this.l('Actual')}${ forecastsAmount ? '<span class="asterisk"> *</span>' : '' }:</span>
+                        <span>${this.currencyPipe.transform(
                         value,
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
-                    ${budget != 0 ? `<span class="percent">${this.percentPipe.transform(value / budget, '1.2-2')}</span>` : ''}
-                 </div>
-                <div>
-                    <span>${this.l('Budget')}:</span>
-                    <span>${this.currencyPipe.transform(
+                        ${budget != 0 ? `<span class="percent">${this.percentPipe.transform(value / budget, '1.2-2')}</span>` : ''}
+                     </div>
+                    <div>
+                        <span>${this.l('Budget')}:</span>
+                        <span>${this.currencyPipe.transform(
                         budget,
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
-                    ${budget != 0 ? `<span class="percent">100.00%</span>` : ''}
-                </div>
-                <div>
-                    <span>${this.l('Variance')}:</span>
-                    <span>${this.currencyPipe.transform(variance,
+                        ${budget != 0 ? `<span class="percent">100.00%</span>` : ''}
+                    </div>
+                    <div>
+                        <span>${this.l('Variance')}:</span>
+                        <span>${this.currencyPipe.transform(variance,
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
-                    ${budget != 0 ? `<span class="percent">${this.percentPipe.transform(variance / budget, '1.2-2')}</span>` : ''}
-                </div>
+                        ${budget != 0 ? `<span class="percent">${this.percentPipe.transform(variance / budget, '1.2-2')}</span>` : ''}
+                    </div>
+                </div>              
                 ${ forecastsAmount
                     ? `<div class="asterisk-description">* - including forecasts (${this.currencyPipe.transform(
                         forecastsAmount,
