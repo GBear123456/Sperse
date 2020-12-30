@@ -82,7 +82,7 @@ import { TransactionDto } from '@app/cfo/transactions/transaction-dto.interface'
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { TransactionFields } from '@app/cfo/transactions/transaction-fields.enum';
 import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
-import { RequestHelper } from '../../../shared/helpers/RequestHelper';
+import { RequestHelper } from '@shared/helpers/RequestHelper';
 
 @Component({
     templateUrl: './transactions.component.html',
@@ -165,7 +165,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private transactionDetailDialogRef: MatDialogRef<TransactionDetailInfoComponent>;
     private transactionId$: Subject<number> = new Subject<number>();
 
-    dataGridStateTimeout: any;
     filtersInitialData: FiltersInitialData;
     counterpartiesFilter: FilterModel;
     counterparties$: Observable<CounterpartyDto[]> = this.transactionsServiceProxy.getCounterparties(this.instanceType, this.instanceId);
@@ -185,7 +184,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private readonly countDataSourceURI = 'Transaction/$count';
     private readonly totalDataSourceURI = 'TransactionTotal';
     private readonly reportSourceURI = 'TransactionReport';
-    private readonly cacheKey = this.getCacheKey('dataGridState', this.dataSourceURI);
     private filters: FilterModel[];
     private rootComponent: any;
     private cashFlowCategoryFilter = [];
@@ -1317,34 +1315,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     }
 
-    storeGridState(instance) {
-        clearTimeout(this.dataGridStateTimeout);
-        this.dataGridStateTimeout = setTimeout(() => {
-            instance = instance || this.dataGrid && this.dataGrid.instance;
-            if (instance)
-                this.cacheService.set(this.cacheKey, instance.state());
-        }, 500);
-    }
-
-    applyGridState(instance) {
-        instance = instance || this.dataGrid && this.dataGrid.instance;
-        if (instance) {
-            let state = this.cacheService.get(this.cacheKey);
-            if (state) {
-                instance.state(state);
-                state.columns.forEach((column) =>
-                    instance.columnOption(column.dataField, 'visible', column.visible)
-                );
-            }
-        }
-    }
-
-    onInitialized(event) {
-        this.applyGridState(event.component);
-    }
-
     onContentReady(event) {
-        this.storeGridState(event.component);
         this.setGridDataLoaded();
         this.onSelectionChanged(event, true);
         event.component.updateDimensions();

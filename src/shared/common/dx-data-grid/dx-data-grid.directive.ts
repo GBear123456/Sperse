@@ -1,10 +1,15 @@
 /** Core imports */
-import { Directive, OnInit, OnDestroy, Renderer2 } from '@angular/core';
+import {
+    Directive,
+    OnInit,
+    OnDestroy,
+    Renderer2,
+    ViewContainerRef
+} from '@angular/core';
 
 /** Third party imports */
 import { AppConsts } from '@shared/AppConsts';
 import { ClipboardService } from 'ngx-clipboard';
-import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from '@abp/notify/notify.service';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DateTimePipe } from '@shared/common/pipes/datetime.pipe.ts';
@@ -13,6 +18,7 @@ import { on } from 'devextreme/events';
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 
 @Directive({
     selector: 'dx-data-grid'
@@ -20,7 +26,6 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 export class DxDataGridDirective implements OnInit, OnDestroy {
     private clipboardIcon;
     private subscriptions = [];
-    private timezone = DateHelper.getUserTimezone();
     private copyToClipboard = (event) => {
         this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
         this.notifyService.info(this.ls.l('SavedToClipboard'));
@@ -36,7 +41,9 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
         private ls: AppLocalizationService,
         private notifyService: NotifyService,
         private component: DxDataGridComponent,
-        private clipboardService: ClipboardService
+        private clipboardService: ClipboardService,
+        private cacheHelper: CacheHelper,
+        private viewContainerRef: ViewContainerRef
     ) {
         this.clipboardIcon = this.renderer.createElement('i');
         this.clipboardIcon.addEventListener('click', this.copyToClipboard, true);
@@ -44,6 +51,12 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.component.stateStoring.enabled = true;
+        this.component.stateStoring.storageKey =
+            this.cacheHelper.getCacheKey(
+                this.viewContainerRef['_data'].componentView.parent.component.constructor.name,
+                'DataGridState'
+            );
         this.subscriptions.push(
             this.component.onInitialized.subscribe(event => {
                 setTimeout(() =>
