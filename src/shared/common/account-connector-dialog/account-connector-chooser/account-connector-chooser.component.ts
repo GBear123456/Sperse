@@ -1,16 +1,15 @@
 import {
-    Component,
     ChangeDetectionStrategy,
-    Output,
+    Component,
     EventEmitter,
     Input,
-    OnInit
+    OnInit,
+    Output
 } from '@angular/core';
 import { AccountConnector } from '@shared/common/account-connector-dialog/models/account-connector.model';
 import { AccountConnectors } from '@shared/AppEnums';
 import { MatDialogRef } from '@angular/material/dialog';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { environment } from '@root/environments/environment';
 
 @Component({
     selector: 'account-connector-chooser',
@@ -31,22 +30,24 @@ export class AccountConnectorChooserComponent implements OnInit {
     ngOnInit() {
         this.connectors = [
             {
-                name: AccountConnectors.Plaid,
+                getName: function() { return this.checked ? AccountConnectors.SaltEdge : AccountConnectors.Plaid },
                 iconName: 'plaid-connector',
                 title: this.ls.l('PlaidConnectorTitle'),
                 description: this.ls.l('PlaidConnectorDescription'),
-                disabled: false
+                disabled: false,
+                switcher: true,
+                checked: false
                 // disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Plaid))
             },
             {
-                name: AccountConnectors.QuickBook,
+                getName: () => AccountConnectors.QuickBook,
                 iconName: 'quick-book-connector',
                 title: this.ls.l('QuickBookConnectorTitle'),
                 description: this.ls.l('QuickBookConnectorDescription'),
                 disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.QuickBook))
             },
             {
-                name: AccountConnectors.XeroOAuth2,
+                getName: () => AccountConnectors.XeroOAuth2,
                 iconName: 'xero-connector',
                 title: this.ls.l('XeroConnectorTitle'),
                 description: this.ls.l('XeroConnectorDescription'),
@@ -57,7 +58,7 @@ export class AccountConnectorChooserComponent implements OnInit {
         this.selectConnector(this.connectors.find((connector: AccountConnector) => !connector.disabled));
     }
 
-    selectConnector(connector: AccountConnector, next = false) {
+    selectConnector(connector: AccountConnector, next: boolean = false) {
         if (!connector.disabled) {
             this.selectedConnector = connector;
             if (next) {
@@ -68,7 +69,7 @@ export class AccountConnectorChooserComponent implements OnInit {
 
     next() {
         if (this.selectedConnector) {
-            this.onConnectorChosen.emit(this.selectedConnector.name);
+            this.onConnectorChosen.emit(this.selectedConnector.getName());
         }
     }
 

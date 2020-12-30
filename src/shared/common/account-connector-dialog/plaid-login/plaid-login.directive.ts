@@ -9,6 +9,7 @@ import { first, filter, switchMap } from 'rxjs/operators';
 import { SyncTypeIds } from '@shared/AppEnums';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
+import { GetConnectionInfoOutput, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
 import { SyncAccountServiceProxy, CreateSyncAccountInput } from '@shared/service-proxies/service-proxies';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
@@ -22,6 +23,7 @@ export class PlaidLoginDirective {
 
     constructor(
         private cfoService: CFOService,
+        private syncService: SyncServiceProxy,
         private syncAccount: SyncAccountServiceProxy,
         private syncProgressService: SynchProgressService,
         private leftMenuService: LeftMenuService,
@@ -38,14 +40,14 @@ export class PlaidLoginDirective {
         this.cfoService.statusActive$.pipe(
             filter(Boolean),
             first(),
-            switchMap(() => this.syncAccount.getPlaidConfig(this.cfoService.instanceType, this.cfoService.instanceId))
-        ).subscribe(res => {
+            switchMap(() => this.syncService.getConnectionInfo(this.cfoService.instanceType, this.cfoService.instanceId, SyncTypeIds.Plaid))
+        ).subscribe((res: GetConnectionInfoOutput) => {
             let handler = window['Plaid'].create({
                 clientName: res.clientName,
-                env: res.evn,
-                key: res.key,
-                product: res.product,
-                webhook: res.webhook,
+                env: res.environment,
+                key: res.publicKey,
+                product: res.scope,
+                webhook: res.webhookUrl,
                 linkCustomizationName: 'app',
                 onExit: () => {
                     this.onClose.emit();
@@ -56,7 +58,8 @@ export class PlaidLoginDirective {
                     this.syncAccount.create(this.cfoService.instanceType, this.cfoService.instanceId, new CreateSyncAccountInput({
                         isSyncBankAccountsEnabled: true,
                         typeId: SyncTypeIds.Plaid,
-                        publicToken: public_token
+                        publicToken: public_token,
+                        syncAccountRef: undefined
                     })).subscribe(() => {
                         this.onComplete.emit();
                         this.syncProgressService.runSynchProgress();
