@@ -148,10 +148,13 @@
     display: table;
     & > div {
         display: table-row;
-        span {
+        & > span {
             display: table-cell;
             padding: 0 5px;
             text-align: right;
+            .asterisk {
+                font-weight: 500;
+            }
             &:first-child {
                 text-align: left;
             }
@@ -170,6 +173,11 @@
         }
         &:last-child span {
             padding-top: 5px;
+        }
+        &.asterisk-description {
+            font-style: italic;
+            padding: 0 5px;
+            display: block;
         }
     }
 }
