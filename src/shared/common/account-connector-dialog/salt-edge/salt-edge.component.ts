@@ -1,3 +1,4 @@
+/** Core imports */
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
@@ -6,8 +7,13 @@ import {
     OnInit,
     Output
 } from '@angular/core';
-import { CFOService } from '@shared/cfo/cfo.service';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+
+/** Third party imports  */
 import { filter, first, switchMap } from 'rxjs/operators';
+
+/** Application imports */
+import { CFOService } from '@shared/cfo/cfo.service';
 import { SyncTypeIds } from '@shared/AppEnums';
 import {
     CreateSyncAccountInput,
@@ -15,7 +21,6 @@ import {
     SyncAccountServiceProxy,
     SyncServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { NotifyService } from '@abp/notify/notify.service';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 
@@ -23,7 +28,6 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
     selector: 'salt-edge',
     templateUrl: 'salt-edge.component.html',
     styleUrls: [ 'salt-edge.component.less' ],
-    providers: [ { provide: Window, useValue: window } ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SaltEdgeComponent implements OnInit {
@@ -35,7 +39,6 @@ export class SaltEdgeComponent implements OnInit {
         private syncService: SyncServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
         private domSanitizer: DomSanitizer,
-        private window: Window,
         private notifyService: NotifyService,
         private syncProgressService: SynchProgressService,
         private syncAccountServiceProxy: SyncAccountServiceProxy
@@ -43,7 +46,7 @@ export class SaltEdgeComponent implements OnInit {
 
     ngOnInit() {
         this.createHandler();
-        this.window.addEventListener('message', this.providerEventsHandler);
+        window.addEventListener('message', this.providerEventsHandler);
     }
 
     providerEventsHandler = (event: MessageEvent) => {
@@ -87,7 +90,7 @@ export class SaltEdgeComponent implements OnInit {
     }
 
     ngOnDestroy() {
-        this.window.removeEventListener('message', this.providerEventsHandler);
+        window.removeEventListener('message', this.providerEventsHandler);
     }
 
 }
