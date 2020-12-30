@@ -2592,7 +2592,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** Add budget dot for month data cells */
-        if (e.area === 'data' && e.cell.columnPath) {
+        if (e.area === 'data' && e.cell.columnPath
+            && e.cell.rowPath[e.cell.rowPath.length - 1].indexOf(CategorizationPrefixes.TransactionDescriptor) !== 0) {
             let fieldObj = this.getFieldObjectByPath(e.cell.columnPath);
             let fieldName = fieldObj.groupInterval;
             if (fieldName === 'month') {
@@ -2970,7 +2971,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                         this.cfoPreferencesService.selectedCurrencyId,
                         this.cfoPreferencesService.selectedCurrencySymbol
                     )}</span>
-                    ${budget != 0? `<span class="percent">100.00%</span>` : ''}
+                    ${budget != 0 ? `<span class="percent">100.00%</span>` : ''}
                 </div>
                 <div>
                     <span>${this.l('Variance')}:</span>
@@ -4713,9 +4714,10 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         this.updateRequestFilter(this.dateFilter);
     }
 
-    setBankAccountsFilter(emitFilterChange = false) {
+    setBankAccountsFilter(emitFilterChange: boolean = false) {
         this.bankAccountsService.setBankAccountsFilter(this.filters, this.syncAccounts, emitFilterChange);
-        this.allowChangingForecast = this.bankAccountsService.state.statuses.indexOf(BankAccountStatus.Active) >= 0;
+        this.allowChangingForecast = !this.bankAccountsService.state.statuses.length
+            || this.bankAccountsService.state.statuses.indexOf(BankAccountStatus.Active) >= 0;
     }
 
     discardDiscrepancy(cellObj) {
