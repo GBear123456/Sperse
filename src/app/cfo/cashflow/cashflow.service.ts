@@ -181,7 +181,6 @@ export class CashflowService {
     statsCategoryTree = {};
     statsCategoriesLevelsCount = 0;
     budgets: { [budgetKey: string]: number } = {};
-    forecasts: { [forecastKey: string]: number } = {};
 
     constructor(
         private cfoPreferencesService: CfoPreferencesService,
@@ -2257,34 +2256,6 @@ export class CashflowService {
         return this.addCategorizationLevels({ ...stubTransaction, ...stubObj });
     }
 
-    saveForecastToCache(forecast: TransactionStatsDtoExtended) {
-        if (forecast.categoryId) {
-            const cashflowTypeId: string = this.getCashFlowTypeByCategory(forecast.categoryId, this.categoryTree)
-                || (forecast.amount >= 0 ? 'I' : 'E');
-            const forecastKey = this.getItemKey(
-                cashflowTypeId,
-                forecast.categoryId,
-                forecast.initialDate.clone().startOf('month'),
-                forecast.initialDate.clone().endOf('month')
-            );
-            this.forecasts[forecastKey] = (this.forecasts[forecastKey] || 0) + forecast.amount;
-        }
-    }
-
-    removeForecastFromCache(forecast: TransactionStatsDtoExtended) {
-        if (forecast.categoryId) {
-            const forecastKey = this.getItemKey(
-                forecast.cashflowTypeId,
-                forecast.categoryId,
-                forecast.initialDate.clone().startOf('month'),
-                forecast.initialDate.clone().endOf('month')
-            );
-            if (this.forecasts[forecastKey]) {
-                this.forecasts[forecastKey] -= forecast.amount;
-            }
-        }
-    }
-
     saveBudgets(budgets: BudgetDto[]) {
         this.budgets = {};
         budgets.forEach((budget: BudgetDto) => {
@@ -2303,9 +2274,5 @@ export class CashflowService {
 
     getCellBudget(cashflowTypeId: string, categoryId: number, startDate: moment.Moment, endDate: moment.Moment): number {
         return this.budgets[this.getItemKey(cashflowTypeId, categoryId, startDate, endDate)];
-    }
-
-    getCellForecastsValue(cashflowTypeId: string, categoryId: number, startDate: moment.Moment, endDate: moment.Moment): number {
-        return this.forecasts[this.getItemKey(cashflowTypeId, categoryId, startDate, endDate)];
     }
 }
