@@ -2592,29 +2592,31 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         }
 
         /** Add budget dot for month data cells */
-        if (e.area === 'data' && e.cell.columnPath
-            && e.cell.rowPath[e.cell.rowPath.length - 1].indexOf(CategorizationPrefixes.TransactionDescriptor) !== 0) {
-            let fieldObj = this.getFieldObjectByPath(e.cell.columnPath);
-            let fieldName = fieldObj.groupInterval;
-            if (fieldName === 'month') {
-                const categoryId = this.cashflowService.getCategoryValueByPrefix(e.cell.rowPath, CategorizationPrefixes.Category);
-                if (categoryId && this.hasBudgetsFeature) {
-                    const datePeriod = this.cashflowService.formattingDate(e.cell.columnPath);
-                    const cashflowTypeId: string = e.cell.rowPath[0][2];
-                    const cellBudget = this.cashflowService.getCellBudget(
-                        cashflowTypeId,
-                        categoryId,
-                        datePeriod.startDate,
-                        datePeriod.endDate
-                    );
-                    if (cellBudget !== undefined) {
-                        const dot: HTMLElement = this.document.createElement('div');
-                        dot.className = 'budget-info ' + (
-                            e.cell.value - cellBudget >= 0 ? 'within-budget' : 'out-of-budget'
+        if (e.area === 'data' && e.cell.columnPath) {
+            const lastPathItem: string = e.cell.rowPath[e.cell.rowPath.length - 1];
+            if (lastPathItem && lastPathItem.indexOf(CategorizationPrefixes.TransactionDescriptor) !== 0) {
+                let fieldObj = this.getFieldObjectByPath(e.cell.columnPath);
+                let fieldName = fieldObj.groupInterval;
+                if (fieldName === 'month') {
+                    const categoryId = this.cashflowService.getCategoryValueByPrefix(e.cell.rowPath, CategorizationPrefixes.Category);
+                    if (categoryId && this.hasBudgetsFeature) {
+                        const datePeriod = this.cashflowService.formattingDate(e.cell.columnPath);
+                        const cashflowTypeId: string = e.cell.rowPath[0][2];
+                        const cellBudget = this.cashflowService.getCellBudget(
+                            cashflowTypeId,
+                            categoryId,
+                            datePeriod.startDate,
+                            datePeriod.endDate
                         );
-                        dot.setAttribute('data-budget', cellBudget.toString());
-                        dot.setAttribute('data-value', e.cell.value);
-                        e.cellElement.appendChild(dot);
+                        if (cellBudget !== undefined) {
+                            const dot: HTMLElement = this.document.createElement('div');
+                            dot.className = 'budget-info ' + (
+                                e.cell.value - cellBudget >= 0 ? 'within-budget' : 'out-of-budget'
+                            );
+                            dot.setAttribute('data-budget', cellBudget.toString());
+                            dot.setAttribute('data-value', e.cell.value);
+                            e.cellElement.appendChild(dot);
+                        }
                     }
                 }
             }
@@ -2982,7 +2984,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                     )}</span>
                         ${budget != 0 ? `<span class="percent">${this.percentPipe.transform(variance / budget, '1.2-2')}</span>` : ''}
                     </div>
-                </div>              
+                </div>
                 ${ forecastsAmount
                     ? `<div class="asterisk-description">* - including forecasts (${this.currencyPipe.transform(
                         forecastsAmount,
