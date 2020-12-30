@@ -45,7 +45,8 @@ import {
     TransactionTypesAndCategoriesDto,
     TransactionTypeDto,
     StringFilterElementDto,
-    FiltersInitialData
+    FiltersInitialData,
+    SyncAccountBankDto
 } from '@shared/service-proxies/service-proxies';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -411,7 +412,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     request.params.$orderby = orderBy ? orderBy + (orderBy.match(/\b(Id)\b/i) ? '' : ',Id desc') : 'Id desc';
                     request.params.$select = DataGridService.getSelectFields(
                         this.dataGrid,
-                        [ this.transactionFields.Id ],
+                        [ this.transactionFields.Id, this.transactionFields.CashFlowTypeId ],
                         this.fieldsDependencies
                     );
                     if (request.params.$filter && request.url.indexOf('$filter')) {
@@ -487,10 +488,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             this.transactionTypesAndCategories$,
             this.filtersInitialData$,
             this.bankAccountsService.syncAccounts$.pipe(first())
-        ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]) => {
+        ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]:
+                     [TransactionTypesAndCategoriesDto, FiltersInitialData, SyncAccountBankDto[]]) => {
             this.syncAccounts = syncAccounts;
-            this.types = typeAndCategories.types.map((item) => item.name);
-            this.categories = typeAndCategories.categories.map((item) => item.name);
+            this.types = typeAndCategories.types.map((item: TransactionTypeDto) => item.name);
+            this.categories = typeAndCategories.categories.map((item: StringFilterElementDto) => item.name);
             this.bankAccountsLookup = syncAccounts.reduce((acc, item) => {
                 return acc.concat(item.bankAccounts);
             }, []);
@@ -1349,10 +1351,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     categorizeTransactions($event) {
-        let transactions: any[] = this.dataGrid.instance.getSelectedRowKeys();
+        let transactions: TransactionDto[] = this.dataGrid.instance.getSelectedRowsData();
         if (!transactions.length && this.draggedTransactionRow)
             transactions = [this.draggedTransactionRow];
-        let transactionIds = transactions.map(t => t.Id || t);
+        let transactionIds: number[] = transactions.map((transaction: TransactionDto) => transaction.Id);
         let isSingleDraggedTransaction = !!this.draggedTransactionRow;
 
         if ($event.categoryId) {
@@ -1429,9 +1431,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 });
             };
 
-            if (_.some(transactions, x => x.CashFlowTypeId != $event.categoryCashType)) {
+            if (transactions.some((transaction: TransactionDto) => transaction.CashFlowTypeId != $event.categoryCashType)) {
                 abp.message.confirm(this.l('RuleDialog_ChangeCashTypeMessage'), this.l('RuleDialog_ChangeCashTypeTitle'),
-                    (result) => {
+                    (result: boolean) => {
                         if (result) {
                             updateTransactionCategoryMethod(true);
                         }
