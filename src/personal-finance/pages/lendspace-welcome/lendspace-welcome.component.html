@@ -3,17 +3,17 @@
         <div class="row">
             <div class="col-12 text-center">
                 <h1 class="title">
-                    {{l('LendSpaceHomeTitle')}}
+                    {{ls.l('LendSpaceHomeTitle')}}
                 </h1>
                 <p class="subtitle">
-                    {{l('LendSpaceHomeDescription')}}
+                    {{ls.l('LendSpaceHomeDescription')}}
                 </p>
             </div>
         </div>
     </div>
 
     <div class="category-wrapper">
-        <a class="fin-res-center" routerLink="/personal-finance/resources">{{l('Financial_Resource_Center')}}</a>
+        <a class="fin-res-center" routerLink="/personal-finance/resources">{{ls.l('Financial_Resource_Center')}}</a>
         <div class="container">
             <ul class="category-list row">
                 <li class="category-item col-sm-6 col-lg-3" *ngFor="let category of categoryItems" [hidden]="category.hidden">

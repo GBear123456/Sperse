@@ -20,7 +20,7 @@
             (onContentReady)="onContentReady($event)"
             (onItemClick)="initActiveMessage($event.itemData)">
                 <div *dxTemplate="let item of 'group'" class="group-item" [ngClass]="{selected: item.id == activeMessage?.id, 'has-children': item.hasChildren, expanded: item.expanded}" (click)="expandGroup(item)">
-                    <div class="email" title="{{item.date | datetime: formatting.fieldDateTime}}">
+                    <div class="email" [title]="item.date | datetime: formatting.fieldDateTime">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(item?.fromUserContactPhotoPublicId) + ')'}" class="img-circle"></div>
                         <div class="details">
                             <span class="from">{{item.fromUserName}}</span>
@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <div *dxTemplate="let item of 'item'" class="sub-item" [ngClass]="{selected: item.id == activeMessage?.id}">
-                    <div class="email" title="{{item.date | datetime: formatting.fieldDateTime}}">
+                    <div class="email" [title]="item.date | datetime: formatting.fieldDateTime">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(item?.fromUserContactPhotoPublicId) + ')'}" class="img-circle"></div>
                         <div class="details">
                             <span class="from">{{item.fromUserName}}</span>
