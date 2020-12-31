@@ -24,13 +24,11 @@ export class LinkedAccountService {
         this.accountService.switchToLinkedAccount(input)
             .subscribe((result: SwitchToLinkedAccountOutput) => {
                 this.authService.logout(false);
-                let baseUrl = this.appUrlService.getAppRootUrlOfTenant(result.tenancyName);
-                if (tenantId != this.appSession.tenantId)
-                    baseUrl = AppConsts.appConfigOrigin.remoteServiceBaseUrl;
-                let targetUrl =  baseUrl + '?switchAccountToken=' + result.switchAccountToken;
-                if (input.targetTenantId)
-                    targetUrl = targetUrl + '&tenantId=' + input.targetTenantId;
-                location.href = targetUrl;
+                let baseUrl = tenantId != this.appSession.tenantId ?
+                    AppConsts.appConfigOrigin.remoteServiceBaseUrl :
+                    this.appUrlService.getAppRootUrlOfTenant(result.tenancyName);
+                location.href = baseUrl + '?switchAccountToken=' + result.switchAccountToken +
+                    (tenantId ? '&tenantId=' + tenantId : '');
             });
     }
 }
