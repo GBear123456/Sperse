@@ -66,6 +66,7 @@ export class LeftMenuComponent implements OnInit {
                 caption: this.ls.l('CRMDashboardMenu_CustomizeSettings'),
                 component: '/editions',
                 iconSrc: 'assets/common/icons/setup.svg',
+                modalDialog: true,
                 onClick: () => this.userManagementService.openProfileTenantSettingsDialog(),
                 visible: this.appService.isHostTenant ?
                     this.permission.isGranted(AppPermissions.AdministrationHostSettings) :
@@ -75,6 +76,7 @@ export class LeftMenuComponent implements OnInit {
                 caption: this.ls.l('CRMDashboardMenu_IntroductionTour'),
                 visible: this.showIntroTour && this.showIntroductionTour,
                 iconSrc: 'assets/common/icons/introduction-tour.svg',
+                modalDialog: true,
                 onClick: () => this.openIntro.emit()
             },
             {

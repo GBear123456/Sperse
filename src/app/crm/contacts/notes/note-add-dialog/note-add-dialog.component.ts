@@ -104,7 +104,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     isCRMOrdersGranted = this.permission.isGranted(AppPermissions.CRMOrdersInvoices);
     showAdditionalFields = true;
     private typePrefix: string;
-    
+
     constructor(
         injector: Injector,
         private dialog: MatDialog,
@@ -311,11 +311,11 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     }
 
     private updateTypePrefix(contact: Contact) {
-        this.typePrefix = contact instanceof PersonShortInfoDto
-            ? this.l('Client')
-            : (contact instanceof OrganizationShortInfo
-                ? this.l('Company')
-                : this.l('Property')
+        this.typePrefix = contact instanceof OrganizationShortInfo
+            ? this.l('Company')
+            : (contact instanceof PropertyDto
+                ? this.l('Property')
+                : this.l('Client')
             );
     }
 
