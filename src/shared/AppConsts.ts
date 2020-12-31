@@ -16,6 +16,7 @@ export class AppConsts {
     static appBaseHref: string; // returns angular's base-href parameter value if used during the publish
     static appBaseUrlFormat: string;
     static appMemberPortalUrl: string;
+    static appConfigOrigin: any;
 
     static recaptchaSiteKey: string;
     static googleSheetClientId: string;

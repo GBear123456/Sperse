@@ -60,6 +60,7 @@ export class AppPreBootstrap {
     }
 
     private static updateAppConsts(appConfig) {
+        AppConsts.appConfigOrigin = appConfig;
         AppConsts.recaptchaSiteKey = appConfig.recaptchaSiteKey;
         AppConsts.googleSheetClientId = appConfig.googleSheetClientId;
         AppConsts.subscriptionExpireNootifyDayCount = appConfig.subscriptionExpireNootifyDayCount;
