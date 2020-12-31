@@ -188,5 +188,4 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
     bankCodeChange() {
         this.dropdownHeaderStyle = this.getDropdownHeaderStyle();
     }
-
 }
