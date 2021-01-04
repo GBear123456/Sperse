@@ -490,7 +490,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
                 sourceCategory = {};
                 sourceCategory.element = e.currentTarget;
-                sourceCategory.key = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
+                sourceCategory.key = e.currentTarget.closest('tr').getAttribute('data-category-id');
                 let categoryName = this.categorization.categories[sourceCategory.key].name;
                 e.originalEvent.dataTransfer.setData('Text', categoryName);
                 e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
@@ -543,20 +543,17 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             .on('drop', (e) => {
                 e.originalEvent.preventDefault();
                 e.originalEvent.stopPropagation();
-
+                let targetCategoryId: string = e.currentTarget.closest('tr').getAttribute('data-category-id');
                 if (sourceCategory) {
-                    let source = sourceCategory.key;
-                    let target = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);
-
-                    this.handleCategoryDrop(source, target);
+                    let sourceCategoryId: string = sourceCategory.key;
+                    this.handleCategoryDrop(sourceCategoryId, targetCategoryId);
                 } else {
-                    let categoryId = this.categoryList.instance.getKeyByRowIndex(e.currentTarget.closest('tr').rowIndex);
-                    let category = this.categorization.categories[categoryId];
-                    let parentCategory = this.categorization.categories[category.parentId];
+                    let category: CategoryDto = this.categorization.categories[targetCategoryId];
+                    let parentCategory: CategoryDto = this.categorization.categories[category.parentId];
 
                     let showRuleDialog: boolean = e.target.classList.contains('category-drop-add-rule');
                     this.onTransactionDrop.emit({
-                        categoryId: categoryId,
+                        categoryId: targetCategoryId,
                         categoryName: category.name,
                         parentId: category.parentId,
                         parentName: parentCategory ? parentCategory.name : null,
@@ -589,35 +586,35 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 'unknown';
     }
 
-    handleCategoryDrop(sourceId, targetId) {
-        let sourceCategory = this.categorization.categories[sourceId];
-        let targetCategory = this.categorization.categories[targetId];
+    handleCategoryDrop(sourceCategoryId: string, targetCategoryId: string) {
+        let sourceCategory = this.categorization.categories[sourceCategoryId];
+        let targetCategory = this.categorization.categories[targetCategoryId];
 
-        let targetAccountingTypeId = parseInt(targetId);
+        let targetAccountingTypeId = parseInt(targetCategoryId);
         let targetAccountingType = this.categorization.accountingTypes[targetAccountingTypeId];
         let isMerge = false;
 
         let moveToId: number;
         let targetName: string;
         let hasSourceSubcategories = _.values(this.categorization.categories).some((item) => {
-            return item.parentId == sourceId;
+            return item.parentId == sourceCategoryId;
         });
 
         if (targetCategory) {
             if (sourceCategory.parentId && targetCategory.parentId || //subcategory -> subcategory
-                sourceCategory.parentId && sourceCategory.parentId == targetId || //subcategory -> own parent
+                sourceCategory.parentId && sourceCategory.parentId == +targetCategoryId || //subcategory -> own parent
                 !sourceCategory.parentId && !targetCategory.parentId && hasSourceSubcategories || // not empty category -> category
                 !sourceCategory.parentId && targetCategory.parentId //category -> subcategory
             ) {
                 isMerge = true;
             }
 
-            if (!sourceCategory.parentId && targetCategory.parentId && _.some(this.categorization.categories, (x) => x.parentId == sourceId)) {
+            if (!sourceCategory.parentId && targetCategory.parentId && _.some(this.categorization.categories, (x) => x.parentId == sourceCategoryId)) {
                 abp.message.warn(this.l('MoveMergeCategoryWithChildsToChild'));
                 return;
             }
 
-            moveToId = targetId;
+            moveToId = parseInt(targetCategoryId);
             targetName = targetCategory.name;
         } else {
             targetName = targetAccountingType.name;
@@ -629,7 +626,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                     this.categoryTreeServiceProxy.deleteCategory(
                         InstanceType[this._cfoService.instanceType],
                         this._cfoService.instanceId,
-                        moveToId, false, sourceId
+                        moveToId, false, +sourceCategoryId
                     ).subscribe(
                         () => {
                             this.refreshCategories();
@@ -646,8 +643,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                         InstanceType[this._cfoService.instanceType],
                         this._cfoService.instanceId,
                         new UpdateCategoryInput({
-                            id: sourceId,
-                            parentId: targetCategory ? targetId : targetAccountingType ? null : sourceCategory.parentId,
+                            id: +sourceCategoryId,
+                            parentId: targetCategory ? +targetCategoryId : targetAccountingType ? null : sourceCategory.parentId,
                             accountingTypeId: targetAccountingType ? targetAccountingTypeId : sourceCategory.accountingTypeId,
                             name: sourceCategory.name,
                             coAID: sourceCategory.coAID,
@@ -1037,9 +1034,11 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         if ($event.rowType != 'data' || $event.key.rowIndex)
             return;
 
-        let accounting = this.categorization.accountingTypes[
-            $event.key >= 0 ? this.categorization.categories[$event.key]
-                .accountingTypeId : parseInt($event.key)];
+        let accounting: AccountingTypeDto = this.categorization.accountingTypes[
+            $event.key >= 0
+                ? this.categorization.categories[parseInt($event.key)].accountingTypeId
+                : parseInt($event.key)
+        ];
         if (accounting) {
             let cashflowType = accounting.typeId == 'I' ? 'inflows' :
                 accounting.typeId == 'E' ? 'outflows' :
@@ -1059,6 +1058,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
         if (!isNaN($event.key)) {
             $event.rowElement.setAttribute('draggable', true);
+            $event.rowElement.setAttribute('data-category-id', $event.key);
         }
     }
 

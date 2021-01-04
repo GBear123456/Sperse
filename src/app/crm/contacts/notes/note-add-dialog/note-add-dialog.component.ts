@@ -104,7 +104,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     isCRMOrdersGranted = this.permission.isGranted(AppPermissions.CRMOrdersInvoices);
     showAdditionalFields = true;
     private typePrefix: string;
-    
+
     constructor(
         injector: Injector,
         private dialog: MatDialog,
@@ -203,10 +203,11 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     }
 
     private getContacts(): Observable<Contact[]> {
-        let contacts: Contact[] = [];
-        let personContactInfo = this._contactInfo.personContactInfo;
+        let contacts: Contact[] = [],
+            personContactInfo = this._contactInfo.personContactInfo,
+            isUpdatable = this._contactInfo['organizationContactInfo'].isUpdatable;
         /** Add related organizations contacts */
-        contacts = contacts.concat(personContactInfo && personContactInfo.orgRelations ?
+        contacts = contacts.concat(isUpdatable && personContactInfo && personContactInfo.orgRelations ?
             personContactInfo.orgRelations
                 .map((organizationRelation: PersonOrgRelationShortInfo) => {
                     organizationRelation.organization['fullName'] = organizationRelation.organization.name;
@@ -214,6 +215,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 }) : []);
         /** Add contact persons */
         contacts = contacts.concat(
+            isUpdatable &&
             this._contactInfo['organizationContactInfo'] &&
             this._contactInfo['organizationContactInfo'].contactPersons
                 ? this._contactInfo['organizationContactInfo'].contactPersons
@@ -311,11 +313,11 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     }
 
     private updateTypePrefix(contact: Contact) {
-        this.typePrefix = contact instanceof PersonShortInfoDto
-            ? this.l('Client')
-            : (contact instanceof OrganizationShortInfo
-                ? this.l('Company')
-                : this.l('Property')
+        this.typePrefix = contact instanceof OrganizationShortInfo
+            ? this.l('Company')
+            : (contact instanceof PropertyDto
+                ? this.l('Property')
+                : this.l('Client')
             );
     }
 

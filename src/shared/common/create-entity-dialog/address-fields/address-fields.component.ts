@@ -6,7 +6,8 @@ import {
     EventEmitter,
     Input,
     Output,
-    ViewChild
+    ViewChild,
+    OnInit
 } from '@angular/core';
 
 /** Third party imports */
@@ -36,7 +37,7 @@ import { Address } from '@shared/common/create-entity-dialog/models/address.mode
     styleUrls: [ 'address-fields.component.less' ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddressFieldsComponent {
+export class AddressFieldsComponent implements OnInit {
     @Input() address: Address;
     @Input() addressTypes?: AddressUsageTypeDto[];
     @Input() googleAutoComplete: boolean;
@@ -111,7 +112,8 @@ export class AddressFieldsComponent {
         this.onZipChanged.emit();
     }
 
-    changeState() {
+    changeState(e) {
+        this.address.state.code = e.value;
         this.onStateChanged.emit();
     }
 }
