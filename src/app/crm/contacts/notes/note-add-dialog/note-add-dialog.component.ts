@@ -203,10 +203,11 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     }
 
     private getContacts(): Observable<Contact[]> {
-        let contacts: Contact[] = [];
-        let personContactInfo = this._contactInfo.personContactInfo;
+        let contacts: Contact[] = [],
+            personContactInfo = this._contactInfo.personContactInfo,
+            isUpdatable = this._contactInfo['organizationContactInfo'].isUpdatable;
         /** Add related organizations contacts */
-        contacts = contacts.concat(personContactInfo && personContactInfo.orgRelations ?
+        contacts = contacts.concat(isUpdatable && personContactInfo && personContactInfo.orgRelations ?
             personContactInfo.orgRelations
                 .map((organizationRelation: PersonOrgRelationShortInfo) => {
                     organizationRelation.organization['fullName'] = organizationRelation.organization.name;
@@ -214,6 +215,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 }) : []);
         /** Add contact persons */
         contacts = contacts.concat(
+            isUpdatable &&
             this._contactInfo['organizationContactInfo'] &&
             this._contactInfo['organizationContactInfo'].contactPersons
                 ? this._contactInfo['organizationContactInfo'].contactPersons

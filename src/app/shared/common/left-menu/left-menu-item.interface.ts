@@ -8,7 +8,7 @@ export interface LeftMenuItem {
     visible?: boolean | Observable<boolean>;
     disabled?: boolean;
     showPlus?: boolean;
-    modalDialog?: boolean;
+    isModalDialog?: boolean;
     onClick?: (item: LeftMenuItem) => any;
     data?: { [name: string]: any };
 }
