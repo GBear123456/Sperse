@@ -51,13 +51,14 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.component.stateStoring.enabled = true;
-        this.component.stateStoring.ignoreColumnOptionNames = [];
-        this.component.stateStoring.storageKey =
-            this.cacheHelper.getCacheKey(
+        this.component.instance.option('stateStoring', {
+            enabled: true,
+            ignoreColumnOptionNames: [],
+            storageKey: this.cacheHelper.getCacheKey(
                 this.viewContainerRef['_data'].componentView.parent.component.constructor.name,
                 'DataGridState'
-            );
+            )
+        });
 
         this.subscriptions.push(
             this.component.onInitialized.subscribe(event => {
