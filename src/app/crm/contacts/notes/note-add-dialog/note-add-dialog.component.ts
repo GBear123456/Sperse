@@ -1,6 +1,7 @@
 /** Core imports */
 import { Output, EventEmitter, OnInit, AfterViewInit,
     Component, Inject, Injector, ViewChild, ElementRef } from '@angular/core';
+import { Location } from '@angular/common';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -108,6 +109,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     constructor(
         injector: Injector,
         private dialog: MatDialog,
+        private location: Location,
         private elementRef: ElementRef,
         private phoneFormatPipe: PhoneFormatPipe,
         private notesService: NotesServiceProxy,
@@ -137,7 +139,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         });
         this.getContacts().subscribe((contacts: Contact[]) => {
             this.contacts = contacts;
-            this.onContactChanged({ value: this.data.contactInfo.id });
+            this.contactId = !this.location.path().includes('contact-information')
+                && this.data.propertyId || this.data.contactInfo.id;
+            this.onContactChanged({ value: this.contactId });
             this.applyOrdersFilter();
             this.initNoteData();
         });
