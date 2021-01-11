@@ -92,5 +92,4 @@ export class SaltEdgeComponent implements OnInit {
     ngOnDestroy() {
         window.removeEventListener('message', this.providerEventsHandler);
     }
-
 }

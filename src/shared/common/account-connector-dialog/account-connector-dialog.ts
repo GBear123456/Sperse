@@ -59,12 +59,15 @@ export class AccountConnectorDialogComponent implements OnInit {
     }
 
     openConnector(connector: AccountConnectors) {
-        this.elementRef.nativeElement.closest(
+        let container = this.elementRef.nativeElement.closest(
             '#' + this.dialogRef.id
-        ).style.padding = 0;
-        if (connector !== AccountConnectors.SaltEdge) {
+        );
+        container.style.padding = 0;
+        if (connector == AccountConnectors.SaltEdge) {
+            container.style.background = 'transparent';
+            container.style.boxShadow = 'none';
+        } else
             this.dialogRef.updateSize('0', '0');
-        }
         this.selectedConnector = connector;
     }
 
