@@ -24,16 +24,6 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
     selector: 'dx-data-grid'
 })
 export class DxDataGridDirective implements OnInit, OnDestroy {
-    private clipboardIcon;
-    private subscriptions = [];
-    private copyToClipboard = (event) => {
-        this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
-        this.notifyService.info(this.ls.l('SavedToClipboard'));
-
-        event.stopPropagation();
-        event.preventDefault();
-    }
-    exporting = false;
 
     constructor(
         private dateTimePipe: DateTimePipe,
@@ -49,14 +39,26 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
         this.clipboardIcon.addEventListener('click', this.copyToClipboard, true);
         this.renderer.addClass(this.clipboardIcon, 'save-to-clipboard');
     }
+    private clipboardIcon;
+    private subscriptions = [];
+    exporting = false;
+    private copyToClipboard = (event) => {
+        this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
+        this.notifyService.info(this.ls.l('SavedToClipboard'));
+
+        event.stopPropagation();
+        event.preventDefault();
+    }
 
     ngOnInit() {
         this.component.stateStoring.enabled = true;
+        this.component.stateStoring.ignoreColumnOptionNames = [];
         this.component.stateStoring.storageKey =
             this.cacheHelper.getCacheKey(
                 this.viewContainerRef['_data'].componentView.parent.component.constructor.name,
                 'DataGridState'
             );
+
         this.subscriptions.push(
             this.component.onInitialized.subscribe(event => {
                 setTimeout(() =>
@@ -72,7 +74,7 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
                 if (event.rowType == 'header') {
                     if (event.cellElement.classList.contains('dx-command-select'))
                         event.cellElement.setAttribute('title', this.ls.l(
-                            event.component.option('selection.selectAllMode') === 'allPages' ? 'AffectAllPagesItems' : 'AffectOnPageItems')); 
+                            event.component.option('selection.selectAllMode') === 'allPages' ? 'AffectAllPagesItems' : 'AffectOnPageItems'));
                 } else if (event.rowType == 'data') {
                     if (event.eventType == 'mouseover') {
                         if (event.column.name == 'hiddenTime') {
