@@ -139,7 +139,7 @@
                         <dxi-column [dataField]="transactionFields.Date"
                                     cssClass="tabular"
                                     sortOrder="desc"
-                                    minWidth="90px"
+                                    [minWidth]="(isHeaderFilterVisible ? 130 : 90) + 'px'"
                                     calculateSortValue="Date"
                                     [renderAsync]="true"
                                     [caption]="l('Transactions_Date')"
