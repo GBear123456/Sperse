@@ -1,5 +1,6 @@
 export interface SubscriptionDto {
     Id: string;
+    SubscriptionId: string;
     PhotoPublicId: string;
     ContactId: string;
     FirstName: string;
