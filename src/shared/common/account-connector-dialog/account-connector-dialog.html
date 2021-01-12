@@ -1,6 +1,6 @@
 <mat-dialog-content>
-    <button (click)="closeDialog($event)" class="close"></button>
-    <button *ngIf="selectedConnector && showBackButton" (click)="selectedConnector = undefined" class="back"></button>
+    <button *ngIf="selectedConnector !== accountConnectors.SaltEdge" (click)="closeDialog($event)" class="close"></button>
+    <button *ngIf="selectedConnector && selectedConnector !== accountConnectors.SaltEdge && showBackButton" (click)="selectedConnector = undefined" class="back"></button>
 
     <account-connector-chooser [hidden]="selectedConnector && selectedConnector != accountConnectors.Plaid"
         [disabledConnectors]="data?.disabledConnectors"
