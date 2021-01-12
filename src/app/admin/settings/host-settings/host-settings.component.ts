@@ -136,7 +136,6 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
             this.hostSettingService.updateYTelSettings(this.yTelSettings)
         ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
-
             if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone && this.initialTimeZone !== this.hostSettings.general.timezone) {
                 this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(function () {
                     window.location.reload();

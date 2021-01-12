@@ -16,6 +16,7 @@ export class AppConsts {
     static appBaseHref: string; // returns angular's base-href parameter value if used during the publish
     static appBaseUrlFormat: string;
     static appMemberPortalUrl: string;
+    static appConfigOrigin: any;
 
     static recaptchaSiteKey: string;
     static googleSheetClientId: string;
@@ -78,6 +79,7 @@ export class AppConsts {
         date: 'MM/dd/yyyy',
         dateTime: 'MM/dd/yyyy hh:mm a',
         dateMoment: 'MM/DD/YYYY',
+        dateTimeMoment: 'MM/DD/YYYY hh:mm A',
         monthDay: 'MMM d',
         inboxDate: 'MMM d, yyyy hh:mm a',
         fieldDateTime: 'MMM DD, YYYY HH:mm',
@@ -96,7 +98,7 @@ export class AppConsts {
         affiliateRate: /^[0-9]{1,2}(\.[0-9]{1,2})*$/,
         ein: /^\d{2}\-?\d{7}$/,
         duns: /^\d{2}\-?\d{3}-?\d{4}$/,
-        siteUrl: /^(http:\/\/| https:\/\/)[a-z0-9-]+(\.[a-z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
+        siteUrl: /^(http:\/\/|https:\/\/)[a-z0-9-]+(\.[a-z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
         zipUsPattern: /^\d{5}(?:-\d{4})?$/,
         notSupportedDocuments: /\.(ade|adp|apk|bat|chm|cmd|com|cpl|dll|dmg|exe|hta|ins|isp|jar|js|jse|lib|lnk|mde|msc|msi|msp|mst|nsh|pif|scr|sct|shb|sys|vb|vbe|vbs|vxd|wsc|wsf|wsh|cab)$/i
     };

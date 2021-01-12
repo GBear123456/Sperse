@@ -1,0 +1,22 @@
+<h2>{{ ls.l('MemberPortal') }}</h2>
+<ng-container *ngIf="tenant">
+    <ng-container>
+        <div class="form-group">
+            <label for="memberPortalUrl">{{ls.l('MemberPortal') + ' ' + ls.l('URL')}}</label>
+            <input #memberPortalUrl="ngModel"
+                   id="memberPortalUrl"
+                   type="url"
+                   name="memberPortalUrl"
+                   class="form-control"
+                   [(ngModel)]="memberPortalSettings.url"
+                   maxlength="128"
+                   [pattern]="siteUrlRegexPattern"
+                   (change)="changeDetectorRef.detectChanges()">
+        </div>
+        <div *ngIf="!memberPortalUrl.valid && !memberPortalUrl.pristine">
+            <span class="help-block text-danger">
+                {{ls.l("Invalid_MemberPortalUrl")}}
+            </span>
+        </div>
+    </ng-container>
+</ng-container>

@@ -47,7 +47,7 @@
                 <dxo-sorting mode="multiple"></dxo-sorting>
             </dx-data-grid>
         </mat-tab>
-        <mat-tab [label]="ls.l('Commissions')" *ngIf="isCommissionsAllowed">
+        <mat-tab [label]="ls.l('EarnedCommissions')" *ngIf="isCommissionsAllowed">
             <dx-data-grid #commissionDataGrid
                 height="calc(100vh - 270px)"
                 class="main-component-view"
@@ -86,11 +86,6 @@
                             [caption]="ls.l('OrderNumber')"
                             cssClass="clipboard-holder">
                 </dxi-column>
-                <dxi-column [dataField]="commissionFields.OrderDate"
-                            [caption]="ls.l('OrderDate')" 
-                            cellTemplate="dateCell"                                     
-                            cssClass="tabular">
-                </dxi-column>
                 <dxi-column [dataField]="commissionFields.EarnedDate"
                             [caption]="ls.l('EarnedDate')" 
                             cellTemplate="dateCell"                                     
@@ -118,27 +113,10 @@
                             [dataField]="commissionFields.BuyerName"
                             [caption]="ls.l('BuyerName')">
                 </dxi-column>
-                <dxi-column [dataField]="commissionFields.BuyerEmailAddress"
-                            [caption]="ls.l('BuyerEmailAddress')"
-                            cssClass="clipboard-holder clipboard-holder">
-                </dxi-column>
-                <dxi-column [dataField]="commissionFields.BuyerAffiliateCode"
-                            [caption]="ls.l('BuyerAffiliateCode')"
-                            cssClass="clipboard-holder">
-                </dxi-column>
                 <dxi-column [dataField]="commissionFields.CommissionRate"
                             [caption]="ls.l('Rate')"
                             format="percent"
                             cssClass="clipboard-holder padding-right">
-                </dxi-column>
-                <dxi-column [dataField]="commissionFields.TransactionId"
-                            dataType="string"
-                            [caption]="ls.l('TransactionId')"
-                            cssClass="tabular clipboard-holder">
-                </dxi-column>
-                <dxi-column dataField="TransactionAuthCode"
-                            [caption]="ls.l('TransactionAuthCode')"
-                            cssClass="clipboard-holder">
                 </dxi-column>
                 <dxi-column width="140px"
                             [dataField]="commissionFields.CommissionAmount"

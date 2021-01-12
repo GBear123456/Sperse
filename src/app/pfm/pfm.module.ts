@@ -12,7 +12,7 @@ import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxContextMenuModule } from 'devextreme-angular/ui/context-menu';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
-import { DxButtonModule } from '@root/node_modules/devextreme-angular';
+import { DxButtonModule } from 'devextreme-angular';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatInputModule } from '@angular/material/input';

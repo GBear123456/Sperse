@@ -31,5 +31,6 @@ export const TransactionFields: KeysEnum<TransactionDto> = {
     ProviderCashFlowCategoryName: 'ProviderCashFlowCategoryName',
     ProviderCashFlowSubCategoryName: 'ProviderCashFlowSubCategoryName',
     Department: 'Department',
-    BankCode: 'BankCode'
+    BankCode: 'BankCode',
+    CashFlowTypeId: 'CashFlowTypeId'
 };

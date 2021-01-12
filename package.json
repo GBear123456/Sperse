@@ -1,6 +1,6 @@
 {
   "name": "abp-zero-template",
-  "version": "5.1.0",
+  "version": "5.2.0",
   "license": "MIT",
   "angular-cli": {},
   "scripts": {
@@ -92,7 +92,8 @@
     "css-toggle-switch": "^4.0.3",
     "d3": "^4.13.0",
     "detect-zoom": "^1.0.2",
-    "devextreme": "^19.2.5",
+    "devextreme": "19.2.11",
+    "devextreme-angular": "19.2.11",
     "dom4": "^2.0.1",
     "dropzone": "^5.1.1",
     "easy-pie-chart": "^2.1.7",

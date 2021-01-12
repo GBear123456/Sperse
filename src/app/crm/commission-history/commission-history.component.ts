@@ -115,6 +115,31 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             items: []
         }
     ];
+    reconciliationFilter: FilterModel = new FilterModel({
+        component: null,
+        caption: 'Reconciliation',
+        items: {
+            element: new FilterItemModel({
+                dataSource: {
+                    rate: this.commissionFields.CommissionRate + ' ne ' + this.commissionFields.ResellerAffiliateRate,
+                    mentor: this.commissionFields.ResellerContactId + ' ne ' + this.commissionFields.BuyerAffiliateContactId
+                }
+            }, true)
+        },
+        filterMethod: (filter) => {
+            if (filter.items.element)
+                return filter.items.element.value;
+            return '';
+        }
+    });
+    get isReconciliationRateSelected(): Boolean {
+        let element = this.reconciliationFilter.items.element;
+        return element.value == element.dataSource.rate;
+    }
+    get isReconciliationMentorSelected(): Boolean {
+        let element = this.reconciliationFilter.items.element;
+        return element.value == element.dataSource.mentor;
+    }
     permissions = AppPermissions;
     searchValueChanged = false;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
@@ -260,6 +285,17 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             filterMethod: FiltersService.filterBySource
         }),
         new FilterModel({
+            component: FilterSourceComponent,
+            caption: 'Buyer',
+            items: {
+                element: new SourceContactFilterModel({
+                    contactFieldExpr: this.commissionFields.BuyerContactId,
+                    ls: this.localizationService
+                })
+            },
+            filterMethod: FiltersService.filterBySource
+        }),
+        new FilterModel({
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
             caption: 'OrderDate',
@@ -392,9 +428,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         })
     ];
-    
-    manageAllowed = this.isGranted(AppPermissions.CRMCommissionsManage) 
-        && this.isGranted(AppPermissions.CRMOrdersInvoicesManage);
+
+    manageAllowed = this.isGranted(AppPermissions.CRMCommissionsManage);
 
     constructor(
         injector: Injector,
@@ -409,6 +444,15 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         private changeDetectorRef: ChangeDetectorRef
     ) {
         super(injector);
+
+        this.invoicesService.settings$.pipe(
+            filter(Boolean), first()
+        ).subscribe((res: InvoiceSettings) => {
+            this.reconciliationFilter.items.element.dataSource.rate =
+                this.commissionFields.ResellerAffiliateRate + ' ne null and ' +
+                this.commissionFields.CommissionRate + ' ne ' + res.defaultAffiliateRate +
+                ' and ' + this.reconciliationFilter.items.element.dataSource.rate;
+        });
     }
 
     ngOnInit() {
@@ -654,7 +698,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             text: this.l('ReassignCommissions'),
                             icon: './assets/common/icons/assign-icon.svg',
                             visible: this.selectedViewType == this.COMMISSION_VIEW,
-                            disabled: !this.manageAllowed 
+                            disabled: !this.manageAllowed
                                 || !this.selectedRecords.length
                                 || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
                             onClick: (e) => {
@@ -662,47 +706,78 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             }
                         }
                     }, cancelButton, {
-                        widget: 'dxButton',
+                        name: 'menu',
+                        widget: 'dxDropDownMenu',
+                        visible: this.selectedViewType == this.COMMISSION_VIEW,
+                        disabled: !this.manageAllowed
+                            || !this.selectedRecords.length
+                            || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
                         options: {
-                            text: this.l('UpdateCommissionableAmount'),
-                            visible: this.selectedViewType == this.COMMISSION_VIEW,
-                            disabled: !this.manageAllowed
-                                || !this.selectedRecords.length
-                                || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
-                            onClick: (e) => {
-                                this.dialog.open(UpdateCommissionableDialogComponent, {
-                                    disableClose: true,
-                                    closeOnNavigation: false,
-                                    data: {
-                                        entityIds: this.selectedRecords.map(item => item.Id),
-                                        bulkUpdateAllowed: this.bulkUpdateAllowed
+                            hint: this.l('Update'),
+                            items: [
+                                {
+                                    text: this.l('CommissionableAmount'),
+                                    action: (e) => {
+                                        this.dialog.open(UpdateCommissionableDialogComponent, {
+                                            disableClose: true,
+                                            closeOnNavigation: false,
+                                            data: {
+                                                entityIds: this.selectedRecords.map(item => item.Id),
+                                                bulkUpdateAllowed: this.bulkUpdateAllowed
+                                            }
+                                        }).afterClosed().subscribe(() => this.refresh());
                                     }
-                                }).afterClosed().subscribe(() => this.refresh());
-                            }
-                        }
-                    }, {
-                        widget: 'dxButton',
-                        options: {
-                            text: this.l('UpdateCommissionRate'),
-                            visible: this.selectedViewType == this.COMMISSION_VIEW,
-                            disabled: !this.manageAllowed
-                                || !this.selectedRecords.length
-                                || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
-                            onClick: (e) => {
-                                this.dialog.open(UpdateCommissionRateDialogComponent, {
-                                    disableClose: true,
-                                    closeOnNavigation: false,
-                                    data: {
-                                        entityIds: this.selectedRecords.map(item => item.Id),
-                                        bulkUpdateAllowed: this.bulkUpdateAllowed
+                                },
+                                {
+                                    text: this.l('CommissionRate'),
+                                    action: (e) => {
+                                        this.dialog.open(UpdateCommissionRateDialogComponent, {
+                                            disableClose: true,
+                                            closeOnNavigation: false,
+                                            data: {
+                                                entityIds: this.selectedRecords.map(item => item.Id),
+                                                bulkUpdateAllowed: this.bulkUpdateAllowed
+                                            }
+                                        }).afterClosed().subscribe(() => this.refresh());
                                     }
-                                }).afterClosed().subscribe(() => this.refresh());
-                            }
+                                }
+                            ]
                         }
                     }
                 ]
-            },
-            {
+            }, {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'menu',
+                        widget: 'dxDropDownMenu',
+                        attr: {
+                            'filter-selected': this.isReconciliationMentorSelected || this.isReconciliationRateSelected
+                        },
+                        visible: this.selectedViewType == this.COMMISSION_VIEW,
+                        options: {
+                            hint: this.l('Reconciliation'),
+                            onItemClick: (e) => {
+                                e.component.element().setAttribute('filter-selected',
+                                    this.isReconciliationMentorSelected || this.isReconciliationRateSelected);
+                            },
+                            items: [
+                                {
+                                    icon: this.getReconciliationIcon('rate'),
+                                    action: () => this.applyReconciliationFilter('rate'),
+                                    text: this.l('ReconciliationCommissionRate')
+                                },
+                                {
+                                    icon: this.getReconciliationIcon('mentor'),
+                                    action: () => this.applyReconciliationFilter('mentor'),
+                                    text: this.l('ReconciliationCommissionMentor')
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }, {
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
@@ -744,6 +819,19 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             }
         ];
         this.changeDetectorRef.detectChanges();
+    }
+
+    getReconciliationIcon(field) {
+        let element = this.reconciliationFilter.items.element;
+        return element.value == element.dataSource[field] ? 'check' : 'filter';
+    }
+
+    applyReconciliationFilter(field) {
+        let target = this.reconciliationFilter.items.element,
+            source = target.dataSource[field];
+        target.value = target.value && target.value == source ? null : source;
+        this.processFilterInternal();
+        this.initToolbarConfig();
     }
 
     requestWithdrawal() {
@@ -869,7 +957,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.processODataFilter(
                 this.dataGrid.instance,
                 this.dataSourceURI,
-                this.filters,
+                this.filters.concat(this.reconciliationFilter),
                 this.filtersService.getCheckCustom
             );
         }

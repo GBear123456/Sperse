@@ -15,7 +15,6 @@
         <div *dxTemplate="let data of 'content'">
             <categorization
                 width="340px"
-                height="100%"
                 [dragMode]="false"
                 [showSearch]="true"
                 [showFilterIcon]="true"
@@ -253,6 +252,7 @@
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.Id"
+                                    sortOrder="desc"
                                     cssClass="tabular id-column clipboard-holder"
                                     [caption]="l('Transactions_Id')"
                                     [visible]="false">
@@ -363,7 +363,7 @@
                             </span>
                         </div>
 
-                        <div *dxTemplate="let data of 'CashFlowTypeNameTemplate'" [class]="'clipboard-holder ' + data.value.toLowerCase()">
+                        <div *dxTemplate="let data of 'CashFlowTypeNameTemplate'" [class]="'clipboard-holder ' + data?.value?.toLowerCase()">
                             {{data.value}}
                         </div>
 

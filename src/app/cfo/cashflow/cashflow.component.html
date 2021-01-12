@@ -37,11 +37,34 @@
                          (onSelectionChanged)="changeDetailsTab($event)">
                 </dx-tabs>
                 <div class="detailsButtons">
-                    <dx-button *ngIf="!hasStaticInstance" [text]="'+ ' + l('AddForecastTransaction')" (onClick)="addNewForecast()" [disabled]="!isInstanceAdmin || disableAddForecastButton"></dx-button>
-                    <dx-button *ngIf="detailsContainsForecasts" [disabled]="!isInstanceAdmin || !detailsSomeForecastsItemsSelected" [text]="'x ' + l('DeleteSelectedForecasts')" (onClick)="deleteSelectedForecasts()"></dx-button>
-                    <dx-button *ngIf="searchValue?.length" class="search-value-btn" [text]="searchValue" [visible]="!cashflowService.showAllVisible" (onClick)="refreshTransactionDetail(false)"></dx-button>
-                    <dx-button class="showall-btn" [text]="l('Show all')" [visible]="cashflowService.showAllVisible" (onClick)="refreshTransactionDetail(true)" [disabled]="cashflowService.showAllDisable"></dx-button>
-                    <dx-button *ngIf="!hasStaticInstance" class="reclassify-btn" [text]="l('Reclassify')" [disabled]="!_cfoService.classifyTransactionsAllowed() || !detailsSomeHistoricalItemsSelected" (onClick)="reclassifyTransactions()"></dx-button>
+                    <dx-button *ngIf="!hasStaticInstance"
+                               [text]="'+ ' + l('AddForecastTransaction')"
+                               (onClick)="addNewForecast()"
+                               [disabled]="!isInstanceAdmin || disableAddForecastButton">
+                    </dx-button>
+                    <dx-button *ngIf="detailsContainsForecasts"
+                               [disabled]="!isInstanceAdmin || !detailsSomeForecastsItemsSelected"
+                               [text]="'x ' + l('DeleteSelectedForecasts')"
+                               (onClick)="deleteSelectedForecasts()">
+                    </dx-button>
+                    <dx-button *ngIf="searchValue?.length"
+                               class="search-value-btn"
+                               [text]="searchValue"
+                               [visible]="!cashflowService.showAllVisible"
+                               (onClick)="refreshTransactionDetail(false)">
+                    </dx-button>
+                    <dx-button class="showall-btn"
+                               [text]="l('Show all')"
+                               [visible]="cashflowService.showAllVisible"
+                               (onClick)="refreshTransactionDetail(true)"
+                               [disabled]="cashflowService.showAllDisable">
+                    </dx-button>
+                    <dx-button *ngIf="!hasStaticInstance"
+                               class="reclassify-btn"
+                               [text]="l('Reclassify')"
+                               [disabled]="!_cfoService.classifyTransactionsAllowed() || !detailsSomeHistoricalItemsSelected"
+                               (onClick)="reclassifyTransactions()">
+                    </dx-button>
                 </div>
             </div>
 
@@ -76,18 +99,21 @@
                 <dxi-column *ngIf="!hasStaticInstance" dataField="forecastDate"
                             dataType="date"
                             [cssClass]="'forecastDate ' + tabularFontName"
-                            cellTemplate="dateCell"
+                            cellTemplate="dateCellTemplate"
                             headerCellTemplate="twoRowsHeaderCellTemplate"
                             alignment="left"
                             [allowEditing]="false"
                             [minWidth]="30"
                             [caption]="l('DetailsHeaders_ForecastDate')">
-                    <dxi-validation-rule type="custom" [message]="l('ForecastDateUpdating_validation_message')" [validationCallback]="validateForecastDate"></dxi-validation-rule>
+                    <dxi-validation-rule type="custom"
+                                         [message]="l('ForecastDateUpdating_validation_message')"
+                                         [validationCallback]="validateForecastDate">
+                    </dxi-validation-rule>
                 </dxi-column>
                 <dxi-column dataField="date"
                             dataType="date"
                             [cssClass]="tabularFontName"
-                            cellTemplate="dateCell"
+                            cellTemplate="dateCellTemplate"
                             headerCellTemplate="twoRowsHeaderCellTemplate"
                             alignment="left"
                             [caption]="l('DetailsHeaders_ActualDate')"
@@ -100,7 +126,7 @@
                             alignment="left"
                             [minWidth]="30"
                             [allowFiltering]="false"
-                            caption="{{l('BusinessEntities')}}"
+                            [caption]="l('BusinessEntities')"
                             [cssClass]="tabularFontName + ' clipboard-holder'">
                 </dxi-column>
                 <dxi-column *ngIf="hasStaticInstance"
@@ -110,7 +136,7 @@
                             [minWidth]="30"
                             [allowFiltering]="false"
                             cellTemplate="CategoryNameTemplate"
-                            caption="{{l('Transactions_CashflowCategoryName')}}"
+                            [caption]="l('Transactions_CashflowCategoryName')"
                             cssClass="category">
                 </dxi-column>
                 <dxi-column *ngIf="hasStaticInstance"
@@ -120,7 +146,7 @@
                             [minWidth]="30"
                             [allowFiltering]="false"
                             cssClass="clipboard-holder"
-                            caption="{{l('Transactions_Vendor')}}">
+                            [caption]="l('Transactions_Vendor')">
                 </dxi-column>
                 <dxi-column *ngIf="!hasStaticInstance"
                             dataField="status"
@@ -207,7 +233,7 @@
                             [minWidth]="30"
                             [allowFiltering]="false"
                             cellTemplate="amountTemplate"
-                            caption="{{l('Transactions_Amount')}}"
+                            [caption]="l('Transactions_Amount')"
                             cssClass="tabular">
                 </dxi-column>
                 <dxi-column *ngIf="hasStaticInstance"
@@ -215,7 +241,7 @@
                             alignment="left"
                             [minWidth]="30"
                             [allowFiltering]="false"
-                            caption="{{l('Transactions_BankAccountNumber')}}"
+                            [caption]="l('Transactions_BankAccountNumber')"
                             cssClass="tabular clipboard-holder">
                 </dxi-column>
                 <dxi-column *ngIf="hasStaticInstance"
@@ -225,13 +251,13 @@
                             [minWidth]="30"
                             [allowFiltering]="false"
                             cssClass="clipboard-holder"
-                            caption="{{l('Transactions_Comments')}}">
+                            [caption]="l('Transactions_Comments')">
                 </dxi-column>
 
                 <dxo-load-panel [enabled]="false"></dxo-load-panel>
                 <dxo-scrolling mode="virtual"></dxo-scrolling>
 
-                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">{{cellData.value | date: 'MM/dd/yyyy'}}</div>
+                <div *dxTemplate="let cellData of 'dateCellTemplate'" class="clipboard-holder">{{cellData.value | date: 'MM/dd/yyyy'}}</div>
                 <div *dxTemplate="let cellData of 'typeCell'">{{cashflowService.cashflowTypes[cellData.value]}}</div>
                 <div *dxTemplate="let cellData of 'descriptionTemplate'">
                     <span id="transactionDetailTarget-{{cellData.data.id}}" class="clipboard-holder">{{cellData.text}}</span>
@@ -251,7 +277,7 @@
                 </div>
                 <div *dxTemplate="let cell of 'amountTemplate'">
                     <ng-container>
-                        <span [class]="'clipboard-holder ' + (cell.value < 0 ? 'negative-values' : 'positive-values')"> {{ cell.text | currency:_cfoPreferencesService.selectedCurrencyId:_cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }} </span>
+                        <span [class]="'clipboard-holder ' + (cell.value < 0 ? 'negative-values' : 'positive-values')"> {{ cell.text | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }} </span>
                     </ng-container>
                 </div>
                 <div *dxTemplate="let data of 'CategoryNameTemplate'">
@@ -307,7 +333,7 @@
                 </dx-pivot-grid>
             </div>
         </dx-scroll-view>
-        <div class="sidebar-calculator-widget" [ngClass]="{'calculatorHidden': !calculatorShowed}">
+        <div class="sidebar-calculator-widget" [ngClass]="{ 'calculatorHidden': !calculatorShowed }">
             <div class="calculator-title">
                 <h3>{{l( 'Cell Calculator')}}</h3>
                 <span class="close" (click)="closeCalculator()"></span>

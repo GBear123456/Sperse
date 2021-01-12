@@ -67,7 +67,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     testEmailAddress: string = undefined;
     isMultiTenancyEnabled: boolean = this.multiTenancy.isEnabled;
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
-    activeTabIndex: number = (abp.clock.provider.supportsMultipleTimezone) ? 0 : 1;
     loading = false;
     settings: TenantSettingsEditDto = undefined;
     memberPortalSettings: MemberPortalSettingsDto = new MemberPortalSettingsDto();
@@ -341,8 +340,11 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.tenantSettingsService.updateSendGridSettings(this.sendGridSettings),
             this.tenantSettingsService.updateYTelSettings(this.yTelSettings)
         ];
-        if (this.isAdminCustomizations)
+        if (this.isAdminCustomizations) {
+            if (!this.memberPortalSettings.url)
+                this.memberPortalSettings.url = undefined;
             requests.push(this.tenantSettingsService.updateMemberPortalSettings(this.memberPortalSettings));
+        }
         if (this.isCreditReportFeatureEnabled)
             requests.push(this.tenantSettingsCreditReportService.updateIdcsSettings(this.idcsSettings));
         if (this.isPFMApplicationsFeatureEnabled)
@@ -358,7 +360,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
         forkJoin(requests).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
-
             if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone && this.initialTimeZone !== this.settings.general.timezone) {
                 this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
                     window.location.reload();

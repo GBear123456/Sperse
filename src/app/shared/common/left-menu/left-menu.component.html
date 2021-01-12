@@ -9,7 +9,7 @@
                 [ngClass]="{
                     'items-progress-item': true,
                     'passed': i < selectedItemIndex,
-                    'current': i == selectedItemIndex,
+                    'current': !item.isModalDialog && i == selectedItemIndex,
                     'disabled': item.disabled
                 }">
                 <div class="img">

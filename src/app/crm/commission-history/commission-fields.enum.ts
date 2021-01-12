@@ -2,6 +2,8 @@ import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { CommissionDto } from '@app/crm/commission-history/commission-dto';
 
 export const CommissionFields: KeysEnum<CommissionDto> = {
+    BuyerAffiliateContactId: 'BuyerAffiliateContactId',
+    BuyerAffiliateName: 'BuyerAffiliateName',
     BuyerAffiliateCode: 'BuyerAffiliateCode',
     BuyerContactId: 'BuyerContactId',
     BuyerEmailAddress: 'BuyerEmailAddress',
@@ -19,6 +21,7 @@ export const CommissionFields: KeysEnum<CommissionDto> = {
     ProductAmount: 'ProductAmount',
     ProductCode: 'ProductCode',
     ProductName: 'ProductName',
+    ResellerAffiliateRate: 'ResellerAffiliateRate',
     ResellerAffiliateCode: 'ResellerAffiliateCode',
     ResellerContactId: 'ResellerContactId',
     ResellerEmailAddress: 'ResellerEmailAddress',

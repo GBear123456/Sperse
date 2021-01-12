@@ -577,6 +577,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                     hasBackdrop: false,
                     closeOnNavigation: true,
                     data: noteAddDialogData
+                }).componentInstance.onSaved.subscribe(() => {
+                    this.contactsService.invalidate('notes');
                 });
             });
         else if (selectedMenuItem.type === ContextType.AddInvoice)

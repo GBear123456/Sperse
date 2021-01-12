@@ -13,6 +13,7 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
 import { AppFeatures } from '@shared/AppFeatures';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -34,6 +35,7 @@ export class LeftMenuComponent implements OnInit {
         private appSessionService: AppSessionService,
         private permission: PermissionCheckerService,
         private feature: FeatureCheckerService,
+        private userManagementService: UserManagementService,
         public appService: AppService,
         public ls: AppLocalizationService
     ) {}
@@ -63,13 +65,18 @@ export class LeftMenuComponent implements OnInit {
             {
                 caption: this.ls.l('CRMDashboardMenu_CustomizeSettings'),
                 component: '/editions',
-                disabled: true,
-                iconSrc: 'assets/common/icons/setup.svg'
+                iconSrc: 'assets/common/icons/setup.svg',
+                isModalDialog: true,
+                onClick: () => this.userManagementService.openProfileTenantSettingsDialog(),
+                visible: this.appService.isHostTenant ?
+                    this.permission.isGranted(AppPermissions.AdministrationHostSettings) :
+                    this.permission.isGranted(AppPermissions.AdministrationTenantSettings)
             },
             {
                 caption: this.ls.l('CRMDashboardMenu_IntroductionTour'),
                 visible: this.showIntroTour && this.showIntroductionTour,
                 iconSrc: 'assets/common/icons/introduction-tour.svg',
+                isModalDialog: true,
                 onClick: () => this.openIntro.emit()
             },
             {
@@ -82,7 +89,7 @@ export class LeftMenuComponent implements OnInit {
                 caption: this.ls.l('CRMDashboardMenu_CommissionHistory'),
                 component: '/commission-history',
                 visible: this.feature.isEnabled(AppFeatures.CRMCommissions)
-                    && this.permission.isGranted(AppPermissions.CRMCommissions) 
+                    && this.permission.isGranted(AppPermissions.CRMCommissions)
                     && this.appSessionService.tenant
                     && this.appSessionService.tenant.customLayoutType == LayoutType.BankCode,
                 iconSrc: './assets/common/icons/dollar.svg'

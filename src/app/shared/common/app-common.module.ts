@@ -92,6 +92,7 @@ import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.mod
 import { AppRatingModule } from './rating/app-rating.module';
 import { CalendarButtonComponent } from '@app/shared/common/calendar-button/calendar-button.component';
 import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
+import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.module';
 
 @NgModule({
     imports: [
@@ -158,11 +159,11 @@ import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete'
         LoadingSpinnerModule,
         ModalDialogModule,
         AppRatingModule,
-        GooglePlaceModule
+        GooglePlaceModule,
+        TimeZoneComboModule
     ],
     declarations: [
         TimeAgoPipe,
-        TimeZoneComboComponent,
         JqPluginDirective,
         CommonLookupModalComponent,
         DateRangePickerComponent,

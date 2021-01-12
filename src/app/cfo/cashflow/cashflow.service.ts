@@ -20,12 +20,14 @@ import { CategorizationPrefixes } from './enums/categorization-prefixes.enum';
 import {
     AdjustmentType,
     BankAccountDto,
+    BudgetDto,
     CashFlowGridSettingsDto,
     CashFlowInitialData,
     CategoryDto,
     GetCategoryTreeOutput,
     GetReportTemplateDefinitionOutput,
     GroupByPeriod,
+    IBudgetDto,
     SectionGroup,
     StatsDetailFilter,
     StatsFilter,
@@ -134,7 +136,7 @@ export class CashflowService {
         Reconciliation,
         Total
     ];
-    cashflowData;
+    cashflowData: TransactionStatsDtoExtended[];
     cashflowGridSettings: CashFlowGridSettingsDto;
 
     selectedForecastModelId;
@@ -177,7 +179,8 @@ export class CashflowService {
 
     reportSections: GetReportTemplateDefinitionOutput;
     statsCategoryTree = {};
-    statsCategoriesLevelsCount: number = 0;
+    statsCategoriesLevelsCount = 0;
+    budgets: { [budgetKey: string]: number } = {};
 
     constructor(
         private cfoPreferencesService: CfoPreferencesService,
@@ -489,7 +492,7 @@ export class CashflowService {
      */
     getCategoryValueByPrefix(path: any[], prefix: CategorizationPrefixes): any {
         let value;
-        path.some(pathItem => {
+        [].concat(path).reverse().some((pathItem: string) => {
             if (pathItem && pathItem.slice(0, 2) === prefix) {
                 value = pathItem !== CategorizationPrefixes.CashflowType + CashflowTypes.CashflowTypeTotal ? pathItem.slice(2) : undefined;
                 return true;
@@ -567,13 +570,14 @@ export class CashflowService {
                cellInterval.startDate.isBefore(allowedForecastsInterval.endDate);
     }
 
-    getCategoryFullPath(categoryId: number, category: CategoryDto, categoryTree: GetCategoryTreeOutput): string[] {
+    getCategoryFullPath(categoryId: number, categoryTree: GetCategoryTreeOutput, defaultTypeId?: 'I' | 'E'): string[] {
         const allCategoriesInPath: string[] = this.getCategoryPath(categoryId, categoryTree);
         const highestCategory: CategoryDto = categoryTree.categories[allCategoriesInPath[0].slice(2)];
         const accountingTypeId: number = highestCategory && highestCategory.accountingTypeId;
+        const typeId: string = categoryTree.accountingTypes[accountingTypeId].typeId || defaultTypeId;
         return [
-            ...(accountingTypeId
-                ? [CategorizationPrefixes.CashflowType + categoryTree.accountingTypes[accountingTypeId].typeId]
+            ...(accountingTypeId && typeId
+                ? [CategorizationPrefixes.CashflowType + typeId]
                 : []),
             ...allCategoriesInPath
         ];
@@ -871,7 +875,6 @@ export class CashflowService {
                     transactionObj['levels'][`level${levelNumber++}`] = key;
                     return true;
                 }
-
                 const isUnclassified = !transactionObj[level.statsKeyName];
                 /**
                  * If user wants to hide categories - avoid adding level for them
@@ -884,7 +887,7 @@ export class CashflowService {
                     return true;
                 }
 
-                if (level.prefix === CategorizationPrefixes.Category) {
+                if (level.prefix === CategorizationPrefixes.Category && !isAccountTransaction) {
                     let transactionCategoriesIds = this.getTransactionCategoriesIds(transactionObj.categoryId, this.categoryTree);
                     if (this.userPreferencesService.localPreferences.value.showAccountingTypeTotals) {
                         const highestCategory = transactionCategoriesIds && transactionCategoriesIds[0]
@@ -905,15 +908,16 @@ export class CashflowService {
                 /** Add categorization level to show */
                 key = isUnclassified ? transactionObj[level.statsKeyName] : level.prefix + transactionObj[level.statsKeyName];
                 transactionObj['levels'][`level${levelNumber++}`] = key;
+            } else if (isAccountTransaction && level.prefix === CategorizationPrefixes.AccountName) {
+                return false;
             }
             return true;
         });
 
         /** Don't show items only with one level in the second level */
-        if (Object.keys(transactionObj.levels).length === 1) {
+        if (Object.keys(transactionObj.levels).length === 1 && !isAccountTransaction) {
             transactionObj.levels.level1 = 'hidden';
         }
-
         this.updateTreePathes(transactionObj);
         return transactionObj;
     }
@@ -921,7 +925,7 @@ export class CashflowService {
     getHighestCategoryParentId(categoryId: number, categoryTree: GetCategoryTreeOutput): number {
         let highestCategoryId = categoryId;
         const category: CategoryDto = categoryTree.categories[categoryId];
-        if (category.parentId) {
+        if (category && category.parentId) {
             highestCategoryId = this.getHighestCategoryParentId(category.parentId, categoryTree);
         }
         return highestCategoryId;
@@ -1419,7 +1423,7 @@ export class CashflowService {
     }
 
     getCurrentValueForStartingBalanceCell(summaryCell) {
-        const cellData = <any>this.getCellData(summaryCell, summaryCell.value(summaryCell.field('row')).slice(2), StartedBalance);
+        const cellData = <any>this.getCellData(summaryCell, (summaryCell.value(summaryCell.field('row')) || '').slice(2), StartedBalance);
         return this.calculateCellValue(cellData, this.zeroAdjustmentsList, true);
     }
 
@@ -1520,7 +1524,7 @@ export class CashflowService {
     getCellValue(summaryCell, target, isCalculatedValue = underscore.contains([StartedBalance, Reconciliation], target)) {
 
         let targetPeriodAccountCachedValue;
-        const accountId = summaryCell.value(summaryCell.field('row'), true).slice(2);
+        const accountId = (summaryCell.value(summaryCell.field('row'), true) || '').slice(2);
         const targetPeriodCell = summaryCell.parent('row') ? summaryCell.parent('row').slice(0, CategorizationPrefixes.CashflowType + target) : null;
         const targetPeriodAccountCell = targetPeriodCell ? targetPeriodCell.child('row', CategorizationPrefixes.AccountName + accountId) : null;
 
@@ -2252,4 +2256,23 @@ export class CashflowService {
         return this.addCategorizationLevels({ ...stubTransaction, ...stubObj });
     }
 
+    saveBudgets(budgets: BudgetDto[]) {
+        this.budgets = {};
+        budgets.forEach((budget: BudgetDto) => {
+            const cashflowTypeId: string = this.getCashFlowTypeByCategory(budget.categoryId, this.categoryTree)
+                || (budget.amount >= 0 ? 'I' : 'E');
+            const budgetKey = this.getItemKey(cashflowTypeId, budget.categoryId, budget.startDate, budget.endDate);
+            this.budgets[budgetKey] = (this.budgets[budgetKey] || 0) + budget.amount;
+        });
+    }
+
+    getItemKey(cashflowTypeId: string, categoryId: number, startDate: moment.Moment, endDate: moment.Moment): string {
+        return cashflowTypeId + categoryId
+               + startDate.utc().format('DD-MM-YYYY')
+               + endDate.utc().format('DD-MM-YYYY');
+    }
+
+    getCellBudget(cashflowTypeId: string, categoryId: number, startDate: moment.Moment, endDate: moment.Moment): number {
+        return this.budgets[this.getItemKey(cashflowTypeId, categoryId, startDate, endDate)];
+    }
 }

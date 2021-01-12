@@ -3,6 +3,10 @@
     height: 100%;
     ::ng-deep dx-data-grid {
         .dx-datagrid-rowsview {
+            td.highlight {
+                font-weight: 500;
+                background-color: rgba(222,222,222, 0.5) !important;
+            }
             .dx-datagrid-focus-overlay.dx-pointer-events-target {
                 display: none;
             }
@@ -22,6 +26,10 @@
             }
         }
         .dx-datagrid-headers {
+            td.highlight {
+                font-weight: 500;
+                background-color: rgba(222,222,222, 0.5) !important;
+            }
             .dx-datagrid-text-content {
                 text-align: center;
                 white-space: initial;
@@ -31,4 +39,8 @@
             overflow: visible!important;
         }
     }
+}
+
+::ng-deep .dx-list-item-content {
+    white-space: nowrap!important;
 }

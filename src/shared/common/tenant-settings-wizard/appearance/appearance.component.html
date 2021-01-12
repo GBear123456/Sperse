@@ -1,0 +1,45 @@
+<h2>{{ ls.l('Appearance') }}</h2>
+<ng-container>
+    <ng-container *ngIf="tenant">
+        <div class="row m-form file-uploads">
+            <div class="col-md-6">
+                <uploader #logoUploader
+                          [title]="ls.l('ApplicationLogo')"
+                          [documentId]="tenant.logoId"
+                          [documentLink]="tenant.logoId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + tenant.logoId : undefined"
+                          [uploadInfoText]="ls.l('UploadLogo_Info')"
+                          [uploadButtonText]="ls.l('FileUpload')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadLogo'"
+                          acceptFileExt=".jpg,.jpeg,.png,.gif"
+                          [maxFileSize]="maxLogoFileSize"
+                          (onDocumentClear)="clearLogo()">
+                </uploader>
+            </div>
+            <div class="col-md-6">
+                <uploader #cssUploader
+                          [title]="ls.l('CustomCSS')"
+                          [documentId]="tenant.customCssId"
+                          [documentLink]="tenant.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id : undefined"
+                          [uploadInfoText]="ls.l('UploadCSS_Info')"
+                          [uploadButtonText]="ls.l('FileUpload')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss'"
+                          acceptFileExt=".css"
+                          [maxFileSize]="maxCssFileSize"
+                          (onDocumentClear)="clearCustomCss()">
+                </uploader>
+            </div>
+        </div>
+        <div class="row m-form file-uploads">
+            <div class="col-md-12">
+                <uploader #faviconsUploader
+                          [title]="ls.l('CustomFavicons')"
+                          [uploadInfoText]="ls.l('UploadFavicons_Info')"
+                          [uploadButtonText]="ls.l('FileUpload')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons'"
+                          acceptFileExt=".zip"
+                          (onDocumentClear)="clearFavicons()">
+                </uploader>
+            </div>
+        </div>
+    </ng-container>
+</ng-container>

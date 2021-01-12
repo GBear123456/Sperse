@@ -87,6 +87,17 @@
                                     cssClass="tabular clipboard-holder"
                                     [visible]="false">
                         </dxi-column>
+                        <dxi-column [dataField]="commissionFields.BuyerAffiliateContactId"
+                                    [caption]="l('BuyerAffiliateContactId')"
+                                    cssClass="tabular clipboard-holder"
+                                    [visible]="false">
+                        </dxi-column>
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
+                                    [dataField]="commissionFields.BuyerAffiliateName"
+                                    [caption]="l('BuyerAffiliateName')"
+                                    [visible]="false">
+                        </dxi-column>
                         <dxi-column width="180px"
                                     [dataField]="commissionFields.OrderNumber"
                                     [caption]="l('OrderNumber')"
@@ -94,7 +105,8 @@
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.OrderDate"
                                     [caption]="l('OrderDate')" 
-                                    cellTemplate="dateCell"                                     
+                                    cellTemplate="dateCell"
+                                    [visible]="false"
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.EarnedDate"
@@ -149,7 +161,8 @@
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.BuyerEmailAddress"
                                     [caption]="l('BuyerEmailAddress')"
-                                    cssClass="clipboard-holder clipboard-holder">
+                                    cssClass="clipboard-holder clipboard-holder"
+                                    [visible]="false">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.BuyerAffiliateCode"
                                     [caption]="l('BuyerAffiliateCode')"
@@ -157,30 +170,47 @@
                         </dxi-column>
                         <dxi-column width="200px"
                                     cellTemplate="staticWidthCell"
+                                    [dataField]="commissionFields.BuyerAffiliateName"
+                                    [caption]="l('BuyerAffiliateName')"
+                                    [cssClass]="isReconciliationMentorSelected ? 'highlight' : ''"
+                                    [visible]="isReconciliationMentorSelected">
+                        </dxi-column>
+                        <dxi-column width="200px"
+                                    cellTemplate="staticWidthCell"
                                     [dataField]="commissionFields.ResellerName"
+                                    [cssClass]="isReconciliationMentorSelected ? 'highlight' : ''"
                                     [caption]="l('ResellerName')">
                         </dxi-column>
                         <dxi-column width="200px"
                                     cellTemplate="staticWidthCell"
                                     [dataField]="commissionFields.ResellerEmailAddress"
+                                    [visible]="false"
                                     [caption]="l('ResellerEmailAddress')">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.ResellerAffiliateCode"
                                     [caption]="l('ResellerAffiliateCode')"
                                     cssClass="clipboard-holder">
                         </dxi-column>
+                        <dxi-column [dataField]="commissionFields.ResellerAffiliateRate"
+                                    [caption]="l('ResellerAffiliateRate')"
+                                    format="percent"
+                                    [visible]="isReconciliationRateSelected"
+                                    cssClass="clipboard-holder padding-right {{isReconciliationRateSelected ? 'highlight' : ''}}">
+                        </dxi-column>
                         <dxi-column [dataField]="commissionFields.CommissionRate"
                                     [caption]="l('Rate')"
                                     format="percent"
-                                    cssClass="clipboard-holder padding-right">
+                                    cssClass="clipboard-holder padding-right {{isReconciliationRateSelected ? 'highlight' : ''}}">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.TransactionId"
                                     dataType="string"
+                                    [visible]="false"
                                     [caption]="l('TransactionId')"
                                     cssClass="tabular clipboard-holder">
                         </dxi-column>
                         <dxi-column dataField="TransactionAuthCode"
                                     [caption]="l('TransactionAuthCode')"
+                                    [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column width="140px"
@@ -210,7 +240,7 @@
                         </div>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{cellData.value | date: formatting.dateTime : userTimezone}}
+                            {{cellData.value | datetime: formatting.dateTime}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
@@ -328,7 +358,7 @@
                         </div>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{cellData.value | date: formatting.dateTime : userTimezone }}
+                            {{cellData.value | datetime: formatting.dateTime}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>

@@ -29,4 +29,5 @@ export interface TransactionDto {
     ProviderCashFlowSubCategoryName: string;
     Department: string;
     BankCode: string;
+    CashFlowTypeId: string;
 }

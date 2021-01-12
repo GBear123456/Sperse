@@ -265,6 +265,18 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         });
     }
 
+    onCallendarOpened(event) {
+        let container = event.component['_$container'][0],
+            position = container.getBoundingClientRect(),
+            popup = event.component['_popup']['_$content'][0],
+            isHeightOverflow = innerHeight - position.y < popup.offsetHeight,
+            isWidthOverflow = innerWidth - position.x < popup.offsetWidth;
+        if (isWidthOverflow || isHeightOverflow)
+            popup.style.transform = 'translate(' +
+                (isWidthOverflow ? -300 : 0) + 'px, ' +
+                (isHeightOverflow ? -300 : 0) + 'px)';
+    }
+
     ngOnDestroy() {
         this.contactsService.unsubscribe(this.ident);
     }

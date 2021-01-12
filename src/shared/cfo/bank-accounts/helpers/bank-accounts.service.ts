@@ -32,7 +32,8 @@ import {
     BusinessEntityServiceProxy,
     InstanceType,
     SyncProgressDto,
-    BankAccountProgress
+    BankAccountProgress,
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { BankAccountsState } from '@shared/cfo/bank-accounts-widgets/bank-accounts-state.model';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
@@ -42,6 +43,7 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { BankAccountStatus } from '@shared/cfo/bank-accounts/helpers/bank-accounts.status.enum';
 import { BankAccountType } from '@shared/cfo/bank-accounts/helpers/bank-account-type.model';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { InstanceModel } from '@shared/cfo/instance.model';
 
 @Injectable()
@@ -61,11 +63,12 @@ export class BankAccountsService {
         this.cfoService.instanceId ||
         this.cfoService.instanceType
     ].join('_');
+    isAdvicePeriod = this.appSessionService.layoutType == LayoutType.AdvicePeriod;
     state: BankAccountsState = {
         selectedBankAccountIds: [],
-        statuses: [
+        statuses: this.isAdvicePeriod ? [
             BankAccountStatus.Active
-        ],
+        ] : [],
         usedBankAccountIds: [],
         visibleBankAccountIds: [],
         selectedBusinessEntitiesIds: [],
@@ -125,6 +128,7 @@ export class BankAccountsService {
 
     constructor(
         public cfoService: CFOService,
+        private appSessionService: AppSessionService,
         private bankAccountsServiceProxy: BankAccountsServiceProxy,
         private businessEntityService: BusinessEntityServiceProxy,
         private cacheService: CacheService,
@@ -199,7 +203,7 @@ export class BankAccountsService {
             );
 
         this.selectedBusinessEntitiesIds$ = this.selectedBusinessEntities$.pipe(
-            map(businessEntities => businessEntities.reduce((entitiesIds, entity) => {
+            map(businessEntities => businessEntities.reduce((entitiesIds, entity: BusinessEntityDto) => {
                 return entitiesIds.concat(entity.id);
             }, [])),
             distinctUntilChanged((oldIds, newIds) => !ArrayHelper.dataChanged(oldIds, newIds))
@@ -555,7 +559,9 @@ export class BankAccountsService {
                 const firstUserLogin = !cachedState || !cachedState.selectedBankAccountTypes;
                 if (firstUserLogin) {
                     this._selectedBankAccountTypes.next(
-                        list.filter(item => item.name != 'Bill.com' && item.name != 'Accounting').map(item => item.id)
+                        (!this.isAdvicePeriod ? list :
+                            list.filter(item => item.name != 'Bill.com' && item.name != 'Accounting')
+                        ).map(item => item.id)
                     );
                 }
             })

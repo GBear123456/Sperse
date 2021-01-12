@@ -27,7 +27,8 @@ import {
     TypeDto,
     ReportSectionDto,
     SectionGroup,
-    CategoryDto
+    CategoryDto,
+    TenantHostServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -44,6 +45,8 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { RootStoreModule } from '@root/store/root-store.module';
 import { SummaryCell } from 'devextreme/ui/pivot_grid/ui.pivot_grid.summary_display_modes.js';
 import { TransactionStatsDtoExtended } from '@app/cfo/cashflow/models/transaction-stats-dto-extended';
+import { CategorizationPrefixes } from '@app/cfo/cashflow/enums/categorization-prefixes.enum';
+import { CashflowTypes } from '@app/cfo/cashflow/enums/cashflow-types.enum';
 
 describe('CashflowService', () => {
     beforeEach(() => {
@@ -78,7 +81,8 @@ describe('CashflowService', () => {
                 ContactServiceProxy,
                 CashflowServiceProxy,
                 CfoPreferencesService,
-                CurrencyPipe
+                CurrencyPipe,
+                TenantHostServiceProxy
             ]
         });
         abp.timing['timeZoneInfo'] = {
@@ -276,7 +280,6 @@ describe('CashflowService', () => {
         });
         service.userPreferencesService.localPreferences.value.showReportingSectionTotals = true;
         let levels = service.addCategorizationLevels(transaction).levels;
-        console.log(levels);
         expect(levels).toEqual({
             level0: 'CTI',
             level1: 'RGN/A',
@@ -290,14 +293,14 @@ describe('CashflowService', () => {
             accountId: 88188,
             adjustmentType: undefined,
             amount: -54.92,
-            cashflowTypeId: "I",
+            cashflowTypeId: 'I',
             categoryId: 52113,
             comment: undefined,
             count: 1,
-            currencyId: "USD",
-            date: "2020-05-01T00:00:00Z",
+            currencyId: 'USD',
+            date: '2020-05-01T00:00:00Z',
             forecastId: undefined,
-            initialDate: "2020-05-01T00:00:00Z",
+            initialDate: '2020-05-01T00:00:00Z',
             transactionDescriptor: undefined
         });
         /** Bug levels: {level0: "CTI", level1: "CA52107", level2: "CA52109", level3: "CA52113"} */
@@ -306,8 +309,8 @@ describe('CashflowService', () => {
             accountingTypes: {
                 5525: new AccountingTypeDto({
                     isSystem: false,
-                    name: "Income",
-                    typeId: "I"
+                    name: 'Income',
+                    typeId: 'I'
                 })
             },
             categories: {
@@ -315,7 +318,7 @@ describe('CashflowService', () => {
                     accountingTypeId: 5525,
                     coAID: null,
                     isActive: false,
-                    name: "Plants and Soil",
+                    name: 'Plants and Soil',
                     parentId: 52109,
                     reportingCategoryId: null
                 }),
@@ -323,7 +326,7 @@ describe('CashflowService', () => {
                     accountingTypeId: 5525,
                     coAID: null,
                     isActive: false,
-                    name: "Job Materials",
+                    name: 'Job Materials',
                     parentId: 52107,
                     reportingCategoryId: null
                 }),
@@ -331,14 +334,13 @@ describe('CashflowService', () => {
                     accountingTypeId: 5525,
                     coAID: null,
                     isActive: false,
-                    name: "Landscaping Services",
+                    name: 'Landscaping Services',
                     parentId: null,
                     reportingCategoryId: null
                 })
             }
         });
         let levels = service.addCategorizationLevels(transaction).levels;
-        console.log(levels);
         expect(levels).toEqual({
             level0: 'CTI',
             level1: 'AT5525',
@@ -346,6 +348,28 @@ describe('CashflowService', () => {
             level3: 'CA52109',
             level4: 'CA52113'
         });
+    }));
+
+    it('addCategorizationLevels should return levels for cashflowType only', inject([CashflowService], (service: CashflowService) => {
+        const transaction = new TransactionStatsDtoExtended({
+            adjustmentType: null,
+            accountId: null,
+            currencyId: 'USD',
+            amount: 0,
+            comment: null,
+            date: null,
+            initialDate: null,
+            forecastId: null,
+            isStub: true,
+            cashflowTypeId: CashflowTypes.StartedBalance
+        });
+        service.categoryTree = new GetCategoryTreeOutput({
+            types: {},
+            accountingTypes: {},
+            categories: {}
+        });
+        const updatedTransaction: TransactionStatsDtoExtended = service.addCategorizationLevels(transaction);
+        expect(Object.keys(updatedTransaction.levels).length).toBe(1);
     }));
 
     it('customizeFieldText should return text', inject([ CashflowService ], (service: CashflowService) => {
@@ -921,8 +945,64 @@ describe('CashflowService', () => {
                 86: new CategoryDto({ parentId: null, name: 'Parent category', accountingTypeId: 2, coAID: null, isActive: true, reportingCategoryId: null })
             }
         });
-        const categoryFullPath = service.getCategoryFullPath(77, category, categoryTree);
-        console.log(categoryFullPath);
+        const categoryFullPath = service.getCategoryFullPath(77, categoryTree);
         expect(categoryFullPath).toEqual([ 'CTE', 'CA86', 'CA67', 'CA77' ]);
+    }));
+
+    it('getCategoryFullPath should work', inject([ CashflowService ], (service: CashflowService) => {
+        const categoryTree: GetCategoryTreeOutput = new GetCategoryTreeOutput ({
+            types: { I: new TypeDto({ name: 'Inflows'}), E: new TypeDto({name: 'Outflows'})},
+            accountingTypes: {
+                2: new AccountingTypeDto({
+                    isSystem: false,
+                    name: 'Income',
+                    typeId: 'I'
+                })
+            },
+            categories: {
+                53997: new CategoryDto({
+                    accountingTypeId: 2,
+                    coAID: null,
+                    isActive: true,
+                    name: 'Design income',
+                    parentId: null,
+                    reportingCategoryId: null
+                })
+            }
+        });
+        service.userPreferencesService.localPreferences.value.showAccountingTypeTotals = true;
+        const categoryFullPath = service.getCategoryFullPath(53997, categoryTree);
+        expect(categoryFullPath).toEqual([ 'CTI', 'CA53997' ]);
+    }));
+
+    it('getCategoryFullPath should work event without mapping of accounting type to cashflowTypeId', inject([ CashflowService ], (service: CashflowService) => {
+        const categoryTree: GetCategoryTreeOutput = new GetCategoryTreeOutput ({
+            types: { I: new TypeDto({ name: 'Inflows'}), E: new TypeDto({name: 'Outflows'})},
+            accountingTypes: {
+                2: new AccountingTypeDto({
+                    isSystem: false,
+                    name: null,
+                    typeId: null
+                })
+            },
+            categories: {
+                53997: new CategoryDto({
+                    accountingTypeId: 2,
+                    coAID: null,
+                    isActive: true,
+                    name: 'Design income',
+                    parentId: null,
+                    reportingCategoryId: null
+                })
+            }
+        });
+        service.userPreferencesService.localPreferences.value.showAccountingTypeTotals = true;
+        const categoryFullPath = service.getCategoryFullPath(53997, categoryTree, 'I');
+        expect(categoryFullPath).toEqual([ 'CTI', 'CA53997' ]);
+    }));
+
+    it('getCategoryValueByPrefix should return the deepest category in path', inject([ CashflowService ], (service: CashflowService) => {
+        const categoryPath = [ 'CTE', 'AT5906', 'CA53944', 'CA53953' ];
+        expect(service.getCategoryValueByPrefix(categoryPath, CategorizationPrefixes.Category)).toEqual('53953');
     }));
 });

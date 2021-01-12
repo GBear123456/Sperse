@@ -60,6 +60,7 @@ export class AppPreBootstrap {
     }
 
     private static updateAppConsts(appConfig) {
+        AppConsts.appConfigOrigin = appConfig;
         AppConsts.recaptchaSiteKey = appConfig.recaptchaSiteKey;
         AppConsts.googleSheetClientId = appConfig.googleSheetClientId;
         AppConsts.subscriptionExpireNootifyDayCount = appConfig.subscriptionExpireNootifyDayCount;
@@ -153,6 +154,7 @@ export class AppPreBootstrap {
             requestHeaders['.AspNetCore.Culture'] = 'c=' + cookieLangValue + '|uic=' + cookieLangValue;
         }
 
+        abp.auth.clearToken();
         return abp.ajax({
             url: AppConsts.remoteServiceBaseUrl + '/api/TokenAuth/LinkedAccountAuthenticate?switchAccountToken=' + switchAccountToken,
             method: 'POST',

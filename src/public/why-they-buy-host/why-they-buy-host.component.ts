@@ -14,8 +14,8 @@ import { WhyTheyBuyComponent } from '@root/bank-code/products/why-they-buy/why-t
         '../../shared/common/styles/core.less',
         './why-they-buy-host.component.less',
         '../../assets/metronic/dist/html/blue/assets/demo/blue/base/style.bundle.light.css',
-        '../../node_modules/devextreme/dist/css/dx.common.css',
-        '../../node_modules/devextreme/dist/css/dx.light.css',
+        '../../../node_modules/devextreme/dist/css/dx.common.css',
+        '../../../node_modules/devextreme/dist/css/dx.light.css',
         '../../bank-code/products/why-they-buy/why-they-buy.component.less'
     ],
     encapsulation: ViewEncapsulation.None,

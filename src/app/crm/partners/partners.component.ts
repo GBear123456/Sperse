@@ -24,7 +24,7 @@ import {
     finalize
 } from 'rxjs/operators';
 import * as _ from 'underscore';
-import DataSource from '@root/node_modules/devextreme/data/data_source';
+import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 
 /** Application imports */

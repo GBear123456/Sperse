@@ -28,7 +28,9 @@ import {
     ContactServiceProxy,
     InvoiceServiceProxy,
     InvoiceStatus,
-    InvoiceSettings, PipelineDto, StageDto
+    InvoiceSettings,
+    PipelineDto,
+    StageDto
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { MarkAsPaidDialogComponent } from '@app/crm/contacts/invoices/mark-paid-dialog/mark-paid-dialog.component';
@@ -41,6 +43,7 @@ import { InvoiceDto } from '@app/crm/contacts/invoices/invoice-dto.interface';
 import { InvoiceFields } from '@app/crm/contacts/invoices/invoice-fields.enum';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './invoices.component.html',
@@ -50,10 +53,12 @@ import { FieldDependencies } from '@app/shared/common/data-grid.service/field-de
 })
 export class InvoicesComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxTooltipComponent, { static: false }) actionsTooltip: DxTooltipComponent;
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild('invoicesDataGrid', { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild('generatedCommissionDataGrid', {static: false}) generatedCommissionDataGrid: DxDataGridComponent;
 
     private actionRecordData: InvoiceDto;
     private settings = new InvoiceSettings();
+    private readonly commissionDataSourceURI = 'Commission';
     private readonly dataSourceURI = 'OrderInvoices';
     private filters: FilterModel[];
 
@@ -69,9 +74,25 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     previewDisabled = false;
     downloadPdfDisabled = false;
     duplicateInvoiceDisabled = false;
-    isSendEmailAllowed = false;    
+    isSendEmailAllowed = false;
 
     private readonly ident = 'Invoices';
+    private _selectedTabIndex = 0;
+
+    get selectedTabIndex(): number {
+        return this._selectedTabIndex;
+    }
+
+    set selectedTabIndex(val: number) {
+        this._selectedTabIndex = val;
+        if (val) {
+            this.initGeneratedCommissionDataSource();
+        }
+    }
+
+    generatedCommissionDataSource;
+    isCommissionsAllowed = this.feature.isEnabled(AppFeatures.CRMCommissions)
+        && this.permission.isGranted(AppPermissions.CRMCommissions);
 
     contactId: number;
     stages$: Observable<StageDto[]> = this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order, null).pipe(
@@ -85,7 +106,13 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             this.invoiceFields.ContactId,
             this.invoiceFields.Date
         ]
-    }
+    };
+
+    currencyFormat = {
+        type: 'currency',
+        precision: 2,
+        currency: 'USD'
+    };
 
     constructor(injector: Injector,
         private dialog: MatDialog,
@@ -99,6 +126,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         this.clientService.invalidateSubscribe((area: string) => {
             if (area === 'invoices') {
                 this.dataSource = this.getDataSource();
+                this.initGeneratedCommissionDataSource(true);
             }
         }, this.ident);
         this.clientService.contactInfoSubscribe((data: ContactInfoDto) => {
@@ -107,12 +135,16 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 this.isSendEmailAllowed = this.permission.checkCGPermission(
                     data.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
                 this.dataSource = this.getDataSource();
+                this.initGeneratedCommissionDataSource(true);
             }
         }, this.ident);
 
-        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe((settings: InvoiceSettings) => {
-            this.settings = settings;
-        });
+        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe(
+            (settings: InvoiceSettings) => {
+                this.settings = settings;
+                this.currencyFormat.currency = settings.currency;
+            }
+        );
     }
 
     ngOnInit(): void {
@@ -156,6 +188,29 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 deserializeDates: false
             })
         });
+    }
+
+    initGeneratedCommissionDataSource(invalidate = false) {
+        if (this.contactId && (invalidate ? this.generatedCommissionDataSource : !this.generatedCommissionDataSource))
+            this.generatedCommissionDataSource = new DataSource({
+                requireTotalCount: true,
+                store: new ODataStore({
+                    key: 'Id',
+                    url: this.oDataService.getODataUrl(this.commissionDataSourceURI,
+                        {'BuyerContactId': this.contactId}),
+                    version: AppConsts.ODataVersion,
+                    deserializeDates: false,
+                    beforeSend: (request) => {
+                        this.loadingService.startLoading();
+                        request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                        request.params.$select = DataGridService.getSelectFields(
+                            this.generatedCommissionDataGrid,
+                            ['Id', 'ResellerContactId']
+                        );
+                    }
+                })
+            });
     }
 
     processFilterInternal() {

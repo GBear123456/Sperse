@@ -1,0 +1,141 @@
+<h2>{{ ls.l('Security') }}</h2>
+<div *ngIf="passwordComplexitySettings">
+    <h5>{{ls.l("PasswordComplexity")}}</h5>
+    <div class="columns">
+        <div>
+            <div class="form-group">
+                <dx-check-box id="Setting_PasswordComplexity_UseDefaultSettings"
+                              [text]="ls.l('UseDefaultSettings')"
+                              [(value)]="passwordComplexitySettings.isDefaultUsed">
+                </dx-check-box>
+            </div>
+            <div class="form-group">
+                <dx-check-box id="Setting_PasswordComplexity_RequireDigit"
+                              [disabled]="passwordComplexitySettings.isDefaultUsed"
+                              [text]="ls.l('PasswordComplexity_RequireDigit')"
+                              [(value)]="passwordComplexitySettings.isDefaultUsed
+                                 ? passwordComplexitySettings.default.requireDigit
+                                 : passwordComplexitySettings.current.requireDigit">
+                </dx-check-box>
+            </div>
+            <div class="form-group">
+                <dx-check-box id="Setting_PasswordComplexity_RequireLowercase"
+                              [text]="ls.l('PasswordComplexity_RequireLowercase')"
+                              [disabled]="passwordComplexitySettings.isDefaultUsed"
+                              [(value)]="passwordComplexitySettings.isDefaultUsed
+                                 ? passwordComplexitySettings.default.requireLowercase
+                                 : passwordComplexitySettings.current.requireLowercase">
+                </dx-check-box>
+            </div>
+        </div>
+        <div>
+            <div class="form-group">
+                <dx-check-box id="Setting_PasswordComplexity_RequireNonAlphanumeric"
+                              [disabled]="passwordComplexitySettings.isDefaultUsed"
+                              [text]="ls.l('PasswordComplexity_RequireNonAlphanumeric')"
+                              [(value)]="passwordComplexitySettings.isDefaultUsed
+                                 ? passwordComplexitySettings.default.requireNonAlphanumeric
+                                 : passwordComplexitySettings.current.requireNonAlphanumeric">
+                </dx-check-box>
+            </div>
+            <div class="form-group require-uppercase">
+                <dx-check-box id="Setting_PasswordComplexity_RequireUppercase"
+                              [disabled]="passwordComplexitySettings.isDefaultUsed"
+                              [text]="ls.l('PasswordComplexity_RequireUppercase')"
+                              [(value)]="passwordComplexitySettings.isDefaultUsed
+                                 ? passwordComplexitySettings.default.requireUppercase
+                                 : passwordComplexitySettings.current.requireUppercase">
+                </dx-check-box>
+            </div>
+            <div class="form-group require-length">
+                <label>{{ls.l("PasswordComplexity_RequiredLength")}}</label>
+                <input type="number" name="RequiredLength" class="form-control"
+                       [ngClass]="{
+                            'edited': passwordComplexitySettings.isDefaultUsed
+                              ? passwordComplexitySettings.default.requiredLength
+                              : passwordComplexitySettings.current.requiredLength
+                       }"
+                       [disabled]="passwordComplexitySettings.isDefaultUsed"
+                       [(ngModel)]="passwordComplexitySettings.isDefaultUsed
+                            ? passwordComplexitySettings.default.requiredLength
+                            : passwordComplexitySettings.current.requiredLength">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="lock-out" *ngIf="userLockOutSettings">
+    <h5>{{ls.l("UserLockOut")}}</h5>
+    <div class="form-group login-attempts">
+        <dx-check-box id="Setting_UserLockOut_IsEnabled"
+                      [text]="ls.l('EnableUserAccountLockingOnFailedLoginAttemts')"
+                      [(value)]="userLockOutSettings.isEnabled">
+        </dx-check-box>
+    </div>
+    <ng-container *ngIf="userLockOutSettings.isEnabled">
+        <div class="form-group max-failed-attempts">
+            <label for="MaxFailedAccessAttemptsBeforeLockout">
+                {{ ls.l("MaxFailedAccessAttemptsBeforeLockout") }}
+            </label>
+            <input id="MaxFailedAccessAttemptsBeforeLockout"
+                   type="number"
+                   name="MaxFailedAccessAttemptsBeforeLockout"
+                   class="form-control"
+                   [ngClass]="{ 'edited': userLockOutSettings.maxFailedAccessAttemptsBeforeLockout }"
+                   [(ngModel)]="userLockOutSettings.maxFailedAccessAttemptsBeforeLockout">
+        </div>
+        <div class="form-group lockdown-duration">
+            <label for="DefaultAccountLockoutDurationAsSeconds">
+                {{ ls.l("DefaultAccountLockoutDurationAsSeconds") }}
+            </label>
+            <input id="DefaultAccountLockoutDurationAsSeconds"
+                   type="number"
+                   name="DefaultAccountLockoutSeconds"
+                   class="form-control"
+                   [ngClass]="{ 'edited': userLockOutSettings.defaultAccountLockoutSeconds }"
+                   [(ngModel)]="userLockOutSettings.defaultAccountLockoutSeconds">
+        </div>
+    </ng-container>
+</div>
+<div *ngIf="isHost || !isMultiTenancyEnabled || (twoFactorLoginSettings && twoFactorLoginSettings.isEnabledForApplication)"
+     class="two-factor-login">
+    <h5>{{ ls.l("TwoFactorLogin") }}</h5>
+    <div class="columns">
+        <div>
+            <div class="form-group">
+                <dx-check-box id="Setting_TwoFactorLogin_IsEnabled"
+                              [text]="ls.l('EnableTwoFactorLogin')"
+                              [(value)]="twoFactorLoginSettings.isEnabled">
+                </dx-check-box>
+            </div>
+            <div class="form-group">
+                <dx-check-box id="Setting_TwoFactorLogin_IsEmailProviderEnabled"
+                              *ngIf="twoFactorLoginSettings.isEnabled"
+                              [text]="ls.l('IsEmailVerificationEnabled')"
+                              [(value)]="twoFactorLoginSettings.isEmailProviderEnabled">
+                </dx-check-box>
+            </div>
+            <div class="form-group">
+                <dx-check-box id="Setting_TwoFactorLogin_IsSmsProviderEnabled"
+                              *ngIf="twoFactorLoginSettings.isEnabled"
+                              [text]="ls.l('IsSmsVerificationEnabled')"
+                              [(value)]="twoFactorLoginSettings.isSmsProviderEnabled">
+                </dx-check-box>
+            </div>
+        </div>
+        <div>
+            <div *ngIf="twoFactorLoginSettings.isEnabled" class="form-group">
+                <dx-check-box id="Setting_TwoFactorLogin_IsGoogleAuthenticatorEnabled"
+                              [text]="ls.l('IsGoogleAuthenticatorEnabled')"
+                              [(value)]="twoFactorLoginSettings.isGoogleAuthenticatorEnabled">
+                </dx-check-box>
+            </div>
+            <div *ngIf="twoFactorLoginSettings.isEnabled" class="form-group remember-browser">
+                <dx-check-box id="Setting_TwoFactorLogin_IsRememberBrowserEnabled"
+                              [text]="ls.l('AllowToRememberBrowserForTwoFactorLogin')"
+                              hint="If you allow this, users can select Remember Browser to skip two-factor login for the same browser the next time"
+                              [(value)]="twoFactorLoginSettings.isRememberBrowserEnabled">
+                </dx-check-box>
+            </div>
+        </div>
+    </div>
+</div>
