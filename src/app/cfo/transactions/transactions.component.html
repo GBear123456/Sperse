@@ -110,6 +110,9 @@
                         [allowColumnResizing]="true"
                         [hoverStateEnabled]="true"
                         [cacheEnabled]="true"
+                        [columnChooser]="{
+                          height: rowsViewHeight
+                        }"
                         [headerFilter]="{ allowSearch: true, visible: false }"
                         [pager]="defaultGridPagerConfig"
                         [loadPanel]="{ enabled: false }"
@@ -136,6 +139,7 @@
                         <dxi-column [dataField]="transactionFields.Date"
                                     cssClass="tabular"
                                     sortOrder="desc"
+                                    minWidth="90px"
                                     calculateSortValue="Date"
                                     [renderAsync]="true"
                                     [caption]="l('Transactions_Date')"
@@ -186,6 +190,7 @@
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.BankAccountId"
                                     cssClass="tabular clipboard-holder"
+                                    minWidth="150px"
                                     [renderAsync]="true"
                                     [caption]="l('Transactions_BankAccountNumber')"
                                     [lookup]="{
@@ -198,6 +203,7 @@
                         <dxi-column [dataField]="transactionFields.Comments"
                                     dataType="string"
                                     [caption]="l('Transactions_Comments')"
+                                    [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.CategoryName"
@@ -463,13 +469,6 @@
 
                         <div *dxTemplate="let data of 'transactionTotal'">
                             <div class="informer">
-                                <h2 class="count clipboard-holder">
-                                    {{ transactionTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
-                                </h2>
-                                <span class="name" (click)="toggleTotalDefault()">
-                                    <span id="adjustments" *ngIf="adjustmentTotal !== 0">!</span> {{l('Net_Amount')}} <span class="name-count clipboard-holder">{{transactionCount | number}}</span> <i id="totalDetails" class="arrow"></i>
-
-                                </span>
                                 <dx-tooltip target="#adjustments"
                                             position="top"
                                             showEvent="dxhoverstart"
@@ -509,6 +508,12 @@
                                         </div>
                                     </div>
                                 </dx-tooltip>
+                                <h2 class="count clipboard-holder">
+                                    {{ transactionTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
+                                </h2>
+                                <span class="name" (click)="toggleTotalDefault()">
+                                    <span id="adjustments" *ngIf="adjustmentTotal !== 0">!</span> {{l('Net_Amount')}} <span class="name-count clipboard-holder">{{transactionCount | number}}</span> <i id="totalDetails" class="arrow"></i>
+                                </span>
                             </div>
                         </div>
 
