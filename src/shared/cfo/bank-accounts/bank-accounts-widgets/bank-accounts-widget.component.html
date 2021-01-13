@@ -93,12 +93,14 @@
         <dxi-column dataField="selected"
                     caption=""
                     [width]="44"
+                    [visibleIndex]="1"
                     [visible]="showCheckboxes"
                     cssClass="checkbox clipboard-holder"
                     alignment="center"
                     dataType="boolean">
         </dxi-column>
         <dxi-column dataField="name"
+                    [visibleIndex]="2"
                     [caption]="l('Account')"
                     [sortIndex]="0"
                     sortOrder="asc"
@@ -108,6 +110,7 @@
                     cssClass="accountNumber bold clipboard-holder">
         </dxi-column>
         <dxi-column dataField="bankAccounts.length"
+                    [visibleIndex]="3"
                     [visible]="showAdvancedColumns && showAccountsCount"
                     [width]="70"
                     [sortIndex]="1"
@@ -120,6 +123,7 @@
         <dxi-column [width]="wide ? 30 : 50"
                     alignment="right"
                     [allowEditing]="false"
+                    [visibleIndex]="4"
                     [visible]="showAdvancedColumns && showAccountsCount"
                     cellTemplate="expandTemplate">
         </dxi-column>
@@ -129,9 +133,11 @@
                     [width]="180"
                     [allowEditing]="false"
                     cellTemplate="syncDateTemplate"
+                    [visibleIndex]="5"
                     [visible]="showSyncDate">
         </dxi-column>
         <dxi-column dataField="syncAccountStatus"
+                    [visibleIndex]="6"
                     [visible]="showStatus"
                     [caption]="l('BankAccountsWidget_Sync_status')"
                     [width]="showStatusText ? 170 : 20"
@@ -142,6 +148,7 @@
                     [allowEditing]="false">
         </dxi-column>
         <dxi-column alignment="right"
+                    [visibleIndex]="7"
                     [visible]="!accessAllDepartments">
         </dxi-column>
         <dxi-column dataField="balance"
@@ -153,13 +160,14 @@
                     alignment="right"
                     [allowEditing]="false"
                     [calculateDisplayValue]="calculateBalanceDisplayValue"
+                    [visibleIndex]="8"
                     [visible]="accessAllDepartments">
         </dxi-column>
         <dxi-column dataField="syncRef"
                     [width]="40"
                     alignment="right"
                     [allowEditing]="false"
-                    [visible]="!!(allowUpdateAccount && contextMenuItems && contextMenuItems.length)"
+                    [visibleIndex]="10"
                     cellTemplate="actionsTemplate">
         </dxi-column>
         <div *dxTemplate="let syncAccount of 'detail'">
@@ -372,9 +380,9 @@
         <div *dxTemplate="let cell of 'expandTemplate'">
             <div class="expand-div"></div>
         </div>
-        <div *dxTemplate="let cell of 'actionsTemplate'">
-            <a class="dx-link dx-link-edit options-button"
-               (click)="openActionsMenu(cell)">&nbsp;</a>
+        <div *dxTemplate="let cell of 'actionsTemplate'" style="height: 30px;">
+            <a *ngIf="allowUpdateAccount && isInstanceAdmin && isMemberAccessManage" 
+                class="dx-link dx-link-edit options-button" (click)="openActionsMenu(cell)">&nbsp;</a>
         </div>
         <div *dxTemplate="let cell of 'syncDateTemplate'">
             <ng-container *ngIf="(cell.text)">

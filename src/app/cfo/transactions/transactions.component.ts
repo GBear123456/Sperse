@@ -179,6 +179,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     defaultDebitTooltipVisible = false;
     defaultTotalTooltipVisible = false;
     toggleTabContent = true;
+    rowsViewHeight: number;
 
     private readonly dataSourceURI = 'Transaction';
     private readonly countDataSourceURI = 'Transaction/$count';
@@ -847,6 +848,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     template: 'transactionTotal'
                 }
             );
+            this.changeDetectionRef.detectChanges();
         }
     }
 
@@ -1318,6 +1320,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     onContentReady(event) {
         this.setGridDataLoaded();
         this.onSelectionChanged(event, true);
+        this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
         event.component.updateDimensions();
     }
 
