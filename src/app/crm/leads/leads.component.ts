@@ -315,7 +315,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 };
             });
         })
-    )
+    );
     private readonly CONTACT_GROUP_CACHE_KEY = 'SELECTED_PIPELINE_ID';
     private readonly cacheKey = this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY, this.dataSourceURI);
     selectedPipelineId: number;
@@ -428,14 +428,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             let localizedLabel = this.l('Pipeline_' + selectedPipeline.name + '_Single');
             localizedLabel = this.l('Pipeline_' + selectedPipeline.name + '_Single') !== localizedLabel
                 ? localizedLabel
-                : pluralize.singular(selectedPipeline.name)
+                : pluralize.singular(selectedPipeline.name);
             return [
                 {
                     enabled: this.permission.checkCGPermission(selectedPipeline.contactGroupId),
                     action: this.createLead.bind(this),
                     label: this.l('CreateNew') + ' ' + localizedLabel
                 }
-            ]
+            ];
         })
     );
     permissions = AppPermissions;
@@ -742,20 +742,20 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             );
             this.handleTotalCountUpdate();
             this.handlePipelineUpdate();
+            this.handleDataGridUpdate();
+            this.handlePivotGridUpdate();
+            this.handleChartUpdate();
         });
         this.addBankCodeField();
     }
 
     ngOnInit() {
         this.loadOrganizationUnits();
-        this.handleDataGridUpdate();
-        this.handlePivotGridUpdate();
-        this.handleChartUpdate();
         this.handleMapUpdate();
         this.handleModuleChange();
         this.activate();
         this.handleFiltersPining();
-        this.handleUserGroupTextUpdate()
+        this.handleUserGroupTextUpdate();
     }
 
     ngAfterViewInit() {
@@ -1037,8 +1037,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private waitUntil(layoutType: DataLayoutType) {
-        return (data) => this.dataLayoutType.value === layoutType ? of(data) : this.dataLayoutType$.pipe(
-            filter((dataLayoutType: DataLayoutType) => dataLayoutType === layoutType),
+        return (data) => this.dataLayoutType.value == layoutType ? of(data) : this.dataLayoutType$.pipe(
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType == layoutType),
             first(),
             mapTo(data)
         );
@@ -1787,7 +1787,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     searchValueChange(e: object) {
         if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
-            this._router.navigate([], {queryParams: {search: this.searchValue}});
+            this._router.navigate([], {queryParams: {
+                ...this._activatedRoute.snapshot.queryParams,
+                search: this.searchValue
+            }});
             this._refresh.next(null);
         }
     }
@@ -1947,7 +1950,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         }}
                 );
             });
-        })
+        });
     }
 
     onCellClick($event) {
