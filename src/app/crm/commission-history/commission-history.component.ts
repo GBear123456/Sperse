@@ -142,7 +142,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
     permissions = AppPermissions;
     searchValueChanged = false;
-    searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
+    searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
@@ -484,9 +484,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             this.subRouteParams = this._activatedRoute.queryParams
                 .pipe(takeUntil(this.deactivate$))
                 .subscribe(params => {
-                    const searchValueChanged = params.searchValue && this.searchValue !== params.searchValue;
+                    const searchValueChanged = params.search && this.searchValue !== params.search;
                     if (searchValueChanged) {
-                        this.searchValue = params.searchValue || '';
+                        this.searchValue = params.search || '';
                         this.initToolbarConfig();
                         setTimeout(() => this.filtersService.clearAllFilters());
                     }
@@ -947,6 +947,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         if (this.searchValue != e['value']) {
             this.searchValueChanged = true;
             this.searchValue = e['value'];
+            this._router.navigate([], {queryParams: {search: this.searchValue}});
             this._refresh.next(null);
             this.changeDetectorRef.detectChanges();
         }

@@ -440,7 +440,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     );
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
-    searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
+    searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
     searchClear = false;
     private pivotGridDataSource = {
         remoteOperations: true,
@@ -942,9 +942,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             )
         ).subscribe((params: Params) => {
             let filtersToChange = [];
-            const searchValueChanged = params.searchValue && this.searchValue !== params.searchValue;
+            const searchValueChanged = params.search && this.searchValue !== params.search;
             if (searchValueChanged) {
-                this.searchValue = params.searchValue;
+                this.searchValue = params.search;
                 this.initToolbarConfig();
             }
             if (this.crmService.updateCountryStateFilter(params, this.filterCountryStates)) {
@@ -1787,6 +1787,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     searchValueChange(e: object) {
         if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
+            this._router.navigate([], {queryParams: {search: this.searchValue}});
             this._refresh.next(null);
         }
     }
