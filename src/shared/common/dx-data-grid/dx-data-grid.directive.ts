@@ -96,8 +96,9 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
             }),
             this.component.onContentReady.subscribe(event => {
                 let dataSource = event.component.getDataSource();
-                if (!dataSource || !dataSource.group())
-                    event.element.classList.remove('show-group-panel');
+                if (dataSource)
+                    event.element.classList[dataSource.group()
+                        ? 'add' : 'remove']('show-group-panel');
             }),
             this.component.onCellPrepared.subscribe(event => {
                 if (event.rowType == 'header') {
