@@ -12,6 +12,7 @@ import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxLoadPanelModule } from 'devextreme-angular/ui/load-panel';
 import { DxTemplateModule } from 'devextreme-angular/core';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { NgxPageScrollModule } from 'ngx-page-scroll';
 
 /** Application imports */
@@ -32,7 +33,7 @@ import { ConsumerStatementsComponent } from './consumer-statements/consumer-stat
 import { KbaComponent } from './kba-request/kba-request.component';
 import { LayoutModule } from '../../shared/layout/layout.module';
 import { CreditReportServiceProxy } from '@shared/service-proxies/service-proxies';
-import { DxSelectBoxModule } from 'devextreme-angular';
+import { DateTimeModule } from '@shared/common/pipes/datetime/datetime.module';
 
 @NgModule({
     imports: [
@@ -52,7 +53,8 @@ import { DxSelectBoxModule } from 'devextreme-angular';
         RouterModule.forChild([{
             path: '',
             component: CreditReportComponent
-        }])
+        }]),
+        DateTimeModule
     ],
     declarations: [
         CreditReportComponent,

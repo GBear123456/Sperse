@@ -331,6 +331,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             return pipelines.find((pipeline: PipelineDto) => pipeline.id == pipelineId);
         })
     );
+    isPropertyPipeline$: Observable<boolean> = this.selectedPipeline$
+        .pipe(
+            map(selectedPipeline => [EntityTypeSys.Acquisition, EntityTypeSys.Management].indexOf(selectedPipeline.entityTypeSysId as EntityTypeSys) > -1)
+        );
     /** Get pipeline contactGroup @todo remove using of contact group in all places */
     selectedContactGroup$: Observable<ContactGroup> = this.selectedPipeline$.pipe(
         map((pipeline: PipelineDto) => pipeline.contactGroupId)
@@ -702,7 +706,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 this.leadFields.StageChecklistPointDoneCount,
                                 this.leadFields.AffiliateContactName,
                                 this.leadFields.AffiliateContactAffiliateCode,
-                                this.leadFields.PropertyId
+                                this.leadFields.PropertyId,
+                                this.leadFields.PropertyName
                             ]
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;

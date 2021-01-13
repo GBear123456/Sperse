@@ -513,7 +513,8 @@ export class ContactsService {
             this.organizationContactInfo$.pipe(filter(Boolean), first()),
             this.leadInfo$.pipe(filter(Boolean), first(), map((leadInfo: LeadInfoDto) => leadInfo.propertyId))
         ).subscribe(([contactInfo, personContactInfo, organizationContactInfo, propertyId]:
-                          [ContactInfoDto, PersonContactInfoDto, OrganizationContactInfoDto, number]) => {
+            [ContactInfoDto, PersonContactInfoDto, OrganizationContactInfoDto, number]
+        ) => {
             const noteAddDialogData: NoteAddDialogData = {
                 note: noteData,
                 contactInfo: contactInfo,

@@ -34,7 +34,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { GhostListModule } from '@app/shared/common/ghost-list/ghost-list.module';
 import { ModalDialogModule } from './dialogs/modal/modal-dialog.module';
 import { CountryPhoneNumberModule } from './phone-numbers/country-phone-number.module';
-import { DateTimePipe } from './pipes/datetime.pipe';
+import { DateTimeModule } from '@shared/common/pipes/datetime/datetime.module';
+import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
 
 @NgModule({
     declarations: [
@@ -44,7 +45,6 @@ import { DateTimePipe } from './pipes/datetime.pipe';
         AddressFormatPipe,
         FileSizePipe,
         ZipCodeFormatterPipe,
-        DateTimePipe,
         InfoComponent,
         TitleCasePipe,
         RegisterConfirmComponent,
@@ -59,14 +59,14 @@ import { DateTimePipe } from './pipes/datetime.pipe';
         AddressFormatPipe,
         FileSizePipe,
         ZipCodeFormatterPipe,
-        DateTimePipe,
         InfoComponent,
         TitleCasePipe,
         DxDataGridDirective,
         ConditionsModalComponent,
         NoDataModule,
         InlineSVGModule,
-        GhostListModule       
+        GhostListModule,
+        DateTimePipe
     ],
     imports: [
         ngCommon.CommonModule,
@@ -78,14 +78,14 @@ import { DateTimePipe } from './pipes/datetime.pipe';
         MatDialogModule,
         DxTextBoxModule,
         DxCheckBoxModule,
-        PhoneFormatModule
+        PhoneFormatModule,
+        DateTimeModule
     ],
     entryComponents: [
         RegisterConfirmComponent,
         ConditionsModalComponent
     ],
     providers: [
-        DateTimePipe,
         AppUrlService,
         CellsCopyingService,
         CacheHelper,

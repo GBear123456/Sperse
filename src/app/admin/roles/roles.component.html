@@ -55,7 +55,7 @@
                         <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{ cellData.value | date: formatting.dateTime : userTimezone }}
+                            {{ cellData.value | datetime: formatting.dateTimeMoment }}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>

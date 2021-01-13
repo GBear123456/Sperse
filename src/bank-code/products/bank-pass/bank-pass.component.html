@@ -176,9 +176,9 @@
                             <div *dxTemplate="let cellData of 'phoneCell'">
                                 {{cellData.value | phone}}
                             </div>
-                            <div *dxTemplate="let cellData of 'dateCell'">
-                                {{cellData.value | date: formatting.date : userTimezone}}
-                            </div>
+                            <!--<div *dxTemplate="let cellData of 'dateCell'">
+                                {{cellData.value | datetime: formatting.dateMoment}}
+                            </div>-->
                             <div *dxTemplate="let cellData of 'bankCodeCell'">
                                 <bank-code-letters [bankCode]="cellData.value"
                                                    [showDescriptionsOnClick]="true"

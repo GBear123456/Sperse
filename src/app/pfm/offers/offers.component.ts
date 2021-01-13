@@ -151,6 +151,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     ];
     toolbarConfig: ToolbarGroupModel[];
     readonly offerFields: KeysEnum<OfferDto> = OfferFields;
+    formatting = AppConsts.formatting;
 
     constructor(
         private injector: Injector,

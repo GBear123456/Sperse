@@ -57,7 +57,7 @@
                         {{duration.value}} ms
                     </ng-container>
                     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                        {{cellData.value | date: formatting.dateTime : userTimezone }}
+                        {{cellData.value | datetime: formatting.dateTimeMoment }}
                     </div>
                     <div *dxTemplate="let cellData of 'ipCell'" class="clipboard-holder">
                         <a target="_blank" [href]="urlHelper.getLookupIpUrl(cellData.value)">{{cellData.value}}</a>

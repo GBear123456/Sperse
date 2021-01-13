@@ -1,34 +1,30 @@
 /** Core imports */
-import { Directive, OnInit, OnDestroy, Renderer2 } from '@angular/core';
+import {
+    Directive,
+    OnInit,
+    OnDestroy,
+    Renderer2,
+    ViewContainerRef
+} from '@angular/core';
+import { Location } from '@angular/common';
 
 /** Third party imports */
 import { AppConsts } from '@shared/AppConsts';
 import { ClipboardService } from 'ngx-clipboard';
-import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from '@abp/notify/notify.service';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { DateTimePipe } from '@shared/common/pipes/datetime.pipe.ts';
+import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe.ts';
 import { on } from 'devextreme/events';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 
 @Directive({
     selector: 'dx-data-grid'
 })
 export class DxDataGridDirective implements OnInit, OnDestroy {
-    private clipboardIcon;
-    private subscriptions = [];
-    private timezone = DateHelper.getUserTimezone();
-    private copyToClipboard = (event) => {
-        this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
-        this.notifyService.info(this.ls.l('SavedToClipboard'));
-
-        event.stopPropagation();
-        event.preventDefault();
-    }
-    exporting = false;
 
     constructor(
         private dateTimePipe: DateTimePipe,
@@ -36,14 +32,28 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
         private ls: AppLocalizationService,
         private notifyService: NotifyService,
         private component: DxDataGridComponent,
-        private clipboardService: ClipboardService
+        private clipboardService: ClipboardService,
+        private cacheHelper: CacheHelper,
+        private viewContainerRef: ViewContainerRef,
+        private location: Location
     ) {
         this.clipboardIcon = this.renderer.createElement('i');
         this.clipboardIcon.addEventListener('click', this.copyToClipboard, true);
         this.renderer.addClass(this.clipboardIcon, 'save-to-clipboard');
     }
+    private clipboardIcon;
+    private subscriptions = [];
+    exporting = false;
+    private copyToClipboard = (event) => {
+        this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
+        this.notifyService.info(this.ls.l('SavedToClipboard'));
+
+        event.stopPropagation();
+        event.preventDefault();
+    }
 
     ngOnInit() {
+        this.initStateStoring();
         this.subscriptions.push(
             this.component.onInitialized.subscribe(event => {
                 setTimeout(() =>
@@ -59,7 +69,7 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
                 if (event.rowType == 'header') {
                     if (event.cellElement.classList.contains('dx-command-select'))
                         event.cellElement.setAttribute('title', this.ls.l(
-                            event.component.option('selection.selectAllMode') === 'allPages' ? 'AffectAllPagesItems' : 'AffectOnPageItems')); 
+                            event.component.option('selection.selectAllMode') === 'allPages' ? 'AffectAllPagesItems' : 'AffectOnPageItems'));
                 } else if (event.rowType == 'data') {
                     if (event.eventType == 'mouseover') {
                         if (event.column.name == 'hiddenTime') {
@@ -128,6 +138,21 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
                 this.exporting = false;
             })
         );
+    }
+
+    initStateStoring() {
+        this.component.instance.option('stateStoring', {
+            enabled: true,
+            ignoreColumnOptionNames: [],
+            storageKey: this.cacheHelper.getCacheKey(
+                this.getLocationPath(),
+                'DataGridState'
+            )
+        });
+    }
+
+    getLocationPath() {
+        return this.location.path().split('?').shift().replace(/\//g, '_');
     }
 
     checkInitDateCellColumn(component) {

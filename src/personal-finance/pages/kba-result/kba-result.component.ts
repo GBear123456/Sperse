@@ -1,10 +1,13 @@
-import { Component, OnInit, Injector } from '@angular/core';
-import { AppComponentBase } from 'shared/common/app-component-base';
+/** Core imports */
+import { Component, OnInit } from '@angular/core';
 import { KbaInputModel } from './kba.model';
 
+/** Third party imports */
 import * as _ from 'underscore';
 
+/** Application imports */
 import { KBAServiceProxy } from 'shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-kba-result',
@@ -12,16 +15,15 @@ import { KBAServiceProxy } from 'shared/service-proxies/service-proxies';
     providers: [KBAServiceProxy],
     styleUrls: ['./kba-result.component.less']
 })
-export class KbaResultComponent extends AppComponentBase implements OnInit {
+export class KbaResultComponent implements OnInit {
     model: KbaInputModel = new KbaInputModel();
     params: any = {};
     showingError: string;
 
     constructor(
-        injector: Injector,
-        private _KBAService: KBAServiceProxy
+        private KBAService: KBAServiceProxy,
+        public ls: AppLocalizationService
     ) {
-        super(injector);
         this.parseParams();
         this.showingError = decodeURIComponent(this.params.err).replace(/[+]/g, ' ');
     }
@@ -53,7 +55,7 @@ export class KbaResultComponent extends AppComponentBase implements OnInit {
         this.model.memberId = this.params['MemberId'];
         this.model.err = this.params['err'];
         this.model.passed = (this.params['result'] == '1');
-        this._KBAService.processKBAResponse(this.model)
+        this.KBAService.processKBAResponse(this.model)
             .subscribe(() => {});
     }
 }

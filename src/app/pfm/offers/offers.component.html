@@ -111,7 +111,7 @@
                     <div [ngStyle]="{'background-image': 'url(' + field.data.LogoUrl + ')'}" class="logo-url"></div>
                 </div>
                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                    {{cellData.value | date: 'MM/dd/yyyy' : userTimezone}}
+                    {{cellData.value | datetime: formatting.dateMoment}}
                 </div>
                 <dxo-group-panel [visible]="true"></dxo-group-panel>
                 <dxo-summary>

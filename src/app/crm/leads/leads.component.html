@@ -87,21 +87,20 @@
                 <div>
                     <div id="LeadsTable">
                         <ghost-list *ngIf="!isDataLoaded"></ghost-list>
-                        <dx-data-grid
-                                class="limitedPagerTotal main-component-view"
-                                accessKey="narrowHeaderPanel"
-                                noDataText=""
-                                [renderAsync]="true"
-                                [allowColumnReordering]="true"
-                                [columnAutoWidth]="true"
-                                [cacheEnabled]="false"
-                                [rowDragging]="{
+                        <dx-data-grid class="limitedPagerTotal main-component-view"
+                                      accessKey="narrowHeaderPanel"
+                                      noDataText=""
+                                      [renderAsync]="true"
+                                      [allowColumnReordering]="true"
+                                      [columnAutoWidth]="true"
+                                      [cacheEnabled]="false"
+                                      [rowDragging]="{
                                     cursorOffset: {x: 30},
                                     allowDropInsideItem: isMergeAllowed,
                                     showDragIcons: false,
                                     onDragEnd: onDragEnd
                                 }"
-                                [remoteOperations]="{
+                                      [remoteOperations]="{
                                     filtering: false,
                                     grouping: false,
                                     groupPaging: true,
@@ -109,28 +108,27 @@
                                     sorting: true,
                                     summary: true
                                 }"
-                                [allowColumnResizing]="true"
-                                [loadPanel]="{ enabled: false }"
-                                [hoverStateEnabled]="true"
-                                [columnChooser]="{
+                                      [allowColumnResizing]="true"
+                                      [loadPanel]="{ enabled: false }"
+                                      [hoverStateEnabled]="true"
+                                      [columnChooser]="{
                                     height: rowsViewHeight
                                 }"
-                                [pager]="defaultGridPagerConfig"
-                                (onOptionChanged)="onGridOptionChanged($event)"
-                                (onContentReady)="onContentReady($event)"
-                                (onCellClick)="onCellClick($event)"
-                                (onEditingStart)="toggleActionsMenu($event)"
-                                (onSelectionChanged)="onSelectionChanged($event)"
-                                (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                            <dxo-selection
-                                    selectAllMode="page"
-                                    showCheckBoxesMode="always"
-                                    mode="multiple">
+                                      [pager]="defaultGridPagerConfig"
+                                      (onOptionChanged)="onGridOptionChanged($event)"
+                                      (onContentReady)="onContentReady($event)"
+                                      (onCellClick)="onCellClick($event)"
+                                      (onEditingStart)="toggleActionsMenu($event)"
+                                      (onSelectionChanged)="onSelectionChanged($event)"
+                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                            <dxo-selection selectAllMode="page"
+                                           showCheckBoxesMode="always"
+                                           mode="multiple">
                             </dxo-selection>
                             <dxo-editing mode="popup"
-                                [texts]="{ editRow: '' }"
-                                [popup]="{ onShowing: onShowingPopup, height: '0', width: '0' }"
-                                [allowUpdating]="true">
+                                         [texts]="{ editRow: '' }"
+                                         [popup]="{ onShowing: onShowingPopup, height: '0', width: '0' }"
+                                         [allowUpdating]="true">
                             </dxo-editing>
                             <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                             <dxi-column cssClass="stars" [width]="40" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
@@ -177,6 +175,11 @@
                             <dxi-column [dataField]="leadFields.CompanyName"
                                         [caption]="l('Customer.CompanyName')"
                                         cssClass="clipboard-holder">
+                            </dxi-column>
+                            <dxi-column [dataField]="leadFields.PropertyName"
+                                        [caption]="l('PropertyName')"
+                                        cssClass="clipboard-holder"
+                                        [visible]="isPropertyPipeline$ | async">
                             </dxi-column>
                             <dxi-column [dataField]="leadFields.Email"
                                         [caption]="l('Contact.Email')"
@@ -304,7 +307,7 @@
                                 {{cellData.value | phone}}
                             </div>
                             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                                {{cellData.value | date: formatting.dateTime : userTimezone}}
+                                {{cellData.value | datetime: formatting.dateTimeMoment}}
                             </div>
                             <div *dxTemplate="let cellData of 'bankCodeCell'">
                                 <bank-code-letters [bankCode]="cellData.value"

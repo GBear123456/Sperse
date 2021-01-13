@@ -1,5 +1,4 @@
-import { Component, AfterViewInit, OnDestroy, Injector, Input, Output, EventEmitter } from '@angular/core';
-import { AppComponentBase } from '../../app-component-base';
+import { Component, AfterViewInit, OnDestroy, Input, Output, EventEmitter } from '@angular/core';
 import * as moment from 'moment-timezone';
 import * as JQCalendarInit from 'jquery-calendar';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
@@ -10,7 +9,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
     templateUrl: 'calendar.component.html',
     styleUrls: ['calendar.component.less']
 })
-export class CalendarComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
+export class CalendarComponent implements AfterViewInit, OnDestroy {
     UID: String = Math.random().toString(36).substring(2);
     calendar: any;
 
@@ -29,8 +28,7 @@ export class CalendarComponent extends AppComponentBase implements AfterViewInit
 
     @Output() onChange: EventEmitter<CalendarValuesModel> = new EventEmitter();
 
-    constructor(injector: Injector) {
-        super(injector);
+    constructor() {
         moment.tz.setDefault(undefined);
         window['getUserTimezoneDate'] = (date: Date) => {
             DateHelper.addTimezoneOffset(date, true);

@@ -26,7 +26,7 @@
                     </ng-container>
                 </div>
                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                    {{cellData.value | date: 'MM/dd/yyyy' : userTimezone}}
+                    {{cellData.value | datetime: formatting.dateMoment}}
                 </div>
             </dx-data-grid>
         </div>

@@ -134,7 +134,7 @@
                                     {{cellData.value | currency: currency}}
                                 </div>
                                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                                    {{cellData.value | date: formatting.dateTime : userTimezone}}
+                                    {{cellData.value | datetime: formatting.dateTimeMoment}}
                                 </div>
                                 <dxo-summary>
                                     <dxi-group-item [column]="orderFields.Id"
@@ -264,7 +264,7 @@
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                     </div>
                     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                        {{cellData.value | date: formatting.date : userTimezone }}
+                        {{cellData.value | datetime: formatting.dateMoment}}
                     </div>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
                         <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>

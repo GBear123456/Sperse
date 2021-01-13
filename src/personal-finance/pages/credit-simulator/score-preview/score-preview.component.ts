@@ -1,21 +1,15 @@
-import {Component, AfterViewInit, Input, Injector} from '@angular/core';
-import {AppComponentBase} from '@shared/common/app-component-base';
+import { Component, Input } from '@angular/core';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-score-preview',
     templateUrl: './score-preview.component.html',
     styleUrls: ['./score-preview.component.less']
 })
-export class ScorePreviewComponent extends AppComponentBase implements AfterViewInit {
+export class ScorePreviewComponent {
     @Input() actualCreditScore;
     @Input() calculatedCreditScore;
-
-    constructor(injector: Injector) {
-        super(injector);
-    }
-
-    ngAfterViewInit() {
-    }
+    constructor(public ls: AppLocalizationService) {}
 
     getScoreColor(score: number) {
         if (score >= 750) return '#48dc8e';

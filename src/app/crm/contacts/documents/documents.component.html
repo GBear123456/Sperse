@@ -44,7 +44,7 @@
             <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
 
             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                {{ cellData.value | date: formatting.dateTime : userTimezone }}
+                {{ cellData.value | datetime: formatting.dateTimeMoment }}
             </div>
             <div *dxTemplate="let data of 'title'">
                 <h2 class="title">{{ showPropertyDocuments ? l('PropertyDocuments') : l('Documents')}}</h2>
