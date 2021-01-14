@@ -38,6 +38,7 @@ import {
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import cloneDeep from 'lodash/cloneDeep';
+import invert from 'lodash/invert';
 import pluralize from 'pluralize';
 
 /** Application imports */
@@ -340,6 +341,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         map((pipeline: PipelineDto) => pipeline.contactGroupId)
     );
     selectedContactGroup: ContactGroup;
+    contactGroupNames = invert(ContactGroup);
     selectedPipelineName$: Observable<string> = this.selectedPipeline$.pipe(
         map((selectedPipeline: PipelineDto) => selectedPipeline.name)
     );
