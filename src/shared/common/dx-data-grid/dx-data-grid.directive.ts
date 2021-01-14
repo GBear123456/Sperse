@@ -6,6 +6,7 @@ import {
     Renderer2,
     ViewContainerRef
 } from '@angular/core';
+import { Location } from '@angular/common';
 
 /** Third party imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -33,7 +34,8 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
         private component: DxDataGridComponent,
         private clipboardService: ClipboardService,
         private cacheHelper: CacheHelper,
-        private viewContainerRef: ViewContainerRef
+        private viewContainerRef: ViewContainerRef,
+        private location: Location
     ) {
         this.clipboardIcon = this.renderer.createElement('i');
         this.clipboardIcon.addEventListener('click', this.copyToClipboard, true);
@@ -51,15 +53,7 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.component.instance.option('stateStoring', {
-            enabled: true,
-            ignoreColumnOptionNames: [],
-            storageKey: this.cacheHelper.getCacheKey(
-                this.viewContainerRef['_data'].componentView.parent.component.constructor.name,
-                'DataGridState'
-            )
-        });
-
+        this.initStateStoring();
         this.subscriptions.push(
             this.component.onInitialized.subscribe(event => {
                 setTimeout(() =>
@@ -102,8 +96,9 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
             }),
             this.component.onContentReady.subscribe(event => {
                 let dataSource = event.component.getDataSource();
-                if (!dataSource || !dataSource.group())
-                    event.element.classList.remove('show-group-panel');
+                if (dataSource)
+                    event.element.classList[dataSource.group()
+                        ? 'add' : 'remove']('show-group-panel');
             }),
             this.component.onCellPrepared.subscribe(event => {
                 if (event.rowType == 'header') {
@@ -144,6 +139,21 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
                 this.exporting = false;
             })
         );
+    }
+
+    initStateStoring() {
+        this.component.instance.option('stateStoring', {
+            enabled: true,
+            ignoreColumnOptionNames: [],
+            storageKey: this.cacheHelper.getCacheKey(
+                this.getLocationPath(),
+                'DataGridState'
+            )
+        });
+    }
+
+    getLocationPath() {
+        return this.location.path().split('?').shift().replace(/\//g, '_');
     }
 
     checkInitDateCellColumn(component) {
