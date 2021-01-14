@@ -321,7 +321,7 @@
                             <dxo-summary>
                                 <dxi-group-item [column]="leadFields.Id"
                                                 summaryType="count"
-                                                [displayFormat]="'{0} ' + l('ContactGroup_' + selectedContactGroup).toLocaleLowerCase()">
+                                                [displayFormat]="'{0} ' + l('ContactGroup_' + contactGroupNames[selectedContactGroup]).toLocaleLowerCase()">
                                 </dxi-group-item>
                             </dxo-summary>
                         </dx-data-grid>
