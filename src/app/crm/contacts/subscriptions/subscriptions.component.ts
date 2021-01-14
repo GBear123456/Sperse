@@ -101,17 +101,24 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     }
 
     setDataSource(data: OrderSubscriptionDto[]) {
+        let records: OrderSubscriptionDto[] = [];
         _.mapObject(
-            _.groupBy(data, (item: OrderSubscriptionDto) => item.serviceTypeId),
-            (values: OrderSubscriptionDto[]) => {
-                let chain = _.chain(values).sortBy('id').reverse().value();
-                if (!chain.some(item => {
-                    if (item.status == 'Current')
-                        return item['isLastSubscription'] = true;
-                })) chain[0]['isLastSubscription'] = true;
-            });
+            _.groupBy(data, (item: OrderSubscriptionDto) => item.subscriptionId),
+            (subscriptions: OrderSubscriptionDto[]) => {
+                records.push(subscriptions[0]);
+                subscriptions[0]['services'] = subscriptions;
+                _.mapObject(_.groupBy(subscriptions, (item: OrderSubscriptionDto) => item.serviceTypeId),
+                (services: OrderSubscriptionDto[]) => {
+                    let chain = _.chain(services).sortBy('id').reverse().value();
+                    if (!chain.some(item => {
+                        if (item.status == 'Current')
+                            return item['isLastSubscription'] = true;
+                    })) chain[0]['isLastSubscription'] = true;
+                });
+            }
+        );
 
-        this.dataSource = new DataSource(data);
+        this.dataSource = new DataSource(records);
         this.filterDataSource();
     }
 
@@ -256,6 +263,10 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                 endDate: cell.column.dataField == 'endDate' ?
                     DateHelper.removeTimezoneOffset(new Date(event.value), true, 'to') : cell.data.endDate
             })],
+            productId: undefined,
+            paymentPeriodType: undefined,
+            orderId: undefined,
+            invoiceLineId: undefined,
             updateThirdParty: this.isBankCodeLayout && cell.data.serviceTypeId === BankCodeServiceType.BANKVault
         })).pipe(
             finalize(() => this.loadingService.finishLoading())

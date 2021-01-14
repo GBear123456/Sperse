@@ -69,6 +69,10 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                 amount: this.data.amount
             })
         ],
+        productId: undefined,
+        paymentPeriodType: undefined,
+        orderId: undefined,
+        invoiceLineId: undefined,
         updateThirdParty: false
     });
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
