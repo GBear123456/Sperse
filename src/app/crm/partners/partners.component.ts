@@ -356,7 +356,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     partnerTypes: any/*PartnerTypeDto*/[];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
-    searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
+    searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
     private pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
@@ -772,9 +772,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.subRouteParams = this._activatedRoute.queryParams
                 .pipe(takeUntil(this.deactivate$))
                 .subscribe(params => {
-                    const searchValueChanged = this.searchValue !== params.searchValue;
+                    const searchValueChanged = this.searchValue !== params.search;
                     if (searchValueChanged) {
-                        this.searchValue = params.searchValue;
+                        this.searchValue = params.search || '';
                         setTimeout(() => this.filtersService.clearAllFilters());
                         this.initToolbarConfig();
                     }
@@ -1484,6 +1484,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     searchValueChange(e: object) {
         if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
+            this._router.navigate([], {queryParams: {search: this.searchValue}});
             this._refresh.next(null);
         }
     }

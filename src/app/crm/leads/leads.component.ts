@@ -38,6 +38,7 @@ import {
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import cloneDeep from 'lodash/cloneDeep';
+import invert from 'lodash/invert';
 import pluralize from 'pluralize';
 
 /** Application imports */
@@ -315,7 +316,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 };
             });
         })
-    )
+    );
     private readonly CONTACT_GROUP_CACHE_KEY = 'SELECTED_PIPELINE_ID';
     private readonly cacheKey = this.getCacheKey(this.CONTACT_GROUP_CACHE_KEY, this.dataSourceURI);
     selectedPipelineId: number;
@@ -340,6 +341,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         map((pipeline: PipelineDto) => pipeline.contactGroupId)
     );
     selectedContactGroup: ContactGroup;
+    contactGroupNames = invert(ContactGroup);
     selectedPipelineName$: Observable<string> = this.selectedPipeline$.pipe(
         map((selectedPipeline: PipelineDto) => selectedPipeline.name)
     );
@@ -428,19 +430,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             let localizedLabel = this.l('Pipeline_' + selectedPipeline.name + '_Single');
             localizedLabel = this.l('Pipeline_' + selectedPipeline.name + '_Single') !== localizedLabel
                 ? localizedLabel
-                : pluralize.singular(selectedPipeline.name)
+                : pluralize.singular(selectedPipeline.name);
             return [
                 {
                     enabled: this.permission.checkCGPermission(selectedPipeline.contactGroupId),
                     action: this.createLead.bind(this),
                     label: this.l('CreateNew') + ' ' + localizedLabel
                 }
-            ]
+            ];
         })
     );
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
-    searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
+    searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
     searchClear = false;
     private pivotGridDataSource = {
         remoteOperations: true,
@@ -742,23 +744,23 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             );
             this.handleTotalCountUpdate();
             this.handlePipelineUpdate();
+            this.handleDataGridUpdate();
+            this.handlePivotGridUpdate();
         });
         this.addBankCodeField();
     }
 
     ngOnInit() {
         this.loadOrganizationUnits();
-        this.handleDataGridUpdate();
-        this.handlePivotGridUpdate();
-        this.handleChartUpdate();
         this.handleMapUpdate();
         this.handleModuleChange();
         this.activate();
         this.handleFiltersPining();
-        this.handleUserGroupTextUpdate()
+        this.handleUserGroupTextUpdate();
     }
 
     ngAfterViewInit() {
+        this.handleChartUpdate();
         this.selectedPipelineId$.pipe(takeUntil(this.destroy$)).subscribe((selectedPipelineId: number) => {
             this.selectedPipelineId = selectedPipelineId;
         });
@@ -942,9 +944,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             )
         ).subscribe((params: Params) => {
             let filtersToChange = [];
-            const searchValueChanged = params.searchValue && this.searchValue !== params.searchValue;
+            const searchValueChanged = params.search && this.searchValue !== params.search;
             if (searchValueChanged) {
-                this.searchValue = params.searchValue;
+                this.searchValue = params.search;
                 this.initToolbarConfig();
             }
             if (this.crmService.updateCountryStateFilter(params, this.filterCountryStates)) {
@@ -1037,8 +1039,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     private waitUntil(layoutType: DataLayoutType) {
-        return (data) => this.dataLayoutType.value === layoutType ? of(data) : this.dataLayoutType$.pipe(
-            filter((dataLayoutType: DataLayoutType) => dataLayoutType === layoutType),
+        return (data) => this.dataLayoutType.value == layoutType ? of(data) : this.dataLayoutType$.pipe(
+            filter((dataLayoutType: DataLayoutType) => dataLayoutType == layoutType),
             first(),
             mapTo(data)
         );
@@ -1787,6 +1789,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     searchValueChange(e: object) {
         if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
+            this._router.navigate([], {queryParams: {
+                ...this._activatedRoute.snapshot.queryParams,
+                search: this.searchValue
+            }});
             this._refresh.next(null);
         }
     }
@@ -1946,7 +1952,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         }}
                 );
             });
-        })
+        });
     }
 
     onCellClick($event) {

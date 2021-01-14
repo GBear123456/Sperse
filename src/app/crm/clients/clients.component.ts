@@ -410,7 +410,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     ];
     permissions = AppPermissions;
     pivotGridDataIsLoading: boolean;
-    searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
+    searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
     private pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
@@ -857,9 +857,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.subRouteParams = this._activatedRoute.queryParams
                 .pipe(takeUntil(this.deactivate$))
                 .subscribe(params => {
-                    const searchValueChanged = params.searchValue && this.searchValue !== params.searchValue;
+                    const searchValueChanged = params.search && this.searchValue !== params.search;
                     if (searchValueChanged) {
-                        this.searchValue = params.searchValue || '';
+                        this.searchValue = params.search || '';
                         this.initToolbarConfig();
                         setTimeout(() => this.filtersService.clearAllFilters());
                     }
@@ -1492,6 +1492,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (this.searchValue != e['value']) {
             this.searchValue = e['value'];
             this._refresh.next(null);
+            this._router.navigate([], {queryParams: {search: this.searchValue}});
             this.changeDetectorRef.detectChanges();
         }
     }
@@ -1676,7 +1677,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (event.name == 'selectedRowKeys') {
             this.updateSelectedKeys(event.value);
         } if (event.name == 'selectionFilter') {
-            if (event.value === null || !event.value.length) {
+            if (!event.value || !event.value.length) {
                 let seletion = event.component.getSelectedRowKeys();
                 if (seletion instanceof Array)
                     this.updateSelectedKeys(seletion);
