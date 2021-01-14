@@ -65,6 +65,7 @@
     <ghost-list [hidden]="isDataLoaded"></ghost-list>
     <dx-data-grid id="gridContainer"
                   width="99.9%"
+                  [renderAsync]="true"
                   [height]="calculateHeight()"
                   [dataSource]="dataSource"
                   noDataText=""
@@ -173,9 +174,11 @@
         <div *dxTemplate="let syncAccount of 'detail'">
             <div class="bank-accounts-grid-container">
                 <dx-data-grid accessKey="detailGrid"
-                              [dataSource]="syncAccount.data.bankAccounts"
+                              [dataSource]="syncAccount?.data?.bankAccounts"
                               [showBorders]="false"
                               width="100%"
+                              keyExpr='id'
+                              [renderAsync]="true"
                               [showColumnLines]="false"
                               [showRowLines]="false"
                               [columnAutoWidth]="false"
@@ -196,7 +199,6 @@
                                    [deferRendering]="true">
                         </dxo-popup>
                     </dxo-editing>
-                    <dxo-selection [deferred]="true"></dxo-selection>
                     <dxo-filter-row [visible]="false"></dxo-filter-row>
                     <dxi-column dataField="id"
                                 [allowEditing]="false"
