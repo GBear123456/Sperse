@@ -744,7 +744,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.handlePipelineUpdate();
             this.handleDataGridUpdate();
             this.handlePivotGridUpdate();
-            this.handleChartUpdate();
         });
         this.addBankCodeField();
     }
@@ -759,6 +758,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     ngAfterViewInit() {
+        this.handleChartUpdate();
         this.selectedPipelineId$.pipe(takeUntil(this.destroy$)).subscribe((selectedPipelineId: number) => {
             this.selectedPipelineId = selectedPipelineId;
         });
