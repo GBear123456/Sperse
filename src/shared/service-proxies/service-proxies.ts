@@ -29833,20 +29833,21 @@ export class SyncServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
-     * @syncTypeId (optional) 
+     * @body (optional) 
      * @return Success
      */
-    getConnectionInfo(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<GetConnectionInfoOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Sync/GetConnectionInfo?";
+    requestConnection(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: RequestConnectionInput | null | undefined): Observable<RequestConnectionOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/RequestConnection?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (syncTypeId !== undefined)
-            url_ += "syncTypeId=" + encodeURIComponent("" + syncTypeId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -29855,21 +29856,21 @@ export class SyncServiceProxy {
             })
         };
 
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetConnectionInfo(response_);
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRequestConnection(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetConnectionInfo(<any>response_);
+                    return this.processRequestConnection(<any>response_);
                 } catch (e) {
-                    return <Observable<GetConnectionInfoOutput>><any>_observableThrow(e);
+                    return <Observable<RequestConnectionOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetConnectionInfoOutput>><any>_observableThrow(response_);
+                return <Observable<RequestConnectionOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetConnectionInfo(response: HttpResponseBase): Observable<GetConnectionInfoOutput> {
+    protected processRequestConnection(response: HttpResponseBase): Observable<RequestConnectionOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -29880,7 +29881,7 @@ export class SyncServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetConnectionInfoOutput.fromJS(resultData200) : new GetConnectionInfoOutput();
+            result200 = resultData200 ? RequestConnectionOutput.fromJS(resultData200) : new RequestConnectionOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -29888,7 +29889,7 @@ export class SyncServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetConnectionInfoOutput>(<any>null);
+        return _observableOf<RequestConnectionOutput>(<any>null);
     }
 
     /**
@@ -74752,7 +74753,57 @@ export interface ISetupSyncUserApplicationInput {
     clientSecret: string | undefined;
 }
 
-export class GetConnectionInfoOutput implements IGetConnectionInfoOutput {
+export enum ConnectionMode {
+    Create = "Create", 
+    Reconnect = "Reconnect", 
+    Refresh = "Refresh", 
+}
+
+export class RequestConnectionInput implements IRequestConnectionInput {
+    syncTypeId!: string;
+    mode!: ConnectionMode;
+    syncAccountId!: number | undefined;
+
+    constructor(data?: IRequestConnectionInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.syncTypeId = data["syncTypeId"];
+            this.mode = data["mode"];
+            this.syncAccountId = data["syncAccountId"];
+        }
+    }
+
+    static fromJS(data: any): RequestConnectionInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RequestConnectionInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["syncTypeId"] = this.syncTypeId;
+        data["mode"] = this.mode;
+        data["syncAccountId"] = this.syncAccountId;
+        return data; 
+    }
+}
+
+export interface IRequestConnectionInput {
+    syncTypeId: string;
+    mode: ConnectionMode;
+    syncAccountId: number | undefined;
+}
+
+export class RequestConnectionOutput implements IRequestConnectionOutput {
     connectUrl!: string | undefined;
     scope!: string[] | undefined;
     clientName!: string | undefined;
@@ -74760,7 +74811,7 @@ export class GetConnectionInfoOutput implements IGetConnectionInfoOutput {
     publicKey!: string | undefined;
     webhookUrl!: string | undefined;
 
-    constructor(data?: IGetConnectionInfoOutput) {
+    constructor(data?: IRequestConnectionOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -74784,9 +74835,9 @@ export class GetConnectionInfoOutput implements IGetConnectionInfoOutput {
         }
     }
 
-    static fromJS(data: any): GetConnectionInfoOutput {
+    static fromJS(data: any): RequestConnectionOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new GetConnectionInfoOutput();
+        let result = new RequestConnectionOutput();
         result.init(data);
         return result;
     }
@@ -74807,7 +74858,7 @@ export class GetConnectionInfoOutput implements IGetConnectionInfoOutput {
     }
 }
 
-export interface IGetConnectionInfoOutput {
+export interface IRequestConnectionOutput {
     connectUrl: string | undefined;
     scope: string[] | undefined;
     clientName: string | undefined;

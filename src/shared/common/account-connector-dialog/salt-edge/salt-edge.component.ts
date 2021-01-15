@@ -17,9 +17,11 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { SyncTypeIds } from '@shared/AppEnums';
 import {
     CreateSyncAccountInput,
-    GetConnectionInfoOutput,
+    RequestConnectionInput,
+    RequestConnectionOutput,
     SyncAccountServiceProxy,
-    SyncServiceProxy
+    SyncServiceProxy,
+    ConnectionMode
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
@@ -80,10 +82,15 @@ export class SaltEdgeComponent implements OnInit {
         this.cfoService.statusActive$.pipe(
             filter(Boolean),
             first(),
-            switchMap(() => this.syncService.getConnectionInfo(
-                this.cfoService.instanceType, this.cfoService.instanceId, SyncTypeIds.SaltEdge)
+            switchMap(() => this.syncService.requestConnection(
+                this.cfoService.instanceType, this.cfoService.instanceId,
+                new RequestConnectionInput({
+                    syncTypeId: SyncTypeIds.SaltEdge,
+                    mode: ConnectionMode.Create,
+                    syncAccountId: undefined
+                }))
             )
-        ).subscribe((res: GetConnectionInfoOutput) => {
+        ).subscribe((res: RequestConnectionOutput) => {
             this.connectUrl = this.domSanitizer.bypassSecurityTrustResourceUrl(res.connectUrl);
             this.changeDetectorRef.detectChanges();
         });

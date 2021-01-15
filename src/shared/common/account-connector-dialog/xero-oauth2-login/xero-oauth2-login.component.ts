@@ -5,7 +5,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { finalize, filter, first, switchMap } from 'rxjs/operators';
 
 /** Application imports */
-import { GetConnectionInfoOutput, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { RequestConnectionInput, RequestConnectionOutput, SyncServiceProxy, ConnectionMode } from '@shared/service-proxies/service-proxies';
 import { SyncTypeIds } from '@shared/AppEnums';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
@@ -36,14 +36,18 @@ export class XeroOauth2LoginComponent implements OnInit {
         this.cfoService.statusActive$.pipe(
             filter(Boolean),
             first(),
-            switchMap(() => this.syncServiceProxy.getConnectionInfo(
-                <any>this.cfoService.instanceType,
+            switchMap(() => this.syncServiceProxy.requestConnection(
+                this.cfoService.instanceType,
                 this.cfoService.instanceId,
-                SyncTypeIds.XeroOAuth2
+                new RequestConnectionInput({
+                    syncTypeId: SyncTypeIds.XeroOAuth2,
+                    mode: ConnectionMode.Create,
+                    syncAccountId: undefined
+                })
             ).pipe(
                 finalize(() => this.loadingService.finishLoading(this.loadingContainerElement))
             ))
-        ).subscribe((result: GetConnectionInfoOutput) => {
+        ).subscribe((result: RequestConnectionOutput) => {
             const setupAccountWindow = window.open(
                 result.connectUrl,
                 '_blank',
