@@ -266,7 +266,6 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             productId: undefined,
             paymentPeriodType: undefined,
             orderId: undefined,
-            invoiceLineId: undefined,
             updateThirdParty: this.isBankCodeLayout && cell.data.serviceTypeId === BankCodeServiceType.BANKVault
         })).pipe(
             finalize(() => this.loadingService.finishLoading())
