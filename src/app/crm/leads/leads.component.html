@@ -6,10 +6,12 @@
                   [showToggleToolbarButton]="true"
                   [showToggleFullScreenButton]="true"
                   [showToggleColumnSelectorButton]="showDataGrid || showPivotGrid"
+                  [showStateResetButton]="showDataGrid"
                   (onReload)="refresh()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="pipelineTypes$ | async"
                         [totalCount]="totalCount"

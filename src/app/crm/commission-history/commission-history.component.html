@@ -6,10 +6,12 @@
                   [showToggleFullScreenButton]="true"
                   [showReloadButton]="ui.showReload"
                   [showToggleColumnSelectorButton]="true"
+                  [showStateResetButton]="true"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="refresh()"
+                  (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="viewTypes"
                         [totalCount]="totalRowCount > 0 ? totalRowCount : undefined"

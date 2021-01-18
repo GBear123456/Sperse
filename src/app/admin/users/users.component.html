@@ -7,10 +7,12 @@
                   [showToggleFullScreenButton]="true"
                   [showToggleColumnSelectorButton]="true"
                   [buttons]="headlineButtons"
+                  [showStateResetButton]="true"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="invalidate()"
+                  (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
