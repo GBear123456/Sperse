@@ -423,6 +423,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     };
     subscriptionsDataSource = new DataSource({
+        group: this.subscriptionFields.SubscriptionId,
         requireTotalCount: true,
         store: new ODataStore({
             key: this.subscriptionFields.Id,
