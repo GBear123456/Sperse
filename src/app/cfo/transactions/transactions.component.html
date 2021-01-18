@@ -471,9 +471,10 @@
                             <div class="informer">
                                 <dx-tooltip target="#adjustments"
                                             position="top"
-                                            showEvent="dxhoverstart"
+                                            (onContentReady)="changeDetectionRef.detectChanges()"
+                                            showEvent="mouseenter"
                                             hideEvent="dxhoverend">
-                                    <div *dxTemplate="let data = data of 'content'">
+                                    <div *dxTemplate="let data of 'content'">
                                         <span class="title">{{ls('Platform', 'Unreconciled_Balance')}}:</span> {{adjustmentTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}
                                     </div>
                                 </dx-tooltip>

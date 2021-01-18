@@ -118,7 +118,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     constructor(injector: Injector,
         private transactionsServiceProxy: TransactionsServiceProxy,
         private classificationServiceProxy: ClassificationServiceProxy,
-        private changeDetectionRef: ChangeDetectorRef,
+        public changeDetectionRef: ChangeDetectorRef,
         private cacheService: CacheService,
         private lifecycleService: LifecycleSubjectsService,
         private store$: Store<RootStore.State>,
