@@ -42,8 +42,9 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
         this.renderer.addClass(this.clipboardIcon, 'save-to-clipboard');
     }
     private clipboardIcon;
+    private dateCheckTimeout;
     private subscriptions = [];
-    exporting = false;
+    private exporting = false;
     private copyToClipboard = (event) => {
         this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
         this.notifyService.info(this.ls.l('SavedToClipboard'));
@@ -56,14 +57,20 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
         this.initStateStoring();
         this.subscriptions.push(
             this.component.onInitialized.subscribe(event => {
+                let stateInherit = this.component.instance.state;
+                this.component.instance.state = (state?: any): void => {
+                    stateInherit(state);
+                    this.setForCheckDateCellColumn(event.component);
+                };
+
                 setTimeout(() =>
                     DataGridService.toggleCompactRowsHeight(this.component, true)
                 );
-                this.checkInitDateCellColumn(event.component);
+                this.setForCheckDateCellColumn(event.component);
             }),
             this.component.onOptionChanged.subscribe(event => {
                 if (event.name == 'dataSource' || event.name == 'summary')
-                    setTimeout(() => this.checkInitDateCellColumn(event.component));
+                    this.setForCheckDateCellColumn(event.component);
             }),
             this.component.onCellHoverChanged.subscribe(event => {
                 if (event.rowType == 'header') {
@@ -142,11 +149,15 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
     }
 
     initStateStoring() {
+        let hint = this.component.instance.option('hint');
         this.component.instance.option('stateStoring', {
             enabled: true,
             ignoreColumnOptionNames: [],
             storageKey: this.cacheHelper.getCacheKey(
-                this.getLocationPath(),
+                [
+                    this.getLocationPath(),
+                    hint ? hint.toLowerCase().replace(/\s/g, '_') : undefined
+                ].filter(Boolean).join('_'),
                 'DataGridState'
             )
         });
@@ -154,6 +165,13 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
 
     getLocationPath() {
         return this.location.path().split('?').shift().replace(/\//g, '_');
+    }
+
+    setForCheckDateCellColumn(component) {
+        clearTimeout(this.dateCheckTimeout);
+        this.dateCheckTimeout = setTimeout(() => {
+            this.checkInitDateCellColumn(component);
+        }, 300);
     }
 
     checkInitDateCellColumn(component) {
@@ -169,7 +187,7 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
 
     initDateCellColumn(column, component) {
         component.columnOption(column.dataField, 'name', 'hiddenTime');
-        component.columnOption(column.dataField, 'minWidth', '180px');
+        component.columnOption(column.dataField, 'minWidth', '190px');
         component.columnOption(column.dataField, 'cellTemplate', undefined);
         component.columnOption(column.dataField, 'cssClass', column.cssClass + ' clipboard-holder');
         component.columnOption(column.dataField, 'calculateCellValue', (data) => {
