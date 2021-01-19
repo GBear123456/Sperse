@@ -16,9 +16,11 @@
                   [showReloadButton]="ui.showReload"
                   [showToggleColumnSelectorButton]="showToggleColumnSelectorButton"
                   [showToggleFullScreenButton]="true"
+                  [showStateResetButton]="!showOrdersPipeline"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="invalidate()"
+                  (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <orders-header-dropdown
                         [totalCount]="totalCount"

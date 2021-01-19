@@ -4,7 +4,9 @@
               [showToggleToolbarButton]="true"
               [showToggleLeftMenuButton]="true"
               [showToggleCompactViewButton]="showToggleCompactViewButton"
+              [showStateResetButton]="true"
               (onToggleCompactView)="toggleCompactView()"
+              (onStateReset)="dataGrid.instance.state(null)"
               (onToggleLeftMenu)="onLeftMenuToggle()">
     <synch-progress class="synch-progress"></synch-progress>
 </app-headline>

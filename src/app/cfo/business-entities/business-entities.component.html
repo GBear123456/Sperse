@@ -7,7 +7,9 @@
                   [showToggleCompactViewButton]="true"
                   [showToggleFullScreenButton]="true"
                   [showToggleLeftMenuButton]="true"
+                  [showStateResetButton]="true"
                   (onReload)="refreshDataGrid()"
+                  (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid()">
