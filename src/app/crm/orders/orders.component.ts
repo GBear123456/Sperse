@@ -435,7 +435,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     this.subscriptionsGrid,
                     [
                         this.subscriptionFields.Id,
-                        this.subscriptionFields.SubscriptionId,
                         this.subscriptionFields.LeadId,
                         this.subscriptionFields.ContactId,
                         this.subscriptionFields.ContactGroupId
@@ -473,8 +472,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         fields: [
             {
                 area: 'row',
-                dataField: 'ServiceType',
-                name: 'serviceType',
+                dataField: 'ProductName',
+                name: 'productName',
                 expanded: true,
                 sortBy: 'displayText'
             },
@@ -1572,7 +1571,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 CrmService.getEntityDetailsLink(entity.ContactId, section, entity.LeadId),
                 {
                     queryParams: {
-                        ...(isOrder ? {orderId: entity.Id} : {subId: (entity as SubscriptionDto).SubscriptionId}),
+                        ...(isOrder ? {orderId: entity.Id} : {subId: entity.Id}),
                         referrer: 'app/crm/orders',
                         dataLayoutType: DataLayoutType.Pipeline,
                         ...queryParams
