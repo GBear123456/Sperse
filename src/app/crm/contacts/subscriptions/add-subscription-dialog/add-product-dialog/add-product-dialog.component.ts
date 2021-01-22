@@ -1,0 +1,215 @@
+/** Core imports */
+import {
+    AfterViewInit,
+    Component,
+    ElementRef,
+    Inject,
+    OnInit,
+    ViewChild,
+    ChangeDetectionStrategy,
+    ChangeDetectorRef
+} from '@angular/core';
+import { getCurrencySymbol } from '@angular/common';
+
+/** Third party imports */
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { Observable } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
+
+/** Application imports */
+import {
+    InvoiceSettings,
+    ProductServiceProxy,
+    ServiceProductServiceProxy,
+    ServiceProductDto,
+    ProductServiceInfo,
+    CreateProductInput,
+    ProductGroupInfo,
+    ProductDto,
+    ProductType,
+    RecurringPaymentFrequency,
+    ProductSubscriptionOptionInfo
+} from '@shared/service-proxies/service-proxies';
+import { DateHelper } from '@shared/helpers/DateHelper';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
+import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { AddServiceProductDialogComponent } from '../add-service-product-dialog/add-service-product-dialog.component';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
+
+@Component({
+    selector: 'add-product-dialog',
+    templateUrl: './add-product-dialog.component.html',
+    styleUrls: [
+        '../../../../../../shared/common/styles/close-button.less',
+        '../../../../../shared/common/styles/form.less',
+        './add-product-dialog.component.less'
+    ],
+    providers: [ProductServiceProxy, ServiceProductServiceProxy],
+    changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class AddProductDialogComponent implements AfterViewInit, OnInit {
+    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
+    private slider: any;
+    product: CreateProductInput;
+    amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
+        filter(Boolean), map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
+    );
+
+    readonly addNewItemId = -1;
+    productTypes: string[] = Object.keys(ProductType);
+    productGroups: ProductGroupInfo[];
+    services: ServiceProductDto[];
+    frequencies = Object.keys(RecurringPaymentFrequency);
+
+    constructor(
+        private elementRef: ElementRef,
+        private productProxy: ProductServiceProxy,
+        private notify: NotifyService,
+        private permission: AppPermissionService,
+        private invoicesService: InvoicesService,
+        private changeDetection: ChangeDetectorRef,
+        private serviceProductProxy: ServiceProductServiceProxy,
+        private userManagementService: UserManagementService,
+        public dialogRef: MatDialogRef<AddProductDialogComponent>,
+        public ls: AppLocalizationService,
+        public dialog: MatDialog,
+        @Inject(MAT_DIALOG_DATA) public data: any
+    ) {
+        this.dialogRef.beforeClose().subscribe(() => {
+            this.dialogRef.updatePosition({
+                top: '75px',
+                right: '-100vw'
+            });
+        });
+
+        this.product = new CreateProductInput();
+        productProxy.getProudctGroups().subscribe((groups: ProductGroupInfo[]) => {
+            this.productGroups = groups;
+        });
+
+        serviceProductProxy.getAll(false).subscribe((services: ServiceProductDto[]) => {
+            this.services = services;
+            this.checkAddManageOption(this.services);
+        });
+    }
+
+    ngOnInit() {
+        this.slider = this.elementRef.nativeElement.closest('.slider');
+        this.slider.classList.add('hide', 'min-width-0');
+        this.dialogRef.updateSize('0px', '0px');
+        this.dialogRef.updatePosition({
+            top: '75px',
+            right: '-100vw'
+        });
+    }
+
+    checkAddManageOption(options) {
+        if (this.permission.isGranted(AppPermissions.CRMOrdersManage)) {
+            let addNewItemElement: any = {
+                id: this.addNewItemId                
+            };
+            addNewItemElement.code = addNewItemElement.name = '+ ' + this.ls.l('Add new');
+            options.push(addNewItemElement);
+        }
+    }
+
+    ngAfterViewInit() {
+        this.slider.classList.remove('hide');
+        this.dialogRef.updateSize(undefined, '100vh');
+            this.dialogRef.updatePosition({
+                top: '75px',
+                right: '0px'
+            });
+    }
+
+    saveProduct() {
+        if (this.validationGroup.instance.validate().isValid) {
+            this.productProxy.createProduct(this.product).subscribe(res => {
+                this.notify.info(this.ls.l('SavedSuccessfully'));
+                this.dialogRef.close(new ProductDto({
+                    id: res.productId,
+                    name: this.product.name,
+                    code: this.product.code
+                }));
+            });
+        }
+    }
+
+    close() {
+        this.dialogRef.close();
+    }
+
+    addNewServiceFields() {
+        if (!this.product.productServices)
+            this.product.productServices = [];
+        this.product.productServices.push(
+            new ProductServiceInfo()
+        );
+    }
+
+    removeServiceFields(index) {
+        this.product.productServices.splice(index, 1);
+    }
+
+    addNewPaymentPeriod() {
+        if (!this.product.productSubscriptionOptions)
+            this.product.productSubscriptionOptions = [];
+        if (this.product.productSubscriptionOptions.some(item => !item.frequency))
+            return ;
+        this.product.productSubscriptionOptions.push(
+            new ProductSubscriptionOptionInfo()
+        );
+    }
+
+    removePaymentPeriod(index) {
+        this.product.productSubscriptionOptions.splice(index, 1);
+    }
+
+    getServiceLevels(serviceId) {
+        let service = this.services.find(item => item.id == serviceId);
+        return service ? service.serviceProductLevels : [];
+    }
+
+    getFrequencies() {
+        let options = this.product.productSubscriptionOptions;
+        return options ? this.frequencies.filter(item => {
+            return !options.some(option => option.frequency == item);
+        }) : this.frequencies;
+    }
+
+    onServiceChanged(event) {
+        this.detectChanges();
+        if (!event.value)
+            return;
+
+        let selectedItem = event.component.option('selectedItem');
+        if (selectedItem.id == this.addNewItemId)
+            this.showAddServiceProductDialog(event.component, event.previousValue);
+    }
+
+    showAddServiceProductDialog(component, previousValue: string) {
+        this.dialog.open(AddServiceProductDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                title: this.ls.l('EditTemplate'),
+                templateType: 'Contact',
+                saveTitle: this.ls.l('Save')
+            }
+        }).afterClosed().subscribe((res: ServiceProductDto) => {
+            if (res)
+                this.services.splice(this.services.length - 1, 0, res);
+            component.option('value', res ? res.code : previousValue);
+            this.detectChanges();
+        });
+    }
+
+    detectChanges() {
+        this.changeDetection.detectChanges();
+    }
+}

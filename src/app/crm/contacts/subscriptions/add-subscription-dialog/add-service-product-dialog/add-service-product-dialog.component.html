@@ -11,8 +11,9 @@
         <div class="field">
             <label for="code">{{ls.l('Code')}}</label>
             <dx-text-box name="code"
-                         [inputAttr]="{ id: 'code' }"
-                         [(value)]="serviceProduct.code">
+                width="300px"               
+                [inputAttr]="{ id: 'code' }"
+                [(value)]="serviceProduct.code">
                 <dx-validator>
                     <dxi-validation-rule type="required" message="{{ls.l('CodeIsRequired')}}."></dxi-validation-rule>
                 </dx-validator>
@@ -21,8 +22,9 @@
         <div class="field">
             <label for="name">{{ls.l('Name')}}</label>
             <dx-text-box name="name"
-                         [inputAttr]="{ id: 'name' }"
-                         [(value)]="serviceProduct.name">
+                width="300px"
+                [inputAttr]="{ id: 'name' }"
+                [(value)]="serviceProduct.name">
                 <dx-validator>
                     <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
                 </dx-validator>
@@ -31,24 +33,27 @@
         <div class="field">
             <label for="monthlyFee">{{ls.l('Amount')}}</label>
             <dx-number-box name="monthlyFee"
-                           [inputAttr]="{ id: 'monthlyFee' }"
-                           [format]="amountFormat$ | async"
-                           [(value)]="serviceProduct.monthlyFee">
+                width="300px"
+                [inputAttr]="{ id: 'monthlyFee' }"
+                [format]="amountFormat$ | async"
+                [(value)]="serviceProduct.monthlyFee">
             </dx-number-box>
         </div>
         <div class="field">
             <label for="activationTime">{{ls.l('StartDate')}}</label>
             <dx-date-box [min]="today"
-                         type="date"
-                         [(value)]="serviceProduct.activationTime"
-                         (onValueChanged)="detectChanges()">
+                width="300px"
+                type="date"
+                [(value)]="serviceProduct.activationTime"
+                (onValueChanged)="detectChanges()">
             </dx-date-box>
         </div>
         <div class="field">
             <label for="deactivationTime">{{ls.l('EndDate')}}</label>
             <dx-date-box [min]="serviceProduct.activationTime"
-                         type="date"
-                         [(value)]="serviceProduct.deactivationTime">
+                width="300px"
+                type="date"
+                [(value)]="serviceProduct.deactivationTime">
             </dx-date-box>
         </div>
         <div class="levels-header">
@@ -59,8 +64,9 @@
             <div class="field">
                 <label for="code">{{ls.l('Code')}}</label>
                 <dx-text-box name="code"
-                             [inputAttr]="{ id: 'code' }"
-                             [(value)]="serviceLevel.code">
+                    width="250px"
+                    [inputAttr]="{ id: 'code' }"
+                    [(value)]="serviceLevel.code">
                     <dx-validator>
                         <dxi-validation-rule type="required" message="{{ls.l('CodeIsRequired')}}."></dxi-validation-rule>
                     </dx-validator>
@@ -69,8 +75,9 @@
             <div class="field">
                 <label for="name">{{ls.l('Name')}}</label>
                 <dx-text-box name="name"
-                             [inputAttr]="{ id: 'name' }"
-                             [(value)]="serviceLevel.name">
+                    width="250px"
+                    [inputAttr]="{ id: 'name' }"
+                    [(value)]="serviceLevel.name">
                     <dx-validator>
                         <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
                     </dx-validator>
@@ -79,24 +86,27 @@
             <div class="field">
                 <label for="monthlyFee">{{ls.l('Amount')}}</label>
                 <dx-number-box name="monthlyFee"
-                               [inputAttr]="{ id: 'monthlyFee' }"
-                               [format]="amountFormat$ | async"
-                               [(value)]="serviceLevel.monthlyFee">
+                    width="250px"
+                    [inputAttr]="{ id: 'monthlyFee' }"
+                    [format]="amountFormat$ | async"
+                    [(value)]="serviceLevel.monthlyFee">
                 </dx-number-box>
             </div>
             <div class="field">
                 <label for="activationTime">{{ls.l('StartDate')}}</label>
                 <dx-date-box [min]="today"
-                             type="date"
-                             [(value)]="serviceLevel.activationTime"
-                             (onValueChanged)="detectChanges()">
+                    width="250px"
+                    type="date"
+                    [(value)]="serviceLevel.activationTime"
+                    (onValueChanged)="detectChanges()">
                 </dx-date-box>
             </div>
             <div class="field">
                 <label for="deactivationTime">{{ls.l('EndDate')}}</label>
                 <dx-date-box [min]="serviceLevel.activationTime"
-                             type="date"
-                             [(value)]="serviceLevel.deactivationTime">
+                    width="250px"
+                    type="date"
+                    [(value)]="serviceLevel.deactivationTime">
                 </dx-date-box>
             </div>
         </div>

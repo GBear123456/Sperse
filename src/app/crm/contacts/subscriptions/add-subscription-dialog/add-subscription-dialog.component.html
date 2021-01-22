@@ -13,12 +13,12 @@
             <div class="field">
                 <label for="code">{{ls.l('Product')}}</label>
                 <dx-select-box [inputAttr]="{ id: 'code' }"
-                               [dataSource]="serviceTypes"
+                               [dataSource]="products"
                                displayExpr="name"
-                               valueExpr="code"
-                               [(value)]="subscription.code"
-                               placeholder="Select service..."
-                               (onValueChanged)="onServiceTypeChanged($event, subscription)">
+                               valueExpr="id"
+                               [(value)]="subscription.productId"
+                               placeholder="Select product..."
+                               (onValueChanged)="onProductChanged($event, subscription)">
                     <dx-validator>
                         <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                     </dx-validator>
@@ -80,8 +80,8 @@
                             [contactId]="data.contactId">
             </order-dropdown>
         </div>
-        <div class="field">
+        <!-- div class="field">
             <div class="add-new-button" (click)="addNewSubscriptionFields()"><span>+ Add</span></div>
-        </div>
+        </div -->
     </dx-validation-group>
 </mat-dialog-content>

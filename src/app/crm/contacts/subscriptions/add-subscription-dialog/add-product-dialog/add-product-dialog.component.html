@@ -1,0 +1,146 @@
+<header>
+    <h2 mat-dialog-title>{{ls.l('AddProduct')}}</h2>
+    <mat-dialog-actions>
+        <button mat-button (click)="saveProduct()" class="button-layout button-primary">{{ls.l('Save')}}</button>
+    </mat-dialog-actions>
+    <span class="close" (click)="close()"></span>
+</header>
+<span class="close" (click)="close()"></span>
+<mat-dialog-content>
+    <dx-validation-group>
+        <div class="field">
+            <label for="code">{{ls.l('Code')}}</label>
+            <dx-text-box name="code"
+                width="300px"
+                [inputAttr]="{ id: 'code' }"
+                [(value)]="product.code">
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{ls.l('CodeIsRequired')}}."></dxi-validation-rule>
+                </dx-validator>
+            </dx-text-box>
+        </div>
+        <div class="field">
+            <label for="name">{{ls.l('Name')}}</label>
+            <dx-text-box name="name"
+                width="300px"
+                [inputAttr]="{ id: 'name' }"
+                [(value)]="product.name">
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
+                </dx-validator>
+            </dx-text-box>
+        </div>
+        <div class="field">
+            <label for="activationTime">{{ls.l('Type')}}</label>
+            <dx-select-box [dataSource]="productTypes"
+                width="300px"
+                placeholder="Select type..."
+                [(value)]="product.type">
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                </dx-validator>
+            </dx-select-box>
+        </div>
+        <div class="field">
+            <label for="monthlyFee">{{ls.l('Price')}}</label>
+            <dx-number-box name="price"
+                width="300px"
+                [inputAttr]="{ id: 'monthlyFee' }"
+                [format]="amountFormat$ | async"
+                [(value)]="product.price">
+            </dx-number-box>
+        </div>
+        <div class="field">
+            <label for="deactivationTime">{{ls.l('Group')}}</label>
+            <dx-select-box [dataSource]="productGroups"
+                width="300px"
+                displayExpr="name"
+                valueExpr="id"
+                placeholder="Select group..."
+                [(value)]="product.groupId">
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                </dx-validator>
+            </dx-select-box>
+        </div>
+        <div class="services-header">
+            {{ls.l('Services')}}:
+        </div>
+        <div class="services" *ngFor="let service of product.productServices; let i = index">
+            <i class="fa fa-close" (click)="removeServiceFields(i)"></i>
+            <div class="field">
+                <label for="name">{{ls.l('Name')}}</label>
+                <dx-select-box name="name"
+                    width="250px"
+                    valueExpr="id"
+                    displayExpr="name"
+                    [dataSource]="services"
+                    placeholder="Select service..."
+                    [(value)]="service.memberServiceId"
+                    (onValueChanged)="onServiceChanged($event)">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-select-box>
+            </div>
+            <div class="field">
+                <label for="level">{{ls.l('Level')}}</label>
+                <dx-select-box name="level"
+                    width="250px"
+                    valueExpr="id"
+                    displayExpr="name"
+                    [dataSource]="getServiceLevels(service.memberServiceId)"
+                    placeholder="Select level..."
+                    [(value)]="service.memberServiceLevelId">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-select-box>
+            </div>
+        </div>
+        <div class="field">
+            <div class="add-new-button" (click)="addNewServiceFields()"><span>+ {{ls.l('Add')}}</span></div>
+        </div>
+        <div class="services-header">
+            {{ls.l('PaymentPeriodType')}}:
+        </div>
+        <div class="services" *ngFor="let option of product.productSubscriptionOptions; let i = index">
+            <i class="fa fa-close" (click)="removePaymentPeriod(i)"></i>
+            <div class="field">
+                <label class="wide" for="name">{{ls.l('Frequency')}}</label>
+                <dx-select-box name="name"
+                    width="200px"
+                    [dataSource]="getFrequencies()"
+                    placeholder="Select frequency..."
+                    [(value)]="option.frequency">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-select-box>
+            </div>
+            <div class="field">
+                <label class="wide" for="monthlyFee">{{ls.l('Fee')}}</label>
+                <dx-number-box name="price"
+                    width="200px"
+                    [inputAttr]="{ id: 'monthlyFee' }"
+                    [format]="amountFormat$ | async"
+                    [(value)]="option.fee">
+                </dx-number-box>
+            </div>
+            <div class="field">
+                <label class="wide" for="level">{{ls.l('TrialDayCount')}}</label>
+                <dx-number-box name="count"
+                    width="200px"
+                    [min]="0"
+                    [(value)]="option.trialDayCount">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                    </dx-validator>
+                </dx-number-box>
+            </div>
+        </div>
+        <div class="field">
+            <div class="add-new-button" (click)="addNewPaymentPeriod()"><span>+ {{ls.l('Add')}}</span></div>
+        </div>
+    </dx-validation-group>
+</mat-dialog-content>
