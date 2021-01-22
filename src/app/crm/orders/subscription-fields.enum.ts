@@ -3,7 +3,6 @@ import { SubscriptionDto } from '@app/crm/orders/subcription-dto.interface';
 
 export const SubscriptionFields: KeysEnum<SubscriptionDto> = {
     Id: 'Id',
-    SubscriptionId: 'SubscriptionId',
     PhotoPublicId: 'PhotoPublicId',
     ContactId: 'ContactId',
     FirstName: 'FirstName',
@@ -17,8 +16,7 @@ export const SubscriptionFields: KeysEnum<SubscriptionDto> = {
     CountryCode: 'CountryCode',
     PersonalAffiliateCode: 'PersonalAffiliateCode',
     ContactDate: 'ContactDate',
-    ServiceType: 'ServiceType',
-    ServiceName: 'ServiceName',
+    ProductName: 'ProductName',
     StartDate: 'StartDate',
     EndDate: 'EndDate',
     Fee: 'Fee',

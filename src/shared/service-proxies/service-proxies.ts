@@ -26595,6 +26595,58 @@ export class ProductServiceProxy {
     }
 
     /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateProduct(body: UpdateProductInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Product/UpdateProduct";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateProduct(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateProduct(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateProduct(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     getProudctGroups(): Observable<ProductGroupInfo[]> {
@@ -72020,6 +72072,90 @@ export class CreateProductOutput implements ICreateProductOutput {
 
 export interface ICreateProductOutput {
     productId: number | undefined;
+}
+
+export class UpdateProductInput implements IUpdateProductInput {
+    id!: number;
+    code!: string;
+    name!: string;
+    description!: string | undefined;
+    groupId!: number | undefined;
+    type!: ProductType | undefined;
+    price!: number | undefined;
+    productServices!: ProductServiceInfo[] | undefined;
+    productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+
+    constructor(data?: IUpdateProductInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.code = data["code"];
+            this.name = data["name"];
+            this.description = data["description"];
+            this.groupId = data["groupId"];
+            this.type = data["type"];
+            this.price = data["price"];
+            if (data["productServices"] && data["productServices"].constructor === Array) {
+                this.productServices = [];
+                for (let item of data["productServices"])
+                    this.productServices.push(ProductServiceInfo.fromJS(item));
+            }
+            if (data["productSubscriptionOptions"] && data["productSubscriptionOptions"].constructor === Array) {
+                this.productSubscriptionOptions = [];
+                for (let item of data["productSubscriptionOptions"])
+                    this.productSubscriptionOptions.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateProductInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateProductInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["groupId"] = this.groupId;
+        data["type"] = this.type;
+        data["price"] = this.price;
+        if (this.productServices && this.productServices.constructor === Array) {
+            data["productServices"] = [];
+            for (let item of this.productServices)
+                data["productServices"].push(item.toJSON());
+        }
+        if (this.productSubscriptionOptions && this.productSubscriptionOptions.constructor === Array) {
+            data["productSubscriptionOptions"] = [];
+            for (let item of this.productSubscriptionOptions)
+                data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IUpdateProductInput {
+    id: number;
+    code: string;
+    name: string;
+    description: string | undefined;
+    groupId: number | undefined;
+    type: ProductType | undefined;
+    price: number | undefined;
+    productServices: ProductServiceInfo[] | undefined;
+    productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
 }
 
 export class ProductGroupInfo implements IProductGroupInfo {
