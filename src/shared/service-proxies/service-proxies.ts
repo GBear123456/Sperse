@@ -71865,6 +71865,10 @@ export interface IProductInfo {
     rate: number | undefined;
 }
 
+export enum ProductType {
+    Subscription = "Subscription", 
+}
+
 export class ProductServiceInfo implements IProductServiceInfo {
     memberServiceId!: number | undefined;
     memberServiceLevelId!: number | undefined;
@@ -71954,19 +71958,15 @@ export interface IProductSubscriptionOptionInfo {
     trialDayCount: number | undefined;
 }
 
-export enum ProductType {
-    Subscription = "Subscription", 
-}
-
 export class CreateProductInput implements ICreateProductInput {
-    productServices!: ProductServiceInfo[] | undefined;
-    productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     code!: string;
     name!: string;
     description!: string | undefined;
     groupId!: number | undefined;
     type!: ProductType | undefined;
     price!: number | undefined;
+    productServices!: ProductServiceInfo[] | undefined;
+    productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
 
     constructor(data?: ICreateProductInput) {
         if (data) {
@@ -71979,6 +71979,12 @@ export class CreateProductInput implements ICreateProductInput {
 
     init(data?: any) {
         if (data) {
+            this.code = data["code"];
+            this.name = data["name"];
+            this.description = data["description"];
+            this.groupId = data["groupId"];
+            this.type = data["type"];
+            this.price = data["price"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
                 for (let item of data["productServices"])
@@ -71989,12 +71995,6 @@ export class CreateProductInput implements ICreateProductInput {
                 for (let item of data["productSubscriptionOptions"])
                     this.productSubscriptionOptions.push(ProductSubscriptionOptionInfo.fromJS(item));
             }
-            this.code = data["code"];
-            this.name = data["name"];
-            this.description = data["description"];
-            this.groupId = data["groupId"];
-            this.type = data["type"];
-            this.price = data["price"];
         }
     }
 
@@ -72007,6 +72007,12 @@ export class CreateProductInput implements ICreateProductInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["groupId"] = this.groupId;
+        data["type"] = this.type;
+        data["price"] = this.price;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -72017,25 +72023,19 @@ export class CreateProductInput implements ICreateProductInput {
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
         }
-        data["code"] = this.code;
-        data["name"] = this.name;
-        data["description"] = this.description;
-        data["groupId"] = this.groupId;
-        data["type"] = this.type;
-        data["price"] = this.price;
         return data; 
     }
 }
 
 export interface ICreateProductInput {
-    productServices: ProductServiceInfo[] | undefined;
-    productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     code: string;
     name: string;
     description: string | undefined;
     groupId: number | undefined;
     type: ProductType | undefined;
     price: number | undefined;
+    productServices: ProductServiceInfo[] | undefined;
+    productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
 }
 
 export class CreateProductOutput implements ICreateProductOutput {
@@ -72082,6 +72082,8 @@ export class UpdateProductInput implements IUpdateProductInput {
     groupId!: number | undefined;
     type!: ProductType | undefined;
     price!: number | undefined;
+    productServices!: ProductServiceInfo[] | undefined;
+    productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
 
     constructor(data?: IUpdateProductInput) {
         if (data) {
@@ -72101,6 +72103,16 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.groupId = data["groupId"];
             this.type = data["type"];
             this.price = data["price"];
+            if (data["productServices"] && data["productServices"].constructor === Array) {
+                this.productServices = [];
+                for (let item of data["productServices"])
+                    this.productServices.push(ProductServiceInfo.fromJS(item));
+            }
+            if (data["productSubscriptionOptions"] && data["productSubscriptionOptions"].constructor === Array) {
+                this.productSubscriptionOptions = [];
+                for (let item of data["productSubscriptionOptions"])
+                    this.productSubscriptionOptions.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
         }
     }
 
@@ -72120,6 +72132,16 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["groupId"] = this.groupId;
         data["type"] = this.type;
         data["price"] = this.price;
+        if (this.productServices && this.productServices.constructor === Array) {
+            data["productServices"] = [];
+            for (let item of this.productServices)
+                data["productServices"].push(item.toJSON());
+        }
+        if (this.productSubscriptionOptions && this.productSubscriptionOptions.constructor === Array) {
+            data["productSubscriptionOptions"] = [];
+            for (let item of this.productSubscriptionOptions)
+                data["productSubscriptionOptions"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -72132,6 +72154,8 @@ export interface IUpdateProductInput {
     groupId: number | undefined;
     type: ProductType | undefined;
     price: number | undefined;
+    productServices: ProductServiceInfo[] | undefined;
+    productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
 }
 
 export class ProductGroupInfo implements IProductGroupInfo {
