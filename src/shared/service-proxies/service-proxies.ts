@@ -63911,8 +63911,8 @@ export interface ICreateOrUpdateLeadOutput {
 }
 
 export enum PaymentPeriodType {
-    _30 = 30, 
-    _365 = 365, 
+    Monthly = "Monthly", 
+    Annual = "Annual", 
 }
 
 export class PackageInfoDto implements IPackageInfoDto {
