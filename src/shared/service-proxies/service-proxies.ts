@@ -71832,6 +71832,7 @@ export class ProductDto implements IProductDto {
     id!: number | undefined;
     code!: string | undefined;
     name!: string | undefined;
+    paymentPeriodTypes!: PaymentPeriodType[] | undefined;
 
     constructor(data?: IProductDto) {
         if (data) {
@@ -71847,6 +71848,11 @@ export class ProductDto implements IProductDto {
             this.id = data["id"];
             this.code = data["code"];
             this.name = data["name"];
+            if (data["paymentPeriodTypes"] && data["paymentPeriodTypes"].constructor === Array) {
+                this.paymentPeriodTypes = [];
+                for (let item of data["paymentPeriodTypes"])
+                    this.paymentPeriodTypes.push(item);
+            }
         }
     }
 
@@ -71862,6 +71868,11 @@ export class ProductDto implements IProductDto {
         data["id"] = this.id;
         data["code"] = this.code;
         data["name"] = this.name;
+        if (this.paymentPeriodTypes && this.paymentPeriodTypes.constructor === Array) {
+            data["paymentPeriodTypes"] = [];
+            for (let item of this.paymentPeriodTypes)
+                data["paymentPeriodTypes"].push(item);
+        }
         return data; 
     }
 }
@@ -71870,6 +71881,7 @@ export interface IProductDto {
     id: number | undefined;
     code: string | undefined;
     name: string | undefined;
+    paymentPeriodTypes: PaymentPeriodType[] | undefined;
 }
 
 export class ProductInfo implements IProductInfo {
