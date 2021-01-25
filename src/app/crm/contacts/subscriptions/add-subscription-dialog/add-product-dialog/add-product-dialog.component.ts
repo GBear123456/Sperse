@@ -133,7 +133,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 this.dialogRef.close(new ProductDto({
                     id: res.productId,
                     name: this.product.name,
-                    code: this.product.code
+                    code: this.product.code,
+                    paymentPeriodTypes: this.product.productSubscriptionOptions.map(item => item.frequency)
                 }));
             });
         }

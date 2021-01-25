@@ -24,25 +24,14 @@
                     </dx-validator>
                 </dx-select-box>
             </div>
-            <div class="field">
-                <label for="name">{{ls.l('Name')}}</label>
-                <dx-text-box name="name" #nameComponent
-                             [inputAttr]="{ id: 'name' }"
-                             [(value)]="subscription.name">
+            <div class="field" *ngIf="paymentPeriodTypes?.length">
+                <label for="code">{{ls.l('PaymentPeriodType')}}</label>
+                <dx-select-box [dataSource]="paymentPeriodTypes"
+                               [(value)]="subscription.paymentPeriodType"
+                               placeholder="Select period type...">
                     <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
+                        <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                     </dx-validator>
-                </dx-text-box>
-            </div>
-            <div class="field" *ngIf="subscription.levels?.length">
-                <label for="name">{{ls.l('Level')}}</label>
-                <dx-select-box [inputAttr]="{ id: 'level' }"
-                               [dataSource]="subscription.levels"
-                               displayExpr="code"
-                               valueExpr="code"
-                               [(value)]="subscription.level"
-                               showClearButton="true"
-                               (onValueChanged)="onServiceLevelChanged($event, subscription)">
                 </dx-select-box>
             </div>
             <div class="field">
@@ -60,21 +49,14 @@
                              [(value)]="subscription.endDate">
                 </dx-date-box>
             </div>
-            <div class="field">
-                <label for="amount">{{ls.l('Amount')}}</label>
-                <dx-number-box name="amount"
-                               [inputAttr]="{ id: 'amount' }"
-                               [format]="amountFormat$ | async"
-                               [(value)]="subscription.amount">
-                </dx-number-box>
-            </div>
         </div>
         <div class="field order-field">
             <label for="orderNumber">
                 {{ls.l('OrderNumber')}}
                 <small class="small-gray">*optional</small>
             </label>
-            <order-dropdown [(orderNumber)]="subscription.orderNumber"
+            <order-dropdown [(orderId)]="subscription.orderId"
+                            [(orderNumber)]="subscription.orderNumber"
                             placeholder=""
                             width="100%"
                             [contactId]="data.contactId">

@@ -24,6 +24,7 @@ import {
     ServiceProductServiceProxy,
     ServiceProductDto,
     ProductServiceProxy,
+    PaymentPeriodType,
     ProductDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -58,6 +59,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     readonly addNewItemId = -1;
     products: ProductDto[];
+    paymentPeriodTypes: PaymentPeriodType[] = [];
     serviceTypes: ServiceProductDto[] = null;
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         contactId: this.data.contactId,
@@ -75,7 +77,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         ],
         productId: undefined,
         paymentPeriodType: undefined,
-        orderId: undefined,
+        orderId: this.data.orderId,
         updateThirdParty: false
     });
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
@@ -183,8 +185,10 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         let selectedItem: ProductDto = event.component.option('selectedItem');
         if (selectedItem.id == this.addNewItemId)
             this.showAddProductDialog(event.component, event.previousValue);
-        else
+        else {
             this.subscription.productId = selectedItem.id;
+            this.paymentPeriodTypes = selectedItem.paymentPeriodTypes;
+        }
     }
 
     onServiceLevelChanged(event, sub: SubscriptionInput) {

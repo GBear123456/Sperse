@@ -124,8 +124,8 @@ export class PaymentOptionsComponent extends AppComponentBase {
                 editionId: this.plan.selectedEditionId,
                 maxUserCount: this.plan.usersAmount,
                 frequency: this.plan.billingPeriod == BillingPeriod.Monthly
-                    ? PaymentPeriodType._30
-                    : PaymentPeriodType._365
+                    ? PaymentPeriodType.Monthly
+                    : PaymentPeriodType.Annual
             }
         };
         switch (paymentMethod) {
