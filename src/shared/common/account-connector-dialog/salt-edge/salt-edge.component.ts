@@ -5,7 +5,8 @@ import {
     Component,
     EventEmitter,
     OnInit,
-    Output
+    Output,
+    Input
 } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
@@ -33,6 +34,8 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SaltEdgeComponent implements OnInit {
+    @Input() reconnect = false;
+    @Input() accountId: number;
     @Output() onClose: EventEmitter<any> = new EventEmitter<any>();
     @Output() onComplete: EventEmitter<any> = new EventEmitter<any>();
     connectUrl: SafeResourceUrl;
@@ -86,8 +89,10 @@ export class SaltEdgeComponent implements OnInit {
                 this.cfoService.instanceType, this.cfoService.instanceId,
                 new RequestConnectionInput({
                     syncTypeId: SyncTypeIds.SaltEdge,
-                    mode: ConnectionMode.Create,
-                    syncAccountId: undefined
+                    mode: this.reconnect ? 
+                        ConnectionMode.Reconnect :
+                        ConnectionMode.Create,
+                    syncAccountId: this.accountId
                 }))
             )
         ).subscribe((res: RequestConnectionOutput) => {

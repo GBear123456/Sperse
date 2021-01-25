@@ -18,6 +18,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 export class XeroOauth2LoginComponent implements OnInit {
     @Input() loadingContainerElement: Element;
     @Input() reconnect = false;
+    @Input() accountId: number;
     @Output() onComplete: EventEmitter<number> = new EventEmitter();
 
     constructor(
@@ -41,8 +42,10 @@ export class XeroOauth2LoginComponent implements OnInit {
                 this.cfoService.instanceId,
                 new RequestConnectionInput({
                     syncTypeId: SyncTypeIds.XeroOAuth2,
-                    mode: ConnectionMode.Create,
-                    syncAccountId: undefined
+                    mode: this.reconnect ? 
+                        ConnectionMode.Reconnect :
+                        ConnectionMode.Create,
+                    syncAccountId: this.accountId
                 })
             ).pipe(
                 finalize(() => this.loadingService.finishLoading(this.loadingContainerElement))

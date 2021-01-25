@@ -1,5 +1,5 @@
 /** Core imports */
-import { Directive, EventEmitter, Inject, Output, Renderer2 } from '@angular/core';
+import { Directive, EventEmitter, Inject, Output, Input, Renderer2, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
@@ -17,7 +17,9 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
     selector: 'plaid-login',
     providers: [SyncAccountServiceProxy]
 })
-export class PlaidLoginDirective {
+export class PlaidLoginDirective  implements OnInit {
+    @Input() reconnect = false;
+    @Input() accountId: number;
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
     @Output() onClose: EventEmitter<any> = new EventEmitter();
 
@@ -29,7 +31,9 @@ export class PlaidLoginDirective {
         private leftMenuService: LeftMenuService,
         private renderer: Renderer2,
         @Inject(DOCUMENT) private document
-    ) {
+    ) {}
+
+    ngOnInit() {
         if (window['Plaid'])
           this.createPlaidHandler();
         else
@@ -45,8 +49,10 @@ export class PlaidLoginDirective {
                 this.cfoService.instanceId,
                 new RequestConnectionInput({
                     syncTypeId: SyncTypeIds.Plaid,
-                    mode: ConnectionMode.Create,
-                    syncAccountId: undefined
+                    mode: this.reconnect ? 
+                        ConnectionMode.Reconnect :
+                        ConnectionMode.Create,
+                    syncAccountId: this.accountId
                 })
             ))
         ).subscribe((res: RequestConnectionOutput) => {

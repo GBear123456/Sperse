@@ -87,7 +87,6 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
         let syncTypeId = syncAccount.syncTypeId;
         let syncTypeKey = Object.keys(SyncTypeIds).find((v) => SyncTypeIds[v] == syncTypeId);
         let connector: AccountConnectors = AccountConnectors[syncTypeKey];
-
         const dialogConfig = { ...AccountConnectorDialogComponent.defaultConfig, ...{
             data: {
                 connector: connector,
