@@ -46950,7 +46950,6 @@ export interface IAddMappingDto {
 }
 
 export class RecategorizeInput implements IRecategorizeInput {
-    parseDescription!: boolean | undefined;
     bankAccountIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
@@ -46967,7 +46966,6 @@ export class RecategorizeInput implements IRecategorizeInput {
 
     init(data?: any) {
         if (data) {
-            this.parseDescription = data["parseDescription"];
             if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
                 this.bankAccountIds = [];
                 for (let item of data["bankAccountIds"])
@@ -46988,7 +46986,6 @@ export class RecategorizeInput implements IRecategorizeInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["parseDescription"] = this.parseDescription;
         if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
             data["bankAccountIds"] = [];
             for (let item of this.bankAccountIds)
@@ -47002,7 +46999,6 @@ export class RecategorizeInput implements IRecategorizeInput {
 }
 
 export interface IRecategorizeInput {
-    parseDescription: boolean | undefined;
     bankAccountIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
@@ -47014,7 +47010,6 @@ export class ResetClassificationDto implements IResetClassificationDto {
     removeRules!: boolean | undefined;
     removeCategoryTree!: boolean | undefined;
     removeForecasts!: boolean | undefined;
-    recalculateTransactionAttributes!: boolean | undefined;
 
     constructor(data?: IResetClassificationDto) {
         if (data) {
@@ -47028,7 +47023,6 @@ export class ResetClassificationDto implements IResetClassificationDto {
             this.removeRules = false;
             this.removeCategoryTree = false;
             this.removeForecasts = false;
-            this.recalculateTransactionAttributes = false;
         }
     }
 
@@ -47038,7 +47032,6 @@ export class ResetClassificationDto implements IResetClassificationDto {
             this.removeRules = data["removeRules"] !== undefined ? data["removeRules"] : false;
             this.removeCategoryTree = data["removeCategoryTree"] !== undefined ? data["removeCategoryTree"] : false;
             this.removeForecasts = data["removeForecasts"] !== undefined ? data["removeForecasts"] : false;
-            this.recalculateTransactionAttributes = data["recalculateTransactionAttributes"] !== undefined ? data["recalculateTransactionAttributes"] : false;
         }
     }
 
@@ -47055,7 +47048,6 @@ export class ResetClassificationDto implements IResetClassificationDto {
         data["removeRules"] = this.removeRules;
         data["removeCategoryTree"] = this.removeCategoryTree;
         data["removeForecasts"] = this.removeForecasts;
-        data["recalculateTransactionAttributes"] = this.recalculateTransactionAttributes;
         return data; 
     }
 }
@@ -47065,7 +47057,6 @@ export interface IResetClassificationDto {
     removeRules: boolean | undefined;
     removeCategoryTree: boolean | undefined;
     removeForecasts: boolean | undefined;
-    recalculateTransactionAttributes: boolean | undefined;
 }
 
 export class UpdateTransactionsCategoryInput implements IUpdateTransactionsCategoryInput {
