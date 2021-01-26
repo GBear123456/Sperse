@@ -63,20 +63,24 @@ export class SaltEdgeComponent implements OnInit {
             const response = JSON.parse(event.data);
             if (response.data.stage === 'success') {
                 this.notifyService.success('Successfully Connected');
-                this.syncAccountServiceProxy.create(
-                    this.cfoService.instanceType,
-                    this.cfoService.instanceId,
-                    new CreateSyncAccountInput({
-                        isSyncBankAccountsEnabled: true,
-                        typeId: SyncTypeIds.SaltEdge,
-                        publicToken: undefined,
-                        syncAccountRef: response.data.connection_id
-                    })
-                ).pipe(finalize(() =>
-                    this.syncProgressService.runSynchProgress().subscribe()
-                )).subscribe(() =>
-                    this.onComplete.emit()
-                );
+                if (this.reconnect) {
+                    this.syncProgressService.runSynchProgress().subscribe();
+                    this.onComplete.emit();
+                } else
+                    this.syncAccountServiceProxy.create(
+                        this.cfoService.instanceType,
+                        this.cfoService.instanceId,
+                        new CreateSyncAccountInput({
+                            isSyncBankAccountsEnabled: true,
+                            typeId: SyncTypeIds.SaltEdge,
+                            publicToken: undefined,
+                            syncAccountRef: response.data.connection_id
+                        })
+                    ).pipe(finalize(() =>
+                        this.syncProgressService.runSynchProgress().subscribe()
+                    )).subscribe(() =>
+                        this.onComplete.emit()
+                    );
             }
         }
     }
