@@ -24,7 +24,7 @@ import {
     ServiceProductServiceProxy,
     ServiceProductDto,
     ProductServiceProxy,
-    PaymentPeriodType,
+    RecurringPaymentFrequency,
     ProductDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -59,7 +59,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     readonly addNewItemId = -1;
     products: ProductDto[];
-    paymentPeriodTypes: PaymentPeriodType[] = [];
+    paymentPeriodTypes: RecurringPaymentFrequency[] = [];
     serviceTypes: ServiceProductDto[] = null;
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         contactId: this.data.contactId,

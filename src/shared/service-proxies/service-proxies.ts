@@ -68971,13 +68971,18 @@ export interface ISubscriptionInput {
     amount: number | undefined;
 }
 
+export enum RecurringPaymentFrequency {
+    Monthly = "Monthly", 
+    Annual = "Annual", 
+}
+
 export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInput {
     contactId!: number;
     leadId!: number | undefined;
     orderNumber!: string | undefined;
     subscriptions!: SubscriptionInput[] | undefined;
     productId!: number | undefined;
-    paymentPeriodType!: PaymentPeriodType | undefined;
+    paymentPeriodType!: RecurringPaymentFrequency | undefined;
     orderId!: number | undefined;
     updateThirdParty!: boolean | undefined;
 
@@ -69038,7 +69043,7 @@ export interface IUpdateOrderSubscriptionInput {
     orderNumber: string | undefined;
     subscriptions: SubscriptionInput[] | undefined;
     productId: number | undefined;
-    paymentPeriodType: PaymentPeriodType | undefined;
+    paymentPeriodType: RecurringPaymentFrequency | undefined;
     orderId: number | undefined;
     updateThirdParty: boolean | undefined;
 }
@@ -71927,11 +71932,6 @@ export interface IProductServiceInfo {
     memberServiceLevelId: number | undefined;
 }
 
-export enum RecurringPaymentFrequency {
-    Monthly = "Monthly", 
-    Annual = "Annual", 
-}
-
 export class ProductSubscriptionOptionInfo implements IProductSubscriptionOptionInfo {
     frequency!: RecurringPaymentFrequency | undefined;
     fee!: number | undefined;
@@ -72060,7 +72060,7 @@ export class ProductDto implements IProductDto {
     id!: number | undefined;
     code!: string | undefined;
     name!: string | undefined;
-    paymentPeriodTypes!: PaymentPeriodType[] | undefined;
+    paymentPeriodTypes!: RecurringPaymentFrequency[] | undefined;
 
     constructor(data?: IProductDto) {
         if (data) {
@@ -72109,7 +72109,7 @@ export interface IProductDto {
     id: number | undefined;
     code: string | undefined;
     name: string | undefined;
-    paymentPeriodTypes: PaymentPeriodType[] | undefined;
+    paymentPeriodTypes: RecurringPaymentFrequency[] | undefined;
 }
 
 export class ProductShortInfo implements IProductShortInfo {
