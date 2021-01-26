@@ -41942,6 +41942,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     balance!: number | undefined;
     lastSyncDate!: moment.Moment | undefined;
     lastGoodSyncDate!: moment.Moment | undefined;
+    refreshAllowedSinceDate!: moment.Moment | undefined;
     bankAccounts!: BankAccountDto[] | undefined;
     syncAccountStatus!: SyncProgressStatus | undefined;
     syncRef!: string | undefined;
@@ -41965,6 +41966,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
             this.balance = data["balance"];
             this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
             this.lastGoodSyncDate = data["lastGoodSyncDate"] ? moment(data["lastGoodSyncDate"].toString()) : <any>undefined;
+            this.refreshAllowedSinceDate = data["refreshAllowedSinceDate"] ? moment(data["refreshAllowedSinceDate"].toString()) : <any>undefined;
             if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
                 this.bankAccounts = [];
                 for (let item of data["bankAccounts"])
@@ -41992,6 +41994,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
         data["balance"] = this.balance;
         data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
         data["lastGoodSyncDate"] = this.lastGoodSyncDate ? this.lastGoodSyncDate.toISOString() : <any>undefined;
+        data["refreshAllowedSinceDate"] = this.refreshAllowedSinceDate ? this.refreshAllowedSinceDate.toISOString() : <any>undefined;
         if (this.bankAccounts && this.bankAccounts.constructor === Array) {
             data["bankAccounts"] = [];
             for (let item of this.bankAccounts)
@@ -42012,6 +42015,7 @@ export interface ISyncAccountBankDto {
     balance: number | undefined;
     lastSyncDate: moment.Moment | undefined;
     lastGoodSyncDate: moment.Moment | undefined;
+    refreshAllowedSinceDate: moment.Moment | undefined;
     bankAccounts: BankAccountDto[] | undefined;
     syncAccountStatus: SyncProgressStatus | undefined;
     syncRef: string | undefined;
