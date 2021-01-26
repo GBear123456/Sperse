@@ -11,7 +11,7 @@ import {
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 
 /** Third party imports  */
-import { filter, first, switchMap } from 'rxjs/operators';
+import { filter, first, switchMap, finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { CFOService } from '@shared/cfo/cfo.service';
@@ -61,7 +61,8 @@ export class SaltEdgeComponent implements OnInit {
                 return;
             }
             const response = JSON.parse(event.data);
-            if (response.data.api_stage === 'start') {
+            if (response.data.stage === 'success') {
+                this.notifyService.success('Successfully Connected');
                 this.syncAccountServiceProxy.create(
                     this.cfoService.instanceType,
                     this.cfoService.instanceId,
@@ -71,12 +72,11 @@ export class SaltEdgeComponent implements OnInit {
                         publicToken: undefined,
                         syncAccountRef: response.data.connection_id
                     })
-                ).subscribe()
-            }
-            if (response.data.stage === 'success') {
-                this.notifyService.success('Successfully Connected');
-                this.onComplete.emit();
-                this.syncProgressService.runSynchProgress().subscribe();
+                ).pipe(finalize(() =>
+                    this.syncProgressService.runSynchProgress().subscribe()
+                )).subscribe(() =>
+                    this.onComplete.emit()
+                );
             }
         }
     }
@@ -89,7 +89,7 @@ export class SaltEdgeComponent implements OnInit {
                 this.cfoService.instanceType, this.cfoService.instanceId,
                 new RequestConnectionInput({
                     syncTypeId: SyncTypeIds.SaltEdge,
-                    mode: this.reconnect ? 
+                    mode: this.reconnect ?
                         ConnectionMode.Reconnect :
                         ConnectionMode.Create,
                     syncAccountId: this.accountId
