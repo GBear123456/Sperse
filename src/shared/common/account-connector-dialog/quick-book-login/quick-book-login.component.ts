@@ -15,6 +15,8 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     selector: 'quick-book-login'
 })
 export class QuickBookLoginComponent implements OnInit {
+    @Input() reconnect = false;
+    @Input() accountId: number;
     @Input() loadingContainerElement: Element;
     @Output() onComplete: EventEmitter<number> = new EventEmitter();
 
@@ -39,8 +41,10 @@ export class QuickBookLoginComponent implements OnInit {
                 this.cfoService.instanceId,
                 new RequestConnectionInput({
                     syncTypeId: SyncTypeIds.QuickBook,
-                    mode: ConnectionMode.Create,
-                    syncAccountId: undefined
+                    mode: this.reconnect ? 
+                        ConnectionMode.Reconnect :
+                        ConnectionMode.Create,
+                    syncAccountId: this.accountId
                 })
             ).pipe(
                 finalize(() => this.loadingService.finishLoading(this.loadingContainerElement))

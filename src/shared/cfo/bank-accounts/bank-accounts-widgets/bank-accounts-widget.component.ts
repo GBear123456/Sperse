@@ -632,13 +632,18 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         this.renameBankAccount();
     }
 
+    getContexMenuByName(name: string) {
+        return this.contextMenuItems.find(e => e.name === name);
+    }
+
     openActionsMenu(cellObj) {
-        this.contextMenuItems[this.contextMenuItems.findIndex(e => e.name === 'resync')]['hide'] =
-            cellObj.data.syncTypeId === 'Q';
-        this.contextMenuItems[this.contextMenuItems.findIndex(e => e.name === 'update')]['hide'] =
-            cellObj.data.syncTypeId != SyncTypeIds.Plaid
-            && cellObj.data.syncTypeId != SyncTypeIds.QuickBook
-            && cellObj.data.syncTypeId != SyncTypeIds.XeroOAuth2;
+        this.getContexMenuByName('resync')['hide'] = cellObj.data.syncTypeId === 'Q';
+        this.getContexMenuByName('update')['hide'] = ![
+            SyncTypeIds.Plaid, 
+            SyncTypeIds.QuickBook, 
+            SyncTypeIds.XeroOAuth2, 
+            SyncTypeIds.SaltEdge
+        ].includes(cellObj.data.syncTypeId);
         this.syncAccount = cellObj.data;
         this.syncRef = cellObj.text;
         this.syncAccountId = cellObj.data.syncAccountId;
