@@ -175,10 +175,11 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         return service ? service.serviceProductLevels : [];
     }
 
-    getFrequencies() {
+    getFrequencies(selected) {
         let options = this.product.productSubscriptionOptions;
         return options ? this.frequencies.filter(item => {
-            return !options.some(option => option.frequency == item);
+            return selected.frequency == item ||
+                !options.some(option => option.frequency == item);
         }) : this.frequencies;
     }
 

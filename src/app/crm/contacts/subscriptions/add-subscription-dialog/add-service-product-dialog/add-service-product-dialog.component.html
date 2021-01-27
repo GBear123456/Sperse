@@ -31,15 +31,6 @@
             </dx-text-box>
         </div>
         <div class="field">
-            <label for="monthlyFee">{{ls.l('Amount')}}</label>
-            <dx-number-box name="monthlyFee"
-                width="300px"
-                [inputAttr]="{ id: 'monthlyFee' }"
-                [format]="amountFormat$ | async"
-                [(value)]="serviceProduct.monthlyFee">
-            </dx-number-box>
-        </div>
-        <div class="field">
             <label for="activationTime">{{ls.l('StartDate')}}</label>
             <dx-date-box [min]="today"
                 width="300px"
@@ -82,15 +73,6 @@
                         <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
                     </dx-validator>
                 </dx-text-box>
-            </div>
-            <div class="field">
-                <label for="monthlyFee">{{ls.l('Amount')}}</label>
-                <dx-number-box name="monthlyFee"
-                    width="250px"
-                    [inputAttr]="{ id: 'monthlyFee' }"
-                    [format]="amountFormat$ | async"
-                    [(value)]="serviceLevel.monthlyFee">
-                </dx-number-box>
             </div>
             <div class="field">
                 <label for="activationTime">{{ls.l('StartDate')}}</label>
