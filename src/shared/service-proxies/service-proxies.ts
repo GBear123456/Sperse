@@ -22011,6 +22011,110 @@ export class NotesServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    pinNote(body: PinNoteInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Notes/PinNote";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPinNote(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPinNote(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processPinNote(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    unpinNote(body: UnpinNoteInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Notes/UnpinNote";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnpinNote(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUnpinNote(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUnpinNote(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -65928,6 +66032,8 @@ export class NoteInfoDto implements INoteInfoDto {
     addedByUserId!: number | undefined;
     addedByUserName!: string | undefined;
     addedByUserPhotoPublicId!: string | undefined;
+    pinnedByUserName!: string | undefined;
+    pinnedDateTime!: moment.Moment | undefined;
 
     constructor(data?: INoteInfoDto) {
         if (data) {
@@ -65955,6 +66061,8 @@ export class NoteInfoDto implements INoteInfoDto {
             this.addedByUserId = data["addedByUserId"];
             this.addedByUserName = data["addedByUserName"];
             this.addedByUserPhotoPublicId = data["addedByUserPhotoPublicId"];
+            this.pinnedByUserName = data["pinnedByUserName"];
+            this.pinnedDateTime = data["pinnedDateTime"] ? moment(data["pinnedDateTime"].toString()) : <any>undefined;
         }
     }
 
@@ -65982,6 +66090,8 @@ export class NoteInfoDto implements INoteInfoDto {
         data["addedByUserId"] = this.addedByUserId;
         data["addedByUserName"] = this.addedByUserName;
         data["addedByUserPhotoPublicId"] = this.addedByUserPhotoPublicId;
+        data["pinnedByUserName"] = this.pinnedByUserName;
+        data["pinnedDateTime"] = this.pinnedDateTime ? this.pinnedDateTime.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -66002,6 +66112,8 @@ export interface INoteInfoDto {
     addedByUserId: number | undefined;
     addedByUserName: string | undefined;
     addedByUserPhotoPublicId: string | undefined;
+    pinnedByUserName: string | undefined;
+    pinnedDateTime: moment.Moment | undefined;
 }
 
 export class CreateNoteInput implements ICreateNoteInput {
@@ -66178,6 +66290,86 @@ export interface IUpdateNoteInput {
     followUpDateTime: moment.Moment | undefined;
     dateTime: moment.Moment | undefined;
     addedByUserId: number | undefined;
+}
+
+export class PinNoteInput implements IPinNoteInput {
+    contactId!: number;
+    noteId!: number;
+
+    constructor(data?: IPinNoteInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.noteId = data["noteId"];
+        }
+    }
+
+    static fromJS(data: any): PinNoteInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new PinNoteInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["noteId"] = this.noteId;
+        return data; 
+    }
+}
+
+export interface IPinNoteInput {
+    contactId: number;
+    noteId: number;
+}
+
+export class UnpinNoteInput implements IUnpinNoteInput {
+    contactId!: number;
+    noteId!: number;
+
+    constructor(data?: IUnpinNoteInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.noteId = data["noteId"];
+        }
+    }
+
+    static fromJS(data: any): UnpinNoteInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UnpinNoteInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["noteId"] = this.noteId;
+        return data; 
+    }
+}
+
+export interface IUnpinNoteInput {
+    contactId: number;
+    noteId: number;
 }
 
 export enum UserNotificationState {
