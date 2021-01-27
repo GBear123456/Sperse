@@ -16,6 +16,7 @@ import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/materia
 /** Application imports */
 import { AccountConnectors } from '@shared/AppEnums';
 import { AccountConnectorDialogData } from '@shared/common/account-connector-dialog/models/account-connector-dialog-data';
+import { ConnectionMode } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'account-connector-dialog',
@@ -35,6 +36,10 @@ export class AccountConnectorDialogComponent implements OnInit {
     selectedConnector: AccountConnectors;
     accountConnectors = AccountConnectors;
     showBackButton = true;
+
+    get connectionMode(): ConnectionMode {
+        return this.data.mode || ConnectionMode.Create;
+    }
 
     constructor(
         private elementRef: ElementRef,
