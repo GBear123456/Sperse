@@ -9,7 +9,7 @@
 
     <ng-template [ngIf]="selectedConnector === accountConnectors.Plaid">
         <plaid-login
-            [reconnect]="data?.reconnect"
+            [mode]="data?.mode"
             [accountId]="data?.config?.accountId"
             (onComplete)="complete(true)"
             (onClose)="closeDialog($event)">
@@ -17,7 +17,7 @@
     </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.SaltEdge">
         <salt-edge
-            [reconnect]="data?.reconnect"
+            [mode]="data?.mode"
             [accountId]="data?.config?.accountId"
             (onComplete)="complete()" 
             (onClose)="closeDialog()">
@@ -25,7 +25,7 @@
     </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.QuickBook">
         <quick-book-login
-            [reconnect]="data?.reconnect"
+            [mode]="data?.mode"
             [accountId]="data?.config?.accountId"
             [loadingContainerElement]="data?.loadingContainerElement"
             (onComplete)="complete()">
@@ -33,7 +33,7 @@
     </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.XeroOAuth2">
         <xero-oauth2-login
-            [reconnect]="data?.reconnect"
+            [mode]="data?.mode"
             [accountId]="data?.config?.accountId"
             [loadingContainerElement]="data?.loadingContainerElement"
             (onComplete)="complete()">

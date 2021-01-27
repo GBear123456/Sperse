@@ -12,7 +12,7 @@ import { AccountConnectorDialogComponent } from '@shared/common/account-connecto
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { SyncAccountBankDto } from '@shared/service-proxies/service-proxies';
+import { SyncAccountBankDto, ConnectionMode } from '@shared/service-proxies/service-proxies';
 import { AccountConnectors, SyncTypeIds } from '@shared/AppEnums';
 import { BankAccountsWidgetComponent } from '@shared/cfo/bank-accounts/bank-accounts-widgets/bank-accounts-widget.component';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
@@ -80,23 +80,23 @@ export class BankAccountsComponent extends CFOComponentBase implements OnInit, A
         this.bankAccountsService.applyFilter();
     }
 
-    onUpdateAccount(syncAccount: SyncAccountBankDto) {
+    onUpdateAccount(event: {account: SyncAccountBankDto, mode: ConnectionMode}) {
         if (!this.isInstanceAdmin && !this.isMemberAccessManage)
             return;
 
-        let syncTypeId = syncAccount.syncTypeId;
+        let syncTypeId = event.account.syncTypeId;
         let syncTypeKey = Object.keys(SyncTypeIds).find((v) => SyncTypeIds[v] == syncTypeId);
         let connector: AccountConnectors = AccountConnectors[syncTypeKey];
         const dialogConfig = { ...AccountConnectorDialogComponent.defaultConfig, ...{
             data: {
                 connector: connector,
                 config: {
-                    accountId: syncAccount.syncAccountId,
+                    accountId: event.account.syncAccountId,
                 },
                 operationType: 'update',
                 instanceType: this.instanceType,
                 instanceId: this.instanceId,
-                reconnect: true
+                mode: event.mode
             }
         }};
         this.dialog.open(AccountConnectorDialogComponent, dialogConfig);

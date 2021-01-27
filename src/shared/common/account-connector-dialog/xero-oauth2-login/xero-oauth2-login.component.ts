@@ -17,7 +17,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class XeroOauth2LoginComponent implements OnInit {
     @Input() loadingContainerElement: Element;
-    @Input() reconnect = false;
+    @Input() mode = ConnectionMode.Create;
     @Input() accountId: number;
     @Output() onComplete: EventEmitter<number> = new EventEmitter();
 
@@ -42,9 +42,7 @@ export class XeroOauth2LoginComponent implements OnInit {
                 this.cfoService.instanceId,
                 new RequestConnectionInput({
                     syncTypeId: SyncTypeIds.XeroOAuth2,
-                    mode: this.reconnect ? 
-                        ConnectionMode.Reconnect :
-                        ConnectionMode.Create,
+                    mode: this.mode,
                     syncAccountId: this.accountId
                 })
             ).pipe(
@@ -63,7 +61,7 @@ export class XeroOauth2LoginComponent implements OnInit {
                             this.cfoService.instanceChangeProcess(true).subscribe(() => {
                                 this.syncProgressService.runSynchProgress().subscribe();
                             });
-                        } else if (this.reconnect) {
+                        } else if (this.mode == ConnectionMode.Reconnect || this.mode == ConnectionMode.Refresh) {
                             this.syncProgressService.runSynchProgress().subscribe();
                         } // need found the way to detect closing the dialog without login
 

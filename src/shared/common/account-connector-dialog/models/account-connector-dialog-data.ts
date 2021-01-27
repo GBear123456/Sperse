@@ -1,5 +1,5 @@
 import { AccountConnectors } from '@shared/AppEnums';
-import { InstanceType } from '@shared/service-proxies/service-proxies';
+import { InstanceType, ConnectionMode } from '@shared/service-proxies/service-proxies';
 
 export interface AccountConnectorDialogData {
     connector?: AccountConnectors;
@@ -10,5 +10,5 @@ export interface AccountConnectorDialogData {
     loadingContainerElement?: Element;
     instanceType?: InstanceType;
     instanceId?: number;
-    reconnect?: boolean;
+    mode?: ConnectionMode;
 }

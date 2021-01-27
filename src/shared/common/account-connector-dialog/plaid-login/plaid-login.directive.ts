@@ -18,7 +18,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
     providers: [SyncAccountServiceProxy]
 })
 export class PlaidLoginDirective  implements OnInit {
-    @Input() reconnect = false;
+    @Input() mode = ConnectionMode.Create;
     @Input() accountId: number;
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
     @Output() onClose: EventEmitter<any> = new EventEmitter();
@@ -49,9 +49,7 @@ export class PlaidLoginDirective  implements OnInit {
                 this.cfoService.instanceId,
                 new RequestConnectionInput({
                     syncTypeId: SyncTypeIds.Plaid,
-                    mode: this.reconnect ? 
-                        ConnectionMode.Reconnect :
-                        ConnectionMode.Create,
+                    mode: this.mode,
                     syncAccountId: this.accountId
                 })
             ))
