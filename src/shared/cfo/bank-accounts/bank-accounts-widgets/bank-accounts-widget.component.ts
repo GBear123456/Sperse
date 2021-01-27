@@ -639,7 +639,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     openActionsMenu(cellObj) {
         this.getContexMenuByName('resync')['hide'] = cellObj.data.syncTypeId === 'Q';
         this.getContexMenuByName('update')['hide'] = ![
-            SyncTypeIds.Plaid, 
+            //SyncTypeIds.Plaid, 
             SyncTypeIds.QuickBook, 
             SyncTypeIds.XeroOAuth2, 
             SyncTypeIds.SaltEdge
