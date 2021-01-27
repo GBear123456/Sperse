@@ -34,7 +34,7 @@ import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-pr
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SaltEdgeComponent implements OnInit {
-    @Input() reconnect = false;
+    @Input() mode = ConnectionMode.Create;
     @Input() accountId: number;
     @Output() onClose: EventEmitter<any> = new EventEmitter<any>();
     @Output() onComplete: EventEmitter<any> = new EventEmitter<any>();
@@ -63,10 +63,7 @@ export class SaltEdgeComponent implements OnInit {
             const response = JSON.parse(event.data);
             if (response.data.stage === 'success') {
                 this.notifyService.success('Successfully Connected');
-                if (this.reconnect) {
-                    this.syncProgressService.runSynchProgress().subscribe();
-                    this.onComplete.emit();
-                } else
+                if (this.mode == ConnectionMode.Create) {
                     this.syncAccountServiceProxy.create(
                         this.cfoService.instanceType,
                         this.cfoService.instanceId,
@@ -81,6 +78,10 @@ export class SaltEdgeComponent implements OnInit {
                     )).subscribe(() =>
                         this.onComplete.emit()
                     );
+                } else {
+                    this.syncProgressService.runSynchProgress().subscribe();
+                    this.onComplete.emit();
+                }
             }
         }
     }
@@ -93,9 +94,7 @@ export class SaltEdgeComponent implements OnInit {
                 this.cfoService.instanceType, this.cfoService.instanceId,
                 new RequestConnectionInput({
                     syncTypeId: SyncTypeIds.SaltEdge,
-                    mode: this.reconnect ?
-                        ConnectionMode.Reconnect :
-                        ConnectionMode.Create,
+                    mode: this.mode,
                     syncAccountId: this.accountId
                 }))
             )

@@ -24,6 +24,7 @@ import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import Form from 'devextreme/ui/form';
 import { BehaviorSubject, Observable, combineLatest, forkJoin } from 'rxjs';
 import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
+import * as moment from 'moment-timezone';
 
 /** Application imports */
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
@@ -37,6 +38,7 @@ import {
     RenameSyncAccountInput,
     BankAccountDto,
     SyncProgressOutput,
+    ConnectionMode,
     InstanceType
 } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
@@ -559,8 +561,8 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         return data;
     }
 
-    updateAccountInfo(data: SyncAccountBankDto) {
-        this.onUpdateAccount.emit(data);
+    updateAccountInfo(account: SyncAccountBankDto, mode: ConnectionMode) {
+        this.onUpdateAccount.emit({account, mode});
     }
 
     calculateHeight() {
@@ -637,7 +639,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     openActionsMenu(cellObj) {
-        this.getContexMenuByName('resync')['hide'] = cellObj.data.syncTypeId === 'Q';
+        this.getContexMenuByName('resync')['hide'] = cellObj.data.syncTypeId == 'Q';
         this.getContexMenuByName('update')['hide'] = ![
             //SyncTypeIds.Plaid, 
             SyncTypeIds.QuickBook, 
@@ -662,7 +664,12 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 this.changeBankAccountName();
                 break;
             case 'sync':
-                this.requestSyncForAccounts();
+                if (this.syncAccount.syncTypeId == SyncTypeIds.SaltEdge &&
+                    (!this.syncAccount.refreshAllowedSinceDate || this.syncAccount.refreshAllowedSinceDate < moment())
+                )
+                    this.updateAccountInfo(this.syncAccount, ConnectionMode.Refresh);
+                else
+                    this.requestSyncForAccounts();                
                 break;
             case 'auto-sync':
                 this.updateAutoSyncTime(
@@ -675,7 +682,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 this.requestSyncForAccounts(true);
                 break;
             case 'update':
-                this.updateAccountInfo(this.syncAccount);
+                this.updateAccountInfo(this.syncAccount, ConnectionMode.Reconnect);
                 break;
             case 'delete':
                 this.removeAccount(this.syncAccountId);
