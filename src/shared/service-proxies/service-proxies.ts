@@ -26416,6 +26416,58 @@ export class PipelineServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    updatePipelineSortOrder(body: UpdateSortOrderInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/UpdatePipelineSortOrder";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdatePipelineSortOrder(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdatePipelineSortOrder(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdatePipelineSortOrder(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     create(body: PipelineCreateInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Pipeline/Create";
         url_ = url_.replace(/[?&]$/, "");
@@ -71918,6 +71970,46 @@ export interface IPipelineDto {
     stages: StageDto[] | undefined;
 }
 
+export class UpdateSortOrderInput implements IUpdateSortOrderInput {
+    id!: number;
+    sortOrder!: number;
+
+    constructor(data?: IUpdateSortOrderInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSortOrderInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSortOrderInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IUpdateSortOrderInput {
+    id: number;
+    sortOrder: number;
+}
+
 export class PipelineCreateInput implements IPipelineCreateInput {
     name!: string | undefined;
     purposeId!: string;
@@ -74760,46 +74852,6 @@ export interface IMergeStagesInput {
     pipelineId: number;
     sourceStageId: number;
     destinationStageId: number | undefined;
-}
-
-export class UpdateSortOrderInput implements IUpdateSortOrderInput {
-    id!: number;
-    sortOrder!: number;
-
-    constructor(data?: IUpdateSortOrderInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.sortOrder = data["sortOrder"];
-        }
-    }
-
-    static fromJS(data: any): UpdateSortOrderInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateSortOrderInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["sortOrder"] = this.sortOrder;
-        return data; 
-    }
-}
-
-export interface IUpdateSortOrderInput {
-    id: number;
-    sortOrder: number;
 }
 
 export class CreateStageChecklistPointInput implements ICreateStageChecklistPointInput {
