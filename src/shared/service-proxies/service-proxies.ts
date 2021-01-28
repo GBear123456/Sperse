@@ -21791,12 +21791,15 @@ export class NotesServiceProxy {
 
     /**
      * @contactIds (optional) 
+     * @ascendingSorting (optional) 
      * @return Success
      */
-    getNotes(contactIds: number[] | null | undefined): Observable<NoteInfoDto[]> {
+    getNotes(contactIds: number[] | null | undefined, ascendingSorting: boolean | null | undefined): Observable<NoteInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Notes/GetNotes?";
         if (contactIds !== undefined)
             contactIds && contactIds.forEach(item => { url_ += "contactIds=" + encodeURIComponent("" + item) + "&"; });
+        if (ascendingSorting !== undefined)
+            url_ += "ascendingSorting=" + encodeURIComponent("" + ascendingSorting) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
