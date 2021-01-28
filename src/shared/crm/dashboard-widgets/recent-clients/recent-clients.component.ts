@@ -157,7 +157,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
     }
 
     onCellClick($event) {
-        if (this.selectedItem.value && this.selectedItem.value.dataLink) {
+        if (this.selectedItem.value && this.selectedItem.value.dataLink && $event.row) {
             let eventRowData = $event.row.data;
             let dataLink = this.selectedItem.value.dataLink
                 .replace('{contactId}', eventRowData.contactId)
