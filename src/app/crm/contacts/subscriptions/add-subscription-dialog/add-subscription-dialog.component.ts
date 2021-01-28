@@ -52,7 +52,8 @@ import { AppPermissions } from '@shared/AppPermissions';
     providers: [ServiceProductServiceProxy, ProductServiceProxy]
 })
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
-    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
+    @ViewChild('productGroup', { static: false }) validationProductGroup: DxValidationGroupComponent;
+    @ViewChild('serviceGroup', { static: false }) validationServiceGroup: DxValidationGroupComponent;
     @ViewChild(OrderDropdownComponent, { static: true }) orderDropdownComponent: OrderDropdownComponent;
     today = new Date();
     private slider: any;
@@ -84,6 +85,10 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
     );
+
+    get validationGroup() {
+        return this.selectedTabIndex ? this.validationServiceGroup : this.validationProductGroup;
+    }
 
     constructor(
         private elementRef: ElementRef,

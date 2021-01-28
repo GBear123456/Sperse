@@ -6,10 +6,10 @@
     <span class="close" (click)="close()"></span>
 </header>
 <span class="close" (click)="close()"></span>
-<mat-dialog-content>
-    <dx-validation-group>
-        <mat-tab-group [(selectedIndex)]="selectedTabIndex">
-            <mat-tab label="By product">
+<mat-dialog-content>    
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+        <mat-tab label="By product">
+            <dx-validation-group #productGroup>
                 <div class="subscription" *ngIf="!selectedTabIndex">
                     <div class="field">
                         <label for="code">{{ls.l('Product')}}</label>
@@ -36,8 +36,10 @@
                         </dx-select-box>
                     </div>
                 </div>
-            </mat-tab>
-            <mat-tab label="By service">
+            </dx-validation-group>
+        </mat-tab>
+        <mat-tab label="By service">
+            <dx-validation-group #serviceGroup>
                 <div class="subscription-wrapper" *ngIf="selectedTabIndex">
                     <div class="subscription" *ngFor="let subscription of subscription.subscriptions; let i = index">
                         <i *ngIf="i !== 0" class="fa fa-close" (click)="removeSubscriptionFields(i)"></i>
@@ -101,22 +103,22 @@
                         </div>
                     </div>
                 </div>
-            </mat-tab>
-        </mat-tab-group>
-        <div class="field order-field">
-            <label for="orderNumber">
-                {{ls.l('OrderNumber')}}
-                <small class="small-gray">*optional</small>
-            </label>
-            <order-dropdown [(orderId)]="subscription.orderId"
-                            [(orderNumber)]="subscription.orderNumber"
-                            placeholder=""
-                            width="100%"
-                            [contactId]="data.contactId">
-            </order-dropdown>
-        </div>
-        <div class="field" *ngIf="selectedTabIndex">
-            <div class="add-new-button" (click)="addNewSubscriptionFields()"><span>+ Add</span></div>
-        </div>
-    </dx-validation-group>
+            </dx-validation-group>
+        </mat-tab>
+    </mat-tab-group>
+    <div class="field order-field">
+        <label for="orderNumber">
+            {{ls.l('OrderNumber')}}
+            <small class="small-gray">*optional</small>
+        </label>
+        <order-dropdown [(orderId)]="subscription.orderId"
+                        [(orderNumber)]="subscription.orderNumber"
+                        placeholder=""
+                        width="100%"
+                        [contactId]="data.contactId">
+        </order-dropdown>
+    </div>
+    <div class="field" *ngIf="selectedTabIndex">
+        <div class="add-new-button" (click)="addNewSubscriptionFields()"><span>+ Add</span></div>
+    </div>
 </mat-dialog-content>
