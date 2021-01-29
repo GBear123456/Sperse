@@ -27,12 +27,10 @@
                     </div>
                     <div class="field">
                         <label for="code">{{ls.l('PaymentPeriodType')}}</label>
-                        <dx-select-box [dataSource]="paymentPeriodTypes"
+                        <dx-select-box [showClearButton]="true"
+                                       [dataSource]="paymentPeriodTypes"
                                        [(value)]="subscription.paymentPeriodType"
                                        placeholder="Select period type...">
-                            <dx-validator>
-                                <dxi-validation-rule type="required" message=""></dxi-validation-rule>
-                            </dx-validator>
                         </dx-select-box>
                     </div>
                 </div>
@@ -44,7 +42,7 @@
                     <div class="subscription" *ngFor="let subscription of subscription.subscriptions; let i = index">
                         <i *ngIf="i !== 0" class="fa fa-close" (click)="removeSubscriptionFields(i)"></i>
                         <div class="field">
-                            <label for="code">{{ls.l('Product')}}</label>
+                            <label for="code">{{ls.l('Service')}}</label>
                             <dx-select-box [inputAttr]="{ id: 'code' }"
                                            [dataSource]="serviceTypes"
                                            displayExpr="name"
