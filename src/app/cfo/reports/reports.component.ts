@@ -371,13 +371,15 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 instanceType: this.instanceType,
                 instanceId: this.instanceId,
                 period: this.selectedPeriod,
-                reportGenerated: (templateType) => {
-                    if (templateType)
-                        this.invalidate();
-                    else
+                reportGenerated: (reportPeriod) => {
+                    if (reportPeriod) {
                         this.onMenuClick(this.menuItems.find(
-                            item => item.data.period == ReportPeriod.Annual)
+                            item => item.data.period == reportPeriod)
                         );
+                    }
+                    else {
+                        this.invalidate();
+                    }
                 }
             }
         });
