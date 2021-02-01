@@ -169,6 +169,8 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }));
     widgetWidth: number;
 
+    connectionMode = ConnectionMode;
+
     constructor(
         injector: Injector,
         private datePipe: DatePipe,
@@ -639,18 +641,22 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     }
 
     openActionsMenu(cellObj) {
-        this.getContexMenuByName('resync')['hide'] = cellObj.data.syncTypeId == 'Q';
+        let cell = cellObj.data;                            
+        this.getContexMenuByName('sync')['hide'] = 
+            cell.syncTypeId == SyncTypeIds.SaltEdge &&
+            cell.syncAccountStatus == 'actionrequired';
+        this.getContexMenuByName('resync')['hide'] = cell.syncTypeId == 'Q';
         this.getContexMenuByName('update')['hide'] = ![
             //SyncTypeIds.Plaid, 
             SyncTypeIds.QuickBook, 
             SyncTypeIds.XeroOAuth2, 
             SyncTypeIds.SaltEdge
-        ].includes(cellObj.data.syncTypeId);
-        this.syncAccount = cellObj.data;
+        ].includes(cell.syncTypeId);
+        this.syncAccount = cell;
         this.syncRef = cellObj.text;
-        this.syncAccountId = cellObj.data.syncAccountId;
+        this.syncAccountId = cell.syncAccountId;
         this.bankAccountInfo.id = this.syncAccountId;
-        this.bankAccountInfo.newName = cellObj.data.name;
+        this.bankAccountInfo.newName = cell.name;
         this.syncAccountIds = [];
         this.syncAccountIds.push(this.syncAccountId);
         this.isContextMenuVisible = true;

@@ -363,11 +363,11 @@
             </ng-container>
         </div>
         <div *dxTemplate="let cell of 'statusTemplate'">
-            <ng-container *ngIf="(cell.text)">
+            <ng-container *ngIf="cell.text">
                 <div [class]="'account-status ' + cell.text | lowercase" [ngClass]="{'short': !showStatusText}" id="account{{cell.key}}">
                     <ng-container *ngIf="showStatusText">
                         <a *ngIf="(cell.text | lowercase) == 'actionrequired' && additionalActionsAllowed; else textBlock"
-                           (click)="updateAccountInfo(cell.data)"
+                           (click)="updateAccountInfo(cell.data, connectionMode.Reconnect)"
                            (mouseenter)="mouseEnter(cell)"
                            (mouseleave)="actionsRequiredTooltipVisible = false">
                             {{l('SyncStatus_' + cell.text) | uppercase}}
