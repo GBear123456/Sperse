@@ -81,7 +81,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     ) {
         this.dialogRef.beforeClose().subscribe(() => {
             this.dialogRef.updatePosition({
-                top: '75px',
+                top: this.data.fullHeigth ? '0px' : '75px',
                 right: '-100vw'
             });
         });
@@ -102,7 +102,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.slider.classList.add('hide', 'min-width-0');
         this.dialogRef.updateSize('0px', '0px');
         this.dialogRef.updatePosition({
-            top: '75px',
+            top: this.data.fullHeigth ? '0px' : '75px',
             right: '-100vw'
         });
     }
@@ -121,7 +121,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.slider.classList.remove('hide');
         this.dialogRef.updateSize(undefined, '100vh');
             this.dialogRef.updatePosition({
-                top: '75px',
+                top: this.data.fullHeigth ? '0px' : '75px',
                 right: '0px'
             });
     }

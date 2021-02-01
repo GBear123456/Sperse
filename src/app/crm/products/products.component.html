@@ -1,0 +1,84 @@
+<div [@routerTransition]>
+    <app-headline [names]="[ l('Products') ]"
+                  icon="people"
+                  [buttons]="headlineButtons"
+                  [showToggleCompactViewButton]="showDataGrid"
+                  [showToggleToolbarButton]="true"
+                  [showReloadButton]="ui.showReload"
+                  [showToggleFullScreenButton]="true"
+                  [showToggleColumnSelectorButton]="showDataGrid || showPivotGrid"
+                  (onToggleToolbar)="toggleToolbar()"
+                  (onToggleCompactView)="toggleCompactView()"
+                  (onToggleFullScreen)="repaintDataGrid(100)"
+                  (onReload)="invalidate()"
+                  (onToggleColumnSelector)="toggleColumnChooser()">
+        <span *ngIf="totalCount !== undefined" class="total-count">({{ totalCount }})</span>
+        <import-progress-bar></import-progress-bar>
+    </app-headline>
+    <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+    <div class="main-wrapper">
+        <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
+            <div class="portlet-body">
+                <ghost-list [hidden]="isDataLoaded"></ghost-list>
+                <dx-data-grid class="main-component-view"
+                    accesskey="narrowHeaderPanel"
+                    [renderAsync]="true"
+                    [dataSource]="dataSource"
+                    [allowColumnReordering]="true"
+                    [columnAutoWidth]="true"
+                    [allowColumnResizing]="true"
+                    [hoverStateEnabled]="true"
+                    [columnChooser]="{
+                        height: rowsViewHeight
+                    }"
+                    [remoteOperations]="{ 
+                        filtering: false, 
+                        grouping: false, 
+                        groupPaging: true, 
+                        paging: true, 
+                        sorting: true, 
+                        summary: true 
+                    }"
+                    [loadPanel]="{ enabled: false }"
+                    [pager]="defaultGridPagerConfig"
+                    (onOptionChanged)="onGridOptionChanged($event)"
+                    (onContentReady)="onContentReady($event)"
+                    (onCellClick)="onCellClick($event)"
+                    (onEditingStart)="toggleActionsMenu($event)"
+                    (onSelectionChanged)="onSelectionChanged($event)"
+                    (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                    <dxo-selection selectAllMode="page"
+                        showCheckBoxesMode="none"
+                        mode="multiple">
+                    </dxo-selection>
+                    <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+
+                    <dxi-column [width]="40" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                    <dxi-column [dataField]="productFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
+                    <dxi-column [dataField]="productFields.Code" [caption]="l('Code')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="productFields.Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="productFields.Description" [caption]="l('Description')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="productFields.Group" [caption]="l('Group')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="productFields.ProductType" [caption]="l('ProductType')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="productFields.Price" [caption]="l('Price')" cssClass="clipboard-holder"></dxi-column>
+
+                    <dxo-sorting mode="multiple"></dxo-sorting>
+                    <dxo-paging [pageSize]="20"></dxo-paging>
+                    <dxo-group-panel [visible]="true"></dxo-group-panel>
+                    <dxo-summary>
+                        <dxi-group-item 
+                            [column]="productFields.Id"
+                            summaryType="count"
+                            [displayFormat]="'{0} ' + l('Products').toLocaleLowerCase()">
+                        </dxi-group-item>
+                    </dxo-summary>
+                </dx-data-grid>
+            </div>
+        </div>
+    </div>
+</div>
+
+<app-no-data
+    [hidden]="!isDataLoaded || totalRowCount"
+    [showLink]="false">
+</app-no-data>
