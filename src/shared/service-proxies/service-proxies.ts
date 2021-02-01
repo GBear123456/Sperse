@@ -21791,12 +21791,15 @@ export class NotesServiceProxy {
 
     /**
      * @contactIds (optional) 
+     * @ascendingSorting (optional) 
      * @return Success
      */
-    getNotes(contactIds: number[] | null | undefined): Observable<NoteInfoDto[]> {
+    getNotes(contactIds: number[] | null | undefined, ascendingSorting: boolean | null | undefined): Observable<NoteInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Notes/GetNotes?";
         if (contactIds !== undefined)
             contactIds && contactIds.forEach(item => { url_ += "contactIds=" + encodeURIComponent("" + item) + "&"; });
+        if (ascendingSorting !== undefined)
+            url_ += "ascendingSorting=" + encodeURIComponent("" + ascendingSorting) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -21994,6 +21997,110 @@ export class NotesServiceProxy {
     }
 
     protected processUpdateNote(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    pinNote(body: PinNoteInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Notes/PinNote";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPinNote(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPinNote(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processPinNote(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    unpinNote(body: UnpinNoteInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Notes/UnpinNote";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnpinNote(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUnpinNote(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUnpinNote(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -26290,6 +26397,58 @@ export class PipelineServiceProxy {
     }
 
     protected processUpdateEntitySortOrder(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updatePipelineSortOrder(body: UpdateSortOrderInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/UpdatePipelineSortOrder";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdatePipelineSortOrder(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdatePipelineSortOrder(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdatePipelineSortOrder(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -56806,7 +56965,7 @@ export interface IGetCustomerAndLeadStatsOutput {
 }
 
 export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCustomersOutput {
-    id!: number | undefined;
+    contactId!: number | undefined;
     fullName!: string | undefined;
     creationTime!: moment.Moment | undefined;
 
@@ -56821,7 +56980,7 @@ export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCus
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
+            this.contactId = data["contactId"];
             this.fullName = data["fullName"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
         }
@@ -56836,7 +56995,7 @@ export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCus
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
+        data["contactId"] = this.contactId;
         data["fullName"] = this.fullName;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         return data; 
@@ -56844,16 +57003,17 @@ export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCus
 }
 
 export interface IGetRecentlyCreatedCustomersOutput {
-    id: number | undefined;
+    contactId: number | undefined;
     fullName: string | undefined;
     creationTime: moment.Moment | undefined;
 }
 
 export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOutput {
+    leadId!: number | undefined;
     email!: string | undefined;
     phone!: string | undefined;
     bankCode!: string | undefined;
-    id!: number | undefined;
+    contactId!: number | undefined;
     fullName!: string | undefined;
     creationTime!: moment.Moment | undefined;
 
@@ -56868,10 +57028,11 @@ export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOu
 
     init(data?: any) {
         if (data) {
+            this.leadId = data["leadId"];
             this.email = data["email"];
             this.phone = data["phone"];
             this.bankCode = data["bankCode"];
-            this.id = data["id"];
+            this.contactId = data["contactId"];
             this.fullName = data["fullName"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
         }
@@ -56886,10 +57047,11 @@ export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOu
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["leadId"] = this.leadId;
         data["email"] = this.email;
         data["phone"] = this.phone;
         data["bankCode"] = this.bankCode;
-        data["id"] = this.id;
+        data["contactId"] = this.contactId;
         data["fullName"] = this.fullName;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         return data; 
@@ -56897,10 +57059,11 @@ export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOu
 }
 
 export interface IGetRecentlyCreatedLeadsOutput {
+    leadId: number | undefined;
     email: string | undefined;
     phone: string | undefined;
     bankCode: string | undefined;
-    id: number | undefined;
+    contactId: number | undefined;
     fullName: string | undefined;
     creationTime: moment.Moment | undefined;
 }
@@ -65862,6 +66025,8 @@ export class NoteInfoDto implements INoteInfoDto {
     addedByUserId!: number | undefined;
     addedByUserName!: string | undefined;
     addedByUserPhotoPublicId!: string | undefined;
+    pinnedByUserName!: string | undefined;
+    pinnedDateTime!: moment.Moment | undefined;
 
     constructor(data?: INoteInfoDto) {
         if (data) {
@@ -65889,6 +66054,8 @@ export class NoteInfoDto implements INoteInfoDto {
             this.addedByUserId = data["addedByUserId"];
             this.addedByUserName = data["addedByUserName"];
             this.addedByUserPhotoPublicId = data["addedByUserPhotoPublicId"];
+            this.pinnedByUserName = data["pinnedByUserName"];
+            this.pinnedDateTime = data["pinnedDateTime"] ? moment(data["pinnedDateTime"].toString()) : <any>undefined;
         }
     }
 
@@ -65916,6 +66083,8 @@ export class NoteInfoDto implements INoteInfoDto {
         data["addedByUserId"] = this.addedByUserId;
         data["addedByUserName"] = this.addedByUserName;
         data["addedByUserPhotoPublicId"] = this.addedByUserPhotoPublicId;
+        data["pinnedByUserName"] = this.pinnedByUserName;
+        data["pinnedDateTime"] = this.pinnedDateTime ? this.pinnedDateTime.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -65936,6 +66105,8 @@ export interface INoteInfoDto {
     addedByUserId: number | undefined;
     addedByUserName: string | undefined;
     addedByUserPhotoPublicId: string | undefined;
+    pinnedByUserName: string | undefined;
+    pinnedDateTime: moment.Moment | undefined;
 }
 
 export class CreateNoteInput implements ICreateNoteInput {
@@ -66112,6 +66283,86 @@ export interface IUpdateNoteInput {
     followUpDateTime: moment.Moment | undefined;
     dateTime: moment.Moment | undefined;
     addedByUserId: number | undefined;
+}
+
+export class PinNoteInput implements IPinNoteInput {
+    contactId!: number;
+    noteId!: number;
+
+    constructor(data?: IPinNoteInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.noteId = data["noteId"];
+        }
+    }
+
+    static fromJS(data: any): PinNoteInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new PinNoteInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["noteId"] = this.noteId;
+        return data; 
+    }
+}
+
+export interface IPinNoteInput {
+    contactId: number;
+    noteId: number;
+}
+
+export class UnpinNoteInput implements IUnpinNoteInput {
+    contactId!: number;
+    noteId!: number;
+
+    constructor(data?: IUnpinNoteInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.noteId = data["noteId"];
+        }
+    }
+
+    static fromJS(data: any): UnpinNoteInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UnpinNoteInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["noteId"] = this.noteId;
+        return data; 
+    }
+}
+
+export interface IUnpinNoteInput {
+    contactId: number;
+    noteId: number;
 }
 
 export enum UserNotificationState {
@@ -71660,6 +71911,46 @@ export interface IPipelineDto {
     stages: StageDto[] | undefined;
 }
 
+export class UpdateSortOrderInput implements IUpdateSortOrderInput {
+    id!: number;
+    sortOrder!: number;
+
+    constructor(data?: IUpdateSortOrderInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSortOrderInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSortOrderInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IUpdateSortOrderInput {
+    id: number;
+    sortOrder: number;
+}
+
 export class PipelineCreateInput implements IPipelineCreateInput {
     name!: string | undefined;
     purposeId!: string;
@@ -74502,46 +74793,6 @@ export interface IMergeStagesInput {
     pipelineId: number;
     sourceStageId: number;
     destinationStageId: number | undefined;
-}
-
-export class UpdateSortOrderInput implements IUpdateSortOrderInput {
-    id!: number;
-    sortOrder!: number;
-
-    constructor(data?: IUpdateSortOrderInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.sortOrder = data["sortOrder"];
-        }
-    }
-
-    static fromJS(data: any): UpdateSortOrderInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateSortOrderInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["sortOrder"] = this.sortOrder;
-        return data; 
-    }
-}
-
-export interface IUpdateSortOrderInput {
-    id: number;
-    sortOrder: number;
 }
 
 export class CreateStageChecklistPointInput implements ICreateStageChecklistPointInput {
