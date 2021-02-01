@@ -12,8 +12,10 @@
                   [showToggleToolbarButton]="true"
                   [showReloadButton]="ui.showReload"
                   [showToggleColumnSelectorButton]="true"
+                  [showStateResetButton]="true"
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="refreshDataGrid()"
+                  (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>

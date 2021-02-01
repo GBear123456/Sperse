@@ -5,6 +5,8 @@
                   [showToggleToolbarButton]="true"
                   [showToggleLeftMenuButton]="false"
                   [showToggleCompactViewButton]="!_cfoService.hasStaticInstance"
+                  [showStateResetButton]="true"
+                  (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleCompactView)="toggleCompactView()"
                   (onReload)="reload()">
         <business-entities-chooser (onFilterButtonClick)="openBankAccountsSelectDialog()"></business-entities-chooser>

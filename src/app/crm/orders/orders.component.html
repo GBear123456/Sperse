@@ -16,9 +16,11 @@
                   [showReloadButton]="ui.showReload"
                   [showToggleColumnSelectorButton]="showToggleColumnSelectorButton"
                   [showToggleFullScreenButton]="true"
+                  [showStateResetButton]="!showOrdersPipeline"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="invalidate()"
+                  (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <orders-header-dropdown
                         [totalCount]="totalCount"
@@ -55,6 +57,7 @@
                             <dx-data-grid #ordersGrid
                                           class="main-component-view limitedPagerTotal"
                                           accesskey="narrowHeaderPanel"
+                                          [hint]="l('Orders')"
                                           [renderAsync]="true"
                                           [allowColumnReordering]="true"
                                           [columnAutoWidth]="true"
@@ -198,6 +201,7 @@
                               class="main-component-view limitedPagerTotal"
                               accesskey="narrowHeaderPanel"
                               keyExpr="id"
+                              [hint]="l('Subscriptions')"
                               [loadPanel]="{ enabled: false }"
                               [allowColumnReordering]="true"
                               [columnAutoWidth]="true"

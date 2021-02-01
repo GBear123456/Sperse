@@ -70,6 +70,10 @@
                 <div><span class="icon left-menu dx-icon-filter"></span></div>
                 <span class="text">{{ toggleFilterMenuButtonText$ | async }}</span>
             </li>
+            <li *ngIf="showStateResetButton" (click)="onStateReset.emit()">
+                <div><span class="icon dx-icon-undo resetGridState"></span></div>
+                <span class="text">{{ ls.l('ResetGridToDefault') }}</span>
+            </li>
         </ul>
     </div>
 </ng-template>

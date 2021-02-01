@@ -3,9 +3,11 @@
               [showToggleCompactViewButton]="true"
               [showReloadButton]="ui.showReload"
               [showToggleColumnSelectorButton]="true"
+              [showStateResetButton]="isDataGrid"
               (onToggleCompactView)="toggleContactView()"
               (onToggleToolbar)="toggleToolbar()"
               (onReload)="refresh()"
+              (onStateReset)="resetGridState()"
               (onToggleColumnSelector)="toggleColumnChooser()">
     <types-dropdown [items]="reportTypes"
                     [totalCount]="totalCount"

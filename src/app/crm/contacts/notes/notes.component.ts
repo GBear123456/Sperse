@@ -57,7 +57,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         switchMap(([contactIds, refresh]: [number[], boolean]) => {
             return !refresh && this.notesService['data'] && this.notesService['data'].contactIds && this.notesService['data'].contactIds == contactIds
                     ? of(this.notesService['data'].source)
-                    : this.notesService.getNotes(contactIds).pipe(
+                    : this.notesService.getNotes(contactIds, false).pipe(
                         tap((notes: NoteInfoDto[]) => {
                             this.notesService['data'] = {
                                 contactIds: contactIds,

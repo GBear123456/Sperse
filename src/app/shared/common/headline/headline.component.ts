@@ -53,6 +53,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Input() showToggleFilterMenuButton = false;
     @Input() showPrintButton = false;
     @Input() showToggleLeftMenuButton = false;
+    @Input() showStateResetButton = false;
     @Input() toggleButtonPosition: 'left' | 'right' = 'left';
     @Output() onReload: EventEmitter<null> = new EventEmitter<null>();
     @Output() onToggleToolbar: EventEmitter<null> = new EventEmitter<null>();
@@ -62,6 +63,7 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Output() onToggleColumnSelector: EventEmitter<null> = new EventEmitter<null>();
     @Output() onPrint: EventEmitter<null> = new EventEmitter<null>();
     @Output() onToggleLeftMenu: EventEmitter<null> = new EventEmitter<null>();
+    @Output() onStateReset: EventEmitter<null> = new EventEmitter<null>();
     @HostBinding('class.fullscreen') isFullScreenMode = false;
     data: HeadLineConfigModel;
     showHeadlineButtons = false;

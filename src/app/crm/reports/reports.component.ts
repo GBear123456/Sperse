@@ -468,6 +468,10 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             [ReportType.SalesReport]: this.salesReportComponent && this.salesReportComponent.dataGrid
         }[this.selectedReportType];
     }
+    
+    get isDataGrid() {
+        return  this.dataGrid instanceof DxDataGridComponent;
+    }
 
     toggleColumnChooser() {
         if (this.dataGrid instanceof DxDataGridComponent) {
@@ -581,6 +585,11 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             this.subscriptionTrackerColumnsVisibility[cell.column.name] = !this.subscriptionTrackerColumnsVisibility[cell.column.name];
             cell.event.stopPropagation();
         }
+    }
+    
+    resetGridState() {
+        if (this.isDataGrid)
+            (this.dataGrid as DxDataGridComponent).instance.state(null);
     }
 
     deactivate() {
