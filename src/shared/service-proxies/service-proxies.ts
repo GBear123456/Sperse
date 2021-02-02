@@ -28188,6 +28188,177 @@ export class RapidServiceProxy {
         }
         return _observableOf<GetRapidTokenOutput>(<any>null);
     }
+
+    /**
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @return Success
+     */
+    getRefundsAndCancellationsForCurrentUser(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetRefundsAndCancellationsOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/GetRefundsAndCancellationsForCurrentUser?";
+        if (startDate !== undefined)
+            url_ += "startDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "endDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRefundsAndCancellationsForCurrentUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRefundsAndCancellationsForCurrentUser(<any>response_);
+                } catch (e) {
+                    return <Observable<GetRefundsAndCancellationsOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetRefundsAndCancellationsOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRefundsAndCancellationsForCurrentUser(response: HttpResponseBase): Observable<GetRefundsAndCancellationsOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetRefundsAndCancellationsOutput.fromJS(resultData200) : new GetRefundsAndCancellationsOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetRefundsAndCancellationsOutput>(<any>null);
+    }
+
+    /**
+     * @contactId (optional) 
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @return Success
+     */
+    getRefundsAndCancellationsForContact(contactId: number | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetRefundsAndCancellationsOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/GetRefundsAndCancellationsForContact?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (startDate !== undefined)
+            url_ += "startDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "endDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRefundsAndCancellationsForContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRefundsAndCancellationsForContact(<any>response_);
+                } catch (e) {
+                    return <Observable<GetRefundsAndCancellationsOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetRefundsAndCancellationsOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRefundsAndCancellationsForContact(response: HttpResponseBase): Observable<GetRefundsAndCancellationsOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetRefundsAndCancellationsOutput.fromJS(resultData200) : new GetRefundsAndCancellationsOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetRefundsAndCancellationsOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    createContactAgents(body: CreateContactAgentsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/CreateContactAgents";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateContactAgents(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateContactAgents(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateContactAgents(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -72697,9 +72868,22 @@ export interface IUpdateMonthlyGoalInput {
     monthlyGoal: number | undefined;
 }
 
+export enum PropertyType {
+    Townhouse = "Townhouse", 
+    Duplex = "Duplex", 
+    SDH = "SDH", 
+}
+
 export enum HeatingCoolingType {
     Water = "Water", 
     Gas = "Gas", 
+    Electric = "Electric", 
+}
+
+export enum YardPatioEnum {
+    Yes = "Yes", 
+    No = "No", 
+    Fenced = "Fenced", 
 }
 
 export enum ParkingType {
@@ -72716,7 +72900,24 @@ export enum BasementStatus {
     Finished = "Finished", 
 }
 
+export enum PlatformDayOfWeek {
+    Sunday = "Sunday", 
+    Monday = "Monday", 
+    Tuesday = "Tuesday", 
+    Wednesday = "Wednesday", 
+    Thursday = "Thursday", 
+    Friday = "Friday", 
+    Saturday = "Saturday", 
+}
+
+export enum GarbageCollection {
+    Waist = "Waist", 
+    Recycling = "Recycling", 
+    Compost = "Compost", 
+}
+
 export enum FireplaceType {
+    NA = "NA", 
     Gas = "Gas", 
     Wood = "Wood", 
     Electric = "Electric", 
@@ -72726,6 +72927,7 @@ export class PropertyDto implements IPropertyDto {
     id!: number;
     name!: string;
     address!: CreateContactAddressInput | undefined;
+    propertyType!: PropertyType | undefined;
     area!: number | undefined;
     yearBuilt!: number | undefined;
     floor!: number | undefined;
@@ -72747,11 +72949,13 @@ export class PropertyDto implements IPropertyDto {
     floorHardwood!: boolean | undefined;
     floorTile!: boolean | undefined;
     floorCarpet!: boolean | undefined;
+    floorLVP!: boolean | undefined;
     storageInSuite!: boolean | undefined;
     storageLocker!: number | undefined;
-    yardFenced!: boolean | undefined;
+    storageLockerKey!: boolean | undefined;
+    yard!: YardPatioEnum | undefined;
+    patio!: YardPatioEnum | undefined;
     yardBalcony!: boolean | undefined;
-    yardAdditional!: boolean | undefined;
     parking!: ParkingType | undefined;
     basement!: BasementStatus | undefined;
     dogs!: boolean | undefined;
@@ -72759,16 +72963,24 @@ export class PropertyDto implements IPropertyDto {
     petsSizeLimit!: string | undefined;
     petsBreedRestriction!: string | undefined;
     condoDocuments!: boolean | undefined;
+    intercomSetup!: string | undefined;
     additionalKeys!: boolean | undefined;
+    numberOfSets!: number | undefined;
+    frontDoorFob!: number | undefined;
     garageRemote!: boolean | undefined;
     garageKey!: boolean | undefined;
+    garageNumberReceived!: number | undefined;
     garageCode!: string | undefined;
     parkadeFob!: boolean | undefined;
     parkingStall!: number | undefined;
-    visitorParkingPass!: boolean | undefined;
+    visitorParkingPass!: number | undefined;
     mailbox!: number | undefined;
     mailboxKey!: boolean | undefined;
-    garbageDay!: boolean | undefined;
+    mailboxNumberReceived!: number | undefined;
+    garbageDay!: PlatformDayOfWeek | undefined;
+    garbageCollection!: GarbageCollection | undefined;
+    garbageKey!: boolean | undefined;
+    garbageNumberReceived!: number | undefined;
     firepit!: boolean | undefined;
     secure!: boolean | undefined;
     onSiteManager!: boolean | undefined;
@@ -72799,6 +73011,7 @@ export class PropertyDto implements IPropertyDto {
             this.id = data["id"];
             this.name = data["name"];
             this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
+            this.propertyType = data["propertyType"];
             this.area = data["area"];
             this.yearBuilt = data["yearBuilt"];
             this.floor = data["floor"];
@@ -72820,11 +73033,13 @@ export class PropertyDto implements IPropertyDto {
             this.floorHardwood = data["floorHardwood"];
             this.floorTile = data["floorTile"];
             this.floorCarpet = data["floorCarpet"];
+            this.floorLVP = data["floorLVP"];
             this.storageInSuite = data["storageInSuite"];
             this.storageLocker = data["storageLocker"];
-            this.yardFenced = data["yardFenced"];
+            this.storageLockerKey = data["storageLockerKey"];
+            this.yard = data["yard"];
+            this.patio = data["patio"];
             this.yardBalcony = data["yardBalcony"];
-            this.yardAdditional = data["yardAdditional"];
             this.parking = data["parking"];
             this.basement = data["basement"];
             this.dogs = data["dogs"];
@@ -72832,16 +73047,24 @@ export class PropertyDto implements IPropertyDto {
             this.petsSizeLimit = data["petsSizeLimit"];
             this.petsBreedRestriction = data["petsBreedRestriction"];
             this.condoDocuments = data["condoDocuments"];
+            this.intercomSetup = data["intercomSetup"];
             this.additionalKeys = data["additionalKeys"];
+            this.numberOfSets = data["numberOfSets"];
+            this.frontDoorFob = data["frontDoorFob"];
             this.garageRemote = data["garageRemote"];
             this.garageKey = data["garageKey"];
+            this.garageNumberReceived = data["garageNumberReceived"];
             this.garageCode = data["garageCode"];
             this.parkadeFob = data["parkadeFob"];
             this.parkingStall = data["parkingStall"];
             this.visitorParkingPass = data["visitorParkingPass"];
             this.mailbox = data["mailbox"];
             this.mailboxKey = data["mailboxKey"];
+            this.mailboxNumberReceived = data["mailboxNumberReceived"];
             this.garbageDay = data["garbageDay"];
+            this.garbageCollection = data["garbageCollection"];
+            this.garbageKey = data["garbageKey"];
+            this.garbageNumberReceived = data["garbageNumberReceived"];
             this.firepit = data["firepit"];
             this.secure = data["secure"];
             this.onSiteManager = data["onSiteManager"];
@@ -72872,6 +73095,7 @@ export class PropertyDto implements IPropertyDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["propertyType"] = this.propertyType;
         data["area"] = this.area;
         data["yearBuilt"] = this.yearBuilt;
         data["floor"] = this.floor;
@@ -72893,11 +73117,13 @@ export class PropertyDto implements IPropertyDto {
         data["floorHardwood"] = this.floorHardwood;
         data["floorTile"] = this.floorTile;
         data["floorCarpet"] = this.floorCarpet;
+        data["floorLVP"] = this.floorLVP;
         data["storageInSuite"] = this.storageInSuite;
         data["storageLocker"] = this.storageLocker;
-        data["yardFenced"] = this.yardFenced;
+        data["storageLockerKey"] = this.storageLockerKey;
+        data["yard"] = this.yard;
+        data["patio"] = this.patio;
         data["yardBalcony"] = this.yardBalcony;
-        data["yardAdditional"] = this.yardAdditional;
         data["parking"] = this.parking;
         data["basement"] = this.basement;
         data["dogs"] = this.dogs;
@@ -72905,16 +73131,24 @@ export class PropertyDto implements IPropertyDto {
         data["petsSizeLimit"] = this.petsSizeLimit;
         data["petsBreedRestriction"] = this.petsBreedRestriction;
         data["condoDocuments"] = this.condoDocuments;
+        data["intercomSetup"] = this.intercomSetup;
         data["additionalKeys"] = this.additionalKeys;
+        data["numberOfSets"] = this.numberOfSets;
+        data["frontDoorFob"] = this.frontDoorFob;
         data["garageRemote"] = this.garageRemote;
         data["garageKey"] = this.garageKey;
+        data["garageNumberReceived"] = this.garageNumberReceived;
         data["garageCode"] = this.garageCode;
         data["parkadeFob"] = this.parkadeFob;
         data["parkingStall"] = this.parkingStall;
         data["visitorParkingPass"] = this.visitorParkingPass;
         data["mailbox"] = this.mailbox;
         data["mailboxKey"] = this.mailboxKey;
+        data["mailboxNumberReceived"] = this.mailboxNumberReceived;
         data["garbageDay"] = this.garbageDay;
+        data["garbageCollection"] = this.garbageCollection;
+        data["garbageKey"] = this.garbageKey;
+        data["garbageNumberReceived"] = this.garbageNumberReceived;
         data["firepit"] = this.firepit;
         data["secure"] = this.secure;
         data["onSiteManager"] = this.onSiteManager;
@@ -72938,6 +73172,7 @@ export interface IPropertyDto {
     id: number;
     name: string;
     address: CreateContactAddressInput | undefined;
+    propertyType: PropertyType | undefined;
     area: number | undefined;
     yearBuilt: number | undefined;
     floor: number | undefined;
@@ -72959,11 +73194,13 @@ export interface IPropertyDto {
     floorHardwood: boolean | undefined;
     floorTile: boolean | undefined;
     floorCarpet: boolean | undefined;
+    floorLVP: boolean | undefined;
     storageInSuite: boolean | undefined;
     storageLocker: number | undefined;
-    yardFenced: boolean | undefined;
+    storageLockerKey: boolean | undefined;
+    yard: YardPatioEnum | undefined;
+    patio: YardPatioEnum | undefined;
     yardBalcony: boolean | undefined;
-    yardAdditional: boolean | undefined;
     parking: ParkingType | undefined;
     basement: BasementStatus | undefined;
     dogs: boolean | undefined;
@@ -72971,16 +73208,24 @@ export interface IPropertyDto {
     petsSizeLimit: string | undefined;
     petsBreedRestriction: string | undefined;
     condoDocuments: boolean | undefined;
+    intercomSetup: string | undefined;
     additionalKeys: boolean | undefined;
+    numberOfSets: number | undefined;
+    frontDoorFob: number | undefined;
     garageRemote: boolean | undefined;
     garageKey: boolean | undefined;
+    garageNumberReceived: number | undefined;
     garageCode: string | undefined;
     parkadeFob: boolean | undefined;
     parkingStall: number | undefined;
-    visitorParkingPass: boolean | undefined;
+    visitorParkingPass: number | undefined;
     mailbox: number | undefined;
     mailboxKey: boolean | undefined;
-    garbageDay: boolean | undefined;
+    mailboxNumberReceived: number | undefined;
+    garbageDay: PlatformDayOfWeek | undefined;
+    garbageCollection: GarbageCollection | undefined;
+    garbageKey: boolean | undefined;
+    garbageNumberReceived: number | undefined;
     firepit: boolean | undefined;
     secure: boolean | undefined;
     onSiteManager: boolean | undefined;
@@ -73388,6 +73633,214 @@ export class GetRapidTokenOutput implements IGetRapidTokenOutput {
 export interface IGetRapidTokenOutput {
     token: string | undefined;
     expirationDate: moment.Moment | undefined;
+}
+
+export class RefundInfo implements IRefundInfo {
+    totalAmount!: number | undefined;
+    count!: number | undefined;
+
+    constructor(data?: IRefundInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalAmount = data["totalAmount"];
+            this.count = data["count"];
+        }
+    }
+
+    static fromJS(data: any): RefundInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new RefundInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalAmount"] = this.totalAmount;
+        data["count"] = this.count;
+        return data; 
+    }
+}
+
+export interface IRefundInfo {
+    totalAmount: number | undefined;
+    count: number | undefined;
+}
+
+export class GetRefundsAndCancellationsOutput implements IGetRefundsAndCancellationsOutput {
+    refunds!: { [key: string] : RefundInfo; } | undefined;
+    cancellations!: { [key: string] : number; } | undefined;
+
+    constructor(data?: IGetRefundsAndCancellationsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["refunds"]) {
+                this.refunds = {};
+                for (let key in data["refunds"]) {
+                    if (data["refunds"].hasOwnProperty(key))
+                        this.refunds[key] = data["refunds"][key] ? RefundInfo.fromJS(data["refunds"][key]) : new RefundInfo();
+                }
+            }
+            if (data["cancellations"]) {
+                this.cancellations = {};
+                for (let key in data["cancellations"]) {
+                    if (data["cancellations"].hasOwnProperty(key))
+                        this.cancellations[key] = data["cancellations"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): GetRefundsAndCancellationsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetRefundsAndCancellationsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.refunds) {
+            data["refunds"] = {};
+            for (let key in this.refunds) {
+                if (this.refunds.hasOwnProperty(key))
+                    data["refunds"][key] = this.refunds[key];
+            }
+        }
+        if (this.cancellations) {
+            data["cancellations"] = {};
+            for (let key in this.cancellations) {
+                if (this.cancellations.hasOwnProperty(key))
+                    data["cancellations"][key] = this.cancellations[key];
+            }
+        }
+        return data; 
+    }
+}
+
+export interface IGetRefundsAndCancellationsOutput {
+    refunds: { [key: string] : RefundInfo; } | undefined;
+    cancellations: { [key: string] : number; } | undefined;
+}
+
+export enum AgentDataSource {
+    Sticky = "Sticky", 
+    Konnective = "Konnective", 
+}
+
+export class ContactAgentInput implements IContactAgentInput {
+    agentCode!: string;
+    agentName!: string | undefined;
+    callCenter!: string | undefined;
+
+    constructor(data?: IContactAgentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.agentCode = data["agentCode"];
+            this.agentName = data["agentName"];
+            this.callCenter = data["callCenter"];
+        }
+    }
+
+    static fromJS(data: any): ContactAgentInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactAgentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["agentCode"] = this.agentCode;
+        data["agentName"] = this.agentName;
+        data["callCenter"] = this.callCenter;
+        return data; 
+    }
+}
+
+export interface IContactAgentInput {
+    agentCode: string;
+    agentName: string | undefined;
+    callCenter: string | undefined;
+}
+
+export class CreateContactAgentsInput implements ICreateContactAgentsInput {
+    contactId!: number;
+    source!: AgentDataSource | undefined;
+    contactAgents!: ContactAgentInput[];
+
+    constructor(data?: ICreateContactAgentsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.contactAgents = [];
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.source = data["source"];
+            if (data["contactAgents"] && data["contactAgents"].constructor === Array) {
+                this.contactAgents = [];
+                for (let item of data["contactAgents"])
+                    this.contactAgents.push(ContactAgentInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateContactAgentsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactAgentsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["source"] = this.source;
+        if (this.contactAgents && this.contactAgents.constructor === Array) {
+            data["contactAgents"] = [];
+            for (let item of this.contactAgents)
+                data["contactAgents"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICreateContactAgentsInput {
+    contactId: number;
+    source: AgentDataSource | undefined;
+    contactAgents: ContactAgentInput[];
 }
 
 export class SubscribersReportInfo implements ISubscribersReportInfo {
