@@ -65,6 +65,7 @@ import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -150,7 +151,17 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             route: 'property-documents',
             visible$: this.isPropertyContact$
         },
-        { name: 'contact-information', label: this.l('ContactInfo'), route: 'contact-information' },
+        {
+            name: 'contact-information',
+            label$: this.leadInfo$.pipe(map(
+                lead => ({
+                    [EntityTypeSys.Default]: this.l('ContactInfo'),
+                    [EntityTypeSys.Acquisition]: this.l('SellerContactInfo'),
+                    [EntityTypeSys.Management]: this.l('BuyerContactInfo')
+                }[lead.typeSysId])
+            )),
+            route: 'contact-information'
+        },
         { name: 'personal-details', label: this.l('PersonalDetails'), route: 'personal-details'},
         {
             name: 'user-information',
@@ -173,7 +184,17 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             route: 'user-inbox',
             visible$: this.isCommunicationHistoryAllowed$
         },
-        { name: 'documents', label: this.l('Documents'), route: 'documents' },
+        {
+            name: 'documents',
+            label$: this.leadInfo$.pipe(map(
+                lead => ({
+                    [EntityTypeSys.Default]: this.l('Documents'),
+                    [EntityTypeSys.Acquisition]: this.l('SellerDocuments'),
+                    [EntityTypeSys.Management]: this.l('BuyerDocuments')
+                }[lead.typeSysId])
+            )),
+            route: 'documents'
+        },
         { name: 'notes', label: this.l('Notes'), route: 'notes'},
         {
             name: 'invoices',
