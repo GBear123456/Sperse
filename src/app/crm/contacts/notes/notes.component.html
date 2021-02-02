@@ -16,6 +16,7 @@
                     [allowColumnResizing]="true"
                     [hoverStateEnabled]="true"
                     (onCellClick)="onCellClick($event)"
+                    (onContentReady)="onContentReady()"
                     (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                     (onToolbarPreparing)="onToolbarPreparing($event)">
                 <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
