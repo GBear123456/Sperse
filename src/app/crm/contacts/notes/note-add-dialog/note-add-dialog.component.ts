@@ -212,7 +212,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             personContactInfo = this._contactInfo.personContactInfo,
             isUpdatable = this._contactInfo['organizationContactInfo'].isUpdatable;
         /** Add contact persons */
-        contacts.push({
+        contacts.push(<any>{
             id: this._contactInfo.id,
             fullName: personContactInfo.fullName,
             jobTitle: personContactInfo.jobTitle,
