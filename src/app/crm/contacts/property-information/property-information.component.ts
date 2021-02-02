@@ -16,10 +16,14 @@ import cloneDeep from 'lodash/cloneDeep';
 /** Application imports */
 import {
     BasementStatus,
-    ContactInfoDto, CreateContactAddressInput, FireplaceType, HeatingCoolingType, LayoutType,
+    ContactInfoDto, CreateContactAddressInput, FireplaceType, HeatingCoolingType,
     LeadInfoDto,
     PropertyDto,
-    PropertyServiceProxy
+    PropertyServiceProxy,
+    GarbageCollection,
+    PropertyType,
+    YardPatioEnum,
+    PlatformDayOfWeek
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
@@ -70,6 +74,22 @@ export class PropertyInformationComponent implements OnInit {
         value: item
     }));
     firePlace: SelectBoxItem[] = Object.values(FireplaceType).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    garbageCollection: SelectBoxItem[] = Object.values(GarbageCollection).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    propertyTypes: SelectBoxItem[] = Object.values(PropertyType).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    yardPatioValues: SelectBoxItem[] = Object.values(YardPatioEnum).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    weekDays: SelectBoxItem[] = Object.values(PlatformDayOfWeek).map((item: string) => ({
         displayValue: this.ls.l(item),
         value: item
     }));
