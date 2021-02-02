@@ -68,7 +68,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     private slider: any;
     private _contactInfo: ContactInfoDto;
     private validator: any;
-
+    today = new Date();
     masks = AppConsts.masks;
 
     showOrigin = false;
@@ -83,7 +83,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     addedBy: number;
     defaultType: string;
     type: string;
-    enableSaveButton = !this.data.note || this.data.note.addedByUserId == this.appSession.userId
+    enableSaveButton = !this.data.note
+        || this.data.note.addedByUserId == this.appSession.userId
         || this.permission.isGranted(AppPermissions.CRMManageOtherUsersNote);
 
     types = [];
@@ -210,6 +211,15 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         let contacts: Contact[] = [],
             personContactInfo = this._contactInfo.personContactInfo,
             isUpdatable = this._contactInfo['organizationContactInfo'].isUpdatable;
+        /** Add contact persons */
+        contacts.push({
+            id: this._contactInfo.id,
+            fullName: personContactInfo.fullName,
+            jobTitle: personContactInfo.jobTitle,
+            ratingId: this._contactInfo.ratingId,
+            thumbnail: personContactInfo.primaryPhoto,
+            phones: personContactInfo.details.phones
+        });
         /** Add related organizations contacts */
         contacts = contacts.concat(isUpdatable && personContactInfo && personContactInfo.orgRelations ?
             personContactInfo.orgRelations
@@ -217,21 +227,6 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                     organizationRelation.organization['fullName'] = organizationRelation.organization.name;
                     return organizationRelation.organization;
                 }) : []);
-        /** Add contact persons */
-        contacts = contacts.concat(
-            isUpdatable &&
-            this._contactInfo['organizationContactInfo'] &&
-            this._contactInfo['organizationContactInfo'].contactPersons
-                ? this._contactInfo['organizationContactInfo'].contactPersons
-                : [{
-                    id: this._contactInfo.id,
-                    fullName: personContactInfo.fullName,
-                    jobTitle: personContactInfo.jobTitle,
-                    ratingId: this._contactInfo.ratingId,
-                    thumbnail: personContactInfo.primaryPhoto,
-                    phones: personContactInfo.details.phones
-                }]
-        );
 
         return !!this.data.propertyId
             ? this.propertyServiceProxy.getPropertyDetails(this.data.propertyId).pipe(
