@@ -155,10 +155,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             name: 'contact-information',
             label$: this.leadInfo$.pipe(map(
                 lead => ({
-                    [EntityTypeSys.Default]: this.l('ContactInfo'),
                     [EntityTypeSys.Acquisition]: this.l('SellerContactInfo'),
                     [EntityTypeSys.Management]: this.l('BuyerContactInfo')
-                }[lead.typeSysId])
+                }[lead.typeSysId] || this.l('ContactInfo'))
             )),
             route: 'contact-information'
         },
@@ -188,10 +187,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             name: 'documents',
             label$: this.leadInfo$.pipe(map(
                 lead => ({
-                    [EntityTypeSys.Default]: this.l('Documents'),
                     [EntityTypeSys.Acquisition]: this.l('SellerDocuments'),
                     [EntityTypeSys.Management]: this.l('BuyerDocuments')
-                }[lead.typeSysId])
+                }[lead.typeSysId] || this.l('Documents'))
             )),
             route: 'documents'
         },
