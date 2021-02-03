@@ -51511,6 +51511,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     leadTypeId!: number | undefined;
     leadTypeSysId!: string | undefined;
     stageId!: number | undefined;
+    dealAmount!: number | undefined;
     followUpDate!: moment.Moment | undefined;
     trackingInfo!: TrackingInfo | undefined;
     inviteUser!: boolean | undefined;
@@ -51599,6 +51600,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.leadTypeId = data["leadTypeId"];
             this.leadTypeSysId = data["leadTypeSysId"];
             this.stageId = data["stageId"];
+            this.dealAmount = data["dealAmount"];
             this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
             this.inviteUser = data["inviteUser"];
@@ -51687,6 +51689,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["leadTypeId"] = this.leadTypeId;
         data["leadTypeSysId"] = this.leadTypeSysId;
         data["stageId"] = this.stageId;
+        data["dealAmount"] = this.dealAmount;
         data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
         data["inviteUser"] = this.inviteUser;
@@ -51740,6 +51743,7 @@ export interface ICreateOrUpdateContactInput {
     leadTypeId: number | undefined;
     leadTypeSysId: string | undefined;
     stageId: number | undefined;
+    dealAmount: number | undefined;
     followUpDate: moment.Moment | undefined;
     trackingInfo: TrackingInfo | undefined;
     inviteUser: boolean | undefined;
@@ -63952,6 +63956,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     leadTypeId!: number | undefined;
     leadTypeSysId!: string | undefined;
     stageId!: number | undefined;
+    dealAmount!: number | undefined;
     followUpDate!: moment.Moment | undefined;
     trackingInfo!: TrackingInfo | undefined;
     inviteUser!: boolean | undefined;
@@ -64037,6 +64042,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.leadTypeId = data["leadTypeId"];
             this.leadTypeSysId = data["leadTypeSysId"];
             this.stageId = data["stageId"];
+            this.dealAmount = data["dealAmount"];
             this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
             this.inviteUser = data["inviteUser"];
@@ -64122,6 +64128,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["leadTypeId"] = this.leadTypeId;
         data["leadTypeSysId"] = this.leadTypeSysId;
         data["stageId"] = this.stageId;
+        data["dealAmount"] = this.dealAmount;
         data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
         data["inviteUser"] = this.inviteUser;
@@ -64172,6 +64179,7 @@ export interface ICreateOrUpdateLeadInput {
     leadTypeId: number | undefined;
     leadTypeSysId: string | undefined;
     stageId: number | undefined;
+    dealAmount: number | undefined;
     followUpDate: moment.Moment | undefined;
     trackingInfo: TrackingInfo | undefined;
     inviteUser: boolean | undefined;
@@ -64761,7 +64769,7 @@ export class LeadInfoDto implements ILeadInfoDto {
     pipelineId!: number | undefined;
     stageId!: number | undefined;
     stage!: string | undefined;
-    amount!: number | undefined;
+    dealAmount!: number | undefined;
     creationDate!: moment.Moment | undefined;
     modificationDate!: moment.Moment | undefined;
     sourceCode!: string | undefined;
@@ -64812,7 +64820,7 @@ export class LeadInfoDto implements ILeadInfoDto {
             this.pipelineId = data["pipelineId"];
             this.stageId = data["stageId"];
             this.stage = data["stage"];
-            this.amount = data["amount"];
+            this.dealAmount = data["dealAmount"];
             this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
             this.modificationDate = data["modificationDate"] ? moment(data["modificationDate"].toString()) : <any>undefined;
             this.sourceCode = data["sourceCode"];
@@ -64863,7 +64871,7 @@ export class LeadInfoDto implements ILeadInfoDto {
         data["pipelineId"] = this.pipelineId;
         data["stageId"] = this.stageId;
         data["stage"] = this.stage;
-        data["amount"] = this.amount;
+        data["dealAmount"] = this.dealAmount;
         data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
         data["modificationDate"] = this.modificationDate ? this.modificationDate.toISOString() : <any>undefined;
         data["sourceCode"] = this.sourceCode;
@@ -64907,7 +64915,7 @@ export interface ILeadInfoDto {
     pipelineId: number | undefined;
     stageId: number | undefined;
     stage: string | undefined;
-    amount: number | undefined;
+    dealAmount: number | undefined;
     creationDate: moment.Moment | undefined;
     modificationDate: moment.Moment | undefined;
     sourceCode: string | undefined;
@@ -64946,6 +64954,7 @@ export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
     campaignCode!: string | undefined;
     affiliateCode!: string | undefined;
     channelCode!: string | undefined;
+    dealAmount!: number | undefined;
     comments!: string | undefined;
 
     constructor(data?: IUpdateLeadInfoInput) {
@@ -64964,6 +64973,7 @@ export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
             this.campaignCode = data["campaignCode"];
             this.affiliateCode = data["affiliateCode"];
             this.channelCode = data["channelCode"];
+            this.dealAmount = data["dealAmount"];
             this.comments = data["comments"];
         }
     }
@@ -64982,6 +64992,7 @@ export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
         data["campaignCode"] = this.campaignCode;
         data["affiliateCode"] = this.affiliateCode;
         data["channelCode"] = this.channelCode;
+        data["dealAmount"] = this.dealAmount;
         data["comments"] = this.comments;
         return data; 
     }
@@ -64993,6 +65004,7 @@ export interface IUpdateLeadInfoInput {
     campaignCode: string | undefined;
     affiliateCode: string | undefined;
     channelCode: string | undefined;
+    dealAmount: number | undefined;
     comments: string | undefined;
 }
 

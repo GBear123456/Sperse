@@ -88,7 +88,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                 icon: 'c-info',
                 items: [
                     { name: 'stage', readonly: true },
-                    { name: 'amount', readonly: true },
+                    { name: 'dealAmount' },
                     { name: 'creationDate', readonly: true },
                     { name: 'modificationDate', readonly: true }
                 ]
@@ -307,7 +307,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                 return value.utc().format(this.formatting.fieldDate);
             else
                 return value.format(this.formatting.fieldDateTime);
-        } else if (field == 'netMonthlyIncome' || field.toLowerCase().indexOf('amount') >= 0)
+        } else if (field == 'netMonthlyIncome' || field.toLowerCase().indexOf('dealAmount') >= 0)
             return this.currencyPipe.transform(value, this.invoiceSettings.currency);
         else if (field == 'ssn')
             return [value.slice(0, 3), value.slice(3, 5), value.slice(5, 9)].filter(Boolean).join('-');
