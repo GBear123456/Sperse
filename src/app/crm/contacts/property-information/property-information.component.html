@@ -117,15 +117,15 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('Parking') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
+                                                <dx-tag-box
                                                     showClearButton="true"
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [items]="parking"
                                                     [stylingMode]="stylingMode"
-                                                    [(value)]="property.parking"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                    [value]="getMultipleValues('parking', parking)"
+                                                    (onValueChanged)="tagValueChanged('parking', $event)"
+                                                ></dx-tag-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -676,15 +676,15 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('Fireplace') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
+                                                <dx-tag-box
                                                     showClearButton="true"
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="firePlace"
-                                                    [(value)]="property.fireplace"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                    [value]="getMultipleValues('fireplace', firePlace)"
+                                                    (onValueChanged)="tagValueChanged('fireplace', $event)"
+                                                ></dx-tag-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -1050,29 +1050,29 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('GarbageDay') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
+                                                <dx-tag-box
                                                     showClearButton="true"
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="weekDays"
-                                                    [(value)]="property.garbageDay"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                    [value]="getMultipleValues('garbageDay', weekDays)"
+                                                    (onValueChanged)="tagValueChanged('garbageDay', $event)"
+                                                ></dx-tag-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('GarbageCollection') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
+                                                <dx-tag-box
                                                     showClearButton="true"
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="garbageCollection"
-                                                    [(value)]="property.garbageCollection"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                    [value]="getMultipleValues('garbageCollection', garbageCollection)"
+                                                    (onValueChanged)="tagValueChanged('garbageCollection', $event)"
+                                                ></dx-tag-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
