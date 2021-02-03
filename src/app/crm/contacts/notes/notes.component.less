@@ -195,3 +195,44 @@
         left: 20px;
     }
 }
+
+::ng-deep .dx-buttongroup.dx-widget.group-notes-filter {
+    margin-right: 10px;
+
+    .dx-buttongroup-wrapper {
+        height: 60px;
+        margin-top: -11px;
+        margin-bottom: -11px;
+
+        .dx-button-content {
+            height: 60px;
+            padding: 14px 15px;
+
+            .dx-button-text {
+                font-size: 16px;
+            }
+
+            .dx-icon {
+                font-size: 18px;
+                line-height: 16px;
+            }
+        }
+    }
+
+    .dx-buttongroup-item {
+        border-radius: 0;
+
+        &.dx-item-selected {
+            background-color: transparent !important;
+            border-bottom: 2px solid #00aeef;
+
+            .dx-button-text {
+                color: #000;
+            }
+
+            .dx-icon {
+                color: #00aeef;
+            }
+        }
+    }
+}
