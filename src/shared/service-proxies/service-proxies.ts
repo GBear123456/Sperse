@@ -72891,11 +72891,11 @@ export enum YardPatioEnum {
 }
 
 export enum ParkingType {
-    Garage = "Garage", 
-    Underground = "Underground", 
-    OutdoorLot = "OutdoorLot", 
-    DedicatedPad = "DedicatedPad", 
-    Street = "Street", 
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
+    _8 = 8, 
+    _16 = 16, 
 }
 
 export enum BasementStatus {
@@ -72905,26 +72905,26 @@ export enum BasementStatus {
 }
 
 export enum PlatformDayOfWeek {
-    Sunday = "Sunday", 
-    Monday = "Monday", 
-    Tuesday = "Tuesday", 
-    Wednesday = "Wednesday", 
-    Thursday = "Thursday", 
-    Friday = "Friday", 
-    Saturday = "Saturday", 
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
+    _8 = 8, 
+    _16 = 16, 
+    _32 = 32, 
+    _64 = 64, 
 }
 
 export enum GarbageCollection {
-    Waist = "Waist", 
-    Recycling = "Recycling", 
-    Compost = "Compost", 
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
 }
 
 export enum FireplaceType {
-    NA = "NA", 
-    Gas = "Gas", 
-    Wood = "Wood", 
-    Electric = "Electric", 
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
 }
 
 export class PropertyDto implements IPropertyDto {
