@@ -16,6 +16,8 @@ import { AppConsts } from '@shared/AppConsts';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
+    PinNoteInput,
+    UnpinNoteInput,
     ContactInfoDto,
     ContactServiceProxy,
     LeadInfoDto,
@@ -25,6 +27,7 @@ import {
 import { ContactsService } from '../contacts.service';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 
@@ -36,7 +39,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
 
-    private formatting = AppConsts.formatting;
+    public formatting = AppConsts.formatting;
     private readonly ident = 'Notes';
 
     private readonly FilterPersonIndex   = 0;
@@ -72,6 +75,10 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                 this.startLoading();
                 return this.notesService.getNotes(this.getFilteredContactIds(contactIds), this.ascendingSorting).pipe(
                         finalize(() => this.finishLoading()),
+                        map(notes => notes.map(item => {
+                            item['pinned'] = item.pinnedDateTime ? 1 : 0;
+                            return item;
+                        })),
                         tap((notes: NoteInfoDto[]) => {
                             this.notes = notes;
                             setTimeout(() => this.updateToolbar(), 500);
@@ -90,6 +97,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         private notesService: NotesServiceProxy,
         private contactService: ContactServiceProxy,
         private clipboardService: ClipboardService,
+        private sessionService: AppSessionService,
         private dialog: MatDialog,
         private route: ActivatedRoute
     ) {
@@ -130,7 +138,6 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                     setTimeout(() => this.clientService.showNoteAddDialog());
             }
         });
-        this.initActionMenuItems();
     }
 
     private updateToolbar() {
@@ -226,8 +233,32 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         ]});
     }
 
-    private initActionMenuItems() {
+    private togglePinNote(note) {
+        this.startLoading();            
+        let request = note.pinnedDateTime ?
+            this.notesService.unpinNote(new UnpinNoteInput({
+                contactId: note.contactId,
+                noteId: note.id
+            })) :
+            this.notesService.pinNote(new PinNoteInput({
+                contactId: note.contactId,
+                noteId: note.id
+            }));
+
+        request.pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(() => {
+            this.invalidate();        
+        });
+    }
+
+    private initActionMenuItems(note) {
         this.actionMenuItems = [
+            {
+                text: this.l((note.pinnedDateTime ? 'Unpin' : 'Pin')),
+                class: 'dx-icon-' + (note.pinnedDateTime ? 'un' : '') + 'pin',
+                action: this.togglePinNote.bind(this, note)
+            },
             {
                 text: this.l('Edit'),
                 class: 'edit',
@@ -254,6 +285,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
 
     toggleActionsMenu(data, target) {
         this.actionRecordData = data;
+        this.initActionMenuItems(data);
         this.actionMenu.toggle(target);
     }
 
@@ -267,10 +299,6 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
             location: 'before',
             template: 'title'
         });
-    }
-
-    calculateDateCellValue = (data) => {
-        return formatDate(data.dateTime, this.formatting.dateTime, abp.localization.currentLanguage.name);
     }
 
     onCellClick(event) {
@@ -311,6 +339,25 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
 
     onContentReady() {
         this.updateToolbar();
+    }
+
+    onRowPrepared(event) {
+        if (event.data && event.data.pinnedDateTime)
+            event.rowElement.classList.add('pinned');
+    }
+
+    onOptionChanged(event) {
+        if (event.fullName.includes('sortOrder')) {
+            setTimeout(() => {
+                let sortList = event.component.getDataSource().sort();
+                if (sortList && (!sortList.length || sortList[0].selector != 'pinned')) {
+                    sortList.unshift({selector: 'pinned', desc: true});
+                    event.component.getDataSource().sort(sortList);
+                    event.component.getDataSource().reload();
+                    event.component.refresh();
+                }
+            });
+        }
     }
 
     ngOnDestroy() {

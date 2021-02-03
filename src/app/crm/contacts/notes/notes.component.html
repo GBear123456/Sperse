@@ -17,12 +17,16 @@
                     [hoverStateEnabled]="true"
                     (onCellClick)="onCellClick($event)"
                     (onContentReady)="onContentReady()"
+                    (onRowPrepared)="onRowPrepared($event)"
+                    (onOptionChanged)="onOptionChanged($event)"
                     (onDataErrorOccurred)="httpInterceptor.handleError($event.error)"
                     (onToolbarPreparing)="onToolbarPreparing($event)">
                 <dxo-search-panel [visible]="true" [width]="300"></dxo-search-panel>
                 <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
 
                 <dxi-column alignment="center" width="40px" cellTemplate="actionsCellTemplate" headerCellTemplate="actionsCellTemplate"></dxi-column>
+                <dxi-column dataField="pinned" [visible]="false">
+                </dxi-column>
                 <dxi-column dataField="text"
                             [caption]="l('Note')"
                             width="350px"
@@ -32,9 +36,8 @@
                 </dxi-column>
                 <dxi-column dataField="dateTime"
                             [caption]="l('Date')"
-                            sortOrder="desc"
-                            cssClass="tabular clipboard-holder"
-                            [calculateCellValue]="calculateDateCellValue">
+                            cssClass="tabular"
+                            cellTemplate="dateCell">
                 </dxi-column>
                 <dxi-column dataField="addedByUserName"
                             [caption]="l('AddedBy')"
@@ -53,6 +56,16 @@
                             [caption]="l('Contact')"
                             cssClass="clipboard-holder">
                 </dxi-column>
+                <dxi-column dataField="pinnedByUserName"
+                            [caption]="l('PinnedByUser')"
+                            cssClass="clipboard-holder">
+                </dxi-column>
+                <dxi-column dataField="pinnedDateTime"
+                            [caption]="l('PinnedDate')"
+                            cssClass="tabular"
+                            cellTemplate="dateCell">
+                </dxi-column>
+
 
                 <div *dxTemplate="let cellData of 'actionsCellTemplate'">
                     <a *ngIf="showActonMenu(cellData.data)" class="dx-link dx-link-edit"></a>
@@ -63,6 +76,10 @@
 
                 <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                     {{cellData.value | phone}}
+                </div>
+
+                <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                    {{cellData.value | datetime: formatting.dateTimeMoment}}
                 </div>
 
                 <div *dxTemplate="let data of 'title'">
@@ -77,18 +94,23 @@
         <div class="chat-view" *ngIf="!showGridView">
             <dx-scroll-view showScrollbar="onHover">
                 <div class="notes-wrapper">
-                    <div *ngFor="let note of notes; let i = index" class="note-wrapper"
-                         [ngClass]="{
-                            current: note.addedByUserId == userId,
-                            another: note.addedByUserId != userId
-                         }"
-                         [attr.fullname]="note.addedByUserName">
-                        <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(note.addedByUserPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
-                        <a *ngIf="showActonMenu(note)" class="gear-icon" (click)="toggleActionsMenu(note, $event.target)"></a>
-                        <div class="body date" [attr.date]="note.dateTime | datetime: formatting.fieldDateTime">
-                            <i class="save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, note.text)"></i>
-                            <div [innerHtml]="note.text"></div>
+                    <div *ngFor="let note of notes; let i = index">
+                         <div class="note-wrapper"
+                            [ngClass]="{
+                                current: note.addedByUserId == userId,
+                                another: note.addedByUserId != userId,
+                                pinned: !!note.pinnedDateTime
+                            }"                                                                                
+                            [attr.fullname]="note.addedByUserName">
+                            <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(note.addedByUserPhotoPublicId) + ')'}" class="img-circle avatar small"></div>
+                            <a *ngIf="showActonMenu(note)" class="gear-icon" (click)="toggleActionsMenu(note, $event.target)"></a>
+                            <div class="body date" [attr.date]="note.dateTime | datetime: formatting.fieldDateTime">
+                                <i class="dx-icon-{{note.pinnedDateTime ? 'un' : ''}}pin" (click)="togglePinNote(note)" [title]="note.pinnedDateTime ? l('Unpin') : l('Pin')"></i>
+                                <i class="save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, note.text)"></i>
+                                <div [innerHtml]="note.text"></div>
+                            </div>
                         </div>
+                        <div *ngIf="note.pinnedDateTime && notes[i + 1] && !notes[i + 1].pinnedDateTime" class="pinned-separator"><span>{{l('Unpinned')}}</span></div>
                     </div>
                 </div>
             </dx-scroll-view>
