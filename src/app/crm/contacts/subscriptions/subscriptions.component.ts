@@ -101,24 +101,17 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     }
 
     setDataSource(data: OrderSubscriptionDto[]) {
-        let records: OrderSubscriptionDto[] = [];
         _.mapObject(
-            _.groupBy(data, (item: OrderSubscriptionDto) => item.subscriptionId),
+            _.groupBy(data, (item: OrderSubscriptionDto) => item.serviceType),
             (subscriptions: OrderSubscriptionDto[]) => {
-                records.push(subscriptions[0]);
-                subscriptions[0]['services'] = subscriptions;
-                _.mapObject(_.groupBy(subscriptions, (item: OrderSubscriptionDto) => item.serviceTypeId),
-                (services: OrderSubscriptionDto[]) => {
-                    let chain = _.chain(services).sortBy('id').reverse().value();
-                    if (!chain.some(item => {
-                        if (item.status == 'Current')
-                            return item['isLastSubscription'] = true;
-                    })) chain[0]['isLastSubscription'] = true;
-                });
-            }
-        );
+                let chain = _.chain(subscriptions).sortBy('id').reverse().value();
+                if (!chain.some(item => {
+                    if (item.status == 'Current')
+                        return item['isLastSubscription'] = true;
+                })) chain[0]['isLastSubscription'] = true;
+            });
 
-        this.dataSource = new DataSource(records);
+        this.dataSource = new DataSource(data);
         this.filterDataSource();
     }
 
@@ -216,10 +209,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             data = {
                 ...data,
                 endDate: subscription.endDate,
-                systemType: subscription.systemType,
-                code: subscription.serviceTypeId,
-                name: subscription.serviceType,
-                level: subscription.serviceId
+                name: subscription.serviceType
             };
         }
         this.dialog.open(AddSubscriptionDialogComponent, {

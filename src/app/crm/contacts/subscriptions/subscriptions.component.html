@@ -20,6 +20,7 @@
 
     <dxi-column dataField="id" [visible]="false" cssClass="clipboard-holder"></dxi-column>
     <dxi-column dataField="serviceType" [caption]="ls.l('ProductName')" cssClass="clipboard-holder"></dxi-column>
+    <dxi-column dataField="orderType" [caption]="ls.l('OrderType')" cssClass="clipboard-holder"></dxi-column>
     <dxi-column dataField="startDate" cellTemplate="dateTimeTemplate" [width]="appService.isHostTenant ? 180 : 215" cssClass="tabular"></dxi-column>
     <dxi-column dataField="endDate" cellTemplate="dateTimeTemplate" [width]="appService.isHostTenant ? 180 : 215" cssClass="tabular"></dxi-column>
     <dxi-column dataField="trialEndDate" cellTemplate="dateTemplate" cssClass="tabular"></dxi-column>
@@ -30,7 +31,7 @@
         <a *ngIf="cell.data.tenantId && permission.isGranted(permissions.TenantsImpersonation)"
            (click)="cell.data.statusCode === 'A' && showUserImpersonateLookUpModal($event, cell.data)">{{ls.l('LoginAsThisTenant')}}</a>
         <!-- <br /> -->
-        <button class="btn-link" *ngIf="cell.data.statusCode === 'A' && permission.isGranted(permissions.CRMOrdersManage)" (click)="cancelSubscription(cell.data.subscriptionId, $event)">{{ls.l('cancel')}}</button>
+        <button class="btn-link" *ngIf="cell.data.statusCode === 'A' && permission.isGranted(permissions.CRMOrdersManage)" (click)="cancelSubscription(cell.data.id, $event)">{{ls.l('cancel')}}</button>
     </div>
     <div *dxTemplate="let cellData of 'dateTemplate'" class="clipboard-holder">
         <span class="date-time" title="{{cellData.value | date: formatting.date : userTimezone }}">{{cellData.value | date: formatting.date : userTimezone}}</span>
@@ -65,12 +66,11 @@
     </div>
     <div *dxTemplate="let detail of 'detail'">
         <div class="master-detail-caption"><b>{{ls.l('Services info')}}</b></div>
-        <dx-data-grid [dataSource]="detail.data.services"
+        <dx-data-grid [dataSource]="detail.data.orderSubscriptionServices"
                       [showBorders]="true"
                       [columnAutoWidth]="true">
 
             <dxi-column dataField="serviceName" [caption]="ls.l('Subscriptions.ServiceName')" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="orderType" [caption]="ls.l('OrderType')" cssClass="clipboard-holder"></dxi-column>
         </dx-data-grid>
         <div class="master-detail-caption"><b>{{ls.l('Payments info')}}</b></div>
         <dx-data-grid [dataSource]="detail.data.orderSubscriptionPayments"
