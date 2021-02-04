@@ -211,7 +211,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     public manageAllowed = this._cfoService.classifyTransactionsAllowed(false);
     public dragInProgress = false;
-    private draggedTransactionRow;
+    private draggedTransactionId: number;
     public selectedCashflowCategoryKeys: number[];
 
     public bankAccountCount;
@@ -1105,16 +1105,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         filterQuery$.subscribe((filterQuery: string) => {
             this.filterQuery = filterQuery;
-            this.countDataSource['_store']['_url'] = super.getODataUrl(this.countDataSourceURI, filterQuery);
+            this.transactionsFilterQuery = _.reject(filterQuery, x => _.has(x, 'AccountingTypeId')
+                || (_.has(x, 'CashflowCategoryId') && typeof x['CashflowCategoryId'] == 'number')
+                || (_.has(x, 'or') &&  (typeof x.or[0] == 'string' ? x.or[0].includes('CashflowCategoryId') : _.has(x.or[0], 'CashflowCategoryId')))
+                || _.has(x, 'CashflowSubCategoryId')
+            );
+
+            this.countDataSource['_store']['_url'] = super.getODataUrl(this.countDataSourceURI, this.transactionsFilterQuery);
             this.countDataSource.load();
             this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
             this.totalDataSource.load();
 
-            this.transactionsFilterQuery = _.reject(filterQuery, (x) => _.has(x, 'AccountingTypeId')
-                || (_.has(x, 'CashflowCategoryId') && typeof x['CashflowCategoryId'] == 'number')
-                || (_.has(x, 'or') &&  _.has(x.or[0], 'CashflowCategoryId'))
-                || _.has(x, 'CashflowSubCategoryId')
-            );
             this.changeDetectionRef.detectChanges();
         });
     }
@@ -1234,7 +1235,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             affectedRows = affectedRows.filter('.dx-selection');
         affectedRows.attr('draggable', true).on('dragstart', (e) => {
             if (!transactionKeys.length)
-                this.draggedTransactionRow = this.dataGrid.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
+                this.draggedTransactionId = this.dataGrid.instance.getKeyByRowIndex(e.currentTarget.rowIndex);
             this.dragInProgress = true;
             e.originalEvent.dataTransfer.setData('Text', transactionKeys.join(','));
             e.originalEvent.dataTransfer.setDragImage(img, -10, -10);
@@ -1246,12 +1247,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             e.originalEvent.preventDefault();
             e.originalEvent.stopPropagation();
 
-            this.draggedTransactionRow = null;
+            this.draggedTransactionId = null;
             this.dragInProgress = false;
             document.removeEventListener('dxpointermove', this.stopPropagation);
             this.changeDetectionRef.detectChanges();
         }).on('click', () => {
-            this.draggedTransactionRow = null;
+            this.draggedTransactionId = null;
             this.dragInProgress = false;
             this.changeDetectionRef.detectChanges();
         });
@@ -1326,10 +1327,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     categorizeTransactions($event) {
         let transactions: TransactionDto[] = this.dataGrid.instance.getSelectedRowsData();
-        if (!transactions.length && this.draggedTransactionRow)
-            transactions = [this.draggedTransactionRow];
+        if (!transactions.length && this.draggedTransactionId) {
+            let selectedRow = this.dataGrid.instance.getVisibleRows().find(row => row.data.Id == this.draggedTransactionId);
+            transactions = [selectedRow ? selectedRow.data : <any>{Id: this.draggedTransactionId}];
+        }
         let transactionIds: number[] = transactions.map((transaction: TransactionDto) => transaction.Id);
-        let isSingleDraggedTransaction = !!this.draggedTransactionRow;
+        let isSingleDraggedTransaction = !!this.draggedTransactionId;
 
         if ($event.categoryId) {
             let updateTransactionCategoryMethod = (suppressCashflowTypeMismatch: boolean = false) => {
