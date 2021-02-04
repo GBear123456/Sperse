@@ -72968,6 +72968,7 @@ export class PropertyDto implements IPropertyDto {
     floorLVP!: boolean | undefined;
     storageInSuite!: boolean | undefined;
     storageLocker!: number | undefined;
+    storageLockerNumber!: number | undefined;
     storageLockerKey!: boolean | undefined;
     yard!: YardPatioEnum | undefined;
     patio!: YardPatioEnum | undefined;
@@ -73052,6 +73053,7 @@ export class PropertyDto implements IPropertyDto {
             this.floorLVP = data["floorLVP"];
             this.storageInSuite = data["storageInSuite"];
             this.storageLocker = data["storageLocker"];
+            this.storageLockerNumber = data["storageLockerNumber"];
             this.storageLockerKey = data["storageLockerKey"];
             this.yard = data["yard"];
             this.patio = data["patio"];
@@ -73136,6 +73138,7 @@ export class PropertyDto implements IPropertyDto {
         data["floorLVP"] = this.floorLVP;
         data["storageInSuite"] = this.storageInSuite;
         data["storageLocker"] = this.storageLocker;
+        data["storageLockerNumber"] = this.storageLockerNumber;
         data["storageLockerKey"] = this.storageLockerKey;
         data["yard"] = this.yard;
         data["patio"] = this.patio;
@@ -73213,6 +73216,7 @@ export interface IPropertyDto {
     floorLVP: boolean | undefined;
     storageInSuite: boolean | undefined;
     storageLocker: number | undefined;
+    storageLockerNumber: number | undefined;
     storageLockerKey: boolean | undefined;
     yard: YardPatioEnum | undefined;
     patio: YardPatioEnum | undefined;
