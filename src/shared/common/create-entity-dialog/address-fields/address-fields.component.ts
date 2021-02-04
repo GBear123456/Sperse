@@ -42,6 +42,7 @@ export class AddressFieldsComponent implements OnInit {
     @Input() addressTypes?: AddressUsageTypeDto[];
     @Input() googleAutoComplete: boolean;
     @Input() showClearButton: boolean;
+    @Input() showNeighborhood: boolean;
     @Output() onAddressTypeChanged: EventEmitter<any> = new EventEmitter<any>();
     @Output() onCountryUpdate: EventEmitter<any> = new EventEmitter<string>();
     @Output() onAddressChanged: EventEmitter<AddressChanged> = new EventEmitter<AddressChanged>();
