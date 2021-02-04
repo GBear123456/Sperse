@@ -24,6 +24,11 @@
                     white-space: initial;
                 }
 
+
+                tr.dx-row.dx-data-row.dx-column-lines.pinned {
+                    background: #f3f1fa!important;
+                }
+
                 .dx-column-indicators,
                 .dx-header-filter-indicator {
                     padding: 9px 0;
@@ -62,6 +67,31 @@
                 display: flex;
                 flex-flow: column;
                 width: 100%;
+
+                .pinned-separator {
+                    position: relative;
+                    display: inline-block;
+                    width: calc(100% - 20px);
+                    padding: 40px 0px 20px 0px;
+                    text-align: center;
+                    text-transform: uppercase;
+                    font-weight: 500;
+                    &:before {
+                        content: '';
+                        display: block;
+                        width: 100%;
+                        position: absolute;
+                        height: 1px;
+                        top: 48px;
+                        background: #ddd;
+                        z-index: -1;
+                    }
+                    span {
+                        padding: 0 15px;
+                        background: #FFF;
+                        z-index: 1;
+                    }
+                }
             }
 
             .note-wrapper {
@@ -82,6 +112,18 @@
                     .save-to-clipboard {
                         display: inline-block;
                     }
+                }
+            
+                .dx-icon-pin:before {
+                    display: block;
+                    transform: rotate(35deg);
+                }
+
+                .dx-icon-pin, .dx-icon-unpin {
+                    position: absolute;
+                    cursor: pointer;
+                    right: 15px;
+                    top: 7px;
                 }
 
                 .save-to-clipboard {
@@ -113,6 +155,9 @@
                         margin-left: 0;
                     }
 
+                    &.pinned .body {
+                        background: rgba(0, 174, 239, 0.3);
+                    }
                     .body {
                         background: rgba(0, 174, 239, 0.1);
                         margin-right: 20px;
@@ -127,6 +172,9 @@
                 }
 
                 &.another {
+                    &.pinned .body {
+                        background: #f3f1fa;
+                    }
                     .body {
                         background: #f3f7fa;
                         margin-left: 20px;
