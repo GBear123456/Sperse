@@ -227,12 +227,14 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
     onDateHover(event) {
         let target = event.target.children[1];
-        target.innerText = target.title;
+        if (target)
+            target.innerText = target.title;
     }
 
     onDateLeave(event) {
         let target = event.target.children[1];
-        target.innerText = target.title.split(' ').shift();
+        if (target)
+            target.innerText = target.title.split(' ').shift();
     }
 
     onDateChanged(event, cell) {
