@@ -28029,6 +28029,177 @@ export class RapidServiceProxy {
         }
         return _observableOf<GetRapidTokenOutput>(<any>null);
     }
+
+    /**
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @return Success
+     */
+    getRefundsAndCancellationsForCurrentUser(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetRefundsAndCancellationsOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/GetRefundsAndCancellationsForCurrentUser?";
+        if (startDate !== undefined)
+            url_ += "startDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "endDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRefundsAndCancellationsForCurrentUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRefundsAndCancellationsForCurrentUser(<any>response_);
+                } catch (e) {
+                    return <Observable<GetRefundsAndCancellationsOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetRefundsAndCancellationsOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRefundsAndCancellationsForCurrentUser(response: HttpResponseBase): Observable<GetRefundsAndCancellationsOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetRefundsAndCancellationsOutput.fromJS(resultData200) : new GetRefundsAndCancellationsOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetRefundsAndCancellationsOutput>(<any>null);
+    }
+
+    /**
+     * @contactId (optional) 
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @return Success
+     */
+    getRefundsAndCancellationsForContact(contactId: number | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetRefundsAndCancellationsOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/GetRefundsAndCancellationsForContact?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (startDate !== undefined)
+            url_ += "startDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "endDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRefundsAndCancellationsForContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRefundsAndCancellationsForContact(<any>response_);
+                } catch (e) {
+                    return <Observable<GetRefundsAndCancellationsOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetRefundsAndCancellationsOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRefundsAndCancellationsForContact(response: HttpResponseBase): Observable<GetRefundsAndCancellationsOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetRefundsAndCancellationsOutput.fromJS(resultData200) : new GetRefundsAndCancellationsOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetRefundsAndCancellationsOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    createContactAgents(body: CreateContactAgentsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/CreateContactAgents";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateContactAgents(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateContactAgents(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateContactAgents(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -51805,6 +51976,7 @@ export class SourceContactInfo implements ISourceContactInfo {
     id!: number | undefined;
     groupId!: string | undefined;
     affiliateCode!: string | undefined;
+    affiliateRate!: number | undefined;
     companyName!: string | undefined;
     personName!: string | undefined;
     jobTitle!: string | undefined;
@@ -51823,6 +51995,7 @@ export class SourceContactInfo implements ISourceContactInfo {
             this.id = data["id"];
             this.groupId = data["groupId"];
             this.affiliateCode = data["affiliateCode"];
+            this.affiliateRate = data["affiliateRate"];
             this.companyName = data["companyName"];
             this.personName = data["personName"];
             this.jobTitle = data["jobTitle"];
@@ -51841,6 +52014,7 @@ export class SourceContactInfo implements ISourceContactInfo {
         data["id"] = this.id;
         data["groupId"] = this.groupId;
         data["affiliateCode"] = this.affiliateCode;
+        data["affiliateRate"] = this.affiliateRate;
         data["companyName"] = this.companyName;
         data["personName"] = this.personName;
         data["jobTitle"] = this.jobTitle;
@@ -51852,6 +52026,7 @@ export interface ISourceContactInfo {
     id: number | undefined;
     groupId: string | undefined;
     affiliateCode: string | undefined;
+    affiliateRate: number | undefined;
     companyName: string | undefined;
     personName: string | undefined;
     jobTitle: string | undefined;
@@ -52505,6 +52680,7 @@ export interface IUpdateContactCustomFieldsInput {
 
 export class UpdateAffiliateContactInput implements IUpdateAffiliateContactInput {
     contactId!: number;
+    leadId!: number | undefined;
     affiliateContactId!: number | undefined;
     updatePendingCommissions!: boolean | undefined;
 
@@ -52520,6 +52696,7 @@ export class UpdateAffiliateContactInput implements IUpdateAffiliateContactInput
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
+            this.leadId = data["leadId"];
             this.affiliateContactId = data["affiliateContactId"];
             this.updatePendingCommissions = data["updatePendingCommissions"];
         }
@@ -52535,6 +52712,7 @@ export class UpdateAffiliateContactInput implements IUpdateAffiliateContactInput
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["leadId"] = this.leadId;
         data["affiliateContactId"] = this.affiliateContactId;
         data["updatePendingCommissions"] = this.updatePendingCommissions;
         return data; 
@@ -52543,6 +52721,7 @@ export class UpdateAffiliateContactInput implements IUpdateAffiliateContactInput
 
 export interface IUpdateAffiliateContactInput {
     contactId: number;
+    leadId: number | undefined;
     affiliateContactId: number | undefined;
     updatePendingCommissions: boolean | undefined;
 }
@@ -73101,6 +73280,214 @@ export class GetRapidTokenOutput implements IGetRapidTokenOutput {
 export interface IGetRapidTokenOutput {
     token: string | undefined;
     expirationDate: moment.Moment | undefined;
+}
+
+export class RefundInfo implements IRefundInfo {
+    totalAmount!: number | undefined;
+    count!: number | undefined;
+
+    constructor(data?: IRefundInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalAmount = data["totalAmount"];
+            this.count = data["count"];
+        }
+    }
+
+    static fromJS(data: any): RefundInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new RefundInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalAmount"] = this.totalAmount;
+        data["count"] = this.count;
+        return data; 
+    }
+}
+
+export interface IRefundInfo {
+    totalAmount: number | undefined;
+    count: number | undefined;
+}
+
+export class GetRefundsAndCancellationsOutput implements IGetRefundsAndCancellationsOutput {
+    refunds!: { [key: string] : RefundInfo; } | undefined;
+    cancellations!: { [key: string] : number; } | undefined;
+
+    constructor(data?: IGetRefundsAndCancellationsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["refunds"]) {
+                this.refunds = {};
+                for (let key in data["refunds"]) {
+                    if (data["refunds"].hasOwnProperty(key))
+                        this.refunds[key] = data["refunds"][key] ? RefundInfo.fromJS(data["refunds"][key]) : new RefundInfo();
+                }
+            }
+            if (data["cancellations"]) {
+                this.cancellations = {};
+                for (let key in data["cancellations"]) {
+                    if (data["cancellations"].hasOwnProperty(key))
+                        this.cancellations[key] = data["cancellations"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): GetRefundsAndCancellationsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetRefundsAndCancellationsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.refunds) {
+            data["refunds"] = {};
+            for (let key in this.refunds) {
+                if (this.refunds.hasOwnProperty(key))
+                    data["refunds"][key] = this.refunds[key];
+            }
+        }
+        if (this.cancellations) {
+            data["cancellations"] = {};
+            for (let key in this.cancellations) {
+                if (this.cancellations.hasOwnProperty(key))
+                    data["cancellations"][key] = this.cancellations[key];
+            }
+        }
+        return data; 
+    }
+}
+
+export interface IGetRefundsAndCancellationsOutput {
+    refunds: { [key: string] : RefundInfo; } | undefined;
+    cancellations: { [key: string] : number; } | undefined;
+}
+
+export enum AgentDataSource {
+    Sticky = "Sticky", 
+    Konnective = "Konnective", 
+}
+
+export class ContactAgentInput implements IContactAgentInput {
+    agentCode!: string;
+    agentName!: string | undefined;
+    callCenter!: string | undefined;
+
+    constructor(data?: IContactAgentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.agentCode = data["agentCode"];
+            this.agentName = data["agentName"];
+            this.callCenter = data["callCenter"];
+        }
+    }
+
+    static fromJS(data: any): ContactAgentInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactAgentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["agentCode"] = this.agentCode;
+        data["agentName"] = this.agentName;
+        data["callCenter"] = this.callCenter;
+        return data; 
+    }
+}
+
+export interface IContactAgentInput {
+    agentCode: string;
+    agentName: string | undefined;
+    callCenter: string | undefined;
+}
+
+export class CreateContactAgentsInput implements ICreateContactAgentsInput {
+    contactId!: number;
+    source!: AgentDataSource | undefined;
+    contactAgents!: ContactAgentInput[];
+
+    constructor(data?: ICreateContactAgentsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.contactAgents = [];
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.source = data["source"];
+            if (data["contactAgents"] && data["contactAgents"].constructor === Array) {
+                this.contactAgents = [];
+                for (let item of data["contactAgents"])
+                    this.contactAgents.push(ContactAgentInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateContactAgentsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactAgentsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["source"] = this.source;
+        if (this.contactAgents && this.contactAgents.constructor === Array) {
+            data["contactAgents"] = [];
+            for (let item of this.contactAgents)
+                data["contactAgents"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICreateContactAgentsInput {
+    contactId: number;
+    source: AgentDataSource | undefined;
+    contactAgents: ContactAgentInput[];
 }
 
 export class SubscribersReportInfo implements ISubscribersReportInfo {
