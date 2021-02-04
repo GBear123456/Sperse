@@ -27,6 +27,7 @@ import {
     ProductGroupInfo,
     ProductDto,
     ProductType,
+    UpdateProductInput,
     RecurringPaymentFrequency,
     ProductSubscriptionOptionInfo
 } from '@shared/service-proxies/service-proxies';
@@ -54,9 +55,9 @@ import { AppPermissions } from '@shared/AppPermissions';
 export class AddProductDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
     private slider: any;
-    product: CreateProductInput;
-    amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
-        filter(Boolean), map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
+    product: CreateProductInput | UpdateProductInput;
+    amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(filter(Boolean), 
+        map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
     );
 
     readonly addNewItemId = -1;
@@ -86,7 +87,10 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             });
         });
 
-        this.product = new CreateProductInput();
+        if (data.product)
+            this.product = new UpdateProductInput(data.product);
+        else
+            this.product = new CreateProductInput(data.product);
         productProxy.getProudctGroups().subscribe((groups: ProductGroupInfo[]) => {
             this.productGroups = groups;
         });
@@ -128,15 +132,21 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     saveProduct() {
         if (this.validationGroup.instance.validate().isValid) {
-            this.productProxy.createProduct(this.product).subscribe(res => {
-                this.notify.info(this.ls.l('SavedSuccessfully'));
-                this.dialogRef.close(new ProductDto({
-                    id: res.productId,
-                    name: this.product.name,
-                    code: this.product.code,
-                    paymentPeriodTypes: this.product.productSubscriptionOptions.map(item => item.frequency)
-                }));
-            });
+            if (this.data.product)
+                this.productProxy.updateProduct(<UpdateProductInput>this.product).subscribe(() => {
+                    this.notify.info(this.ls.l('SavedSuccessfully'));
+                    this.dialogRef.close();
+                });
+            else
+                this.productProxy.createProduct(this.product).subscribe(res => {
+                    this.notify.info(this.ls.l('SavedSuccessfully'));
+                    this.dialogRef.close(new ProductDto({
+                        id: res.productId,
+                        name: this.product.name,
+                        code: this.product.code,
+                        paymentPeriodTypes: this.product.productSubscriptionOptions.map(item => item.frequency)
+                    }));
+                });
         }
     }
 

@@ -32,6 +32,9 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 import { AddProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
+import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
+import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
+import { ProductServiceProxy } from '@shared/service-proxies/service-proxies';
 import { ProductDto } from '@app/crm/products/products-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ProductFields } from '@app/crm/products/products-fields.enum';
@@ -45,6 +48,7 @@ import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
     ],
     animations: [appModuleAnimation()],
     providers: [
+        ProductServiceProxy,
         LifecycleSubjectsService
     ]
 })
@@ -59,8 +63,38 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     public headlineButtons: HeadlineButton[] = [
         {
             enabled: true,
-            action: this.createProduct.bind(this),
+            action: this.showProductDialog.bind(this),
             label: this.l('AddProduct')
+        }
+    ];
+
+    actionEvent: any;
+    actionMenuGroups: ActionMenuGroup[] = [
+        {
+            key: '',
+            visible: true,
+            items: [
+                {
+                    text: this.l('Edit'),
+                    class: 'edit',
+                    action: () => {
+                        this.editProduct(this.actionEvent.Id);
+                    }
+                }            
+            ]
+        },
+        {
+            key: '',
+            visible: true,
+            items: [
+                {
+                    text: this.l('Delete'),
+                    class: 'delete',
+                    action: () => {
+                        this.deteleProduct(this.actionEvent.Id);
+                    }
+                }
+            ]
         }
     ];
 
@@ -90,6 +124,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     constructor(
         injector: Injector,
         private filtersService: FiltersService,
+        private productProxy: ProductServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         public appService: AppService,
         public dialog: MatDialog
@@ -113,6 +148,10 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         this.setGridDataLoaded();
         if (!this.rowsViewHeight)
             this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
+        event.component.columnOption('command:edit', {
+            visibleIndex: -1,
+            width: 40
+        });
     }
 
     onSelectionChanged($event) {
@@ -125,9 +164,28 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         this.processFilterInternal();
     }
 
-    createProduct() {
+    editProduct(id: number) {
+        this.startLoading();
+        this.productProxy.getProductInfo(id).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(product => {
+            this.showProductDialog(product);
+        })
+    }
+
+    deteleProduct(id: number) {
+        this.startLoading();
+        this.productProxy.deleteProduct(id).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(() => {
+            this.invalidate();            
+        })
+    }
+        
+    showProductDialog(product?) {
         const dialogData = {
-            fullHeigth: true
+            fullHeigth: true,
+            product: product
         };
         this.dialog.open(AddProductDialogComponent, {
             panelClass: 'slider',
@@ -137,10 +195,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         }).afterClosed().subscribe(
             () => this.invalidate()
         );
-    }
-
-    onCardClick({entity, entityStageDataSource, loadMethod}) {
-
     }
 
     initFilterConfig() {
@@ -328,6 +382,27 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         if (this.toolbar) {
             this.toolbar.toolbarComponent.instance.repaint();
         }
+    }
+
+    onShowingPopup(e) {
+        e.component.option('visible', false);
+        e.component.hide();
+    }
+
+    onMenuItemClick(event) {
+        event.itemData.action.call(this);
+        this.actionEvent = null;
+    }
+
+    onCellClick(event) {
+        this.editProduct(event.data.Id);
+    }
+
+    toggleActionsMenu(event) {
+        ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {
+            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, event.data);
+            this.actionEvent = actionRecord;
+        });
     }
 
     deactivate() {

@@ -1,67 +1,18 @@
 ﻿:host {
     position: relative;
     height: 100%;
-    .total-count {
-        font-size: 24px;
-        font-weight: 600;
-        margin-right: auto;
-        margin-left: 0;
-        padding-left: 5px;
-        flex-grow: 0;
-    }
 
-    ::ng-deep #gridContainer {
-        .verify-icon {
-            width: 11px;
-            height: 9px;
-            margin-right: 6px;
-            display: inline-block;
-            background: url('../../../assets/common/icons/verify-icon.svg') no-repeat center;
+    ::ng-deep .main-component-view {
+        .dx-command-edit + td::before {
+            display: none!important;
         }
+
         .dx-datagrid-rowsview {
             .dx-column-lines {
                 cursor: pointer;
                 & > td {
                     span {
                         text-align: center;
-                        .link-to-cfo-column {
-                            position: relative;
-                            width: 100%;
-                            &::after {
-                                content: '';
-                                background: url('../../../assets/common/icons/cfo-check.svg') no-repeat center;
-                                position: absolute;
-                                left: 10px;
-                                width: 11px;
-                                height: 9px;
-                                top: 9px;
-                            }
-                            &::before {
-                                padding-top: 2px;
-                                content: 'CFO';
-                                border-radius: 14px;
-                                background-image: linear-gradient(41deg,#f76b1c,#fad961);
-                                background-size: cover;
-                                color: #ffffff;
-                                font-size: 10px;
-                                font-weight: 600;
-                                line-height: 2.2;
-                                letter-spacing: 0.2px;
-                                width: 72px;
-                                height: 23px;
-                                display: inline-block;
-                                padding-left: 10px;
-                            }
-                        }
-                        .link-request-verification {
-                            text-decoration: none;
-                            color: #00AEEF;
-                            letter-spacing: 0.2px;
-                            font-weight: 500;
-                            &:hover {
-                                color: #56d1ff;
-                            }
-                        }
                     }
                 }
             }

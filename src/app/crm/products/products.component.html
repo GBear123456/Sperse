@@ -17,6 +17,13 @@
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="main-wrapper">
+        <action-menu [items]="actionMenuGroups"
+                     [visible]="!!actionEvent"
+                     class="grouped-action-menu"
+                     width="300px"
+                     [grouped]="true"
+                     (onItemClick)="onMenuItemClick($event)">
+        </action-menu>
         <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
@@ -52,11 +59,15 @@
                         mode="multiple">
                     </dxo-selection>
                     <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                    <dxo-editing mode="popup"
+                        [texts]="{ editRow: '' }"
+                        [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
+                        [allowUpdating]="true">
+                    </dxo-editing>
 
-                    <dxi-column [width]="40" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                     <dxi-column [dataField]="productFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
-                    <dxi-column [dataField]="productFields.Code" [caption]="l('Code')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="productFields.Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="productFields.Code" [caption]="l('Code')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="productFields.Description" [caption]="l('Description')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="productFields.Group" [caption]="l('Group')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="productFields.ProductType" [caption]="l('ProductType')" cssClass="clipboard-holder"></dxi-column>
