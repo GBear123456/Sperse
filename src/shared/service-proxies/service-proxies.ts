@@ -2971,6 +2971,64 @@ export class BudgetServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    generateReport(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: GenerateBudgetReportInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Budget/GenerateReport?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGenerateReport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGenerateReport(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGenerateReport(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -43216,6 +43274,94 @@ export interface IBudgetImportInput {
     override: boolean | undefined;
 }
 
+export class SendReportNotificationInfo implements ISendReportNotificationInfo {
+    recipientUserEmailAddress!: string;
+    sendReportInAttachments!: boolean;
+
+    constructor(data?: ISendReportNotificationInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.recipientUserEmailAddress = data["recipientUserEmailAddress"];
+            this.sendReportInAttachments = data["sendReportInAttachments"];
+        }
+    }
+
+    static fromJS(data: any): SendReportNotificationInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendReportNotificationInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["recipientUserEmailAddress"] = this.recipientUserEmailAddress;
+        data["sendReportInAttachments"] = this.sendReportInAttachments;
+        return data; 
+    }
+}
+
+export interface ISendReportNotificationInfo {
+    recipientUserEmailAddress: string;
+    sendReportInAttachments: boolean;
+}
+
+export class GenerateBudgetReportInput implements IGenerateBudgetReportInput {
+    businessEntityId!: number;
+    year!: number;
+    currencyId!: string;
+    notificationData!: SendReportNotificationInfo | undefined;
+
+    constructor(data?: IGenerateBudgetReportInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.businessEntityId = data["businessEntityId"];
+            this.year = data["year"];
+            this.currencyId = data["currencyId"];
+            this.notificationData = data["notificationData"] ? SendReportNotificationInfo.fromJS(data["notificationData"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GenerateBudgetReportInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GenerateBudgetReportInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["businessEntityId"] = this.businessEntityId;
+        data["year"] = this.year;
+        data["currencyId"] = this.currencyId;
+        data["notificationData"] = this.notificationData ? this.notificationData.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGenerateBudgetReportInput {
+    businessEntityId: number;
+    year: number;
+    currencyId: string;
+    notificationData: SendReportNotificationInfo | undefined;
+}
+
 export class BusinessEntityDto implements IBusinessEntityDto {
     id!: number | undefined;
     name!: string | undefined;
@@ -44169,9 +44315,62 @@ export interface ICashFlowCommentThreadDto {
     categorization: { [key: string] : string; } | undefined;
 }
 
+export class BudgetDto implements IBudgetDto {
+    businessEntityId!: number | undefined;
+    categoryId!: number | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    amount!: number | undefined;
+
+    constructor(data?: IBudgetDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.businessEntityId = data["businessEntityId"];
+            this.categoryId = data["categoryId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.amount = data["amount"];
+        }
+    }
+
+    static fromJS(data: any): BudgetDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BudgetDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["businessEntityId"] = this.businessEntityId;
+        data["categoryId"] = this.categoryId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["amount"] = this.amount;
+        return data; 
+    }
+}
+
+export interface IBudgetDto {
+    businessEntityId: number | undefined;
+    categoryId: number | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    amount: number | undefined;
+}
+
 export class CashFlowStatsDto implements ICashFlowStatsDto {
     transactionStats!: TransactionStatsDto[] | undefined;
     commentThreads!: CashFlowCommentThreadDto[] | undefined;
+    budgets!: BudgetDto[] | undefined;
 
     constructor(data?: ICashFlowStatsDto) {
         if (data) {
@@ -44193,6 +44392,11 @@ export class CashFlowStatsDto implements ICashFlowStatsDto {
                 this.commentThreads = [];
                 for (let item of data["commentThreads"])
                     this.commentThreads.push(CashFlowCommentThreadDto.fromJS(item));
+            }
+            if (data["budgets"] && data["budgets"].constructor === Array) {
+                this.budgets = [];
+                for (let item of data["budgets"])
+                    this.budgets.push(BudgetDto.fromJS(item));
             }
         }
     }
@@ -44216,6 +44420,11 @@ export class CashFlowStatsDto implements ICashFlowStatsDto {
             for (let item of this.commentThreads)
                 data["commentThreads"].push(item.toJSON());
         }
+        if (this.budgets && this.budgets.constructor === Array) {
+            data["budgets"] = [];
+            for (let item of this.budgets)
+                data["budgets"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -44223,6 +44432,7 @@ export class CashFlowStatsDto implements ICashFlowStatsDto {
 export interface ICashFlowStatsDto {
     transactionStats: TransactionStatsDto[] | undefined;
     commentThreads: CashFlowCommentThreadDto[] | undefined;
+    budgets: BudgetDto[] | undefined;
 }
 
 export class BankDto implements IBankDto {
@@ -63968,6 +64178,7 @@ export interface ICreateOrUpdateLeadOutput {
 export enum PaymentPeriodType {
     Monthly = "Monthly", 
     Annual = "Annual", 
+    LifeTime = "LifeTime", 
 }
 
 export class PackageInfoDto implements IPackageInfoDto {
@@ -68751,6 +68962,58 @@ export interface ICancelOrderInfo {
     sortOrder: number | undefined;
 }
 
+export class OrderSubscriptionServiceDto implements IOrderSubscriptionServiceDto {
+    id!: number | undefined;
+    serviceId!: string | undefined;
+    serviceName!: string | undefined;
+    serviceTypeId!: string | undefined;
+    systemType!: string | undefined;
+
+    constructor(data?: IOrderSubscriptionServiceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.serviceId = data["serviceId"];
+            this.serviceName = data["serviceName"];
+            this.serviceTypeId = data["serviceTypeId"];
+            this.systemType = data["systemType"];
+        }
+    }
+
+    static fromJS(data: any): OrderSubscriptionServiceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new OrderSubscriptionServiceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["serviceId"] = this.serviceId;
+        data["serviceName"] = this.serviceName;
+        data["serviceTypeId"] = this.serviceTypeId;
+        data["systemType"] = this.systemType;
+        return data; 
+    }
+}
+
+export interface IOrderSubscriptionServiceDto {
+    id: number | undefined;
+    serviceId: string | undefined;
+    serviceName: string | undefined;
+    serviceTypeId: string | undefined;
+    systemType: string | undefined;
+}
+
 export class OrderSbuscriptionPaymentDto implements IOrderSbuscriptionPaymentDto {
     id!: number | undefined;
     startDate!: moment.Moment | undefined;
@@ -68809,21 +69072,17 @@ export interface IOrderSbuscriptionPaymentDto {
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     id!: number | undefined;
-    subscriptionId!: number | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     fee!: number | undefined;
     tenantId!: string | undefined;
-    serviceId!: string | undefined;
-    serviceName!: string | undefined;
     serviceType!: string | undefined;
-    serviceTypeId!: string | undefined;
-    systemType!: string | undefined;
     orderType!: string | undefined;
     trialEndDate!: moment.Moment | undefined;
     statusCode!: string | undefined;
     status!: string | undefined;
     cancelationReason!: string | undefined;
+    orderSubscriptionServices!: OrderSubscriptionServiceDto[] | undefined;
     orderSubscriptionPayments!: OrderSbuscriptionPaymentDto[] | undefined;
 
     constructor(data?: IOrderSubscriptionDto) {
@@ -68838,21 +69097,21 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.subscriptionId = data["subscriptionId"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.fee = data["fee"];
             this.tenantId = data["tenantId"];
-            this.serviceId = data["serviceId"];
-            this.serviceName = data["serviceName"];
             this.serviceType = data["serviceType"];
-            this.serviceTypeId = data["serviceTypeId"];
-            this.systemType = data["systemType"];
             this.orderType = data["orderType"];
             this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
             this.statusCode = data["statusCode"];
             this.status = data["status"];
             this.cancelationReason = data["cancelationReason"];
+            if (data["orderSubscriptionServices"] && data["orderSubscriptionServices"].constructor === Array) {
+                this.orderSubscriptionServices = [];
+                for (let item of data["orderSubscriptionServices"])
+                    this.orderSubscriptionServices.push(OrderSubscriptionServiceDto.fromJS(item));
+            }
             if (data["orderSubscriptionPayments"] && data["orderSubscriptionPayments"].constructor === Array) {
                 this.orderSubscriptionPayments = [];
                 for (let item of data["orderSubscriptionPayments"])
@@ -68871,21 +69130,21 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["subscriptionId"] = this.subscriptionId;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["fee"] = this.fee;
         data["tenantId"] = this.tenantId;
-        data["serviceId"] = this.serviceId;
-        data["serviceName"] = this.serviceName;
         data["serviceType"] = this.serviceType;
-        data["serviceTypeId"] = this.serviceTypeId;
-        data["systemType"] = this.systemType;
         data["orderType"] = this.orderType;
         data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
         data["statusCode"] = this.statusCode;
         data["status"] = this.status;
         data["cancelationReason"] = this.cancelationReason;
+        if (this.orderSubscriptionServices && this.orderSubscriptionServices.constructor === Array) {
+            data["orderSubscriptionServices"] = [];
+            for (let item of this.orderSubscriptionServices)
+                data["orderSubscriptionServices"].push(item.toJSON());
+        }
         if (this.orderSubscriptionPayments && this.orderSubscriptionPayments.constructor === Array) {
             data["orderSubscriptionPayments"] = [];
             for (let item of this.orderSubscriptionPayments)
@@ -68897,21 +69156,17 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
 
 export interface IOrderSubscriptionDto {
     id: number | undefined;
-    subscriptionId: number | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     fee: number | undefined;
     tenantId: string | undefined;
-    serviceId: string | undefined;
-    serviceName: string | undefined;
     serviceType: string | undefined;
-    serviceTypeId: string | undefined;
-    systemType: string | undefined;
     orderType: string | undefined;
     trialEndDate: moment.Moment | undefined;
     statusCode: string | undefined;
     status: string | undefined;
     cancelationReason: string | undefined;
+    orderSubscriptionServices: OrderSubscriptionServiceDto[] | undefined;
     orderSubscriptionPayments: OrderSbuscriptionPaymentDto[] | undefined;
 }
 
@@ -68974,6 +69229,7 @@ export interface ISubscriptionInput {
 export enum RecurringPaymentFrequency {
     Monthly = "Monthly", 
     Annual = "Annual", 
+    LifeTime = "LifeTime", 
 }
 
 export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInput {
@@ -73805,46 +74061,6 @@ export enum ReportPeriod {
     Monthly = "Monthly", 
     Quarterly = "Quarterly", 
     Annual = "Annual", 
-}
-
-export class SendReportNotificationInfo implements ISendReportNotificationInfo {
-    recipientUserEmailAddress!: string;
-    sendReportInAttachments!: boolean;
-
-    constructor(data?: ISendReportNotificationInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.recipientUserEmailAddress = data["recipientUserEmailAddress"];
-            this.sendReportInAttachments = data["sendReportInAttachments"];
-        }
-    }
-
-    static fromJS(data: any): SendReportNotificationInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new SendReportNotificationInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["recipientUserEmailAddress"] = this.recipientUserEmailAddress;
-        data["sendReportInAttachments"] = this.sendReportInAttachments;
-        return data; 
-    }
-}
-
-export interface ISendReportNotificationInfo {
-    recipientUserEmailAddress: string;
-    sendReportInAttachments: boolean;
 }
 
 export class GenerateInput implements IGenerateInput {
