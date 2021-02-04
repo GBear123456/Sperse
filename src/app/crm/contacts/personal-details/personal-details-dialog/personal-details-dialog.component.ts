@@ -658,6 +658,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     this.contactProxy.updateAffiliateContact(
                         new UpdateAffiliateContactInput({
                             contactId: this.contactInfo.id,
+                            leadId: this.leadInfo ? this.leadInfo.id : null,
                             updatePendingCommissions: this.hasCommissionsFeature
                                 && this.hasCommissionsManagePermission && updatePending,
                             affiliateContactId: contact ? contact.id : null
