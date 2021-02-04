@@ -3,7 +3,10 @@
         <search-input [width]="searchInputWidth" (onInput)="searchChanged($event)" [value]="bankAccountsService.searchValue.value"></search-input>
         <sort-button [items]="sortItems" (onChange)="changeSorting($event)"></sort-button>
         <expand-button [items]="expandItems" (onExpand)="expand($event)"></expand-button>
-        <add-account-button *ngIf="showAddAccountButton" (onComplete)="refresh()"></add-account-button>
+        <add-account-button *ngIf="showAddAccountButton" 
+            (onComplete)="refresh()"
+            (onClosed)="refresh(true)">
+        </add-account-button>
     </div>
     <div class="row second-sub-header">
         <div class="left-header col-sm-12">
