@@ -331,7 +331,7 @@
                         <div *ngFor="let phone of contact.phones; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
                             <div class="drop-down-box-wrapper">
                                 <dx-select-box
-                                    width="370px"
+                                    width="390px"
                                     name="phoneType"
                                     [placeholder]="ls.l('Type')"
                                     [dataSource]="phoneTypes$ | async"
@@ -341,7 +341,7 @@
                                     itemTemplate="phoneTypeItemTemplate"
                                     (onValueChanged)="validateCompanyName()">
                                     <div *dxTemplate="let data of 'phoneTypeItemTemplate'">
-                                        <div class="usage-type-item"><span style="width: 100px;">{{data.name}}</span><span>{{ls.l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span></div>
+                                        <div class="usage-type-item"><span style="width: 130px;">{{data.name}}</span><span>{{ls.l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span></div>
                                     </div>
                                 </dx-select-box>
                             </div>
