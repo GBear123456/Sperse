@@ -69,6 +69,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
     @Input() isDeleteAllowed = true;
     @Input() isCopyAllowed = true;
     @Input() showType = true;
+    @Input() showNeighborhood = false;
     @Input() editDialogTitle: string;
     @Output() onAddressUpdate: EventEmitter<AddressUpdate> = new EventEmitter();
 
@@ -76,6 +77,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
     country: string;
     streetNumber: string;
     streetAddress: string;
+    neighborhood: string;
     city: string;
     stateCode: string;
     stateName: string;
@@ -193,10 +195,12 @@ export class AddressesComponent implements OnInit, OnDestroy {
                 stateId: address && address.stateId,
                 stateName: address && address.stateName,
                 streetAddress: address && address.streetAddress,
+                neighborhood: address && address.neighborhood,
                 usageTypeId: address && address.usageTypeId,
                 zip: address && address.zip,
                 isDeleteAllowed: this.isDeleteAllowed,
                 showType: this.showType,
+                showNeighborhood: this.showNeighborhood,
                 editDialogTitle: this.editDialogTitle
             };
             this.dialog.closeAll();
@@ -274,6 +278,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
         this.country = '';
         this.streetNumber = '';
         this.streetAddress = '';
+        this.neighborhood = '';
         this.city = '';
         this.stateCode = '';
         this.stateName = '';
@@ -317,6 +322,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
                         this.streetAddress && this.city &&
                         ((this.country != address.country) ||
                             (address.streetAddress != (this.streetAddress + ' ' + this.streetNumber)) ||
+                            (this.neighborhood != address.neighborhood) ||
                             (this.city != address.city) ||
                             (this.stateName != address.stateName))
                     ) {
@@ -330,6 +336,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
                                 isActive: address.isActive,
                                 isConfirmed: address.isConfirmed,
                                 streetAddress: this.streetAddress + ' ' + this.streetNumber,
+                                neighborhood: this.neighborhood,
                                 comment: address.comment,
                                 usageTypeId: address.usageTypeId,
                                 stateName: this.stateCode,
@@ -366,6 +373,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
         this.streetAddress = GooglePlaceService.getStreet(event.address_components);
         this.streetNumber = GooglePlaceService.getStreetNumber(event.address_components);
         this.latestFormattedAddress = address.autoComplete = event.formatted_address;
+        this.neighborhood = GooglePlaceService.getNeighborhood(event.address_components);
         this.city = GooglePlaceService.getCity(event.address_components);
     }
 
@@ -379,6 +387,15 @@ export class AddressesComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.destroy.next();
+    }
+
+    getAddressLine2(address: AddressDto) {
+        let addressLine = '';
+        if (this.showNeighborhood)
+            addressLine = `${address.neighborhood}, `;
+        addressLine += `${address.city}, ${address.stateName}, ${address.zip}`;
+
+        return addressLine;
     }
 
     getCountryName(address: AddressDto): Observable<string> {

@@ -42829,6 +42829,7 @@ export interface ICreateContactPhoneInputWithoutCheck {
 export class CreateContactAddressInputWithoutCheck implements ICreateContactAddressInputWithoutCheck {
     contactId!: number | undefined;
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
@@ -42855,6 +42856,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
         if (data) {
             this.contactId = data["contactId"];
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
@@ -42881,6 +42883,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
@@ -42900,6 +42903,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
 export interface ICreateContactAddressInputWithoutCheck {
     contactId: number | undefined;
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
@@ -43643,6 +43647,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     stateName!: string | undefined;
     zip!: string | undefined;
     city!: string | undefined;
+    neighborhood!: string | undefined;
     streetAddress!: string | undefined;
     isDefault!: boolean | undefined;
 
@@ -43673,6 +43678,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
             this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.city = data["city"];
+            this.neighborhood = data["neighborhood"];
             this.streetAddress = data["streetAddress"];
             this.isDefault = data["isDefault"];
         }
@@ -43703,6 +43709,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["city"] = this.city;
+        data["neighborhood"] = this.neighborhood;
         data["streetAddress"] = this.streetAddress;
         data["isDefault"] = this.isDefault;
         return data; 
@@ -43726,6 +43733,7 @@ export interface ICreateBusinessEntityDto {
     stateName: string | undefined;
     zip: string | undefined;
     city: string | undefined;
+    neighborhood: string | undefined;
     streetAddress: string | undefined;
     isDefault: boolean | undefined;
 }
@@ -43749,6 +43757,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     stateName!: string | undefined;
     zip!: string | undefined;
     city!: string | undefined;
+    neighborhood!: string | undefined;
     streetAddress!: string | undefined;
     isDefault!: boolean | undefined;
 
@@ -43781,6 +43790,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
             this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.city = data["city"];
+            this.neighborhood = data["neighborhood"];
             this.streetAddress = data["streetAddress"];
             this.isDefault = data["isDefault"];
         }
@@ -43813,6 +43823,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["city"] = this.city;
+        data["neighborhood"] = this.neighborhood;
         data["streetAddress"] = this.streetAddress;
         data["isDefault"] = this.isDefault;
         return data; 
@@ -43838,6 +43849,7 @@ export interface IUpdateBusinessEntityDto {
     stateName: string | undefined;
     zip: string | undefined;
     city: string | undefined;
+    neighborhood: string | undefined;
     streetAddress: string | undefined;
     isDefault: boolean | undefined;
 }
@@ -49558,6 +49570,7 @@ export interface IContactPhoneDto {
 export class ContactAddressDto implements IContactAddressDto {
     usageTypeId!: string | undefined;
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
@@ -49583,6 +49596,7 @@ export class ContactAddressDto implements IContactAddressDto {
         if (data) {
             this.usageTypeId = data["usageTypeId"];
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
@@ -49608,6 +49622,7 @@ export class ContactAddressDto implements IContactAddressDto {
         data = typeof data === 'object' ? data : {};
         data["usageTypeId"] = this.usageTypeId;
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
@@ -49626,6 +49641,7 @@ export class ContactAddressDto implements IContactAddressDto {
 export interface IContactAddressDto {
     usageTypeId: string | undefined;
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
@@ -50410,6 +50426,7 @@ export class ContactAddressInfo implements IContactAddressInfo {
     ownershipTypeId!: string | undefined;
     isPrimary!: boolean | undefined;
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
@@ -50434,6 +50451,7 @@ export class ContactAddressInfo implements IContactAddressInfo {
             this.ownershipTypeId = data["ownershipTypeId"];
             this.isPrimary = data["isPrimary"];
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
@@ -50458,6 +50476,7 @@ export class ContactAddressInfo implements IContactAddressInfo {
         data["ownershipTypeId"] = this.ownershipTypeId;
         data["isPrimary"] = this.isPrimary;
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
@@ -50475,6 +50494,7 @@ export interface IContactAddressInfo {
     ownershipTypeId: string | undefined;
     isPrimary: boolean | undefined;
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
@@ -51338,6 +51358,7 @@ export interface ITrackingInfo {
 export class CreateContactAddressInput implements ICreateContactAddressInput {
     contactId!: number | undefined;
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
@@ -51364,6 +51385,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
         if (data) {
             this.contactId = data["contactId"];
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
@@ -51390,6 +51412,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
@@ -51409,6 +51432,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
 export interface ICreateContactAddressInput {
     contactId: number | undefined;
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
@@ -52139,7 +52163,6 @@ export class SourceContactInfo implements ISourceContactInfo {
     id!: number | undefined;
     groupId!: string | undefined;
     affiliateCode!: string | undefined;
-    affiliateRate!: number | undefined;
     companyName!: string | undefined;
     personName!: string | undefined;
     jobTitle!: string | undefined;
@@ -52158,7 +52181,6 @@ export class SourceContactInfo implements ISourceContactInfo {
             this.id = data["id"];
             this.groupId = data["groupId"];
             this.affiliateCode = data["affiliateCode"];
-            this.affiliateRate = data["affiliateRate"];
             this.companyName = data["companyName"];
             this.personName = data["personName"];
             this.jobTitle = data["jobTitle"];
@@ -52177,7 +52199,6 @@ export class SourceContactInfo implements ISourceContactInfo {
         data["id"] = this.id;
         data["groupId"] = this.groupId;
         data["affiliateCode"] = this.affiliateCode;
-        data["affiliateRate"] = this.affiliateRate;
         data["companyName"] = this.companyName;
         data["personName"] = this.personName;
         data["jobTitle"] = this.jobTitle;
@@ -52189,7 +52210,6 @@ export interface ISourceContactInfo {
     id: number | undefined;
     groupId: string | undefined;
     affiliateCode: string | undefined;
-    affiliateRate: number | undefined;
     companyName: string | undefined;
     personName: string | undefined;
     jobTitle: string | undefined;
@@ -52843,7 +52863,6 @@ export interface IUpdateContactCustomFieldsInput {
 
 export class UpdateAffiliateContactInput implements IUpdateAffiliateContactInput {
     contactId!: number;
-    leadId!: number | undefined;
     affiliateContactId!: number | undefined;
     updatePendingCommissions!: boolean | undefined;
 
@@ -52859,7 +52878,6 @@ export class UpdateAffiliateContactInput implements IUpdateAffiliateContactInput
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            this.leadId = data["leadId"];
             this.affiliateContactId = data["affiliateContactId"];
             this.updatePendingCommissions = data["updatePendingCommissions"];
         }
@@ -52875,7 +52893,6 @@ export class UpdateAffiliateContactInput implements IUpdateAffiliateContactInput
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        data["leadId"] = this.leadId;
         data["affiliateContactId"] = this.affiliateContactId;
         data["updatePendingCommissions"] = this.updatePendingCommissions;
         return data; 
@@ -52884,7 +52901,6 @@ export class UpdateAffiliateContactInput implements IUpdateAffiliateContactInput
 
 export interface IUpdateAffiliateContactInput {
     contactId: number;
-    leadId: number | undefined;
     affiliateContactId: number | undefined;
     updatePendingCommissions: boolean | undefined;
 }
@@ -52929,6 +52945,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
     id!: number;
     contactId!: number | undefined;
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
@@ -52956,6 +52973,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
             this.id = data["id"];
             this.contactId = data["contactId"];
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
@@ -52983,6 +53001,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
         data["id"] = this.id;
         data["contactId"] = this.contactId;
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
@@ -53003,6 +53022,7 @@ export interface IUpdateContactAddressInput {
     id: number;
     contactId: number | undefined;
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
@@ -62237,6 +62257,7 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
     stateName!: string | undefined;
     city!: string | undefined;
     zip!: string | undefined;
+    neighborhood!: string | undefined;
     address1!: string | undefined;
     address2!: string | undefined;
     firstName!: string | undefined;
@@ -62265,6 +62286,7 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
             this.stateName = data["stateName"];
             this.city = data["city"];
             this.zip = data["zip"];
+            this.neighborhood = data["neighborhood"];
             this.address1 = data["address1"];
             this.address2 = data["address2"];
             this.firstName = data["firstName"];
@@ -62293,6 +62315,7 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
         data["stateName"] = this.stateName;
         data["city"] = this.city;
         data["zip"] = this.zip;
+        data["neighborhood"] = this.neighborhood;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
         data["firstName"] = this.firstName;
@@ -62314,6 +62337,7 @@ export interface IInvoiceAddressInfo {
     stateName: string | undefined;
     city: string | undefined;
     zip: string | undefined;
+    neighborhood: string | undefined;
     address1: string | undefined;
     address2: string | undefined;
     firstName: string | undefined;
@@ -62518,6 +62542,7 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
     stateName!: string | undefined;
     city!: string | undefined;
     zip!: string | undefined;
+    neighborhood!: string | undefined;
     address1!: string | undefined;
     address2!: string | undefined;
     firstName!: string | undefined;
@@ -62542,6 +62567,7 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
             this.stateName = data["stateName"];
             this.city = data["city"];
             this.zip = data["zip"];
+            this.neighborhood = data["neighborhood"];
             this.address1 = data["address1"];
             this.address2 = data["address2"];
             this.firstName = data["firstName"];
@@ -62566,6 +62592,7 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
         data["stateName"] = this.stateName;
         data["city"] = this.city;
         data["zip"] = this.zip;
+        data["neighborhood"] = this.neighborhood;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
         data["firstName"] = this.firstName;
@@ -62583,6 +62610,7 @@ export interface IInvoiceAddressInput {
     stateName: string | undefined;
     city: string | undefined;
     zip: string | undefined;
+    neighborhood: string | undefined;
     address1: string | undefined;
     address2: string | undefined;
     firstName: string | undefined;
@@ -64507,6 +64535,7 @@ export interface ISubmitFreeTrialRequestInput {
 export class SubmitClientRequestInput implements ISubmitClientRequestInput {
     tenancyName!: string;
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
@@ -64540,6 +64569,7 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
         if (data) {
             this.tenancyName = data["tenancyName"];
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
@@ -64573,6 +64603,7 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
         data = typeof data === 'object' ? data : {};
         data["tenancyName"] = this.tenancyName;
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
@@ -64599,6 +64630,7 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
 export interface ISubmitClientRequestInput {
     tenancyName: string;
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
@@ -65440,6 +65472,7 @@ export interface ILocalizationSourceDto {
 
 export class MemberAddressDto implements IMemberAddressDto {
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     zip!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
@@ -65458,6 +65491,7 @@ export class MemberAddressDto implements IMemberAddressDto {
     init(data?: any) {
         if (data) {
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.zip = data["zip"];
             this.city = data["city"];
             this.stateId = data["stateId"];
@@ -65476,6 +65510,7 @@ export class MemberAddressDto implements IMemberAddressDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["zip"] = this.zip;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
@@ -65487,6 +65522,7 @@ export class MemberAddressDto implements IMemberAddressDto {
 
 export interface IMemberAddressDto {
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     zip: string | undefined;
     city: string | undefined;
     stateId: string | undefined;

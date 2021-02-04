@@ -67,13 +67,13 @@ export class EditAddressDialog {
     ) {
         if (this.validateAddress(data)) {
             this.action = 'Edit';
-            this.address =
-                this.googleAutoComplete ? [
-                    data.streetAddress,
-                    data.city,
-                    data.stateName,
-                    data.country
-                ].join(',') : data.streetAddress;
+            let address = data.streetAddress;
+            if (this.googleAutoComplete) {
+                if (data.showNeighborhood)
+                    address += `,${data.neighborhood}`;
+                address += `,${data.city},${data.stateName},${data.country}`;
+            }
+            this.address = address;
         } else
             this.action = 'Create';
         this.googleAutoComplete = Boolean(window['google']);
@@ -115,6 +115,7 @@ export class EditAddressDialog {
         this.statesService.updateState(countryCode, this.data.stateId, this.data.stateName);
         this.data.countryCode = countryCode;
         this.data.city = GooglePlaceService.getCity(address.address_components);
+        this.data.neighborhood = GooglePlaceService.getNeighborhood(address.address_components);
         this.data.formattedAddress = address.formatted_address;
         const streetNumber = GooglePlaceService.getStreetNumber(address.address_components);
         this.address = this.addressInput.nativeElement.value = streetNumber

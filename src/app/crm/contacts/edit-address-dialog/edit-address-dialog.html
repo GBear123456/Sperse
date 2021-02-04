@@ -106,7 +106,15 @@
                     [(value)]="data.city">
                 </dx-text-box>
             </div>
-
+            <div *ngIf="data.showNeighborhood">
+                <label>{{ls.l('Neighborhood')}}</label>
+                <dx-text-box
+                    name="neighborhood"
+                    [disabled]="!isEditAllowed"
+                    maxLength="128"
+                    [(value)]="data.neighborhood">
+                </dx-text-box>
+            </div>
             <div>
                 <label>{{ls.l('ZipCode')}}</label>
                 <dx-text-box
