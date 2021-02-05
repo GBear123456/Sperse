@@ -73029,8 +73029,9 @@ export class PropertyDto implements IPropertyDto {
     numberOfSets!: number | undefined;
     frontDoorFob!: number | undefined;
     garageRemote!: boolean | undefined;
+    garageRemoteNumberReceived!: number | undefined;
     garageKey!: boolean | undefined;
-    garageNumberReceived!: number | undefined;
+    garageKeyNumberReceived!: number | undefined;
     garageCode!: string | undefined;
     parkadeFob!: boolean | undefined;
     parkingStall!: number | undefined;
@@ -73114,8 +73115,9 @@ export class PropertyDto implements IPropertyDto {
             this.numberOfSets = data["numberOfSets"];
             this.frontDoorFob = data["frontDoorFob"];
             this.garageRemote = data["garageRemote"];
+            this.garageRemoteNumberReceived = data["garageRemoteNumberReceived"];
             this.garageKey = data["garageKey"];
-            this.garageNumberReceived = data["garageNumberReceived"];
+            this.garageKeyNumberReceived = data["garageKeyNumberReceived"];
             this.garageCode = data["garageCode"];
             this.parkadeFob = data["parkadeFob"];
             this.parkingStall = data["parkingStall"];
@@ -73199,8 +73201,9 @@ export class PropertyDto implements IPropertyDto {
         data["numberOfSets"] = this.numberOfSets;
         data["frontDoorFob"] = this.frontDoorFob;
         data["garageRemote"] = this.garageRemote;
+        data["garageRemoteNumberReceived"] = this.garageRemoteNumberReceived;
         data["garageKey"] = this.garageKey;
-        data["garageNumberReceived"] = this.garageNumberReceived;
+        data["garageKeyNumberReceived"] = this.garageKeyNumberReceived;
         data["garageCode"] = this.garageCode;
         data["parkadeFob"] = this.parkadeFob;
         data["parkingStall"] = this.parkingStall;
@@ -73277,8 +73280,9 @@ export interface IPropertyDto {
     numberOfSets: number | undefined;
     frontDoorFob: number | undefined;
     garageRemote: boolean | undefined;
+    garageRemoteNumberReceived: number | undefined;
     garageKey: boolean | undefined;
-    garageNumberReceived: number | undefined;
+    garageKeyNumberReceived: number | undefined;
     garageCode: string | undefined;
     parkadeFob: boolean | undefined;
     parkingStall: number | undefined;
