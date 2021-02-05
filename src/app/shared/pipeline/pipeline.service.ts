@@ -293,6 +293,7 @@ export class PipelineService {
                     switchMap((pipeline: PipelineDto) => {
                         return this.dialog.open(LeadCompleteDialogComponent, {
                             data: {
+                                entity: entity,
                                 stages: pipeline.stages
                             }
                         }).afterClosed();

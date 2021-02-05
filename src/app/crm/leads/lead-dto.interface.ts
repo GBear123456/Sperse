@@ -38,4 +38,5 @@ export interface LeadDto {
     PipelineId: number;
     PropertyId: number;
     PropertyName: string;
+    Amount: string;
 }
