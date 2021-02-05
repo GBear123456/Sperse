@@ -49,6 +49,7 @@
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -119,6 +120,7 @@
                                             <div class="dx-field-value">
                                                 <dx-tag-box
                                                     showClearButton="true"
+                                                    showDropDownButton="true"
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [items]="parking"
@@ -183,6 +185,7 @@
                                                                format="currency"
                                                                showClearButton="true"
                                                                step="0"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -218,6 +221,7 @@
                                                            [isCopyAllowed]="true"
                                                            [isDeleteAllowed]="false"
                                                            [showType]="false"
+                                                           [showNeighborhood]="true"
                                                            [isPlaceEditAllowed]="false"
                                                            [editDialogTitle]="ls.l('EditAddress')"
                                                            [contactId]="property.address.contactId"
@@ -225,28 +229,6 @@
                                                 </addresses>
                                             </div>
                                         </div>
-                                        <!--<div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Quadrant') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-text-box
-                                                             [maxLength]="50"
-                                                             showClearButton="true"
-                                                             [stylingMode]="stylingMode"
-                                                             (onValueChanged)="valueChanged()">
-                                                </dx-text-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Community') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-text-box
-                                                             [maxLength]="50"
-                                                             showClearButton="true"
-                                                             [stylingMode]="stylingMode"
-                                                             (onValueChanged)="valueChanged()">
-                                                </dx-text-box>
-                                            </div>
-                                        </div>-->
                                     </div>
                                 </div>
                                 <div class="block">
@@ -386,6 +368,7 @@
                                                                showClearButton="true"
                                                                step="0"
                                                                [stylingMode]="stylingMode"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -540,6 +523,7 @@
                                                              [maxLength]="50"
                                                              showClearButton="true"
                                                              [stylingMode]="stylingMode"
+                                                             [placeholder]="ls.l('EditValuePlaceholder')"
                                                              (onValueChanged)="valueChanged()">
                                                 </dx-text-box>
                                             </div>
@@ -551,6 +535,7 @@
                                                              [maxLength]="100"
                                                              showClearButton="true"
                                                              [stylingMode]="stylingMode"
+                                                             [placeholder]="ls.l('EditValuePlaceholder')"
                                                              (onValueChanged)="valueChanged()">
                                                 </dx-text-box>
                                             </div>
@@ -678,6 +663,7 @@
                                             <div class="dx-field-value">
                                                 <dx-tag-box
                                                     showClearButton="true"
+                                                    showDropDownButton="true"
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
@@ -800,6 +786,7 @@
                                                     [maxLength]="512"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.other"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-text-box>
                                             </div>
@@ -845,6 +832,7 @@
                                                     [maxLength]="256"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.intercomSetup"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-text-box>
                                             </div>
@@ -871,6 +859,7 @@
                                                     step="0"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.numberOfSets"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -883,6 +872,7 @@
                                                     step="0"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.frontDoorFob"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -902,6 +892,19 @@
                                             </div>
                                         </div>
                                         <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('GarageNumberReceived') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box
+                                                    [(value)]="property.garageNumberReceived"
+                                                    [stylingMode]="stylingMode"
+                                                    showClearButton="true"
+                                                    step="0"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    (onValueChanged)="valueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('GarageKey') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-select-box
@@ -916,18 +919,6 @@
                                             </div>
                                         </div>
                                         <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('GarageNumberReceived') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-number-box
-                                                    [(value)]="property.garageNumberReceived"
-                                                    [stylingMode]="stylingMode"
-                                                    showClearButton="true"
-                                                    step="0"
-                                                    (onValueChanged)="valueChanged()">
-                                                </dx-number-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('GarageCode') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-text-box
@@ -935,6 +926,7 @@
                                                     [maxLength]="20"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.garageCode"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-text-box>
                                             </div>
@@ -967,6 +959,7 @@
                                                     step="0"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.parkingStall"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -979,6 +972,7 @@
                                                     step="0"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.visitorParkingPass"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -991,6 +985,7 @@
                                                     step="0"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.mailbox"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -1017,18 +1012,20 @@
                                                     step="0"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.mailboxNumberReceived"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
                                                     (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('StorageLocker') }}</div>
+                                            <div class="dx-field-label">{{ ls.l('StorageLockerNumber') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-number-box
                                                     showClearButton="true"
                                                     step="0"
                                                     [stylingMode]="stylingMode"
-                                                    [(value)]="property.storageLocker"
+                                                    [(value)]="property.storageLockerNumber"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -1052,6 +1049,7 @@
                                             <div class="dx-field-value">
                                                 <dx-tag-box
                                                     showClearButton="true"
+                                                    showDropDownButton="true"
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
@@ -1066,6 +1064,7 @@
                                             <div class="dx-field-value">
                                                 <dx-tag-box
                                                     showClearButton="true"
+                                                    showDropDownButton="true"
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
@@ -1097,6 +1096,7 @@
                                                     step="0"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.garbageNumberReceived"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
                                                     (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>

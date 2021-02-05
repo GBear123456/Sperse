@@ -401,6 +401,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
                 note: this.property.note,
                 address: CreateContactAddressInput.fromJS({
                     streetAddress: this.property.address.streetAddress,
+                    neighborhood: this.property.address.neighborhood,
                     city: this.property.address.city,
                     stateId: state && state.code,
                     stateName: state && state.name,
@@ -539,6 +540,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
                 address.countryCode) {
                 return {
                     streetAddress: streetAddress,
+                    neighborhood: address.neighborhood,
                     city: address.city,
                     stateId: address.state
                         ? this.statesService.getAdjustedStateCode(address.state.code, address.state.name)
@@ -711,6 +713,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             ? AppConsts.defaultCountryName
             : countryName;
         address.zip = GooglePlaceService.getZipCode(event.address.address_components);
+        address.neighborhood = GooglePlaceService.getNeighborhood(event.address.address_components);
         address.streetAddress = GooglePlaceService.getStreet(event.address.address_components);
         address.streetNumber = GooglePlaceService.getStreetNumber(event.address.address_components);
         address.countryCode = countryCode;

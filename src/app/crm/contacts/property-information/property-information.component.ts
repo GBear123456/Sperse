@@ -141,6 +141,7 @@ export class PropertyInformationComponent implements OnInit {
         this.propertyAddresses = [
             new AddressDto({
                 streetAddress: addr.streetAddress,
+                neighborhood: addr.neighborhood,
                 city: addr.city,
                 stateId: addr.stateId,
                 stateName: addr.stateName,
@@ -166,6 +167,7 @@ export class PropertyInformationComponent implements OnInit {
         this.property.address = new CreateContactAddressInput({
             contactId: dialogData.contactId,
             streetAddress: dialogData.streetAddress,
+            neighborhood: dialogData.neighborhood,
             city: dialogData.city,
             stateId: dialogData.stateId,
             stateName: dialogData.stateName,
@@ -184,6 +186,7 @@ export class PropertyInformationComponent implements OnInit {
             this.propertyAddresses = [
                 new AddressDto({
                     streetAddress: dialogData.streetAddress,
+                    neighborhood: dialogData.neighborhood,
                     city: dialogData.city,
                     stateId: dialogData.stateId,
                     stateName: dialogData.stateName,

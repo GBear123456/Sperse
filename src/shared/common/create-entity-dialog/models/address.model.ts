@@ -5,6 +5,7 @@ export class Address implements IAddress {
     address: string;
     streetNumber: string;
     streetAddress: string;
+    neighborhood: string;
     zip: string;
     city: string;
     countryCode: string;
