@@ -51976,7 +51976,6 @@ export class SourceContactInfo implements ISourceContactInfo {
     id!: number | undefined;
     groupId!: string | undefined;
     affiliateCode!: string | undefined;
-    affiliateRate!: number | undefined;
     companyName!: string | undefined;
     personName!: string | undefined;
     jobTitle!: string | undefined;
@@ -51995,7 +51994,6 @@ export class SourceContactInfo implements ISourceContactInfo {
             this.id = data["id"];
             this.groupId = data["groupId"];
             this.affiliateCode = data["affiliateCode"];
-            this.affiliateRate = data["affiliateRate"];
             this.companyName = data["companyName"];
             this.personName = data["personName"];
             this.jobTitle = data["jobTitle"];
@@ -52014,7 +52012,6 @@ export class SourceContactInfo implements ISourceContactInfo {
         data["id"] = this.id;
         data["groupId"] = this.groupId;
         data["affiliateCode"] = this.affiliateCode;
-        data["affiliateRate"] = this.affiliateRate;
         data["companyName"] = this.companyName;
         data["personName"] = this.personName;
         data["jobTitle"] = this.jobTitle;
@@ -52026,7 +52023,6 @@ export interface ISourceContactInfo {
     id: number | undefined;
     groupId: string | undefined;
     affiliateCode: string | undefined;
-    affiliateRate: number | undefined;
     companyName: string | undefined;
     personName: string | undefined;
     jobTitle: string | undefined;
@@ -52680,7 +52676,6 @@ export interface IUpdateContactCustomFieldsInput {
 
 export class UpdateAffiliateContactInput implements IUpdateAffiliateContactInput {
     contactId!: number;
-    leadId!: number | undefined;
     affiliateContactId!: number | undefined;
     updatePendingCommissions!: boolean | undefined;
 
@@ -52696,7 +52691,6 @@ export class UpdateAffiliateContactInput implements IUpdateAffiliateContactInput
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            this.leadId = data["leadId"];
             this.affiliateContactId = data["affiliateContactId"];
             this.updatePendingCommissions = data["updatePendingCommissions"];
         }
@@ -52712,7 +52706,6 @@ export class UpdateAffiliateContactInput implements IUpdateAffiliateContactInput
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        data["leadId"] = this.leadId;
         data["affiliateContactId"] = this.affiliateContactId;
         data["updatePendingCommissions"] = this.updatePendingCommissions;
         return data; 
@@ -52721,7 +52714,6 @@ export class UpdateAffiliateContactInput implements IUpdateAffiliateContactInput
 
 export interface IUpdateAffiliateContactInput {
     contactId: number;
-    leadId: number | undefined;
     affiliateContactId: number | undefined;
     updatePendingCommissions: boolean | undefined;
 }
