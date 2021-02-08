@@ -35,6 +35,17 @@
            ngx-google-places-autocomplete/>
     <span [class]="showClearButton" (click)="removeAddress()"><i class="minus-icon"></i></span>
 </div>
+<div *ngIf="showNeighborhood" class="field addr">
+    <dx-text-box
+            name="neighborhood"
+            maxLength="128"
+            [placeholder]="ls.l('Neighborhood')"
+            width="570px"
+            [(value)]="address.neighborhood"
+            valueChangeEvent="keyup"
+            (onValueChanged)="changeNeighborhood()">
+    </dx-text-box>
+</div>
 <div class="field addr">
     <dx-text-box
             name="city"

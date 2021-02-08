@@ -128,7 +128,7 @@ export class UserInboxComponent implements OnDestroy {
                         width: '240px',
                         selectedItemKeys: this.deliveryType ? this.deliveryType : [CommunicationMessageDeliveryType.Email, CommunicationMessageDeliveryType.SMS],
                         onSelectionChanged: event => {
-                            if (event.addedItems.length || event.removedItems.lenght)
+                            if (event.addedItems.length || event.removedItems.length)
                                 this.activeMessage = undefined;
                                 this.dataSource.reload();
                         },

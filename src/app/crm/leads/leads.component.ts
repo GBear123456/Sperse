@@ -630,7 +630,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.leadFields.AffiliateContactName,
         this.leadFields.AffiliateContactAffiliateCode,
         this.leadFields.PropertyId,
-        this.leadFields.PropertyName
+        this.leadFields.PropertyName,
+        this.leadFields.Amount
     ].concat(
         this.isSmsAndEmailSendingAllowed ? [ this.leadFields.Phone ] : []
     );
@@ -2126,7 +2127,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     onSourceApply(contacts) {
        if (this.isGranted(AppPermissions.CRMBulkUpdates)) {
             ContactsHelper.showConfirmMessage(
-                this.l('UpdateForSelected', this.l('SourceContactName'), this.l('ContactGroup_' + this.selectedContactGroup)),
+                this.l('UpdateForSelected', this.l('SourceContactName'), this.l('ContactGroup_' + this.contactGroupNames[String(this.selectedContactGroup)])),
                 (confirmed: boolean, [ applyCode ]: boolean[]) => {
                     if (confirmed)
                         this.leadService.updateSourceContacts(new UpdateLeadSourceContactsInput({
@@ -2146,7 +2147,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     visible: true,
                     checked: false
                 }],
-                this.l('SourceUpdateConfirmation', this.l('ContactGroup_' + this.selectedContactGroup))
+                this.l('SourceUpdateConfirmation', this.l('ContactGroup_' + this.contactGroupNames[String(this.selectedContactGroup)]))
             );
         }
     }

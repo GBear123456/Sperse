@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, EventEmitter, Output, Input, ViewChild } from '@angular/core';
+import { Component, EventEmitter, ViewEncapsulation, Output, Input, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
@@ -11,7 +11,8 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 @Component({
     selector: 'action-menu',
     templateUrl: './action-menu.component.html',
-    styleUrls: ['./action-menu.component.less']
+    styleUrls: ['./action-menu.component.less'],
+    encapsulation: ViewEncapsulation.None
 })
 export class ActionMenuComponent {
     @Input() items: ActionMenuItem[] | ActionMenuGroup[];

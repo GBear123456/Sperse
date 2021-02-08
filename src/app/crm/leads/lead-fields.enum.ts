@@ -40,5 +40,6 @@ export const LeadFields: KeysEnum<LeadDto> = {
     AffiliateContactAffiliateCode: 'AffiliateContactAffiliateCode',
     PipelineId: 'PipelineId',
     PropertyId: 'PropertyId',
-    PropertyName: 'PropertyName'
+    PropertyName: 'PropertyName',
+    Amount: 'Amount'
 };
