@@ -20,6 +20,7 @@ import { map, filter } from 'rxjs/operators';
 import {
     InvoiceSettings,
     ProductServiceProxy,
+    ProductGroupServiceProxy,
     ServiceProductServiceProxy,
     ServiceProductDto,
     ProductServiceInfo,
@@ -49,7 +50,7 @@ import { AppPermissions } from '@shared/AppPermissions';
         '../../../../../shared/common/styles/form.less',
         './add-product-dialog.component.less'
     ],
-    providers: [ProductServiceProxy, ServiceProductServiceProxy],
+    providers: [ProductServiceProxy, ProductGroupServiceProxy, ServiceProductServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddProductDialogComponent implements AfterViewInit, OnInit {
@@ -69,6 +70,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     constructor(
         private elementRef: ElementRef,
         private productProxy: ProductServiceProxy,
+        private productGroupProxy: ProductGroupServiceProxy,
         private notify: NotifyService,
         private permission: AppPermissionService,
         private invoicesService: InvoicesService,
@@ -91,7 +93,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             this.product = new UpdateProductInput(data.product);
         else
             this.product = new CreateProductInput(data.product);
-        productProxy.getProudctGroups().subscribe((groups: ProductGroupInfo[]) => {
+        productGroupProxy.getProductGroups().subscribe((groups: ProductGroupInfo[]) => {
             this.productGroups = groups;
         });
 
