@@ -29,6 +29,7 @@ export class LeadCompleteDialogComponent extends ConfirmDialogComponent {
     ) {
         super(injector);
 
+        this.amount = this.data.entity.Amount;
         this.orderStages = this.data.stages.filter((item) => !item['isFinal']);
         this.dialogRef['_overlayRef'].hostElement.classList.add('lead-complete');
         invoicesService.settings$.pipe(filter(Boolean), first()).subscribe((res: InvoiceSettings) =>

@@ -202,7 +202,22 @@
             }
 
             .date {
-                margin-bottom: 25px;
+                margin-bottom: 25px!important;
+                span {
+                    position: absolute;
+                    display: block;
+                    bottom: -25px;
+                    right: 10px;                    
+                    font-weight: normal;
+                    font-size: 11px;
+                    line-height: 2.18;
+                    letter-spacing: 0.22px;
+                    white-space: nowrap;
+                    color: #677380;
+                    max-width: 220px;
+                    overflow: hidden;
+                    text-overflow: ellipsis;    
+                }
                 &:after {
                     content: attr(date);
                     position: absolute;
@@ -214,6 +229,7 @@
                     letter-spacing: 0.22px;
                     white-space: nowrap;
                     color: #677380;
+                    left: 0px;
                 }
             }
 
@@ -230,7 +246,7 @@
                 text-align: left;
                 color: #424c56;
                 max-width: 70%;
-                min-width: 300px;
+                min-width: 360px;
                 border-radius: 10px;
                 margin-bottom: 5px;
             }

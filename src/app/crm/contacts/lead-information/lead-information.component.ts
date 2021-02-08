@@ -269,20 +269,21 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
         let field = item.name;
         return {
             id: (this.data && this.data.leadInfo) ? this.data.leadInfo.id : null,
-            value: this.getPropValue(field),
+            value: this.getPropValue(field, !this.hasFieldMoneyType(field)),
+            displayValue: this.getPropValue(field),
             isEditDialogEnabled: false,
             lEntityName: field,
             editPlaceholder: this.ls.l('EditValuePlaceholder')
         };
     }
 
-    getPropValue(field) {
+    getPropValue(field, format = true) {
         let leadInfo = this.data && this.data.leadInfo;
         let value = leadInfo && leadInfo[field];
         if (!value && isNaN(value))
             return null;
 
-        return this.formatFieldValue(field, value);
+        return format ? this.formatFieldValue(field, value) : value;
     }
 
     updateValue(value, item) {
@@ -307,12 +308,17 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                 return value.utc().format(this.formatting.fieldDate);
             else
                 return value.format(this.formatting.fieldDateTime);
-        } else if (field == 'netMonthlyIncome' || field.toLowerCase().indexOf('dealAmount') >= 0)
+        } else if (this.hasFieldMoneyType(field))
             return this.currencyPipe.transform(value, this.invoiceSettings.currency);
         else if (field == 'ssn')
             return [value.slice(0, 3), value.slice(3, 5), value.slice(5, 9)].filter(Boolean).join('-');
         else
             return value;
+    }
+
+    hasFieldMoneyType(field) {
+        return field == 'netMonthlyIncome'
+            || field.toLowerCase().indexOf('amount') >= 0;
     }
 
     updateSourceContactName() {

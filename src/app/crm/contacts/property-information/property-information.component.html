@@ -892,10 +892,10 @@
                                             </div>
                                         </div>
                                         <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('GarageNumberReceived') }}</div>
+                                            <div class="dx-field-label">{{ ls.l('GarageRemoteNumberReceived') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-number-box
-                                                    [(value)]="property.garageNumberReceived"
+                                                    [(value)]="property.garageRemoteNumberReceived"
                                                     [stylingMode]="stylingMode"
                                                     showClearButton="true"
                                                     step="0"
@@ -916,6 +916,19 @@
                                                     [(value)]="property.garageKey"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('GarageKeyNumberReceived') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box
+                                                    [(value)]="property.garageKeyNumberReceived"
+                                                    [stylingMode]="stylingMode"
+                                                    showClearButton="true"
+                                                    step="0"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    (onValueChanged)="valueChanged()">
+                                                </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
