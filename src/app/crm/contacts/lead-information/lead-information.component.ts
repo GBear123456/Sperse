@@ -67,8 +67,8 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
     private _selectedTabIndex = 0;
     private readonly APP_TAB_INDEX = 1;
     private organizationUnits: any;
-    private invoiceSettings: InvoiceSettings = new InvoiceSettings();
     private readonly ident = 'LeadInformation';
+    public invoiceSettings: InvoiceSettings = new InvoiceSettings();
 
     urlHelper = UrlHelper;
     isCGManageAllowed = false;
@@ -88,7 +88,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                 icon: 'c-info',
                 items: [
                     { name: 'stage', readonly: true },
-                    { name: 'dealAmount' },
+                    { name: 'dealAmount', type: { style: 'currency', useGrouping: true } },
                     { name: 'creationDate', readonly: true },
                     { name: 'modificationDate', readonly: true }
                 ]
@@ -202,8 +202,17 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                 this.loadOrganizationUnits();
             }
         }, this.ident);
-        this.invoicesService.settings$.pipe(filter(Boolean), first()).subscribe((settings: InvoiceSettings) => {
+
+        this.invoicesService.settings$.pipe(
+            filter(Boolean), first()
+        ).subscribe((settings: InvoiceSettings) => {
             this.invoiceSettings = settings;
+            this.layoutColumns[0][0].items.some(item => {
+                if (item.type && item.type.style == 'currency') {
+                    item.type.currency = settings.currency;
+                    return true;
+                }
+            });
         });
     }
 
