@@ -66087,6 +66087,7 @@ export class SubscriptionShortInfoOutput implements ISubscriptionShortInfoOutput
     serviceName!: string | undefined;
     serviceId!: string | undefined;
     endDate!: moment.Moment | undefined;
+    gracePeriodDayCount!: number | undefined;
 
     constructor(data?: ISubscriptionShortInfoOutput) {
         if (data) {
@@ -66104,6 +66105,7 @@ export class SubscriptionShortInfoOutput implements ISubscriptionShortInfoOutput
             this.serviceName = data["serviceName"];
             this.serviceId = data["serviceId"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.gracePeriodDayCount = data["gracePeriodDayCount"];
         }
     }
 
@@ -66121,6 +66123,7 @@ export class SubscriptionShortInfoOutput implements ISubscriptionShortInfoOutput
         data["serviceName"] = this.serviceName;
         data["serviceId"] = this.serviceId;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["gracePeriodDayCount"] = this.gracePeriodDayCount;
         return data; 
     }
 }
@@ -66131,6 +66134,7 @@ export interface ISubscriptionShortInfoOutput {
     serviceName: string | undefined;
     serviceId: string | undefined;
     endDate: moment.Moment | undefined;
+    gracePeriodDayCount: number | undefined;
 }
 
 export class GetMemberInfoOutput implements IGetMemberInfoOutput {
@@ -72200,6 +72204,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
     frequency!: RecurringPaymentFrequency | undefined;
     fee!: number | undefined;
     trialDayCount!: number | undefined;
+    gracePeriodDayCount!: number | undefined;
 
     constructor(data?: IProductSubscriptionOptionInfo) {
         if (data) {
@@ -72215,6 +72220,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
             this.frequency = data["frequency"];
             this.fee = data["fee"];
             this.trialDayCount = data["trialDayCount"];
+            this.gracePeriodDayCount = data["gracePeriodDayCount"];
         }
     }
 
@@ -72230,6 +72236,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
         data["frequency"] = this.frequency;
         data["fee"] = this.fee;
         data["trialDayCount"] = this.trialDayCount;
+        data["gracePeriodDayCount"] = this.gracePeriodDayCount;
         return data; 
     }
 }
@@ -72238,6 +72245,7 @@ export interface IProductSubscriptionOptionInfo {
     frequency: RecurringPaymentFrequency | undefined;
     fee: number | undefined;
     trialDayCount: number | undefined;
+    gracePeriodDayCount: number | undefined;
 }
 
 export class ProductInfo implements IProductInfo {
