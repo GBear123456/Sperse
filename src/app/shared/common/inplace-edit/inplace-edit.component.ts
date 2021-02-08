@@ -14,6 +14,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
+import { DxNumberBoxComponent } from 'devextreme-angular/ui/number-box';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
@@ -32,6 +33,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 export class InplaceEditComponent extends AppComponentBase {
     @ViewChild(DxTextBoxComponent, { static: false }) textBox: DxTextBoxComponent;
     @ViewChild(DxTextAreaComponent, { static: false }) textArea: DxTextAreaComponent;
+    @ViewChild(DxNumberBoxComponent, { static: false }) numberBox: DxNumberBoxComponent;
 
     @Input() set data(model: InplaceEditModel) {
         if (model && (!this._data || this._data.value != model.value)) {
@@ -58,6 +60,7 @@ export class InplaceEditComponent extends AppComponentBase {
 
     @Input() id: number;
     @Input() mask: string;
+    @Input() format: any;
     @Input() multiline = false;
     @Input() maskInvalidMessage: string;
     @Input() maxLength;
@@ -125,7 +128,7 @@ export class InplaceEditComponent extends AppComponentBase {
     }
 
     updateItem() {
-        if (this.multiline || this.textBox.instance.option('isValid')) {
+        if (this.multiline || (this.textBox || this.numberBox).instance.option('isValid')) {
             if (this.value != this.valueOriginal && this.valueChanged)
                 this.valueChanged.emit(this.valueOriginal);
             this.isEditModeEnabled = false;
@@ -162,7 +165,7 @@ export class InplaceEditComponent extends AppComponentBase {
             if (this.multiline)
                 this.textArea.instance.focus();
             else
-                this.textBox.instance.focus();
+                (this.textBox || this.numberBox).instance.focus();
         });
     }
 
