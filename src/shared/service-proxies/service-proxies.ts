@@ -57232,6 +57232,9 @@ export interface IGetCustomerAndLeadStatsOutput {
 export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCustomersOutput {
     contactId!: number | undefined;
     fullName!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
+    bankCode!: string | undefined;
     creationTime!: moment.Moment | undefined;
 
     constructor(data?: IGetRecentlyCreatedCustomersOutput) {
@@ -57247,6 +57250,9 @@ export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCus
         if (data) {
             this.contactId = data["contactId"];
             this.fullName = data["fullName"];
+            this.email = data["email"];
+            this.phone = data["phone"];
+            this.bankCode = data["bankCode"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
         }
     }
@@ -57262,6 +57268,9 @@ export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCus
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["fullName"] = this.fullName;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["bankCode"] = this.bankCode;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         return data; 
     }
@@ -57270,16 +57279,19 @@ export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCus
 export interface IGetRecentlyCreatedCustomersOutput {
     contactId: number | undefined;
     fullName: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
+    bankCode: string | undefined;
     creationTime: moment.Moment | undefined;
 }
 
 export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOutput {
     leadId!: number | undefined;
+    contactId!: number | undefined;
+    fullName!: string | undefined;
     email!: string | undefined;
     phone!: string | undefined;
     bankCode!: string | undefined;
-    contactId!: number | undefined;
-    fullName!: string | undefined;
     creationTime!: moment.Moment | undefined;
 
     constructor(data?: IGetRecentlyCreatedLeadsOutput) {
@@ -57294,11 +57306,11 @@ export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOu
     init(data?: any) {
         if (data) {
             this.leadId = data["leadId"];
+            this.contactId = data["contactId"];
+            this.fullName = data["fullName"];
             this.email = data["email"];
             this.phone = data["phone"];
             this.bankCode = data["bankCode"];
-            this.contactId = data["contactId"];
-            this.fullName = data["fullName"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
         }
     }
@@ -57313,11 +57325,11 @@ export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOu
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["leadId"] = this.leadId;
+        data["contactId"] = this.contactId;
+        data["fullName"] = this.fullName;
         data["email"] = this.email;
         data["phone"] = this.phone;
         data["bankCode"] = this.bankCode;
-        data["contactId"] = this.contactId;
-        data["fullName"] = this.fullName;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         return data; 
     }
@@ -57325,11 +57337,11 @@ export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOu
 
 export interface IGetRecentlyCreatedLeadsOutput {
     leadId: number | undefined;
+    contactId: number | undefined;
+    fullName: string | undefined;
     email: string | undefined;
     phone: string | undefined;
     bankCode: string | undefined;
-    contactId: number | undefined;
-    fullName: string | undefined;
     creationTime: moment.Moment | undefined;
 }
 
