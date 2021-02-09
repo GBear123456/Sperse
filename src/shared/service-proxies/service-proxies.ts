@@ -68978,14 +68978,14 @@ export interface ICancelOrderInfo {
     sortOrder: number | undefined;
 }
 
-export class OrderSubscriptionServiceDto implements IOrderSubscriptionServiceDto {
+export class SubscriptionServiceDto implements ISubscriptionServiceDto {
     id!: number | undefined;
     serviceId!: string | undefined;
     serviceName!: string | undefined;
     serviceTypeId!: string | undefined;
     systemType!: string | undefined;
 
-    constructor(data?: IOrderSubscriptionServiceDto) {
+    constructor(data?: ISubscriptionServiceDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -69004,9 +69004,9 @@ export class OrderSubscriptionServiceDto implements IOrderSubscriptionServiceDto
         }
     }
 
-    static fromJS(data: any): OrderSubscriptionServiceDto {
+    static fromJS(data: any): SubscriptionServiceDto {
         data = typeof data === 'object' ? data : {};
-        let result = new OrderSubscriptionServiceDto();
+        let result = new SubscriptionServiceDto();
         result.init(data);
         return result;
     }
@@ -69022,7 +69022,7 @@ export class OrderSubscriptionServiceDto implements IOrderSubscriptionServiceDto
     }
 }
 
-export interface IOrderSubscriptionServiceDto {
+export interface ISubscriptionServiceDto {
     id: number | undefined;
     serviceId: string | undefined;
     serviceName: string | undefined;
@@ -69030,7 +69030,7 @@ export interface IOrderSubscriptionServiceDto {
     systemType: string | undefined;
 }
 
-export class OrderSbuscriptionPaymentDto implements IOrderSbuscriptionPaymentDto {
+export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     id!: number | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
@@ -69038,7 +69038,7 @@ export class OrderSbuscriptionPaymentDto implements IOrderSbuscriptionPaymentDto
     fee!: number | undefined;
     isSubscription!: boolean | undefined;
 
-    constructor(data?: IOrderSbuscriptionPaymentDto) {
+    constructor(data?: ISubscriptionPaymentDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -69058,9 +69058,9 @@ export class OrderSbuscriptionPaymentDto implements IOrderSbuscriptionPaymentDto
         }
     }
 
-    static fromJS(data: any): OrderSbuscriptionPaymentDto {
+    static fromJS(data: any): SubscriptionPaymentDto {
         data = typeof data === 'object' ? data : {};
-        let result = new OrderSbuscriptionPaymentDto();
+        let result = new SubscriptionPaymentDto();
         result.init(data);
         return result;
     }
@@ -69077,7 +69077,7 @@ export class OrderSbuscriptionPaymentDto implements IOrderSbuscriptionPaymentDto
     }
 }
 
-export interface IOrderSbuscriptionPaymentDto {
+export interface ISubscriptionPaymentDto {
     id: number | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
@@ -69098,8 +69098,8 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     statusCode!: string | undefined;
     status!: string | undefined;
     cancelationReason!: string | undefined;
-    orderSubscriptionServices!: OrderSubscriptionServiceDto[] | undefined;
-    orderSubscriptionPayments!: OrderSbuscriptionPaymentDto[] | undefined;
+    services!: SubscriptionServiceDto[] | undefined;
+    payments!: SubscriptionPaymentDto[] | undefined;
 
     constructor(data?: IOrderSubscriptionDto) {
         if (data) {
@@ -69123,15 +69123,15 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.statusCode = data["statusCode"];
             this.status = data["status"];
             this.cancelationReason = data["cancelationReason"];
-            if (data["orderSubscriptionServices"] && data["orderSubscriptionServices"].constructor === Array) {
-                this.orderSubscriptionServices = [];
-                for (let item of data["orderSubscriptionServices"])
-                    this.orderSubscriptionServices.push(OrderSubscriptionServiceDto.fromJS(item));
+            if (data["services"] && data["services"].constructor === Array) {
+                this.services = [];
+                for (let item of data["services"])
+                    this.services.push(SubscriptionServiceDto.fromJS(item));
             }
-            if (data["orderSubscriptionPayments"] && data["orderSubscriptionPayments"].constructor === Array) {
-                this.orderSubscriptionPayments = [];
-                for (let item of data["orderSubscriptionPayments"])
-                    this.orderSubscriptionPayments.push(OrderSbuscriptionPaymentDto.fromJS(item));
+            if (data["payments"] && data["payments"].constructor === Array) {
+                this.payments = [];
+                for (let item of data["payments"])
+                    this.payments.push(SubscriptionPaymentDto.fromJS(item));
             }
         }
     }
@@ -69156,15 +69156,15 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["statusCode"] = this.statusCode;
         data["status"] = this.status;
         data["cancelationReason"] = this.cancelationReason;
-        if (this.orderSubscriptionServices && this.orderSubscriptionServices.constructor === Array) {
-            data["orderSubscriptionServices"] = [];
-            for (let item of this.orderSubscriptionServices)
-                data["orderSubscriptionServices"].push(item.toJSON());
+        if (this.services && this.services.constructor === Array) {
+            data["services"] = [];
+            for (let item of this.services)
+                data["services"].push(item.toJSON());
         }
-        if (this.orderSubscriptionPayments && this.orderSubscriptionPayments.constructor === Array) {
-            data["orderSubscriptionPayments"] = [];
-            for (let item of this.orderSubscriptionPayments)
-                data["orderSubscriptionPayments"].push(item.toJSON());
+        if (this.payments && this.payments.constructor === Array) {
+            data["payments"] = [];
+            for (let item of this.payments)
+                data["payments"].push(item.toJSON());
         }
         return data; 
     }
@@ -69182,8 +69182,8 @@ export interface IOrderSubscriptionDto {
     statusCode: string | undefined;
     status: string | undefined;
     cancelationReason: string | undefined;
-    orderSubscriptionServices: OrderSubscriptionServiceDto[] | undefined;
-    orderSubscriptionPayments: OrderSbuscriptionPaymentDto[] | undefined;
+    services: SubscriptionServiceDto[] | undefined;
+    payments: SubscriptionPaymentDto[] | undefined;
 }
 
 export class SubscriptionInput implements ISubscriptionInput {

@@ -66,14 +66,14 @@
     </div>
     <div *dxTemplate="let detail of 'detail'">
         <div class="master-detail-caption"><b>{{ls.l('Services info')}}</b></div>
-        <dx-data-grid [dataSource]="detail.data.orderSubscriptionServices"
+        <dx-data-grid [dataSource]="detail.data.services"
                       [showBorders]="true"
                       [columnAutoWidth]="true">
 
             <dxi-column dataField="serviceName" [caption]="ls.l('Subscriptions.ServiceName')" cssClass="clipboard-holder"></dxi-column>
         </dx-data-grid>
         <div class="master-detail-caption"><b>{{ls.l('Payments info')}}</b></div>
-        <dx-data-grid [dataSource]="detail.data.orderSubscriptionPayments"
+        <dx-data-grid [dataSource]="detail.data.payments"
                       [showBorders]="true"
                       [columnAutoWidth]="true">
 
