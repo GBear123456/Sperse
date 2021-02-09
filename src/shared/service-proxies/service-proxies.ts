@@ -73001,6 +73001,7 @@ export class PropertyDto implements IPropertyDto {
     address!: CreateContactAddressInput | undefined;
     propertyType!: PropertyType | undefined;
     area!: number | undefined;
+    lotSize!: number | undefined;
     yearBuilt!: number | undefined;
     floor!: number | undefined;
     numberOfLevels!: number | undefined;
@@ -73070,6 +73071,13 @@ export class PropertyDto implements IPropertyDto {
     partyRoom!: boolean | undefined;
     guestSuite!: boolean | undefined;
     other!: string | undefined;
+    ownersOnTitle!: string | undefined;
+    mortgageHolder!: string | undefined;
+    ownerLiveInHouse!: boolean | undefined;
+    houseOwningTime!: string | undefined;
+    houseWithRenters!: boolean | undefined;
+    annualHOACondoFees!: number | undefined;
+    depositPutAmount!: number | undefined;
 
     constructor(data?: IPropertyDto) {
         if (data) {
@@ -73087,6 +73095,7 @@ export class PropertyDto implements IPropertyDto {
             this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.propertyType = data["propertyType"];
             this.area = data["area"];
+            this.lotSize = data["lotSize"];
             this.yearBuilt = data["yearBuilt"];
             this.floor = data["floor"];
             this.numberOfLevels = data["numberOfLevels"];
@@ -73156,6 +73165,13 @@ export class PropertyDto implements IPropertyDto {
             this.partyRoom = data["partyRoom"];
             this.guestSuite = data["guestSuite"];
             this.other = data["other"];
+            this.ownersOnTitle = data["ownersOnTitle"];
+            this.mortgageHolder = data["mortgageHolder"];
+            this.ownerLiveInHouse = data["ownerLiveInHouse"];
+            this.houseOwningTime = data["houseOwningTime"];
+            this.houseWithRenters = data["houseWithRenters"];
+            this.annualHOACondoFees = data["annualHOACondoFees"];
+            this.depositPutAmount = data["depositPutAmount"];
         }
     }
 
@@ -73173,6 +73189,7 @@ export class PropertyDto implements IPropertyDto {
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["propertyType"] = this.propertyType;
         data["area"] = this.area;
+        data["lotSize"] = this.lotSize;
         data["yearBuilt"] = this.yearBuilt;
         data["floor"] = this.floor;
         data["numberOfLevels"] = this.numberOfLevels;
@@ -73242,6 +73259,13 @@ export class PropertyDto implements IPropertyDto {
         data["partyRoom"] = this.partyRoom;
         data["guestSuite"] = this.guestSuite;
         data["other"] = this.other;
+        data["ownersOnTitle"] = this.ownersOnTitle;
+        data["mortgageHolder"] = this.mortgageHolder;
+        data["ownerLiveInHouse"] = this.ownerLiveInHouse;
+        data["houseOwningTime"] = this.houseOwningTime;
+        data["houseWithRenters"] = this.houseWithRenters;
+        data["annualHOACondoFees"] = this.annualHOACondoFees;
+        data["depositPutAmount"] = this.depositPutAmount;
         return data; 
     }
 }
@@ -73252,6 +73276,7 @@ export interface IPropertyDto {
     address: CreateContactAddressInput | undefined;
     propertyType: PropertyType | undefined;
     area: number | undefined;
+    lotSize: number | undefined;
     yearBuilt: number | undefined;
     floor: number | undefined;
     numberOfLevels: number | undefined;
@@ -73321,6 +73346,13 @@ export interface IPropertyDto {
     partyRoom: boolean | undefined;
     guestSuite: boolean | undefined;
     other: string | undefined;
+    ownersOnTitle: string | undefined;
+    mortgageHolder: string | undefined;
+    ownerLiveInHouse: boolean | undefined;
+    houseOwningTime: string | undefined;
+    houseWithRenters: boolean | undefined;
+    annualHOACondoFees: number | undefined;
+    depositPutAmount: number | undefined;
 }
 
 export class OptionDto implements IOptionDto {
