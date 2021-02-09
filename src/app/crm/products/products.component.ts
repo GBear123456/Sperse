@@ -56,7 +56,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
 
-    private readonly dataSourceURI = 'Products';
+    private readonly dataSourceURI = 'Product';
     private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;

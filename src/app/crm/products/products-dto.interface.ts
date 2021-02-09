@@ -4,6 +4,6 @@ export interface ProductDto {
     Name: string;
     Description: string;
     Group: string;
-    ProductType: string;
+    Type: string;
     Price: number;
 }
