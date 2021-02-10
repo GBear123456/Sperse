@@ -12,6 +12,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable, Subscription, merge, race } from 'rxjs';
 import { filter, map, switchMap, pluck, finalize, skip } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
+import * as moment from 'moment';
 
 /** Application imports */
 import {
@@ -22,6 +23,9 @@ import {
     PropertyServiceProxy,
     PropertyType,
     YardPatioEnum,
+    SellPeriod,
+    InterestRate,
+    ExitStrategy,
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
@@ -33,6 +37,7 @@ import { FireplaceEnum } from './enums/fireplace.enum';
 import { DayOfWeekEnum } from './enums/dayOfWeek.enum';
 import { GarbageEnum } from './enums/garbage.enum';
 import { ParkingEnum } from './enums/parking.enum';
+import { DateHelper } from '@shared/helpers/DateHelper';
 
 interface SelectBoxItem {
     displayValue: string;
@@ -76,6 +81,18 @@ export class PropertyInformationComponent implements OnInit {
         value: item
     }));
     yardPatioValues: SelectBoxItem[] = Object.values(YardPatioEnum).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    sellPeriods: SelectBoxItem[] = Object.values(SellPeriod).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    interestRates: SelectBoxItem[] = Object.values(InterestRate).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    exitStrategies: SelectBoxItem[] = Object.values(ExitStrategy).map((item: string) => ({
         displayValue: this.ls.l(item),
         value: item
     }));
@@ -216,6 +233,18 @@ export class PropertyInformationComponent implements OnInit {
         this.valueChanged();
     }
 
+    get sinceListedDays(): number {
+        return this.property && this.property.listedDate
+            ? moment().diff(moment(this.property.listedDate), 'days')
+            : undefined;
+    }
+    sinceListedDaysChanged(newValue: number) {
+        this.property.listedDate = newValue ?
+            moment().startOf('Day').subtract(newValue, "days") :
+            undefined
+        this.valueChanged();
+    }
+
     valueChanged(successCallback?: () => void) {
         this.loadingService.startLoading(this.elementRef.nativeElement);
         this.propertyServiceProxy.updatePropertyDetails(this.property).pipe(
@@ -228,6 +257,14 @@ export class PropertyInformationComponent implements OnInit {
                 this.changeDetectorRef.detectChanges();
             }
         );
+    }
+
+    getDateValue(date) {
+        return date && date.toDate ? date.toDate() : date;
+    }
+    dateValueChanged($event, propName: string) {
+        this.property[propName] = $event.value && DateHelper.removeTimezoneOffset($event.value, true, 'from');
+        this.valueChanged();
     }
 
     getMultipleValues(propName, items: any[]): number[] {
