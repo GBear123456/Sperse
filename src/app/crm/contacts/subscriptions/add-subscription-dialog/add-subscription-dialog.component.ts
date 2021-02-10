@@ -79,7 +79,8 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         ],
         productId: undefined,
         paymentPeriodType: undefined,
-        updateThirdParty: false
+        updateThirdParty: false,
+        hasRecurringBilling: false
     });
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')

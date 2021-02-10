@@ -66088,6 +66088,8 @@ export class SubscriptionShortInfoOutput implements ISubscriptionShortInfoOutput
     serviceId!: string | undefined;
     endDate!: moment.Moment | undefined;
     gracePeriodDayCount!: number | undefined;
+    hasRecurringBilling!: boolean | undefined;
+    finalEndDate!: moment.Moment | undefined;
 
     constructor(data?: ISubscriptionShortInfoOutput) {
         if (data) {
@@ -66106,6 +66108,8 @@ export class SubscriptionShortInfoOutput implements ISubscriptionShortInfoOutput
             this.serviceId = data["serviceId"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.gracePeriodDayCount = data["gracePeriodDayCount"];
+            this.hasRecurringBilling = data["hasRecurringBilling"];
+            this.finalEndDate = data["finalEndDate"] ? moment(data["finalEndDate"].toString()) : <any>undefined;
         }
     }
 
@@ -66124,6 +66128,8 @@ export class SubscriptionShortInfoOutput implements ISubscriptionShortInfoOutput
         data["serviceId"] = this.serviceId;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["gracePeriodDayCount"] = this.gracePeriodDayCount;
+        data["hasRecurringBilling"] = this.hasRecurringBilling;
+        data["finalEndDate"] = this.finalEndDate ? this.finalEndDate.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -66135,6 +66141,8 @@ export interface ISubscriptionShortInfoOutput {
     serviceId: string | undefined;
     endDate: moment.Moment | undefined;
     gracePeriodDayCount: number | undefined;
+    hasRecurringBilling: boolean | undefined;
+    finalEndDate: moment.Moment | undefined;
 }
 
 export class GetMemberInfoOutput implements IGetMemberInfoOutput {
@@ -69256,6 +69264,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     productId!: number | undefined;
     paymentPeriodType!: RecurringPaymentFrequency | undefined;
     updateThirdParty!: boolean | undefined;
+    hasRecurringBilling!: boolean | undefined;
 
     constructor(data?: IUpdateOrderSubscriptionInput) {
         if (data) {
@@ -69279,6 +69288,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             this.productId = data["productId"];
             this.paymentPeriodType = data["paymentPeriodType"];
             this.updateThirdParty = data["updateThirdParty"];
+            this.hasRecurringBilling = data["hasRecurringBilling"];
         }
     }
 
@@ -69302,6 +69312,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
         data["productId"] = this.productId;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["updateThirdParty"] = this.updateThirdParty;
+        data["hasRecurringBilling"] = this.hasRecurringBilling;
         return data; 
     }
 }
@@ -69314,6 +69325,7 @@ export interface IUpdateOrderSubscriptionInput {
     productId: number | undefined;
     paymentPeriodType: RecurringPaymentFrequency | undefined;
     updateThirdParty: boolean | undefined;
+    hasRecurringBilling: boolean | undefined;
 }
 
 export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInput {
