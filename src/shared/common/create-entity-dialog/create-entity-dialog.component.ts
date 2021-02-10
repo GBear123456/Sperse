@@ -67,7 +67,8 @@ import {
     PropertyInput,
     SimilarContactOutput,
     StageDto,
-    TrackingInfo
+    TrackingInfo,
+    InvoiceSettings
 } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { SimilarEntitiesDialogComponent } from './similar-entities-dialog/similar-entities-dialog.component';
@@ -81,6 +82,7 @@ import { ValidationHelper } from '@shared/helpers/ValidationHelper';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { MessageService } from '@abp/message/message.service';
@@ -150,6 +152,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     currentUserId = abp.session.userId;
     person = new PersonInfoDto();
+    invoiceSettings: InvoiceSettings = new InvoiceSettings();
+    currencyFormat = { style: "currency", currency: "USD", useGrouping: true };
 
     emailsComponent: any;
     phonesComponent: any;
@@ -273,6 +277,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     disallowMultipleItems: boolean = this.data.disallowMultipleItems;
     showBankCodeField: boolean = this.userManagementService.checkBankCodeFeature();
     dontCheckSimilarEntities: boolean = this.data.dontCheckSimilarEntities;
+    dealAmount: number;
     bankCode: string;
     today: Date = new Date();
     readonly leadFields: KeysEnum<LeadDto> = LeadFields;
@@ -313,6 +318,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         private contactAddressService: ContactAddressServiceProxy,
         private nameParser: NameParserService,
         private pipelineService: PipelineService,
+        private invoicesService: InvoicesService,
         private orgServiceProxy: OrganizationContactServiceProxy,
         private notifyService: NotifyService,
         private messageService: MessageService,
@@ -334,6 +340,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         this.addressTypesLoad();
         this.phoneTypesLoad();
         this.emailTypesLoad();
+        this.invoiceSettingsLoad();
         if (!this.hideLinksField)
             this.linkTypesLoad();
         if (this.data.isInLeadMode)
@@ -385,6 +392,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             sourceContactId: this.sourceContactId,
             trackingInfo: trackingInfo,
             parentContactId: this.data.parentId,
+            dealAmount: this.dealAmount,
             bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null,
             leadTypeId: this.data.entityTypeId
         };
@@ -994,6 +1002,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.contact.addresses = [ new Address(this.addressesTypeDefault) ];
             this.sourceContactId = undefined;
             this.notes = undefined;
+            this.dealAmount = undefined;
             this.bankCode = '????';
 
             this.person = new PersonInfoDto();
@@ -1064,6 +1073,16 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             },
             () => this.modalDialog.finishLoading()
         );
+    }
+
+    invoiceSettingsLoad() {
+        this.invoicesService.settings$.pipe(
+            filter(Boolean), first()
+        ).subscribe((settings: InvoiceSettings) => {
+            this.invoiceSettings = settings;
+            this.currencyFormat.currency = settings.currency;
+            this.changeDetectorRef.detectChanges();
+        });
     }
 
     onStagesChanged(event) {

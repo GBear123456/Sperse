@@ -201,12 +201,21 @@
                 </div>
                 <div class="field">
                     <label class="notes-label">{{ls.l('Notes')}}</label>
-                    <dx-text-area
-                        name="comment"
-                        width="570px"
-                        height="34px"
-                        [(value)]="property.note">
+                    <dx-text-area name="comment"
+                                  width="570px"
+                                  height="34px"
+                                  [(value)]="property.note">
                     </dx-text-area>
+                </div>
+                <div class="field">
+                    <label class="currency-label">{{ls.l('Deal')}}</label>
+                    <dx-number-box width="270px"
+                                   height="34px"
+                                   step="0"
+                                   [placeholder]="ls.l('Amount')"
+                                   [format]="currencyFormat"
+                                   [(value)]="dealAmount">
+                    </dx-number-box>
                 </div>
             </dx-validation-group>
             <dx-validation-group *ngIf="showPropertiesDropdown">
@@ -220,6 +229,16 @@
                                    [placeholder]="ls.l('PropertyDropdownPlaceholder')"
                                    [(value)]="propertyId">
                     </dx-select-box>
+                </div>
+                <div class="field">
+                    <label class="currency-label">{{ls.l('Deal')}}</label>
+                    <dx-number-box width="270px"
+                                   height="34px"
+                                   step="0"
+                                   [placeholder]="ls.l('Amount')"
+                                   [format]="currencyFormat"
+                                   [(value)]="dealAmount">
+                    </dx-number-box>
                 </div>
             </dx-validation-group>
             <dx-validation-group *ngIf="!hideCompanyField"
@@ -471,6 +490,16 @@
                             <span (click)="addNewContact('addresses')">{{ls.l('+ Add address')}}</span>
                         </div>
                     </div>
+                </div>
+                <div *ngIf="!showPropertyFields && !showPropertiesDropdown" class="field">
+                    <label class="currency-label">{{ls.l('Deal')}}</label>
+                    <dx-number-box width="270px"
+                                   height="34px"
+                                   step="0"
+                                   [placeholder]="ls.l('Amount')"
+                                   [format]="currencyFormat"
+                                   [(value)]="dealAmount">
+                    </dx-number-box>
                 </div>
             </dx-validation-group>
             <div *ngIf="showBankCodeField" class="field bank-code">
