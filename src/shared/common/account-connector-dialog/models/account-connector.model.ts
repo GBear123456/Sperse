@@ -1,10 +1,9 @@
 import { AccountConnectors } from '@shared/AppEnums';
 export interface AccountConnector {
-    getName: () => AccountConnectors;
+    name: AccountConnectors;
     title: string;
     description: string;
     iconName: string;
     disabled: boolean;
-    switcher?: boolean;
     checked?: boolean;
 }

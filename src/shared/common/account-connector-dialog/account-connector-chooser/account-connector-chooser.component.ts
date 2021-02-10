@@ -6,10 +6,13 @@ import {
     OnInit,
     Output
 } from '@angular/core';
+import { MatDialog } from '@angular/material/dialog';
 import { AccountConnector } from '@shared/common/account-connector-dialog/models/account-connector.model';
 import { AccountConnectors } from '@shared/AppEnums';
 import { MatDialogRef } from '@angular/material/dialog';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ConditionsType } from '@shared/AppEnums';
 
 @Component({
     selector: 'account-connector-chooser',
@@ -20,42 +23,58 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class AccountConnectorChooserComponent implements OnInit {
     @Input() disabledConnectors: AccountConnectors[];
     @Output() onConnectorChosen: EventEmitter<AccountConnectors> = new EventEmitter<AccountConnectors>();
+
     selectedConnector: AccountConnector;
-    connectors: AccountConnector[];
+    accountConnectors = AccountConnectors;
+    connectors: {
+        [name: string]: AccountConnector
+    };
+
     constructor(
+        private dialog: MatDialog,
         private dialogRef: MatDialogRef<AccountConnectorChooserComponent>,
         public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
-        this.connectors = [
-            {
-                getName: function() { return this.checked ? AccountConnectors.SaltEdge : AccountConnectors.Plaid },
+        this.connectors = {
+            [AccountConnectors.Plaid]: {
+                name: AccountConnectors.Plaid,
                 iconName: 'plaid-connector',
                 title: this.ls.l('PlaidConnectorTitle'),
                 description: this.ls.l('PlaidConnectorDescription'),
-                disabled: false,
-                switcher: true,
-                checked: false
-                // disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.Plaid))
+                disabled: this.checkDisabled(AccountConnectors.Plaid)
             },
-            {
-                getName: () => AccountConnectors.QuickBook,
+            [AccountConnectors.SaltEdge]: {
+                name: AccountConnectors.SaltEdge,
+                iconName: 'salt-edge-connector',
+                title: this.ls.l('SaltEdgeConnectorTitle'),
+                description: this.ls.l('SaltEdgeConnectorDescription'),
+                disabled: this.checkDisabled(AccountConnectors.SaltEdge)
+            },        
+            [AccountConnectors.QuickBook]: {
+                name: AccountConnectors.QuickBook,
                 iconName: 'quick-book-connector',
                 title: this.ls.l('QuickBookConnectorTitle'),
                 description: this.ls.l('QuickBookConnectorDescription'),
-                disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.QuickBook))
+                disabled: this.checkDisabled(AccountConnectors.QuickBook)
             },
-            {
-                getName: () => AccountConnectors.XeroOAuth2,
+            [AccountConnectors.XeroOAuth2]: {
+                name: AccountConnectors.XeroOAuth2,
                 iconName: 'xero-connector',
                 title: this.ls.l('XeroConnectorTitle'),
                 description: this.ls.l('XeroConnectorDescription'),
-                disabled: !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(AccountConnectors.XeroOAuth2))
+                disabled: this.checkDisabled(AccountConnectors.XeroOAuth2)
             }
-        ];
+        };
         /** Select connector by default */
-        this.selectConnector(this.connectors.find((connector: AccountConnector) => !connector.disabled));
+        this.selectConnector(Object.keys(AccountConnectors).map((name: AccountConnectors) => {
+            return this.connectors[name];
+        }).find((connector: AccountConnector) => !connector.disabled));
+    }
+
+    checkDisabled(connectorName: AccountConnectors) {
+        return !!(this.disabledConnectors && ~this.disabledConnectors.indexOf(connectorName));
     }
 
     selectConnector(connector: AccountConnector, next: boolean = false) {
@@ -67,10 +86,13 @@ export class AccountConnectorChooserComponent implements OnInit {
         }
     }
 
+    openTermsModal() {
+        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: { type: ConditionsType.Terms } });
+    }
+
     next() {
-        if (this.selectedConnector) {
-            this.onConnectorChosen.emit(this.selectedConnector.getName());
-        }
+        if (this.selectedConnector)
+            this.onConnectorChosen.emit(this.selectedConnector.name);
     }
 
     close() {
