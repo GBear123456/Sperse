@@ -41,6 +41,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AddServiceProductDialogComponent } from '../add-service-product-dialog/add-service-product-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { SettingService } from 'abp-ng2-module/dist/src/settings/setting.service';
 
 @Component({
     selector: 'add-product-dialog',
@@ -66,6 +67,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     productGroups: ProductGroupInfo[];
     services: ServiceProductDto[];
     frequencies = Object.keys(RecurringPaymentFrequency);
+    gracePeriodDefaultValue: number;
 
     constructor(
         private elementRef: ElementRef,
@@ -80,6 +82,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         public dialogRef: MatDialogRef<AddProductDialogComponent>,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
+        private setting: SettingService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef.beforeClose().subscribe(() => {
@@ -101,6 +104,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             this.services = services;
             this.checkAddManageOption(this.services);
         });
+
+        this.gracePeriodDefaultValue = this.setting.getInt('App.OrderSubscription.DefaultSubscriptionGracePeriodDayCount');
     }
 
     ngOnInit() {
