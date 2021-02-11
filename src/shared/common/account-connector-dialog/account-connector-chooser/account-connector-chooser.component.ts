@@ -24,6 +24,7 @@ export class AccountConnectorChooserComponent implements OnInit {
     @Input() disabledConnectors: AccountConnectors[];
     @Output() onConnectorChosen: EventEmitter<AccountConnectors> = new EventEmitter<AccountConnectors>();
 
+    conditionsType = ConditionsType;
     selectedConnector: AccountConnector;
     accountConnectors = AccountConnectors;
     connectors: {
@@ -86,8 +87,8 @@ export class AccountConnectorChooserComponent implements OnInit {
         }
     }
 
-    openTermsModal() {
-        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: { type: ConditionsType.Terms } });
+    openTermsModal(type: ConditionsType) {
+        this.dialog.open(ConditionsModalComponent, { panelClass: 'slider', data: { type } });
     }
 
     next() {

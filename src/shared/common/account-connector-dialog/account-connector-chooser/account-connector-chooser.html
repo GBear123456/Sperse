@@ -53,7 +53,7 @@
 <div class="footer">
     <div class="privacy-policy">
         <img src="assets/common/icons/c-info.svg">
-        <p>{{ls.l('ContinuingAgreeProviders')}} <a (click)="openTermsModal()">{{ls.l('TermsAndPolicy')}}</a>.</p>
+        <p>{{ls.l('ContinuingAgreeProviders')}} <a (click)="openTermsModal(conditionsType.Terms)">{{ls.l('TermsOfService')}}</a> {{ls.l('and')}} <a (click)="openTermsModal(conditionsType.Policies)">{{ls.l('PrivacyPolicy')}}</a>.</p>
     </div>
     <button (click)="next()" [disabled]="!selectedConnector">{{ ls.l('Next') }}</button>
 </div>
