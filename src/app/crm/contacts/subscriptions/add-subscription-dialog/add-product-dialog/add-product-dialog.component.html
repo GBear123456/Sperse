@@ -1,5 +1,5 @@
 <header>
-    <h2 mat-dialog-title>{{ls.l('AddProduct')}}</h2>
+    <h2 mat-dialog-title>{{ls.l(data.product ? 'EditProduct' : 'AddProduct')}}</h2>
     <mat-dialog-actions>
         <button mat-button (click)="saveProduct()" class="button-layout button-primary">{{ls.l('Save')}}</button>
     </mat-dialog-actions>
