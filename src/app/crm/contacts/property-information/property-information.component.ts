@@ -10,7 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { Observable, Subscription, merge, race } from 'rxjs';
-import { filter, map, switchMap, pluck, finalize, skip } from 'rxjs/operators';
+import { filter, map, switchMap, pluck, finalize, skip, first } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 import * as moment from 'moment';
 
@@ -26,6 +26,7 @@ import {
     SellPeriod,
     InterestRate,
     ExitStrategy,
+    InvoiceSettings,
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
@@ -38,6 +39,7 @@ import { DayOfWeekEnum } from './enums/dayOfWeek.enum';
 import { GarbageEnum } from './enums/garbage.enum';
 import { ParkingEnum } from './enums/parking.enum';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 
 interface SelectBoxItem {
     displayValue: string;
@@ -57,6 +59,9 @@ export class PropertyInformationComponent implements OnInit {
     propertyAddresses: AddressDto[];
     leadInfoSubscription: Subscription;
     stylingMode = 'filled';
+
+    invoiceSettings: InvoiceSettings = new InvoiceSettings();
+    currencyFormat = { style: "currency", currency: "USD", useGrouping: true };
 
     yesNoDropdowns: SelectBoxItem[] = [
         { displayValue: 'Yes', value: true },
@@ -119,6 +124,7 @@ export class PropertyInformationComponent implements OnInit {
         private propertyServiceProxy: PropertyServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
         private loadingService: LoadingService,
+        private invoicesService: InvoicesService,
         private elementRef: ElementRef,
         public ls: AppLocalizationService
     ) {}
@@ -150,6 +156,8 @@ export class PropertyInformationComponent implements OnInit {
             this.savePropertyInfo(property);
             this.changeDetectorRef.detectChanges();
         });
+
+        this.invoiceSettingsLoad();
     }
 
     savePropertyInfo(property: PropertyDto) {
@@ -312,6 +320,16 @@ export class PropertyInformationComponent implements OnInit {
     validateProperty(event): void {
         if (event.value)
             this.valueChanged();
+    }
+
+    invoiceSettingsLoad() {
+        this.invoicesService.settings$.pipe(
+            filter(Boolean), first()
+        ).subscribe((settings: InvoiceSettings) => {
+            this.invoiceSettings = settings;
+            this.currencyFormat.currency = settings.currency;
+            this.changeDetectorRef.detectChanges();
+        });
     }
 
     ngOnDestroy() {
