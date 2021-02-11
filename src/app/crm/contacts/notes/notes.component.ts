@@ -9,7 +9,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, Observable, of, zip } from 'rxjs';
-import { first, filter, finalize, map, switchMap, tap, distinctUntilChanged } from 'rxjs/operators';
+import { first, filter, finalize, map, switchMap, tap,
+    distinctUntilChanged, takeUntil, debounceTime } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -63,9 +64,25 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         this.FilterPropertyIndex
     ];
 
+    leadInfo: any;
+    contactInfo: any;
     notes: NoteInfoDto[];
+    contactIds$: Observable<number[]> = zip(
+        this.clientService.contactInfo$.pipe(filter(Boolean)),
+        this.clientService.leadInfo$.pipe(filter(Boolean))
+    ).pipe(
+        map(([contactInfo, leadInfo]: [ ContactInfoDto, LeadInfoDto]) => {
+            this.leadInfo = leadInfo;
+            this.contactInfo = contactInfo;
+            return [
+                contactInfo.id, contactInfo.primaryOrganizationContactId || 0, leadInfo.propertyId || 0
+            ];
+        }),
+        distinctUntilChanged((prevIds: number[], nextIds: number[]) => !ArrayHelper.dataChanged(prevIds, nextIds)),
+    );
+
     notes$: Observable<NoteInfoDto[]> = combineLatest(
-        this.getContactIds(),
+        this.contactIds$,
         this.refresh$.asObservable()
     ).pipe(
         switchMap(([contactIds, refresh]: [number[], boolean]) => {
@@ -81,7 +98,6 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                         })),
                         tap((notes: NoteInfoDto[]) => {
                             this.notes = notes;
-                            setTimeout(() => this.updateToolbar(), 500);
                             this.notesService['data'] = {
                                 contactIds: contactIds,
                                 source: notes
@@ -117,22 +133,9 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
             return contactIds.filter(Boolean);
     }
 
-    getContactIds(): Observable<number[]> {
-        return zip(
-            this.clientService.contactInfo$.pipe(filter(Boolean)),
-            this.clientService.leadInfo$.pipe(filter(Boolean))
-        ).pipe(
-            map(([contactInfo, leadInfo]: [ ContactInfoDto, LeadInfoDto]) => {
-                return [
-                    contactInfo.id, contactInfo.primaryOrganizationContactId || 0, leadInfo.propertyId || 0
-                ];
-            }),
-            distinctUntilChanged((prevIds: number[], nextIds: number[]) => !ArrayHelper.dataChanged(prevIds, nextIds)),
-        );
-    }
-
     ngOnInit() {
         this.notes$.pipe(first()).subscribe((notes: NoteInfoDto[]) => {
+            this.updateToolbar();
             if (this.componentIsActivated) {
                 if (!notes || !notes.length || this.route.snapshot.queryParams.addNew)
                     setTimeout(() => this.clientService.showNoteAddDialog());
@@ -141,10 +144,6 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     }
 
     private updateToolbar() {
-        let dataGrid = this.dataGrid && this.dataGrid.instance,
-            startItemIndex = dataGrid && this.showGridView ? (dataGrid.pageIndex() * dataGrid.pageSize() + 1) : 1,
-            endItemIndex = dataGrid && this.showGridView ? startItemIndex + dataGrid.getVisibleRows().length - 1 : this.notes.length,
-            totalCount = dataGrid && this.showGridView ? dataGrid.totalCount() : this.notes.length;
         this.clientService.toolbarUpdate({
             customToolbar: [{
                 location: 'before',
@@ -156,9 +155,21 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                             class: 'group-notes-filter'
                         },
                         items: [
-                            {id: this.FilterPersonIndex, text: this.l('Person')},
-                            {id: this.FilterCompanyIndex, text: this.l('Company')},
-                            {id: this.FilterPropertyIndex, text: this.l('Property')}
+                            {
+                                id: this.FilterPersonIndex,
+                                text: this.l('Person'),
+                                visible: this.contactInfo.primaryOrganizationContactId || this.leadInfo.propertyId
+                            },
+                            {
+                                id: this.FilterCompanyIndex,
+                                text: this.l('Company'),
+                                visible: this.contactInfo.primaryOrganizationContactId
+                            },
+                            {
+                                id: this.FilterPropertyIndex,
+                                text: this.l('Property'),
+                                visible: this.leadInfo.propertyId
+                            }
                         ],
                         selectionMode: 'multiple',
                         stylingMode: 'text',
@@ -171,39 +182,47 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                                 this.invalidate();
                         }
                     }
-                }, {
-                    widget: 'dxSelectBox',
-                    options: {
-                        width: '230px',
-                        valueExpr: 'id',
-                        displayExpr: 'name',
-                        value: this.ascendingSorting,
-                        showClearButton: false,
-                        placeholder: this.l('SortBy', ''),
-                        dataSource: [
-                            {id: false, name: this.l('SortBy', this.l('Newest'))},
-                            {id: true, name: this.l('SortBy', this.l('Latest'))}
-                        ],
-                        onValueChanged: event => {
-                            this.ascendingSorting = event.value;
-                            this.invalidate();
-                        },
-                        inputAttr: {view: 'headline'}
-                    }
                 }]
             }, {
                 location: 'after',
                 items: [{
                     widget: 'dxTextBox',
                     options: {
-                        value: startItemIndex + ' - ' + endItemIndex + ' of ' + totalCount,
                         inputAttr: {view: 'headline'},
-                        visible: !!totalCount,
-                        readOnly: true
+                        readOnly: true,
+                        onInitialized: (event) => {
+                            this.notes$.pipe(
+                                takeUntil(this.destroy$),
+                                takeUntil(this.clientService.toolbarSubject$),
+                                debounceTime(300)
+                            ).subscribe(() => {
+                                let dataGrid = this.dataGrid && this.dataGrid.instance,
+                                    startItemIndex = dataGrid && this.showGridView ? (dataGrid.pageIndex() * dataGrid.pageSize() + 1) : 1,
+                                    endItemIndex = dataGrid && this.showGridView ? startItemIndex + dataGrid.getVisibleRows().length - 1 : this.notes.length,
+                                    totalCount = dataGrid && this.showGridView ? dataGrid.totalCount() : this.notes.length;
+                                event.component.option('value', startItemIndex + ' - ' + endItemIndex + ' of ' + totalCount);
+                                event.component.option('visible', !!totalCount);
+                            });
+                        }
                     }
                 }]
-            },
-            {
+            }, {
+                location: 'after',
+                items: [
+                    {
+                        name: 'sort',
+                        action: (event) => {
+                            let item = event.element.getElementsByTagName('img')[0];
+                            this.ascendingSorting = !item.classList.contains('rotate');
+                            if (this.ascendingSorting)
+                                item.classList.add('rotate');
+                            else
+                                item.classList.remove('rotate');
+                            this.invalidate();
+                        }
+                    }
+                ]
+            }, {
                 location: 'after',
                 items: [
                     {
@@ -225,8 +244,6 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                     options: { checkPressed: () => this.showGridView },
                     action: () => {
                         this.showGridView = !this.showGridView;
-                        if (!this.showGridView)
-                            this.updateToolbar();
                     }
                 }]
             }
@@ -234,7 +251,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     }
 
     private togglePinNote(note) {
-        this.startLoading();            
+        this.startLoading();
         let request = note.pinnedDateTime ?
             this.notesService.unpinNote(new UnpinNoteInput({
                 contactId: note.contactId,
@@ -248,7 +265,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         request.pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
-            this.invalidate();        
+            this.invalidate();
         });
     }
 
@@ -335,10 +352,6 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     showActonMenu(note: NoteInfoDto) {
         return (note && note.addedByUserId === this.userId) ||
             this.permission.isGranted(AppPermissions.CRMManageOtherUsersNote);
-    }
-
-    onContentReady() {
-        this.updateToolbar();
     }
 
     onRowPrepared(event) {
