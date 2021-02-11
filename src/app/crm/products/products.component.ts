@@ -63,7 +63,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     public headlineButtons: HeadlineButton[] = [
         {
             enabled: true,
-            action: this.showProductDialog.bind(this),
+            action: () => this.showProductDialog(),
             label: this.l('AddProduct')
         }
     ];

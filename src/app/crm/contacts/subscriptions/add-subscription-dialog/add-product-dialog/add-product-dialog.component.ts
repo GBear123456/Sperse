@@ -92,7 +92,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             });
         });
 
-        if (data.product)
+        if (data.product && data.product.id)
             this.product = new UpdateProductInput(data.product);
         else
             this.product = new CreateProductInput(data.product);
@@ -139,8 +139,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     saveProduct() {
         if (this.validationGroup.instance.validate().isValid) {
-            if (this.data.product)
-                this.productProxy.updateProduct(<UpdateProductInput>this.product).subscribe(() => {
+            if (this.product instanceof UpdateProductInput)
+                this.productProxy.updateProduct(this.product).subscribe(() => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
                     this.dialogRef.close();
                 });
