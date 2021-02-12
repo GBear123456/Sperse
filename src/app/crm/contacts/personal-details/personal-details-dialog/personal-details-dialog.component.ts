@@ -127,6 +127,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     affiliateRate;
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     hasCommissionsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
+    affiliateManageAllowed = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesManage);
 
     constructor(
         private route: ActivatedRoute,
@@ -678,8 +679,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     openSourceContactList(event) {
-        event.stopPropagation();
-        this.sourceComponent.toggle();
+        if (this.affiliateManageAllowed) {
+            event.stopPropagation();
+            this.sourceComponent.toggle();
+        }
     }
 
     removeSourceContact(event) {
