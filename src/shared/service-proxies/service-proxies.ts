@@ -43483,8 +43483,21 @@ export interface IBusinessEntityDto {
     hasChildren: boolean | undefined;
 }
 
+export enum BusinessEntityType {
+    Other = "Other", 
+    LLC = "LLC", 
+    SoleProprietership = "SoleProprietership", 
+    LLP = "LLP", 
+    LLLP = "LLLP", 
+    Corp = "Corp", 
+    Trust = "Trust", 
+    LP = "LP", 
+    Inc = "Inc", 
+    Partnership = "Partnership", 
+}
+
 export class BusinessEntityTypeDto implements IBusinessEntityTypeDto {
-    id!: string | undefined;
+    id!: BusinessEntityType | undefined;
     name!: string | undefined;
 
     constructor(data?: IBusinessEntityTypeDto) {
@@ -43519,15 +43532,20 @@ export class BusinessEntityTypeDto implements IBusinessEntityTypeDto {
 }
 
 export interface IBusinessEntityTypeDto {
-    id: string | undefined;
+    id: BusinessEntityType | undefined;
     name: string | undefined;
+}
+
+export enum BusinessEntityStatus {
+    Active = "Active", 
+    Inactive = "Inactive", 
 }
 
 export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
     name!: string | undefined;
     parentId!: number | undefined;
     industry!: string | undefined;
-    typeId!: string | undefined;
+    type!: BusinessEntityType | undefined;
     taxNumber!: string | undefined;
     dateOpened!: moment.Moment | undefined;
     website!: string | undefined;
@@ -43541,7 +43559,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
     zip!: string | undefined;
     city!: string | undefined;
     streetAddress!: string | undefined;
-    statusId!: string | undefined;
+    status!: BusinessEntityStatus | undefined;
     isDefault!: boolean | undefined;
     id!: number | undefined;
 
@@ -43559,7 +43577,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
             this.name = data["name"];
             this.parentId = data["parentId"];
             this.industry = data["industry"];
-            this.typeId = data["typeId"];
+            this.type = data["type"];
             this.taxNumber = data["taxNumber"];
             this.dateOpened = data["dateOpened"] ? moment(data["dateOpened"].toString()) : <any>undefined;
             this.website = data["website"];
@@ -43573,7 +43591,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
             this.zip = data["zip"];
             this.city = data["city"];
             this.streetAddress = data["streetAddress"];
-            this.statusId = data["statusId"];
+            this.status = data["status"];
             this.isDefault = data["isDefault"];
             this.id = data["id"];
         }
@@ -43591,7 +43609,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
         data["name"] = this.name;
         data["parentId"] = this.parentId;
         data["industry"] = this.industry;
-        data["typeId"] = this.typeId;
+        data["type"] = this.type;
         data["taxNumber"] = this.taxNumber;
         data["dateOpened"] = this.dateOpened ? this.dateOpened.toISOString() : <any>undefined;
         data["website"] = this.website;
@@ -43605,7 +43623,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
         data["zip"] = this.zip;
         data["city"] = this.city;
         data["streetAddress"] = this.streetAddress;
-        data["statusId"] = this.statusId;
+        data["status"] = this.status;
         data["isDefault"] = this.isDefault;
         data["id"] = this.id;
         return data; 
@@ -43616,7 +43634,7 @@ export interface IBusinessEntityInfoDto {
     name: string | undefined;
     parentId: number | undefined;
     industry: string | undefined;
-    typeId: string | undefined;
+    type: BusinessEntityType | undefined;
     taxNumber: string | undefined;
     dateOpened: moment.Moment | undefined;
     website: string | undefined;
@@ -43630,7 +43648,7 @@ export interface IBusinessEntityInfoDto {
     zip: string | undefined;
     city: string | undefined;
     streetAddress: string | undefined;
-    statusId: string | undefined;
+    status: BusinessEntityStatus | undefined;
     isDefault: boolean | undefined;
     id: number | undefined;
 }
@@ -43639,7 +43657,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     name!: string;
     parentId!: number | undefined;
     industry!: string | undefined;
-    typeId!: string | undefined;
+    type!: BusinessEntityType | undefined;
     taxNumber!: string | undefined;
     dateOpened!: moment.Moment | undefined;
     website!: string | undefined;
@@ -43670,7 +43688,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
             this.name = data["name"];
             this.parentId = data["parentId"];
             this.industry = data["industry"];
-            this.typeId = data["typeId"];
+            this.type = data["type"];
             this.taxNumber = data["taxNumber"];
             this.dateOpened = data["dateOpened"] ? moment(data["dateOpened"].toString()) : <any>undefined;
             this.website = data["website"];
@@ -43701,7 +43719,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
         data["name"] = this.name;
         data["parentId"] = this.parentId;
         data["industry"] = this.industry;
-        data["typeId"] = this.typeId;
+        data["type"] = this.type;
         data["taxNumber"] = this.taxNumber;
         data["dateOpened"] = this.dateOpened ? this.dateOpened.toISOString() : <any>undefined;
         data["website"] = this.website;
@@ -43725,7 +43743,7 @@ export interface ICreateBusinessEntityDto {
     name: string;
     parentId: number | undefined;
     industry: string | undefined;
-    typeId: string | undefined;
+    type: BusinessEntityType | undefined;
     taxNumber: string | undefined;
     dateOpened: moment.Moment | undefined;
     website: string | undefined;
@@ -43745,11 +43763,11 @@ export interface ICreateBusinessEntityDto {
 
 export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     id!: number;
-    statusId!: string | undefined;
+    status!: BusinessEntityStatus | undefined;
     name!: string;
     parentId!: number | undefined;
     industry!: string | undefined;
-    typeId!: string | undefined;
+    type!: BusinessEntityType | undefined;
     taxNumber!: string | undefined;
     dateOpened!: moment.Moment | undefined;
     website!: string | undefined;
@@ -43778,11 +43796,11 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.statusId = data["statusId"];
+            this.status = data["status"];
             this.name = data["name"];
             this.parentId = data["parentId"];
             this.industry = data["industry"];
-            this.typeId = data["typeId"];
+            this.type = data["type"];
             this.taxNumber = data["taxNumber"];
             this.dateOpened = data["dateOpened"] ? moment(data["dateOpened"].toString()) : <any>undefined;
             this.website = data["website"];
@@ -43811,11 +43829,11 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["statusId"] = this.statusId;
+        data["status"] = this.status;
         data["name"] = this.name;
         data["parentId"] = this.parentId;
         data["industry"] = this.industry;
-        data["typeId"] = this.typeId;
+        data["type"] = this.type;
         data["taxNumber"] = this.taxNumber;
         data["dateOpened"] = this.dateOpened ? this.dateOpened.toISOString() : <any>undefined;
         data["website"] = this.website;
@@ -43837,11 +43855,11 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
 
 export interface IUpdateBusinessEntityDto {
     id: number;
-    statusId: string | undefined;
+    status: BusinessEntityStatus | undefined;
     name: string;
     parentId: number | undefined;
     industry: string | undefined;
-    typeId: string | undefined;
+    type: BusinessEntityType | undefined;
     taxNumber: string | undefined;
     dateOpened: moment.Moment | undefined;
     website: string | undefined;
