@@ -33,11 +33,13 @@ import { CreateEntityModule } from '@shared/common/create-entity-dialog/create-e
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ImpersonationService } from '@admin/users/impersonation.service';
 import { LinkedAccountService } from '@app/shared/layout/linked-accounts-modal/linked-account.service';
+import { DateTimeModule } from '@shared/common/pipes/datetime/datetime.module';
 
 @NgModule({
     imports: [
         AccessCodeInstructionsModule,
         CommonModule,
+        DateTimeModule,
         BankCodeCommonModule,
         DxDataGridModule,
         DxTextBoxModule,
