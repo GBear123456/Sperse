@@ -49812,6 +49812,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     jobTitle!: string | undefined;
     orgRelationId!: number | undefined;
     xref!: string | undefined;
+    userEmailAddress!: string | undefined;
     customField1!: string | undefined;
     customField2!: string | undefined;
     customField3!: string | undefined;
@@ -49821,7 +49822,6 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     id!: number | undefined;
     fullName!: string | undefined;
     userId!: number | undefined;
-    username!: string | undefined;
     primaryPhoneId!: number | undefined;
     primaryAddressId!: number | undefined;
     primaryPhoto!: string | undefined;
@@ -49843,6 +49843,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
             this.jobTitle = data["jobTitle"];
             this.orgRelationId = data["orgRelationId"];
             this.xref = data["xref"];
+            this.userEmailAddress = data["userEmailAddress"];
             this.customField1 = data["customField1"];
             this.customField2 = data["customField2"];
             this.customField3 = data["customField3"];
@@ -49856,7 +49857,6 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
             this.id = data["id"];
             this.fullName = data["fullName"];
             this.userId = data["userId"];
-            this.username = data["username"];
             this.primaryPhoneId = data["primaryPhoneId"];
             this.primaryAddressId = data["primaryAddressId"];
             this.primaryPhoto = data["primaryPhoto"];
@@ -49878,6 +49878,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
         data["jobTitle"] = this.jobTitle;
         data["orgRelationId"] = this.orgRelationId;
         data["xref"] = this.xref;
+        data["userEmailAddress"] = this.userEmailAddress;
         data["customField1"] = this.customField1;
         data["customField2"] = this.customField2;
         data["customField3"] = this.customField3;
@@ -49891,7 +49892,6 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["userId"] = this.userId;
-        data["username"] = this.username;
         data["primaryPhoneId"] = this.primaryPhoneId;
         data["primaryAddressId"] = this.primaryAddressId;
         data["primaryPhoto"] = this.primaryPhoto;
@@ -49906,6 +49906,7 @@ export interface IPersonContactInfoDto {
     jobTitle: string | undefined;
     orgRelationId: number | undefined;
     xref: string | undefined;
+    userEmailAddress: string | undefined;
     customField1: string | undefined;
     customField2: string | undefined;
     customField3: string | undefined;
@@ -49915,7 +49916,6 @@ export interface IPersonContactInfoDto {
     id: number | undefined;
     fullName: string | undefined;
     userId: number | undefined;
-    username: string | undefined;
     primaryPhoneId: number | undefined;
     primaryAddressId: number | undefined;
     primaryPhoto: string | undefined;
@@ -69720,7 +69720,6 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
     id!: number | undefined;
     fullName!: string | undefined;
     userId!: number | undefined;
-    username!: string | undefined;
     primaryPhoneId!: number | undefined;
     primaryAddressId!: number | undefined;
     primaryPhoto!: string | undefined;
@@ -69749,7 +69748,6 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
             this.id = data["id"];
             this.fullName = data["fullName"];
             this.userId = data["userId"];
-            this.username = data["username"];
             this.primaryPhoneId = data["primaryPhoneId"];
             this.primaryAddressId = data["primaryAddressId"];
             this.primaryPhoto = data["primaryPhoto"];
@@ -69778,7 +69776,6 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["userId"] = this.userId;
-        data["username"] = this.username;
         data["primaryPhoneId"] = this.primaryPhoneId;
         data["primaryAddressId"] = this.primaryAddressId;
         data["primaryPhoto"] = this.primaryPhoto;
@@ -69796,7 +69793,6 @@ export interface IOrganizationContactInfoDto {
     id: number | undefined;
     fullName: string | undefined;
     userId: number | undefined;
-    username: string | undefined;
     primaryPhoneId: number | undefined;
     primaryAddressId: number | undefined;
     primaryPhoto: string | undefined;
