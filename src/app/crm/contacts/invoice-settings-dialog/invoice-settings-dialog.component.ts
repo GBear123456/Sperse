@@ -61,7 +61,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     ];
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
-    isRateDisabled = this.isManageUnallowed || !this.permission.isGranted(AppPermissions.CRMCommissionsManage);
+    isRateDisabled = this.isManageUnallowed || !this.permission.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
 
     constructor(
         public dialog: MatDialog,

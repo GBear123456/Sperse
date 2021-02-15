@@ -39,7 +39,7 @@ import { AppFeatures } from '@shared/AppFeatures';
                         component: CommissionHistoryComponent, 
                         data: { 
                             feature: AppFeatures.CRMCommissions, 
-                            permission: AppPermissions.CRMCommissions, 
+                            permission: AppPermissions.CRMAffiliatesCommissions, 
                             reuse: true 
                         } 
                     }

@@ -20,7 +20,7 @@
                                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('AffiliateCode'))"
                                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('AffiliateCode').toLowerCase())"
                                               [validationRules]="affiliateValidationRules"
-                                              [isReadOnlyField]="!manageAllowed"
+                                              [isReadOnlyField]="!affiliateManageAllowed"
                                               (valueChanged)="updateAffiliateCode($event)"
                                               (itemDeleted)="deleteItem(ls.l('Affiliate'))">
                                 </inplace-edit>
@@ -60,7 +60,7 @@
                                         <div class="field-info">
                                             <a [ngClass]="{empty: !sourceContactInfo?.sourceContactLevel1}" (click)="openContactDetails(sourceContactInfo?.sourceContactLevel1?.id)">
                                                 {{ sourceContactInfo?.sourceContactLevel1?.name || (ls.l('Set') + ' ' + ls.l('PersonalSettings.Contact1')) }}
-                                                <i id="affiliateContactLink" class="edit fa fa-pencil"
+                                                <i *ngIf="affiliateManageAllowed" id="affiliateContactLink" class="edit fa fa-pencil"
                                                     (click)="openSourceContactList($event)">
                                                 </i>
                                                 <ng-container *ngIf="sourceContactInfo?.sourceContactLevel1">

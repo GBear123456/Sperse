@@ -92,7 +92,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     generatedCommissionDataSource;
     isCommissionsAllowed = this.feature.isEnabled(AppFeatures.CRMCommissions)
-        && this.permission.isGranted(AppPermissions.CRMCommissions);
+        && this.permission.isGranted(AppPermissions.CRMAffiliatesCommissions);
 
     contactId: number;
     stages$: Observable<StageDto[]> = this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.order, null).pipe(
