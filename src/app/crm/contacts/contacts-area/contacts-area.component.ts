@@ -44,7 +44,6 @@ export class ContactsAreaComponent {
     @Input() contactInfoData: ContactInfoDetailsDto;
 
     isEditAllowed = false;
-    isEditUserAllowed = this.permissionService.isGranted(AppPermissions.AdministrationUsersEdit);
 
     private clickTimeout;
     private clickCounter = 0;
@@ -182,14 +181,21 @@ export class ContactsAreaComponent {
         );
     }
 
-    checkEditUserEmailAllowed(data) {
-        return this.contactInfo.personContactInfo.userEmailAddress != data.emailAddress 
-            || this.permissionService.isGranted(AppPermissions.AdministrationUsersEdit);
+    isUserEmail(data) {
+        return this.contactInfo.personContactInfo.userEmailAddress == data.emailAddress;
+    }
+
+    checkEditEmailAllowed(data) {
+        return !this.isUserEmail(data) ||
+            this.permissionService.isGranted(AppPermissions.AdministrationUsersEdit);
     }
 
     inPlaceEdit(field, item, event, index) {
-        if (!this.checkEditUserEmailAllowed(item))
+        if (!this.checkEditEmailAllowed(item))
             return ;
+
+        if (this.isUserEmail(item))
+            return this.editEmailAddress(item, event, index);
 
         this.clickCounter++;
         clearTimeout(this.clickTimeout);
@@ -235,11 +241,28 @@ export class ContactsAreaComponent {
         }
     }
 
+    editEmailAddress(email, event, index) {
+        if (this.isUserEmail(email))
+            this.dialog.open(ConfirmDialogComponent, {
+                data: {
+                    title: this.ls.l('EditContactHeader', this.ls.l('Email')),
+                    message: this.ls.l('UserEmailAffectMessage', this.ls.l('Edit'))
+                }
+            }).afterClosed().subscribe(result => {
+                if (result)
+                    this.showDialog('emailAddress', email, event, index);
+            });
+        else
+            this.showDialog('emailAddress', email, event, index);
+    }
+
     deleteEmailAddress(email, event, index) {
         this.dialog.open(ConfirmDialogComponent, {
             data: {
                 title: this.ls.l('DeleteContactHeader', this.ls.l('Email')),
-                message: this.ls.l('DeleteContactMessage', this.ls.l('Email').toLowerCase())
+                message: this.isUserEmail(email) ?
+                    this.ls.l('UserEmailAffectMessage', this.ls.l('Delete'))
+                : this.ls.l('DeleteContactMessage', this.ls.l('Email').toLowerCase())
             }
         }).afterClosed().subscribe(result => {
             if (result) {
