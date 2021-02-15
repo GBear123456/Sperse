@@ -22,6 +22,7 @@ import { EditContactDialog } from '../edit-contact-dialog/edit-contact-dialog.co
 import { ContactsService } from '../contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'contacts-area',
@@ -43,6 +44,7 @@ export class ContactsAreaComponent {
     @Input() contactInfoData: ContactInfoDetailsDto;
 
     isEditAllowed = false;
+    isEditUserAllowed = this.permissionService.isGranted(AppPermissions.AdministrationUsersEdit);
 
     private clickTimeout;
     private clickCounter = 0;
@@ -180,7 +182,15 @@ export class ContactsAreaComponent {
         );
     }
 
+    checkEditUserEmailAllowed(data) {
+        return this.contactInfo.personContactInfo.userEmailAddress != data.emailAddress 
+            || this.permissionService.isGranted(AppPermissions.AdministrationUsersEdit);
+    }
+
     inPlaceEdit(field, item, event, index) {
+        if (!this.checkEditUserEmailAllowed(item))
+            return ;
+
         this.clickCounter++;
         clearTimeout(this.clickTimeout);
         this.clickTimeout = setTimeout(() => {

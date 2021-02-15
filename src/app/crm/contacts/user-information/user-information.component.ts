@@ -9,6 +9,7 @@ import { DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable } from 'rxjs';
 import { finalize, filter, takeUntil,
     debounceTime, first, map, startWith } from 'rxjs/operators';
+import { ClipboardService } from 'ngx-clipboard';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
 
@@ -134,6 +135,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
         private notify: NotifyService,
         private elementRef: ElementRef,
         private lifecycleSubjectService: LifecycleSubjectsService,
+        private clipboardService: ClipboardService,
         public dialog: MatDialog,
         public phoneFormatPipe: PhoneFormatPipe,
         public ls: AppLocalizationService
@@ -373,13 +375,17 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
     }
 
     closePhoneInPlaceEdit() {
-        this.phoneInplaceEdit = false;
-        this.data.user.phoneNumber = this.initialPhoneNumber;
+        if (this.isEditAllowed) {
+            this.phoneInplaceEdit = false;
+            this.data.user.phoneNumber = this.initialPhoneNumber;
+        }
     }
 
     phoneInPlaceEdit() {
-        this.phoneInplaceEdit = true;
-        this.initialPhoneNumber = this.data.user.phoneNumber;
+        if (this.isEditAllowed) {
+            this.phoneInplaceEdit = true;
+            this.initialPhoneNumber = this.data.user.phoneNumber;
+        }
     }
 
     roleUpdate(event, role) {
@@ -508,6 +514,11 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
             }
         } else if (!open)
             dialog.close();
+    }
+
+    copyToClipbord(value) {
+        this.clipboardService.copyFromContent(value);
+        this.notify.info(this.ls.l('SavedToClipboard'));
     }
 
     ngOnDestroy() {

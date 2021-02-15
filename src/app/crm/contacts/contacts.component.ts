@@ -153,11 +153,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         },
         {
             name: 'contact-information',
-            label$: this.leadInfo$.pipe(map(
+            label$: this.contactsService.leadInfo$.pipe(map(
                 lead => ({
                     [EntityTypeSys.Acquisition]: this.l('SellerContactInfo'),
                     [EntityTypeSys.Management]: this.l('BuyerContactInfo')
-                }[lead.typeSysId] || this.l('ContactInfo'))
+                }[lead && lead.typeSysId] || this.l('ContactInfo'))
             )),
             route: 'contact-information'
         },
@@ -167,12 +167,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             label$: this.userId$.pipe(map((userId: number) => userId
                 ? this.l('UserInformation')
                 : this.l('InviteUser'))),
-            visible$: this.userId$.pipe(
-                map((userId: number) => {
-                    return this.permission.isGranted(userId
-                        ? AppPermissions.AdministrationUsers
-                        : AppPermissions.AdministrationUsersCreate
-                    );
+            visible$: combineLatest(this.userId$, this.contactGroupId$).pipe(
+                map(([userId, contactGroupId] : [number, string]) => {
+                    return userId ? this.permission.isGranted(AppPermissions.AdministrationUsersEdit)
+                        || this.permission.checkCGPermission(contactGroupId, 'UserInformation')
+                    : this.permission.isGranted(AppPermissions.AdministrationUsersCreate);
                 })
             ),
             route: 'user-information'
@@ -185,11 +184,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         },
         {
             name: 'documents',
-            label$: this.leadInfo$.pipe(map(
+            label$: this.contactsService.leadInfo$.pipe(map(
                 lead => ({
                     [EntityTypeSys.Acquisition]: this.l('SellerDocuments'),
                     [EntityTypeSys.Management]: this.l('BuyerDocuments')
-                }[lead.typeSysId] || this.l('Documents'))
+                }[lead && lead.typeSysId] || this.l('Documents'))
             )),
             route: 'documents'
         },
