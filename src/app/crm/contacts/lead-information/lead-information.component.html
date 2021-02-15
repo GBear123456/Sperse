@@ -35,13 +35,16 @@
                                             (click)="showApplicationAllowed && item.action ? item.action() : undefined">
                                             <a *ngIf="item?.name == 'clientIp'; else default" target="_blank" class="client-ip-link" [href]="urlHelper.getLookupIpUrl(value)">{{value}}</a>
                                             <ng-template #default>
-                                                <span [title]="value" [ngClass]="{'wide': item.wide}">{{value}}</span>
+                                                <span [title]="value" [ngClass]="{'wide': item.wide}">
+                                                    <ng-container *ngIf="item?.type?.style == 'currency'; else plaine">{{value | currency: item?.type?.currency}}</ng-container>
+                                                    <ng-template #plaine>{{value}}</ng-template>
+                                                </span>
                                             </ng-template>
                                             <i class="save-to-clipboard" (click)="saveToClipboard($event, value)"></i>
                                         </div>
                                         <ng-container *ngIf="isEditAllowed && !item.readonly">
                                             <div class="inplace-edit-container {{ item.name }}">
-                                                <inplace-edit [data]="getPropData(item)" (valueChanged)="updateValue($event, item)"></inplace-edit>
+                                                <inplace-edit [data]="getPropData(item)" (valueChanged)="updateValue($event, item)" [format]="item?.type?.style == 'currency' ? item.type : undefined"></inplace-edit>
                                             </div>
                                         </ng-container>
                                     </ng-container>

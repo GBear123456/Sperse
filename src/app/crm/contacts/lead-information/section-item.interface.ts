@@ -6,4 +6,5 @@ export interface SectionItem {
     action?: () => void;
     hideLabel?: boolean;
     hideEmpty?: boolean;
+    type?: any;
 }

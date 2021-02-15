@@ -390,12 +390,12 @@ export class AddressesComponent implements OnInit, OnDestroy {
     }
 
     getAddressLine2(address: AddressDto) {
-        let addressLine = '';
+        let addressLine = [];
         if (this.showNeighborhood)
-            addressLine = `${address.neighborhood}, `;
-        addressLine += `${address.city}, ${address.stateName}, ${address.zip}`;
+            addressLine.push(address.neighborhood);
+        addressLine.push(address.city, address.stateName, address.zip);
 
-        return addressLine;
+        return addressLine.filter(Boolean).join(', ');
     }
 
     getCountryName(address: AddressDto): Observable<string> {
@@ -407,7 +407,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
                 ).pipe(
                     map((countries: CountryDto[]) => {
                         const country = countries.find((country: CountryDto) => country.code == address.countryCode);
-                        return country && country.name;
+                        return country && country.name || '';
                     })
                 );
         else

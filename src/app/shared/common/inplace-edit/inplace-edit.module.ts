@@ -5,6 +5,7 @@ import { CommonModule } from '@angular/common';
 /** Third party imports */
 import { DxTextAreaModule } from 'devextreme-angular/ui/text-area';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { ClipboardModule } from 'ngx-clipboard';
@@ -18,6 +19,7 @@ import { InplaceEditComponent } from './inplace-edit.component';
         DxTextAreaModule,
         DxValidatorModule,
         DxTextBoxModule,
+        DxNumberBoxModule,
         DxButtonModule,
         ClipboardModule
     ],
