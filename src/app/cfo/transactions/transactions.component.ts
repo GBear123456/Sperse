@@ -435,7 +435,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     }
                     setTimeout(() => {
                         if (this.dataGrid.instance.option('filterRow.visible')
-                            && this.getElementRef().nativeElement === this.categoryChooserContainer.nativeElement.parentElement) {
+                            && this.getElementRef().nativeElement === this.categoryChooserContainer.nativeElement.parentElement
+                        ) {
                             this.repaintDataGrid();
                         }
                     }, 1500);
@@ -1029,6 +1030,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     initFiltering() {
+        if (this._activatedRoute.snapshot.queryParams.filters) {
+            this.categoriesRowsData = [];
+            this.clearCategoriesFilters();
+            this.categorizationComponent.clearSelection();
+        }
+
         this.filtersService.apply((filters: FilterModel[]) => {
             if (filters && filters.length) {
                 filters && filters.forEach((filter: FilterModel) => {
@@ -1085,6 +1092,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     processFilterInternal() {
+        this.isDataLoaded = false;
+        this.changeDetectionRef.markForCheck();
         let filterQuery$: Observable<string> = this.processODataFilter(
             this.dataGrid.instance,
             this.dataSourceURI,
@@ -1105,19 +1114,25 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
         filterQuery$.subscribe((filterQuery: string) => {
             this.filterQuery = filterQuery;
-            this.transactionsFilterQuery = _.reject(filterQuery, x => _.has(x, 'AccountingTypeId')
-                || (_.has(x, 'CashflowCategoryId') && typeof x['CashflowCategoryId'] == 'number')
-                || (_.has(x, 'or') &&  (typeof x.or[0] == 'string' ? x.or[0].includes('CashflowCategoryId') : _.has(x.or[0], 'CashflowCategoryId')))
-                || _.has(x, 'CashflowSubCategoryId')
-            );
 
-            this.countDataSource['_store']['_url'] = super.getODataUrl(this.countDataSourceURI, this.transactionsFilterQuery);
+            this.countDataSource['_store']['_url'] = super.getODataUrl(this.countDataSourceURI, filterQuery);
             this.countDataSource.load();
             this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
             this.totalDataSource.load();
 
+            this.transactionsFilterQuery = _.reject(filterQuery, query =>
+                this.checkFilterQueryByField(query, 'AccountingTypeId') ||
+                this.checkFilterQueryByField(query, 'CashflowCategoryId') ||
+                this.checkFilterQueryByField(query, 'CashflowSubCategoryId')
+            );
+
             this.changeDetectionRef.detectChanges();
         });
+    }
+
+    checkFilterQueryByField(query, field) {
+        return (_.has(query, field) && typeof query[field] == 'number') ||
+            (_.has(query, 'or') && (typeof query.or[0] == 'string' ? query.or[0].includes(field) : _.has(query.or[0], field)));
     }
 
     getODataUrl(uri: string, filter?: Object) {
@@ -1172,7 +1187,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         } else if (this.selectedCashflowCategoryKeys) {
             this.processFilterInternal();
         }
-
         this.categoriesRowsData = categories.slice();
         this.selectedCashflowCategoryKeys = categories && categories.map((category: Category) => {
             return <number>category.key;

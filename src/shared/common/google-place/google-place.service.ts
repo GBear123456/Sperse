@@ -54,6 +54,6 @@ export class GooglePlaceService {
     }
 
     static normalize(value: string): string {
-        return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        return value && value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
 }
