@@ -137,7 +137,7 @@
                                 <dx-button class="exit" icon="refresh" (onClick)="closePhoneInPlaceEdit()"></dx-button>
                             </div>
                         </div>
-                        <button class="button-layout button-primary reset-password" [disabled]="!data?.user?.isActive" (click)="resetPasswordDialog($event)">{{ls.l('PasswordReset')}}</button>
+                        <button class="button-layout button-primary reset-password" [disabled]="!data?.user?.isActive || !isEditAllowed" (click)="resetPasswordDialog($event)">{{ls.l('PasswordReset')}}</button>
                         <div class="title">
                             {{ls.l('Options') + ':'}}
                         </div>
@@ -169,7 +169,7 @@
                 </div>
             </dx-scroll-view>
         </mat-tab>
-        <mat-tab label="Permissions">
+        <mat-tab label="Permissions" [disabled]="!isEditAllowed">
             <dx-scroll-view showScrollbar="onHover">
                 <permission-tree *ngIf="selectedTabIndex == PERMISSIONS_TAB_INDEX"></permission-tree>
             </dx-scroll-view>

@@ -178,6 +178,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
         this.initToolbarConfig();
     }
+    impersonationIsGranted = this.permission.isGranted(
+        AppPermissions.AdministrationUsersImpersonation
+    );
     actionEvent: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     actionMenuGroups: ActionMenuGroup[] = [
@@ -213,11 +216,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     text: this.l('LoginAsThisUser'),
                     class: 'login',
                     checkVisible: (lead: LeadDto) => {
-                        return !!lead.UserId && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
+                        return !!lead.UserId && (
+                            this.impersonationIsGranted || 
+                            this.permission.checkCGPermission(this.selectedContactGroup, 'UserInformation.AutoLogin')
+                        );
                     },
                     action: (data?) => {
                         const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
-                        this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId);
+                        if (this.impersonationIsGranted)
+                            this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId);
+                        else
+                            this.contactService.autoLoginAsUser(lead.UserId);                        
                     }
                 },
                 {

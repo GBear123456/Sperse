@@ -174,6 +174,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private subRouteParams: any;
     private dependencyChanged = false;
 
+    impersonationIsGranted = this.permission.isGranted(
+        AppPermissions.AdministrationUsersImpersonation
+    );
+
     actionEvent: any;
     actionMenuGroups: ActionMenuGroup[] = [
         {
@@ -207,10 +211,18 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 {
                     text: this.l('LoginAsThisUser'),
                     class: 'login',
-                    checkVisible: (partner: PartnerDto) => !!partner.UserId && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
+                    checkVisible: (partner: PartnerDto) => {
+                        return !!partner.UserId && (
+                            this.impersonationIsGranted || 
+                            this.permission.checkCGPermission(ContactGroup.Partner, 'UserInformation.AutoLogin')
+                        );
+                    },
                     action: () => {
-                        const partner: PartnerDto = this.actionEvent.data || this.actionEvent;
-                        this.impersonationService.impersonate(partner.UserId, this.appSession.tenantId);
+                        const partner: PartnerDto = this.actionEvent.data || this.actionEvent;                        
+                        if (this.impersonationIsGranted)
+                            this.impersonationService.impersonate(partner.UserId, this.appSession.tenantId);
+                        else
+                            this.contactService.autoLoginAsUser(partner.UserId);
                     }
                 },
                 {

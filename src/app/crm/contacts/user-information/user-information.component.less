@@ -67,6 +67,11 @@
         line-height: 1.71;
         letter-spacing: 0.6px;
         opacity: 1;
+        &.mat-tab-disabled {
+            .mat-tab-label-content {
+                opacity: 0.5;
+            }
+        }
     }
 
     ::ng-deep .mat-tab-label-active {
