@@ -6,11 +6,13 @@
                   [showToggleToolbarButton]="true"
                   [showToggleFullScreenButton]="true"
                   [showReloadButton]="ui.showReload"
-                  [showToggleColumnSelectorButton]="this.showDataGrid || this.showPivotGrid"
+                  [showToggleColumnSelectorButton]="showDataGrid || showPivotGrid"
+                  [showStateResetButton]="showDataGrid"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="refresh()"
+                  (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <span *ngIf="totalCount !== undefined" class="total-count">({{ totalCount | number }})</span>
         <import-progress-bar></import-progress-bar>
@@ -219,7 +221,7 @@
                             </div>
                         </div>
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{cellData.value | date: formatting.dateTime : userTimezone }}
+                            {{cellData.value | datetime: formatting.dateTimeMoment }}
                         </div>
                         <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                             {{cellData.value | phone}}

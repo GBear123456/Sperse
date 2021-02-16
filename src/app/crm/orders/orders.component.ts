@@ -397,7 +397,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ordersToolbarConfig: ToolbarGroupModel[];
     subscriptionsToolbarConfig: ToolbarGroupModel[];
     orderTypesEnum = OrderType;
-    searchValue = this._activatedRoute.snapshot.queryParams.searchValue || '';
+    searchValue = this._activatedRoute.snapshot.queryParams.search || '';
     searchClear = false;
     ordersDataSource: any = {
         uri: this.ordersDataSourceURI,
@@ -816,8 +816,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 mapTo(queryParams))
             )
         ).subscribe((params: Params) => {
-            if (params.searchValue && this.searchValue !== params.searchValue) {
-                this.searchValue = params.searchValue;
+            if (params.search && this.searchValue !== params.search) {
+                this.searchValue = params.search;
                 if (this.selectedOrderType.value == OrderType.Order)
                     this.initOrdersToolbarConfig();
                 else
@@ -1522,6 +1522,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     searchValueChange(e: object) {
         if (this.filterChanged = (this.searchValue != e['value'])) {
             this.searchValue = e['value'];
+            this._router.navigate([], {queryParams: {search: this.searchValue}});
             this.search.next(e['value']);
             this.processFilterInternal();
         }

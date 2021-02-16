@@ -16,9 +16,11 @@
                   [showReloadButton]="ui.showReload"
                   [showToggleColumnSelectorButton]="showToggleColumnSelectorButton"
                   [showToggleFullScreenButton]="true"
+                  [showStateResetButton]="!showOrdersPipeline"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="invalidate()"
+                  (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <orders-header-dropdown
                         [totalCount]="totalCount"
@@ -55,6 +57,7 @@
                             <dx-data-grid #ordersGrid
                                           class="main-component-view limitedPagerTotal"
                                           accesskey="narrowHeaderPanel"
+                                          [hint]="l('Orders')"
                                           [renderAsync]="true"
                                           [allowColumnReordering]="true"
                                           [columnAutoWidth]="true"
@@ -134,7 +137,7 @@
                                     {{cellData.value | currency: currency}}
                                 </div>
                                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                                    {{cellData.value | date: formatting.dateTime : userTimezone}}
+                                    {{cellData.value | datetime: formatting.dateTimeMoment}}
                                 </div>
                                 <dxo-summary>
                                     <dxi-group-item [column]="orderFields.Id"
@@ -168,7 +171,7 @@
                                 totalsURI="OrderCount"
                                 dragulaName="orderStages"
                                 [dataSource]="pipelineDataSource"
-                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId', 'ContactGroupId', 'Phone']"
+                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId', 'ContactGroupId', 'Phone', 'Amount']"
                                 dateField="OrderDate"
                                 [contactGroupId]="null"
                                 [actionMenuGroups]="actionMenuGroups"
@@ -198,6 +201,7 @@
                               class="main-component-view limitedPagerTotal"
                               accesskey="narrowHeaderPanel"
                               keyExpr="id"
+                              [hint]="l('Subscriptions')"
                               [loadPanel]="{ enabled: false }"
                               [allowColumnReordering]="true"
                               [columnAutoWidth]="true"
@@ -263,7 +267,7 @@
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
                     </div>
                     <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                        {{cellData.value | date: formatting.date : userTimezone }}
+                        {{cellData.value | datetime: formatting.dateMoment}}
                     </div>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
                         <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>

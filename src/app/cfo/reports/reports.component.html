@@ -4,7 +4,9 @@
               [showToggleToolbarButton]="true"
               [showToggleLeftMenuButton]="true"
               [showToggleCompactViewButton]="showToggleCompactViewButton"
+              [showStateResetButton]="true"
               (onToggleCompactView)="toggleCompactView()"
+              (onStateReset)="dataGrid.instance.state(null)"
               (onToggleLeftMenu)="onLeftMenuToggle()">
     <synch-progress class="synch-progress"></synch-progress>
 </app-headline>
@@ -13,7 +15,7 @@
 <div class="wrapper" [ngClass]="{ leftMenuOpened: !leftMenu.collapsed }">
     <cfo-left-menu #leftMenu
                    [items]="menuItems"
-                   [selectedItemIndex]="0"
+                   [selectedItemIndex]="selectedPeriodIndex"
                    headerTitle="">
     </cfo-left-menu>
     <action-menu [items]="actionMenuItems"
@@ -54,10 +56,10 @@
             <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
 
             <div *dxTemplate="let cellData of 'dateTimeCell'" class="clipboard-holder">
-                {{ cellData.value | date: formatting.dateTime : userTimezone }}
+                {{ cellData.value | datetime: formatting.dateTimeMoment }}
             </div>
             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                {{ cellData.value | date: formatting.date }}
+                {{ cellData.value | datetime: formatting.dateMoment }}
             </div>
             <div *dxTemplate="let cellData of 'deptCell'" class="deptCell clipboard-holder" [title]="formatDepartments(cellData.value)">
                 {{ formatDepartments(cellData.value) }}

@@ -15,7 +15,6 @@
         <div *dxTemplate="let data of 'content'">
             <categorization
                 width="340px"
-                height="100%"
                 [dragMode]="false"
                 [showSearch]="true"
                 [showFilterIcon]="true"
@@ -64,11 +63,13 @@
                   [showToggleTotalsButton]="true"
                   [showToggleColumnSelectorButton]="!_cfoService.hasStaticInstance"
                   [showToggleLeftMenuButton]="false"
+                  [showStateResetButton]="true"
                   (onReload)="reload()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onToggleTotals)="toggleDataGridToolbar()"
                   (onToggleToolbar)="toggleToolbar()"
+                  (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <span *ngIf="totalCount" class="total-count">({{ totalCount | number }})</span>
         <business-entities-chooser class="accounts-chooser" (onChanged)="applyTotalBankAccountFilter(true)"
@@ -111,6 +112,9 @@
                         [allowColumnResizing]="true"
                         [hoverStateEnabled]="true"
                         [cacheEnabled]="true"
+                        [columnChooser]="{
+                          height: rowsViewHeight
+                        }"
                         [headerFilter]="{ allowSearch: true, visible: false }"
                         [pager]="defaultGridPagerConfig"
                         [loadPanel]="{ enabled: false }"
@@ -122,8 +126,7 @@
                         (onSelectionChanged)="onSelectionChanged($event)"
                         (onCellClick)="onCellClick($event)"
                         (onCellPrepared)="onCellPrepared($event)"
-                        (onToolbarPreparing)="onToolbarPreparing($event)"
-                        (onInitialized)="onInitialized($event)">
+                        (onToolbarPreparing)="onToolbarPreparing($event)">
                         <dxo-selection selectAllMode="page"
                                        showCheckBoxesMode="always"
                                        mode="multiple">
@@ -138,6 +141,7 @@
                         <dxi-column [dataField]="transactionFields.Date"
                                     cssClass="tabular"
                                     sortOrder="desc"
+                                    [minWidth]="(isHeaderFilterVisible ? 130 : 90) + 'px'"
                                     calculateSortValue="Date"
                                     [renderAsync]="true"
                                     [caption]="l('Transactions_Date')"
@@ -188,6 +192,7 @@
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.BankAccountId"
                                     cssClass="tabular clipboard-holder"
+                                    minWidth="150px"
                                     [renderAsync]="true"
                                     [caption]="l('Transactions_BankAccountNumber')"
                                     [lookup]="{
@@ -200,6 +205,7 @@
                         <dxi-column [dataField]="transactionFields.Comments"
                                     dataType="string"
                                     [caption]="l('Transactions_Comments')"
+                                    [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.CategoryName"
@@ -253,6 +259,7 @@
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.Id"
+                                    sortOrder="desc"
                                     cssClass="tabular id-column clipboard-holder"
                                     [caption]="l('Transactions_Id')"
                                     [visible]="false">
@@ -363,7 +370,7 @@
                             </span>
                         </div>
 
-                        <div *dxTemplate="let data of 'CashFlowTypeNameTemplate'" [class]="'clipboard-holder ' + data.value.toLowerCase()">
+                        <div *dxTemplate="let data of 'CashFlowTypeNameTemplate'" [class]="'clipboard-holder ' + data?.value?.toLowerCase()">
                             {{data.value}}
                         </div>
 
@@ -464,18 +471,12 @@
 
                         <div *dxTemplate="let data of 'transactionTotal'">
                             <div class="informer">
-                                <h2 class="count clipboard-holder">
-                                    {{ transactionTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
-                                </h2>
-                                <span class="name" (click)="toggleTotalDefault()">
-                                    <span id="adjustments" *ngIf="adjustmentTotal !== 0">!</span> {{l('Net_Amount')}} <span class="name-count clipboard-holder">{{transactionCount | number}}</span> <i id="totalDetails" class="arrow"></i>
-
-                                </span>
                                 <dx-tooltip target="#adjustments"
                                             position="top"
-                                            showEvent="dxhoverstart"
+                                            (onContentReady)="changeDetectionRef.detectChanges()"
+                                            showEvent="mouseenter"
                                             hideEvent="dxhoverend">
-                                    <div *dxTemplate="let data = data of 'content'">
+                                    <div *dxTemplate="let data of 'content'">
                                         <span class="title">{{ls('Platform', 'Unreconciled_Balance')}}:</span> {{adjustmentTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2'}}
                                     </div>
                                 </dx-tooltip>
@@ -510,6 +511,12 @@
                                         </div>
                                     </div>
                                 </dx-tooltip>
+                                <h2 class="count clipboard-holder">
+                                    {{ transactionTotal | currency:cfoPreferencesService.selectedCurrencyId:cfoPreferencesService.selectedCurrencySymbol:'1.2-2' }}
+                                </h2>
+                                <span class="name" (click)="toggleTotalDefault()">
+                                    <span id="adjustments" *ngIf="adjustmentTotal !== 0">!</span> {{l('Net_Amount')}} <span class="name-count clipboard-holder">{{transactionCount | number}}</span> <i id="totalDetails" class="arrow"></i>
+                                </span>
                             </div>
                         </div>
 

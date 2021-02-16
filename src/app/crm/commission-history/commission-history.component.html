@@ -6,10 +6,12 @@
                   [showToggleFullScreenButton]="true"
                   [showReloadButton]="ui.showReload"
                   [showToggleColumnSelectorButton]="true"
+                  [showStateResetButton]="true"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="refresh()"
+                  (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="viewTypes"
                         [totalCount]="totalRowCount > 0 ? totalRowCount : undefined"
@@ -39,6 +41,7 @@
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
                 <div>                    
                     <dx-data-grid #commissionDataGrid
+                                  [hint]="l('Commissions')"
                                   class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
                                   columnResizingMode="widget"
@@ -111,7 +114,7 @@
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.EarnedDate"
                                     [caption]="l('EarnedDate')" 
-                                    cellTemplate="dateCell"                                     
+                                    cellTemplate="dateCell"
                                     cssClass="tabular">
                         </dxi-column> 
                         <dxi-column [dataField]="commissionFields.InvoiceDate"
@@ -124,12 +127,6 @@
                                     [caption]="l('TransactionDate')" 
                                     cellTemplate="dateCell"
                                     [visible]="false" 
-                                    cssClass="tabular">
-                        </dxi-column>
-                        <dxi-column [dataField]="commissionFields.EarnedDate"
-                                    [caption]="l('EarnedDate')" 
-                                    cellTemplate="dateCell"
-                                    [visible]="false"
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.ProductCode"
@@ -240,7 +237,7 @@
                         </div>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{cellData.value | datetime: formatting.dateTime}}
+                            {{cellData.value | datetime: formatting.dateTimeMoment}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
@@ -268,6 +265,7 @@
                 </div>
                 <div>
                     <dx-data-grid #ledgerDataGrid
+                                  [hint]="l('Ledger')"
                                   class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
                                   columnResizingMode="widget"
@@ -358,7 +356,7 @@
                         </div>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{cellData.value | datetime: formatting.dateTime}}
+                            {{cellData.value | datetime: formatting.dateTimeMoment}}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
@@ -374,6 +372,7 @@
                 </div>
                 <div>
                     <dx-data-grid #resellersDataGrid
+                                  [hint]="l('Resellers')"
                                   class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
                                   columnResizingMode="widget"

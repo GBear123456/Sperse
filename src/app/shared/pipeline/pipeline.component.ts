@@ -3,6 +3,7 @@ import {
     ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, EventEmitter,
     Output, Input, OnInit, OnDestroy, ViewChildren, QueryList, SimpleChanges
 } from '@angular/core';
+import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -32,7 +33,8 @@ import {
     CreateStageInput,
     RenameStageInput,
     MergeStagesInput,
-    UpdateSortOrderInput
+    UpdateSortOrderInput,
+    InvoiceSettings
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from './pipeline.service';
@@ -44,7 +46,7 @@ import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { FiltersService } from '@shared/filters/filters.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { DxoTooltipComponent } from '@root/node_modules/devextreme-angular/ui/nested/tooltip';
+import { DxoTooltipComponent } from 'devextreme-angular/ui/nested/tooltip';
 import { Stage } from '@app/shared/pipeline/stage.model';
 import { StageWidth } from '@app/shared/pipeline/stage-width.enum';
 import { InstanceModel } from '@shared/cfo/instance.model';
@@ -54,12 +56,13 @@ import { ODataRequestValues } from '@shared/common/odata/odata-request-values.in
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { AppPermissions } from '@shared/AppPermissions';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 
 @Component({
     selector: 'app-pipeline',
     templateUrl: './pipeline.component.html',
     styleUrls: ['./pipeline.component.less'],
-    providers: [ StageServiceProxy ],
+    providers: [ StageServiceProxy, CurrencyPipe ],
     host: {
         '(window:keyup)': 'onKeyUp($event)',
         '(window:resize)': 'onResize()'
@@ -128,15 +131,18 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     stageWidths = StageWidth;
     stageColumnWidths: string[] = Object.keys(StageWidth);
     private readonly COLUMN_WIDTHS_CACHE_KEY = 'COLUMN_WIDTHS';
-    searchValue = this._activatedRoute.snapshot.queryParams.searchValue || '';
+    searchValue = this._activatedRoute.snapshot.queryParams.search || '';
     searchClear = false;
     actionEvent: any;
+    currency: string;
 
     constructor(
         injector: Injector,
+        private currencyPipe: CurrencyPipe,
         private odataService: ODataService,
         private dragulaService: DragulaService,
         private pipelineService: PipelineService,
+        private invoicesService: InvoicesService,
         private stageServiceProxy: StageServiceProxy,
         private changeDetector: ChangeDetectorRef,
         private filtersService: FiltersService,
@@ -146,6 +152,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         public dialog: MatDialog
     ) {
         super(injector);
+
+        invoicesService.settings$.pipe(
+            filter(Boolean)
+        ).subscribe((res: InvoiceSettings) => {
+            this.currency = res.currency;
+        });
+
         this.filtersService.filterFixed$.pipe(
             switchMap(() => this.pipelineService.dataLayoutType$),
             filter((dlt: DataLayoutType) => dlt === DataLayoutType.Pipeline)
@@ -187,10 +200,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     getEntitySubtitle(entity: any): string {
         let subtitle: string;
         if (entity) {
-            let prioritizedSubtitle = entity && (entity.Name || entity.Title
-                || entity.Email || entity.Phone) ? entity.CompanyName : '';
+            let prioritizedSubtitle = this.currencyPipe.transform(entity.Amount, this.currency);
             if (this.pipeline.entityTypeSysId === EntityTypeSys.Management) {
-                prioritizedSubtitle = entity.PropertyName || prioritizedSubtitle;
+                prioritizedSubtitle = prioritizedSubtitle || entity.PropertyName;
+            } else if (this.pipeline.entityTypeSysId === EntityTypeSys.Acquisition) {
+                prioritizedSubtitle = prioritizedSubtitle || entity.Name;
+            } else {
+                prioritizedSubtitle = entity.Name || entity.Title
+                    || entity.Email || entity.Phone ? prioritizedSubtitle || entity.CompanyName : '';
             }
             subtitle = prioritizedSubtitle || entity.Description;
         }

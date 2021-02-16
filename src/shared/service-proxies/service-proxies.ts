@@ -21791,12 +21791,15 @@ export class NotesServiceProxy {
 
     /**
      * @contactIds (optional) 
+     * @ascendingSorting (optional) 
      * @return Success
      */
-    getNotes(contactIds: number[] | null | undefined): Observable<NoteInfoDto[]> {
+    getNotes(contactIds: number[] | null | undefined, ascendingSorting: boolean | null | undefined): Observable<NoteInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Notes/GetNotes?";
         if (contactIds !== undefined)
             contactIds && contactIds.forEach(item => { url_ += "contactIds=" + encodeURIComponent("" + item) + "&"; });
+        if (ascendingSorting !== undefined)
+            url_ += "ascendingSorting=" + encodeURIComponent("" + ascendingSorting) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -21994,6 +21997,110 @@ export class NotesServiceProxy {
     }
 
     protected processUpdateNote(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    pinNote(body: PinNoteInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Notes/PinNote";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPinNote(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPinNote(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processPinNote(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    unpinNote(body: UnpinNoteInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Notes/UnpinNote";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUnpinNote(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUnpinNote(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUnpinNote(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -26312,6 +26419,58 @@ export class PipelineServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    updatePipelineSortOrder(body: UpdateSortOrderInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Pipeline/UpdatePipelineSortOrder";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdatePipelineSortOrder(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdatePipelineSortOrder(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdatePipelineSortOrder(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     create(body: PipelineCreateInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Pipeline/Create";
         url_ = url_.replace(/[?&]$/, "");
@@ -28310,6 +28469,177 @@ export class RapidServiceProxy {
             }));
         }
         return _observableOf<GetRapidTokenOutput>(<any>null);
+    }
+
+    /**
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @return Success
+     */
+    getRefundsAndCancellationsForCurrentUser(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetRefundsAndCancellationsOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/GetRefundsAndCancellationsForCurrentUser?";
+        if (startDate !== undefined)
+            url_ += "startDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "endDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRefundsAndCancellationsForCurrentUser(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRefundsAndCancellationsForCurrentUser(<any>response_);
+                } catch (e) {
+                    return <Observable<GetRefundsAndCancellationsOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetRefundsAndCancellationsOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRefundsAndCancellationsForCurrentUser(response: HttpResponseBase): Observable<GetRefundsAndCancellationsOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetRefundsAndCancellationsOutput.fromJS(resultData200) : new GetRefundsAndCancellationsOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetRefundsAndCancellationsOutput>(<any>null);
+    }
+
+    /**
+     * @contactId (optional) 
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @return Success
+     */
+    getRefundsAndCancellationsForContact(contactId: number | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<GetRefundsAndCancellationsOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/GetRefundsAndCancellationsForContact?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (startDate !== undefined)
+            url_ += "startDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "endDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetRefundsAndCancellationsForContact(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetRefundsAndCancellationsForContact(<any>response_);
+                } catch (e) {
+                    return <Observable<GetRefundsAndCancellationsOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetRefundsAndCancellationsOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetRefundsAndCancellationsForContact(response: HttpResponseBase): Observable<GetRefundsAndCancellationsOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetRefundsAndCancellationsOutput.fromJS(resultData200) : new GetRefundsAndCancellationsOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetRefundsAndCancellationsOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    createContactAgents(body: CreateContactAgentsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/CreateContactAgents";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateContactAgents(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateContactAgents(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateContactAgents(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -42781,6 +43111,7 @@ export interface ICreateContactPhoneInputWithoutCheck {
 export class CreateContactAddressInputWithoutCheck implements ICreateContactAddressInputWithoutCheck {
     contactId!: number | undefined;
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
@@ -42807,6 +43138,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
         if (data) {
             this.contactId = data["contactId"];
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
@@ -42833,6 +43165,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
@@ -42852,6 +43185,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
 export interface ICreateContactAddressInputWithoutCheck {
     contactId: number | undefined;
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
@@ -43595,6 +43929,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     stateName!: string | undefined;
     zip!: string | undefined;
     city!: string | undefined;
+    neighborhood!: string | undefined;
     streetAddress!: string | undefined;
     isDefault!: boolean | undefined;
 
@@ -43625,6 +43960,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
             this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.city = data["city"];
+            this.neighborhood = data["neighborhood"];
             this.streetAddress = data["streetAddress"];
             this.isDefault = data["isDefault"];
         }
@@ -43655,6 +43991,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["city"] = this.city;
+        data["neighborhood"] = this.neighborhood;
         data["streetAddress"] = this.streetAddress;
         data["isDefault"] = this.isDefault;
         return data; 
@@ -43678,6 +44015,7 @@ export interface ICreateBusinessEntityDto {
     stateName: string | undefined;
     zip: string | undefined;
     city: string | undefined;
+    neighborhood: string | undefined;
     streetAddress: string | undefined;
     isDefault: boolean | undefined;
 }
@@ -43701,6 +44039,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     stateName!: string | undefined;
     zip!: string | undefined;
     city!: string | undefined;
+    neighborhood!: string | undefined;
     streetAddress!: string | undefined;
     isDefault!: boolean | undefined;
 
@@ -43733,6 +44072,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
             this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.city = data["city"];
+            this.neighborhood = data["neighborhood"];
             this.streetAddress = data["streetAddress"];
             this.isDefault = data["isDefault"];
         }
@@ -43765,6 +44105,7 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["city"] = this.city;
+        data["neighborhood"] = this.neighborhood;
         data["streetAddress"] = this.streetAddress;
         data["isDefault"] = this.isDefault;
         return data; 
@@ -43790,6 +44131,7 @@ export interface IUpdateBusinessEntityDto {
     stateName: string | undefined;
     zip: string | undefined;
     city: string | undefined;
+    neighborhood: string | undefined;
     streetAddress: string | undefined;
     isDefault: boolean | undefined;
 }
@@ -49510,6 +49852,7 @@ export interface IContactPhoneDto {
 export class ContactAddressDto implements IContactAddressDto {
     usageTypeId!: string | undefined;
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
@@ -49535,6 +49878,7 @@ export class ContactAddressDto implements IContactAddressDto {
         if (data) {
             this.usageTypeId = data["usageTypeId"];
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
@@ -49560,6 +49904,7 @@ export class ContactAddressDto implements IContactAddressDto {
         data = typeof data === 'object' ? data : {};
         data["usageTypeId"] = this.usageTypeId;
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
@@ -49578,6 +49923,7 @@ export class ContactAddressDto implements IContactAddressDto {
 export interface IContactAddressDto {
     usageTypeId: string | undefined;
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
@@ -50362,6 +50708,7 @@ export class ContactAddressInfo implements IContactAddressInfo {
     ownershipTypeId!: string | undefined;
     isPrimary!: boolean | undefined;
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
@@ -50386,6 +50733,7 @@ export class ContactAddressInfo implements IContactAddressInfo {
             this.ownershipTypeId = data["ownershipTypeId"];
             this.isPrimary = data["isPrimary"];
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
@@ -50410,6 +50758,7 @@ export class ContactAddressInfo implements IContactAddressInfo {
         data["ownershipTypeId"] = this.ownershipTypeId;
         data["isPrimary"] = this.isPrimary;
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
@@ -50427,6 +50776,7 @@ export interface IContactAddressInfo {
     ownershipTypeId: string | undefined;
     isPrimary: boolean | undefined;
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
@@ -51290,6 +51640,7 @@ export interface ITrackingInfo {
 export class CreateContactAddressInput implements ICreateContactAddressInput {
     contactId!: number | undefined;
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
@@ -51316,6 +51667,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
         if (data) {
             this.contactId = data["contactId"];
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
@@ -51342,6 +51694,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
@@ -51361,6 +51714,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
 export interface ICreateContactAddressInput {
     contactId: number | undefined;
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
@@ -51463,6 +51817,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     leadTypeId!: number | undefined;
     leadTypeSysId!: string | undefined;
     stageId!: number | undefined;
+    dealAmount!: number | undefined;
     followUpDate!: moment.Moment | undefined;
     trackingInfo!: TrackingInfo | undefined;
     inviteUser!: boolean | undefined;
@@ -51551,6 +51906,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.leadTypeId = data["leadTypeId"];
             this.leadTypeSysId = data["leadTypeSysId"];
             this.stageId = data["stageId"];
+            this.dealAmount = data["dealAmount"];
             this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
             this.inviteUser = data["inviteUser"];
@@ -51639,6 +51995,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["leadTypeId"] = this.leadTypeId;
         data["leadTypeSysId"] = this.leadTypeSysId;
         data["stageId"] = this.stageId;
+        data["dealAmount"] = this.dealAmount;
         data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
         data["inviteUser"] = this.inviteUser;
@@ -51692,6 +52049,7 @@ export interface ICreateOrUpdateContactInput {
     leadTypeId: number | undefined;
     leadTypeSysId: string | undefined;
     stageId: number | undefined;
+    dealAmount: number | undefined;
     followUpDate: moment.Moment | undefined;
     trackingInfo: TrackingInfo | undefined;
     inviteUser: boolean | undefined;
@@ -52869,6 +53227,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
     id!: number;
     contactId!: number | undefined;
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
@@ -52896,6 +53255,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
             this.id = data["id"];
             this.contactId = data["contactId"];
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
@@ -52923,6 +53283,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
         data["id"] = this.id;
         data["contactId"] = this.contactId;
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
@@ -52943,6 +53304,7 @@ export interface IUpdateContactAddressInput {
     id: number;
     contactId: number | undefined;
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
@@ -57150,8 +57512,11 @@ export interface IGetCustomerAndLeadStatsOutput {
 }
 
 export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCustomersOutput {
-    id!: number | undefined;
+    contactId!: number | undefined;
     fullName!: string | undefined;
+    email!: string | undefined;
+    phone!: string | undefined;
+    bankCode!: string | undefined;
     creationTime!: moment.Moment | undefined;
 
     constructor(data?: IGetRecentlyCreatedCustomersOutput) {
@@ -57165,8 +57530,11 @@ export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCus
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
+            this.contactId = data["contactId"];
             this.fullName = data["fullName"];
+            this.email = data["email"];
+            this.phone = data["phone"];
+            this.bankCode = data["bankCode"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
         }
     }
@@ -57180,25 +57548,32 @@ export class GetRecentlyCreatedCustomersOutput implements IGetRecentlyCreatedCus
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
+        data["contactId"] = this.contactId;
         data["fullName"] = this.fullName;
+        data["email"] = this.email;
+        data["phone"] = this.phone;
+        data["bankCode"] = this.bankCode;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         return data; 
     }
 }
 
 export interface IGetRecentlyCreatedCustomersOutput {
-    id: number | undefined;
+    contactId: number | undefined;
     fullName: string | undefined;
+    email: string | undefined;
+    phone: string | undefined;
+    bankCode: string | undefined;
     creationTime: moment.Moment | undefined;
 }
 
 export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOutput {
+    leadId!: number | undefined;
+    contactId!: number | undefined;
+    fullName!: string | undefined;
     email!: string | undefined;
     phone!: string | undefined;
     bankCode!: string | undefined;
-    id!: number | undefined;
-    fullName!: string | undefined;
     creationTime!: moment.Moment | undefined;
 
     constructor(data?: IGetRecentlyCreatedLeadsOutput) {
@@ -57212,11 +57587,12 @@ export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOu
 
     init(data?: any) {
         if (data) {
+            this.leadId = data["leadId"];
+            this.contactId = data["contactId"];
+            this.fullName = data["fullName"];
             this.email = data["email"];
             this.phone = data["phone"];
             this.bankCode = data["bankCode"];
-            this.id = data["id"];
-            this.fullName = data["fullName"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
         }
     }
@@ -57230,22 +57606,24 @@ export class GetRecentlyCreatedLeadsOutput implements IGetRecentlyCreatedLeadsOu
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["leadId"] = this.leadId;
+        data["contactId"] = this.contactId;
+        data["fullName"] = this.fullName;
         data["email"] = this.email;
         data["phone"] = this.phone;
         data["bankCode"] = this.bankCode;
-        data["id"] = this.id;
-        data["fullName"] = this.fullName;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         return data; 
     }
 }
 
 export interface IGetRecentlyCreatedLeadsOutput {
+    leadId: number | undefined;
+    contactId: number | undefined;
+    fullName: string | undefined;
     email: string | undefined;
     phone: string | undefined;
     bankCode: string | undefined;
-    id: number | undefined;
-    fullName: string | undefined;
     creationTime: moment.Moment | undefined;
 }
 
@@ -62173,6 +62551,7 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
     stateName!: string | undefined;
     city!: string | undefined;
     zip!: string | undefined;
+    neighborhood!: string | undefined;
     address1!: string | undefined;
     address2!: string | undefined;
     firstName!: string | undefined;
@@ -62201,6 +62580,7 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
             this.stateName = data["stateName"];
             this.city = data["city"];
             this.zip = data["zip"];
+            this.neighborhood = data["neighborhood"];
             this.address1 = data["address1"];
             this.address2 = data["address2"];
             this.firstName = data["firstName"];
@@ -62229,6 +62609,7 @@ export class InvoiceAddressInfo implements IInvoiceAddressInfo {
         data["stateName"] = this.stateName;
         data["city"] = this.city;
         data["zip"] = this.zip;
+        data["neighborhood"] = this.neighborhood;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
         data["firstName"] = this.firstName;
@@ -62250,6 +62631,7 @@ export interface IInvoiceAddressInfo {
     stateName: string | undefined;
     city: string | undefined;
     zip: string | undefined;
+    neighborhood: string | undefined;
     address1: string | undefined;
     address2: string | undefined;
     firstName: string | undefined;
@@ -62454,6 +62836,7 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
     stateName!: string | undefined;
     city!: string | undefined;
     zip!: string | undefined;
+    neighborhood!: string | undefined;
     address1!: string | undefined;
     address2!: string | undefined;
     firstName!: string | undefined;
@@ -62478,6 +62861,7 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
             this.stateName = data["stateName"];
             this.city = data["city"];
             this.zip = data["zip"];
+            this.neighborhood = data["neighborhood"];
             this.address1 = data["address1"];
             this.address2 = data["address2"];
             this.firstName = data["firstName"];
@@ -62502,6 +62886,7 @@ export class InvoiceAddressInput implements IInvoiceAddressInput {
         data["stateName"] = this.stateName;
         data["city"] = this.city;
         data["zip"] = this.zip;
+        data["neighborhood"] = this.neighborhood;
         data["address1"] = this.address1;
         data["address2"] = this.address2;
         data["firstName"] = this.firstName;
@@ -62519,6 +62904,7 @@ export interface IInvoiceAddressInput {
     stateName: string | undefined;
     city: string | undefined;
     zip: string | undefined;
+    neighborhood: string | undefined;
     address1: string | undefined;
     address2: string | undefined;
     firstName: string | undefined;
@@ -63900,6 +64286,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     leadTypeId!: number | undefined;
     leadTypeSysId!: string | undefined;
     stageId!: number | undefined;
+    dealAmount!: number | undefined;
     followUpDate!: moment.Moment | undefined;
     trackingInfo!: TrackingInfo | undefined;
     inviteUser!: boolean | undefined;
@@ -63985,6 +64372,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.leadTypeId = data["leadTypeId"];
             this.leadTypeSysId = data["leadTypeSysId"];
             this.stageId = data["stageId"];
+            this.dealAmount = data["dealAmount"];
             this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
             this.inviteUser = data["inviteUser"];
@@ -64070,6 +64458,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["leadTypeId"] = this.leadTypeId;
         data["leadTypeSysId"] = this.leadTypeSysId;
         data["stageId"] = this.stageId;
+        data["dealAmount"] = this.dealAmount;
         data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
         data["inviteUser"] = this.inviteUser;
@@ -64120,6 +64509,7 @@ export interface ICreateOrUpdateLeadInput {
     leadTypeId: number | undefined;
     leadTypeSysId: string | undefined;
     stageId: number | undefined;
+    dealAmount: number | undefined;
     followUpDate: moment.Moment | undefined;
     trackingInfo: TrackingInfo | undefined;
     inviteUser: boolean | undefined;
@@ -64440,6 +64830,7 @@ export interface ISubmitFreeTrialRequestInput {
 export class SubmitClientRequestInput implements ISubmitClientRequestInput {
     tenancyName!: string;
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
@@ -64473,6 +64864,7 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
         if (data) {
             this.tenancyName = data["tenancyName"];
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
@@ -64506,6 +64898,7 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
         data = typeof data === 'object' ? data : {};
         data["tenancyName"] = this.tenancyName;
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
@@ -64532,6 +64925,7 @@ export class SubmitClientRequestInput implements ISubmitClientRequestInput {
 export interface ISubmitClientRequestInput {
     tenancyName: string;
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
@@ -64710,7 +65104,7 @@ export class LeadInfoDto implements ILeadInfoDto {
     pipelineId!: number | undefined;
     stageId!: number | undefined;
     stage!: string | undefined;
-    amount!: number | undefined;
+    dealAmount!: number | undefined;
     creationDate!: moment.Moment | undefined;
     modificationDate!: moment.Moment | undefined;
     sourceCode!: string | undefined;
@@ -64761,7 +65155,7 @@ export class LeadInfoDto implements ILeadInfoDto {
             this.pipelineId = data["pipelineId"];
             this.stageId = data["stageId"];
             this.stage = data["stage"];
-            this.amount = data["amount"];
+            this.dealAmount = data["dealAmount"];
             this.creationDate = data["creationDate"] ? moment(data["creationDate"].toString()) : <any>undefined;
             this.modificationDate = data["modificationDate"] ? moment(data["modificationDate"].toString()) : <any>undefined;
             this.sourceCode = data["sourceCode"];
@@ -64812,7 +65206,7 @@ export class LeadInfoDto implements ILeadInfoDto {
         data["pipelineId"] = this.pipelineId;
         data["stageId"] = this.stageId;
         data["stage"] = this.stage;
-        data["amount"] = this.amount;
+        data["dealAmount"] = this.dealAmount;
         data["creationDate"] = this.creationDate ? this.creationDate.toISOString() : <any>undefined;
         data["modificationDate"] = this.modificationDate ? this.modificationDate.toISOString() : <any>undefined;
         data["sourceCode"] = this.sourceCode;
@@ -64856,7 +65250,7 @@ export interface ILeadInfoDto {
     pipelineId: number | undefined;
     stageId: number | undefined;
     stage: string | undefined;
-    amount: number | undefined;
+    dealAmount: number | undefined;
     creationDate: moment.Moment | undefined;
     modificationDate: moment.Moment | undefined;
     sourceCode: string | undefined;
@@ -64895,6 +65289,7 @@ export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
     campaignCode!: string | undefined;
     affiliateCode!: string | undefined;
     channelCode!: string | undefined;
+    dealAmount!: number | undefined;
     comments!: string | undefined;
 
     constructor(data?: IUpdateLeadInfoInput) {
@@ -64913,6 +65308,7 @@ export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
             this.campaignCode = data["campaignCode"];
             this.affiliateCode = data["affiliateCode"];
             this.channelCode = data["channelCode"];
+            this.dealAmount = data["dealAmount"];
             this.comments = data["comments"];
         }
     }
@@ -64931,6 +65327,7 @@ export class UpdateLeadInfoInput implements IUpdateLeadInfoInput {
         data["campaignCode"] = this.campaignCode;
         data["affiliateCode"] = this.affiliateCode;
         data["channelCode"] = this.channelCode;
+        data["dealAmount"] = this.dealAmount;
         data["comments"] = this.comments;
         return data; 
     }
@@ -64942,6 +65339,7 @@ export interface IUpdateLeadInfoInput {
     campaignCode: string | undefined;
     affiliateCode: string | undefined;
     channelCode: string | undefined;
+    dealAmount: number | undefined;
     comments: string | undefined;
 }
 
@@ -65369,6 +65767,7 @@ export interface ILocalizationSourceDto {
 
 export class MemberAddressDto implements IMemberAddressDto {
     streetAddress!: string | undefined;
+    neighborhood!: string | undefined;
     zip!: string | undefined;
     city!: string | undefined;
     stateId!: string | undefined;
@@ -65387,6 +65786,7 @@ export class MemberAddressDto implements IMemberAddressDto {
     init(data?: any) {
         if (data) {
             this.streetAddress = data["streetAddress"];
+            this.neighborhood = data["neighborhood"];
             this.zip = data["zip"];
             this.city = data["city"];
             this.stateId = data["stateId"];
@@ -65405,6 +65805,7 @@ export class MemberAddressDto implements IMemberAddressDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["streetAddress"] = this.streetAddress;
+        data["neighborhood"] = this.neighborhood;
         data["zip"] = this.zip;
         data["city"] = this.city;
         data["stateId"] = this.stateId;
@@ -65416,6 +65817,7 @@ export class MemberAddressDto implements IMemberAddressDto {
 
 export interface IMemberAddressDto {
     streetAddress: string | undefined;
+    neighborhood: string | undefined;
     zip: string | undefined;
     city: string | undefined;
     stateId: string | undefined;
@@ -66219,6 +66621,8 @@ export class NoteInfoDto implements INoteInfoDto {
     addedByUserId!: number | undefined;
     addedByUserName!: string | undefined;
     addedByUserPhotoPublicId!: string | undefined;
+    pinnedByUserName!: string | undefined;
+    pinnedDateTime!: moment.Moment | undefined;
 
     constructor(data?: INoteInfoDto) {
         if (data) {
@@ -66246,6 +66650,8 @@ export class NoteInfoDto implements INoteInfoDto {
             this.addedByUserId = data["addedByUserId"];
             this.addedByUserName = data["addedByUserName"];
             this.addedByUserPhotoPublicId = data["addedByUserPhotoPublicId"];
+            this.pinnedByUserName = data["pinnedByUserName"];
+            this.pinnedDateTime = data["pinnedDateTime"] ? moment(data["pinnedDateTime"].toString()) : <any>undefined;
         }
     }
 
@@ -66273,6 +66679,8 @@ export class NoteInfoDto implements INoteInfoDto {
         data["addedByUserId"] = this.addedByUserId;
         data["addedByUserName"] = this.addedByUserName;
         data["addedByUserPhotoPublicId"] = this.addedByUserPhotoPublicId;
+        data["pinnedByUserName"] = this.pinnedByUserName;
+        data["pinnedDateTime"] = this.pinnedDateTime ? this.pinnedDateTime.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -66293,6 +66701,8 @@ export interface INoteInfoDto {
     addedByUserId: number | undefined;
     addedByUserName: string | undefined;
     addedByUserPhotoPublicId: string | undefined;
+    pinnedByUserName: string | undefined;
+    pinnedDateTime: moment.Moment | undefined;
 }
 
 export class CreateNoteInput implements ICreateNoteInput {
@@ -66469,6 +66879,86 @@ export interface IUpdateNoteInput {
     followUpDateTime: moment.Moment | undefined;
     dateTime: moment.Moment | undefined;
     addedByUserId: number | undefined;
+}
+
+export class PinNoteInput implements IPinNoteInput {
+    contactId!: number;
+    noteId!: number;
+
+    constructor(data?: IPinNoteInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.noteId = data["noteId"];
+        }
+    }
+
+    static fromJS(data: any): PinNoteInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new PinNoteInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["noteId"] = this.noteId;
+        return data; 
+    }
+}
+
+export interface IPinNoteInput {
+    contactId: number;
+    noteId: number;
+}
+
+export class UnpinNoteInput implements IUnpinNoteInput {
+    contactId!: number;
+    noteId!: number;
+
+    constructor(data?: IUnpinNoteInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.noteId = data["noteId"];
+        }
+    }
+
+    static fromJS(data: any): UnpinNoteInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UnpinNoteInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["noteId"] = this.noteId;
+        return data; 
+    }
+}
+
+export interface IUnpinNoteInput {
+    contactId: number;
+    noteId: number;
 }
 
 export enum UserNotificationState {
@@ -72080,6 +72570,46 @@ export interface IPipelineDto {
     stages: StageDto[] | undefined;
 }
 
+export class UpdateSortOrderInput implements IUpdateSortOrderInput {
+    id!: number;
+    sortOrder!: number;
+
+    constructor(data?: IUpdateSortOrderInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): UpdateSortOrderInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateSortOrderInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IUpdateSortOrderInput {
+    id: number;
+    sortOrder: number;
+}
+
 export class PipelineCreateInput implements IPipelineCreateInput {
     name!: string | undefined;
     purposeId!: string;
@@ -73192,17 +73722,30 @@ export interface IUpdateMonthlyGoalInput {
     monthlyGoal: number | undefined;
 }
 
+export enum PropertyType {
+    Townhouse = "Townhouse", 
+    Duplex = "Duplex", 
+    SDH = "SDH", 
+}
+
 export enum HeatingCoolingType {
     Water = "Water", 
     Gas = "Gas", 
+    Electric = "Electric", 
+}
+
+export enum YardPatioEnum {
+    Yes = "Yes", 
+    No = "No", 
+    Fenced = "Fenced", 
 }
 
 export enum ParkingType {
-    Garage = "Garage", 
-    Underground = "Underground", 
-    OutdoorLot = "OutdoorLot", 
-    DedicatedPad = "DedicatedPad", 
-    Street = "Street", 
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
+    _8 = 8, 
+    _16 = 16, 
 }
 
 export enum BasementStatus {
@@ -73211,17 +73754,55 @@ export enum BasementStatus {
     Finished = "Finished", 
 }
 
+export enum PlatformDayOfWeek {
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
+    _8 = 8, 
+    _16 = 16, 
+    _32 = 32, 
+    _64 = 64, 
+}
+
+export enum GarbageCollection {
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
+}
+
 export enum FireplaceType {
-    Gas = "Gas", 
-    Wood = "Wood", 
-    Electric = "Electric", 
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
+}
+
+export enum SellPeriod {
+    Immediately = "Immediately", 
+    OneToThreeMonths = "OneToThreeMonths", 
+    ThreeToSixMonths = "ThreeToSixMonths", 
+    SixPlusMonths = "SixPlusMonths", 
+}
+
+export enum InterestRate {
+    Fixed = "Fixed", 
+    Adjustable = "Adjustable", 
+}
+
+export enum ExitStrategy {
+    RTO = "RTO", 
+    STR = "STR", 
+    Flip = "Flip", 
+    LTR = "LTR", 
 }
 
 export class PropertyDto implements IPropertyDto {
     id!: number;
     name!: string;
     address!: CreateContactAddressInput | undefined;
+    propertyType!: PropertyType | undefined;
     area!: number | undefined;
+    lotSize!: number | undefined;
     yearBuilt!: number | undefined;
     floor!: number | undefined;
     numberOfLevels!: number | undefined;
@@ -73242,11 +73823,14 @@ export class PropertyDto implements IPropertyDto {
     floorHardwood!: boolean | undefined;
     floorTile!: boolean | undefined;
     floorCarpet!: boolean | undefined;
+    floorLVP!: boolean | undefined;
     storageInSuite!: boolean | undefined;
     storageLocker!: number | undefined;
-    yardFenced!: boolean | undefined;
+    storageLockerNumber!: number | undefined;
+    storageLockerKey!: boolean | undefined;
+    yard!: YardPatioEnum | undefined;
+    patio!: YardPatioEnum | undefined;
     yardBalcony!: boolean | undefined;
-    yardAdditional!: boolean | undefined;
     parking!: ParkingType | undefined;
     basement!: BasementStatus | undefined;
     dogs!: boolean | undefined;
@@ -73254,16 +73838,25 @@ export class PropertyDto implements IPropertyDto {
     petsSizeLimit!: string | undefined;
     petsBreedRestriction!: string | undefined;
     condoDocuments!: boolean | undefined;
+    intercomSetup!: string | undefined;
     additionalKeys!: boolean | undefined;
+    numberOfSets!: number | undefined;
+    frontDoorFob!: number | undefined;
     garageRemote!: boolean | undefined;
+    garageRemoteNumberReceived!: number | undefined;
     garageKey!: boolean | undefined;
+    garageKeyNumberReceived!: number | undefined;
     garageCode!: string | undefined;
     parkadeFob!: boolean | undefined;
     parkingStall!: number | undefined;
-    visitorParkingPass!: boolean | undefined;
+    visitorParkingPass!: number | undefined;
     mailbox!: number | undefined;
     mailboxKey!: boolean | undefined;
-    garbageDay!: boolean | undefined;
+    mailboxNumberReceived!: number | undefined;
+    garbageDay!: PlatformDayOfWeek | undefined;
+    garbageCollection!: GarbageCollection | undefined;
+    garbageKey!: boolean | undefined;
+    garbageNumberReceived!: number | undefined;
     firepit!: boolean | undefined;
     secure!: boolean | undefined;
     onSiteManager!: boolean | undefined;
@@ -73279,6 +73872,67 @@ export class PropertyDto implements IPropertyDto {
     partyRoom!: boolean | undefined;
     guestSuite!: boolean | undefined;
     other!: string | undefined;
+    ownersOnTitle!: string | undefined;
+    mortgageHolder!: string | undefined;
+    ownerLiveInHouse!: boolean | undefined;
+    houseOwningTime!: string | undefined;
+    houseWithRenters!: boolean | undefined;
+    annualHOACondoFees!: number | undefined;
+    depositPutAmount!: number | undefined;
+    isHomeListed!: boolean | undefined;
+    priceListed!: number | undefined;
+    listedDate!: moment.Moment | undefined;
+    listingExpires!: moment.Moment | undefined;
+    realtorName!: string | undefined;
+    realtorContactNumber!: string | undefined;
+    offersFromListing!: boolean | undefined;
+    offersFromListingAmount!: number | undefined;
+    anythingRecentlyUpgraded!: string | undefined;
+    needRepairs!: string | undefined;
+    structural!: string | undefined;
+    mechanical!: string | undefined;
+    waterIssues!: string | undefined;
+    roof!: string | undefined;
+    plumbing!: string | undefined;
+    electrical!: string | undefined;
+    hvac!: string | undefined;
+    repairsOrIssuesPool!: string | undefined;
+    landscaping!: string | undefined;
+    termites!: string | undefined;
+    repairsOrIssuesOther!: string | undefined;
+    whySell!: string | undefined;
+    howQuicklyWantToSell!: SellPeriod | undefined;
+    didntSellActions!: string | undefined;
+    currentOwningAmount!: number | undefined;
+    hasAdditionalMortgage!: boolean | undefined;
+    otherLienAmount!: number | undefined;
+    areMortgagePaymentsCurrent!: boolean | undefined;
+    monthsBehindOnMortgage!: number | undefined;
+    amountBehindOnMortgages!: number | undefined;
+    backTaxes!: number | undefined;
+    monthlyMortgagePayment!: number | undefined;
+    includeTaxesAndInsurance!: boolean | undefined;
+    annualPropertyTaxes!: number | undefined;
+    annualPropertyInsurance!: number | undefined;
+    interestRateMTG1!: number | undefined;
+    interestRateMTG1Type!: InterestRate | undefined;
+    interestRateMTG2!: number | undefined;
+    interestRateMTG2Type!: InterestRate | undefined;
+    prepaymentPenalty!: number | undefined;
+    mortgageLender1!: string | undefined;
+    mortgageLender2!: string | undefined;
+    mortgageTermRenewal1!: moment.Moment | undefined;
+    mortgageTermRenewal2!: moment.Moment | undefined;
+    sellerFinancing!: string | undefined;
+    lastSoldPrice!: number | undefined;
+    yearLastSold!: string | undefined;
+    cityAssessedValue!: number | undefined;
+    asIsValue!: number | undefined;
+    approxRepairCost!: number | undefined;
+    afterRepairValue!: number | undefined;
+    walkthroughDate!: moment.Moment | undefined;
+    exitStrategy!: ExitStrategy | undefined;
+    existStrategyNotes!: string | undefined;
 
     constructor(data?: IPropertyDto) {
         if (data) {
@@ -73294,7 +73948,9 @@ export class PropertyDto implements IPropertyDto {
             this.id = data["id"];
             this.name = data["name"];
             this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
+            this.propertyType = data["propertyType"];
             this.area = data["area"];
+            this.lotSize = data["lotSize"];
             this.yearBuilt = data["yearBuilt"];
             this.floor = data["floor"];
             this.numberOfLevels = data["numberOfLevels"];
@@ -73315,11 +73971,14 @@ export class PropertyDto implements IPropertyDto {
             this.floorHardwood = data["floorHardwood"];
             this.floorTile = data["floorTile"];
             this.floorCarpet = data["floorCarpet"];
+            this.floorLVP = data["floorLVP"];
             this.storageInSuite = data["storageInSuite"];
             this.storageLocker = data["storageLocker"];
-            this.yardFenced = data["yardFenced"];
+            this.storageLockerNumber = data["storageLockerNumber"];
+            this.storageLockerKey = data["storageLockerKey"];
+            this.yard = data["yard"];
+            this.patio = data["patio"];
             this.yardBalcony = data["yardBalcony"];
-            this.yardAdditional = data["yardAdditional"];
             this.parking = data["parking"];
             this.basement = data["basement"];
             this.dogs = data["dogs"];
@@ -73327,16 +73986,25 @@ export class PropertyDto implements IPropertyDto {
             this.petsSizeLimit = data["petsSizeLimit"];
             this.petsBreedRestriction = data["petsBreedRestriction"];
             this.condoDocuments = data["condoDocuments"];
+            this.intercomSetup = data["intercomSetup"];
             this.additionalKeys = data["additionalKeys"];
+            this.numberOfSets = data["numberOfSets"];
+            this.frontDoorFob = data["frontDoorFob"];
             this.garageRemote = data["garageRemote"];
+            this.garageRemoteNumberReceived = data["garageRemoteNumberReceived"];
             this.garageKey = data["garageKey"];
+            this.garageKeyNumberReceived = data["garageKeyNumberReceived"];
             this.garageCode = data["garageCode"];
             this.parkadeFob = data["parkadeFob"];
             this.parkingStall = data["parkingStall"];
             this.visitorParkingPass = data["visitorParkingPass"];
             this.mailbox = data["mailbox"];
             this.mailboxKey = data["mailboxKey"];
+            this.mailboxNumberReceived = data["mailboxNumberReceived"];
             this.garbageDay = data["garbageDay"];
+            this.garbageCollection = data["garbageCollection"];
+            this.garbageKey = data["garbageKey"];
+            this.garbageNumberReceived = data["garbageNumberReceived"];
             this.firepit = data["firepit"];
             this.secure = data["secure"];
             this.onSiteManager = data["onSiteManager"];
@@ -73352,6 +74020,67 @@ export class PropertyDto implements IPropertyDto {
             this.partyRoom = data["partyRoom"];
             this.guestSuite = data["guestSuite"];
             this.other = data["other"];
+            this.ownersOnTitle = data["ownersOnTitle"];
+            this.mortgageHolder = data["mortgageHolder"];
+            this.ownerLiveInHouse = data["ownerLiveInHouse"];
+            this.houseOwningTime = data["houseOwningTime"];
+            this.houseWithRenters = data["houseWithRenters"];
+            this.annualHOACondoFees = data["annualHOACondoFees"];
+            this.depositPutAmount = data["depositPutAmount"];
+            this.isHomeListed = data["isHomeListed"];
+            this.priceListed = data["priceListed"];
+            this.listedDate = data["listedDate"] ? moment(data["listedDate"].toString()) : <any>undefined;
+            this.listingExpires = data["listingExpires"] ? moment(data["listingExpires"].toString()) : <any>undefined;
+            this.realtorName = data["realtorName"];
+            this.realtorContactNumber = data["realtorContactNumber"];
+            this.offersFromListing = data["offersFromListing"];
+            this.offersFromListingAmount = data["offersFromListingAmount"];
+            this.anythingRecentlyUpgraded = data["anythingRecentlyUpgraded"];
+            this.needRepairs = data["needRepairs"];
+            this.structural = data["structural"];
+            this.mechanical = data["mechanical"];
+            this.waterIssues = data["waterIssues"];
+            this.roof = data["roof"];
+            this.plumbing = data["plumbing"];
+            this.electrical = data["electrical"];
+            this.hvac = data["hvac"];
+            this.repairsOrIssuesPool = data["repairsOrIssuesPool"];
+            this.landscaping = data["landscaping"];
+            this.termites = data["termites"];
+            this.repairsOrIssuesOther = data["repairsOrIssuesOther"];
+            this.whySell = data["whySell"];
+            this.howQuicklyWantToSell = data["howQuicklyWantToSell"];
+            this.didntSellActions = data["didntSellActions"];
+            this.currentOwningAmount = data["currentOwningAmount"];
+            this.hasAdditionalMortgage = data["hasAdditionalMortgage"];
+            this.otherLienAmount = data["otherLienAmount"];
+            this.areMortgagePaymentsCurrent = data["areMortgagePaymentsCurrent"];
+            this.monthsBehindOnMortgage = data["monthsBehindOnMortgage"];
+            this.amountBehindOnMortgages = data["amountBehindOnMortgages"];
+            this.backTaxes = data["backTaxes"];
+            this.monthlyMortgagePayment = data["monthlyMortgagePayment"];
+            this.includeTaxesAndInsurance = data["includeTaxesAndInsurance"];
+            this.annualPropertyTaxes = data["annualPropertyTaxes"];
+            this.annualPropertyInsurance = data["annualPropertyInsurance"];
+            this.interestRateMTG1 = data["interestRateMTG1"];
+            this.interestRateMTG1Type = data["interestRateMTG1Type"];
+            this.interestRateMTG2 = data["interestRateMTG2"];
+            this.interestRateMTG2Type = data["interestRateMTG2Type"];
+            this.prepaymentPenalty = data["prepaymentPenalty"];
+            this.mortgageLender1 = data["mortgageLender1"];
+            this.mortgageLender2 = data["mortgageLender2"];
+            this.mortgageTermRenewal1 = data["mortgageTermRenewal1"] ? moment(data["mortgageTermRenewal1"].toString()) : <any>undefined;
+            this.mortgageTermRenewal2 = data["mortgageTermRenewal2"] ? moment(data["mortgageTermRenewal2"].toString()) : <any>undefined;
+            this.sellerFinancing = data["sellerFinancing"];
+            this.lastSoldPrice = data["lastSoldPrice"];
+            this.yearLastSold = data["yearLastSold"];
+            this.cityAssessedValue = data["cityAssessedValue"];
+            this.asIsValue = data["asIsValue"];
+            this.approxRepairCost = data["approxRepairCost"];
+            this.afterRepairValue = data["afterRepairValue"];
+            this.walkthroughDate = data["walkthroughDate"] ? moment(data["walkthroughDate"].toString()) : <any>undefined;
+            this.exitStrategy = data["exitStrategy"];
+            this.existStrategyNotes = data["existStrategyNotes"];
         }
     }
 
@@ -73367,7 +74096,9 @@ export class PropertyDto implements IPropertyDto {
         data["id"] = this.id;
         data["name"] = this.name;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["propertyType"] = this.propertyType;
         data["area"] = this.area;
+        data["lotSize"] = this.lotSize;
         data["yearBuilt"] = this.yearBuilt;
         data["floor"] = this.floor;
         data["numberOfLevels"] = this.numberOfLevels;
@@ -73388,11 +74119,14 @@ export class PropertyDto implements IPropertyDto {
         data["floorHardwood"] = this.floorHardwood;
         data["floorTile"] = this.floorTile;
         data["floorCarpet"] = this.floorCarpet;
+        data["floorLVP"] = this.floorLVP;
         data["storageInSuite"] = this.storageInSuite;
         data["storageLocker"] = this.storageLocker;
-        data["yardFenced"] = this.yardFenced;
+        data["storageLockerNumber"] = this.storageLockerNumber;
+        data["storageLockerKey"] = this.storageLockerKey;
+        data["yard"] = this.yard;
+        data["patio"] = this.patio;
         data["yardBalcony"] = this.yardBalcony;
-        data["yardAdditional"] = this.yardAdditional;
         data["parking"] = this.parking;
         data["basement"] = this.basement;
         data["dogs"] = this.dogs;
@@ -73400,16 +74134,25 @@ export class PropertyDto implements IPropertyDto {
         data["petsSizeLimit"] = this.petsSizeLimit;
         data["petsBreedRestriction"] = this.petsBreedRestriction;
         data["condoDocuments"] = this.condoDocuments;
+        data["intercomSetup"] = this.intercomSetup;
         data["additionalKeys"] = this.additionalKeys;
+        data["numberOfSets"] = this.numberOfSets;
+        data["frontDoorFob"] = this.frontDoorFob;
         data["garageRemote"] = this.garageRemote;
+        data["garageRemoteNumberReceived"] = this.garageRemoteNumberReceived;
         data["garageKey"] = this.garageKey;
+        data["garageKeyNumberReceived"] = this.garageKeyNumberReceived;
         data["garageCode"] = this.garageCode;
         data["parkadeFob"] = this.parkadeFob;
         data["parkingStall"] = this.parkingStall;
         data["visitorParkingPass"] = this.visitorParkingPass;
         data["mailbox"] = this.mailbox;
         data["mailboxKey"] = this.mailboxKey;
+        data["mailboxNumberReceived"] = this.mailboxNumberReceived;
         data["garbageDay"] = this.garbageDay;
+        data["garbageCollection"] = this.garbageCollection;
+        data["garbageKey"] = this.garbageKey;
+        data["garbageNumberReceived"] = this.garbageNumberReceived;
         data["firepit"] = this.firepit;
         data["secure"] = this.secure;
         data["onSiteManager"] = this.onSiteManager;
@@ -73425,6 +74168,67 @@ export class PropertyDto implements IPropertyDto {
         data["partyRoom"] = this.partyRoom;
         data["guestSuite"] = this.guestSuite;
         data["other"] = this.other;
+        data["ownersOnTitle"] = this.ownersOnTitle;
+        data["mortgageHolder"] = this.mortgageHolder;
+        data["ownerLiveInHouse"] = this.ownerLiveInHouse;
+        data["houseOwningTime"] = this.houseOwningTime;
+        data["houseWithRenters"] = this.houseWithRenters;
+        data["annualHOACondoFees"] = this.annualHOACondoFees;
+        data["depositPutAmount"] = this.depositPutAmount;
+        data["isHomeListed"] = this.isHomeListed;
+        data["priceListed"] = this.priceListed;
+        data["listedDate"] = this.listedDate ? this.listedDate.toISOString() : <any>undefined;
+        data["listingExpires"] = this.listingExpires ? this.listingExpires.toISOString() : <any>undefined;
+        data["realtorName"] = this.realtorName;
+        data["realtorContactNumber"] = this.realtorContactNumber;
+        data["offersFromListing"] = this.offersFromListing;
+        data["offersFromListingAmount"] = this.offersFromListingAmount;
+        data["anythingRecentlyUpgraded"] = this.anythingRecentlyUpgraded;
+        data["needRepairs"] = this.needRepairs;
+        data["structural"] = this.structural;
+        data["mechanical"] = this.mechanical;
+        data["waterIssues"] = this.waterIssues;
+        data["roof"] = this.roof;
+        data["plumbing"] = this.plumbing;
+        data["electrical"] = this.electrical;
+        data["hvac"] = this.hvac;
+        data["repairsOrIssuesPool"] = this.repairsOrIssuesPool;
+        data["landscaping"] = this.landscaping;
+        data["termites"] = this.termites;
+        data["repairsOrIssuesOther"] = this.repairsOrIssuesOther;
+        data["whySell"] = this.whySell;
+        data["howQuicklyWantToSell"] = this.howQuicklyWantToSell;
+        data["didntSellActions"] = this.didntSellActions;
+        data["currentOwningAmount"] = this.currentOwningAmount;
+        data["hasAdditionalMortgage"] = this.hasAdditionalMortgage;
+        data["otherLienAmount"] = this.otherLienAmount;
+        data["areMortgagePaymentsCurrent"] = this.areMortgagePaymentsCurrent;
+        data["monthsBehindOnMortgage"] = this.monthsBehindOnMortgage;
+        data["amountBehindOnMortgages"] = this.amountBehindOnMortgages;
+        data["backTaxes"] = this.backTaxes;
+        data["monthlyMortgagePayment"] = this.monthlyMortgagePayment;
+        data["includeTaxesAndInsurance"] = this.includeTaxesAndInsurance;
+        data["annualPropertyTaxes"] = this.annualPropertyTaxes;
+        data["annualPropertyInsurance"] = this.annualPropertyInsurance;
+        data["interestRateMTG1"] = this.interestRateMTG1;
+        data["interestRateMTG1Type"] = this.interestRateMTG1Type;
+        data["interestRateMTG2"] = this.interestRateMTG2;
+        data["interestRateMTG2Type"] = this.interestRateMTG2Type;
+        data["prepaymentPenalty"] = this.prepaymentPenalty;
+        data["mortgageLender1"] = this.mortgageLender1;
+        data["mortgageLender2"] = this.mortgageLender2;
+        data["mortgageTermRenewal1"] = this.mortgageTermRenewal1 ? this.mortgageTermRenewal1.toISOString() : <any>undefined;
+        data["mortgageTermRenewal2"] = this.mortgageTermRenewal2 ? this.mortgageTermRenewal2.toISOString() : <any>undefined;
+        data["sellerFinancing"] = this.sellerFinancing;
+        data["lastSoldPrice"] = this.lastSoldPrice;
+        data["yearLastSold"] = this.yearLastSold;
+        data["cityAssessedValue"] = this.cityAssessedValue;
+        data["asIsValue"] = this.asIsValue;
+        data["approxRepairCost"] = this.approxRepairCost;
+        data["afterRepairValue"] = this.afterRepairValue;
+        data["walkthroughDate"] = this.walkthroughDate ? this.walkthroughDate.toISOString() : <any>undefined;
+        data["exitStrategy"] = this.exitStrategy;
+        data["existStrategyNotes"] = this.existStrategyNotes;
         return data; 
     }
 }
@@ -73433,7 +74237,9 @@ export interface IPropertyDto {
     id: number;
     name: string;
     address: CreateContactAddressInput | undefined;
+    propertyType: PropertyType | undefined;
     area: number | undefined;
+    lotSize: number | undefined;
     yearBuilt: number | undefined;
     floor: number | undefined;
     numberOfLevels: number | undefined;
@@ -73454,11 +74260,14 @@ export interface IPropertyDto {
     floorHardwood: boolean | undefined;
     floorTile: boolean | undefined;
     floorCarpet: boolean | undefined;
+    floorLVP: boolean | undefined;
     storageInSuite: boolean | undefined;
     storageLocker: number | undefined;
-    yardFenced: boolean | undefined;
+    storageLockerNumber: number | undefined;
+    storageLockerKey: boolean | undefined;
+    yard: YardPatioEnum | undefined;
+    patio: YardPatioEnum | undefined;
     yardBalcony: boolean | undefined;
-    yardAdditional: boolean | undefined;
     parking: ParkingType | undefined;
     basement: BasementStatus | undefined;
     dogs: boolean | undefined;
@@ -73466,16 +74275,25 @@ export interface IPropertyDto {
     petsSizeLimit: string | undefined;
     petsBreedRestriction: string | undefined;
     condoDocuments: boolean | undefined;
+    intercomSetup: string | undefined;
     additionalKeys: boolean | undefined;
+    numberOfSets: number | undefined;
+    frontDoorFob: number | undefined;
     garageRemote: boolean | undefined;
+    garageRemoteNumberReceived: number | undefined;
     garageKey: boolean | undefined;
+    garageKeyNumberReceived: number | undefined;
     garageCode: string | undefined;
     parkadeFob: boolean | undefined;
     parkingStall: number | undefined;
-    visitorParkingPass: boolean | undefined;
+    visitorParkingPass: number | undefined;
     mailbox: number | undefined;
     mailboxKey: boolean | undefined;
-    garbageDay: boolean | undefined;
+    mailboxNumberReceived: number | undefined;
+    garbageDay: PlatformDayOfWeek | undefined;
+    garbageCollection: GarbageCollection | undefined;
+    garbageKey: boolean | undefined;
+    garbageNumberReceived: number | undefined;
     firepit: boolean | undefined;
     secure: boolean | undefined;
     onSiteManager: boolean | undefined;
@@ -73491,6 +74309,67 @@ export interface IPropertyDto {
     partyRoom: boolean | undefined;
     guestSuite: boolean | undefined;
     other: string | undefined;
+    ownersOnTitle: string | undefined;
+    mortgageHolder: string | undefined;
+    ownerLiveInHouse: boolean | undefined;
+    houseOwningTime: string | undefined;
+    houseWithRenters: boolean | undefined;
+    annualHOACondoFees: number | undefined;
+    depositPutAmount: number | undefined;
+    isHomeListed: boolean | undefined;
+    priceListed: number | undefined;
+    listedDate: moment.Moment | undefined;
+    listingExpires: moment.Moment | undefined;
+    realtorName: string | undefined;
+    realtorContactNumber: string | undefined;
+    offersFromListing: boolean | undefined;
+    offersFromListingAmount: number | undefined;
+    anythingRecentlyUpgraded: string | undefined;
+    needRepairs: string | undefined;
+    structural: string | undefined;
+    mechanical: string | undefined;
+    waterIssues: string | undefined;
+    roof: string | undefined;
+    plumbing: string | undefined;
+    electrical: string | undefined;
+    hvac: string | undefined;
+    repairsOrIssuesPool: string | undefined;
+    landscaping: string | undefined;
+    termites: string | undefined;
+    repairsOrIssuesOther: string | undefined;
+    whySell: string | undefined;
+    howQuicklyWantToSell: SellPeriod | undefined;
+    didntSellActions: string | undefined;
+    currentOwningAmount: number | undefined;
+    hasAdditionalMortgage: boolean | undefined;
+    otherLienAmount: number | undefined;
+    areMortgagePaymentsCurrent: boolean | undefined;
+    monthsBehindOnMortgage: number | undefined;
+    amountBehindOnMortgages: number | undefined;
+    backTaxes: number | undefined;
+    monthlyMortgagePayment: number | undefined;
+    includeTaxesAndInsurance: boolean | undefined;
+    annualPropertyTaxes: number | undefined;
+    annualPropertyInsurance: number | undefined;
+    interestRateMTG1: number | undefined;
+    interestRateMTG1Type: InterestRate | undefined;
+    interestRateMTG2: number | undefined;
+    interestRateMTG2Type: InterestRate | undefined;
+    prepaymentPenalty: number | undefined;
+    mortgageLender1: string | undefined;
+    mortgageLender2: string | undefined;
+    mortgageTermRenewal1: moment.Moment | undefined;
+    mortgageTermRenewal2: moment.Moment | undefined;
+    sellerFinancing: string | undefined;
+    lastSoldPrice: number | undefined;
+    yearLastSold: string | undefined;
+    cityAssessedValue: number | undefined;
+    asIsValue: number | undefined;
+    approxRepairCost: number | undefined;
+    afterRepairValue: number | undefined;
+    walkthroughDate: moment.Moment | undefined;
+    exitStrategy: ExitStrategy | undefined;
+    existStrategyNotes: string | undefined;
 }
 
 export class OptionDto implements IOptionDto {
@@ -73883,6 +74762,214 @@ export class GetRapidTokenOutput implements IGetRapidTokenOutput {
 export interface IGetRapidTokenOutput {
     token: string | undefined;
     expirationDate: moment.Moment | undefined;
+}
+
+export class RefundInfo implements IRefundInfo {
+    totalAmount!: number | undefined;
+    count!: number | undefined;
+
+    constructor(data?: IRefundInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalAmount = data["totalAmount"];
+            this.count = data["count"];
+        }
+    }
+
+    static fromJS(data: any): RefundInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new RefundInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalAmount"] = this.totalAmount;
+        data["count"] = this.count;
+        return data; 
+    }
+}
+
+export interface IRefundInfo {
+    totalAmount: number | undefined;
+    count: number | undefined;
+}
+
+export class GetRefundsAndCancellationsOutput implements IGetRefundsAndCancellationsOutput {
+    refunds!: { [key: string] : RefundInfo; } | undefined;
+    cancellations!: { [key: string] : number; } | undefined;
+
+    constructor(data?: IGetRefundsAndCancellationsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["refunds"]) {
+                this.refunds = {};
+                for (let key in data["refunds"]) {
+                    if (data["refunds"].hasOwnProperty(key))
+                        this.refunds[key] = data["refunds"][key] ? RefundInfo.fromJS(data["refunds"][key]) : new RefundInfo();
+                }
+            }
+            if (data["cancellations"]) {
+                this.cancellations = {};
+                for (let key in data["cancellations"]) {
+                    if (data["cancellations"].hasOwnProperty(key))
+                        this.cancellations[key] = data["cancellations"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): GetRefundsAndCancellationsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetRefundsAndCancellationsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.refunds) {
+            data["refunds"] = {};
+            for (let key in this.refunds) {
+                if (this.refunds.hasOwnProperty(key))
+                    data["refunds"][key] = this.refunds[key];
+            }
+        }
+        if (this.cancellations) {
+            data["cancellations"] = {};
+            for (let key in this.cancellations) {
+                if (this.cancellations.hasOwnProperty(key))
+                    data["cancellations"][key] = this.cancellations[key];
+            }
+        }
+        return data; 
+    }
+}
+
+export interface IGetRefundsAndCancellationsOutput {
+    refunds: { [key: string] : RefundInfo; } | undefined;
+    cancellations: { [key: string] : number; } | undefined;
+}
+
+export enum AgentDataSource {
+    Sticky = "Sticky", 
+    Konnective = "Konnective", 
+}
+
+export class ContactAgentInput implements IContactAgentInput {
+    agentCode!: string;
+    agentName!: string | undefined;
+    callCenter!: string | undefined;
+
+    constructor(data?: IContactAgentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.agentCode = data["agentCode"];
+            this.agentName = data["agentName"];
+            this.callCenter = data["callCenter"];
+        }
+    }
+
+    static fromJS(data: any): ContactAgentInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactAgentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["agentCode"] = this.agentCode;
+        data["agentName"] = this.agentName;
+        data["callCenter"] = this.callCenter;
+        return data; 
+    }
+}
+
+export interface IContactAgentInput {
+    agentCode: string;
+    agentName: string | undefined;
+    callCenter: string | undefined;
+}
+
+export class CreateContactAgentsInput implements ICreateContactAgentsInput {
+    contactId!: number;
+    source!: AgentDataSource | undefined;
+    contactAgents!: ContactAgentInput[];
+
+    constructor(data?: ICreateContactAgentsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.contactAgents = [];
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.source = data["source"];
+            if (data["contactAgents"] && data["contactAgents"].constructor === Array) {
+                this.contactAgents = [];
+                for (let item of data["contactAgents"])
+                    this.contactAgents.push(ContactAgentInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateContactAgentsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateContactAgentsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["source"] = this.source;
+        if (this.contactAgents && this.contactAgents.constructor === Array) {
+            data["contactAgents"] = [];
+            for (let item of this.contactAgents)
+                data["contactAgents"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICreateContactAgentsInput {
+    contactId: number;
+    source: AgentDataSource | undefined;
+    contactAgents: ContactAgentInput[];
 }
 
 export class SubscribersReportInfo implements ISubscribersReportInfo {
@@ -75346,46 +76433,6 @@ export interface IMergeStagesInput {
     pipelineId: number;
     sourceStageId: number;
     destinationStageId: number | undefined;
-}
-
-export class UpdateSortOrderInput implements IUpdateSortOrderInput {
-    id!: number;
-    sortOrder!: number;
-
-    constructor(data?: IUpdateSortOrderInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.sortOrder = data["sortOrder"];
-        }
-    }
-
-    static fromJS(data: any): UpdateSortOrderInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateSortOrderInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["sortOrder"] = this.sortOrder;
-        return data; 
-    }
-}
-
-export interface IUpdateSortOrderInput {
-    id: number;
-    sortOrder: number;
 }
 
 export class CreateStageChecklistPointInput implements ICreateStageChecklistPointInput {

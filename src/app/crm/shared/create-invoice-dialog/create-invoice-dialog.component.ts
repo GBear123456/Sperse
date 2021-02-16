@@ -10,7 +10,7 @@ import {
 import { RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
-import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
+import { DxValidationGroupComponent } from 'devextreme-angular';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';

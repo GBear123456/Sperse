@@ -1,6 +1,7 @@
 /** Core imports */
 import { Output, EventEmitter, OnInit, AfterViewInit,
     Component, Inject, Injector, ViewChild, ElementRef } from '@angular/core';
+import { Location } from '@angular/common';
 
 /** Third party imports */
 import DataSource from 'devextreme/data/data_source';
@@ -67,7 +68,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     private slider: any;
     private _contactInfo: ContactInfoDto;
     private validator: any;
-
+    today = new Date();
     masks = AppConsts.masks;
 
     showOrigin = false;
@@ -82,7 +83,8 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     addedBy: number;
     defaultType: string;
     type: string;
-    enableSaveButton = !this.data.note || this.data.note.addedByUserId == this.appSession.userId
+    enableSaveButton = !this.data.note
+        || this.data.note.addedByUserId == this.appSession.userId
         || this.permission.isGranted(AppPermissions.CRMManageOtherUsersNote);
 
     types = [];
@@ -104,10 +106,11 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     isCRMOrdersGranted = this.permission.isGranted(AppPermissions.CRMOrdersInvoices);
     showAdditionalFields = true;
     private typePrefix: string;
-    
+
     constructor(
         injector: Injector,
         private dialog: MatDialog,
+        private location: Location,
         private elementRef: ElementRef,
         private phoneFormatPipe: PhoneFormatPipe,
         private notesService: NotesServiceProxy,
@@ -137,7 +140,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         });
         this.getContacts().subscribe((contacts: Contact[]) => {
             this.contacts = contacts;
-            this.onContactChanged({ value: this.data.contactInfo.id });
+            this.contactId = !this.location.path().includes('contact-information')
+                && this.data.propertyId || this.data.contactInfo.id;
+            this.onContactChanged({ value: this.contactId });
             this.applyOrdersFilter();
             this.initNoteData();
         });
@@ -203,29 +208,25 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     }
 
     private getContacts(): Observable<Contact[]> {
-        let contacts: Contact[] = [];
-        let personContactInfo = this._contactInfo.personContactInfo;
+        let contacts: Contact[] = [],
+            personContactInfo = this._contactInfo.personContactInfo,
+            isUpdatable = this._contactInfo['organizationContactInfo'].isUpdatable;
+        /** Add contact persons */
+        contacts.push(<any>{
+            id: this._contactInfo.id,
+            fullName: personContactInfo.fullName,
+            jobTitle: personContactInfo.jobTitle,
+            ratingId: this._contactInfo.ratingId,
+            thumbnail: personContactInfo.primaryPhoto,
+            phones: personContactInfo.details.phones
+        });
         /** Add related organizations contacts */
-        contacts = contacts.concat(personContactInfo && personContactInfo.orgRelations ?
+        contacts = contacts.concat(isUpdatable && personContactInfo && personContactInfo.orgRelations ?
             personContactInfo.orgRelations
                 .map((organizationRelation: PersonOrgRelationShortInfo) => {
                     organizationRelation.organization['fullName'] = organizationRelation.organization.name;
                     return organizationRelation.organization;
                 }) : []);
-        /** Add contact persons */
-        contacts = contacts.concat(
-            this._contactInfo['organizationContactInfo'] &&
-            this._contactInfo['organizationContactInfo'].contactPersons
-                ? this._contactInfo['organizationContactInfo'].contactPersons
-                : [{
-                    id: this._contactInfo.id,
-                    fullName: personContactInfo.fullName,
-                    jobTitle: personContactInfo.jobTitle,
-                    ratingId: this._contactInfo.ratingId,
-                    thumbnail: personContactInfo.primaryPhoto,
-                    phones: personContactInfo.details.phones
-                }]
-        );
 
         return !!this.data.propertyId
             ? this.propertyServiceProxy.getPropertyDetails(this.data.propertyId).pipe(
@@ -311,11 +312,11 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     }
 
     private updateTypePrefix(contact: Contact) {
-        this.typePrefix = contact instanceof PersonShortInfoDto
-            ? this.l('Client')
-            : (contact instanceof OrganizationShortInfo
-                ? this.l('Company')
-                : this.l('Property')
+        this.typePrefix = contact instanceof OrganizationShortInfo
+            ? this.l('Company')
+            : (contact instanceof PropertyDto
+                ? this.l('Property')
+                : this.l('Client')
             );
     }
 

@@ -2,10 +2,6 @@
     display: block;
     height: 100%;
 
-    .container-fluid {
-        padding: 30px 60px;
-    }
-
     .section {
         &-title {
             position: relative;
@@ -35,7 +31,6 @@
         background: #f7fbff;
         // f3f7fa
         // f8fbff
-
         * {
             font-size: 15px;
             font-weight: 500;
@@ -65,6 +60,7 @@
                 &.empty .address-wrapper {
                     display: none;
                 }
+
                 .addresses {
                     .address {
                         padding-left: 0;
@@ -82,9 +78,9 @@
                 }
 
                 .add-address {
-                    padding: 0!important;
+                    padding: 0 !important;
                 }
-    
+
                 .address-icons {
                     display: none;
                 }
@@ -132,14 +128,16 @@
                 font-weight: normal;
                 border: 0;
             }
-
             //.dx-editor-filled .dx-texteditor-input {
             //    padding: 8px;
             //}
-
             .dx-texteditor-empty.dx-state-focused .dx-placeholder {
                 font-size: 10px;
                 top: -15px;
+            }
+
+            .dx-textarea.dx-texteditor-empty.dx-state-focused .dx-placeholder {
+                top: -9px;
             }
         }
     }

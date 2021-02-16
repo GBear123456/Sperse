@@ -35,6 +35,16 @@
            ngx-google-places-autocomplete/>
     <span [class]="showClearButton" (click)="removeAddress()"><i class="minus-icon"></i></span>
 </div>
+<div *ngIf="showNeighborhood" class="field addr">
+    <dx-text-box
+            name="neighborhood"
+            maxLength="128"
+            [placeholder]="ls.l('Neighborhood')"
+            width="570px"
+            [(value)]="address.neighborhood"
+            valueChangeEvent="keyup">
+    </dx-text-box>
+</div>
 <div class="field addr">
     <dx-text-box
             name="city"
@@ -50,11 +60,12 @@
             [dataSource]="getCountryStates(address.countryCode) | async"
             displayExpr="name"
             name="state"
+            valueExpr="code"
             [placeholder]="ls.l('State')"
             width="270px"
             [searchEnabled]="true"
-            [(value)]="address.state"
-            (onValueChanged)="changeState()"
+            [value]="address?.state?.code"
+            (onValueChanged)="changeState($event)"
             (onCustomItemCreating)="createCustomState($event)">
     </dx-select-box>
 </div>

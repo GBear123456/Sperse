@@ -47,7 +47,13 @@ export class GooglePlaceService {
         return city && GooglePlaceService.normalize(city);
     }
 
+    static getNeighborhood(components: AddressComponent[]): string {
+        const neighborhood = GooglePlaceService.getFieldValue(components, 'neighborhood', 'short_name')
+            || GooglePlaceService.getFieldValue(components, 'sublocality', 'short_name');
+        return neighborhood && GooglePlaceService.normalize(neighborhood);
+    }
+
     static normalize(value: string): string {
-        return value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        return value && value.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
     }
 }

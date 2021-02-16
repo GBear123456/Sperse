@@ -38,6 +38,7 @@ import { DxRangeSliderModule } from 'devextreme-angular/ui/range-slider';
 import { DxSwitchModule } from 'devextreme-angular/ui/switch';
 import { DxPopupModule } from 'devextreme-angular/ui/popup';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxCalendarModule } from 'devextreme-angular/ui/calendar';
 import { ModalModule } from 'ngx-bootstrap';
 import { filter, map } from 'rxjs/operators';
 import { ImageViewerModule } from 'ng2-image-viewer';
@@ -92,11 +93,13 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { ReportsComponent } from './reports/reports.component';
 import { SendNotificationDialogComponent } from '@app/cfo/reports/send-notification-dialog/send-notification-dialog.component';
 import { GenerateReportDialogComponent } from '@app/cfo/reports/generate-report-dialog/generate-report-dialog.component';
+import { UploadBudgetDialogComponent } from '@app/cfo/cashflow/upload-budget-dialog/upload-budget-dialog.component';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
+import { NgxFileDropModule } from 'ngx-file-drop';
 
 let COMPONENTS = [
     StartComponent,
@@ -134,6 +137,7 @@ let COMPONENTS = [
     GenerateReportDialogComponent,
     SendNotificationDialogComponent,
     AddInstanceUserDialogComponent,
+    UploadBudgetDialogComponent,
     InstanceUsersComponent
 ];
 
@@ -166,6 +170,7 @@ let COMPONENTS = [
         DxRadioGroupModule,
         DxTabsModule,
         DxTagBoxModule,
+        DxCalendarModule,
         DxResizableModule,
         DxListModule,
         ModalModule.forRoot(),
@@ -189,7 +194,8 @@ let COMPONENTS = [
         ExpandButtonModule,
         ActionMenuModule,
         ModalDialogModule,
-        GooglePlaceModule
+        GooglePlaceModule,
+        NgxFileDropModule
     ],
     declarations: COMPONENTS,
     exports: COMPONENTS,
@@ -207,6 +213,7 @@ let COMPONENTS = [
         GenerateReportDialogComponent,
         SendNotificationDialogComponent,
         AddInstanceUserDialogComponent,
+        UploadBudgetDialogComponent,
         PortalDashboardComponent,
         DashboardComponent
     ],

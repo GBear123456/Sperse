@@ -9,13 +9,15 @@ export class StatesService {
     constructor(private store$: Store<RootStore.State>) {}
 
     updateState(countryCode: string, stateCode: string, stateName: string) {
-        this.store$.dispatch(new StatesStoreActions.UpdateAction({
-            countryCode: countryCode,
-            state: new CountryStateDto({
-                code: stateCode,
-                name: stateName
-            })
-        }));
+        if (stateCode || stateName) {
+            this.store$.dispatch(new StatesStoreActions.UpdateAction({
+                countryCode: countryCode,
+                state: new CountryStateDto({
+                    code: stateCode,
+                    name: stateName
+                })
+            }));
+        }
     }
 
     getAdjustedStateCode(stateCode: string, stateName): string {

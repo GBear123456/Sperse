@@ -9,6 +9,7 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'login-attempts',
@@ -20,6 +21,7 @@ export class LoginAttemptsComponent implements OnInit, OnDestroy {
     private readonly ident = 'LoginAttempts';
     urlHelper = UrlHelper;
     userTimezone = DateHelper.getUserTimezone();
+    formatting = AppConsts.formatting;
 
     constructor(
         private userService: UserServiceProxy,

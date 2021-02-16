@@ -5,6 +5,7 @@ export class Address implements IAddress {
     address: string;
     streetNumber: string;
     streetAddress: string;
+    neighborhood: string;
     zip: string;
     city: string;
     countryCode: string;
@@ -16,7 +17,7 @@ export class Address implements IAddress {
     comment: string;
 
     constructor(type?: string) {
-        if(type) {
+        if (type) {
             this.type = type;
         }
     }

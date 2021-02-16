@@ -40,7 +40,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Client')),
             message: this.ls.l('CRMDashboard_LastNEntitiesRecords', this.recordsCount, this.ls.l('ContactGroup_Client').toLowerCase()),
-            dataLink: '',
+            dataLink: 'app/crm/contact/{contactId}/lead/{leadId}',
             allRecordsLink: '/app/crm/leads',
             visible: this.permissionService.isGranted(AppPermissions.CRMCustomers),
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
@@ -49,7 +49,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         {
             name: this.ls.l('CRMDashboard_RecentClients'),
             message: this.ls.l('CRMDashboard_LastNClientsRecords', [this.recordsCount]),
-            dataLink: 'app/crm/contact',
+            dataLink: 'app/crm/contact/{contactId}',
             allRecordsLink: '/app/crm/clients',
             visible: this.permissionService.isGranted(AppPermissions.CRMCustomers),
             dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
@@ -58,7 +58,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Partner')),
             message: this.ls.l('CRMDashboard_LastNEntitiesRecords', this.recordsCount, this.ls.l('ContactGroup_Partner').toLowerCase()),
-            dataLink: '',
+            dataLink: 'app/crm/contact/{contactId}/lead/{leadId}',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Partner' },
             visible: this.permissionService.isGranted(AppPermissions.CRMPartners),
@@ -68,7 +68,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_UserProfile')),
             message: this.ls.l('CRMDashboard_LastNEntitiesRecords', this.recordsCount, this.ls.l('ContactGroup_UserProfile').toLowerCase()),
-            dataLink: '',
+            dataLink: 'app/crm/contact/{contactId}/lead/{leadId}',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'UserProfile' },
             visible: this.permissionService.isGranted(AppPermissions.CRMEmployees),
@@ -78,7 +78,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Investor')),
             message: this.ls.l('CRMDashboard_LastNEntitiesRecords',  this.recordsCount, this.ls.l('ContactGroup_Investor').toLowerCase()),
-            dataLink: '',
+            dataLink: 'app/crm/contact/{contactId}/lead/{leadId}',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Investor' },
             visible: this.permissionService.isGranted(AppPermissions.CRMInvestors),
@@ -88,7 +88,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Vendor')),
             message: this.ls.l('CRMDashboard_LastNEntitiesRecords',  this.recordsCount, this.ls.l('ContactGroup_Vendor').toLowerCase()),
-            dataLink: '',
+            dataLink: 'app/crm/contact/{contactId}/lead/{leadId}',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Vendor' },
             visible: this.permissionService.isGranted(AppPermissions.CRMVendors),
@@ -98,7 +98,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         {
             name: this.ls.l('CRMDashboard_RecentEntities', this.ls.l('ContactGroup_Other')),
             message: this.ls.l('CRMDashboard_LastNEntitiesRecords',  this.recordsCount, this.ls.l('ContactGroup_Other').toLowerCase()),
-            dataLink: '',
+            dataLink: 'app/crm/contact/{contactId}/lead/{leadId}',
             allRecordsLink: '/app/crm/leads',
             linkParams: { contactGroup: 'Other' },
             visible: this.permissionService.isGranted(AppPermissions.CRMOthers),
@@ -157,10 +157,12 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
     }
 
     onCellClick($event) {
-        if (this.selectedItem.value && this.selectedItem.value.dataLink) {
-            $event.row && this.router.navigate(
-                [this.selectedItem.value.dataLink, $event.row.data.id],
-                { queryParams: { referrer: this.router.url } }
+        if (this.selectedItem.value && this.selectedItem.value.dataLink && $event.row) {
+            let eventRowData = $event.row.data;
+            let dataLink = this.selectedItem.value.dataLink
+                .replace('{contactId}', eventRowData.contactId)
+                .replace('{leadId}', eventRowData.leadId);
+            $event.row && this.router.navigate([dataLink], { queryParams: { referrer: this.router.url } }
             );
         }
     }

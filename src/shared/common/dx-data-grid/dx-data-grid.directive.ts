@@ -1,34 +1,30 @@
 /** Core imports */
-import { Directive, OnInit, OnDestroy, Renderer2 } from '@angular/core';
+import {
+    Directive,
+    OnInit,
+    OnDestroy,
+    Renderer2,
+    ViewContainerRef
+} from '@angular/core';
+import { Location } from '@angular/common';
 
 /** Third party imports */
 import { AppConsts } from '@shared/AppConsts';
 import { ClipboardService } from 'ngx-clipboard';
-import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from '@abp/notify/notify.service';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { DateTimePipe } from '@shared/common/pipes/datetime.pipe.ts';
+import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe.ts';
 import { on } from 'devextreme/events';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 
 @Directive({
     selector: 'dx-data-grid'
 })
 export class DxDataGridDirective implements OnInit, OnDestroy {
-    private clipboardIcon;
-    private subscriptions = [];
-    private timezone = DateHelper.getUserTimezone();
-    private copyToClipboard = (event) => {
-        this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
-        this.notifyService.info(this.ls.l('SavedToClipboard'));
-
-        event.stopPropagation();
-        event.preventDefault();
-    }
-    exporting = false;
 
     constructor(
         private dateTimePipe: DateTimePipe,
@@ -36,30 +32,51 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
         private ls: AppLocalizationService,
         private notifyService: NotifyService,
         private component: DxDataGridComponent,
-        private clipboardService: ClipboardService
+        private clipboardService: ClipboardService,
+        private cacheHelper: CacheHelper,
+        private viewContainerRef: ViewContainerRef,
+        private location: Location
     ) {
         this.clipboardIcon = this.renderer.createElement('i');
         this.clipboardIcon.addEventListener('click', this.copyToClipboard, true);
         this.renderer.addClass(this.clipboardIcon, 'save-to-clipboard');
     }
+    private clipboardIcon;
+    private dateCheckTimeout;
+    private subscriptions = [];
+    private exporting = false;
+    private copyToClipboard = (event) => {
+        this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
+        this.notifyService.info(this.ls.l('SavedToClipboard'));
+
+        event.stopPropagation();
+        event.preventDefault();
+    }
 
     ngOnInit() {
+        this.initStateStoring();
         this.subscriptions.push(
             this.component.onInitialized.subscribe(event => {
+                let stateInherit = this.component.instance.state;
+                this.component.instance.state = (state?: any): void => {
+                    stateInherit(state);
+                    this.setForCheckDateCellColumn(event.component);
+                };
+
                 setTimeout(() =>
                     DataGridService.toggleCompactRowsHeight(this.component, true)
                 );
-                this.checkInitDateCellColumn(event.component);
+                this.setForCheckDateCellColumn(event.component);
             }),
             this.component.onOptionChanged.subscribe(event => {
                 if (event.name == 'dataSource' || event.name == 'summary')
-                    setTimeout(() => this.checkInitDateCellColumn(event.component));
+                    this.setForCheckDateCellColumn(event.component);
             }),
             this.component.onCellHoverChanged.subscribe(event => {
                 if (event.rowType == 'header') {
                     if (event.cellElement.classList.contains('dx-command-select'))
                         event.cellElement.setAttribute('title', this.ls.l(
-                            event.component.option('selection.selectAllMode') === 'allPages' ? 'AffectAllPagesItems' : 'AffectOnPageItems')); 
+                            event.component.option('selection.selectAllMode') === 'allPages' ? 'AffectAllPagesItems' : 'AffectOnPageItems'));
                 } else if (event.rowType == 'data') {
                     if (event.eventType == 'mouseover') {
                         if (event.column.name == 'hiddenTime') {
@@ -86,8 +103,9 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
             }),
             this.component.onContentReady.subscribe(event => {
                 let dataSource = event.component.getDataSource();
-                if (!dataSource || !dataSource.group())
-                    event.element.classList.remove('show-group-panel');
+                if (dataSource)
+                    event.element.classList[dataSource.group()
+                        ? 'add' : 'remove']('show-group-panel');
             }),
             this.component.onCellPrepared.subscribe(event => {
                 if (event.rowType == 'header') {
@@ -130,6 +148,32 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
         );
     }
 
+    initStateStoring() {
+        let hint = this.component.instance.option('hint');
+        this.component.instance.option('stateStoring', {
+            enabled: true,
+            ignoreColumnOptionNames: [],
+            storageKey: this.cacheHelper.getCacheKey(
+                [
+                    this.getLocationPath(),
+                    hint ? hint.toLowerCase().replace(/\s/g, '_') : undefined
+                ].filter(Boolean).join('_'),
+                'DataGridState'
+            )
+        });
+    }
+
+    getLocationPath() {
+        return this.location.path().split('?').shift().replace(/\//g, '_');
+    }
+
+    setForCheckDateCellColumn(component) {
+        clearTimeout(this.dateCheckTimeout);
+        this.dateCheckTimeout = setTimeout(() => {
+            this.checkInitDateCellColumn(component);
+        }, 300);
+    }
+
     checkInitDateCellColumn(component) {
         let columns = component.option('columns');
         if (columns) {
@@ -143,7 +187,7 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
 
     initDateCellColumn(column, component) {
         component.columnOption(column.dataField, 'name', 'hiddenTime');
-        component.columnOption(column.dataField, 'minWidth', '180px');
+        component.columnOption(column.dataField, 'minWidth', '190px');
         component.columnOption(column.dataField, 'cellTemplate', undefined);
         component.columnOption(column.dataField, 'cssClass', column.cssClass + ' clipboard-holder');
         component.columnOption(column.dataField, 'calculateCellValue', (data) => {

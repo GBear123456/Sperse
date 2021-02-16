@@ -16,7 +16,7 @@
             <h4 *ngIf="showType && types[address.usageTypeId] as type">{{ type }}</h4>
             <p *ngIf="!address.inplaceEdit">
                 <i>{{ address | address:address.streetAddress }}</i>
-                <i>{{ address | address:address.city:address.stateName:address.zip }}</i>
+                <i>{{ getAddressLine2(address) }}</i>
                 <i>{{ getCountryName(address) | async }}</i>
             </p>
             <div *ngIf="address.inplaceEdit">

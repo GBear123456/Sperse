@@ -181,7 +181,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     }
 
     buttonClick(e, button: IDialogButton) {
-        if (e && e.offsetX > e.target.closest('button').offsetWidth - 32)
+        if (e && e.offsetX > e.target.closest('button').offsetWidth - 32 && this.contextMenu)
             return this.contextMenu.instance.option('visible', true);
 
         button.action(e);

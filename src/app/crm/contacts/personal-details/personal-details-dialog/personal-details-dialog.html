@@ -131,7 +131,7 @@
                                             <ng-container *ngIf="leadInfo?.channelCode as channelCode">
                                                 <span class="channel-code">{{leadInfo?.channelCode}}</span>, on
                                             </ng-container>
-                                            <span>{{contactInfo?.contactDate | date: formatting.dateTime : userTimezone}}</span>
+                                            <span>{{contactInfo?.contactDate | datetime: formatting.dateTimeMoment}}</span>
                                         </div>
                                         <hr/>
                                     </div>
@@ -153,7 +153,7 @@
                                             {{ ls.l('System') }}
                                         </ng-template>
                                         <div *ngIf="lastModificationInfo.date as lastModificationTime" class="additional-info">
-                                            <span>on {{lastModificationTime | date: formatting.dateTime : userTimezone}} </span>
+                                            <span>on {{lastModificationTime | datetime: formatting.dateTimeMoment}} </span>
                                             <span class="date-ago">({{ lastModificationTime | timeAgo}})</span>
                                         </div>
                                     </div>

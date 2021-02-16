@@ -7,6 +7,7 @@ export interface EditAddressDialogData {
     country: string;
     countryCode?: string;
     stateId: string;
+    neighborhood: string;
     zip: string;
     isCompany: boolean;
     usageTypeId: string;
@@ -17,6 +18,7 @@ export interface EditAddressDialogData {
     deleteItem: (e: MouseEvent) => void;
     isDeleteAllowed: boolean;
     showType: boolean;
+    showNeighborhood: boolean;
     editDialogTitle: string;
     formattedAddress?: string;
 }

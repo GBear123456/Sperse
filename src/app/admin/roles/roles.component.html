@@ -7,10 +7,12 @@
                   [showToggleCompactViewButton]="true"
                   [showToggleFullScreenButton]="true"
                   [showToggleColumnSelectorButton]="true"
+                  [showStateResetButton]="true"
                   (onReload)="invalidate()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleToolbar)="repaintDataGrid()"
+                  (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
@@ -55,7 +57,7 @@
                         <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
 
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-                            {{ cellData.value | date: formatting.dateTime : userTimezone }}
+                            {{ cellData.value | datetime: formatting.dateTimeMoment }}
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>

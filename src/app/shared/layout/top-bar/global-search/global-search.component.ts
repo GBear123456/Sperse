@@ -279,7 +279,7 @@ export class GlobalSearchComponent implements OnInit {
         this.search$.pipe(first()).subscribe((search: string) => {
             this.router.navigate([groupLink], {
                 queryParams: {
-                    searchValue: search,
+                    search: search,
                     ...groupLinkParams
                 }
             });

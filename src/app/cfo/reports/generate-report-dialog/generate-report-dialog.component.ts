@@ -6,7 +6,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import moment from 'moment-timezone';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
-import { DxTextBoxComponent } from '@root/node_modules/devextreme-angular';
+import { DxTextBoxComponent } from 'devextreme-angular';
 import { forkJoin, Observable } from 'rxjs';
 import { first, switchMap, tap, map, finalize } from 'rxjs/operators';
 import { select, Store } from '@ngrx/store';
@@ -17,6 +17,9 @@ import { IDialogButton } from '@root/shared/common/dialogs/modal/dialog-button.i
 import { ModalDialogComponent } from '@root/shared/common/dialogs/modal/modal-dialog.component';
 import { BankAccountsService } from '@root/shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import {
+    BudgetServiceProxy,
+    SendReportNotificationInfo,
+    GenerateBudgetReportInput,
     DepartmentsServiceProxy,
     ReportsServiceProxy,
     GenerateInput,
@@ -29,7 +32,6 @@ import { GenerateReportStep } from './generate-report-step.enum';
 import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppConsts } from '@shared/AppConsts';
-import { SendReportNotificationInfo } from '@shared/service-proxies/service-proxies';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppFeatures } from '@shared/AppFeatures';
 
@@ -39,14 +41,14 @@ import { AppFeatures } from '@shared/AppFeatures';
         '../report-dialog.less',
         'generate-report-dialog.component.less'
     ],
-    providers: [ DepartmentsServiceProxy, ReportsServiceProxy ]
+    providers: [ DepartmentsServiceProxy, ReportsServiceProxy, BudgetServiceProxy ]
 })
 export class GenerateReportDialogComponent implements OnInit {
     @ViewChild(DxTreeListComponent, { static: false }) treeList: DxTreeListComponent;
     @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
     @ViewChild('notificationToEmailTextBox', { static: false }) notificationToEmailTextBox: DxTextBoxComponent;
 
-    title = this.ls.l('SelectBusinessEntity');
+    title = this.ls.l('SelectReportTemplate');
     initButtons: IDialogButton[] = [
         {
             title: this.ls.l('Back'),
@@ -59,14 +61,15 @@ export class GenerateReportDialogComponent implements OnInit {
             title: this.ls.l('Next'),
             class: 'primary saveButton',
             action: this.next.bind(this),
-            disabled: true
+            disabled: false
         }
     ];
+    budgetReportDate: Date = DateHelper.addTimezoneOffset(new Date(), true);
     departmentsEntities: string[] = [];
     selectedDepartments: string[] = [];
     noDepartmentItem = this.ls.l('NoDepartment');
     buttons: IDialogButton[] = this.initButtons;
-    currentStep = GenerateReportStep.BusinessEntities;
+    currentStep = GenerateReportStep.ReportTemplate;
     generateReportSteps = GenerateReportStep;
     selectedBusinessEntityIds: any = [];
     selectedBusinessEntities$ = this.bankAccountsService.businessEntities$.pipe(
@@ -92,8 +95,15 @@ export class GenerateReportDialogComponent implements OnInit {
     dontSendEmailNotification = false;
     generatingStarted = false;
     reportTemplate: ReportTemplate = ReportTemplate.Personal;
-    reportTemplateItems: any[] = Object.keys(ReportTemplate);
-    firstReportTemplateVisit: boolean = true;
+    reportTemplateItems: any[] = Object.keys(ReportTemplate).map(item => {
+        return {
+            name: this.ls.l(item),
+            value: item
+        };
+    }).concat(this.feature.isEnabled(AppFeatures.CFOBudgets)
+        ? {name: this.ls.l('IncomeStatementAndBudget'), value: undefined} : []
+    );
+    firstReportTemplateVisit = true;
 
     private readonly BACK_BTN_INDEX = 0;
     private readonly NEXT_BTN_INDEX = 1;
@@ -107,6 +117,7 @@ export class GenerateReportDialogComponent implements OnInit {
         private dialogRef: MatDialogRef<GenerateReportDialogComponent>,
         private instanceAppService: InstanceServiceProxy,
         private feature: FeatureCheckerService,
+        private budgetProxy: BudgetServiceProxy,
         public cfoService: CFOService,
         public bankAccountsService: BankAccountsService,
         public ls: AppLocalizationService
@@ -169,22 +180,23 @@ export class GenerateReportDialogComponent implements OnInit {
     private prev() {
         this.currentStep--;
         if (this.currentStep == GenerateReportStep.Departments
-            && this.departmentsEntities.length <= 1
+            && (!this.reportTemplate || this.departmentsEntities.length <= 1)
         ) this.currentStep--;
         this.processStep();
     }
 
     private next() {
         this.currentStep++;
-        if (this.currentStep == GenerateReportStep.Departments) {
+        if (this.currentStep == GenerateReportStep.Calendar) {
             this.applyBusinessEntity();
-            if (this.departmentsEntities.length <= 1)
+            if (this.firstReportTemplateVisit && this.reportTemplate == ReportTemplate.Suspense) {
+                this.setSuspenseReportDates();
+                this.firstReportTemplateVisit = false;
+            }
+        } else if (this.currentStep == GenerateReportStep.Departments) {
+            if (this.departmentsEntities.length <= 1 || !this.reportTemplate)
                 this.currentStep++;
-        } else if (this.currentStep == GenerateReportStep.Calendar && this.firstReportTemplateVisit && this.reportTemplate == ReportTemplate.Suspense) {
-            this.setSuspenseReportDates();
-            this.firstReportTemplateVisit = false;
-        }
-        else if (this.currentStep == GenerateReportStep.Final) {
+        } else if (this.currentStep == GenerateReportStep.Final) {
             this.applyDateRange();
         }
         this.processStep();
@@ -193,16 +205,19 @@ export class GenerateReportDialogComponent implements OnInit {
     private processStep() {
         this.buttons = this.initButtons;
         if (this.currentStep == GenerateReportStep.BusinessEntities) {
+            this.selectedBusinessEntityIds = [];
             this.title = this.ls.l('SelectBusinessEntity');
-            this.buttons[this.BACK_BTN_INDEX].disabled = true;
+            this.buttons[this.NEXT_BTN_INDEX].disabled = true;
+            this.buttons[this.BACK_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.Departments) {
             this.title = this.ls.l('SelectDepartments');
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.ReportTemplate) {
             this.title = this.ls.l('SelectReportTemplate');
-            this.buttons[this.BACK_BTN_INDEX].disabled = false;
+            this.buttons[this.BACK_BTN_INDEX].disabled = true;
         } else if (this.currentStep == GenerateReportStep.Calendar) {
-            this.title = this.ls.l('SelectDateRange');
+            this.title = this.reportTemplate ? this.ls.l('SelectDateRange') :
+                this.ls.l('Select') + ' ' + this.ls.l('Year');
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.Final) {
             this.title = this.ls.l('ReportGenerationOptions');
@@ -214,10 +229,9 @@ export class GenerateReportDialogComponent implements OnInit {
         let todayDay = new Date().getDate();
         if (todayDay >= 16) { // from 1 to 15 of current month
             this.dateFrom = moment.utc().startOf('month');
-            this.dateTo = moment.utc().set("date", 15);
-        }
-        else { // from 16 to end of previous month
-            this.dateFrom = moment.utc().subtract(1, 'month').set("date", 16);
+            this.dateTo = moment.utc().set('date', 15);
+        } else { // from 16 to end of previous month
+            this.dateFrom = moment.utc().subtract(1, 'month').set('date', 16);
             this.dateTo = moment.utc().subtract(1, 'month').endOf('month');
         }
 
@@ -254,6 +268,9 @@ export class GenerateReportDialogComponent implements OnInit {
             first(),
             tap(() => this.notify.info(this.ls.l('GeneratingStarted'))),
             switchMap((currencyId: string) => {
+                if (!this.reportTemplate)
+                    return this.getBudgetReportRequest(currencyId);
+
                 if (this.isSeparateGrouping) {
                     let observables: Observable<void>[] = [];
                     this.selectedBusinessEntityIds.map(param => {
@@ -283,13 +300,14 @@ export class GenerateReportDialogComponent implements OnInit {
                         this.getGenerateInput(currencyId, this.selectedBusinessEntityIds, this.selectedDepartments)
                     );
                 }
-            }),
+            })
+        ).pipe(
             finalize(() => {
                 this.generatingStarted = false;
             })
         ).subscribe(
             () => {
-                this.data.reportGenerated();
+                this.data.reportGenerated(this.reportTemplate);
                 this.modalDialog.close(true);
                 this.notify.info(this.ls.l('SuccessfullyGenerated'));
             },
@@ -299,18 +317,43 @@ export class GenerateReportDialogComponent implements OnInit {
         );
     }
 
+    getBudgetReportRequest(currencyId: string) {
+        return this.budgetProxy.generateReport(<any>this.data.instanceType, this.data.instanceId,
+            new GenerateBudgetReportInput({
+                businessEntityId: this.selectedBusinessEntityIds[0],
+                year: this.budgetReportDate.getUTCFullYear(),
+                currencyId: currencyId,
+                notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
+                    ? new SendReportNotificationInfo({
+                        recipientUserEmailAddress: this.notificationToEmail,
+                        sendReportInAttachments: this.sendReportInAttachments
+                    }) : null
+        }));
+    }
+
     onContentReady(event) {
         this.onSelectionChanged({ selectedRowKeys: event.component.getSelectedRowKeys() });
     }
 
     onSelectionChanged(event) {
+        let currentKeys = !event.currentDeselectedRowKeys ? [] :
+            event.currentDeselectedRowKeys.concat(event.currentSelectedRowKeys);
+        if (!this.reportTemplate && event.selectedRowKeys.length != 1 && event.component)
+            event.component.selectRows(currentKeys);
+
         if (this.currentStep === GenerateReportStep.BusinessEntities) {
-            this.buttons[this.NEXT_BTN_INDEX].disabled = !event.selectedRowKeys.length;
+            this.buttons[this.NEXT_BTN_INDEX].disabled = !(this.reportTemplate ||
+                !event.currentSelectedRowKeys ? event.selectedRowKeys : currentKeys).length;
         }
     }
 
     get submitButtonDisabled() {
         return this.generatingStarted || !this.dontSendEmailNotification && !this.emailIsValidAndNotEmpty;
+    }
+
+    onCalendarOptionChanged(event) {
+        if (event.name == 'currentDate')
+            this.budgetReportDate = event.value;
     }
 
     onInitialized(event) {

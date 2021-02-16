@@ -20,7 +20,7 @@
             <a class="dx-link action" (click)="deleteCertificate(data)">{{ls.l('Delete')}}</a>
         </div>
         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-            {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
+            {{cellData.value | datetime: formatting.dateTimeMoment}}
         </div>
     </dx-data-grid>
 </div>
@@ -54,7 +54,7 @@
             <a class="dx-link action" (click)="deleteSSLBinding(data)">{{ls.l('Delete')}}</a>
         </div>
         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
-            {{cellData.value | date: 'MM/dd/yyyy, h:mm a'}}
+            {{cellData.value | datetime: formatting.dateTimeMoment}}
         </div>
     </dx-data-grid>
 </div>

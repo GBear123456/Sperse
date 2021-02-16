@@ -80,7 +80,6 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
                 or: filterData
             };
         }
-
         return data;
     }
 }

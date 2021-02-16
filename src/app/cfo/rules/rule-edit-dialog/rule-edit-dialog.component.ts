@@ -21,6 +21,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'rule-dialog',
@@ -122,6 +123,7 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
 
     attributeValue: string;
     userTimezone = DateHelper.getUserTimezone();
+    formatting = AppConsts.formatting;
 
     ngOnInit() {
         this.formats = _.values(CashFlowAmountFormat).map((value) => {

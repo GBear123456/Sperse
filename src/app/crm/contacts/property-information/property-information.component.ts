@@ -10,26 +10,40 @@ import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { Observable, Subscription, merge, race } from 'rxjs';
-import { filter, map, switchMap, pluck, finalize, skip } from 'rxjs/operators';
+import { filter, map, switchMap, pluck, finalize, skip, first } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
+import * as moment from 'moment';
 
 /** Application imports */
 import {
     BasementStatus,
-    ContactInfoDto, CreateContactAddressInput, FireplaceType, HeatingCoolingType, LayoutType,
+    ContactInfoDto, CreateContactAddressInput, HeatingCoolingType,
     LeadInfoDto,
     PropertyDto,
-    PropertyServiceProxy
+    PropertyServiceProxy,
+    PropertyType,
+    YardPatioEnum,
+    SellPeriod,
+    InterestRate,
+    ExitStrategy,
+    InvoiceSettings,
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AddressUpdate } from '@app/crm/contacts/addresses/address-update.interface';
+import lodashIsEqual from 'lodash/isEqual';
+import { FireplaceEnum } from './enums/fireplace.enum';
+import { DayOfWeekEnum } from './enums/dayOfWeek.enum';
+import { GarbageEnum } from './enums/garbage.enum';
+import { ParkingEnum } from './enums/parking.enum';
+import { DateHelper } from '@shared/helpers/DateHelper';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 
 interface SelectBoxItem {
     displayValue: string;
-    value: boolean | string | null;
+    value: boolean | string | null | number;
 }
 
 @Component({
@@ -46,6 +60,9 @@ export class PropertyInformationComponent implements OnInit {
     leadInfoSubscription: Subscription;
     stylingMode = 'filled';
 
+    invoiceSettings: InvoiceSettings = new InvoiceSettings();
+    currencyFormat = { style: "currency", currency: "USD", useGrouping: true };
+
     yesNoDropdowns: SelectBoxItem[] = [
         { displayValue: 'Yes', value: true },
         { displayValue: 'No', value: false }
@@ -54,13 +71,7 @@ export class PropertyInformationComponent implements OnInit {
         { displayValue: 'Received', value: true },
         { displayValue: 'N/A', value: false }
     ];
-    parking: SelectBoxItem[] = [
-        { displayValue: this.ls.l('Garage'), value: 'Garage' },
-        { displayValue: this.ls.l('Underground'), value: 'Underground' },
-        { displayValue: this.ls.l('OutdoorLot'), value: 'OutdoorLot' },
-        { displayValue: this.ls.l('DedicatedPad'), value: 'DedicatedPad' },
-        { displayValue: this.ls.l('Street'), value: 'Street' },
-    ];
+
     basement: SelectBoxItem[] = Object.values(BasementStatus).map((item: string) => ({
         displayValue: this.ls.l(item),
         value: item
@@ -69,9 +80,42 @@ export class PropertyInformationComponent implements OnInit {
         displayValue: this.ls.l(item),
         value: item
     }));
-    firePlace: SelectBoxItem[] = Object.values(FireplaceType).map((item: string) => ({
+
+    propertyTypes: SelectBoxItem[] = Object.values(PropertyType).map((item: string) => ({
         displayValue: this.ls.l(item),
         value: item
+    }));
+    yardPatioValues: SelectBoxItem[] = Object.values(YardPatioEnum).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    sellPeriods: SelectBoxItem[] = Object.values(SellPeriod).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    interestRates: SelectBoxItem[] = Object.values(InterestRate).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    exitStrategies: SelectBoxItem[] = Object.values(ExitStrategy).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    parking: SelectBoxItem[] = Object.values(ParkingEnum).filter(isNaN).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: ParkingEnum[item]
+    }));
+    firePlace: SelectBoxItem[] = Object.values(FireplaceEnum).filter(isNaN).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: FireplaceEnum[item]
+    }));
+    garbageCollection: SelectBoxItem[] = Object.values(GarbageEnum).filter(isNaN).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: GarbageEnum[item]
+    }));
+    weekDays: SelectBoxItem[] = Object.values(DayOfWeekEnum).filter(isNaN).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: DayOfWeekEnum[item]
     }));
 
     constructor(
@@ -80,6 +124,7 @@ export class PropertyInformationComponent implements OnInit {
         private propertyServiceProxy: PropertyServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
         private loadingService: LoadingService,
+        private invoicesService: InvoicesService,
         private elementRef: ElementRef,
         public ls: AppLocalizationService
     ) {}
@@ -111,6 +156,8 @@ export class PropertyInformationComponent implements OnInit {
             this.savePropertyInfo(property);
             this.changeDetectorRef.detectChanges();
         });
+
+        this.invoiceSettingsLoad();
     }
 
     savePropertyInfo(property: PropertyDto) {
@@ -119,6 +166,7 @@ export class PropertyInformationComponent implements OnInit {
         this.propertyAddresses = [
             new AddressDto({
                 streetAddress: addr.streetAddress,
+                neighborhood: addr.neighborhood,
                 city: addr.city,
                 stateId: addr.stateId,
                 stateName: addr.stateName,
@@ -144,6 +192,7 @@ export class PropertyInformationComponent implements OnInit {
         this.property.address = new CreateContactAddressInput({
             contactId: dialogData.contactId,
             streetAddress: dialogData.streetAddress,
+            neighborhood: dialogData.neighborhood,
             city: dialogData.city,
             stateId: dialogData.stateId,
             stateName: dialogData.stateName,
@@ -162,6 +211,7 @@ export class PropertyInformationComponent implements OnInit {
             this.propertyAddresses = [
                 new AddressDto({
                     streetAddress: dialogData.streetAddress,
+                    neighborhood: dialogData.neighborhood,
                     city: dialogData.city,
                     stateId: dialogData.stateId,
                     stateName: dialogData.stateName,
@@ -191,6 +241,18 @@ export class PropertyInformationComponent implements OnInit {
         this.valueChanged();
     }
 
+    get sinceListedDays(): number {
+        return this.property && this.property.listedDate
+            ? moment().diff(moment(this.property.listedDate), 'days')
+            : undefined;
+    }
+    sinceListedDaysChanged(newValue: number) {
+        this.property.listedDate = newValue ?
+            moment().startOf('Day').subtract(newValue, "days") :
+            undefined
+        this.valueChanged();
+    }
+
     valueChanged(successCallback?: () => void) {
         this.loadingService.startLoading(this.elementRef.nativeElement);
         this.propertyServiceProxy.updatePropertyDetails(this.property).pipe(
@@ -205,9 +267,69 @@ export class PropertyInformationComponent implements OnInit {
         );
     }
 
+    getDateValue(date) {
+        return date && date.toDate ? date.toDate() : date;
+    }
+    dateValueChanged($event, propName: string) {
+        this.property[propName] = $event.value && DateHelper.removeTimezoneOffset($event.value, true, 'from');
+        this.valueChanged();
+    }
+
+    getMultipleValues(propName, items: any[]): number[] {
+        let propValue: number = this.property[propName];
+        if (propValue == 0) return [0];
+        if (!propValue) return [];
+
+        let result: number[] = [];
+        items.forEach(item => {
+            if (item.value && (item.value & propValue) == item.value)
+                result.push(item.value);
+        });
+        return result;
+    }
+
+    tagValueChanged(propName, event) {
+        let newValues: number[] = event.value;
+        let prevValues: number[] = event.previousValue;
+        if (lodashIsEqual(newValues.sort(), prevValues.sort()))
+            return;
+
+        let triggerChange = true;
+        if (!newValues || !newValues.length) {
+            this.property[propName] = null;
+        }
+        else {
+            if (newValues.indexOf(0) >= 0) {
+                if (prevValues && prevValues.length == 1 && prevValues[0] == 0) {
+                    newValues = newValues.filter(v => v != 0);
+                    triggerChange = false;
+                }
+                else {
+                    newValues = [0];
+                    triggerChange = prevValues.indexOf(0) < 0;
+                }
+            }
+
+            this.property[propName] = newValues.reduce((prev, current) => prev | current, 0);
+        }
+
+        if (triggerChange)
+            this.valueChanged();
+    }
+
     validateProperty(event): void {
         if (event.value)
             this.valueChanged();
+    }
+
+    invoiceSettingsLoad() {
+        this.invoicesService.settings$.pipe(
+            filter(Boolean), first()
+        ).subscribe((settings: InvoiceSettings) => {
+            this.invoiceSettings = settings;
+            this.currencyFormat.currency = settings.currency;
+            this.changeDetectorRef.detectChanges();
+        });
     }
 
     ngOnDestroy() {

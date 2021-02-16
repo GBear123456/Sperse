@@ -3,7 +3,14 @@
      class="inplace-edit-view-mode {{multiline ? 'multiline': ''}}"
      (click)="setEditModeEnabled(true, $event)">
     <span class="link" [ngClass]="{ 'placeholder': !value }" [attr.title]="link">
-        <a (click)="link && $event.stopPropagation()" [attr.href]="link" [attr.title]="displayValue || value || editPlaceholder" target="_blank" #editText>{{displayValue || value || editPlaceholder}}</a>
+        <a (click)="link && $event.stopPropagation()" [attr.href]="link" [attr.title]="displayValue || value || editPlaceholder" target="_blank" #editText>
+            <ng-container *ngIf="format?.style == 'currency'; else plaine">
+                {{displayValue || (value | currency: format.currency) || editPlaceholder}}
+            </ng-container>
+            <ng-template #plaine>
+                {{displayValue || value || editPlaceholder}}                
+            </ng-template>
+        </a>
     </span>
     <div class="actions {{ buttonsPosition }}" [ngClass]="{ empty: !displayValue && !value && !editPlaceholder}">
         <i *ngIf="isEditDialogEnabled"
@@ -41,7 +48,7 @@
         (onInitialized)="onTextAreaInitialized($event)">
         <dx-validator [validationRules]="validationRules || []"></dx-validator>
     </dx-text-area>
-    <dx-text-box *ngIf="!multiline"
+    <dx-text-box *ngIf="!multiline && !format"
         width="calc(100% - 70px)"
         [placeholder]="editPlaceholder"
         [(value)]="valueOriginal"
@@ -52,6 +59,17 @@
         (onFocusOut)="onFocusOut($event)">
         <dx-validator [validationRules]="validationRules || []"></dx-validator>
     </dx-text-box>
+    <dx-number-box *ngIf="!multiline && format?.style == 'currency'"
+        [min]="0" 
+        width="calc(100% - 70px)"
+        [placeholder]="editPlaceholder" 
+        [format]="format"
+        [(value)]="valueOriginal"
+        (onFocusIn)="onFocusIn($event)"
+        (onEnterKey)="onEnterKey()"
+        (onFocusOut)="onFocusOut($event)">
+        <dx-validator [validationRules]="validationRules || []"></dx-validator>
+    </dx-number-box>
     <div class="edit-buttons" [ngClass]="buttonsPosition">
         <dx-button *ngIf="showUpdateButton"
                    class="button-update"

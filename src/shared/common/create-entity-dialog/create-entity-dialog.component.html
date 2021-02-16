@@ -195,17 +195,27 @@
                                     [address]="property.address"
                                     [googleAutoComplete]="googleAutoComplete"
                                     [showClearButton]="false"
+                                    [showNeighborhood]="true"
                                     (onAddressChanged)="updateAddressFields($event, this.property.address)">
                     </address-fields>
                 </div>
                 <div class="field">
                     <label class="notes-label">{{ls.l('Notes')}}</label>
-                    <dx-text-area
-                        name="comment"
-                        width="570px"
-                        height="34px"
-                        [(value)]="property.note">
+                    <dx-text-area name="comment"
+                                  width="570px"
+                                  height="34px"
+                                  [(value)]="property.note">
                     </dx-text-area>
+                </div>
+                <div class="field">
+                    <label class="currency-label">{{ls.l('Deal')}}</label>
+                    <dx-number-box width="270px"
+                                   height="34px"
+                                   step="0"
+                                   [placeholder]="ls.l('Amount')"
+                                   [format]="currencyFormat"
+                                   [(value)]="dealAmount">
+                    </dx-number-box>
                 </div>
             </dx-validation-group>
             <dx-validation-group *ngIf="showPropertiesDropdown">
@@ -219,6 +229,16 @@
                                    [placeholder]="ls.l('PropertyDropdownPlaceholder')"
                                    [(value)]="propertyId">
                     </dx-select-box>
+                </div>
+                <div class="field">
+                    <label class="currency-label">{{ls.l('Deal')}}</label>
+                    <dx-number-box width="270px"
+                                   height="34px"
+                                   step="0"
+                                   [placeholder]="ls.l('Amount')"
+                                   [format]="currencyFormat"
+                                   [(value)]="dealAmount">
+                    </dx-number-box>
                 </div>
             </dx-validation-group>
             <dx-validation-group *ngIf="!hideCompanyField"
@@ -331,7 +351,7 @@
                         <div *ngFor="let phone of contact.phones; index as i" class="editable-item" [ngClass]="{'first-item': !i}">
                             <div class="drop-down-box-wrapper">
                                 <dx-select-box
-                                    width="370px"
+                                    width="390px"
                                     name="phoneType"
                                     [placeholder]="ls.l('Type')"
                                     [dataSource]="phoneTypes$ | async"
@@ -341,7 +361,7 @@
                                     itemTemplate="phoneTypeItemTemplate"
                                     (onValueChanged)="validateCompanyName()">
                                     <div *dxTemplate="let data of 'phoneTypeItemTemplate'">
-                                        <div class="usage-type-item"><span style="width: 100px;">{{data.name}}</span><span>{{ls.l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span></div>
+                                        <div class="usage-type-item"><span style="width: 130px;">{{data.name}}</span><span>{{ls.l('ContactInformation_PhoneTypeTooltip_' + data.id)}}</span></div>
                                     </div>
                                 </dx-select-box>
                             </div>
@@ -470,6 +490,16 @@
                             <span (click)="addNewContact('addresses')">{{ls.l('+ Add address')}}</span>
                         </div>
                     </div>
+                </div>
+                <div *ngIf="!showPropertyFields && !showPropertiesDropdown" class="field">
+                    <label class="currency-label">{{ls.l('Deal')}}</label>
+                    <dx-number-box width="270px"
+                                   height="34px"
+                                   step="0"
+                                   [placeholder]="ls.l('Amount')"
+                                   [format]="currencyFormat"
+                                   [(value)]="dealAmount">
+                    </dx-number-box>
                 </div>
             </dx-validation-group>
             <div *ngIf="showBankCodeField" class="field bank-code">

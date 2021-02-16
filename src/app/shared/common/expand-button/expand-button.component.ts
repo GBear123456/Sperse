@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output, ViewChild } from '@angular/core';
 import { IExpandItem } from '@app/shared/common/expand-button/expand-item.interface';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { DxSelectBoxComponent } from '@root/node_modules/devextreme-angular';
+import { DxSelectBoxComponent } from 'devextreme-angular';
 
 @Component({
     selector: 'expand-button',

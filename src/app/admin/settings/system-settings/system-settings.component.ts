@@ -19,6 +19,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AddOrEditSSLBindingModalComponent } from '../modals/add-or-edit-ssl-binding-modal.component';
 import { UploadSSLCertificateModalComponent } from '../modals/upload-ssl-cert-modal.component';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'system-settings',
@@ -41,6 +42,7 @@ export class SystemSettingsComponent implements OnInit {
     orgUnits = [];
     tenantHostsEnabled = abp.features.isEnabled(AppFeatures.AdminCustomizations)
         && this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
+    formatting = AppConsts.formatting;
 
     constructor(
         private dictionaryProxy: DictionaryServiceProxy,

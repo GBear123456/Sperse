@@ -34,7 +34,9 @@
         <button class="btn-link" *ngIf="cell.data.statusCode === 'A' && permission.isGranted(permissions.CRMOrdersManage)" (click)="cancelSubscription(cell.data.id, $event)">{{ls.l('cancel')}}</button>
     </div>
     <div *dxTemplate="let cellData of 'dateTemplate'" class="clipboard-holder">
-        <span class="date-time" title="{{cellData.value | date: formatting.date : userTimezone }}">{{cellData.value | date: formatting.date : userTimezone}}</span>
+        <span class="date-time" [title]="cellData.value | datetime: formatting.dateMoment">
+            {{cellData.value | datetime: formatting.dateMoment}}
+        </span>
     </div>
 
     <div *dxTemplate="let cellData of 'dateTimeTemplate'" 
@@ -44,13 +46,13 @@
         <dx-date-box width="33px"
             applyValueMode="useButtons"
             [visible]="!appService.isHostTenant"
-            [min]="cellData.column.dataField == 'endDate' ? (cellData.data.startDate | date: formatting.date : userTimezone) : undefined"
-            [max]="cellData.column.dataField == 'startDate' ? (cellData.data.endDate | date: formatting.date : userTimezone) : undefined"
-            [value]="cellData.value | date: formatting.dateTime : userTimezone"
+            [min]="cellData.column.dataField == 'endDate' ? (cellData.data.startDate | datetime: formatting.dateMoment) : undefined"
+            [max]="cellData.column.dataField == 'startDate' ? (cellData.data.endDate | datetime: formatting.dateMoment) : undefined"
+            [value]="cellData.value ? (cellData.value | datetime: formatting.dateTimeMoment) : undefined"
             (onOpened)="onCallendarOpened($event)"
             (onValueChanged)="onDateChanged($event, cellData)"
         ></dx-date-box>
-        <span class="date-time" title="{{cellData.value | date: formatting.dateTime : userTimezone }}">{{cellData.value | date: formatting.date : userTimezone}}</span>
+        <span *ngIf="cellData.value" class="date-time" title="{{cellData.value | datetime: formatting.dateTimeMoment}}">{{cellData.value | datetime: formatting.dateMoment}}</span>
     </div>
     <div *dxTemplate="let cellData of 'statusCell'" class="clipboard-holder">
         <span [matTooltip]="'Cancellation Reason: ' + cellData.data.cancelationReason"
