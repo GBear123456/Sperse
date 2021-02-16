@@ -61,9 +61,8 @@ export class XeroOauth2LoginComponent implements OnInit {
                             this.cfoService.instanceChangeProcess(true).subscribe(() => {
                                 this.syncProgressService.runSynchProgress().subscribe();
                             });
-                        } else if (this.mode == ConnectionMode.Reconnect || this.mode == ConnectionMode.Refresh) {
+                        } else
                             this.syncProgressService.runSynchProgress().subscribe();
-                        } // need found the way to detect closing the dialog without login
 
                         clearInterval(interval);
                         this.onComplete.emit();

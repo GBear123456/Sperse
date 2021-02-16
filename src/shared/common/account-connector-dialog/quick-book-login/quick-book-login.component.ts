@@ -60,7 +60,7 @@ export class QuickBookLoginComponent implements OnInit {
                             this.cfoService.instanceChangeProcess(true).subscribe(() => {
                                 this.syncProgressService.runSynchProgress().subscribe();
                             });
-                        else if (this.mode == ConnectionMode.Reconnect || this.mode == ConnectionMode.Refresh)
+                        else
                             this.syncProgressService.runSynchProgress().subscribe();
 
                         clearInterval(interval);
