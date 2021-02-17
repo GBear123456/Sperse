@@ -309,6 +309,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     ];
 
+    impersonationIsGranted = this.permission.isGranted(
+        AppPermissions.AdministrationUsersImpersonation
+    );
+    
     actionEvent: any;
     actionMenuGroups: ActionMenuGroup[] = [
         {
@@ -342,8 +346,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('LoginAsThisUser'),
                     class: 'login',
-                    checkVisible: (client: ContactDto) => !!client.UserId && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
-                    action: () => this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId)
+                    checkVisible: (client: ContactDto) => {
+                        return !!client.UserId && (
+                            this.impersonationIsGranted || 
+                            this.permission.checkCGPermission(client.GroupId, 'UserInformation.AutoLogin')
+                        )
+                    },
+                    action: () => {
+                        if (this.impersonationIsGranted)
+                            this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId);
+                        else
+                            this.contactService.autoLoginAsUser(this.actionEvent.UserId);
+                    }
                 },
                 {
                     text: this.l('NotesAndCallLog'),

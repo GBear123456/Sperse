@@ -10,6 +10,7 @@ import { filter, first, finalize, tap, switchMap, catchError,
     map, mapTo, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { ContactStatus } from '@root/shared/AppEnums';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
@@ -19,7 +20,9 @@ import {
     OrganizationContactInfoDto,
     UserServiceProxy,
     ContactServiceProxy,
+    ContactUserServiceProxy,
     ContactCommunicationServiceProxy,
+    LoginAsUserOutput,
     ISendEmailInput,
     SendEmailInput,
     ISendSMSInput,
@@ -66,6 +69,7 @@ import { AddCompanyDialogData } from '@app/crm/contacts/add-company-dialog/add-c
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
 import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Injectable()
 export class ContactsService {
@@ -104,10 +108,12 @@ export class ContactsService {
     next: Subject<any> = new Subject();
 
     constructor(injector: Injector,
+        private authService: AppAuthService,
         private contactProxy: ContactServiceProxy,
         private leadService: LeadServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
         private documentProxy: DocumentServiceProxy,
+        private contactUserService: ContactUserServiceProxy,
         private communicationProxy: ContactCommunicationServiceProxy,
         private permission: AppPermissionService,
         private userService: UserServiceProxy,
@@ -731,6 +737,13 @@ export class ContactsService {
                 } ],
                 this.ls.l('ClientStatusUpdateConfirmationTitle')
             );
+        });
+    }
+
+    autoLoginAsUser(userId: number): void {
+        this.contactUserService.loginAsUser(userId).subscribe((result: LoginAsUserOutput) => {
+            this.authService.logout(false);
+            location.href = AppConsts.appBaseUrl + '?secureId=' + result.impersonationToken;
         });
     }
 
