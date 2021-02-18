@@ -1586,10 +1586,16 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         });
     }
 
-    onCounterpartiesChanged(event) {
+    onCounterpartiesChanged(component) {
         this.counterpartiesFilter.isSelected =
-            event.component.option('selectedItems').length;
+            component.instance.option('selectedItems').length;
         this.processFilterInternal();
+        this.counterpartyFilter.instance.close();
+    }
+
+    onCounterpartiesClear(component) {
+        component.instance.unselectAll();
+        this.onCounterpartiesChanged(component);
     }
 
     customizeExcelCell(e) {
