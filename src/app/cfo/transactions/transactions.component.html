@@ -42,18 +42,21 @@
         [value]=""
         [placeholder]="(counterpartiesFilter?.isSelected ? l('Clear') : l('Select')) + ' ' + l('Vendor') + ' \u25BE'"
         (onOpened)="onPopupOpened($event)">
-        <div *dxTemplate="let data of 'content'" style="padding-bottom: 20px;">
-            <dx-list
+        <div *dxTemplate="let data of 'content'" class="counterparty-dropdown">
+            <div class="apply-all">
+                <span (click)="onCounterpartiesChanged(counterpartyComponent)">{{l('Apply')}}</span>
+                <span (click)="onCounterpartiesClear(counterpartyComponent)">{{l('Clear')}}</span>
+            </div>
+            <dx-list #counterpartyComponent
                 width="340px"
                 keyExpr="id"
                 searchExpr="name"
                 displayExpr="name"
-                selectionMode="multiple"
+                selectionMode="all"
                 [searchEnabled]="true"
                 [showSelectionControls]="true"
                 [dataSource]="counterparties$ | async"
-                (onInitialized)="onCounterpartiesInitialized($event)"
-                (onSelectionChanged)="onCounterpartiesChanged($event)">
+                (onInitialized)="onCounterpartiesInitialized($event)">
             </dx-list>
         </div>
     </dx-drop-down-box>
