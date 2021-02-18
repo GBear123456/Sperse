@@ -12,18 +12,25 @@
         [value]=""
         [placeholder]="(categoriesRowsData?.length ? l('Clear') : l('Select')) + ' ' + l('Category') + ' \u25BE'"
         (onOpened)="onPopupOpened($event)">
-        <div *dxTemplate="let data of 'content'">
+        <div #wrapper *dxTemplate="let data of 'content'">
             <categorization
                 width="340px"
+                [height]="wrapper.offsetHeight - 30 + 'px'"
+                [showTitle]="false"
                 [dragMode]="false"
+                [showHeader]="true"
                 [showSearch]="true"
+                [showToolbar]="false"
+                [showSelectAll]="true"
                 [showFilterIcon]="true"
                 [showAddEntity]="false"
                 [addingAllowed]="false"
+                [showCloseButton]="false"
+                [showApplySelection]="true"
                 [showClearSelection]="true"
-                [filteredRowsData]="categoriesRowsData"
+                [filteredRowsData]="filterCategoriesRowsData"
                 [transactionsFilter]="transactionsFilterQuery"
-                (onFilterSelected)="filterByCashflowCategories($event)">
+                (onFilterSelected)="applyCashflowCategories($event)">
             </categorization>
         </div>
     </dx-drop-down-box>

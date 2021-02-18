@@ -47,18 +47,25 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     @Input() width: string;
     @Input() height: string;
-    @Input() showTitle: boolean;
-    @Input() showHeader: boolean;
+    @Input() showTitle = false;
+    @Input() showHeader = false;
     @Input() showSearch = false;
+    @Input() showToolbar = true;
+    @Input() showSelectAll = false;
     @Input() addingAllowed = true;
+    @Input() showCloseButton = true;
     @Input() showAddEntity: boolean;
     @Input() showFilterIcon: boolean;
+    @Input() showApplySelection: boolean;
     @Input() showClearSelection: boolean;
     @Input() includeNonCashflowNodes = true;
     @Input() categoryId: number;
     @Input() set filteredRowsData(values: Category[]) {
-        this._filteredRowsData = values;
-        this.applyFilteredRowsSelection();
+        this._filteredRowsData = values.slice(0);
+        let instance = this.categoryList 
+            && this.categoryList.instance;
+        if (instance) 
+            instance.refresh();            
     }
     get filteredRowsData(): Category[] {
         return this._filteredRowsData;
@@ -167,7 +174,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     initToolbarConfig() {
-
         let addEntityItems = [];
         this.types.forEach(x => {
             let item = {
@@ -839,7 +845,9 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                     let wrapper = $event.cellElement.parentElement;
                     if (!this.clearSelection(wrapper, <number>category.key))
                         this.filteredRowsData.push(category);
-                    this.onFilterSelected.emit(this.filteredRowsData);
+        
+                    if (!this.showApplySelection)
+                        this.applyFilterSelection();
                 });
         }
     }
@@ -993,11 +1001,17 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 }
                 this._prevClickDate = nowDate;
             }
-        } else if (this.showFilterIcon) {
+        } else if (this.showFilterIcon && $event.event.target.nodeName != 'SPAN') {
             if (!this.clearSelection($event.rowElement, $event.data.key))
                 this.filteredRowsData.push($event.data);
-            this.onFilterSelected.emit(this.filteredRowsData);
+
+            if (!this.showApplySelection)
+                this.applyFilterSelection();
         }
+    }
+
+    applyFilterSelection() {
+        this.onFilterSelected.emit(this.filteredRowsData);
     }
 
     clearSelection(wrapper?: HTMLElement, clearedItemKey?: number): boolean {
@@ -1023,7 +1037,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         } else {
             this.filteredRowsData = [];
             $('.filtered-category').removeClass('filtered-category');
-            this.onFilterSelected.emit(this.filteredRowsData);
+            this.applyFilterSelection();
         }
         return clearFilter;
     }
@@ -1063,7 +1077,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     toogleSearchInput(event) {
-        if (this.showHeader && event.target.tagName != 'INPUT')
+        if (this.showHeader && this.showToolbar && event.target.tagName != 'INPUT')
             this.showSearch = false;
     }
 
@@ -1075,10 +1089,23 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     addAccountingTypeRow(typeId) {
-        if (!this.settings.showAT) { return; }
+        if (!this.settings.showAT) 
+            return;
 
         this.currentTypeId = typeId;
         this.categoryList.instance.addRow();
+    }
+
+    checkSelectedAll() {
+        return this.filteredRowsData.length == this.categories.length;
+    }
+
+    toggleSelection() {
+        if (this.checkSelectedAll())
+            this.filteredRowsData = [];
+        else
+            this.filteredRowsData = this.categories.slice(0);
+        this.categoryList.instance.refresh();
     }
 
     insertAccountingType(typeId, name) {

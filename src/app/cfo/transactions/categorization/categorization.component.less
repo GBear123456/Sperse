@@ -1,5 +1,6 @@
 :host {
     width: 100%;
+    height: 100%;
     display: block; 
     h3 {
         width: 340px;
@@ -7,19 +8,33 @@
         line-height: 1.38;
         letter-spacing: 0.3px;
         font-weight: 600;
-        padding: 20px 10px 0 20px;
+        padding: 15px 10px 10px 20px;
 
-        .clearAll {
+        .select-all {
+            float: right;
             font-size: 11px;
             letter-spacing: 0.4px;
             color: #677380;
+            display: inline-block;
+            text-transform: uppercase;
+            font-weight: 400;
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        .apply-all {
+            width: 35%;
+            font-size: 11px;
+            letter-spacing: 0.4px;
+            color: #677380;
+            display: inline-block;
             text-transform: uppercase;
             font-weight: 400;
             text-align: right;
             cursor: pointer;
-            float: right;
-            margin-right: 15px;
-            margin-top: 3px;
+            span {
+                margin-right: 15px;
+            }
         }
 
         .close {
@@ -130,6 +145,11 @@
 
                     .dx-placeholder {
                         font-size: 14px;
+                        top: -28px;
+                    }
+            
+                    input {
+                        padding: 8px 8px 8px 34px;
                     }
                 }
 

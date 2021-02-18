@@ -1,11 +1,15 @@
 <div [ngClass]="{ 'show-search': showSearch }">
     <div class="tree-header" *ngIf="showHeader">
-        <h3 *ngIf="showTitle">
-            {{l('ClassifyTransactions')}}
-            <span class="close" (click)="close.emit(null)"></span>
-            <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection()">{{'Clear'}}</span>
+        <h3>
+            <span *ngIf="showTitle">{{l('ClassifyTransactions')}}</span>
+            <div class="apply-all">
+                <span *ngIf="showApplySelection" class="applyAll" (click)="applyFilterSelection()">{{l('Apply')}}</span>
+                <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection()">{{l('Clear')}}</span>
+            </div>
+            <span *ngIf="showSelectAll" class="select-all" (click)="toggleSelection()">{{l(checkSelectedAll() ? 'DeselectAll': 'SelectAll')}}</span>
+            <span *ngIf="showCloseButton" class="close" (click)="close.emit(null)"></span>
         </h3>
-        <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
+        <app-toolbar *ngIf="showToolbar" [config]="toolbarConfig" [compact]="true"></app-toolbar>
     </div>
     <dx-tree-list [width]="width"
                   [height]="height"
@@ -65,7 +69,7 @@
             <dx-text-box [width]="180" [value]="cell.value" valueChangeEvent="keyup" (onValueChanged)="cell.setValue($event.value)"></dx-text-box>
         </div>
 
-        <div *dxTemplate="let cell of 'categoryTemplate'">
+        <div *dxTemplate="let cell of 'categoryTemplate'" [title]="cell.text">
             <ng-container>
                 <div class="category-hover"></div>
                 <span>{{ cell.text }}</span>
