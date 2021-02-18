@@ -2,6 +2,9 @@
     <business-entities-chooser
         width="130px"
         popupWidth="330px"
+        [showSearch]="true"
+        [applyFilter]="false"
+        [showApplySelection]="true"
         (onChanged)="applyTotalBankAccountFilter(true)">
     </business-entities-chooser>
 </div>
