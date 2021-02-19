@@ -60040,8 +60040,8 @@ export interface IGetEditionTenantStatisticsOutput {
 }
 
 export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
-    timezone!: string | undefined;
     defaultCountry!: string | undefined;
+    timezone!: string | undefined;
     timezoneForComparison!: string | undefined;
     zendeskAccountUrl!: string | undefined;
     publicSiteUrl!: string | undefined;
@@ -60057,8 +60057,8 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
 
     init(data?: any) {
         if (data) {
-            this.timezone = data["timezone"];
             this.defaultCountry = data["defaultCountry"];
+            this.timezone = data["timezone"];
             this.timezoneForComparison = data["timezoneForComparison"];
             this.zendeskAccountUrl = data["zendeskAccountUrl"];
             this.publicSiteUrl = data["publicSiteUrl"];
@@ -60074,8 +60074,8 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["timezone"] = this.timezone;
         data["defaultCountry"] = this.defaultCountry;
+        data["timezone"] = this.timezone;
         data["timezoneForComparison"] = this.timezoneForComparison;
         data["zendeskAccountUrl"] = this.zendeskAccountUrl;
         data["publicSiteUrl"] = this.publicSiteUrl;
@@ -60084,8 +60084,8 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
 }
 
 export interface IGeneralSettingsEditDto {
-    timezone: string | undefined;
     defaultCountry: string | undefined;
+    timezone: string | undefined;
     timezoneForComparison: string | undefined;
     zendeskAccountUrl: string | undefined;
     publicSiteUrl: string | undefined;
