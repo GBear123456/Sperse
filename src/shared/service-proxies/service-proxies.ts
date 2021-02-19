@@ -77729,6 +77729,7 @@ export enum Currency {
     CHF = "CHF", 
     MXN = "MXN", 
     RUB = "RUB", 
+    BTC = "BTC", 
 }
 
 export class InvoiceSettings implements IInvoiceSettings {
