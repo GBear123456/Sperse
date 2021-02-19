@@ -15,20 +15,25 @@
                         [value]="selectedAll"
                         (onValueChanged)="onSelectAll($event)">
                     </dx-check-box>
+                    <div class="apply-all" *ngIf="showApplySelection">
+                        <span (click)="applySelection()">{{ls.l('Apply')}}</span>
+                        <span (click)="clearSelection()">{{ls.l('Clear')}}</span>
+                    </div>
                     <span *ngIf="onFilterButtonClick.observers.length" class="accounts-filter" (click)="filterButtonClick()"></span>
                 </div>
                 <dx-tree-view
                     [expandAllEnabled]="true"
                     parentIdExpr="parentId"
                     dataStructure="plain"
+                    [searchEnabled]="showSearch"
                     [dataSource]="dataSource"
                     selectedExpr="selected"
                     hasItemsExpr="hasChildren"
                     showCheckBoxesMode="normal"
                     displayExpr="name"
                     itemTemplate="itemTemplate"
-                    (onItemCollapsed)="dropDown.instance.repaint()"
-                    (onItemExpanded)="dropDown.instance.repaint()"
+                    (onItemCollapsed)="showApplySelection || dropDown.instance.repaint()"
+                    (onItemExpanded)="showApplySelection || dropDown.instance.repaint()"
                     (onSelectionChanged)="selectedItemsChange()">
                     <div *dxTemplate="let item of 'itemTemplate'">
                         <div class="selection-list-item {{item.hasChildren ? 'highlighted' : ''}}">
