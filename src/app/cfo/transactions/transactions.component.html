@@ -38,14 +38,14 @@
         </div>
     </dx-drop-down-box>
 </div>
-<div #counterpartyFilterContainer class="counterparty-filter">
+<div #counterpartyFilterContainer class="header-dropdown-filter">
     <dx-drop-down-box
         #counterpartyFilter
         width="130px"
         [value]=""
         [placeholder]="(counterpartiesFilter?.isSelected ? l('Clear') : l('Select')) + ' ' + l('Vendor') + ' \u25BE'"
         (onOpened)="onPopupOpened($event)">
-        <div *dxTemplate="let data of 'content'" class="counterparty-dropdown">
+        <div *dxTemplate="let data of 'content'" class="header-dropdown">
             <div class="apply-all">
                 <span (click)="onCounterpartiesChanged(counterpartyComponent)">{{l('Apply')}}</span>
                 <span (click)="onCounterpartiesClear(counterpartyComponent)">{{l('Clear')}}</span>
@@ -61,6 +61,32 @@
                 [dataSource]="counterparties$ | async"
                 (onInitialized)="onCounterpartiesInitialized($event)">
             </dx-list>
+        </div>
+    </dx-drop-down-box>
+</div>
+<div #accountFilterContainer class="header-dropdown-filter">
+    <dx-drop-down-box
+        #accountFilter
+        width="130px"
+        [value]=""
+        [placeholder]="(bankAccountFilter?.isSelected ? l('Clear') : l('Select')) + ' ' + l('Account') + ' \u25BE'"
+        (onOpened)="onPopupOpened($event)">
+        <div *dxTemplate="let data of 'content'" class="header-dropdown">
+            <div class="apply-all">
+                <span (click)="onAccountsChanged()">{{l('Apply')}}</span>
+                <span (click)="onAccountsClear(accountsLookupComponent)">{{l('Clear')}}</span>
+            </div>
+            <dx-tree-view #accountsLookupComponent
+                width="340px"
+                keyExpr="id"
+                searchExpr="accountName"
+                displayExpr="accountName"
+                selectionMode="multiple"
+                itemsExpr="bankAccounts"
+                showCheckBoxesMode="selectAll"
+                [searchEnabled]="true"
+                [dataSource]="bankAccountsLookup">
+            </dx-tree-view>
         </div>
     </dx-drop-down-box>
 </div>

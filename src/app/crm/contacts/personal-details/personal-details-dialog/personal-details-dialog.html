@@ -64,7 +64,7 @@
                                                     (click)="openSourceContactList($event)">
                                                 </i>
                                                 <ng-container *ngIf="sourceContactInfo?.sourceContactLevel1">
-                                                    <i class="remove fa fa-times"
+                                                    <i *ngIf="affiliateManageAllowed" class="remove fa fa-times"
                                                         (click)="removeSourceContact($event)">
                                                     </i>
                                                     <i class="save-to-clipboard"

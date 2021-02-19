@@ -153,6 +153,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild('categoriesPanel', { static: false }) categorizationComponent: CategorizationComponent;
+    @ViewChild('accountFilterContainer', { static: false }) accountFilterContainer: ElementRef;
+    @ViewChild('accountFilter', { static: false }) accountFilter: DxDropDownBoxComponent;
     @ViewChild('counterpartyFilterContainer', { static: false }) counterpartyFilterContainer: ElementRef;
     @ViewChild('counterpartyFilter', { static: false }) counterpartyFilter: DxDropDownBoxComponent;
     @ViewChild('becFilterContainer', { static: false }) businessEntitiesFilterContainer: ElementRef;
@@ -216,7 +218,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     public bankAccountCount;
     public bankAccounts: number[];
-    public bankAccountsLookup: BankAccountDto[] = [];
+    public bankAccountsLookup: any[] = [];
     public creditTransactionCount = 0;
     public creditTransactionTotal = 0;
     public creditClassifiedTransactionCount = 0;
@@ -492,11 +494,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]:
                      [TransactionTypesAndCategoriesDto, FiltersInitialData, SyncAccountBankDto[]]) => {
             this.syncAccounts = syncAccounts;
+            this.bankAccountsLookup = syncAccounts.map(acc => {
+                acc['accountName'] = acc.name;
+                acc['id'] = acc.syncRef;
+                return acc;
+            }).filter(acc => acc.bankAccounts.length);
             this.types = typeAndCategories.types.map((item: TransactionTypeDto) => item.name);
             this.categories = typeAndCategories.categories.map((item: StringFilterElementDto) => item.name);
-            this.bankAccountsLookup = syncAccounts.reduce((acc, item) => {
-                return acc.concat(item.bankAccounts);
-            }, []);
             this.filtersInitialData = filtersInitialData;
             this.filters = [
                 this.dateFilter,
@@ -1311,15 +1315,18 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onCellPrepared($event) {
         if ($event.rowType === 'filter') {
-            if ($event.column.dataField == 'BusinessEntityId') {
+            if ($event.column.dataField == TransactionFields.BusinessEntityId) {
                 $event.cellElement.innerHTML = '';
                 $event.cellElement.appendChild(this.businessEntitiesFilterContainer.nativeElement);
-            } else if ($event.column.dataField == 'CashflowCategoryName') {
+            } else if ($event.column.dataField == TransactionFields.CashflowCategoryName) {
                 $event.cellElement.innerHTML = '';
                 $event.cellElement.appendChild(this.categoryChooserContainer.nativeElement);
-            } else if ($event.column.dataField == 'CounterpartyName') {
+            } else if ($event.column.dataField == TransactionFields.CounterpartyName) {
                 $event.cellElement.innerHTML = '';
                 $event.cellElement.appendChild(this.counterpartyFilterContainer.nativeElement);
+            } else if ($event.column.dataField == TransactionFields.BankAccountId) {
+                $event.cellElement.innerHTML = '';
+                $event.cellElement.appendChild(this.accountFilterContainer.nativeElement);
             }
         } else if ($event.rowType === 'data') {
             const transaction: TransactionDto = $event.data;
@@ -1595,7 +1602,26 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onCounterpartiesClear(component) {
         component.instance.unselectAll();
-        this.onCounterpartiesChanged(component);
+        setTimeout(() => this.onCounterpartiesChanged(component));
+    }
+
+    onAccountsChanged() {
+        let keys = this.bankAccountsLookup.reduce((acc, item) => {
+            return acc.concat(item.bankAccounts.filter(bank => bank.selected).map(bank => bank.id));
+        }, []);
+        this.bankAccountFilter.isSelected = keys.length;
+        this.bankAccountFilter.items.element.value = keys;
+
+        this.filtersService.change([this.bankAccountFilter]);
+        this.accountFilter.instance.close();
+    }
+
+    onAccountsClear(component) {
+        component.instance.unselectAll();
+        this.bankAccountFilter.isSelected = false;
+        this.bankAccountFilter.clearFilterItems();
+        this.filtersService.change([this.bankAccountFilter]);
+        this.accountFilter.instance.close();
     }
 
     customizeExcelCell(e) {
@@ -1647,6 +1673,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         hostElement.appendChild(this.businessEntitiesFilterContainer.nativeElement);
         hostElement.appendChild(this.categoryChooserContainer.nativeElement);
         hostElement.appendChild(this.counterpartyFilterContainer.nativeElement);
+        hostElement.appendChild(this.accountFilterContainer.nativeElement);
     }
 
     ngOnDestroy() {

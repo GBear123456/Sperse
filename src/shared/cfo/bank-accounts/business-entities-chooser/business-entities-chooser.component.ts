@@ -33,7 +33,7 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
     @Input() showSearch = false;
     @Input() applyFilter = true;
     @Input() allSelectedTitle = false;
-    @Input() showApplySelection = true;
+    @Input() showApplySelection = false;
 
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() onFilterButtonClick: EventEmitter<any> = new EventEmitter();
