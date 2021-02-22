@@ -77511,6 +77511,7 @@ export enum Currency {
     CHF = "CHF", 
     MXN = "MXN", 
     RUB = "RUB", 
+    BTC = "BTC", 
 }
 
 export class InvoiceSettings implements IInvoiceSettings {
@@ -79631,7 +79632,6 @@ export interface ICounterpartyDto {
 
 export class TransactionAttributeTypeDto implements ITransactionAttributeTypeDto {
     name!: string | undefined;
-    parserCode!: string | undefined;
 
     constructor(data?: ITransactionAttributeTypeDto) {
         if (data) {
@@ -79645,7 +79645,6 @@ export class TransactionAttributeTypeDto implements ITransactionAttributeTypeDto
     init(data?: any) {
         if (data) {
             this.name = data["name"];
-            this.parserCode = data["parserCode"];
         }
     }
 
@@ -79659,14 +79658,12 @@ export class TransactionAttributeTypeDto implements ITransactionAttributeTypeDto
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
-        data["parserCode"] = this.parserCode;
         return data; 
     }
 }
 
 export interface ITransactionAttributeTypeDto {
     name: string | undefined;
-    parserCode: string | undefined;
 }
 
 export class GetTransactionAttributeTypesOutput implements IGetTransactionAttributeTypesOutput {
