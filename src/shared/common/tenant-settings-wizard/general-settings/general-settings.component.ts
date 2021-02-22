@@ -13,15 +13,20 @@ import { AbstractControlDirective } from '@angular/forms';
 import { forkJoin, Observable, throwError, of } from 'rxjs';
 
 /** Application imports */
+import { AppPermissions } from '@shared/AppPermissions';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     GeneralSettingsEditDto,
     SettingScopes,
     TenantLoginInfoDto,
     TenantSettingsServiceProxy,
-    TimingServiceProxy
+    TenantPaymentSettingsServiceProxy,
+    TimingServiceProxy,
+    InvoiceSettings,
+    Currency
 } from '@shared/service-proxies/service-proxies';
-import { AppTimezoneScope } from '@shared/AppEnums';
+import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -47,19 +52,38 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
+    supportedCountries = Object.keys(Country);
+    supportedCurrencies = Object.keys(Currency).map(item => {
+        return {
+            key: item,
+            text: this.ls.l(item)
+        };
+    });
+    paymentSettingsAllowed = 
+        this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices) ||
+        this.permissionService.isGranted(AppPermissions.CRMSettingsConfigure);
+    paymentSettings: InvoiceSettings;
 
     constructor(
         private timingService: TimingServiceProxy,
         private appSession: AppSessionService,
+        private permissionService: PermissionCheckerService,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
+        private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
         public changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        if (this.paymentSettingsAllowed)
+            this.tenantPaymentSettingsProxy.getInvoiceSettings().subscribe(res => {
+                this.paymentSettings = res;
+            });
+    }
 
     save(): Observable<any> {
         if (!this.publicSiteUrl || this.publicSiteUrl.valid) {
             return forkJoin(
                 this.tenantSettingsServiceProxy.updateGeneralSettings(this.settings),
+                this.tenantPaymentSettingsProxy.updateInvoiceSettings(this.paymentSettings),
                 this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),
                 this.tosUploader ? this.tosUploader.uploadFile() : of(null)
             );

@@ -10,7 +10,7 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { TokenService } from '@abp/auth/token.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AppTimezoneScope } from '@shared/AppEnums';
+import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -100,6 +100,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
     masks = AppConsts.masks;
     private rootComponent;
+    supportedCountries = Object.keys(Country);
     headlineButtons: HeadlineButton[] = [
         {
             enabled: true, // this.isGranted(AppPermissions.AdministrationLanguagesCreate),

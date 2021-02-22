@@ -176,3 +176,8 @@ export enum NavigationState {
     Current = 0,
     Next    = 1
 }
+
+export enum Country {
+    USA = 'USA', 
+    Canada = 'Canada'
+}

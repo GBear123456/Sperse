@@ -9,9 +9,16 @@
                     <div class="form-group" *ngIf="showTimezoneSelection">
                         <label for="Timezone">{{l("Timezone")}}</label>
                         <timezone-combo id="Timezone"
-                                        [(selectedTimeZone)]="settings.general.timezone"
-                                        [defaultTimezoneScope]="defaultTimezoneScope">
+                            [(selectedTimeZone)]="settings.general.timezone"
+                            [defaultTimezoneScope]="defaultTimezoneScope">
                         </timezone-combo>
+                    </div>
+                    <div class="form-group">
+                        <label for="DefaultCountry">{{l("DefaultCountry")}}</label>
+                        <dx-select-box
+                            [(value)]="settings.general.defaultCountry"
+                            [dataSource]="supportedCountries">
+                        </dx-select-box>
                     </div>
                     <div class="form-group">
                         <label for="PublicSiteUrl">{{l("PublicSiteUrl")}}</label>

@@ -10,9 +10,17 @@
                     <div class="form-group">
                         <label for="Timezone">{{l("Timezone")}}</label>
                         <timezone-combo id="Timezone"
-                                        [(selectedTimeZone)]="hostSettings.general.timezone"
-                                        [defaultTimezoneScope]="defaultTimezoneScope">
+                            [(selectedTimeZone)]="hostSettings.general.timezone"
+                            [defaultTimezoneScope]="defaultTimezoneScope">
                         </timezone-combo>
+                    </div>
+                    <div class="form-group">
+                        <label for="DefaultCountry">{{l("DefaultCountry")}}</label>
+                        <dx-select-box
+                            stylingMode="outlined"
+                            [(value)]="hostSettings.general.defaultCountry"
+                            [dataSource]="supportedCountries">
+                        </dx-select-box>
                     </div>
                 </dx-scroll-view>
             </mat-tab>
