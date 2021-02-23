@@ -1,6 +1,7 @@
 /** Core imports */
 import {
     ChangeDetectionStrategy,
+    ChangeDetectorRef,
     Component,
     Inject,
     ViewChild,
@@ -24,11 +25,12 @@ import { OffersWizardService } from '@shared/offers-wizard/offers-wizard.service
 })
 export class WizardCenterModalComponent {
     @ViewChild('stepper', { static: false }) stepper: MatHorizontalStepper;
-    @ViewChild('lastValidationGroup', { static: true }) lastValidationGroup: DxValidationGroupComponent;
+    @ViewChild('lastValidationGroup', { static: false }) lastValidationGroup: DxValidationGroupComponent;
     dialogRef: MatDialogRef<WizardCenterModalComponent, any>;
 
     constructor(
         injector: Injector,
+        private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService,
         public offersWizardService: OffersWizardService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -39,6 +41,7 @@ export class WizardCenterModalComponent {
 
     goToNextStep(event) {
         if (this.isValid(event)) {
+            this.changeDetectorRef.detectChanges();
             this.stepper.next();
         }
     }
