@@ -1572,7 +1572,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     calculateMonthYearDisplayValue = (data) => this.datePipe.transform(data.Date, 'MMM yyyy');
 
-    calculateIsPendingDisplayValue = (data) => this.l(data.isPendingTemplate ? 'Transactions_Pending' : 'Transactions_Settled');
+    calculateIsPendingDisplayValue = (data) => this.l(data.IsPending ? 'Transactions_Pending' : 'Transactions_Settled');
 
     toggleDataGridToolbar() {
         this.showDataGridToolbar = !this.showDataGridToolbar;

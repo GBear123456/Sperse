@@ -1,13 +1,13 @@
 /** Core imports */
 import {
-    Component,
     ChangeDetectionStrategy,
-    EventEmitter,
+    Component,
     ElementRef,
-    ViewEncapsulation,
+    EventEmitter,
     Inject,
     OnInit,
-    Output
+    Output,
+    ViewEncapsulation
 } from '@angular/core';
 
 /** Third party imports */
@@ -16,6 +16,7 @@ import { MAT_DIALOG_DATA, MatDialogConfig, MatDialogRef } from '@angular/materia
 /** Application imports */
 import { AccountConnectors } from '@shared/AppEnums';
 import { AccountConnectorDialogData } from '@shared/common/account-connector-dialog/models/account-connector-dialog-data';
+import { ConnectionMode } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'account-connector-dialog',
@@ -26,7 +27,7 @@ import { AccountConnectorDialogData } from '@shared/common/account-connector-dia
 })
 export class AccountConnectorDialogComponent implements OnInit {
     static defaultConfig: MatDialogConfig = {
-        height: '662px',
+        height: '680px',
         width: '900px',
         id: 'account-connector-dialog',
         panelClass: ['account-connector-dialog']
@@ -35,6 +36,10 @@ export class AccountConnectorDialogComponent implements OnInit {
     selectedConnector: AccountConnectors;
     accountConnectors = AccountConnectors;
     showBackButton = true;
+
+    get connectionMode(): ConnectionMode {
+        return this.data.mode || ConnectionMode.Create;
+    }
 
     constructor(
         private elementRef: ElementRef,
@@ -59,10 +64,15 @@ export class AccountConnectorDialogComponent implements OnInit {
     }
 
     openConnector(connector: AccountConnectors) {
-        this.elementRef.nativeElement.closest(
+        let container = this.elementRef.nativeElement.closest(
             '#' + this.dialogRef.id
-        ).style.padding = 0;
-        this.dialogRef.updateSize('0', '0');
+        );
+        container.style.padding = 0;
+        if (connector == AccountConnectors.SaltEdge) {
+            container.style.background = 'transparent';
+            container.style.boxShadow = 'none';
+        } else
+            this.dialogRef.updateSize('0', '0');
         this.selectedConnector = connector;
     }
 
@@ -70,7 +80,7 @@ export class AccountConnectorDialogComponent implements OnInit {
         this.dialogRef.close(e);
     }
 
-    complete(startLoading = false) {
+    complete(startLoading: boolean = false) {
         this.onComplete.emit(startLoading);
         this.closeDialog();
     }

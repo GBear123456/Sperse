@@ -16,6 +16,7 @@
         height: 100%;
         line-height: 100%;
         overflow: hidden;
+        text-align: center;
         .mat-stepper-horizontal {
             height: 100%;
             .mat-horizontal-stepper-header-container {
@@ -39,9 +40,12 @@
             background-size: 100%;
             &.close {
                 right: 35px;
-                width: 15px;
-                height: 15px;
+                width: 20px;
+                height: 20px;
                 background: url(../../../assets/common/images/xero/close.svg) no-repeat;
+                background-size: 20px 20px;
+                outline: none;
+                border: none;
             }
             &.back {
                 left: 35px;
@@ -53,12 +57,17 @@
                     content: "\E943";
                     font-family: "qlink-icons";
                     background: none;
+                    color: #888d93;
                 }
             }
         }
         @media (max-width: 767px) {
             padding-bottom: 20px;
         }
+    }
+
+    ::ng-deep .dx-scrollable-wrapper {
+        padding-right: 10px;
     }
 }
 

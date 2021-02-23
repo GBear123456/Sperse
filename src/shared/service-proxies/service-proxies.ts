@@ -30219,20 +30219,21 @@ export class SyncServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
-     * @syncTypeId (optional) 
+     * @body (optional) 
      * @return Success
      */
-    getSetupAccountsLink(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, syncTypeId: string | null | undefined): Observable<GetSetupAccountsLinkOutput> {
-        let url_ = this.baseUrl + "/api/services/CFO/Sync/GetSetupAccountsLink?";
+    requestConnection(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: RequestConnectionInput | null | undefined): Observable<RequestConnectionOutput> {
+        let url_ = this.baseUrl + "/api/services/CFO/Sync/RequestConnection?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (syncTypeId !== undefined)
-            url_ += "syncTypeId=" + encodeURIComponent("" + syncTypeId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -30241,21 +30242,21 @@ export class SyncServiceProxy {
             })
         };
 
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSetupAccountsLink(response_);
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRequestConnection(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetSetupAccountsLink(<any>response_);
+                    return this.processRequestConnection(<any>response_);
                 } catch (e) {
-                    return <Observable<GetSetupAccountsLinkOutput>><any>_observableThrow(e);
+                    return <Observable<RequestConnectionOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetSetupAccountsLinkOutput>><any>_observableThrow(response_);
+                return <Observable<RequestConnectionOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetSetupAccountsLink(response: HttpResponseBase): Observable<GetSetupAccountsLinkOutput> {
+    protected processRequestConnection(response: HttpResponseBase): Observable<RequestConnectionOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -30266,7 +30267,7 @@ export class SyncServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetSetupAccountsLinkOutput.fromJS(resultData200) : new GetSetupAccountsLinkOutput();
+            result200 = resultData200 ? RequestConnectionOutput.fromJS(resultData200) : new RequestConnectionOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -30274,7 +30275,7 @@ export class SyncServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetSetupAccountsLinkOutput>(<any>null);
+        return _observableOf<RequestConnectionOutput>(<any>null);
     }
 
     /**
@@ -30896,64 +30897,6 @@ export class SyncAccountServiceProxy {
             }));
         }
         return _observableOf<boolean>(<any>null);
-    }
-
-    /**
-     * @instanceType (optional) 
-     * @instanceId (optional) 
-     * @return Success
-     */
-    getPlaidConfig(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined): Observable<PlaidConfig> {
-        let url_ = this.baseUrl + "/api/services/CFO/SyncAccount/GetPlaidConfig?";
-        if (instanceType !== undefined)
-            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
-        if (instanceId !== undefined)
-            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetPlaidConfig(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetPlaidConfig(<any>response_);
-                } catch (e) {
-                    return <Observable<PlaidConfig>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<PlaidConfig>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetPlaidConfig(response: HttpResponseBase): Observable<PlaidConfig> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PlaidConfig.fromJS(resultData200) : new PlaidConfig();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<PlaidConfig>(<any>null);
     }
 }
 
@@ -42385,6 +42328,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
     balance!: number | undefined;
     lastSyncDate!: moment.Moment | undefined;
     lastGoodSyncDate!: moment.Moment | undefined;
+    refreshAllowedSinceDate!: moment.Moment | undefined;
     bankAccounts!: BankAccountDto[] | undefined;
     syncAccountStatus!: SyncProgressStatus | undefined;
     syncRef!: string | undefined;
@@ -42408,6 +42352,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
             this.balance = data["balance"];
             this.lastSyncDate = data["lastSyncDate"] ? moment(data["lastSyncDate"].toString()) : <any>undefined;
             this.lastGoodSyncDate = data["lastGoodSyncDate"] ? moment(data["lastGoodSyncDate"].toString()) : <any>undefined;
+            this.refreshAllowedSinceDate = data["refreshAllowedSinceDate"] ? moment(data["refreshAllowedSinceDate"].toString()) : <any>undefined;
             if (data["bankAccounts"] && data["bankAccounts"].constructor === Array) {
                 this.bankAccounts = [];
                 for (let item of data["bankAccounts"])
@@ -42435,6 +42380,7 @@ export class SyncAccountBankDto implements ISyncAccountBankDto {
         data["balance"] = this.balance;
         data["lastSyncDate"] = this.lastSyncDate ? this.lastSyncDate.toISOString() : <any>undefined;
         data["lastGoodSyncDate"] = this.lastGoodSyncDate ? this.lastGoodSyncDate.toISOString() : <any>undefined;
+        data["refreshAllowedSinceDate"] = this.refreshAllowedSinceDate ? this.refreshAllowedSinceDate.toISOString() : <any>undefined;
         if (this.bankAccounts && this.bankAccounts.constructor === Array) {
             data["bankAccounts"] = [];
             for (let item of this.bankAccounts)
@@ -42455,6 +42401,7 @@ export interface ISyncAccountBankDto {
     balance: number | undefined;
     lastSyncDate: moment.Moment | undefined;
     lastGoodSyncDate: moment.Moment | undefined;
+    refreshAllowedSinceDate: moment.Moment | undefined;
     bankAccounts: BankAccountDto[] | undefined;
     syncAccountStatus: SyncProgressStatus | undefined;
     syncRef: string | undefined;
@@ -43534,8 +43481,21 @@ export interface IBusinessEntityDto {
     hasChildren: boolean | undefined;
 }
 
+export enum BusinessEntityType {
+    Other = "Other", 
+    LLC = "LLC", 
+    SoleProprietership = "SoleProprietership", 
+    LLP = "LLP", 
+    LLLP = "LLLP", 
+    Corp = "Corp", 
+    Trust = "Trust", 
+    LP = "LP", 
+    Inc = "Inc", 
+    Partnership = "Partnership", 
+}
+
 export class BusinessEntityTypeDto implements IBusinessEntityTypeDto {
-    id!: string | undefined;
+    id!: BusinessEntityType | undefined;
     name!: string | undefined;
 
     constructor(data?: IBusinessEntityTypeDto) {
@@ -43570,15 +43530,20 @@ export class BusinessEntityTypeDto implements IBusinessEntityTypeDto {
 }
 
 export interface IBusinessEntityTypeDto {
-    id: string | undefined;
+    id: BusinessEntityType | undefined;
     name: string | undefined;
+}
+
+export enum BusinessEntityStatus {
+    Active = "Active", 
+    Inactive = "Inactive", 
 }
 
 export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
     name!: string | undefined;
     parentId!: number | undefined;
     industry!: string | undefined;
-    typeId!: string | undefined;
+    type!: BusinessEntityType | undefined;
     taxNumber!: string | undefined;
     dateOpened!: moment.Moment | undefined;
     website!: string | undefined;
@@ -43592,7 +43557,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
     zip!: string | undefined;
     city!: string | undefined;
     streetAddress!: string | undefined;
-    statusId!: string | undefined;
+    status!: BusinessEntityStatus | undefined;
     isDefault!: boolean | undefined;
     id!: number | undefined;
 
@@ -43610,7 +43575,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
             this.name = data["name"];
             this.parentId = data["parentId"];
             this.industry = data["industry"];
-            this.typeId = data["typeId"];
+            this.type = data["type"];
             this.taxNumber = data["taxNumber"];
             this.dateOpened = data["dateOpened"] ? moment(data["dateOpened"].toString()) : <any>undefined;
             this.website = data["website"];
@@ -43624,7 +43589,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
             this.zip = data["zip"];
             this.city = data["city"];
             this.streetAddress = data["streetAddress"];
-            this.statusId = data["statusId"];
+            this.status = data["status"];
             this.isDefault = data["isDefault"];
             this.id = data["id"];
         }
@@ -43642,7 +43607,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
         data["name"] = this.name;
         data["parentId"] = this.parentId;
         data["industry"] = this.industry;
-        data["typeId"] = this.typeId;
+        data["type"] = this.type;
         data["taxNumber"] = this.taxNumber;
         data["dateOpened"] = this.dateOpened ? this.dateOpened.toISOString() : <any>undefined;
         data["website"] = this.website;
@@ -43656,7 +43621,7 @@ export class BusinessEntityInfoDto implements IBusinessEntityInfoDto {
         data["zip"] = this.zip;
         data["city"] = this.city;
         data["streetAddress"] = this.streetAddress;
-        data["statusId"] = this.statusId;
+        data["status"] = this.status;
         data["isDefault"] = this.isDefault;
         data["id"] = this.id;
         return data; 
@@ -43667,7 +43632,7 @@ export interface IBusinessEntityInfoDto {
     name: string | undefined;
     parentId: number | undefined;
     industry: string | undefined;
-    typeId: string | undefined;
+    type: BusinessEntityType | undefined;
     taxNumber: string | undefined;
     dateOpened: moment.Moment | undefined;
     website: string | undefined;
@@ -43681,7 +43646,7 @@ export interface IBusinessEntityInfoDto {
     zip: string | undefined;
     city: string | undefined;
     streetAddress: string | undefined;
-    statusId: string | undefined;
+    status: BusinessEntityStatus | undefined;
     isDefault: boolean | undefined;
     id: number | undefined;
 }
@@ -43690,7 +43655,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
     name!: string;
     parentId!: number | undefined;
     industry!: string | undefined;
-    typeId!: string | undefined;
+    type!: BusinessEntityType | undefined;
     taxNumber!: string | undefined;
     dateOpened!: moment.Moment | undefined;
     website!: string | undefined;
@@ -43721,7 +43686,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
             this.name = data["name"];
             this.parentId = data["parentId"];
             this.industry = data["industry"];
-            this.typeId = data["typeId"];
+            this.type = data["type"];
             this.taxNumber = data["taxNumber"];
             this.dateOpened = data["dateOpened"] ? moment(data["dateOpened"].toString()) : <any>undefined;
             this.website = data["website"];
@@ -43752,7 +43717,7 @@ export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
         data["name"] = this.name;
         data["parentId"] = this.parentId;
         data["industry"] = this.industry;
-        data["typeId"] = this.typeId;
+        data["type"] = this.type;
         data["taxNumber"] = this.taxNumber;
         data["dateOpened"] = this.dateOpened ? this.dateOpened.toISOString() : <any>undefined;
         data["website"] = this.website;
@@ -43776,7 +43741,7 @@ export interface ICreateBusinessEntityDto {
     name: string;
     parentId: number | undefined;
     industry: string | undefined;
-    typeId: string | undefined;
+    type: BusinessEntityType | undefined;
     taxNumber: string | undefined;
     dateOpened: moment.Moment | undefined;
     website: string | undefined;
@@ -43796,11 +43761,11 @@ export interface ICreateBusinessEntityDto {
 
 export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     id!: number;
-    statusId!: string | undefined;
+    status!: BusinessEntityStatus | undefined;
     name!: string;
     parentId!: number | undefined;
     industry!: string | undefined;
-    typeId!: string | undefined;
+    type!: BusinessEntityType | undefined;
     taxNumber!: string | undefined;
     dateOpened!: moment.Moment | undefined;
     website!: string | undefined;
@@ -43829,11 +43794,11 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.statusId = data["statusId"];
+            this.status = data["status"];
             this.name = data["name"];
             this.parentId = data["parentId"];
             this.industry = data["industry"];
-            this.typeId = data["typeId"];
+            this.type = data["type"];
             this.taxNumber = data["taxNumber"];
             this.dateOpened = data["dateOpened"] ? moment(data["dateOpened"].toString()) : <any>undefined;
             this.website = data["website"];
@@ -43862,11 +43827,11 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["statusId"] = this.statusId;
+        data["status"] = this.status;
         data["name"] = this.name;
         data["parentId"] = this.parentId;
         data["industry"] = this.industry;
-        data["typeId"] = this.typeId;
+        data["type"] = this.type;
         data["taxNumber"] = this.taxNumber;
         data["dateOpened"] = this.dateOpened ? this.dateOpened.toISOString() : <any>undefined;
         data["website"] = this.website;
@@ -43888,11 +43853,11 @@ export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
 
 export interface IUpdateBusinessEntityDto {
     id: number;
-    statusId: string | undefined;
+    status: BusinessEntityStatus | undefined;
     name: string;
     parentId: number | undefined;
     industry: string | undefined;
-    typeId: string | undefined;
+    type: BusinessEntityType | undefined;
     taxNumber: string | undefined;
     dateOpened: moment.Moment | undefined;
     website: string | undefined;
@@ -47401,7 +47366,6 @@ export interface IAddMappingDto {
 }
 
 export class RecategorizeInput implements IRecategorizeInput {
-    parseDescription!: boolean | undefined;
     bankAccountIds!: number[] | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
@@ -47418,7 +47382,6 @@ export class RecategorizeInput implements IRecategorizeInput {
 
     init(data?: any) {
         if (data) {
-            this.parseDescription = data["parseDescription"];
             if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
                 this.bankAccountIds = [];
                 for (let item of data["bankAccountIds"])
@@ -47439,7 +47402,6 @@ export class RecategorizeInput implements IRecategorizeInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["parseDescription"] = this.parseDescription;
         if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
             data["bankAccountIds"] = [];
             for (let item of this.bankAccountIds)
@@ -47453,7 +47415,6 @@ export class RecategorizeInput implements IRecategorizeInput {
 }
 
 export interface IRecategorizeInput {
-    parseDescription: boolean | undefined;
     bankAccountIds: number[] | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
@@ -47465,7 +47426,6 @@ export class ResetClassificationDto implements IResetClassificationDto {
     removeRules!: boolean | undefined;
     removeCategoryTree!: boolean | undefined;
     removeForecasts!: boolean | undefined;
-    recalculateTransactionAttributes!: boolean | undefined;
 
     constructor(data?: IResetClassificationDto) {
         if (data) {
@@ -47479,7 +47439,6 @@ export class ResetClassificationDto implements IResetClassificationDto {
             this.removeRules = false;
             this.removeCategoryTree = false;
             this.removeForecasts = false;
-            this.recalculateTransactionAttributes = false;
         }
     }
 
@@ -47489,7 +47448,6 @@ export class ResetClassificationDto implements IResetClassificationDto {
             this.removeRules = data["removeRules"] !== undefined ? data["removeRules"] : false;
             this.removeCategoryTree = data["removeCategoryTree"] !== undefined ? data["removeCategoryTree"] : false;
             this.removeForecasts = data["removeForecasts"] !== undefined ? data["removeForecasts"] : false;
-            this.recalculateTransactionAttributes = data["recalculateTransactionAttributes"] !== undefined ? data["recalculateTransactionAttributes"] : false;
         }
     }
 
@@ -47506,7 +47464,6 @@ export class ResetClassificationDto implements IResetClassificationDto {
         data["removeRules"] = this.removeRules;
         data["removeCategoryTree"] = this.removeCategoryTree;
         data["removeForecasts"] = this.removeForecasts;
-        data["recalculateTransactionAttributes"] = this.recalculateTransactionAttributes;
         return data; 
     }
 }
@@ -47516,7 +47473,6 @@ export interface IResetClassificationDto {
     removeRules: boolean | undefined;
     removeCategoryTree: boolean | undefined;
     removeForecasts: boolean | undefined;
-    recalculateTransactionAttributes: boolean | undefined;
 }
 
 export class UpdateTransactionsCategoryInput implements IUpdateTransactionsCategoryInput {
@@ -75953,10 +75909,18 @@ export interface ISetupSyncUserApplicationInput {
     clientSecret: string | undefined;
 }
 
-export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
-    setupAccountsLink!: string | undefined;
+export enum ConnectionMode {
+    Create = "Create", 
+    Reconnect = "Reconnect", 
+    Refresh = "Refresh", 
+}
 
-    constructor(data?: IGetSetupAccountsLinkOutput) {
+export class RequestConnectionInput implements IRequestConnectionInput {
+    syncTypeId!: string;
+    mode!: ConnectionMode;
+    syncAccountId!: number | undefined;
+
+    constructor(data?: IRequestConnectionInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -75967,26 +75931,96 @@ export class GetSetupAccountsLinkOutput implements IGetSetupAccountsLinkOutput {
 
     init(data?: any) {
         if (data) {
-            this.setupAccountsLink = data["setupAccountsLink"];
+            this.syncTypeId = data["syncTypeId"];
+            this.mode = data["mode"];
+            this.syncAccountId = data["syncAccountId"];
         }
     }
 
-    static fromJS(data: any): GetSetupAccountsLinkOutput {
+    static fromJS(data: any): RequestConnectionInput {
         data = typeof data === 'object' ? data : {};
-        let result = new GetSetupAccountsLinkOutput();
+        let result = new RequestConnectionInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["setupAccountsLink"] = this.setupAccountsLink;
+        data["syncTypeId"] = this.syncTypeId;
+        data["mode"] = this.mode;
+        data["syncAccountId"] = this.syncAccountId;
         return data; 
     }
 }
 
-export interface IGetSetupAccountsLinkOutput {
-    setupAccountsLink: string | undefined;
+export interface IRequestConnectionInput {
+    syncTypeId: string;
+    mode: ConnectionMode;
+    syncAccountId: number | undefined;
+}
+
+export class RequestConnectionOutput implements IRequestConnectionOutput {
+    connectUrl!: string | undefined;
+    scope!: string[] | undefined;
+    clientName!: string | undefined;
+    environment!: string | undefined;
+    publicKey!: string | undefined;
+    webhookUrl!: string | undefined;
+
+    constructor(data?: IRequestConnectionOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.connectUrl = data["connectUrl"];
+            if (data["scope"] && data["scope"].constructor === Array) {
+                this.scope = [];
+                for (let item of data["scope"])
+                    this.scope.push(item);
+            }
+            this.clientName = data["clientName"];
+            this.environment = data["environment"];
+            this.publicKey = data["publicKey"];
+            this.webhookUrl = data["webhookUrl"];
+        }
+    }
+
+    static fromJS(data: any): RequestConnectionOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RequestConnectionOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["connectUrl"] = this.connectUrl;
+        if (this.scope && this.scope.constructor === Array) {
+            data["scope"] = [];
+            for (let item of this.scope)
+                data["scope"].push(item);
+        }
+        data["clientName"] = this.clientName;
+        data["environment"] = this.environment;
+        data["publicKey"] = this.publicKey;
+        data["webhookUrl"] = this.webhookUrl;
+        return data; 
+    }
+}
+
+export interface IRequestConnectionOutput {
+    connectUrl: string | undefined;
+    scope: string[] | undefined;
+    clientName: string | undefined;
+    environment: string | undefined;
+    publicKey: string | undefined;
+    webhookUrl: string | undefined;
 }
 
 export class SyncAllAccountsOutput implements ISyncAllAccountsOutput {
@@ -76240,6 +76274,7 @@ export interface ISyncAccountDto {
 export class CreateSyncAccountInput implements ICreateSyncAccountInput {
     typeId!: string;
     publicToken!: string | undefined;
+    syncAccountRef!: string | undefined;
     isSyncBankAccountsEnabled!: boolean | undefined;
 
     constructor(data?: ICreateSyncAccountInput) {
@@ -76255,6 +76290,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
         if (data) {
             this.typeId = data["typeId"];
             this.publicToken = data["publicToken"];
+            this.syncAccountRef = data["syncAccountRef"];
             this.isSyncBankAccountsEnabled = data["isSyncBankAccountsEnabled"];
         }
     }
@@ -76270,6 +76306,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
         data = typeof data === 'object' ? data : {};
         data["typeId"] = this.typeId;
         data["publicToken"] = this.publicToken;
+        data["syncAccountRef"] = this.syncAccountRef;
         data["isSyncBankAccountsEnabled"] = this.isSyncBankAccountsEnabled;
         return data; 
     }
@@ -76278,6 +76315,7 @@ export class CreateSyncAccountInput implements ICreateSyncAccountInput {
 export interface ICreateSyncAccountInput {
     typeId: string;
     publicToken: string | undefined;
+    syncAccountRef: string | undefined;
     isSyncBankAccountsEnabled: boolean | undefined;
 }
 
@@ -76367,66 +76405,6 @@ export class ChangeAutoSyncInput implements IChangeAutoSyncInput {
 export interface IChangeAutoSyncInput {
     syncAccountIds: number[] | undefined;
     autoSyncTime: string | undefined;
-}
-
-export class PlaidConfig implements IPlaidConfig {
-    clientName!: string | undefined;
-    evn!: string | undefined;
-    key!: string | undefined;
-    product!: string[] | undefined;
-    webhook!: string | undefined;
-
-    constructor(data?: IPlaidConfig) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.clientName = data["clientName"];
-            this.evn = data["evn"];
-            this.key = data["key"];
-            if (data["product"] && data["product"].constructor === Array) {
-                this.product = [];
-                for (let item of data["product"])
-                    this.product.push(item);
-            }
-            this.webhook = data["webhook"];
-        }
-    }
-
-    static fromJS(data: any): PlaidConfig {
-        data = typeof data === 'object' ? data : {};
-        let result = new PlaidConfig();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["clientName"] = this.clientName;
-        data["evn"] = this.evn;
-        data["key"] = this.key;
-        if (this.product && this.product.constructor === Array) {
-            data["product"] = [];
-            for (let item of this.product)
-                data["product"].push(item);
-        }
-        data["webhook"] = this.webhook;
-        return data; 
-    }
-}
-
-export interface IPlaidConfig {
-    clientName: string | undefined;
-    evn: string | undefined;
-    key: string | undefined;
-    product: string[] | undefined;
-    webhook: string | undefined;
 }
 
 export class TenantListDto implements ITenantListDto {
@@ -77629,6 +77607,7 @@ export enum Currency {
     CHF = "CHF", 
     MXN = "MXN", 
     RUB = "RUB", 
+    BTC = "BTC", 
 }
 
 export class InvoiceSettings implements IInvoiceSettings {
@@ -79749,7 +79728,6 @@ export interface ICounterpartyDto {
 
 export class TransactionAttributeTypeDto implements ITransactionAttributeTypeDto {
     name!: string | undefined;
-    parserCode!: string | undefined;
 
     constructor(data?: ITransactionAttributeTypeDto) {
         if (data) {
@@ -79763,7 +79741,6 @@ export class TransactionAttributeTypeDto implements ITransactionAttributeTypeDto
     init(data?: any) {
         if (data) {
             this.name = data["name"];
-            this.parserCode = data["parserCode"];
         }
     }
 
@@ -79777,14 +79754,12 @@ export class TransactionAttributeTypeDto implements ITransactionAttributeTypeDto
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
-        data["parserCode"] = this.parserCode;
         return data; 
     }
 }
 
 export interface ITransactionAttributeTypeDto {
     name: string | undefined;
-    parserCode: string | undefined;
 }
 
 export class GetTransactionAttributeTypesOutput implements IGetTransactionAttributeTypesOutput {

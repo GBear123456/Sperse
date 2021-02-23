@@ -26,6 +26,8 @@ import {
     UpdateBusinessEntityDto,
     BusinessEntityInfoDto,
     BusinessEntityDto,
+    BusinessEntityStatus,
+    BusinessEntityType,
     CountryStateDto,
     CountryDto
 } from '@shared/service-proxies/service-proxies';
@@ -258,11 +260,11 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     }
 
     isActive() {
-        return this.isNew || this.businessEntity.statusId == 'A';
+        return this.isNew || this.businessEntity.status == BusinessEntityStatus.Active;
     }
 
     isActiveChanged(value): void {
-        this.businessEntity.statusId = value ? 'A' : 'I';
+        this.businessEntity.status = value ? BusinessEntityStatus.Active : BusinessEntityStatus.Inactive;
     }
 
     optionalValueChanged(event) {

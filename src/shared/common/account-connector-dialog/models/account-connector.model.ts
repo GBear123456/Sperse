@@ -5,4 +5,5 @@ export interface AccountConnector {
     description: string;
     iconName: string;
     disabled: boolean;
+    checked?: boolean;
 }

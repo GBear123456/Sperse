@@ -24,6 +24,7 @@ import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
 import Form from 'devextreme/ui/form';
 import { BehaviorSubject, Observable, combineLatest, forkJoin } from 'rxjs';
 import { distinctUntilChanged, map, takeUntil } from 'rxjs/operators';
+import * as moment from 'moment-timezone';
 
 /** Application imports */
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
@@ -37,6 +38,7 @@ import {
     RenameSyncAccountInput,
     BankAccountDto,
     SyncProgressOutput,
+    ConnectionMode,
     InstanceType
 } from 'shared/service-proxies/service-proxies';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
@@ -166,6 +168,8 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         return !!(selectedBusinessEntities.length || (selectedBankAccountTypes && selectedBankAccountTypes.length) || selectedStatuses.length);
     }));
     widgetWidth: number;
+
+    connectionMode = ConnectionMode;
 
     constructor(
         injector: Injector,
@@ -559,8 +563,8 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         return data;
     }
 
-    updateAccountInfo(data: SyncAccountBankDto) {
-        this.onUpdateAccount.emit(data);
+    updateAccountInfo(account: SyncAccountBankDto, mode: ConnectionMode) {
+        this.onUpdateAccount.emit({account, mode});
     }
 
     calculateHeight() {
@@ -632,18 +636,27 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         this.renameBankAccount();
     }
 
+    getContexMenuByName(name: string) {
+        return this.contextMenuItems.find(e => e.name === name);
+    }
+
     openActionsMenu(cellObj) {
-        this.contextMenuItems[this.contextMenuItems.findIndex(e => e.name === 'resync')]['hide'] =
-            cellObj.data.syncTypeId === 'Q';
-        this.contextMenuItems[this.contextMenuItems.findIndex(e => e.name === 'update')]['hide'] =
-            cellObj.data.syncTypeId != SyncTypeIds.Plaid
-            && cellObj.data.syncTypeId != SyncTypeIds.QuickBook
-            && cellObj.data.syncTypeId != SyncTypeIds.XeroOAuth2;
-        this.syncAccount = cellObj.data;
+        let cell = cellObj.data;                            
+        this.getContexMenuByName('sync')['hide'] = 
+            cell.syncTypeId == SyncTypeIds.SaltEdge &&
+            cell.syncAccountStatus == 'actionrequired';
+        this.getContexMenuByName('resync')['hide'] = cell.syncTypeId == 'Q';
+        this.getContexMenuByName('update')['hide'] = ![
+            //SyncTypeIds.Plaid, 
+            SyncTypeIds.QuickBook, 
+            SyncTypeIds.XeroOAuth2, 
+            SyncTypeIds.SaltEdge
+        ].includes(cell.syncTypeId);
+        this.syncAccount = cell;
         this.syncRef = cellObj.text;
-        this.syncAccountId = cellObj.data.syncAccountId;
+        this.syncAccountId = cell.syncAccountId;
         this.bankAccountInfo.id = this.syncAccountId;
-        this.bankAccountInfo.newName = cellObj.data.name;
+        this.bankAccountInfo.newName = cell.name;
         this.syncAccountIds = [];
         this.syncAccountIds.push(this.syncAccountId);
         this.isContextMenuVisible = true;
@@ -657,7 +670,12 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 this.changeBankAccountName();
                 break;
             case 'sync':
-                this.requestSyncForAccounts();
+                if (this.syncAccount.syncTypeId == SyncTypeIds.SaltEdge &&
+                    (!this.syncAccount.refreshAllowedSinceDate || this.syncAccount.refreshAllowedSinceDate < moment())
+                )
+                    this.updateAccountInfo(this.syncAccount, ConnectionMode.Refresh);
+                else
+                    this.requestSyncForAccounts();                
                 break;
             case 'auto-sync':
                 this.updateAutoSyncTime(
@@ -670,7 +688,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 this.requestSyncForAccounts(true);
                 break;
             case 'update':
-                this.updateAccountInfo(this.syncAccount);
+                this.updateAccountInfo(this.syncAccount, ConnectionMode.Reconnect);
                 break;
             case 'delete':
                 this.removeAccount(this.syncAccountId);
