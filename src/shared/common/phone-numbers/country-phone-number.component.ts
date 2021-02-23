@@ -1,6 +1,12 @@
+/** Core imports */
 import { Component, OnInit, AfterViewInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
-import { AppConsts } from '@shared/AppConsts';
+
+/** Third party imports */
 import { PhoneNumberComponent } from '../../../node_modules/ngx-international-phone-number/src';
+
+/** Application imports */
+import { Country } from '@shared/AppEnums';
+import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -14,6 +20,7 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     @Input() phoneNumber: string;
     @Input() required = true;
     @Input() disabled = false;
+    @Input() defaultCountry = 'us';
     @Output() phoneNumberChange: EventEmitter<string> = new EventEmitter<string>();
     @Output() phoneCountryChange = new EventEmitter();
     @Output() onInitialized = new EventEmitter();
@@ -22,7 +29,12 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     value = '';
     focused = false;
 
-    constructor(public ls: AppLocalizationService) {}
+    constructor(
+        public ls: AppLocalizationService
+    ) {
+        if (abp.setting.get('App.TenantManagement.DefaultCountry') == Country.Canada)
+            this.defaultCountry = 'ca';
+    }
 
     ngOnInit() {
         if (!this.phoneNumber)

@@ -3,7 +3,7 @@ import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, Change
 
 /** Third party imports */
 import { forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
@@ -129,7 +129,9 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
 
     saveAll(): void {
         forkJoin(
-            this.hostSettingService.updateAllSettings(this.hostSettings),
+            this.hostSettingService.updateAllSettings(this.hostSettings).pipe(tap(() => {
+                this.appSessionService.checkSetDefaultCountry(this.hostSettings.general.defaultCountry);
+            })),
             this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),

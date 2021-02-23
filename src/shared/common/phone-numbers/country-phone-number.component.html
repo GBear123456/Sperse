@@ -5,7 +5,7 @@
         [(ngModel)]="phoneNumber"
         [required]="required"
         [disabled]="disabled"
-        defaultCountry="us"
+        [defaultCountry]="defaultCountry"
         #intPhoneNumberModel="ngModel"
         (onFocusIn)="focusIn()"
         (onFocusOut)="focusOut()"

@@ -8,14 +8,17 @@
         </timezone-combo>
     </div>
     <div class="form-group">
-        <label for="DefaultCountry">{{ls.l("DefaultCountry")}}</label>
+        <label for="DefaultCountry">{{ls.l("Country")}}</label>
         <dx-select-box
+            width="120px"
             [(value)]="settings.defaultCountry"
-            [dataSource]="supportedCountries">
+            [dataSource]="supportedCountries"
+            (onSelectionChanged)="onCountryChanged($event)">
         </dx-select-box>
         <div class="payment-settings" *ngIf="paymentSettingsAllowed">
             <label for="Currency">{{ls.l("Currency")}}</label>
             <dx-select-box
+                width="290px"
                 valueExpr="key"
                 displayExpr="text"
                 [(value)]="paymentSettings.currency"

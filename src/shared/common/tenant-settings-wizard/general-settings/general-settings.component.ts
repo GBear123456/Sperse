@@ -11,6 +11,7 @@ import { AbstractControlDirective } from '@angular/forms';
 
 /** Third party imports */
 import { forkJoin, Observable, throwError, of } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppPermissions } from '@shared/AppPermissions';
@@ -59,7 +60,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
             text: this.ls.l(item)
         };
     });
-    paymentSettingsAllowed = 
+    paymentSettingsAllowed =
         this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices) ||
         this.permissionService.isGranted(AppPermissions.CRMSettingsConfigure);
     paymentSettings: InvoiceSettings;
@@ -79,10 +80,16 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
             });
     }
 
+    onCountryChanged(event) {
+        this.paymentSettings.currency = <any>this.supportedCurrencies[Number(event.selectedItem == Country.Canada)].key;
+    }
+
     save(): Observable<any> {
         if (!this.publicSiteUrl || this.publicSiteUrl.valid) {
             return forkJoin(
-                this.tenantSettingsServiceProxy.updateGeneralSettings(this.settings),
+                this.tenantSettingsServiceProxy.updateGeneralSettings(this.settings).pipe(tap(() => {
+                    this.appSession.checkSetDefaultCountry(this.settings.defaultCountry);
+                })),
                 this.tenantPaymentSettingsProxy.updateInvoiceSettings(this.paymentSettings),
                 this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),
                 this.tosUploader ? this.tosUploader.uploadFile() : of(null)
