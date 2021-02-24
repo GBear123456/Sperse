@@ -12,6 +12,7 @@ import { AccountConnectors } from '@shared/AppEnums';
 import { MatDialogRef } from '@angular/material/dialog';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ConditionsType } from '@shared/AppEnums';
 
 @Component({
@@ -31,8 +32,11 @@ export class AccountConnectorChooserComponent implements OnInit {
         [name: string]: AccountConnector
     };
 
+    isSaltEdgeAllowed: boolean = this.appSessionService.tenantName.includes('SaltEdge');
+
     constructor(
         private dialog: MatDialog,
+        private appSessionService: AppSessionService,
         private dialogRef: MatDialogRef<AccountConnectorChooserComponent>,
         public ls: AppLocalizationService
     ) {}
@@ -51,7 +55,8 @@ export class AccountConnectorChooserComponent implements OnInit {
                 iconName: 'salt-edge-connector',
                 title: this.ls.l('SaltEdgeConnectorTitle'),
                 description: this.ls.l('SaltEdgeConnectorDescription'),
-                disabled: this.checkDisabled(AccountConnectors.SaltEdge)
+                disabled: !this.isSaltEdgeAllowed || 
+                    this.checkDisabled(AccountConnectors.SaltEdge)
             },        
             [AccountConnectors.QuickBook]: {
                 name: AccountConnectors.QuickBook,
