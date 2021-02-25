@@ -2,11 +2,11 @@
     <div class="tree-header" *ngIf="showHeader">
         <h3>
             <span *ngIf="showTitle">{{l('ClassifyTransactions')}}</span>
-            <div class="apply-all">
-                <span *ngIf="showApplySelection" class="applyAll" (click)="applyFilterSelection()">{{l('Apply')}}</span>
-                <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection()">{{l('Clear')}}</span>
-            </div>
             <span *ngIf="showSelectAll" class="select-all" (click)="toggleSelection()">{{l(checkSelectedAll() ? 'DeselectAll': 'SelectAll')}}</span>
+            <div class="apply-all">
+                <span *ngIf="showApplySelection" class="btn-apply" (click)="applyFilterSelection()">{{l('Apply')}}</span>
+                <span *ngIf="showClearSelection" class="btn-clear" (click)="clearSelection()">{{l('Clear')}}</span>
+            </div>
             <span *ngIf="showCloseButton" class="close" (click)="close.emit(null)"></span>
         </h3>
         <app-toolbar *ngIf="showToolbar" [config]="toolbarConfig" [compact]="true"></app-toolbar>
