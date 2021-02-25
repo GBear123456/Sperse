@@ -789,11 +789,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 {
                                     action: this.exportToXLS.bind(this),
                                     text: this.l('ExportToExcel'),
+                                    visible: !this.isAdvicePeriod,
                                     icon: 'xls',
                                 },
                                 {
                                     action: this.downloadExcelReport.bind(this),
-                                    text: this.l('ExportToExcelReport'),
+                                    text: this.isAdvicePeriod ? this.l('ExportToExcel') : this.l('ExportToExcelReport'),
                                     icon: 'xls'
                                 },
                                 {
@@ -804,11 +805,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 {
                                     action: this.exportToGoogleSheet.bind(this),
                                     text: this.l('ExportToGoogleSheets'),
+                                    visible: !this.isAdvicePeriod,
                                     icon: 'sheet'
                                 },
                                 {
                                     action: this.exportToGoogleSheetReport.bind(this),
-                                    text: this.l('ExportToGoogleSheetsReport'),
+                                    text: this.isAdvicePeriod ? this.l('ExportToGoogleSheets') : this.l('ExportToGoogleSheetsReport'),
                                     icon: 'sheet'
                                 },
                                 {
