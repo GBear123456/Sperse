@@ -65,6 +65,11 @@
             border: 1px solid #dedede;
             border-radius: 10px;
             margin-bottom: 20px;
+            &.disabled {
+                opacity: 0.5;
+                cursor: default;
+                pointer-events: none;
+            }
             &:hover, &.selected {
                 border: solid 1px #a7cbd8;
                 background-color: #f7fbfc;
