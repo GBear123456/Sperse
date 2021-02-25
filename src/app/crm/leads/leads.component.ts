@@ -223,10 +223,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     action: (data?) => {
                         const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
-                        if (this.impersonationIsGranted)
-                            this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId);
-                        else
-                            this.contactService.autoLoginAsUser(lead.UserId);                        
+                        this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId);
                     }
                 },
                 {

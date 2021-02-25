@@ -348,15 +348,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     class: 'login',
                     checkVisible: (client: ContactDto) => {
                         return !!client.UserId && (
-                            this.impersonationIsGranted || 
+                            this.impersonationIsGranted ||
                             this.permission.checkCGPermission(client.GroupId, 'UserInformation.AutoLogin')
-                        )
+                        );
                     },
                     action: () => {
-                        if (this.impersonationIsGranted)
-                            this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId);
-                        else
-                            this.contactService.autoLoginAsUser(this.actionEvent.UserId);
+                        this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId);
                     }
                 },
                 {
