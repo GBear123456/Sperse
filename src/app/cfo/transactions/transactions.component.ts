@@ -218,7 +218,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     public bankAccountCount;
     public bankAccounts: number[];
-    public bankAccountsLookup: any[] = [];
+    public syncAccountsLookup: any[] = [];
+    public bankAccountsLookup: BankAccountDto[] = [];
     public creditTransactionCount = 0;
     public creditTransactionTotal = 0;
     public creditClassifiedTransactionCount = 0;
@@ -494,11 +495,14 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]:
                      [TransactionTypesAndCategoriesDto, FiltersInitialData, SyncAccountBankDto[]]) => {
             this.syncAccounts = syncAccounts;
-            this.bankAccountsLookup = syncAccounts.map(acc => {
+            this.syncAccountsLookup = syncAccounts.map(acc => {
                 acc['accountName'] = acc.name;
                 acc['id'] = acc.syncRef;
                 return acc;
             }).filter(acc => acc.bankAccounts.length);
+            this.bankAccountsLookup = syncAccounts.reduce((acc, item) => {
+                return acc.concat(item.bankAccounts);
+            }, []);
             this.types = typeAndCategories.types.map((item: TransactionTypeDto) => item.name);
             this.categories = typeAndCategories.categories.map((item: StringFilterElementDto) => item.name);
             this.filtersInitialData = filtersInitialData;
@@ -1608,7 +1612,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     onAccountsChanged() {
-        let keys = this.bankAccountsLookup.reduce((acc, item) => {
+        let keys = this.syncAccountsLookup.reduce((acc, item) => {
             return acc.concat(item.bankAccounts.filter(bank => bank.selected).map(bank => bank.id));
         }, []);
         this.bankAccountFilter.isSelected = keys.length;
