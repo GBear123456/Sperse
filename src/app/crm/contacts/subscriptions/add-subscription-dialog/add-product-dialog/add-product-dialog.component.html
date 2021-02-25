@@ -149,7 +149,7 @@
             <div class="field">
                 <label class="wide gracePeriodDayCount" for="gracePeriodDayCount">{{ls.l('GracePeriodDayCount')}}</label>
                 <dx-number-box name="gracePeriodDayCount"
-                    placeholder="{{gracePeriodDefaultValue == 0 ? '' : ls.l('ByDefault', gracePeriodDefaultValue)}}"
+                    placeholder="{{ls.l('ByDefault', gracePeriodDefaultValue ? 0 : gracePeriodDefaultValue)}}"
                     width="160px"
                     [min]="0"
                     [(value)]="option.gracePeriodDayCount">
