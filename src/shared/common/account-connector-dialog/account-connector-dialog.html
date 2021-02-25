@@ -1,6 +1,6 @@
 <mat-dialog-content>
-    <button (click)="closeDialog($event)" class="close"></button>
-    <button *ngIf="selectedConnector && showBackButton" (click)="selectedConnector = undefined" class="back"></button>
+    <button *ngIf="selectedConnector !== accountConnectors.SaltEdge" (click)="closeDialog($event)" class="close"></button>
+    <button *ngIf="selectedConnector && selectedConnector !== accountConnectors.SaltEdge && showBackButton" (click)="selectedConnector = undefined" class="back"></button>
 
     <account-connector-chooser [hidden]="selectedConnector && selectedConnector != accountConnectors.Plaid"
         [disabledConnectors]="data?.disabledConnectors"
@@ -9,18 +9,32 @@
 
     <ng-template [ngIf]="selectedConnector === accountConnectors.Plaid">
         <plaid-login
+            [mode]="connectionMode"
+            [accountId]="data?.config?.accountId"
             (onComplete)="complete(true)"
             (onClose)="closeDialog($event)">
         </plaid-login>
     </ng-template>
+    <ng-template [ngIf]="selectedConnector === accountConnectors.SaltEdge">
+        <salt-edge
+            [mode]="connectionMode"
+            [accountId]="data?.config?.accountId"
+            (onComplete)="complete()" 
+            (onClose)="closeDialog()">
+        </salt-edge>
+    </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.QuickBook">
-        <quick-book-login [loadingContainerElement]="data?.loadingContainerElement"
+        <quick-book-login
+            [mode]="connectionMode"
+            [accountId]="data?.config?.accountId"
+            [loadingContainerElement]="data?.loadingContainerElement"
             (onComplete)="complete()">
         </quick-book-login>
     </ng-template>
     <ng-template [ngIf]="selectedConnector === accountConnectors.XeroOAuth2">
         <xero-oauth2-login
-            [reconnect]="data?.reconnect"
+            [mode]="connectionMode"
+            [accountId]="data?.config?.accountId"
             [loadingContainerElement]="data?.loadingContainerElement"
             (onComplete)="complete()">
         </xero-oauth2-login>

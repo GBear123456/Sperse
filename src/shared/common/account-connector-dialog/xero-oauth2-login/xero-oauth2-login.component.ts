@@ -5,7 +5,7 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { finalize, filter, first, switchMap } from 'rxjs/operators';
 
 /** Application imports */
-import { GetSetupAccountsLinkOutput, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { RequestConnectionInput, RequestConnectionOutput, SyncServiceProxy, ConnectionMode } from '@shared/service-proxies/service-proxies';
 import { SyncTypeIds } from '@shared/AppEnums';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
@@ -17,7 +17,8 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class XeroOauth2LoginComponent implements OnInit {
     @Input() loadingContainerElement: Element;
-    @Input() reconnect = false;
+    @Input() mode = ConnectionMode.Create;
+    @Input() accountId: number;
     @Output() onComplete: EventEmitter<number> = new EventEmitter();
 
     constructor(
@@ -36,16 +37,20 @@ export class XeroOauth2LoginComponent implements OnInit {
         this.cfoService.statusActive$.pipe(
             filter(Boolean),
             first(),
-            switchMap(() => this.syncServiceProxy.getSetupAccountsLink(
-                <any>this.cfoService.instanceType,
+            switchMap(() => this.syncServiceProxy.requestConnection(
+                this.cfoService.instanceType,
                 this.cfoService.instanceId,
-                SyncTypeIds.XeroOAuth2
+                new RequestConnectionInput({
+                    syncTypeId: SyncTypeIds.XeroOAuth2,
+                    mode: this.mode,
+                    syncAccountId: this.accountId
+                })
             ).pipe(
                 finalize(() => this.loadingService.finishLoading(this.loadingContainerElement))
             ))
-        ).subscribe((result: GetSetupAccountsLinkOutput) => {
+        ).subscribe((result: RequestConnectionOutput) => {
             const setupAccountWindow = window.open(
-                result.setupAccountsLink,
+                result.connectUrl,
                 '_blank',
                 `location=yes,height=680,width=640,scrollbars=yes,status=yes,left=${(window.innerWidth / 2) - 320},top=${(window.innerHeight / 2) - 340}`
             );
@@ -56,9 +61,8 @@ export class XeroOauth2LoginComponent implements OnInit {
                             this.cfoService.instanceChangeProcess(true).subscribe(() => {
                                 this.syncProgressService.runSynchProgress().subscribe();
                             });
-                        } else if (this.reconnect) {
+                        } else
                             this.syncProgressService.runSynchProgress().subscribe();
-                        } // need found the way to detect closing the dialog without login
 
                         clearInterval(interval);
                         this.onComplete.emit();
