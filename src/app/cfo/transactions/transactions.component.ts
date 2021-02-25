@@ -443,7 +443,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         ) {
                             this.repaintDataGrid();
                         }
-                    }, 1500);
+                    });
                 }
             })
         });
