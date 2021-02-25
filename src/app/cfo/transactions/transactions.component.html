@@ -13,7 +13,7 @@
         #categoryFilter
         width="130px"
         [value]=""
-        [placeholder]="(categoriesRowsData?.length ? l('Clear') : l('Select')) + ' ' + l('Category') + ' \u25BE'"
+        [placeholder]="(categoriesRowsData?.length ? categoriesRowsData?.length : l('Select')) + ' ' + l('Categor' + (categoriesRowsData?.length > 1 ? 'ies' : 'y')) + ' \u25BE'"
         (onOpened)="onPopupOpened($event)">
         <div #wrapper *dxTemplate="let data of 'content'">
             <categorization
@@ -43,12 +43,12 @@
         #counterpartyFilter
         width="130px"
         [value]=""
-        [placeholder]="(counterpartiesFilter?.isSelected ? l('Clear') : l('Select')) + ' ' + l('Vendor') + ' \u25BE'"
+        [placeholder]="(counterpartiesFilter?.isSelected ? counterpartiesFilter?.isSelected : l('Select')) + ' ' + l('Vendor' + (counterpartiesFilter?.isSelected > 1 ? 's' : '')) + ' \u25BE'"
         (onOpened)="onPopupOpened($event)">
         <div *dxTemplate="let data of 'content'" class="header-dropdown">
             <div class="apply-all">
-                <span (click)="onCounterpartiesChanged(counterpartyComponent)">{{l('Apply')}}</span>
-                <span (click)="onCounterpartiesClear(counterpartyComponent)">{{l('Clear')}}</span>
+                <span class="btn-apply" (click)="onCounterpartiesChanged(counterpartyComponent)">{{l('Apply')}}</span>
+                <span class="btn-clear" (click)="onCounterpartiesClear(counterpartyComponent)">{{l('Clear')}}</span>
             </div>
             <dx-list #counterpartyComponent
                 width="340px"
@@ -69,12 +69,12 @@
         #accountFilter
         width="130px"
         [value]=""
-        [placeholder]="(bankAccountFilter?.isSelected ? l('Clear') : l('Select')) + ' ' + l('Account') + ' \u25BE'"
+        [placeholder]="(bankAccountFilter?.isSelected ? bankAccountFilter?.items?.element?.value?.length : l('Select')) + ' ' + l('Account' + (bankAccountFilter?.items?.element?.value?.length > 1 ? 's' : '')) + ' \u25BE'"
         (onOpened)="onPopupOpened($event)">
         <div *dxTemplate="let data of 'content'" class="header-dropdown">
             <div class="apply-all">
-                <span (click)="onAccountsChanged()">{{l('Apply')}}</span>
-                <span (click)="onAccountsClear(accountsLookupComponent)">{{l('Clear')}}</span>
+                <span class="btn-apply" (click)="onAccountsChanged()">{{l('Apply')}}</span>
+                <span class="btn-clear" (click)="onAccountsClear(accountsLookupComponent)">{{l('Clear')}}</span>
             </div>
             <dx-tree-view #accountsLookupComponent
                 width="340px"

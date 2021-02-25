@@ -9,9 +9,10 @@
         letter-spacing: 0.3px;
         font-weight: 600;
         padding: 15px 10px 10px 20px;
+        justify-content: space-between;
+        display: flex;
 
         .select-all {
-            float: right;
             font-size: 11px;
             letter-spacing: 0.4px;
             color: #677380;
@@ -23,17 +24,22 @@
         }
 
         .apply-all {
-            width: 35%;
-            font-size: 11px;
-            letter-spacing: 0.4px;
-            color: #677380;
-            display: inline-block;
-            text-transform: uppercase;
+            margin-left: auto;
+            font-size: 14px;
+            line-height: 1.21;
+            letter-spacing: 0.3px;
             font-weight: 400;
             text-align: right;
             cursor: pointer;
             span {
                 margin-right: 15px;
+                &.btn-apply {
+                    color: #00AEEF;
+                    
+                }
+                &:hover {
+                    color: #56d1ff;
+                }
             }
         }
 
