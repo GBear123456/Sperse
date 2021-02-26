@@ -210,14 +210,9 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             items: [
                                 {
                                     action: () => {
-                                        if (this.canImpersonate)
                                             this.impersonationService.impersonate(
                                                 this.contactInfo.personContactInfo.userId,
                                                 this.appSession.tenantId
-                                            );
-                                        else if (this.autoLoginAllowed)
-                                            this.contactService.autoLoginAsUser(
-                                                this.contactInfo.personContactInfo.userId
                                             );
                                     },
                                     text: this.l('LoginAsThisUser'),

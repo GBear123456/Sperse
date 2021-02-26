@@ -218,11 +218,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         );
                     },
                     action: () => {
-                        const partner: PartnerDto = this.actionEvent.data || this.actionEvent;                        
-                        if (this.impersonationIsGranted)
-                            this.impersonationService.impersonate(partner.UserId, this.appSession.tenantId);
-                        else
-                            this.contactService.autoLoginAsUser(partner.UserId);
+                        const partner: PartnerDto = this.actionEvent.data || this.actionEvent;
+                        this.impersonationService.impersonate(partner.UserId, this.appSession.tenantId);
                     }
                 },
                 {
