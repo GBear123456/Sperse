@@ -25,7 +25,9 @@ import {
     GenerateInput,
     InstanceServiceProxy,
     InstanceType,
-    ReportTemplate
+    ReportTemplate,
+    GenerateInputBase,
+    ReportPeriod
 } from '@root/shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { GenerateReportStep } from './generate-report-step.enum';
@@ -64,6 +66,25 @@ export class GenerateReportDialogComponent implements OnInit {
             disabled: false
         }
     ];
+    templateConfig = {
+        default: {
+            showDepartments: true,
+            showYearCalendar: false,
+            allowMultipleBE: true,
+            generateMethod: this.getDefaultReportRequest.bind(this),
+            reportPeriod: null
+        },
+        IncomeStatementAndBudget: {
+            showYearCalendar: true,
+            generateMethod: this.getBudgetReportRequest.bind(this),
+            reportPeriod: ReportPeriod.Annual
+        },
+        BalanceReport: {
+            allowMultipleBE: true,
+            generateMethod: this.getBalanceSheetReportRequest.bind(this)
+        }
+    };
+    currentConfig = this.templateConfig.default;
     budgetReportDate: Date = DateHelper.addTimezoneOffset(new Date(), true);
     departmentsEntities: string[] = [];
     selectedDepartments: string[] = [];
@@ -101,8 +122,8 @@ export class GenerateReportDialogComponent implements OnInit {
             value: item
         };
     }).concat(this.feature.isEnabled(AppFeatures.CFOBudgets)
-        ? {name: this.ls.l('IncomeStatementAndBudget'), value: undefined} : []
-    );
+        ? { name: this.ls.l('IncomeStatementAndBudget'), value: 'IncomeStatementAndBudget'} : []
+    ).concat({ name: this.ls.l('BalanceReport'), value: 'BalanceReport' });
     firstReportTemplateVisit = true;
 
     private readonly BACK_BTN_INDEX = 0;
@@ -180,7 +201,7 @@ export class GenerateReportDialogComponent implements OnInit {
     private prev() {
         this.currentStep--;
         if (this.currentStep == GenerateReportStep.Departments
-            && (!this.reportTemplate || this.departmentsEntities.length <= 1)
+            && (!this.currentConfig.showDepartments || this.departmentsEntities.length <= 1)
         ) this.currentStep--;
         this.processStep();
     }
@@ -194,7 +215,7 @@ export class GenerateReportDialogComponent implements OnInit {
                 this.firstReportTemplateVisit = false;
             }
         } else if (this.currentStep == GenerateReportStep.Departments) {
-            if (this.departmentsEntities.length <= 1 || !this.reportTemplate)
+            if (this.departmentsEntities.length <= 1 || !this.currentConfig.showDepartments)
                 this.currentStep++;
         } else if (this.currentStep == GenerateReportStep.Final) {
             this.applyDateRange();
@@ -216,8 +237,7 @@ export class GenerateReportDialogComponent implements OnInit {
             this.title = this.ls.l('SelectReportTemplate');
             this.buttons[this.BACK_BTN_INDEX].disabled = true;
         } else if (this.currentStep == GenerateReportStep.Calendar) {
-            this.title = this.reportTemplate ? this.ls.l('SelectDateRange') :
-                this.ls.l('Select') + ' ' + this.ls.l('Year');
+            this.title = this.currentConfig.showYearCalendar ? this.ls.l('Select') + ' ' + this.ls.l('Year') : this.ls.l('SelectDateRange');
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.Final) {
             this.title = this.ls.l('ReportGenerationOptions');
@@ -267,47 +287,14 @@ export class GenerateReportDialogComponent implements OnInit {
             select(CurrenciesStoreSelectors.getSelectedCurrencyId),
             first(),
             tap(() => this.notify.info(this.ls.l('GeneratingStarted'))),
-            switchMap((currencyId: string) => {
-                if (!this.reportTemplate)
-                    return this.getBudgetReportRequest(currencyId);
-
-                if (this.isSeparateGrouping) {
-                    let observables: Observable<void>[] = [];
-                    this.selectedBusinessEntityIds.map(param => {
-                        if (this.departmentsEntities.length) {
-                            let departments = this.selectedDepartments.length ? this.selectedDepartments : this.departmentsEntities;
-                            departments.forEach(dept => {
-                                observables.push(this.reportsProxy.generate(
-                                    <any>this.data.instanceType,
-                                    this.data.instanceId,
-                                    this.getGenerateInput(currencyId, [+param], [dept])
-                                ));
-                            });
-                        } else {
-                            observables.push(this.reportsProxy.generate(
-                                <any>this.data.instanceType,
-                                this.data.instanceId,
-                                this.getGenerateInput(currencyId, [+param], this.selectedDepartments)
-                            ));
-                        }
-                    });
-
-                    return forkJoin(observables);
-                } else {
-                    return this.reportsProxy.generate(
-                        <any>this.data.instanceType,
-                        this.data.instanceId,
-                        this.getGenerateInput(currencyId, this.selectedBusinessEntityIds, this.selectedDepartments)
-                    );
-                }
-            })
+            switchMap((currencyId: string) => this.currentConfig.generateMethod(currencyId))
         ).pipe(
             finalize(() => {
                 this.generatingStarted = false;
             })
         ).subscribe(
             () => {
-                this.data.reportGenerated(this.reportTemplate);
+                this.data.reportGenerated(this.currentConfig.reportPeriod);
                 this.modalDialog.close(true);
                 this.notify.info(this.ls.l('SuccessfullyGenerated'));
             },
@@ -315,6 +302,38 @@ export class GenerateReportDialogComponent implements OnInit {
                 this.notify.error(this.ls.l('GenerationFailed'));
             }
         );
+    }
+
+    getDefaultReportRequest(currencyId: string) {
+        if (this.isSeparateGrouping) {
+            let observables: Observable<void>[] = [];
+            this.selectedBusinessEntityIds.map(param => {
+                if (this.departmentsEntities.length) {
+                    let departments = this.selectedDepartments.length ? this.selectedDepartments : this.departmentsEntities;
+                    departments.forEach(dept => {
+                        observables.push(this.reportsProxy.generate(
+                            <any>this.data.instanceType,
+                            this.data.instanceId,
+                            this.getGenerateInput(currencyId, [+param], [dept])
+                        ));
+                    });
+                } else {
+                    observables.push(this.reportsProxy.generate(
+                        <any>this.data.instanceType,
+                        this.data.instanceId,
+                        this.getGenerateInput(currencyId, [+param], this.selectedDepartments)
+                    ));
+                }
+            });
+
+            return forkJoin(observables);
+        } else {
+            return this.reportsProxy.generate(
+                <any>this.data.instanceType,
+                this.data.instanceId,
+                this.getGenerateInput(currencyId, this.selectedBusinessEntityIds, this.selectedDepartments)
+            );
+        }
     }
 
     getBudgetReportRequest(currencyId: string) {
@@ -331,18 +350,38 @@ export class GenerateReportDialogComponent implements OnInit {
         }));
     }
 
-    onContentReady(event) {
-        this.onSelectionChanged({ selectedRowKeys: event.component.getSelectedRowKeys() });
+    getBalanceSheetReportRequest(currencyId: string) {
+        return this.reportsProxy.generateBalanceSheetReport(<any>this.data.instanceType, this.data.instanceId,
+            new GenerateInputBase({
+                businessEntityIds: this.selectedBusinessEntityIds,
+                from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
+                to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
+                period: this.data.period,
+                currencyId: currencyId,
+                notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
+                    ? new SendReportNotificationInfo({
+                        recipientUserEmailAddress: this.notificationToEmail,
+                        sendReportInAttachments: this.sendReportInAttachments
+                    }) : null
+            }));
     }
 
-    onSelectionChanged(event) {
+    onReportTemplateValueChanged(event) {
+        this.currentConfig = this.templateConfig[event.value] ? this.templateConfig[event.value] : this.templateConfig.default;
+    }
+
+    onBEContentReady(event) {
+        this.onBESelectionChanged({ selectedRowKeys: event.component.getSelectedRowKeys() });
+    }
+
+    onBESelectionChanged(event) {
         let currentKeys = !event.currentDeselectedRowKeys ? [] :
             event.currentDeselectedRowKeys.concat(event.currentSelectedRowKeys);
-        if (!this.reportTemplate && event.selectedRowKeys.length != 1 && event.component)
+        if (!this.currentConfig.allowMultipleBE && event.selectedRowKeys.length != 1 && event.component)
             event.component.selectRows(currentKeys);
 
         if (this.currentStep === GenerateReportStep.BusinessEntities) {
-            this.buttons[this.NEXT_BTN_INDEX].disabled = !(this.reportTemplate ||
+            this.buttons[this.NEXT_BTN_INDEX].disabled = !(this.currentConfig.allowMultipleBE ||
                 !event.currentSelectedRowKeys ? event.selectedRowKeys : currentKeys).length;
         }
     }
