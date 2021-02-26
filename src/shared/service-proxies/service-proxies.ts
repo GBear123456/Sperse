@@ -28190,6 +28190,71 @@ export class RapidServiceProxy {
     }
 
     /**
+     * @contactId (optional) 
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @return Success
+     */
+    getKonnectiveData(contactId: number | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<any[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Rapid/GetKonnectiveData?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        if (startDate !== undefined)
+            url_ += "startDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "endDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetKonnectiveData(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetKonnectiveData(<any>response_);
+                } catch (e) {
+                    return <Observable<any[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<any[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetKonnectiveData(response: HttpResponseBase): Observable<any[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<any[]>(<any>null);
+    }
+
+    /**
      * @startDate (optional) 
      * @endDate (optional) 
      * @return Success
@@ -61286,6 +61351,8 @@ export class ImportItemInput implements IImportItemInput {
     userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
+    assignedUser!: string | undefined;
+    followUpDate!: moment.Moment | undefined;
     notes!: string | undefined;
     dateCreated!: moment.Moment | undefined;
     leadStageName!: string | undefined;
@@ -61334,6 +61401,8 @@ export class ImportItemInput implements IImportItemInput {
             this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
+            this.assignedUser = data["assignedUser"];
+            this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.notes = data["notes"];
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
             this.leadStageName = data["leadStageName"];
@@ -61382,6 +61451,8 @@ export class ImportItemInput implements IImportItemInput {
         data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
+        data["assignedUser"] = this.assignedUser;
+        data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["notes"] = this.notes;
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
         data["leadStageName"] = this.leadStageName;
@@ -61423,6 +61494,8 @@ export interface IImportItemInput {
     userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
+    assignedUser: string | undefined;
+    followUpDate: moment.Moment | undefined;
     notes: string | undefined;
     dateCreated: moment.Moment | undefined;
     leadStageName: string | undefined;
@@ -61737,6 +61810,8 @@ export class ImportContactInput implements IImportContactInput {
     userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
+    assignedUser!: string | undefined;
+    followUpDate!: moment.Moment | undefined;
     notes!: string | undefined;
     dateCreated!: moment.Moment | undefined;
     leadStageName!: string | undefined;
@@ -61792,6 +61867,8 @@ export class ImportContactInput implements IImportContactInput {
             this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
+            this.assignedUser = data["assignedUser"];
+            this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.notes = data["notes"];
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
             this.leadStageName = data["leadStageName"];
@@ -61844,6 +61921,8 @@ export class ImportContactInput implements IImportContactInput {
         data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
+        data["assignedUser"] = this.assignedUser;
+        data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["notes"] = this.notes;
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
         data["leadStageName"] = this.leadStageName;
@@ -61889,6 +61968,8 @@ export interface IImportContactInput {
     userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
+    assignedUser: string | undefined;
+    followUpDate: moment.Moment | undefined;
     notes: string | undefined;
     dateCreated: moment.Moment | undefined;
     leadStageName: string | undefined;

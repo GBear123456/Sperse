@@ -61,6 +61,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     private readonly USER_PASSWORD = 'userPassword';
     private readonly DATE_CREATED = 'dateCreated';
+    private readonly FOLLOW_UP_DATE = 'followUpDate';
     private readonly FULL_NAME_FIELD = 'personalInfo_fullName';
     private readonly NAME_PREFIX_FIELD = 'personalInfo_fullName_namePrefix';
     private readonly FIRST_NAME_FIELD = 'personalInfo_fullName_firstName';
@@ -214,7 +215,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     ];
 
     private readonly FIELDS_DATE_TIME = [
-        this.DATE_CREATED
+        this.DATE_CREATED,
+        this.FOLLOW_UP_DATE
     ];
 
     private readonly FIELDS_DATE = [
