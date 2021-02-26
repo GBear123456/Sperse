@@ -28706,6 +28706,64 @@ export class ReportsServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    generateBalanceSheetReport(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: GenerateInputBase | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Reports/GenerateBalanceSheetReport?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGenerateBalanceSheetReport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGenerateBalanceSheetReport(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGenerateBalanceSheetReport(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @id (optional) 
      * @return Success
      */
@@ -74354,13 +74412,13 @@ export enum ReportPeriod {
 
 export class GenerateInput implements IGenerateInput {
     reportTemplate!: ReportTemplate | undefined;
+    departments!: string[] | undefined;
+    bankAccountIds!: number[] | undefined;
     from!: moment.Moment;
     to!: moment.Moment;
     period!: ReportPeriod;
     currencyId!: string;
     businessEntityIds!: number[] | undefined;
-    bankAccountIds!: number[] | undefined;
-    departments!: string[] | undefined;
     notificationData!: SendReportNotificationInfo | undefined;
 
     constructor(data?: IGenerateInput) {
@@ -74375,6 +74433,16 @@ export class GenerateInput implements IGenerateInput {
     init(data?: any) {
         if (data) {
             this.reportTemplate = data["reportTemplate"];
+            if (data["departments"] && data["departments"].constructor === Array) {
+                this.departments = [];
+                for (let item of data["departments"])
+                    this.departments.push(item);
+            }
+            if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
+                this.bankAccountIds = [];
+                for (let item of data["bankAccountIds"])
+                    this.bankAccountIds.push(item);
+            }
             this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
             this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
             this.period = data["period"];
@@ -74383,16 +74451,6 @@ export class GenerateInput implements IGenerateInput {
                 this.businessEntityIds = [];
                 for (let item of data["businessEntityIds"])
                     this.businessEntityIds.push(item);
-            }
-            if (data["bankAccountIds"] && data["bankAccountIds"].constructor === Array) {
-                this.bankAccountIds = [];
-                for (let item of data["bankAccountIds"])
-                    this.bankAccountIds.push(item);
-            }
-            if (data["departments"] && data["departments"].constructor === Array) {
-                this.departments = [];
-                for (let item of data["departments"])
-                    this.departments.push(item);
             }
             this.notificationData = data["notificationData"] ? SendReportNotificationInfo.fromJS(data["notificationData"]) : <any>undefined;
         }
@@ -74408,6 +74466,16 @@ export class GenerateInput implements IGenerateInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["reportTemplate"] = this.reportTemplate;
+        if (this.departments && this.departments.constructor === Array) {
+            data["departments"] = [];
+            for (let item of this.departments)
+                data["departments"].push(item);
+        }
+        if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
+            data["bankAccountIds"] = [];
+            for (let item of this.bankAccountIds)
+                data["bankAccountIds"].push(item);
+        }
         data["from"] = this.from ? this.from.toISOString() : <any>undefined;
         data["to"] = this.to ? this.to.toISOString() : <any>undefined;
         data["period"] = this.period;
@@ -74417,16 +74485,6 @@ export class GenerateInput implements IGenerateInput {
             for (let item of this.businessEntityIds)
                 data["businessEntityIds"].push(item);
         }
-        if (this.bankAccountIds && this.bankAccountIds.constructor === Array) {
-            data["bankAccountIds"] = [];
-            for (let item of this.bankAccountIds)
-                data["bankAccountIds"].push(item);
-        }
-        if (this.departments && this.departments.constructor === Array) {
-            data["departments"] = [];
-            for (let item of this.departments)
-                data["departments"].push(item);
-        }
         data["notificationData"] = this.notificationData ? this.notificationData.toJSON() : <any>undefined;
         return data; 
     }
@@ -74434,13 +74492,77 @@ export class GenerateInput implements IGenerateInput {
 
 export interface IGenerateInput {
     reportTemplate: ReportTemplate | undefined;
+    departments: string[] | undefined;
+    bankAccountIds: number[] | undefined;
     from: moment.Moment;
     to: moment.Moment;
     period: ReportPeriod;
     currencyId: string;
     businessEntityIds: number[] | undefined;
-    bankAccountIds: number[] | undefined;
-    departments: string[] | undefined;
+    notificationData: SendReportNotificationInfo | undefined;
+}
+
+export class GenerateInputBase implements IGenerateInputBase {
+    from!: moment.Moment;
+    to!: moment.Moment;
+    period!: ReportPeriod;
+    currencyId!: string;
+    businessEntityIds!: number[] | undefined;
+    notificationData!: SendReportNotificationInfo | undefined;
+
+    constructor(data?: IGenerateInputBase) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
+            this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
+            this.period = data["period"];
+            this.currencyId = data["currencyId"];
+            if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
+                this.businessEntityIds = [];
+                for (let item of data["businessEntityIds"])
+                    this.businessEntityIds.push(item);
+            }
+            this.notificationData = data["notificationData"] ? SendReportNotificationInfo.fromJS(data["notificationData"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GenerateInputBase {
+        data = typeof data === 'object' ? data : {};
+        let result = new GenerateInputBase();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["from"] = this.from ? this.from.toISOString() : <any>undefined;
+        data["to"] = this.to ? this.to.toISOString() : <any>undefined;
+        data["period"] = this.period;
+        data["currencyId"] = this.currencyId;
+        if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
+            data["businessEntityIds"] = [];
+            for (let item of this.businessEntityIds)
+                data["businessEntityIds"].push(item);
+        }
+        data["notificationData"] = this.notificationData ? this.notificationData.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGenerateInputBase {
+    from: moment.Moment;
+    to: moment.Moment;
+    period: ReportPeriod;
+    currencyId: string;
+    businessEntityIds: number[] | undefined;
     notificationData: SendReportNotificationInfo | undefined;
 }
 
