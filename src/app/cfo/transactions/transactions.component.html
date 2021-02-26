@@ -2,6 +2,9 @@
     <business-entities-chooser
         width="130px"
         popupWidth="330px"
+        [showSearch]="true"
+        [applyFilter]="false"
+        [showApplySelection]="true"
         (onChanged)="applyTotalBankAccountFilter(true)">
     </business-entities-chooser>
 </div>
@@ -10,44 +13,80 @@
         #categoryFilter
         width="130px"
         [value]=""
-        [placeholder]="(categoriesRowsData?.length ? l('Clear') : l('Select')) + ' ' + l('Category') + ' \u25BE'"
+        [placeholder]="(categoriesRowsData?.length ? categoriesRowsData?.length : l('Select')) + ' ' + l('Categor' + (categoriesRowsData?.length > 1 ? 'ies' : 'y')) + ' \u25BE'"
         (onOpened)="onPopupOpened($event)">
-        <div *dxTemplate="let data of 'content'">
+        <div #wrapper *dxTemplate="let data of 'content'">
             <categorization
                 width="340px"
+                [height]="wrapper.offsetHeight - 30 + 'px'"
+                [showTitle]="false"
                 [dragMode]="false"
+                [showHeader]="true"
                 [showSearch]="true"
+                [showToolbar]="false"
+                [showSelectAll]="true"
                 [showFilterIcon]="true"
                 [showAddEntity]="false"
                 [addingAllowed]="false"
+                [showCloseButton]="false"
+                [showApplySelection]="true"
                 [showClearSelection]="true"
-                [filteredRowsData]="categoriesRowsData"
+                [filteredRowsData]="filterCategoriesRowsData"
                 [transactionsFilter]="transactionsFilterQuery"
-                (onFilterSelected)="filterByCashflowCategories($event)">
+                (onFilterSelected)="applyCashflowCategories($event)">
             </categorization>
         </div>
     </dx-drop-down-box>
 </div>
-<div #counterpartyFilterContainer class="counterparty-filter">
+<div #counterpartyFilterContainer class="header-dropdown-filter">
     <dx-drop-down-box
         #counterpartyFilter
         width="130px"
         [value]=""
-        [placeholder]="(counterpartiesFilter?.isSelected ? l('Clear') : l('Select')) + ' ' + l('Vendor') + ' \u25BE'"
+        [placeholder]="(counterpartiesFilter?.isSelected ? counterpartiesFilter?.isSelected : l('Select')) + ' ' + l('Vendor' + (counterpartiesFilter?.isSelected > 1 ? 's' : '')) + ' \u25BE'"
         (onOpened)="onPopupOpened($event)">
-        <div *dxTemplate="let data of 'content'" style="padding-bottom: 20px;">
-            <dx-list
+        <div *dxTemplate="let data of 'content'" class="header-dropdown">
+            <div class="apply-all">
+                <span class="btn-apply" (click)="onCounterpartiesChanged(counterpartyComponent)">{{l('Apply')}}</span>
+                <span class="btn-clear" (click)="onCounterpartiesClear(counterpartyComponent)">{{l('Clear')}}</span>
+            </div>
+            <dx-list #counterpartyComponent
                 width="340px"
                 keyExpr="id"
                 searchExpr="name"
                 displayExpr="name"
-                selectionMode="multiple"
+                selectionMode="all"
                 [searchEnabled]="true"
                 [showSelectionControls]="true"
                 [dataSource]="counterparties$ | async"
-                (onInitialized)="onCounterpartiesInitialized($event)"
-                (onSelectionChanged)="onCounterpartiesChanged($event)">
+                (onInitialized)="onCounterpartiesInitialized($event)">
             </dx-list>
+        </div>
+    </dx-drop-down-box>
+</div>
+<div #accountFilterContainer class="header-dropdown-filter">
+    <dx-drop-down-box
+        #accountFilter
+        width="130px"
+        [value]=""
+        [placeholder]="(bankAccountFilter?.isSelected ? bankAccountFilter?.items?.element?.value?.length : l('Select')) + ' ' + l('Account' + (bankAccountFilter?.items?.element?.value?.length > 1 ? 's' : '')) + ' \u25BE'"
+        (onOpened)="onPopupOpened($event)">
+        <div *dxTemplate="let data of 'content'" class="header-dropdown">
+            <div class="apply-all">
+                <span class="btn-apply" (click)="onAccountsChanged()">{{l('Apply')}}</span>
+                <span class="btn-clear" (click)="onAccountsClear(accountsLookupComponent)">{{l('Clear')}}</span>
+            </div>
+            <dx-tree-view #accountsLookupComponent
+                width="340px"
+                keyExpr="id"
+                searchExpr="accountName"
+                displayExpr="accountName"
+                selectionMode="multiple"
+                itemsExpr="bankAccounts"
+                showCheckBoxesMode="selectAll"
+                [searchEnabled]="true"
+                [dataSource]="syncAccountsLookup">
+            </dx-tree-view>
         </div>
     </dx-drop-down-box>
 </div>
@@ -182,7 +221,7 @@
                                     [caption]="l('Transactions_Description')">
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.Amount"
-                                    dataType="currency"
+                                    dataType="number"
                                     cssClass="tabular"
                                     name="Amount"
                                     [caption]="l('Transactions_Amount')"

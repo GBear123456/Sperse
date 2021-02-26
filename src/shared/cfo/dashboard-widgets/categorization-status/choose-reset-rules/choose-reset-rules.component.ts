@@ -31,7 +31,6 @@ export class ChooseResetRulesComponent {
         return this.resetRules.unclassify ||
             this.resetRules.removeRules ||
             this.resetRules.removeCategoryTree ||
-            this.resetRules.removeForecasts ||
-            this.resetRules.recalculateTransactionAttributes;
+            this.resetRules.removeForecasts;
     }
 }

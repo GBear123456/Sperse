@@ -16,6 +16,32 @@
     }
 }
 
+::ng-deep .header-dropdown {
+    padding-bottom: 60px;
+    .apply-all {
+        width: 100%;
+        font-size: 14px;
+        line-height: 1.21;
+        letter-spacing: 0.3px;
+        display: inline-block;
+        font-weight: 400;
+        text-align: right;
+        cursor: pointer;
+        padding-left: 25px;
+        span {
+            line-height: 40px;
+            margin-right: 15px;
+            &.btn-apply {
+                color: #00AEEF;
+                
+            }
+            &:hover {
+                color: #56d1ff;
+            }
+        }
+    }
+}
+
 :host {
     display: block;
     position: relative;
@@ -32,7 +58,7 @@
 
     & > .bec-filter,
     & > .category-filter,
-    & > .counterparty-filter {
+    & > .header-dropdown-filter {
         display: none;
     }
 
@@ -40,7 +66,7 @@
         margin-left: 10px;
     }
 
-    .category-filter, .counterparty-filter {
+    .category-filter, .header-dropdown-filter {
         ::ng-deep dx-drop-down-box {
             input {
                 cursor: pointer;
@@ -50,7 +76,7 @@
 
     .bec-filter,
     .category-filter,
-    .counterparty-filter {
+    .header-dropdown-filter {
         ::ng-deep .dx-dropdownbox {
             .dx-placeholder {
                 font-size: 11px !important;
@@ -143,6 +169,7 @@
 
     .wrapper {
         max-width: 100vw;
+        max-height: calc(100vh - 210px);
         display: flex;
 
         &.expanded {
@@ -157,14 +184,21 @@
         }
 
         .categories {
-            width: 0;
+            width: 0px;
             transition: 1s;
+            align-self: flex-end;
             overflow: hidden;
             border-right: 0;
         }
 
         .transactions {
             transition: 1s;
+            align-self: flex-end;
+            ghost-list {
+                position: absolute;
+                background: #fff;
+                z-index: 999;
+            }
             ::ng-deep dx-data-grid {
                 tr.dx-selection {
                     cursor: grab;

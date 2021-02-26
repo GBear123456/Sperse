@@ -22,7 +22,6 @@ import {
     ContactServiceProxy,
     ContactUserServiceProxy,
     ContactCommunicationServiceProxy,
-    LoginAsUserOutput,
     ISendEmailInput,
     SendEmailInput,
     ISendSMSInput,
@@ -737,13 +736,6 @@ export class ContactsService {
                 } ],
                 this.ls.l('ClientStatusUpdateConfirmationTitle')
             );
-        });
-    }
-
-    autoLoginAsUser(userId: number): void {
-        this.contactUserService.loginAsUser(userId).subscribe((result: LoginAsUserOutput) => {
-            this.authService.logout(false);
-            location.href = AppConsts.appBaseUrl + '?secureId=' + result.impersonationToken;
         });
     }
 
