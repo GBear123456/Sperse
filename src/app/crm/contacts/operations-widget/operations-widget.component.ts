@@ -146,7 +146,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 this.optionButtonConfig = undefined;
             }
 
-            this.initToolbarConfig();
+            this.initToolbarConfig(0);
         });
     }
 
