@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, OnDestroy, ViewChild } from '@angular/core';
 import { formatDate } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
 
@@ -37,7 +37,7 @@ import { ArrayHelper } from '@shared/helpers/ArrayHelper';
     templateUrl: './notes.component.html',
     styleUrls: ['./notes.component.less']
 })
-export class NotesComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class NotesComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
 
@@ -124,6 +124,13 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
             if (area === 'notes')
                 this.invalidate();
         }, this.ident);
+
+        this.notes$.pipe(first()).subscribe((notes: NoteInfoDto[]) => {
+            if (this.componentIsActivated) {
+                if (!notes || !notes.length || this.route.snapshot.queryParams.addNew)
+                    setTimeout(() => this.clientService.showNoteAddDialog());
+            }
+        });
     }
 
     getFilteredContactIds(contactIds: number[]) {
@@ -133,15 +140,6 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
             }).filter(Boolean);
         else
             return contactIds.filter(Boolean);
-    }
-
-    ngOnInit() {
-        this.notes$.pipe(first()).subscribe((notes: NoteInfoDto[]) => {
-            if (this.componentIsActivated) {
-                if (!notes || !notes.length || this.route.snapshot.queryParams.addNew)
-                    setTimeout(() => this.clientService.showNoteAddDialog());
-            }
-        });
     }
 
     private updateToolbar() {

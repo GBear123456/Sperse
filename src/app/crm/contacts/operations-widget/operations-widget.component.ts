@@ -146,7 +146,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 this.optionButtonConfig = undefined;
             }
 
-            this.initToolbarConfig(0);
+            this.initToolbarConfig();
         });
     }
 
@@ -189,6 +189,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     }
 
     initToolbarConfig(ms = 300) {
+        this.toolbarConfig = [];
         clearTimeout(this.initTimeout);
         this.initTimeout = setTimeout(() => {
             this.manageCGPermision = this.permission.getCGPermissionKey(this.customerType, 'Manage');
@@ -535,9 +536,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         const updateToolbar = this.contactService.isPrevDisabled !== isFirst || this.contactService.isNextDisabled !== isLast;
         this.contactService.isPrevDisabled = isFirst;
         this.contactService.isNextDisabled = isLast;
-        if (updateToolbar) {
-            this.initToolbarConfig(0);
-        }
+        if (updateToolbar)
+            this.initToolbarConfig();
     }
 
     /**

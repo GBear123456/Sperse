@@ -34,7 +34,7 @@ export class ToolBarComponent implements OnDestroy, OnInit {
         setTimeout(() => {
             this.initToolbarItems();
             this.changeDetectorRef.detectChanges();
-        }, 1000);
+        });
     }
     @Input() disableToolbarUpdateAfterFiltersFixing = false;
     @HostBinding('style.display') display: string;
