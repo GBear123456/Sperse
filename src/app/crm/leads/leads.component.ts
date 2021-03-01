@@ -697,6 +697,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        request.params.contactGroupId = this.selectedContactGroup;
                         request.params.$select = DataGridService.getSelectFields(
                             this.dataGrid,
                             [
