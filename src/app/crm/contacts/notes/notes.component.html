@@ -109,7 +109,7 @@
                                     {{note.pinnedDateTime ? l('PinnedBy', (note.pinnedDateTime | datetime: formatting.fieldDateTime), note.pinnedByUserName) : ''}}
                                 </span>
                                 <i class="save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, note.text)"></i>
-                                <div [innerHtml]="note.text"></div>
+                                <div class="inner-html" [innerHtml]="note.text"></div>
                             </div>
                         </div>
                         <div *ngIf="note.pinnedDateTime && notes[i + 1] && !notes[i + 1].pinnedDateTime" class="pinned-separator"><span>{{l('Unpinned')}}</span></div>

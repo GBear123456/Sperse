@@ -61355,6 +61355,8 @@ export class ImportItemInput implements IImportItemInput {
     userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
+    assignedUser!: string | undefined;
+    followUpDate!: moment.Moment | undefined;
     notes!: string | undefined;
     dateCreated!: moment.Moment | undefined;
     leadStageName!: string | undefined;
@@ -61403,6 +61405,8 @@ export class ImportItemInput implements IImportItemInput {
             this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
+            this.assignedUser = data["assignedUser"];
+            this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.notes = data["notes"];
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
             this.leadStageName = data["leadStageName"];
@@ -61451,6 +61455,8 @@ export class ImportItemInput implements IImportItemInput {
         data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
+        data["assignedUser"] = this.assignedUser;
+        data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["notes"] = this.notes;
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
         data["leadStageName"] = this.leadStageName;
@@ -61492,6 +61498,8 @@ export interface IImportItemInput {
     userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
+    assignedUser: string | undefined;
+    followUpDate: moment.Moment | undefined;
     notes: string | undefined;
     dateCreated: moment.Moment | undefined;
     leadStageName: string | undefined;
@@ -61806,6 +61814,8 @@ export class ImportContactInput implements IImportContactInput {
     userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
+    assignedUser!: string | undefined;
+    followUpDate!: moment.Moment | undefined;
     notes!: string | undefined;
     dateCreated!: moment.Moment | undefined;
     leadStageName!: string | undefined;
@@ -61861,6 +61871,8 @@ export class ImportContactInput implements IImportContactInput {
             this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
+            this.assignedUser = data["assignedUser"];
+            this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.notes = data["notes"];
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
             this.leadStageName = data["leadStageName"];
@@ -61913,6 +61925,8 @@ export class ImportContactInput implements IImportContactInput {
         data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
+        data["assignedUser"] = this.assignedUser;
+        data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["notes"] = this.notes;
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
         data["leadStageName"] = this.leadStageName;
@@ -61958,6 +61972,8 @@ export interface IImportContactInput {
     userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
+    assignedUser: string | undefined;
+    followUpDate: moment.Moment | undefined;
     notes: string | undefined;
     dateCreated: moment.Moment | undefined;
     leadStageName: string | undefined;

@@ -100,7 +100,7 @@ export class ContactsService {
     settingsDialogOpened$: Observable<boolean> = this.settingsDialogOpened.asObservable().pipe(
         distinctUntilChanged()
     );
-    toolbarSubject$ = this.toolbarSubject.asObservable().pipe(debounceTime(200));
+    toolbarSubject$ = this.toolbarSubject.asObservable();
     isPrevDisabled = false;
     isNextDisabled = false;
     prev: Subject<any> = new Subject();

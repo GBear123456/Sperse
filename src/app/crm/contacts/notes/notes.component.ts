@@ -9,7 +9,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, Observable, of, zip } from 'rxjs';
-import { first, filter, finalize, map, switchMap, tap,
+import { first, filter, finalize, map, switchMap, tap, publishReplay, refCount,
+
     distinctUntilChanged, takeUntil, debounceTime } from 'rxjs/operators';
 
 /** Application imports */
@@ -74,6 +75,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
         map(([contactInfo, leadInfo]: [ ContactInfoDto, LeadInfoDto]) => {
             this.leadInfo = leadInfo;
             this.contactInfo = contactInfo;
+            this.updateToolbar();
             return [
                 contactInfo.id, contactInfo.primaryOrganizationContactId || 0, leadInfo.propertyId || 0
             ];
@@ -89,9 +91,9 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
             if (!refresh && this.notesService['data'] && this.notesService['data'].contactIds && this.notesService['data'].contactIds == contactIds)
                 return of(this.notesService['data'].source);
             else {
-                this.startLoading();
+                this.startLoading(true);
                 return this.notesService.getNotes(this.getFilteredContactIds(contactIds), this.ascendingSorting).pipe(
-                        finalize(() => this.finishLoading()),
+                        finalize(() => this.finishLoading(true)),
                         map(notes => notes.map(item => {
                             item['pinned'] = item.pinnedDateTime ? 1 : 0;
                             return item;
@@ -105,7 +107,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                         })
                     );
             }
-        })
+        }), publishReplay(), refCount()
     );
 
     constructor(injector: Injector,
@@ -135,7 +137,6 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
 
     ngOnInit() {
         this.notes$.pipe(first()).subscribe((notes: NoteInfoDto[]) => {
-            this.updateToolbar();
             if (this.componentIsActivated) {
                 if (!notes || !notes.length || this.route.snapshot.queryParams.addNew)
                     setTimeout(() => this.clientService.showNoteAddDialog());
@@ -187,11 +188,12 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                 location: 'after',
                 items: [{
                     widget: 'dxTextBox',
+                    visible: this.showGridView,
                     options: {
                         inputAttr: {view: 'headline'},
                         readOnly: true,
                         onInitialized: (event) => {
-                            this.notes$.pipe(
+                            this.showGridView && this.notes$.pipe(
                                 takeUntil(this.destroy$),
                                 takeUntil(this.clientService.toolbarSubject$),
                                 debounceTime(300)
@@ -211,6 +213,14 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                 items: [
                     {
                         name: 'sort',
+                        options: {
+                            onInitialized: (event) => {
+                                setTimeout(() => {
+                                    let item = event.element.getElementsByTagName('img')[0];
+                                    item.classList[this.ascendingSorting ? 'add' : 'remove']('rotate');
+                                });
+                            }
+                        },
                         action: (event) => {
                             let item = event.element.getElementsByTagName('img')[0];
                             this.ascendingSorting = !item.classList.contains('rotate');
@@ -244,6 +254,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
                     options: { checkPressed: () => this.showGridView },
                     action: () => {
                         this.showGridView = !this.showGridView;
+                        this.updateToolbar();
                     }
                 }]
             }
@@ -374,6 +385,7 @@ export class NotesComponent extends AppComponentBase implements OnInit, OnDestro
     }
 
     ngOnDestroy() {
+        this.clientService.toolbarUpdate();
         this.clientService.unsubscribe(this.ident);
     }
 }

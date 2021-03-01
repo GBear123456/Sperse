@@ -433,8 +433,15 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.initialData = JSON.stringify(this.contactService['data']);
     }
 
+    private checkUpdateToolbar() {
+        if (!['user-inbox', 'documents', 'notes'].includes(
+            this._activatedRoute.snapshot.firstChild.routeConfig.path
+        ))
+            this.contactsService.toolbarUpdate();
+    }
+
     private fillContactDetails(result: ContactInfoDto, contactId = null) {
-        this.contactsService.toolbarUpdate();
+        this.checkUpdateToolbar();
         this.contactService['data'].contactInfo = result;
         this.contactsService.contactInfoUpdate(result);
         this.contactGroupId.next(result.groupId);
