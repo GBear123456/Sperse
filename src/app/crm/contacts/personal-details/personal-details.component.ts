@@ -112,6 +112,11 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
         public ls: AppLocalizationService
     ) {
         this.getStates(this.person && this.person.citizenship);
+        this.contactsService.invalidateSubscribe(() => {
+            this.person = undefined;
+            this.changeDetector.detectChanges();
+        }, this.ident);
+
         this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo) {
                 this.personContactInfo = contactInfo.personContactInfo;
@@ -236,6 +241,8 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
     }
 
     updateValue(value: string, field: string) {
+        if (!this.isEditAllowed || !this.person)
+            return ;
         if (value == '') value = null;
         let initialValue = this.person[field];
         if (initialValue != value) {
