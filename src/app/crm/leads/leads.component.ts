@@ -691,8 +691,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 uri: this.dataSourceURI,
                 requireTotalCount: true,
                 store: {
-                    key: this.leadFields.Id,
                     type: 'odata',
+                    key: this.leadFields.Id,
                     url: this.getODataUrl(this.dataSourceURI, this.getInitialFilter()),
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
@@ -1849,7 +1849,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private setDataGridInstance() {
         let instance = this.dataGrid && this.dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
-            instance.option('dataSource', this.dataSource);
+            this.dataGrid.dataSource = this.dataSource;
+            if (!instance.option('paging.pageSize'))
+                instance.option('paging.pageSize', 20);
             this.processFilterInternal();
             this.isDataLoaded = false;
         }
