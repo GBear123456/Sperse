@@ -61361,6 +61361,7 @@ export class ImportItemInput implements IImportItemInput {
     dateCreated!: moment.Moment | undefined;
     leadStageName!: string | undefined;
     leadSource!: string | undefined;
+    leadDealAmount!: number | undefined;
     affiliateCode!: string | undefined;
     campaignId!: string | undefined;
     channelId!: string | undefined;
@@ -61411,6 +61412,7 @@ export class ImportItemInput implements IImportItemInput {
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
             this.leadStageName = data["leadStageName"];
             this.leadSource = data["leadSource"];
+            this.leadDealAmount = data["leadDealAmount"];
             this.affiliateCode = data["affiliateCode"];
             this.campaignId = data["campaignId"];
             this.channelId = data["channelId"];
@@ -61461,6 +61463,7 @@ export class ImportItemInput implements IImportItemInput {
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
         data["leadStageName"] = this.leadStageName;
         data["leadSource"] = this.leadSource;
+        data["leadDealAmount"] = this.leadDealAmount;
         data["affiliateCode"] = this.affiliateCode;
         data["campaignId"] = this.campaignId;
         data["channelId"] = this.channelId;
@@ -61504,6 +61507,7 @@ export interface IImportItemInput {
     dateCreated: moment.Moment | undefined;
     leadStageName: string | undefined;
     leadSource: string | undefined;
+    leadDealAmount: number | undefined;
     affiliateCode: string | undefined;
     campaignId: string | undefined;
     channelId: string | undefined;
@@ -61820,6 +61824,7 @@ export class ImportContactInput implements IImportContactInput {
     dateCreated!: moment.Moment | undefined;
     leadStageName!: string | undefined;
     leadSource!: string | undefined;
+    leadDealAmount!: number | undefined;
     affiliateCode!: string | undefined;
     campaignId!: string | undefined;
     channelId!: string | undefined;
@@ -61877,6 +61882,7 @@ export class ImportContactInput implements IImportContactInput {
             this.dateCreated = data["dateCreated"] ? moment(data["dateCreated"].toString()) : <any>undefined;
             this.leadStageName = data["leadStageName"];
             this.leadSource = data["leadSource"];
+            this.leadDealAmount = data["leadDealAmount"];
             this.affiliateCode = data["affiliateCode"];
             this.campaignId = data["campaignId"];
             this.channelId = data["channelId"];
@@ -61931,6 +61937,7 @@ export class ImportContactInput implements IImportContactInput {
         data["dateCreated"] = this.dateCreated ? this.dateCreated.toISOString() : <any>undefined;
         data["leadStageName"] = this.leadStageName;
         data["leadSource"] = this.leadSource;
+        data["leadDealAmount"] = this.leadDealAmount;
         data["affiliateCode"] = this.affiliateCode;
         data["campaignId"] = this.campaignId;
         data["channelId"] = this.channelId;
@@ -61978,6 +61985,7 @@ export interface IImportContactInput {
     dateCreated: moment.Moment | undefined;
     leadStageName: string | undefined;
     leadSource: string | undefined;
+    leadDealAmount: number | undefined;
     affiliateCode: string | undefined;
     campaignId: string | undefined;
     channelId: string | undefined;
