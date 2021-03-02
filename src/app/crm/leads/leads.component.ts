@@ -697,12 +697,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 uri: this.dataSourceURI,
                 requireTotalCount: true,
                 store: {
-                    key: this.leadFields.Id,
                     type: 'odata',
+                    key: this.leadFields.Id,
                     url: this.getODataUrl(this.dataSourceURI, this.getInitialFilter()),
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        request.params.contactGroupId = this.selectedContactGroup;
                         request.params.$select = DataGridService.getSelectFields(
                             this.dataGrid,
                             [
@@ -1854,7 +1855,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private setDataGridInstance() {
         let instance = this.dataGrid && this.dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
-            instance.option('dataSource', this.dataSource);
+            this.dataGrid.dataSource = this.dataSource;
+            if (!instance.option('paging.pageSize'))
+                instance.option('paging.pageSize', 20);
             this.processFilterInternal();
             this.isDataLoaded = false;
         }

@@ -90,19 +90,19 @@
                     <div id="LeadsTable">
                         <ghost-list *ngIf="!isDataLoaded"></ghost-list>
                         <dx-data-grid class="limitedPagerTotal main-component-view"
-                                      accessKey="narrowHeaderPanel"
-                                      noDataText=""
-                                      [renderAsync]="true"
-                                      [allowColumnReordering]="true"
-                                      [columnAutoWidth]="true"
-                                      [cacheEnabled]="false"
-                                      [rowDragging]="{
-                                    cursorOffset: {x: 30},
-                                    allowDropInsideItem: isMergeAllowed,
-                                    showDragIcons: false,
-                                    onDragEnd: onDragEnd
-                                }"
-                                      [remoteOperations]="{
+                            accessKey="narrowHeaderPanel"
+                            noDataText=""
+                            [renderAsync]="true"
+                            [allowColumnReordering]="true"
+                            [columnAutoWidth]="true"
+                            [cacheEnabled]="false"
+                            [rowDragging]="{
+                                cursorOffset: {x: 30},
+                                allowDropInsideItem: isMergeAllowed,
+                                showDragIcons: false,
+                                onDragEnd: onDragEnd
+                            }"
+                            [remoteOperations]="{
                                     filtering: false,
                                     grouping: false,
                                     groupPaging: true,
@@ -110,22 +110,23 @@
                                     sorting: true,
                                     summary: true
                                 }"
-                                      [allowColumnResizing]="true"
-                                      [loadPanel]="{ enabled: false }"
-                                      [hoverStateEnabled]="true"
-                                      [columnChooser]="{
-                                    height: rowsViewHeight
-                                }"
-                                      [pager]="defaultGridPagerConfig"
-                                      (onOptionChanged)="onGridOptionChanged($event)"
-                                      (onContentReady)="onContentReady($event)"
-                                      (onCellClick)="onCellClick($event)"
-                                      (onEditingStart)="toggleActionsMenu($event)"
-                                      (onSelectionChanged)="onSelectionChanged($event)"
-                                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                            [allowColumnResizing]="true"
+                            [loadPanel]="{ enabled: false }"
+                            [hoverStateEnabled]="true"
+                            [columnChooser]="{
+                                height: rowsViewHeight
+                            }"
+                            [pager]="defaultGridPagerConfig"
+                            (onOptionChanged)="onGridOptionChanged($event)"
+                            (onContentReady)="onContentReady($event)"
+                            (onCellClick)="onCellClick($event)"
+                            (onEditingStart)="toggleActionsMenu($event)"
+                            (onSelectionChanged)="onSelectionChanged($event)"
+                            (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                            <dxo-paging [pageSize]="20" [enabled]="true" [pageIndex]="0"></dxo-paging>
                             <dxo-selection selectAllMode="page"
-                                           showCheckBoxesMode="always"
-                                           mode="multiple">
+                                showCheckBoxesMode="always"
+                                mode="multiple">
                             </dxo-selection>
                             <dxo-editing mode="popup"
                                          [texts]="{ editRow: '' }"
