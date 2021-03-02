@@ -26,6 +26,7 @@ import {
     SellPeriod,
     InterestRate,
     ExitStrategy,
+    PropertyResident,
     InvoiceSettings,
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
@@ -98,6 +99,10 @@ export class PropertyInformationComponent implements OnInit {
         value: item
     }));
     exitStrategies: SelectBoxItem[] = Object.values(ExitStrategy).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    propertyResidents: SelectBoxItem[] = Object.values(PropertyResident).map((item: string) => ({
         displayValue: this.ls.l(item),
         value: item
     }));

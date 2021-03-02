@@ -623,38 +623,26 @@
                                             </div>
                                         </div>
                                         <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('OwnerLiveInHouse') }}</div>
+                                            <div class="dx-field-label">{{ ls.l('PropertyResident') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-select-box showClearButton="true"
                                                                displayExpr="displayValue"
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
-                                                               [items]="yesNoDropdowns"
-                                                               [(value)]="property.ownerLiveInHouse"
+                                                               [items]="propertyResidents"
+                                                               [(value)]="property.propertyResident"
                                                                (onValueChanged)="valueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('HouseOwningTime') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-text-box showClearButton="true"
-                                                             [maxLength]="128"
+                                                <dx-number-box showClearButton="true"
+                                                             step="0"
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="property.houseOwningTime"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('HouseWithRenters') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box showClearButton="true"
-                                                               displayExpr="displayValue"
-                                                               valueExpr="value"
-                                                               [stylingMode]="stylingMode"
-                                                               [items]="yesNoDropdowns"
-                                                               [(value)]="property.houseWithRenters"
-                                                               (onValueChanged)="valueChanged()"></dx-select-box>
+                                                             (onValueChanged)="valueChanged()"></dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -1369,12 +1357,12 @@
                                             </div>
                                         </div>
                                         <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('ExistStrategyNotes') }}</div>
+                                            <div class="dx-field-label">{{ ls.l('ExitStrategyNotes') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="512"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.existStrategyNotes"
+                                                             [(value)]="property.exitStrategyNotes"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              (onValueChanged)="valueChanged()"></dx-text-box>
                                             </div>
