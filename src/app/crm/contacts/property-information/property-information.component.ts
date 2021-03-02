@@ -76,7 +76,7 @@ export class PropertyInformationComponent implements OnInit {
         displayValue: this.ls.l(item),
         value: item
     }));
-    centralHeating: SelectBoxItem[] = Object.values(HeatingCoolingType).map((item: string) => ({
+    heatingType: SelectBoxItem[] = Object.values(HeatingCoolingType).map((item: string) => ({
         displayValue: this.ls.l(item),
         value: item
     }));

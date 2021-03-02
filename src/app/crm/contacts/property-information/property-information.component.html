@@ -169,8 +169,22 @@
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
-                                                    [items]="centralHeating"
-                                                    [(value)]="property.centralHeating"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.isCentralHeating"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Type') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode" 
+                                                    [items]="heatingType"
+                                                    [(value)]="property.heatingType"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
                                             </div>
