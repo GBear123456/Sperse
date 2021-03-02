@@ -454,9 +454,14 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         this.cacheService.set(this._expandedCacheKey, this.categoryList.expandedRowKeys);
     }
 
-    onContentReady($event) {
-        this.initDragAndDropEvents($event);
+    onContentReady(event) {
+        this.initDragAndDropEvents(event);
         this.applyFilteredRowsSelection();
+    }
+
+    onOptionChanged(event) {
+        if (event.fullName == 'searchPanel.text' && !event.value)
+            setTimeout(() => this.processExpandTree(true, false), 100);
     }
 
     applyFilteredRowsSelection() {

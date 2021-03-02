@@ -11,14 +11,14 @@
 <div #categoryFilterContainer class="category-filter">
     <dx-drop-down-box
         #categoryFilter
-        width="130px"
+        width="130px"       
         [value]=""
         [placeholder]="(categoriesRowsData?.length ? categoriesRowsData?.length : l('Select')) + ' ' + l('Categor' + (categoriesRowsData?.length > 1 ? 'ies' : 'y')) + ' \u25BE'"
         (onOpened)="onPopupOpened($event)">
-        <div #wrapper *dxTemplate="let data of 'content'">
+        <div #wrapper *dxTemplate="let data of 'content'" style="height: calc(100vh - 400px)">
             <categorization
                 width="340px"
-                [height]="wrapper.offsetHeight - 30 + 'px'"
+                [height]="wrapper.offsetHeight - 60 + 'px'"
                 [showTitle]="false"
                 [dragMode]="false"
                 [showHeader]="true"
