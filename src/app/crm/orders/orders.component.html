@@ -129,7 +129,7 @@
                                 </dxi-column>
                                 <dxo-sorting mode="multiple"></dxo-sorting>
                                 <dxo-group-panel [visible]="true"></dxo-group-panel>
-                                <dxo-paging [pageSize]="20"></dxo-paging>
+                                <dxo-paging [pageSize]="20" [enabled]="true" [pageIndex]="0"></dxo-paging>
                                 <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                                     {{cellData.value | phone}}
                                 </div>
