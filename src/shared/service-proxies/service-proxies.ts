@@ -73048,9 +73048,10 @@ export interface IUpdateMonthlyGoalInput {
 }
 
 export enum PropertyType {
-    Townhouse = "Townhouse", 
+    Condo = "Condo", 
     Duplex = "Duplex", 
-    SDH = "SDH", 
+    SFD = "SFD", 
+    Townhouse = "Townhouse", 
 }
 
 export enum HeatingCoolingType {
