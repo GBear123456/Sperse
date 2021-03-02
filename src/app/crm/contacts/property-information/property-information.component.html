@@ -1637,6 +1637,20 @@
                                             </div>
                                         </div>
                                         <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('PetApplication') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="receivedNA"
+                                                    [(value)]="property.petApplication"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('IntercomSetup') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-text-box

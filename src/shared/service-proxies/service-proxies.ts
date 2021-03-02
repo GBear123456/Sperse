@@ -73055,9 +73055,9 @@ export enum PropertyType {
 }
 
 export enum HeatingCoolingType {
-    Water = "Water", 
-    Gas = "Gas", 
     Electric = "Electric", 
+    Gas = "Gas", 
+    Water = "Water", 
 }
 
 export enum YardPatioEnum {
@@ -73075,9 +73075,9 @@ export enum ParkingType {
 }
 
 export enum BasementStatus {
-    Unfinished = "Unfinished", 
-    PartiallyFinished = "PartiallyFinished", 
     Finished = "Finished", 
+    PartiallyFinished = "PartiallyFinished", 
+    Unfinished = "Unfinished", 
 }
 
 export enum PlatformDayOfWeek {
@@ -73103,6 +73103,12 @@ export enum FireplaceType {
     _4 = 4, 
 }
 
+export enum PropertyResident {
+    Owner = "Owner", 
+    Tenant = "Tenant", 
+    Vacant = "Vacant", 
+}
+
 export enum SellPeriod {
     Immediately = "Immediately", 
     OneToThreeMonths = "OneToThreeMonths", 
@@ -73111,15 +73117,17 @@ export enum SellPeriod {
 }
 
 export enum InterestRate {
-    Fixed = "Fixed", 
     Adjustable = "Adjustable", 
+    Fixed = "Fixed", 
 }
 
 export enum ExitStrategy {
+    Airbnb = "Airbnb", 
+    Flip = "Flip", 
+    JV = "JV", 
+    LTR = "LTR", 
     RTO = "RTO", 
     STR = "STR", 
-    Flip = "Flip", 
-    LTR = "LTR", 
 }
 
 export class PropertyDto implements IPropertyDto {
@@ -73141,7 +73149,8 @@ export class PropertyDto implements IPropertyDto {
     microwave!: boolean | undefined;
     dishwasher!: boolean | undefined;
     laundryInSuite!: boolean | undefined;
-    centralHeating!: HeatingCoolingType | undefined;
+    isCentralHeating!: boolean | undefined;
+    heatingType!: HeatingCoolingType | undefined;
     ac!: boolean | undefined;
     monthlyHeatingCost!: number | undefined;
     isHeatIncludedInCondoFees!: boolean | undefined;
@@ -73164,6 +73173,7 @@ export class PropertyDto implements IPropertyDto {
     petsSizeLimit!: string | undefined;
     petsBreedRestriction!: string | undefined;
     condoDocuments!: boolean | undefined;
+    petApplication!: boolean | undefined;
     intercomSetup!: string | undefined;
     additionalKeys!: boolean | undefined;
     numberOfSets!: number | undefined;
@@ -73200,9 +73210,8 @@ export class PropertyDto implements IPropertyDto {
     other!: string | undefined;
     ownersOnTitle!: string | undefined;
     mortgageHolder!: string | undefined;
-    ownerLiveInHouse!: boolean | undefined;
-    houseOwningTime!: string | undefined;
-    houseWithRenters!: boolean | undefined;
+    propertyResident!: PropertyResident | undefined;
+    houseOwningTime!: number | undefined;
     annualHOACondoFees!: number | undefined;
     depositPutAmount!: number | undefined;
     isHomeListed!: boolean | undefined;
@@ -73258,7 +73267,7 @@ export class PropertyDto implements IPropertyDto {
     afterRepairValue!: number | undefined;
     walkthroughDate!: moment.Moment | undefined;
     exitStrategy!: ExitStrategy | undefined;
-    existStrategyNotes!: string | undefined;
+    exitStrategyNotes!: string | undefined;
 
     constructor(data?: IPropertyDto) {
         if (data) {
@@ -73289,7 +73298,8 @@ export class PropertyDto implements IPropertyDto {
             this.microwave = data["microwave"];
             this.dishwasher = data["dishwasher"];
             this.laundryInSuite = data["laundryInSuite"];
-            this.centralHeating = data["centralHeating"];
+            this.isCentralHeating = data["isCentralHeating"];
+            this.heatingType = data["heatingType"];
             this.ac = data["ac"];
             this.monthlyHeatingCost = data["monthlyHeatingCost"];
             this.isHeatIncludedInCondoFees = data["isHeatIncludedInCondoFees"];
@@ -73312,6 +73322,7 @@ export class PropertyDto implements IPropertyDto {
             this.petsSizeLimit = data["petsSizeLimit"];
             this.petsBreedRestriction = data["petsBreedRestriction"];
             this.condoDocuments = data["condoDocuments"];
+            this.petApplication = data["petApplication"];
             this.intercomSetup = data["intercomSetup"];
             this.additionalKeys = data["additionalKeys"];
             this.numberOfSets = data["numberOfSets"];
@@ -73348,9 +73359,8 @@ export class PropertyDto implements IPropertyDto {
             this.other = data["other"];
             this.ownersOnTitle = data["ownersOnTitle"];
             this.mortgageHolder = data["mortgageHolder"];
-            this.ownerLiveInHouse = data["ownerLiveInHouse"];
+            this.propertyResident = data["propertyResident"];
             this.houseOwningTime = data["houseOwningTime"];
-            this.houseWithRenters = data["houseWithRenters"];
             this.annualHOACondoFees = data["annualHOACondoFees"];
             this.depositPutAmount = data["depositPutAmount"];
             this.isHomeListed = data["isHomeListed"];
@@ -73406,7 +73416,7 @@ export class PropertyDto implements IPropertyDto {
             this.afterRepairValue = data["afterRepairValue"];
             this.walkthroughDate = data["walkthroughDate"] ? moment(data["walkthroughDate"].toString()) : <any>undefined;
             this.exitStrategy = data["exitStrategy"];
-            this.existStrategyNotes = data["existStrategyNotes"];
+            this.exitStrategyNotes = data["exitStrategyNotes"];
         }
     }
 
@@ -73437,7 +73447,8 @@ export class PropertyDto implements IPropertyDto {
         data["microwave"] = this.microwave;
         data["dishwasher"] = this.dishwasher;
         data["laundryInSuite"] = this.laundryInSuite;
-        data["centralHeating"] = this.centralHeating;
+        data["isCentralHeating"] = this.isCentralHeating;
+        data["heatingType"] = this.heatingType;
         data["ac"] = this.ac;
         data["monthlyHeatingCost"] = this.monthlyHeatingCost;
         data["isHeatIncludedInCondoFees"] = this.isHeatIncludedInCondoFees;
@@ -73460,6 +73471,7 @@ export class PropertyDto implements IPropertyDto {
         data["petsSizeLimit"] = this.petsSizeLimit;
         data["petsBreedRestriction"] = this.petsBreedRestriction;
         data["condoDocuments"] = this.condoDocuments;
+        data["petApplication"] = this.petApplication;
         data["intercomSetup"] = this.intercomSetup;
         data["additionalKeys"] = this.additionalKeys;
         data["numberOfSets"] = this.numberOfSets;
@@ -73496,9 +73508,8 @@ export class PropertyDto implements IPropertyDto {
         data["other"] = this.other;
         data["ownersOnTitle"] = this.ownersOnTitle;
         data["mortgageHolder"] = this.mortgageHolder;
-        data["ownerLiveInHouse"] = this.ownerLiveInHouse;
+        data["propertyResident"] = this.propertyResident;
         data["houseOwningTime"] = this.houseOwningTime;
-        data["houseWithRenters"] = this.houseWithRenters;
         data["annualHOACondoFees"] = this.annualHOACondoFees;
         data["depositPutAmount"] = this.depositPutAmount;
         data["isHomeListed"] = this.isHomeListed;
@@ -73554,7 +73565,7 @@ export class PropertyDto implements IPropertyDto {
         data["afterRepairValue"] = this.afterRepairValue;
         data["walkthroughDate"] = this.walkthroughDate ? this.walkthroughDate.toISOString() : <any>undefined;
         data["exitStrategy"] = this.exitStrategy;
-        data["existStrategyNotes"] = this.existStrategyNotes;
+        data["exitStrategyNotes"] = this.exitStrategyNotes;
         return data; 
     }
 }
@@ -73578,7 +73589,8 @@ export interface IPropertyDto {
     microwave: boolean | undefined;
     dishwasher: boolean | undefined;
     laundryInSuite: boolean | undefined;
-    centralHeating: HeatingCoolingType | undefined;
+    isCentralHeating: boolean | undefined;
+    heatingType: HeatingCoolingType | undefined;
     ac: boolean | undefined;
     monthlyHeatingCost: number | undefined;
     isHeatIncludedInCondoFees: boolean | undefined;
@@ -73601,6 +73613,7 @@ export interface IPropertyDto {
     petsSizeLimit: string | undefined;
     petsBreedRestriction: string | undefined;
     condoDocuments: boolean | undefined;
+    petApplication: boolean | undefined;
     intercomSetup: string | undefined;
     additionalKeys: boolean | undefined;
     numberOfSets: number | undefined;
@@ -73637,9 +73650,8 @@ export interface IPropertyDto {
     other: string | undefined;
     ownersOnTitle: string | undefined;
     mortgageHolder: string | undefined;
-    ownerLiveInHouse: boolean | undefined;
-    houseOwningTime: string | undefined;
-    houseWithRenters: boolean | undefined;
+    propertyResident: PropertyResident | undefined;
+    houseOwningTime: number | undefined;
     annualHOACondoFees: number | undefined;
     depositPutAmount: number | undefined;
     isHomeListed: boolean | undefined;
@@ -73695,7 +73707,7 @@ export interface IPropertyDto {
     afterRepairValue: number | undefined;
     walkthroughDate: moment.Moment | undefined;
     exitStrategy: ExitStrategy | undefined;
-    existStrategyNotes: string | undefined;
+    exitStrategyNotes: string | undefined;
 }
 
 export class OptionDto implements IOptionDto {
