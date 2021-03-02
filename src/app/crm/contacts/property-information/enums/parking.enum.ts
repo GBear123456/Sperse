@@ -1,7 +1,7 @@
 export enum ParkingEnum {
-    Garage = 1,
-    Underground = 2,
+    DedicatedPad = 1,
+    Garage = 2,
     OutdoorLot = 4,
-    DedicatedPad = 8,
-    Street = 16
+    Street = 8,
+    Underground = 16
 }
