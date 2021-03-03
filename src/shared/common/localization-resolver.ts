@@ -50,8 +50,7 @@ export class LocalizationResolver implements CanActivate, CanActivateChild {
             sourceName,
             source ? source.version : undefined,
             cultureName,
-            cultureName,
-            undefined
+            cultureName
         ).pipe(
             take(1),
             mergeMap(result => {
