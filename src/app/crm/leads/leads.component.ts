@@ -732,6 +732,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     beforeSend: (request) => {
                         this.totalCount = undefined;
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        request.params.contactGroupId = this.selectedContactGroup;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
                     onLoaded: (count: any) => {
