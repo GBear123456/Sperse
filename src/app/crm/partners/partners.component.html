@@ -41,10 +41,11 @@
                          [title]="l('Status')"
                          [showConfirmation]="false"
                          [relatedItemsKeys]="selectedPartnerKeys"
+                         [highlightSelected]="true"
                          [hideButtons]="true"
                          [filterModel]="filterModelStatus"
                          targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
-                         [list]="statuses"
+                         [list]="statuses$ | async"
                          (onItemSelected)="updatePartnerStatuses($event)">
         </app-static-list>
         <types-list [selectedKeys]="selectedPartnerKeys"

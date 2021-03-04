@@ -17,7 +17,6 @@ import {
     pluck,
     publishReplay,
     refCount,
-    skip,
     switchMap,
     takeUntil,
     tap,
@@ -188,7 +187,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
                     action: () => {
-                        this.contactService.showSMSDialog({                    
+                        this.contactService.showSMSDialog({
                             phoneNumber: (this.actionEvent.data || this.actionEvent).Phone
                         });
                     }
@@ -213,7 +212,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     class: 'login',
                     checkVisible: (partner: PartnerDto) => {
                         return !!partner.UserId && (
-                            this.impersonationIsGranted || 
+                            this.impersonationIsGranted ||
                             this.permission.checkCGPermission(ContactGroup.Partner, 'UserInformation.AutoLogin')
                         );
                     },
@@ -285,7 +284,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     ];
 
     formatting = AppConsts.formatting;
-    statuses: ContactStatusDto[];
     filterModelLists: FilterModel;
     filterModelTags: FilterModel;
     filterModelTypes: FilterModel;
@@ -321,19 +319,22 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         }
     });
     filterModelAssignment: FilterModel;
+    statuses$: Observable<ContactStatusDto[]> = this.store$.pipe(select(StatusesStoreSelectors.getStatuses));
     filterModelStatus: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'status',
         filterMethod: FilterHelpers.filterByCustomerStatus,
         field: 'StatusId',
+        isSelected: true,
         items: {
             element: new FilterCheckBoxesModel(
                 {
-                    dataSource$: this.store$.pipe(select(StatusesStoreSelectors.getStatuses)),
+                    dataSource$: this.statuses$,
                     nameField: 'name',
                     keyExpr: 'id',
                     selectedKeys$: of(['A'])
-                })
+                }
+            )
         }
     });
     filterModelRating: FilterModel;
@@ -503,15 +504,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
     private filters: FilterModel[] = this.getFilters();
-    odataRequestValues: ODataRequestValues;
     odataRequestValues$: Observable<ODataRequestValues> = concat(
-        this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom).pipe(first()),
         this.filterChanged$.pipe(
             switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
         )
     ).pipe(
         filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues),
-        tap((odataRequestValues: ODataRequestValues) => this.odataRequestValues = odataRequestValues)
     );
     mapData$: Observable<MapData>;
     mapInfoItems$: Observable<InfoItem[]>;
@@ -593,10 +591,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.totalDataSource = new DataSource({
             paginate: false,
             store: new ODataStore({
-                url: this.getODataUrl(this.totalDataSourceURI, [
-                    FiltersService.filterByParentId()
-                ]),
                 version: AppConsts.ODataVersion,
+                url: this.getODataUrl(
+                    this.totalDataSourceURI,
+                    [
+                        this.filterModelStatus.filterMethod(this.filterModelStatus),
+                        FiltersService.filterByPartnerGroupId(),
+                        FiltersService.filterByParentId()
+                    ]
+                ),
                 beforeSend: (request) => {
                     this.totalCount = undefined;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
@@ -607,16 +610,16 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 }
             })
         });
+        this.totalDataSource.load();
     }
 
     ngOnInit() {
-        this.getStatuses();
+        this.filterModelStatus.updateCaptions();
         this.getPartnerTypes();
         this.activate();
         this.handleModuleChange();
         this.handleTotalCountUpdate();
         this.handleDataGridUpdate();
-        this.handlePivotGridUpdate();
         this.handleChartUpdate();
         this.handleMapUpdate();
         this.handleDataLayoutTypeInQuery();
@@ -626,8 +629,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     private handleFiltersPining() {
         const filterFixed$ = this.filtersService.filterFixed$.pipe(
-            takeUntil(this.lifeCycleSubjectsService.destroy$),
-            skip(1)
+            takeUntil(this.lifeCycleSubjectsService.destroy$)
         );
         filterFixed$.pipe(
             switchMap(this.waitUntil(DataLayoutType.DataGrid))
@@ -665,7 +667,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private handleDataGridUpdate() {
-        this.listenForUpdate(DataLayoutType.DataGrid).pipe(skip(1)).subscribe(() => {
+        combineLatest(
+            this.odataRequestValues$,
+            this.refresh$
+        ).pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            filter(() => this.showDataGrid || this.showPivotGrid)
+        ).subscribe((data) => {
+            if (this.showPivotGrid)
+                this.pivotGridComponent.dataGrid.instance.updateDimensions();
             this.processFilterInternal();
         });
     }
@@ -698,13 +708,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             takeUntil(this.destroy$)
         ).subscribe(() => {
             this.crmService.handleModuleChange(this.dataLayoutType.value);
-        });
-    }
-
-    private handlePivotGridUpdate() {
-        this.listenForUpdate(DataLayoutType.PivotGrid).pipe(skip(1)).subscribe(() => {
-            this.pivotGridComponent.dataGrid.instance.updateDimensions();
-            this.processFilterInternal();
         });
     }
 
@@ -781,11 +784,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.subRouteParams = this._activatedRoute.queryParams
                 .pipe(takeUntil(this.deactivate$))
                 .subscribe(params => {
-                    const searchValueChanged = this.searchValue !== params.search;
+                    const searchValueChanged = params.search && this.searchValue !== params.search;
                     if (searchValueChanged) {
                         this.searchValue = params.search || '';
-                        setTimeout(() => this.filtersService.clearAllFilters());
                         this.initToolbarConfig();
+                        setTimeout(() => this.filtersService.clearAllFilters());
                     }
                     if ('addNew' == params['action'])
                         setTimeout(() => this.createPartner());
@@ -872,12 +875,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         if (this.filters) {
             this.filtersService.setup(this.filters);
             this.filtersService.checkIfAnySelected();
-        } else {
+        } else
             this.filtersService.setup(
                 this.filters = this.getFilters()
             );
-        }
-
         this.filtersService.apply(() => {
             this.selectedPartnerKeys = [];
             this.initToolbarConfig();
@@ -1568,12 +1569,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.invalidate();
             this.dataGrid.instance.clearSelection();
         });
-    }
-
-    private getStatuses() {
-        this.store$.pipe(select(StatusesStoreSelectors.getStatuses)).subscribe(
-            statuses => this.statuses = statuses
-        );
     }
 
     private getPartnerTypes() {
