@@ -53,7 +53,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         if (value) {
             this._settings = value;
             this.initialTimezone = value.timezone;
-            this.initialCountry = value.defaultCountry;
+            this.initialCountry = value.defaultCountryCode;
         }
         this.changeDetectorRef.detectChanges();
     };
@@ -118,9 +118,9 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
                 this.tenantSettingsServiceProxy.updateGeneralSettings(this.settings).pipe(tap(() => {
                     if (this.initialTimezone != this.settings.timezone)
                         this.onOptionChanged.emit('timezone');
-                    if (this.initialCountry != this.settings.defaultCountry)
+                    if (this.initialCountry != this.settings.defaultCountryCode)
                         this.onOptionChanged.emit('defaultCountry');
-                    this.appSession.checkSetDefaultCountry(this.settings.defaultCountry);
+                    this.appSession.checkSetDefaultCountry(this.settings.defaultCountryCode);
                 })),
                 this.tenantPaymentSettingsProxy.updateInvoiceSettings(this.paymentSettings),
                 this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),

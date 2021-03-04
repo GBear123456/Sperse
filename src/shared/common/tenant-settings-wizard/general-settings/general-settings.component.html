@@ -14,7 +14,7 @@
             width="120px"
             valueExpr="key"
             displayExpr="text"
-            [(value)]="settings.defaultCountry"
+            [(value)]="settings.defaultCountryCode"
             [dataSource]="supportedCountries"
             (onSelectionChanged)="onCountryChanged($event)">
         </dx-select-box>

@@ -84,7 +84,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
             finalize(() => { this.changeDetection.detectChanges(); })
         ).subscribe(([allSettings, baseCommerceSettings, payPalSettings, achWorksSettings, recurlySettings, yTelSettings]) => {
             this.hostSettings = allSettings;
-            this.initialDefaultCountry = allSettings.general.defaultCountry;
+            this.initialDefaultCountry = allSettings.general.defaultCountryCode;
             this.initialTimeZone = allSettings.general.timezone;
             this.usingDefaultTimeZone = allSettings.general.timezoneForComparison === this.setting.get('Abp.Timing.TimeZone');
             this.baseCommercePaymentSettings = baseCommerceSettings;
@@ -137,7 +137,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     saveAll(): void {
         forkJoin(
             this.hostSettingService.updateAllSettings(this.hostSettings).pipe(tap(() => {
-                this.appSessionService.checkSetDefaultCountry(this.hostSettings.general.defaultCountry);
+                this.appSessionService.checkSetDefaultCountry(this.hostSettings.general.defaultCountryCode);
             })),
             this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
@@ -146,7 +146,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
             this.hostSettingService.updateYTelSettings(this.yTelSettings)
         ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
-            if (this.initialDefaultCountry !== this.hostSettings.general.defaultCountry) {
+            if (this.initialDefaultCountry !== this.hostSettings.general.defaultCountryCode) {
                 this.message.info(this.l('DefaultCountrySettingChangedRefreshPageNotification')).done(function () {
                     window.location.reload();
                 });
