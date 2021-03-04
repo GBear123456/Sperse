@@ -4,13 +4,16 @@
         <label for="Timezone">{{ls.l("Timezone")}}</label>
         <timezone-combo id="Timezone"
             [(selectedTimeZone)]="settings.timezone"
-            [defaultTimezoneScope]="defaultTimezoneScope">
+            [defaultTimezoneScope]="defaultTimezoneScope"
+            (selectedTimeZoneChange)="onTimeZoneChange($event)">
         </timezone-combo>
     </div>
     <div class="form-group">
         <label for="DefaultCountry">{{ls.l("Country")}}</label>
         <dx-select-box
             width="120px"
+            valueExpr="key"
+            displayExpr="text"
             [(value)]="settings.defaultCountry"
             [dataSource]="supportedCountries"
             (onSelectionChanged)="onCountryChanged($event)">

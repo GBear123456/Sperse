@@ -16,6 +16,8 @@
                     <div class="form-group">
                         <label for="DefaultCountry">{{l("DefaultCountry")}}</label>
                         <dx-select-box
+                            valueExpr="key"
+                            displayExpr="text"
                             [(value)]="settings.general.defaultCountry"
                             [dataSource]="supportedCountries">
                         </dx-select-box>

@@ -49,9 +49,7 @@ export class LocalizationResolver implements CanActivate, CanActivateChild {
             Number(this.session.tenantId),
             sourceName,
             source ? source.version : undefined,
-            cultureName,
-            cultureName,
-            undefined
+            cultureName, cultureName, undefined
         ).pipe(
             take(1),
             mergeMap(result => {

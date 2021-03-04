@@ -4,7 +4,9 @@ import {
     ChangeDetectorRef,
     Component,
     ElementRef,
+    EventEmitter,
     Input,
+    Output,
     ViewChild
 } from '@angular/core';
 import { AbstractControlDirective } from '@angular/forms';
@@ -46,14 +48,31 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     @ViewChild('privacyPolicyUploader', { static: false }) privacyPolicyUploader: UploaderComponent;
     @ViewChild('tosUploader', { static: false }) tosUploader: UploaderComponent;
     @ViewChild('publicSiteUrl', { static: false }) publicSiteUrl: AbstractControlDirective;
-    @Input() settings: GeneralSettingsEditDto;
+    @Output() onOptionChanged: EventEmitter<string> = new EventEmitter<string>();
+    @Input() set settings(value: GeneralSettingsEditDto) {
+        if (value) {
+            this._settings = value;
+            this.initialTimezone = value.timezone;
+            this.initialCountry = value.defaultCountry;
+        }
+        this.changeDetectorRef.detectChanges();
+    };
+    get settings(): GeneralSettingsEditDto {
+        return this._settings;
+    };
+    private _settings: GeneralSettingsEditDto;
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
     siteUrlRegexPattern = AppConsts.regexPatterns.siteUrl;
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
-    supportedCountries = Object.keys(Country);
+    supportedCountries = Object.keys(Country).map(item => {
+        return {
+            key: Country[item],
+            text: this.ls.l(item)
+        };
+    });
     supportedCurrencies = Object.keys(Currency).map(item => {
         return {
             key: item,
@@ -63,11 +82,13 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     paymentSettingsAllowed =
         this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices) ||
         this.permissionService.isGranted(AppPermissions.CRMSettingsConfigure);
-    paymentSettings: InvoiceSettings;
+    paymentSettings: InvoiceSettings = new InvoiceSettings();
+    initialTimezone: string;
+    initialCountry: string;
 
     constructor(
-        private timingService: TimingServiceProxy,
         private appSession: AppSessionService,
+        private timingService: TimingServiceProxy,
         private permissionService: PermissionCheckerService,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
@@ -77,17 +98,28 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         if (this.paymentSettingsAllowed)
             this.tenantPaymentSettingsProxy.getInvoiceSettings().subscribe(res => {
                 this.paymentSettings = res;
+                this.changeDetectorRef.detectChanges();
             });
     }
 
-    onCountryChanged(event) {
-        this.paymentSettings.currency = <any>this.supportedCurrencies[Number(event.selectedItem == Country.Canada)].key;
+    onCountryChanged(event) {            
+        this.paymentSettings.currency = <any>this.supportedCurrencies[
+            Number(event.selectedItem.key == Country.Canada)
+        ].key;
+    }
+
+    onTimeZoneChange(event) {
+        console.log('onTimeZoneChange', event, this.initialTimezone);
     }
 
     save(): Observable<any> {
         if (!this.publicSiteUrl || this.publicSiteUrl.valid) {
             return forkJoin(
                 this.tenantSettingsServiceProxy.updateGeneralSettings(this.settings).pipe(tap(() => {
+                    if (this.initialTimezone != this.settings.timezone)
+                        this.onOptionChanged.emit('timezone');
+                    if (this.initialCountry != this.settings.defaultCountry)
+                        this.onOptionChanged.emit('defaultCountry');
                     this.appSession.checkSetDefaultCountry(this.settings.defaultCountry);
                 })),
                 this.tenantPaymentSettingsProxy.updateInvoiceSettings(this.paymentSettings),
