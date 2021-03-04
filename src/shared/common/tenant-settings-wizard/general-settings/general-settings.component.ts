@@ -88,7 +88,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         if (!this.publicSiteUrl || this.publicSiteUrl.valid) {
             return forkJoin(
                 this.tenantSettingsServiceProxy.updateGeneralSettings(this.settings).pipe(tap(() => {
-                    this.appSession.checkSetDefaultCountry(this.settings.defaultCountry);
+                    this.appSession.checkSetDefaultCountry(this.settings.defaultCountryCode);
                 })),
                 this.tenantPaymentSettingsProxy.updateInvoiceSettings(this.paymentSettings),
                 this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),

@@ -334,7 +334,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     saveAll(): void {
         let requests: Observable<any>[] = [
             this.tenantSettingsService.updateAllSettings(this.settings).pipe(tap(() => {
-                this.appSessionService.checkSetDefaultCountry(this.settings.general.defaultCountry);
+                this.appSessionService.checkSetDefaultCountry(this.settings.general.defaultCountryCode);
             })),
             this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),

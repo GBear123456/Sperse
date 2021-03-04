@@ -130,7 +130,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     saveAll(): void {
         forkJoin(
             this.hostSettingService.updateAllSettings(this.hostSettings).pipe(tap(() => {
-                this.appSessionService.checkSetDefaultCountry(this.hostSettings.general.defaultCountry);
+                this.appSessionService.checkSetDefaultCountry(this.hostSettings.general.defaultCountryCode);
             })),
             this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
