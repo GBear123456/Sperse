@@ -3,9 +3,28 @@
     <div class="form-group" *ngIf="showTimezoneSelection">
         <label for="Timezone">{{ls.l("Timezone")}}</label>
         <timezone-combo id="Timezone"
-                        [(selectedTimeZone)]="settings.timezone"
-                        [defaultTimezoneScope]="defaultTimezoneScope">
+            [(selectedTimeZone)]="settings.timezone"
+            [defaultTimezoneScope]="defaultTimezoneScope">
         </timezone-combo>
+    </div>
+    <div class="form-group">
+        <label for="DefaultCountry">{{ls.l("Country")}}</label>
+        <dx-select-box
+            width="120px"
+            [(value)]="settings.defaultCountry"
+            [dataSource]="supportedCountries"
+            (onSelectionChanged)="onCountryChanged($event)">
+        </dx-select-box>
+        <div class="payment-settings" *ngIf="paymentSettingsAllowed">
+            <label for="Currency">{{ls.l("Currency")}}</label>
+            <dx-select-box
+                width="290px"
+                valueExpr="key"
+                displayExpr="text"
+                [(value)]="paymentSettings.currency"
+                [dataSource]="supportedCurrencies">
+            </dx-select-box>
+        </div>
     </div>
     <ng-container *ngIf="tenant">
         <div class="form-group">

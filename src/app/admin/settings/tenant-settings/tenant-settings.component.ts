@@ -5,12 +5,12 @@ import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, Change
 import { IAjaxResponse } from '@abp/abpHttpInterceptor';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 
 /** Application imports */
 import { TokenService } from '@abp/auth/token.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AppTimezoneScope } from '@shared/AppEnums';
+import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -100,6 +100,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
     masks = AppConsts.masks;
     private rootComponent;
+    supportedCountries = Object.keys(Country);
     headlineButtons: HeadlineButton[] = [
         {
             enabled: true, // this.isGranted(AppPermissions.AdministrationLanguagesCreate),
@@ -332,7 +333,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
     saveAll(): void {
         let requests: Observable<any>[] = [
-            this.tenantSettingsService.updateAllSettings(this.settings),
+            this.tenantSettingsService.updateAllSettings(this.settings).pipe(tap(() => {
+                this.appSessionService.checkSetDefaultCountry(this.settings.general.defaultCountry);
+            })),
             this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),

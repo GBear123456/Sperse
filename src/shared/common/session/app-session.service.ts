@@ -10,6 +10,7 @@ import {
     UserLoginInfoDto,
     TenantHostServiceProxy
 } from '@shared/service-proxies/service-proxies';
+import { Country } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
 
@@ -131,6 +132,13 @@ export class AppSessionService {
         abp.multiTenancy.setTenantIdCookie(tenantId);
         reload && location.reload();
         return true;
+    }
+
+    checkSetDefaultCountry(country: string) {
+        if (country) {
+            AppConsts.defaultCountryName = country == Country.USA ? 'United States of America' : country;
+            abp.setting.values['App.TenantManagement.DefaultCountry'] = country;
+        }
     }
 
     private isCurrentTenant(tenantId?: number) {

@@ -28,4 +28,23 @@
             }
         }
     }
+    label[for="Currency"],
+    label[for="DefaultCountry"] {
+        min-width: 90px!important;
+    }
+    .payment-settings {
+        display: flex;
+        padding-left: 20px;
+        width: 400px;
+    }
+    ::ng-deep dx-select-box {
+        border-bottom: 1px solid #dfdfdf!important;
+        .dx-placeholder, input {
+            font-size: 15px;
+            font-family: Montserrat;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            color: #424c56;
+        }
+    }
 }

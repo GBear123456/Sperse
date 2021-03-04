@@ -211,9 +211,10 @@ export class AppPreBootstrap {
             moment.tz.setDefault(abp.timing.timeZoneInfo.iana.timeZoneId);
 
         abp.event.trigger('abp.dynamicScriptsInitialized');
-
         AppConsts.recaptchaSiteKey = abp.setting.get('Recaptcha.SiteKey');
-        AppConsts.subscriptionExpireNootifyDayCount = parseInt(abp.setting.get('App.TenantManagement.SubscriptionExpireNotifyDayCount'));
+        let country = abp.setting.get('App.TenantManagement.DefaultCountry');
+        AppConsts.defaultCountryName = !country || country == 'USA' ? 'United States of America' : country;
+        AppConsts.subscriptionExpireNootifyDayCount = parseInt(abp.setting.get('App.TenantManagement.SubscriptionExpireNotifyDayCount'));                
 
         loadThemeResources ? LocalizedResourcesHelper.loadResources(callback) : callback();
         return of(true);

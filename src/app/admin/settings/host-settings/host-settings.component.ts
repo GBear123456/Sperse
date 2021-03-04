@@ -3,10 +3,10 @@ import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, Change
 
 /** Third party imports */
 import { forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 
 /** Application imports */
-import { AppTimezoneScope } from '@shared/AppEnums';
+import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -38,6 +38,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
     yTelSettings: YTelSettingsEditDto = new YTelSettingsEditDto();
+    supportedCountries = Object.keys(Country);
 
     usingDefaultTimeZone = false;
     initialTimeZone: string = undefined;
@@ -128,7 +129,9 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
 
     saveAll(): void {
         forkJoin(
-            this.hostSettingService.updateAllSettings(this.hostSettings),
+            this.hostSettingService.updateAllSettings(this.hostSettings).pipe(tap(() => {
+                this.appSessionService.checkSetDefaultCountry(this.hostSettings.general.defaultCountry);
+            })),
             this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
