@@ -32,7 +32,7 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     constructor(
         public ls: AppLocalizationService
     ) {
-        if (abp.setting.get('App.TenantManagement.DefaultCountry') == Country.Canada)
+        if (abp.setting.get('App.TenantManagement.DefaultCountryCode') == Country.Canada)
             this.defaultCountry = 'ca';
     }
 
