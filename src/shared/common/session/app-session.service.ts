@@ -151,11 +151,11 @@ export class AppSessionService {
             countryCode = this.getDefaultCountry();
 
         AppConsts.defaultCountryName = this.getCountryNameByCode(countryCode);
-        abp.setting.values['App.TenantManagement.DefaultCountry'] = countryCode;
+        abp.setting.values['App.TenantManagement.DefaultCountryCode'] = countryCode;
     }
 
     getDefaultCountry() {
-        return abp.setting.get('App.TenantManagement.DefaultCountry');
+        return abp.setting.get('App.TenantManagement.DefaultCountryCode');
     }
 
     private getCountryNameByCode(code: string) {
