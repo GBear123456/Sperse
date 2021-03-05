@@ -73054,10 +73054,27 @@ export enum PropertyType {
     Townhouse = "Townhouse", 
 }
 
+export enum Appliences {
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
+    _8 = 8, 
+    _16 = 16, 
+    _32 = 32, 
+}
+
 export enum HeatingCoolingType {
     Electric = "Electric", 
     Gas = "Gas", 
     Water = "Water", 
+}
+
+export enum UtilityType {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
+    _8 = 8, 
 }
 
 export enum YardPatioEnum {
@@ -73146,14 +73163,15 @@ export class PropertyDto implements IPropertyDto {
     bathCount!: number | undefined;
     den!: boolean | undefined;
     office!: boolean | undefined;
-    microwave!: boolean | undefined;
-    dishwasher!: boolean | undefined;
+    appliences!: Appliences | undefined;
+    otherAppliences!: string | undefined;
     laundryInSuite!: boolean | undefined;
     isCentralHeating!: boolean | undefined;
     heatingType!: HeatingCoolingType | undefined;
     ac!: boolean | undefined;
     monthlyHeatingCost!: number | undefined;
     isHeatIncludedInCondoFees!: boolean | undefined;
+    utilityTypesIncluded!: UtilityType | undefined;
     floorVinyl!: boolean | undefined;
     floorHardwood!: boolean | undefined;
     floorTile!: boolean | undefined;
@@ -73295,14 +73313,15 @@ export class PropertyDto implements IPropertyDto {
             this.bathCount = data["bathCount"];
             this.den = data["den"];
             this.office = data["office"];
-            this.microwave = data["microwave"];
-            this.dishwasher = data["dishwasher"];
+            this.appliences = data["appliences"];
+            this.otherAppliences = data["otherAppliences"];
             this.laundryInSuite = data["laundryInSuite"];
             this.isCentralHeating = data["isCentralHeating"];
             this.heatingType = data["heatingType"];
             this.ac = data["ac"];
             this.monthlyHeatingCost = data["monthlyHeatingCost"];
             this.isHeatIncludedInCondoFees = data["isHeatIncludedInCondoFees"];
+            this.utilityTypesIncluded = data["utilityTypesIncluded"];
             this.floorVinyl = data["floorVinyl"];
             this.floorHardwood = data["floorHardwood"];
             this.floorTile = data["floorTile"];
@@ -73444,14 +73463,15 @@ export class PropertyDto implements IPropertyDto {
         data["bathCount"] = this.bathCount;
         data["den"] = this.den;
         data["office"] = this.office;
-        data["microwave"] = this.microwave;
-        data["dishwasher"] = this.dishwasher;
+        data["appliences"] = this.appliences;
+        data["otherAppliences"] = this.otherAppliences;
         data["laundryInSuite"] = this.laundryInSuite;
         data["isCentralHeating"] = this.isCentralHeating;
         data["heatingType"] = this.heatingType;
         data["ac"] = this.ac;
         data["monthlyHeatingCost"] = this.monthlyHeatingCost;
         data["isHeatIncludedInCondoFees"] = this.isHeatIncludedInCondoFees;
+        data["utilityTypesIncluded"] = this.utilityTypesIncluded;
         data["floorVinyl"] = this.floorVinyl;
         data["floorHardwood"] = this.floorHardwood;
         data["floorTile"] = this.floorTile;
@@ -73586,14 +73606,15 @@ export interface IPropertyDto {
     bathCount: number | undefined;
     den: boolean | undefined;
     office: boolean | undefined;
-    microwave: boolean | undefined;
-    dishwasher: boolean | undefined;
+    appliences: Appliences | undefined;
+    otherAppliences: string | undefined;
     laundryInSuite: boolean | undefined;
     isCentralHeating: boolean | undefined;
     heatingType: HeatingCoolingType | undefined;
     ac: boolean | undefined;
     monthlyHeatingCost: number | undefined;
     isHeatIncludedInCondoFees: boolean | undefined;
+    utilityTypesIncluded: UtilityType | undefined;
     floorVinyl: boolean | undefined;
     floorHardwood: boolean | undefined;
     floorTile: boolean | undefined;
