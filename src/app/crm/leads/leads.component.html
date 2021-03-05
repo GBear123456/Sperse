@@ -322,9 +322,8 @@
                             <dxo-group-panel [visible]="true"></dxo-group-panel>
                             <dxo-sorting mode="multiple"></dxo-sorting>
                             <dxo-summary>
-                                <dxi-group-item [column]="leadFields.Id"
-                                                summaryType="count"
-                                                [displayFormat]="'{0} ' + l('ContactGroup_' + contactGroupNames[selectedContactGroup.toString()]).toLocaleLowerCase()">
+                                <dxi-group-item [column]="leadFields.Id" summaryType="count"
+                                    [displayFormat]="'{0} ' + l('Records').toLocaleLowerCase()"> 
                                 </dxi-group-item>
                             </dxo-summary>
                         </dx-data-grid>
