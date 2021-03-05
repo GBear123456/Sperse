@@ -18,7 +18,9 @@
                         <label for="DefaultCountry">{{l("DefaultCountry")}}</label>
                         <dx-select-box
                             stylingMode="outlined"
-                            [(value)]="hostSettings.general.defaultCountry"
+                            valueExpr="key"
+                            displayExpr="text"
+                            [(value)]="hostSettings.general.defaultCountryCode"
                             [dataSource]="supportedCountries">
                         </dx-select-box>
                     </div>

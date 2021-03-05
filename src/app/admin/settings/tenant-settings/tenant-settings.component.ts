@@ -63,7 +63,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     @ViewChild('cssInput', { static: false }) cssInput: ElementRef;
     @ViewChild('faviconInput', { static: false }) faviconInput: ElementRef;
     usingDefaultTimeZone = false;
-    initialTimeZone: string = null;
+    initialTimeZone: string;
+    initialDefaultCountry: string;
     testEmailAddress: string = undefined;
     isMultiTenancyEnabled: boolean = this.multiTenancy.isEnabled;
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
@@ -100,7 +101,12 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
     masks = AppConsts.masks;
     private rootComponent;
-    supportedCountries = Object.keys(Country);
+    supportedCountries = Object.keys(Country).map(item => {
+        return {
+            key: Country[item],
+            text: this.l(item)
+        };
+    });
     headlineButtons: HeadlineButton[] = [
         {
             enabled: true, // this.isGranted(AppPermissions.AdministrationLanguagesCreate),
@@ -186,6 +192,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
                 if (this.settings.general) {
                     this.initialTimeZone = this.settings.general.timezone;
+                    this.initialDefaultCountry = this.settings.general.defaultCountryCode;
                     this.usingDefaultTimeZone = this.settings.general.timezoneForComparison === abp.setting.values['Abp.Timing.TimeZone'];
                 }
             });
@@ -334,7 +341,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     saveAll(): void {
         let requests: Observable<any>[] = [
             this.tenantSettingsService.updateAllSettings(this.settings).pipe(tap(() => {
-                this.appSessionService.checkSetDefaultCountry(this.settings.general.defaultCountry);
+                this.appSessionService.checkSetDefaultCountry(this.settings.general.defaultCountryCode);
             })),
             this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
@@ -363,6 +370,11 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
         forkJoin(requests).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
+            if (this.initialDefaultCountry !== this.settings.general.defaultCountryCode) {
+                this.message.info(this.l('DefaultCountrySettingChangedRefreshPageNotification')).done(() => {
+                    window.location.reload();
+                });
+            }
             if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone && this.initialTimeZone !== this.settings.general.timezone) {
                 this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
                     window.location.reload();

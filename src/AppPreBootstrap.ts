@@ -212,8 +212,6 @@ export class AppPreBootstrap {
 
         abp.event.trigger('abp.dynamicScriptsInitialized');
         AppConsts.recaptchaSiteKey = abp.setting.get('Recaptcha.SiteKey');
-        let country = abp.setting.get('App.TenantManagement.DefaultCountry');
-        AppConsts.defaultCountryName = !country || country == 'USA' ? 'United States of America' : country;
         AppConsts.subscriptionExpireNootifyDayCount = parseInt(abp.setting.get('App.TenantManagement.SubscriptionExpireNotifyDayCount'));                
 
         loadThemeResources ? LocalizedResourcesHelper.loadResources(callback) : callback();

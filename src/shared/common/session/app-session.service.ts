@@ -1,6 +1,11 @@
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+/** Core imports */
 import { Injectable } from '@angular/core';
+
+/** Third party imports */
+import { Store, select } from '@ngrx/store';
+import * as _ from 'underscore';
+
+/** Application imports */
 import {
     ApplicationInfoDto,
     LayoutType,
@@ -8,24 +13,31 @@ import {
     TenantLoginInfoDto,
     UserGroup,
     UserLoginInfoDto,
-    TenantHostServiceProxy
+    TenantHostServiceProxy,
+    CountryDto
 } from '@shared/service-proxies/service-proxies';
 import { Country } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
+import { CountriesStoreActions, CountriesStoreSelectors, RootStore } from '@root/store';
+import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Injectable()
 export class AppSessionService {
     private _user: UserLoginInfoDto;
     private _tenant: TenantLoginInfoDto;
     private _application: ApplicationInfoDto;
+    private countries: any;
 
     constructor(
+        private store$: Store<RootStore.State>,
         private sessionService: SessionServiceProxy,
         private featureService: FeatureCheckerService,
         private tenantHostProxy: TenantHostServiceProxy,
         private abpMultiTenancyService: AbpMultiTenancyService
     ) {
+        this.loadCountries();
         abp.event.on('profilePictureChanged', (thumbnailId) => {
             this.user.profileThumbnailId = thumbnailId;
         });
@@ -97,7 +109,7 @@ export class AppSessionService {
         return info;
     }
 
-    init(): Promise<boolean> {
+    init(): Promise<boolean> {        
         return new Promise<boolean>((resolve, reject) => {
             let updateLoginInfo = (result) => {
                 this._application = result.application;
@@ -134,11 +146,29 @@ export class AppSessionService {
         return true;
     }
 
-    checkSetDefaultCountry(country: string) {
-        if (country) {
-            AppConsts.defaultCountryName = country == Country.USA ? 'United States of America' : country;
-            abp.setting.values['App.TenantManagement.DefaultCountry'] = country;
-        }
+    checkSetDefaultCountry(countryCode?: string) {
+        if (!countryCode)
+            countryCode = this.getDefaultCountry();
+
+        AppConsts.defaultCountryName = this.getCountryNameByCode(countryCode);
+        abp.setting.values['App.TenantManagement.DefaultCountry'] = countryCode;
+    }
+
+    getDefaultCountry() {
+        return abp.setting.get('App.TenantManagement.DefaultCountry');
+    }
+
+    private getCountryNameByCode(code: string) {
+        let country = _.findWhere(this.countries, { code: code });
+        return country && country.name;
+    }
+
+    private loadCountries(): void {
+        this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
+        this.store$.pipe(select(CountriesStoreSelectors.getCountries)).subscribe((countries: CountryDto[]) => {
+            this.countries = countries;
+            this.checkSetDefaultCountry();
+        });
     }
 
     private isCurrentTenant(tenantId?: number) {
