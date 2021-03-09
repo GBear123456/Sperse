@@ -67,7 +67,8 @@ import {
     PropertyInput,
     SimilarContactOutput,
     StageDto,
-    TrackingInfo,
+    TrackingInfo,
+
     InvoiceSettings
 } from '@shared/service-proxies/service-proxies';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
@@ -226,6 +227,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         propertyId: undefined,
         name: undefined,
         note: undefined,
+        monthlyRentPrice: undefined,
         address: new Address()
     };
     similarCustomers: SimilarContactOutput[] = [];
@@ -420,6 +422,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         } else if (this.showPropertiesDropdown) {
             dataObj.propertyInfo = {
                 propertyId: this.propertyId,
+                monthlyRentPrice: this.property.monthlyRentPrice
             };
         }
 

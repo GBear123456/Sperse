@@ -1478,6 +1478,45 @@
                                     <h3>{{ ls.l('InternalOfficeInfo') }}</h3>
                                     <div class="fields">
                                         <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('KREPurchasePrice') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="property.krePurchasePrice"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               (onValueChanged)="valueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('BuyerPurchasePrice') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="property.buyerPurchasePrice"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               (onValueChanged)="valueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('MonthlyRent') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="property.monthlyRentPrice"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               (onValueChanged)="valueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>                                                                                                               
+                                        <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('LastSoldPrice') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-number-box [(value)]="property.lastSoldPrice"

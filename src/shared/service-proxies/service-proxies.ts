@@ -51535,6 +51535,7 @@ export class PropertyInput implements IPropertyInput {
     name!: string | undefined;
     address!: CreateContactAddressInput | undefined;
     note!: string | undefined;
+    monthlyRentPrice!: number | undefined;
 
     constructor(data?: IPropertyInput) {
         if (data) {
@@ -51551,6 +51552,7 @@ export class PropertyInput implements IPropertyInput {
             this.name = data["name"];
             this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.note = data["note"];
+            this.monthlyRentPrice = data["monthlyRentPrice"];
         }
     }
 
@@ -51567,6 +51569,7 @@ export class PropertyInput implements IPropertyInput {
         data["name"] = this.name;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["note"] = this.note;
+        data["monthlyRentPrice"] = this.monthlyRentPrice;
         return data; 
     }
 }
@@ -51576,6 +51579,7 @@ export interface IPropertyInput {
     name: string | undefined;
     address: CreateContactAddressInput | undefined;
     note: string | undefined;
+    monthlyRentPrice: number | undefined;
 }
 
 export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
@@ -73232,6 +73236,9 @@ export class PropertyDto implements IPropertyDto {
     houseOwningTime!: number | undefined;
     annualHOACondoFees!: number | undefined;
     depositPutAmount!: number | undefined;
+    krePurchasePrice!: number | undefined;
+    buyerPurchasePrice!: number | undefined;
+    monthlyRentPrice!: number | undefined;
     isHomeListed!: boolean | undefined;
     priceListed!: number | undefined;
     listedDate!: moment.Moment | undefined;
@@ -73382,6 +73389,9 @@ export class PropertyDto implements IPropertyDto {
             this.houseOwningTime = data["houseOwningTime"];
             this.annualHOACondoFees = data["annualHOACondoFees"];
             this.depositPutAmount = data["depositPutAmount"];
+            this.krePurchasePrice = data["krePurchasePrice"];
+            this.buyerPurchasePrice = data["buyerPurchasePrice"];
+            this.monthlyRentPrice = data["monthlyRentPrice"];
             this.isHomeListed = data["isHomeListed"];
             this.priceListed = data["priceListed"];
             this.listedDate = data["listedDate"] ? moment(data["listedDate"].toString()) : <any>undefined;
@@ -73532,6 +73542,9 @@ export class PropertyDto implements IPropertyDto {
         data["houseOwningTime"] = this.houseOwningTime;
         data["annualHOACondoFees"] = this.annualHOACondoFees;
         data["depositPutAmount"] = this.depositPutAmount;
+        data["krePurchasePrice"] = this.krePurchasePrice;
+        data["buyerPurchasePrice"] = this.buyerPurchasePrice;
+        data["monthlyRentPrice"] = this.monthlyRentPrice;
         data["isHomeListed"] = this.isHomeListed;
         data["priceListed"] = this.priceListed;
         data["listedDate"] = this.listedDate ? this.listedDate.toISOString() : <any>undefined;
@@ -73675,6 +73688,9 @@ export interface IPropertyDto {
     houseOwningTime: number | undefined;
     annualHOACondoFees: number | undefined;
     depositPutAmount: number | undefined;
+    krePurchasePrice: number | undefined;
+    buyerPurchasePrice: number | undefined;
+    monthlyRentPrice: number | undefined;
     isHomeListed: boolean | undefined;
     priceListed: number | undefined;
     listedDate: moment.Moment | undefined;
