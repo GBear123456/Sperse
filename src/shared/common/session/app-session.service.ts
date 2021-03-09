@@ -148,13 +148,13 @@ export class AppSessionService {
 
     checkSetDefaultCountry(countryCode?: string) {
         if (!countryCode)
-            countryCode = this.getDefaultCountry();
+            countryCode = this.getDefaultCountryCode();
 
         AppConsts.defaultCountryName = this.getCountryNameByCode(countryCode);
         abp.setting.values['App.TenantManagement.DefaultCountryCode'] = countryCode;
     }
 
-    getDefaultCountry() {
+    getDefaultCountryCode() {
         return abp.setting.get('App.TenantManagement.DefaultCountryCode');
     }
 
