@@ -8,6 +8,7 @@ import { PhoneNumberComponent } from '../../../node_modules/ngx-international-ph
 import { Country } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     selector: 'country-phone-number',
@@ -20,7 +21,7 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     @Input() phoneNumber: string;
     @Input() required = true;
     @Input() disabled = false;
-    @Input() defaultCountry = 'us';
+    @Input() defaultCountry;
     @Output() phoneNumberChange: EventEmitter<string> = new EventEmitter<string>();
     @Output() phoneCountryChange = new EventEmitter();
     @Output() onInitialized = new EventEmitter();
@@ -30,10 +31,10 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     focused = false;
 
     constructor(
+        private appSession: AppSessionService,
         public ls: AppLocalizationService
     ) {
-        if (abp.setting.get('App.TenantManagement.DefaultCountryCode') == Country.Canada)
-            this.defaultCountry = 'ca';
+        this.defaultCountry = (appSession.getDefaultCountryCode() || Country.USA).toLowerCase();
     }
 
     ngOnInit() {
