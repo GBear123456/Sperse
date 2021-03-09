@@ -27,7 +27,9 @@ import {
     InterestRate,
     ExitStrategy,
     PropertyResident,
+    PetFeeType,
     InvoiceSettings,
+    PestsType
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
@@ -74,6 +76,14 @@ export class PropertyInformationComponent implements OnInit {
         { displayValue: 'Received', value: true },
         { displayValue: 'N/A', value: false }
     ];
+    oneFiveDropdowns: SelectBoxItem[] = [
+        { displayValue: '0', value: 0 },
+        { displayValue: '1', value: 1 },
+        { displayValue: '2', value: 2 },
+        { displayValue: '3', value: 3 },
+        { displayValue: '4', value: 4 },
+        { displayValue: '5', value: 5 }
+    ];
 
     basement: SelectBoxItem[] = Object.values(BasementStatus).map((item: string) => ({
         displayValue: this.ls.l(item),
@@ -105,6 +115,14 @@ export class PropertyInformationComponent implements OnInit {
         value: item
     }));
     propertyResidents: SelectBoxItem[] = Object.values(PropertyResident).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    petFeeTypes: SelectBoxItem[] = Object.values(PetFeeType).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    pestsTypes: SelectBoxItem[] = Object.values(PestsType).map((item: string) => ({
         displayValue: this.ls.l(item),
         value: item
     }));

@@ -410,6 +410,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
+                    this.moveDropdownsToHost();
+                    this.isDataLoaded = false;
+                    this.changeDetectionRef.detectChanges();
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     const orderBy = request.params.$orderby;
                     request.params.$orderby = orderBy ? orderBy + (orderBy.match(/\b(Id)\b/i) ? '' : ',Id desc') : 'Id desc';
@@ -431,18 +434,16 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     }
                 },
                 onLoaded: () => {
-                    this.moveDropdownsToHost();
                     if (this.showFilterRow) {
                         this.showFilterRow = false;
                         this.dataGrid.instance.option('filterRow.visible', true);
                         this.initToolbarConfig();
                     }
+
                     setTimeout(() => {
-                        if (this.dataGrid.instance.option('filterRow.visible')
-                            && this.getElementRef().nativeElement === this.categoryChooserContainer.nativeElement.parentElement
-                        ) {
-                            this.repaintDataGrid();
-                        }
+                       if (this.isHeaderFilterVisible &&
+                           this.getElementRef().nativeElement === this.categoryChooserContainer.nativeElement.parentElement
+                       ) this.repaintDataGrid();
                     });
                 }
             })
@@ -866,9 +867,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onGridOptionChanged(event) {
         super.onGridOptionChanged(event);
-        if (event.fullName.indexOf('visibleIndex') > -1) {
+        if ((event.name == 'columnChooser') || event.name == 'columns' && (
+            event.fullName.includes('visibleIndex') ||
+            event.fullName.includes('sortOrder') ||
+            event.fullName.includes('visible')
+        ))
             this.moveDropdownsToHost();
-        }
     }
 
     processTotalValuesInternal(totals, startingBalanceTotal = 0) {
@@ -1082,8 +1086,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     setDataSource() {
-        if (this.dataGrid && !this.dataGrid.dataSource)
+        if (this.dataGrid && !this.dataGrid.dataSource) {
+            if (!this.dataGrid.instance.option('paging.pageSize'))
+                this.dataGrid.instance.option('paging.pageSize', 20);
             this.dataGrid.dataSource = this.dataSource;
+        }
     }
 
     applyTotalBankAccountFilter(emitFilterChange = false) {
@@ -1104,8 +1111,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     processFilterInternal() {
-        this.isDataLoaded = false;
-        this.changeDetectionRef.markForCheck();
         let filterQuery$: Observable<string> = this.processODataFilter(
             this.dataGrid.instance,
             this.dataSourceURI,
@@ -1322,21 +1327,26 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     }
 
+    appendFilter(event, filter) {
+        clearTimeout(filter.nativeElement.getAttribute('timeout'));
+        filter.nativeElement.setAttribute('timeout', setTimeout(() => {
+            if (this.getElementRef().nativeElement == filter.nativeElement.parentElement) {
+                event.cellElement.innerHTML = '';
+                event.cellElement.appendChild(filter.nativeElement);
+            }
+        }), 100);
+    }
+
     onCellPrepared($event) {
         if ($event.rowType === 'filter') {
-            if ($event.column.dataField == TransactionFields.BusinessEntityId) {
-                $event.cellElement.innerHTML = '';
-                $event.cellElement.appendChild(this.businessEntitiesFilterContainer.nativeElement);
-            } else if ($event.column.dataField == TransactionFields.CashflowCategoryName) {
-                $event.cellElement.innerHTML = '';
-                $event.cellElement.appendChild(this.categoryChooserContainer.nativeElement);
-            } else if ($event.column.dataField == TransactionFields.CounterpartyName) {
-                $event.cellElement.innerHTML = '';
-                $event.cellElement.appendChild(this.counterpartyFilterContainer.nativeElement);
-            } else if ($event.column.dataField == TransactionFields.BankAccountId) {
-                $event.cellElement.innerHTML = '';
-                $event.cellElement.appendChild(this.accountFilterContainer.nativeElement);
-            }
+            if ($event.column.dataField == TransactionFields.BusinessEntityId)
+                this.appendFilter($event, this.businessEntitiesFilterContainer);
+            else if ($event.column.dataField == TransactionFields.CashflowCategoryName)
+                this.appendFilter($event, this.categoryChooserContainer);
+            else if ($event.column.dataField == TransactionFields.CounterpartyName)
+                this.appendFilter($event, this.counterpartyFilterContainer);
+            else if ($event.column.dataField == TransactionFields.BankAccountId)
+                this.appendFilter($event, this.accountFilterContainer);
         } else if ($event.rowType === 'data') {
             const transaction: TransactionDto = $event.data;
             if ($event.column.dataField == this.transactionFields.CashflowCategoryName && !transaction.CashflowCategoryName) {
@@ -1679,16 +1689,19 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     private moveDropdownsToHost() {
         let hostElement = this.getElementRef().nativeElement;
-        hostElement.appendChild(this.businessEntitiesFilterContainer.nativeElement);
-        hostElement.appendChild(this.categoryChooserContainer.nativeElement);
-        hostElement.appendChild(this.counterpartyFilterContainer.nativeElement);
-        hostElement.appendChild(this.accountFilterContainer.nativeElement);
+        if (hostElement !== this.businessEntitiesFilterContainer.nativeElement.parentElement)
+            hostElement.appendChild(this.businessEntitiesFilterContainer.nativeElement);
+        if (hostElement !== this.categoryChooserContainer.nativeElement.parentElement)
+            hostElement.appendChild(this.categoryChooserContainer.nativeElement);
+        if (hostElement !== this.counterpartyFilterContainer.nativeElement.parentElement)
+            hostElement.appendChild(this.counterpartyFilterContainer.nativeElement);
+        if (hostElement !== this.accountFilterContainer.nativeElement.parentElement)
+            hostElement.appendChild(this.accountFilterContainer.nativeElement);
     }
 
     ngOnDestroy() {
         this.filtersService.unsubscribe();
         this.rootComponent.overflowHidden();
-
         super.ngOnDestroy();
     }
 

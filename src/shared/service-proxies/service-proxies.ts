@@ -51587,6 +51587,7 @@ export class PropertyInput implements IPropertyInput {
     name!: string | undefined;
     address!: CreateContactAddressInput | undefined;
     note!: string | undefined;
+    monthlyRentPrice!: number | undefined;
 
     constructor(data?: IPropertyInput) {
         if (data) {
@@ -51603,6 +51604,7 @@ export class PropertyInput implements IPropertyInput {
             this.name = data["name"];
             this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.note = data["note"];
+            this.monthlyRentPrice = data["monthlyRentPrice"];
         }
     }
 
@@ -51619,6 +51621,7 @@ export class PropertyInput implements IPropertyInput {
         data["name"] = this.name;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["note"] = this.note;
+        data["monthlyRentPrice"] = this.monthlyRentPrice;
         return data; 
     }
 }
@@ -51628,6 +51631,7 @@ export interface IPropertyInput {
     name: string | undefined;
     address: CreateContactAddressInput | undefined;
     note: string | undefined;
+    monthlyRentPrice: number | undefined;
 }
 
 export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
@@ -73182,11 +73186,24 @@ export enum PropertyResident {
     Vacant = "Vacant", 
 }
 
+export enum PestsType {
+    Termites = "Termites", 
+    Rodents = "Rodents", 
+    Insects = "Insects", 
+    Other = "Other", 
+}
+
 export enum SellPeriod {
     Immediately = "Immediately", 
     OneToThreeMonths = "OneToThreeMonths", 
     ThreeToSixMonths = "ThreeToSixMonths", 
     SixPlusMonths = "SixPlusMonths", 
+}
+
+export enum PetFeeType {
+    OneTime = "OneTime", 
+    Monthly = "Monthly", 
+    Refundable = "Refundable", 
 }
 
 export enum InterestRate {
@@ -73288,6 +73305,9 @@ export class PropertyDto implements IPropertyDto {
     houseOwningTime!: number | undefined;
     annualHOACondoFees!: number | undefined;
     depositPutAmount!: number | undefined;
+    krePurchasePrice!: number | undefined;
+    buyerPurchasePrice!: number | undefined;
+    monthlyRentPrice!: number | undefined;
     isHomeListed!: boolean | undefined;
     priceListed!: number | undefined;
     listedDate!: moment.Moment | undefined;
@@ -73307,11 +73327,17 @@ export class PropertyDto implements IPropertyDto {
     hvac!: string | undefined;
     repairsOrIssuesPool!: string | undefined;
     landscaping!: string | undefined;
-    termites!: string | undefined;
+    pests!: PestsType | undefined;
+    pestsResolved!: boolean | undefined;
     repairsOrIssuesOther!: string | undefined;
     whySell!: string | undefined;
     howQuicklyWantToSell!: SellPeriod | undefined;
     didntSellActions!: string | undefined;
+    tenantLeaseTerm!: moment.Moment | undefined;
+    tenantDepositReceived!: number | undefined;
+    tenantPetAddendum!: boolean | undefined;
+    tenantPetFeeType!: PetFeeType | undefined;
+    tenantPetFee!: number | undefined;
     currentOwningAmount!: number | undefined;
     hasAdditionalMortgage!: boolean | undefined;
     otherLienAmount!: number | undefined;
@@ -73438,6 +73464,9 @@ export class PropertyDto implements IPropertyDto {
             this.houseOwningTime = data["houseOwningTime"];
             this.annualHOACondoFees = data["annualHOACondoFees"];
             this.depositPutAmount = data["depositPutAmount"];
+            this.krePurchasePrice = data["krePurchasePrice"];
+            this.buyerPurchasePrice = data["buyerPurchasePrice"];
+            this.monthlyRentPrice = data["monthlyRentPrice"];
             this.isHomeListed = data["isHomeListed"];
             this.priceListed = data["priceListed"];
             this.listedDate = data["listedDate"] ? moment(data["listedDate"].toString()) : <any>undefined;
@@ -73457,11 +73486,17 @@ export class PropertyDto implements IPropertyDto {
             this.hvac = data["hvac"];
             this.repairsOrIssuesPool = data["repairsOrIssuesPool"];
             this.landscaping = data["landscaping"];
-            this.termites = data["termites"];
+            this.pests = data["pests"];
+            this.pestsResolved = data["pestsResolved"];
             this.repairsOrIssuesOther = data["repairsOrIssuesOther"];
             this.whySell = data["whySell"];
             this.howQuicklyWantToSell = data["howQuicklyWantToSell"];
             this.didntSellActions = data["didntSellActions"];
+            this.tenantLeaseTerm = data["tenantLeaseTerm"] ? moment(data["tenantLeaseTerm"].toString()) : <any>undefined;
+            this.tenantDepositReceived = data["tenantDepositReceived"];
+            this.tenantPetAddendum = data["tenantPetAddendum"];
+            this.tenantPetFeeType = data["tenantPetFeeType"];
+            this.tenantPetFee = data["tenantPetFee"];
             this.currentOwningAmount = data["currentOwningAmount"];
             this.hasAdditionalMortgage = data["hasAdditionalMortgage"];
             this.otherLienAmount = data["otherLienAmount"];
@@ -73588,6 +73623,9 @@ export class PropertyDto implements IPropertyDto {
         data["houseOwningTime"] = this.houseOwningTime;
         data["annualHOACondoFees"] = this.annualHOACondoFees;
         data["depositPutAmount"] = this.depositPutAmount;
+        data["krePurchasePrice"] = this.krePurchasePrice;
+        data["buyerPurchasePrice"] = this.buyerPurchasePrice;
+        data["monthlyRentPrice"] = this.monthlyRentPrice;
         data["isHomeListed"] = this.isHomeListed;
         data["priceListed"] = this.priceListed;
         data["listedDate"] = this.listedDate ? this.listedDate.toISOString() : <any>undefined;
@@ -73607,11 +73645,17 @@ export class PropertyDto implements IPropertyDto {
         data["hvac"] = this.hvac;
         data["repairsOrIssuesPool"] = this.repairsOrIssuesPool;
         data["landscaping"] = this.landscaping;
-        data["termites"] = this.termites;
+        data["pests"] = this.pests;
+        data["pestsResolved"] = this.pestsResolved;
         data["repairsOrIssuesOther"] = this.repairsOrIssuesOther;
         data["whySell"] = this.whySell;
         data["howQuicklyWantToSell"] = this.howQuicklyWantToSell;
         data["didntSellActions"] = this.didntSellActions;
+        data["tenantLeaseTerm"] = this.tenantLeaseTerm ? this.tenantLeaseTerm.toISOString() : <any>undefined;
+        data["tenantDepositReceived"] = this.tenantDepositReceived;
+        data["tenantPetAddendum"] = this.tenantPetAddendum;
+        data["tenantPetFeeType"] = this.tenantPetFeeType;
+        data["tenantPetFee"] = this.tenantPetFee;
         data["currentOwningAmount"] = this.currentOwningAmount;
         data["hasAdditionalMortgage"] = this.hasAdditionalMortgage;
         data["otherLienAmount"] = this.otherLienAmount;
@@ -73731,6 +73775,9 @@ export interface IPropertyDto {
     houseOwningTime: number | undefined;
     annualHOACondoFees: number | undefined;
     depositPutAmount: number | undefined;
+    krePurchasePrice: number | undefined;
+    buyerPurchasePrice: number | undefined;
+    monthlyRentPrice: number | undefined;
     isHomeListed: boolean | undefined;
     priceListed: number | undefined;
     listedDate: moment.Moment | undefined;
@@ -73750,11 +73797,17 @@ export interface IPropertyDto {
     hvac: string | undefined;
     repairsOrIssuesPool: string | undefined;
     landscaping: string | undefined;
-    termites: string | undefined;
+    pests: PestsType | undefined;
+    pestsResolved: boolean | undefined;
     repairsOrIssuesOther: string | undefined;
     whySell: string | undefined;
     howQuicklyWantToSell: SellPeriod | undefined;
     didntSellActions: string | undefined;
+    tenantLeaseTerm: moment.Moment | undefined;
+    tenantDepositReceived: number | undefined;
+    tenantPetAddendum: boolean | undefined;
+    tenantPetFeeType: PetFeeType | undefined;
+    tenantPetFee: number | undefined;
     currentOwningAmount: number | undefined;
     hasAdditionalMortgage: boolean | undefined;
     otherLienAmount: number | undefined;
