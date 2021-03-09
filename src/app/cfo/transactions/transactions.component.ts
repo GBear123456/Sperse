@@ -1130,6 +1130,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         );
 
         filterQuery$.subscribe((filterQuery: string) => {
+            if (filterQuery == 'canceled')
+                return;
+
             this.filterQuery = filterQuery;
 
             this.countDataSource['_store']['_url'] = super.getODataUrl(this.countDataSourceURI, filterQuery);

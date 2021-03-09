@@ -1,11 +1,10 @@
 <mat-tab-group *ngIf="property">
-    <mat-tab [label]="ls.l('GeneralDetails')">
+    <mat-tab [label]="ls.l('PropertyDetails')">
 
         <dx-scroll-view showScrollbar="onHover">
             <div class="container-fluid properties">
                 <div class="row">
                     <div class="col-md-12 section general">
-                        <!--<h3 class="section-title">{{ ls.l('GeneralDetails') }}</h3>-->
                         <div class="row">
                             <div class="col-md-12 col-lg-6 col-xl-4">
                                 <div class="block">
@@ -159,7 +158,7 @@
                                     </div>
                                 </div>
                                 <div class="block">
-                                    <h3>{{ ls.l('HeatingCooling') }}</h3>
+                                    <h3>{{ ls.l('Utilities') }}</h3>
                                     <div class="fields">
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('Central') }}</div>
@@ -226,6 +225,96 @@
                                                     showClearButton="true"
                                                     [items]="yesNoDropdowns"
                                                     [(value)]="property.isHeatIncludedInCondoFees"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('UtilityTypesIncluded') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-tag-box
+                                                    showClearButton="true"
+                                                    showDropDownButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="utilityTypes"
+                                                    [value]="getMultipleValues('utilityTypesIncluded', utilityTypes)"
+                                                    (onValueChanged)="tagValueChanged('utilityTypesIncluded', $event)"
+                                                ></dx-tag-box>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="block">
+                                    <h3>{{ ls.l('Flooring') }}</h3>
+                                    <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Carpet') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.floorCarpet"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Hardwood') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.floorHardwood"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('LVP') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.floorLVP"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Tile') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.floorTile"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Vinyl') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.floorVinyl"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
                                             </div>
@@ -341,31 +430,30 @@
                                             </div>
                                         </div>
                                         <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Microwave') }}</div>
+                                            <div class="dx-field-label">{{ ls.l('Appliences') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
+                                                <dx-tag-box
+                                                    showClearButton="true"
+                                                    showDropDownButton="true"
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
-                                                    showClearButton="true"
                                                     [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.microwave"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                    [items]="appliences"
+                                                    [value]="getMultipleValues('appliences', appliences)"
+                                                    (onValueChanged)="tagValueChanged('appliences', $event)"
+                                                ></dx-tag-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Dishwasher') }}</div>
+                                            <div class="dx-field-label">{{ ls.l('OtherAppliences') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.dishwasher"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                <dx-text-box [(value)]="property.otherAppliences"
+                                                             [maxLength]="256"
+                                                             showClearButton="true"
+                                                             [stylingMode]="stylingMode"
+                                                             [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             (onValueChanged)="valueChanged()">
+                                                </dx-text-box>
                                             </div>
                                         </div>
                                     </div>
@@ -397,130 +485,6 @@
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-12 col-lg-6 col-xl-4">
-                                <div class="block">
-                                    <h3>{{ ls.l('Flooring') }}</h3>
-                                    <div class="fields">
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Carpet') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.floorCarpet"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Hardwood') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.floorHardwood"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('LVP') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.floorLVP"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Tile') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.floorTile"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Vinyl') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.floorVinyl"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="block">
-                                    <h3>{{ ls.l('OutdoorSpace') }}</h3>
-                                    <div class="fields">
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Yard') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yardPatioValues"
-                                                    [(value)]="property.yard"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Patio') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yardPatioValues"
-                                                    [(value)]="property.patio"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('BalconyDeck') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.yardBalcony"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
                                             </div>
                                         </div>
                                     </div>
@@ -580,7 +544,270 @@
                                                 ></dx-select-box>
                                             </div>
                                         </div>
-
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6 col-xl-4">
+                                <div class="block">
+                                    <h3>{{ ls.l('OutdoorSpace') }}</h3>
+                                    <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Yard') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yardPatioValues"
+                                                    [(value)]="property.yard"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Patio') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yardPatioValues"
+                                                    [(value)]="property.patio"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('BalconyDeck') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.yardBalcony"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="block">
+                                    <h3>{{ ls.l('AdditionalDetails') }}</h3>
+                                    <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Secure') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.secure"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('OnSiteManager') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.onSiteManager"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('WheelchairAccessible') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    showClearButton="true"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.wheelchairAccessible"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('WalkOut') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    showClearButton="true"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.walkOut"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Elevator') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    showClearButton="true"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.elevator"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('CeilingFan') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    showClearButton="true"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.ceilingFan"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Fireplace') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-tag-box
+                                                    showClearButton="true"
+                                                    showDropDownButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="firePlace"
+                                                    [value]="getMultipleValues('fireplace', firePlace)"
+                                                    (onValueChanged)="tagValueChanged('fireplace', $event)"
+                                                ></dx-tag-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Firepit') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    showClearButton="true"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.firepit"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('PetPark') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    showClearButton="true"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.petPark"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('CommunitySpace') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    showClearButton="true"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.communitySpace"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Pool') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    showClearButton="true"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.pool"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('ExerciseRoom') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    showClearButton="true"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.exerciseRoom"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('PartyRoom') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    showClearButton="true"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.partyRoom"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('GuestSuite') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-select-box
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    showClearButton="true"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="yesNoDropdowns"
+                                                    [(value)]="property.guestSuite"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Other') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box
+                                                    showClearButton="true"
+                                                    [maxLength]="512"
+                                                    [stylingMode]="stylingMode"
+                                                    [(value)]="property.other"
+                                                    [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-text-box>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1251,6 +1478,45 @@
                                     <h3>{{ ls.l('InternalOfficeInfo') }}</h3>
                                     <div class="fields">
                                         <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('KREPurchasePrice') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="property.krePurchasePrice"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               (onValueChanged)="valueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('BuyerPurchasePrice') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="property.buyerPurchasePrice"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               (onValueChanged)="valueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('MonthlyRent') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="property.monthlyRentPrice"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               (onValueChanged)="valueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>                                                                                                               
+                                        <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('LastSoldPrice') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-number-box [(value)]="property.lastSoldPrice"
@@ -1376,242 +1642,6 @@
             </div>
         </dx-scroll-view>
     </mat-tab>
-    <mat-tab [label]="ls.l('AdditionalDetails')">
-        <dx-scroll-view showScrollbar="onHover">
-            <div class="container-fluid properties">
-                <div class="row">
-                    <div class="col-md-12 section additional">
-                        <!--<h3 class="section-title">{{ ls.l('AdditionalDetails') }}</h3>-->
-                        <div class="row">
-                            <div class="col-md-12 col-lg-6">
-                                <div class="block">
-                                    <div class="fields">
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Secure') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.secure"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('OnSiteManager') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.onSiteManager"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('WheelchairAccessible') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.wheelchairAccessible"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('WalkOut') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.walkOut"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Elevator') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.elevator"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('CeilingFan') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.ceilingFan"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Fireplace') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-tag-box
-                                                    showClearButton="true"
-                                                    showDropDownButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="firePlace"
-                                                    [value]="getMultipleValues('fireplace', firePlace)"
-                                                    (onValueChanged)="tagValueChanged('fireplace', $event)"
-                                                ></dx-tag-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Firepit') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.firepit"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                            <div class="col-md-12 col-lg-6">
-                                <div class="block">
-                                    <div class="fields">
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('PetPark') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.petPark"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('CommunitySpace') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.communitySpace"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Pool') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.pool"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('ExerciseRoom') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.exerciseRoom"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('PartyRoom') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.partyRoom"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('GuestSuite') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-select-box
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="yesNoDropdowns"
-                                                    [(value)]="property.guestSuite"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Other') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-text-box
-                                                    showClearButton="true"
-                                                    [maxLength]="512"
-                                                    [stylingMode]="stylingMode"
-                                                    [(value)]="property.other"
-                                                    [placeholder]="ls.l('EditValuePlaceholder')"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-text-box>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </dx-scroll-view>
-    </mat-tab>
     <mat-tab [label]="ls.l('TurnOverItems')">
         <dx-scroll-view showScrollbar="onHover">
             <div class="container-fluid properties">
@@ -1663,7 +1693,7 @@
                                                 ></dx-text-box>
                                             </div>
                                         </div>
-                                        <div class="dx-field">
+                                        <div class="dx-field combo-dropdown">
                                             <div class="dx-field-label">{{ ls.l('AdditionalKeys') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-select-box
@@ -1676,18 +1706,16 @@
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
                                             </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('NumberOfSets') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box
+                                                <dx-select-box
                                                     showClearButton="true"
-                                                    step="0"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
                                                     [stylingMode]="stylingMode"
+                                                    [items]="oneFiveDropdowns"
                                                     [(value)]="property.numberOfSets"
-                                                    [placeholder]="ls.l('EditValuePlaceholder')"
                                                     (onValueChanged)="valueChanged()"
-                                                ></dx-number-box>
+                                                ></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -1703,7 +1731,7 @@
                                                 ></dx-number-box>
                                             </div>
                                         </div>
-                                        <div class="dx-field">
+                                        <div class="dx-field combo-dropdown">
                                             <div class="dx-field-label">{{ ls.l('GarageRemote') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-select-box
@@ -1716,21 +1744,19 @@
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
                                             </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('GarageRemoteNumberReceived') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box
-                                                    [(value)]="property.garageRemoteNumberReceived"
-                                                    [stylingMode]="stylingMode"
+                                                <dx-select-box
                                                     showClearButton="true"
-                                                    step="0"
-                                                    [placeholder]="ls.l('EditValuePlaceholder')"
-                                                    (onValueChanged)="valueChanged()">
-                                                </dx-number-box>
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="oneFiveDropdowns"
+                                                    [(value)]="property.garageRemoteNumberReceived"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
                                             </div>
                                         </div>
-                                        <div class="dx-field">
+                                        <div class="dx-field combo-dropdown">
                                             <div class="dx-field-label">{{ ls.l('GarageKey') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-select-box
@@ -1743,18 +1769,16 @@
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
                                             </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('GarageKeyNumberReceived') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box
-                                                    [(value)]="property.garageKeyNumberReceived"
-                                                    [stylingMode]="stylingMode"
+                                                <dx-select-box
                                                     showClearButton="true"
-                                                    step="0"
-                                                    [placeholder]="ls.l('EditValuePlaceholder')"
-                                                    (onValueChanged)="valueChanged()">
-                                                </dx-number-box>
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
+                                                    [stylingMode]="stylingMode"
+                                                    [items]="oneFiveDropdowns"
+                                                    [(value)]="property.garageKeyNumberReceived"
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -1829,7 +1853,7 @@
                                                 ></dx-number-box>
                                             </div>
                                         </div>
-                                        <div class="dx-field">
+                                        <div class="dx-field combo-dropdown">
                                             <div class="dx-field-label">{{ ls.l('MailboxKey') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-select-box
@@ -1842,18 +1866,16 @@
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
                                             </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('MailboxNumberReceived') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box
+                                                <dx-select-box
                                                     showClearButton="true"
-                                                    step="0"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
                                                     [stylingMode]="stylingMode"
+                                                    [items]="oneFiveDropdowns"
                                                     [(value)]="property.mailboxNumberReceived"
-                                                    [placeholder]="ls.l('EditValuePlaceholder')"
-                                                    (onValueChanged)="valueChanged()">
-                                                </dx-number-box>
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -1913,7 +1935,7 @@
                                                 ></dx-tag-box>
                                             </div>
                                         </div>
-                                        <div class="dx-field">
+                                        <div class="dx-field combo-dropdown">
                                             <div class="dx-field-label">{{ ls.l('GarbageKey') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-select-box
@@ -1926,18 +1948,16 @@
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
                                             </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('GarbageNumberReceived') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box
+                                                <dx-select-box
                                                     showClearButton="true"
-                                                    step="0"
+                                                    displayExpr="displayValue"
+                                                    valueExpr="value"
                                                     [stylingMode]="stylingMode"
+                                                    [items]="oneFiveDropdowns"
                                                     [(value)]="property.garbageNumberReceived"
-                                                    [placeholder]="ls.l('EditValuePlaceholder')"
-                                                    (onValueChanged)="valueChanged()">
-                                                </dx-number-box>
+                                                    (onValueChanged)="valueChanged()"
+                                                ></dx-select-box>
                                             </div>
                                         </div>
                                     </div>

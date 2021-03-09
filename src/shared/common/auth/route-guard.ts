@@ -101,8 +101,11 @@ export class RouteGuard implements CanActivate, CanActivateChild {
                 location.href = AppConsts.appMemberPortalUrl;
                 return '';
             } else {
-                if (tenant.customLayoutType == LayoutType.BankCode)
+                if (tenant.customLayoutType == LayoutType.BankCode && 
+                    !(tenant.isWhiteLabel && tenant.name.toLowerCase() == 'ascira')
+                ) {
                     return '/code-breaker';
+                }
             }
         }
 

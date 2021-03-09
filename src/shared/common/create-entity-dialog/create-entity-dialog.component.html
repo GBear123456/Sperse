@@ -208,7 +208,7 @@
                     </dx-text-area>
                 </div>
                 <div class="field">
-                    <label class="currency-label">{{ls.l('Deal')}}</label>
+                    <label class="currency-label">{{ls.l('KREPurchasePrice')}}</label>
                     <dx-number-box width="270px"
                                    height="34px"
                                    step="0"
@@ -231,7 +231,7 @@
                     </dx-select-box>
                 </div>
                 <div class="field">
-                    <label class="currency-label">{{ls.l('Deal')}}</label>
+                    <label class="currency-label">{{ls.l('BuyerPurchasePrice')}}</label>
                     <dx-number-box width="270px"
                                    height="34px"
                                    step="0"
@@ -240,6 +240,16 @@
                                    [(value)]="dealAmount">
                     </dx-number-box>
                 </div>
+                <div class="field">
+                    <label class="currency-label">{{ls.l('MonthlyRent')}}</label>
+                    <dx-number-box width="270px"
+                                   height="34px"
+                                   step="0"
+                                   [placeholder]="ls.l('Amount')"
+                                   [format]="currencyFormat"
+                                   [(value)]="property.monthlyRentPrice">
+                    </dx-number-box>
+                </div>                
             </dx-validation-group>
             <dx-validation-group *ngIf="!hideCompanyField"
                                  (onInitialized)="initValidationGroup($event, 'companyValidators')">

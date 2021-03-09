@@ -34,7 +34,8 @@ import {
     switchMap,
     takeUntil,
     tap,
-    withLatestFrom
+    withLatestFrom,
+    debounceTime
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import cloneDeep from 'lodash/cloneDeep';
@@ -217,7 +218,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     class: 'login',
                     checkVisible: (lead: LeadDto) => {
                         return !!lead.UserId && (
-                            this.impersonationIsGranted || 
+                            this.impersonationIsGranted ||
                             this.permission.checkCGPermission(this.selectedContactGroup, 'UserInformation.AutoLogin')
                         );
                     },
@@ -340,7 +341,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     );
     isPropertyPipeline$: Observable<boolean> = this.selectedPipeline$
         .pipe(
-            map(selectedPipeline => [EntityTypeSys.Acquisition, EntityTypeSys.Management].indexOf(selectedPipeline.entityTypeSysId as EntityTypeSys) > -1)
+            map(selectedPipeline => [
+                EntityTypeSys.Acquisition,
+                EntityTypeSys.Management
+            ].includes(selectedPipeline.entityTypeSysId as EntityTypeSys))
         );
     /** Get pipeline contactGroup @todo remove using of contact group in all places */
     selectedContactGroup$: Observable<ContactGroup> = this.selectedPipeline$.pipe(
@@ -732,6 +736,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     beforeSend: (request) => {
                         this.totalCount = undefined;
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                        request.params.contactGroupId = this.selectedContactGroup;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
                     onLoaded: (count: any) => {
@@ -751,9 +756,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 filter((odataRequestValues: ODataRequestValues) => !!odataRequestValues)
             );
             this.handleTotalCountUpdate();
-            this.handlePipelineUpdate();
+            this.handleLayoutDataUpdate();
             this.handleDataGridUpdate();
-            this.handlePivotGridUpdate();
+            this.initLayoutDataSource();
         });
         this.addBankCodeField();
     }
@@ -771,9 +776,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.handleChartUpdate();
         this.selectedPipelineId$.pipe(takeUntil(this.destroy$)).subscribe((selectedPipelineId: number) => {
             this.selectedPipelineId = selectedPipelineId;
-        });
-        this.selectedPipelineId$.pipe(first()).subscribe(() => {
-            this.initDataSource();
         });
     }
 
@@ -861,6 +863,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
+            debounceTime(300)
         ).subscribe(([odataRequestValues, ]) => {
             let url = this.getODataUrl(this.totalDataSourceURI,
                 odataRequestValues.filter, null, odataRequestValues.params);
@@ -871,25 +874,23 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
-    private handlePipelineUpdate() {
-        combineLatest(
-            this.odataRequestValues$,
-            this.refresh$
-        ).pipe(
-            takeUntil(this.lifeCycleSubjectsService.destroy$),
-            switchMap(this.waitUntil(DataLayoutType.Pipeline)),
-            filter(() => this.pipelineDataSource)
-        ).subscribe(() => this.processFilterInternal());
-    }
-
-    private handleDataGridUpdate() {
-        this.listenForUpdate(DataLayoutType.DataGrid).subscribe(() => {
-            this.processFilterInternal();
+    private handleLayoutDataUpdate() {
+        [
+            DataLayoutType.PivotGrid,
+            DataLayoutType.Pipeline
+        ].forEach(layout => {
+            this.listenForUpdate(layout).pipe(
+                debounceTime(300)
+            ).subscribe(() => {
+                this.processFilterInternal();
+            });
         });
     }
 
-    private handlePivotGridUpdate() {
-        this.listenForUpdate(DataLayoutType.PivotGrid).subscribe(() => {
+    private handleDataGridUpdate() {
+        this.listenForUpdate(DataLayoutType.DataGrid).pipe(
+            skip(1), debounceTime(300)
+        ).subscribe(() => {
             this.processFilterInternal();
         });
     }
@@ -1049,8 +1050,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private waitUntil(layoutType: DataLayoutType) {
         return (data) => this.dataLayoutType.value == layoutType ? of(data) : this.dataLayoutType$.pipe(
             filter((dataLayoutType: DataLayoutType) => dataLayoutType == layoutType),
-            first(),
-            mapTo(data)
+            first(), mapTo(data)
         );
     }
 
@@ -1164,7 +1164,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.dataLayoutType.next(dataLayoutType);
         this.initToolbarConfig();
         this.pipelineService.toggleDataLayoutType(this.dataLayoutType.value);
-        this.initDataSource();
+        this.initLayoutDataSource();
         if (!this.showPipeline) {
             if (this.pipelineComponent) {
                 this.pipelineComponent.deselectAllCards();
@@ -1825,21 +1825,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             this.filters,
                             this.filtersService.getCheckCustom
                         );
-                        if (this.showDataGrid) {
-                            filterQuery$.subscribe((filterQuery: string) => {
-                                if (filterQuery && filterQuery !== 'canceled') {
-                                    this.totalDataSource['_store']['_url'] = this.getODataUrl(this.totalDataSourceURI, filterQuery);
-                                    this.dataSource.store.url = this.getODataUrl(this.dataSourceURI, filterQuery);
-                                }
-                            });
-                        }
                     }
                 }
             });
         }
     }
 
-    initDataSource() {
+    initLayoutDataSource() {
         if (this.showPipeline) {
             if (!this.pipelineDataSource)
                 setTimeout(() => this.pipelineDataSource = cloneDeep(this.dataSource));
@@ -1855,10 +1847,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private setDataGridInstance() {
         let instance = this.dataGrid && this.dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
+            this.dataSource.store.url =
+                this.getODataUrl(this.dataSourceURI, this.getInitialFilter());
             this.dataGrid.dataSource = this.dataSource;
             if (!instance.option('paging.pageSize'))
                 instance.option('paging.pageSize', 20);
-            this.processFilterInternal();
             this.isDataLoaded = false;
         }
     }
@@ -2109,10 +2102,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onSelectedPipelineChanged(event) {
         if (event.previousValue != event.value) {
-            this._selectedPipelineId.next(event.value);
             this.filterModelStages.clearFilterItems();
             this.filterModelStages.isSelected = false;
             this.pipelineFilter.items.PipelineId.value = +event.value;
+            this._selectedPipelineId.next(event.value);
             this.cacheService.set(this.cacheKey, event.value);
             this.initToolbarConfig();
         }

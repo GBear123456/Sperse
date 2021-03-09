@@ -51535,6 +51535,7 @@ export class PropertyInput implements IPropertyInput {
     name!: string | undefined;
     address!: CreateContactAddressInput | undefined;
     note!: string | undefined;
+    monthlyRentPrice!: number | undefined;
 
     constructor(data?: IPropertyInput) {
         if (data) {
@@ -51551,6 +51552,7 @@ export class PropertyInput implements IPropertyInput {
             this.name = data["name"];
             this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.note = data["note"];
+            this.monthlyRentPrice = data["monthlyRentPrice"];
         }
     }
 
@@ -51567,6 +51569,7 @@ export class PropertyInput implements IPropertyInput {
         data["name"] = this.name;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["note"] = this.note;
+        data["monthlyRentPrice"] = this.monthlyRentPrice;
         return data; 
     }
 }
@@ -51576,6 +51579,7 @@ export interface IPropertyInput {
     name: string | undefined;
     address: CreateContactAddressInput | undefined;
     note: string | undefined;
+    monthlyRentPrice: number | undefined;
 }
 
 export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
@@ -73054,10 +73058,27 @@ export enum PropertyType {
     Townhouse = "Townhouse", 
 }
 
+export enum Appliences {
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
+    _8 = 8, 
+    _16 = 16, 
+    _32 = 32, 
+}
+
 export enum HeatingCoolingType {
     Electric = "Electric", 
     Gas = "Gas", 
     Water = "Water", 
+}
+
+export enum UtilityType {
+    _0 = 0, 
+    _1 = 1, 
+    _2 = 2, 
+    _4 = 4, 
+    _8 = 8, 
 }
 
 export enum YardPatioEnum {
@@ -73146,14 +73167,15 @@ export class PropertyDto implements IPropertyDto {
     bathCount!: number | undefined;
     den!: boolean | undefined;
     office!: boolean | undefined;
-    microwave!: boolean | undefined;
-    dishwasher!: boolean | undefined;
+    appliences!: Appliences | undefined;
+    otherAppliences!: string | undefined;
     laundryInSuite!: boolean | undefined;
     isCentralHeating!: boolean | undefined;
     heatingType!: HeatingCoolingType | undefined;
     ac!: boolean | undefined;
     monthlyHeatingCost!: number | undefined;
     isHeatIncludedInCondoFees!: boolean | undefined;
+    utilityTypesIncluded!: UtilityType | undefined;
     floorVinyl!: boolean | undefined;
     floorHardwood!: boolean | undefined;
     floorTile!: boolean | undefined;
@@ -73214,6 +73236,9 @@ export class PropertyDto implements IPropertyDto {
     houseOwningTime!: number | undefined;
     annualHOACondoFees!: number | undefined;
     depositPutAmount!: number | undefined;
+    krePurchasePrice!: number | undefined;
+    buyerPurchasePrice!: number | undefined;
+    monthlyRentPrice!: number | undefined;
     isHomeListed!: boolean | undefined;
     priceListed!: number | undefined;
     listedDate!: moment.Moment | undefined;
@@ -73295,14 +73320,15 @@ export class PropertyDto implements IPropertyDto {
             this.bathCount = data["bathCount"];
             this.den = data["den"];
             this.office = data["office"];
-            this.microwave = data["microwave"];
-            this.dishwasher = data["dishwasher"];
+            this.appliences = data["appliences"];
+            this.otherAppliences = data["otherAppliences"];
             this.laundryInSuite = data["laundryInSuite"];
             this.isCentralHeating = data["isCentralHeating"];
             this.heatingType = data["heatingType"];
             this.ac = data["ac"];
             this.monthlyHeatingCost = data["monthlyHeatingCost"];
             this.isHeatIncludedInCondoFees = data["isHeatIncludedInCondoFees"];
+            this.utilityTypesIncluded = data["utilityTypesIncluded"];
             this.floorVinyl = data["floorVinyl"];
             this.floorHardwood = data["floorHardwood"];
             this.floorTile = data["floorTile"];
@@ -73363,6 +73389,9 @@ export class PropertyDto implements IPropertyDto {
             this.houseOwningTime = data["houseOwningTime"];
             this.annualHOACondoFees = data["annualHOACondoFees"];
             this.depositPutAmount = data["depositPutAmount"];
+            this.krePurchasePrice = data["krePurchasePrice"];
+            this.buyerPurchasePrice = data["buyerPurchasePrice"];
+            this.monthlyRentPrice = data["monthlyRentPrice"];
             this.isHomeListed = data["isHomeListed"];
             this.priceListed = data["priceListed"];
             this.listedDate = data["listedDate"] ? moment(data["listedDate"].toString()) : <any>undefined;
@@ -73444,14 +73473,15 @@ export class PropertyDto implements IPropertyDto {
         data["bathCount"] = this.bathCount;
         data["den"] = this.den;
         data["office"] = this.office;
-        data["microwave"] = this.microwave;
-        data["dishwasher"] = this.dishwasher;
+        data["appliences"] = this.appliences;
+        data["otherAppliences"] = this.otherAppliences;
         data["laundryInSuite"] = this.laundryInSuite;
         data["isCentralHeating"] = this.isCentralHeating;
         data["heatingType"] = this.heatingType;
         data["ac"] = this.ac;
         data["monthlyHeatingCost"] = this.monthlyHeatingCost;
         data["isHeatIncludedInCondoFees"] = this.isHeatIncludedInCondoFees;
+        data["utilityTypesIncluded"] = this.utilityTypesIncluded;
         data["floorVinyl"] = this.floorVinyl;
         data["floorHardwood"] = this.floorHardwood;
         data["floorTile"] = this.floorTile;
@@ -73512,6 +73542,9 @@ export class PropertyDto implements IPropertyDto {
         data["houseOwningTime"] = this.houseOwningTime;
         data["annualHOACondoFees"] = this.annualHOACondoFees;
         data["depositPutAmount"] = this.depositPutAmount;
+        data["krePurchasePrice"] = this.krePurchasePrice;
+        data["buyerPurchasePrice"] = this.buyerPurchasePrice;
+        data["monthlyRentPrice"] = this.monthlyRentPrice;
         data["isHomeListed"] = this.isHomeListed;
         data["priceListed"] = this.priceListed;
         data["listedDate"] = this.listedDate ? this.listedDate.toISOString() : <any>undefined;
@@ -73586,14 +73619,15 @@ export interface IPropertyDto {
     bathCount: number | undefined;
     den: boolean | undefined;
     office: boolean | undefined;
-    microwave: boolean | undefined;
-    dishwasher: boolean | undefined;
+    appliences: Appliences | undefined;
+    otherAppliences: string | undefined;
     laundryInSuite: boolean | undefined;
     isCentralHeating: boolean | undefined;
     heatingType: HeatingCoolingType | undefined;
     ac: boolean | undefined;
     monthlyHeatingCost: number | undefined;
     isHeatIncludedInCondoFees: boolean | undefined;
+    utilityTypesIncluded: UtilityType | undefined;
     floorVinyl: boolean | undefined;
     floorHardwood: boolean | undefined;
     floorTile: boolean | undefined;
@@ -73654,6 +73688,9 @@ export interface IPropertyDto {
     houseOwningTime: number | undefined;
     annualHOACondoFees: number | undefined;
     depositPutAmount: number | undefined;
+    krePurchasePrice: number | undefined;
+    buyerPurchasePrice: number | undefined;
+    monthlyRentPrice: number | undefined;
     isHomeListed: boolean | undefined;
     priceListed: number | undefined;
     listedDate: moment.Moment | undefined;
