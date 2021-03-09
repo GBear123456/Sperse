@@ -5,7 +5,6 @@ import { Component, OnInit, AfterViewInit, Input, ViewChild, Output, EventEmitte
 import { PhoneNumberComponent } from '../../../node_modules/ngx-international-phone-number/src';
 
 /** Application imports */
-import { Country } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -34,7 +33,7 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
         private appSession: AppSessionService,
         public ls: AppLocalizationService
     ) {
-        this.defaultCountry = (appSession.getDefaultCountryCode() || Country.USA).toLowerCase();
+        this.defaultCountry = appSession.getDefaultCountryCode().toLowerCase();
     }
 
     ngOnInit() {
