@@ -73130,11 +73130,24 @@ export enum PropertyResident {
     Vacant = "Vacant", 
 }
 
+export enum PestsType {
+    Termites = "Termites", 
+    Rodents = "Rodents", 
+    Insects = "Insects", 
+    Other = "Other", 
+}
+
 export enum SellPeriod {
     Immediately = "Immediately", 
     OneToThreeMonths = "OneToThreeMonths", 
     ThreeToSixMonths = "ThreeToSixMonths", 
     SixPlusMonths = "SixPlusMonths", 
+}
+
+export enum PetFeeType {
+    OneTime = "OneTime", 
+    Monthly = "Monthly", 
+    Refundable = "Refundable", 
 }
 
 export enum InterestRate {
@@ -73258,11 +73271,17 @@ export class PropertyDto implements IPropertyDto {
     hvac!: string | undefined;
     repairsOrIssuesPool!: string | undefined;
     landscaping!: string | undefined;
-    termites!: string | undefined;
+    pests!: PestsType | undefined;
+    pestsResolved!: boolean | undefined;
     repairsOrIssuesOther!: string | undefined;
     whySell!: string | undefined;
     howQuicklyWantToSell!: SellPeriod | undefined;
     didntSellActions!: string | undefined;
+    tenantLeaseTerm!: moment.Moment | undefined;
+    tenantDepositReceived!: number | undefined;
+    tenantPetAddendum!: boolean | undefined;
+    tenantPetFeeType!: PetFeeType | undefined;
+    tenantPetFee!: number | undefined;
     currentOwningAmount!: number | undefined;
     hasAdditionalMortgage!: boolean | undefined;
     otherLienAmount!: number | undefined;
@@ -73411,11 +73430,17 @@ export class PropertyDto implements IPropertyDto {
             this.hvac = data["hvac"];
             this.repairsOrIssuesPool = data["repairsOrIssuesPool"];
             this.landscaping = data["landscaping"];
-            this.termites = data["termites"];
+            this.pests = data["pests"];
+            this.pestsResolved = data["pestsResolved"];
             this.repairsOrIssuesOther = data["repairsOrIssuesOther"];
             this.whySell = data["whySell"];
             this.howQuicklyWantToSell = data["howQuicklyWantToSell"];
             this.didntSellActions = data["didntSellActions"];
+            this.tenantLeaseTerm = data["tenantLeaseTerm"] ? moment(data["tenantLeaseTerm"].toString()) : <any>undefined;
+            this.tenantDepositReceived = data["tenantDepositReceived"];
+            this.tenantPetAddendum = data["tenantPetAddendum"];
+            this.tenantPetFeeType = data["tenantPetFeeType"];
+            this.tenantPetFee = data["tenantPetFee"];
             this.currentOwningAmount = data["currentOwningAmount"];
             this.hasAdditionalMortgage = data["hasAdditionalMortgage"];
             this.otherLienAmount = data["otherLienAmount"];
@@ -73564,11 +73589,17 @@ export class PropertyDto implements IPropertyDto {
         data["hvac"] = this.hvac;
         data["repairsOrIssuesPool"] = this.repairsOrIssuesPool;
         data["landscaping"] = this.landscaping;
-        data["termites"] = this.termites;
+        data["pests"] = this.pests;
+        data["pestsResolved"] = this.pestsResolved;
         data["repairsOrIssuesOther"] = this.repairsOrIssuesOther;
         data["whySell"] = this.whySell;
         data["howQuicklyWantToSell"] = this.howQuicklyWantToSell;
         data["didntSellActions"] = this.didntSellActions;
+        data["tenantLeaseTerm"] = this.tenantLeaseTerm ? this.tenantLeaseTerm.toISOString() : <any>undefined;
+        data["tenantDepositReceived"] = this.tenantDepositReceived;
+        data["tenantPetAddendum"] = this.tenantPetAddendum;
+        data["tenantPetFeeType"] = this.tenantPetFeeType;
+        data["tenantPetFee"] = this.tenantPetFee;
         data["currentOwningAmount"] = this.currentOwningAmount;
         data["hasAdditionalMortgage"] = this.hasAdditionalMortgage;
         data["otherLienAmount"] = this.otherLienAmount;
@@ -73710,11 +73741,17 @@ export interface IPropertyDto {
     hvac: string | undefined;
     repairsOrIssuesPool: string | undefined;
     landscaping: string | undefined;
-    termites: string | undefined;
+    pests: PestsType | undefined;
+    pestsResolved: boolean | undefined;
     repairsOrIssuesOther: string | undefined;
     whySell: string | undefined;
     howQuicklyWantToSell: SellPeriod | undefined;
     didntSellActions: string | undefined;
+    tenantLeaseTerm: moment.Moment | undefined;
+    tenantDepositReceived: number | undefined;
+    tenantPetAddendum: boolean | undefined;
+    tenantPetFeeType: PetFeeType | undefined;
+    tenantPetFee: number | undefined;
     currentOwningAmount: number | undefined;
     hasAdditionalMortgage: boolean | undefined;
     otherLienAmount: number | undefined;
