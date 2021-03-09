@@ -21,7 +21,7 @@
                          [list]="data.stages">
         </app-static-list>
         <user-assignment-list [multiSelection]="true"
-                              [targetSelector]="'[accesskey=\'UserAssign\']'"
+                              [targetSelector]="'[accesskey=UserAssign]'"
                               [proxyService]="activityProxy"
                               [(selectedItemKey)]="appointment.AssignedUserIds"
                               [hideButtons]="true"

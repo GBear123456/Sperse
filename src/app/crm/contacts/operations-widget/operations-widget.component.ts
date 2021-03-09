@@ -189,6 +189,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     }
 
     initToolbarConfig(ms = 300) {
+        this.toolbarConfig = [];
         clearTimeout(this.initTimeout);
         this.initTimeout = setTimeout(() => {
             this.manageCGPermision = this.permission.getCGPermissionKey(this.customerType, 'Manage');
@@ -210,13 +211,13 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             items: [
                                 {
                                     action: () => {
-                                        this.impersonationService.impersonate(
-                                            this.contactInfo.personContactInfo.userId,
-                                            this.appSession.tenantId
-                                        );
+                                            this.impersonationService.impersonate(
+                                                this.contactInfo.personContactInfo.userId,
+                                                this.appSession.tenantId
+                                            );
                                     },
                                     text: this.l('LoginAsThisUser'),
-                                    visible: this.canImpersonate,
+                                    visible: this.canImpersonate || this.autoLoginAllowed,
                                 },
                                 {
                                     text: this.l(this.isCfoAvailable ? 'CFO' : 'ClientDetails_RequestVerification'),
@@ -421,9 +422,16 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         }, ms);
     }
 
+    isUserAvailable() {
+        return Boolean(this.contactInfo && this.contactInfo.personContactInfo && this.contactInfo.personContactInfo.userId);
+    }
+
     get canImpersonate(): Boolean {
-        return !!(this.contactInfo && this.contactInfo.personContactInfo && this.contactInfo.personContactInfo.userId &&
-            this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation));
+        return this.isUserAvailable() && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation);
+    }
+
+    get autoLoginAllowed(): Boolean {
+        return this.isUserAvailable() && this.permission.checkCGPermission(this.contactInfo.groupId, 'UserInformation.AutoLogin');
     }
 
     getNavigationConfig() {
@@ -528,9 +536,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         const updateToolbar = this.contactService.isPrevDisabled !== isFirst || this.contactService.isNextDisabled !== isLast;
         this.contactService.isPrevDisabled = isFirst;
         this.contactService.isNextDisabled = isLast;
-        if (updateToolbar) {
-            this.initToolbarConfig(0);
-        }
+        if (updateToolbar)
+            this.initToolbarConfig();
     }
 
     /**

@@ -1,5 +1,5 @@
 /** Core imports */
-import { Directive, EventEmitter, Inject, Output, Renderer2 } from '@angular/core';
+import { Directive, EventEmitter, Inject, Output, Input, Renderer2, OnInit } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
@@ -9,6 +9,7 @@ import { first, filter, switchMap } from 'rxjs/operators';
 import { SyncTypeIds } from '@shared/AppEnums';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
+import { RequestConnectionInput, RequestConnectionOutput, SyncServiceProxy, ConnectionMode } from '@shared/service-proxies/service-proxies';
 import { SyncAccountServiceProxy, CreateSyncAccountInput } from '@shared/service-proxies/service-proxies';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
 
@@ -16,18 +17,23 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
     selector: 'plaid-login',
     providers: [SyncAccountServiceProxy]
 })
-export class PlaidLoginDirective {
+export class PlaidLoginDirective  implements OnInit {
+    @Input() mode = ConnectionMode.Create;
+    @Input() accountId: number;
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
     @Output() onClose: EventEmitter<any> = new EventEmitter();
 
     constructor(
         private cfoService: CFOService,
+        private syncService: SyncServiceProxy,
         private syncAccount: SyncAccountServiceProxy,
         private syncProgressService: SynchProgressService,
         private leftMenuService: LeftMenuService,
         private renderer: Renderer2,
         @Inject(DOCUMENT) private document
-    ) {
+    ) {}
+
+    ngOnInit() {
         if (window['Plaid'])
           this.createPlaidHandler();
         else
@@ -38,14 +44,22 @@ export class PlaidLoginDirective {
         this.cfoService.statusActive$.pipe(
             filter(Boolean),
             first(),
-            switchMap(() => this.syncAccount.getPlaidConfig(this.cfoService.instanceType, this.cfoService.instanceId))
-        ).subscribe(res => {
+            switchMap(() => this.syncService.requestConnection(
+                this.cfoService.instanceType,
+                this.cfoService.instanceId,
+                new RequestConnectionInput({
+                    syncTypeId: SyncTypeIds.Plaid,
+                    mode: this.mode,
+                    syncAccountId: this.accountId
+                })
+            ))
+        ).subscribe((res: RequestConnectionOutput) => {
             let handler = window['Plaid'].create({
                 clientName: res.clientName,
-                env: res.evn,
-                key: res.key,
-                product: res.product,
-                webhook: res.webhook,
+                env: res.environment,
+                key: res.publicKey,
+                product: res.scope,
+                webhook: res.webhookUrl,
                 linkCustomizationName: 'app',
                 onExit: () => {
                     this.onClose.emit();
@@ -56,7 +70,8 @@ export class PlaidLoginDirective {
                     this.syncAccount.create(this.cfoService.instanceType, this.cfoService.instanceId, new CreateSyncAccountInput({
                         isSyncBankAccountsEnabled: true,
                         typeId: SyncTypeIds.Plaid,
-                        publicToken: public_token
+                        publicToken: public_token,
+                        syncAccountRef: undefined
                     })).subscribe(() => {
                         this.onComplete.emit();
                         this.syncProgressService.runSynchProgress();

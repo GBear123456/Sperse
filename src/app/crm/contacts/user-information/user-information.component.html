@@ -115,6 +115,7 @@
                             <inplace-edit #InPlaceEmail
                                           [id]="null"
                                           [value]="data && data.user && data.user[EMAIL_FIELD]"
+                                          [isReadOnlyField]="!isEditAllowed"
                                           [isEditDialogEnabled]="true"
                                           [validationRules]="validationRules[EMAIL_FIELD] || []"
                                           [lEntityName]="EMAIL_FIELD"
@@ -126,7 +127,9 @@
                         <div class="section-item clearfix">
                             <div class="item-edit-label">{{ls.l("PhoneNumber")}}:</div>
                             <ul *ngIf="!phoneInplaceEdit">
-                                <li (dblclick)="phoneInPlaceEdit()">{{ data?.user?.phoneNumber | phone }}<i class="edit-phone fa fa-pencil" (click)="phoneInPlaceEdit()"></i></li>
+                                <li (dblclick)="phoneInPlaceEdit()">
+                                    {{ data?.user?.phoneNumber | phone }}<i class="edit-phone fa fa-pencil" *ngIf="isEditAllowed" (click)="phoneInPlaceEdit()"></i><i class="copy save-to-clipboard" aria-hidden="true" (click)="copyToClipbord(data?.user?.phoneNumber)"></i>
+                                </li>
                             </ul>
                             <div class="inplace-edit-wrapper" *ngIf="phoneInplaceEdit">
                                 <country-phone-number [(phoneNumber)]="data.user.phoneNumber" #countryPhoneNumber></country-phone-number>
@@ -134,7 +137,7 @@
                                 <dx-button class="exit" icon="refresh" (onClick)="closePhoneInPlaceEdit()"></dx-button>
                             </div>
                         </div>
-                        <button class="button-layout button-primary reset-password" [disabled]="!data?.user?.isActive" (click)="resetPasswordDialog($event)">{{ls.l('PasswordReset')}}</button>
+                        <button class="button-layout button-primary reset-password" [disabled]="!data?.user?.isActive || !isEditAllowed" (click)="resetPasswordDialog($event)">{{ls.l('PasswordReset')}}</button>
                         <div class="title">
                             {{ls.l('Options') + ':'}}
                         </div>
@@ -166,7 +169,7 @@
                 </div>
             </dx-scroll-view>
         </mat-tab>
-        <mat-tab label="Permissions">
+        <mat-tab label="Permissions" [disabled]="!isEditAllowed">
             <dx-scroll-view showScrollbar="onHover">
                 <permission-tree *ngIf="selectedTabIndex == PERMISSIONS_TAB_INDEX"></permission-tree>
             </dx-scroll-view>

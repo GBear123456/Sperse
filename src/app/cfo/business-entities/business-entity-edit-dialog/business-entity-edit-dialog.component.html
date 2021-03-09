@@ -67,9 +67,9 @@
                                name="type"
                                [width]="'360px'"
                                [searchEnabled]="true"
-                               [(value)]="businessEntity.typeId">
+                               [(value)]="businessEntity.type">
                 </dx-select-box>
-                <span [class]="businessEntity.typeId && 'clear-contact' || 'hidden'" (click)="emptyValue('typeId')"><i class="minus-icon"></i></span>
+                <span [class]="businessEntity.type && 'clear-contact' || 'hidden'" (click)="emptyValue('type')"><i class="minus-icon"></i></span>
             </div>
             <div class="field">
                 <label>{{ls.l('BusinessEntity_DateOpened')}}</label>

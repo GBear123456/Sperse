@@ -1,11 +1,15 @@
 <div [ngClass]="{ 'show-search': showSearch }">
     <div class="tree-header" *ngIf="showHeader">
-        <h3 *ngIf="showTitle">
-            {{l('ClassifyTransactions')}}
-            <span class="close" (click)="close.emit(null)"></span>
-            <span *ngIf="showClearSelection" class="clearAll" (click)="clearSelection()">{{'Clear'}}</span>
+        <h3>
+            <span *ngIf="showTitle">{{l('ClassifyTransactions')}}</span>
+            <span *ngIf="showSelectAll" class="select-all" (click)="toggleSelection()">{{l(checkSelectedAll() ? 'DeselectAll': 'SelectAll')}}</span>
+            <div class="apply-all">
+                <span *ngIf="showApplySelection" class="btn-apply" (click)="applyFilterSelection()">{{l('Apply')}}</span>
+                <span *ngIf="showClearSelection" class="btn-clear" (click)="clearSelection()">{{l('Clear')}}</span>
+            </div>
+            <span *ngIf="showCloseButton" class="close" (click)="close.emit(null)"></span>
         </h3>
-        <app-toolbar [config]="toolbarConfig" [compact]="true"></app-toolbar>
+        <app-toolbar *ngIf="showToolbar" [config]="toolbarConfig" [compact]="true"></app-toolbar>
     </div>
     <dx-tree-list [width]="width"
                   [height]="height"
@@ -20,6 +24,7 @@
                   (onKeyDown)="onKeyDown($event)"
                   (onCellPrepared)="onCellPrepared($event)"
                   (onRowClick)="onRowClick($event)"
+                  (onOptionChanged)="onOptionChanged($event)"
                   (onContentReady)="onContentReady($event)"
                   (onSelectionChanged)="onSelectedCategoryChanged($event)"
                   (onRowUpdated)="onCategoryUpdated($event)"
@@ -65,7 +70,7 @@
             <dx-text-box [width]="180" [value]="cell.value" valueChangeEvent="keyup" (onValueChanged)="cell.setValue($event.value)"></dx-text-box>
         </div>
 
-        <div *dxTemplate="let cell of 'categoryTemplate'">
+        <div *dxTemplate="let cell of 'categoryTemplate'" [title]="cell.text">
             <ng-container>
                 <div class="category-hover"></div>
                 <span>{{ cell.text }}</span>

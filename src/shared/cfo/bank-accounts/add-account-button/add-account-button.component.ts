@@ -13,6 +13,7 @@ import { AccountConnectorDialogComponent } from '@shared/common/account-connecto
 })
 export class AddAccountButtonComponent extends CFOComponentBase {
     @Output() onComplete: EventEmitter<any> = new EventEmitter();
+    @Output() onClosed: EventEmitter<any> = new EventEmitter();
     createAccountAvailable: boolean;
     constructor(
         injector: Injector,
@@ -40,6 +41,9 @@ export class AddAccountButtonComponent extends CFOComponentBase {
                 }
             }
         });
+        accountConnectorDialog.afterClosed().subscribe(() => {
+            this.onClosed.emit();
+        })
         accountConnectorDialog.componentInstance.onComplete.subscribe(() => {
             this.onComplete.emit();
         });

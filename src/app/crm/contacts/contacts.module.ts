@@ -106,7 +106,8 @@ import {
     OrderSubscriptionServiceProxy,
     CustomerServiceProxy,
     ContactPhotoServiceProxy,
-    PropertyServiceProxy
+    PropertyServiceProxy,
+    ContactUserServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
@@ -324,6 +325,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         OrderSubscriptionServiceProxy,
         ContactCommunicationServiceProxy,
         PropertyServiceProxy,
+        ContactUserServiceProxy,
         PersonalDetailsService,
         DocumentsService,
         InvoicesService,

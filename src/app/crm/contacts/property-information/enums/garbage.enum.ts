@@ -1,5 +1,5 @@
 export enum GarbageEnum {
-    Waist = 1,
+    Compost = 1,
     Recycling = 2,
-    Compost = 4
+    Waste = 4
 }

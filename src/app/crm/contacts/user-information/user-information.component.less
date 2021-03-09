@@ -67,6 +67,9 @@
         line-height: 1.71;
         letter-spacing: 0.6px;
         opacity: 1;
+        &.mat-tab-disabled {
+            display: none;
+        }
     }
 
     ::ng-deep .mat-tab-label-active {
@@ -199,9 +202,15 @@
                     padding: 7px;
                     cursor: pointer;
                 }
-
+                .save-to-clipboard  {
+                    display: none;
+                    cursor: pointer;
+                }
                 &:hover {
                     .edit-phone {
+                        display: inline-block;
+                    }
+                    .save-to-clipboard  {
                         display: inline-block;
                     }
                 }

@@ -27,11 +27,13 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
         syncAccounts => this.syncAccounts = syncAccounts);
     private isFilterClick;
 
-    @Input() staticItemsText;
-    @Input() applyFilter = true;
     @Input() width = '330px';
+    @Input() staticItemsText;
     @Input() popupWidth: string;
+    @Input() showSearch = false;
+    @Input() applyFilter = true;
     @Input() allSelectedTitle = false;
+    @Input() showApplySelection = false;
 
     @Output() selectionChanged: EventEmitter<any> = new EventEmitter();
     @Output() onFilterButtonClick: EventEmitter<any> = new EventEmitter();
@@ -42,6 +44,7 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
     selectedItems = [];
     selectedAll;
     businessEntities$: Observable<BusinessEntityDto[]> = this.bankAccountsService.sortedBusinessEntities$;
+    businessEntities: any[];
 
     constructor(
         private ls: AppLocalizationService,
@@ -75,16 +78,17 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
     }
 
     updateSelectedItems(data) {
-        this.selectedItems = data.filter(item => item.selected);
+        this.selectedItems = (this.businessEntities || data).filter(item => item.selected);
         let selectedCount = this.selectedItems.length;
         this.selectedAll = selectedCount ? (selectedCount == data.length || undefined) : false;
     }
 
     onPopupOpened(event, data) {
+        this.businessEntities = this.showApplySelection ? data.map(item => Object.assign({}, item)) : data;
         if (this.popupWidth || AppConsts.isMobile)
             event.component._popup.option('width', this.popupWidth ? this.popupWidth : '180px');
         if (this.treeList)
-            this.treeList.instance.option('dataSource', data);
+            this.treeList.instance.option('dataSource', this.businessEntities);
     }
 
     onSelectAll(event) {
@@ -98,40 +102,45 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
 
     onPopupClosed() {
         let businessEntitiesIds = this.getSelectedIds();
-        if (this.applyFilter) {
-            let selectedBankAccountIds = [];
 
-            if (this.selectedBusinessEntitiesChanged(businessEntitiesIds)) {
-                let newBusinessEntitiesIds = difference(
-                    businessEntitiesIds,
-                    this.bankAccountsService.state.selectedBusinessEntitiesIds
-                );
+        if (this.applyFilter)
+            this.checkApplyFilter(businessEntitiesIds);
 
-                this.syncAccounts.forEach(syncAccount => {
-                    syncAccount.bankAccounts.forEach(bankAccount => {
-                        if (!businessEntitiesIds.length || (newBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
-                            || businessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
-                            && this.bankAccountsService.state.selectedBankAccountIds.indexOf(bankAccount.id) >= 0
-                        ))
-                            selectedBankAccountIds.push(bankAccount.id);
-                    });
-                });
-                const state = { selectedBusinessEntitiesIds: businessEntitiesIds };
-                if (
-                    selectedBankAccountIds.length &&
-                    ArrayHelper.dataChanged(this.bankAccountsService.state.selectedBankAccountIds, selectedBankAccountIds)
-                ) {
-                    state['selectedBankAccountIds'] = selectedBankAccountIds;
-                }
-                this.bankAccountsService.changeState(state);
-                this.bankAccountsService.applyFilter();
-                this.onChanged.emit(businessEntitiesIds);
-            }
-        }
         this.onClosed.emit();
         if (this.isFilterClick)
             this.onFilterButtonClick.emit(businessEntitiesIds);
+
         this.isFilterClick = false;
+    }
+
+    checkApplyFilter(businessEntitiesIds: number[]) {
+        let selectedBankAccountIds = [];
+        if (this.selectedBusinessEntitiesChanged(businessEntitiesIds)) {
+            let newBusinessEntitiesIds = difference(
+                businessEntitiesIds,
+                this.bankAccountsService.state.selectedBusinessEntitiesIds
+            );
+
+            this.syncAccounts.forEach(syncAccount => {
+                syncAccount.bankAccounts.forEach(bankAccount => {
+                    if (!businessEntitiesIds.length || (newBusinessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
+                        || businessEntitiesIds.indexOf(bankAccount.businessEntityId) >= 0
+                        && this.bankAccountsService.state.selectedBankAccountIds.indexOf(bankAccount.id) >= 0
+                    ))
+                        selectedBankAccountIds.push(bankAccount.id);
+                });
+            });
+            const state = { selectedBusinessEntitiesIds: businessEntitiesIds };
+            if (
+                selectedBankAccountIds.length &&
+                ArrayHelper.dataChanged(this.bankAccountsService.state.selectedBankAccountIds, selectedBankAccountIds)
+            ) {
+                state['selectedBankAccountIds'] = selectedBankAccountIds;
+            }
+            this.bankAccountsService.changeState(state);
+            this.bankAccountsService.applyFilter();
+            this.onChanged.emit(businessEntitiesIds);
+        }
     }
 
     /**
@@ -147,6 +156,17 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
         this.isFilterClick = true;
         if (this.dropDown && this.dropDown.instance)
             this.dropDown.instance.close();
+    }
+
+    applySelection() {
+        this.checkApplyFilter(this.getSelectedIds());
+        if (this.dropDown && this.dropDown.instance)
+            this.dropDown.instance.close();
+    }
+
+    clearSelection() {
+        this.treeList.instance.unselectAll();
+        setTimeout(() => this.applySelection());
     }
 
     ngOnDestroy() {

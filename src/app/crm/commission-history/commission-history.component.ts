@@ -90,8 +90,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     private rootComponent: any;
     private subRouteParams: any;
-    private bulkUpdateAllowed = this.permission
-        .isGranted(AppPermissions.CRMBulkUpdates);
+    private bulkUpdateAllowed = this.permission.isGranted(AppPermissions.CRMBulkUpdates);
+    private affiliateManageAllowed = this.permission.isGranted(AppPermissions.CRMAffiliatesManage);
 
     selectedRecords: any = [];
     readonly commissionFields: KeysEnum<CommissionDto> = CommissionFields;
@@ -429,7 +429,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         })
     ];
 
-    manageAllowed = this.isGranted(AppPermissions.CRMCommissionsManage);
+    manageAllowed = this.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
 
     constructor(
         injector: Injector,
@@ -698,7 +698,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             text: this.l('ReassignCommissions'),
                             icon: './assets/common/icons/assign-icon.svg',
                             visible: this.selectedViewType == this.COMMISSION_VIEW,
-                            disabled: !this.manageAllowed
+                            disabled: !this.affiliateManageAllowed
                                 || !this.selectedRecords.length
                                 || this.selectedRecords.length > 1 && !this.bulkUpdateAllowed,
                             onClick: (e) => {

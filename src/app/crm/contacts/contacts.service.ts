@@ -10,6 +10,7 @@ import { filter, first, finalize, tap, switchMap, catchError,
     map, mapTo, distinctUntilChanged, debounceTime } from 'rxjs/operators';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { ContactStatus } from '@root/shared/AppEnums';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
@@ -19,6 +20,7 @@ import {
     OrganizationContactInfoDto,
     UserServiceProxy,
     ContactServiceProxy,
+    ContactUserServiceProxy,
     ContactCommunicationServiceProxy,
     ISendEmailInput,
     SendEmailInput,
@@ -66,6 +68,7 @@ import { AddCompanyDialogData } from '@app/crm/contacts/add-company-dialog/add-c
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
 import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Injectable()
 export class ContactsService {
@@ -97,17 +100,19 @@ export class ContactsService {
     settingsDialogOpened$: Observable<boolean> = this.settingsDialogOpened.asObservable().pipe(
         distinctUntilChanged()
     );
-    toolbarSubject$ = this.toolbarSubject.asObservable().pipe(debounceTime(200));
+    toolbarSubject$ = this.toolbarSubject.asObservable();
     isPrevDisabled = false;
     isNextDisabled = false;
     prev: Subject<any> = new Subject();
     next: Subject<any> = new Subject();
 
     constructor(injector: Injector,
+        private authService: AppAuthService,
         private contactProxy: ContactServiceProxy,
         private leadService: LeadServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
         private documentProxy: DocumentServiceProxy,
+        private contactUserService: ContactUserServiceProxy,
         private communicationProxy: ContactCommunicationServiceProxy,
         private permission: AppPermissionService,
         private userService: UserServiceProxy,

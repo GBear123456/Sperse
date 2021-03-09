@@ -26,6 +26,7 @@ import {
     SellPeriod,
     InterestRate,
     ExitStrategy,
+    PropertyResident,
     InvoiceSettings,
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
@@ -40,6 +41,8 @@ import { GarbageEnum } from './enums/garbage.enum';
 import { ParkingEnum } from './enums/parking.enum';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { AppliencesEnum } from './enums/appliences.enum';
+import { UtilityTypesEnum } from './enums/utilityTypes.enum';
 
 interface SelectBoxItem {
     displayValue: string;
@@ -71,12 +74,20 @@ export class PropertyInformationComponent implements OnInit {
         { displayValue: 'Received', value: true },
         { displayValue: 'N/A', value: false }
     ];
+    oneFiveDropdowns: SelectBoxItem[] = [
+        { displayValue: '0', value: 0 },
+        { displayValue: '1', value: 1 },
+        { displayValue: '2', value: 2 },
+        { displayValue: '3', value: 3 },
+        { displayValue: '4', value: 4 },
+        { displayValue: '5', value: 5 }
+    ];
 
     basement: SelectBoxItem[] = Object.values(BasementStatus).map((item: string) => ({
         displayValue: this.ls.l(item),
         value: item
     }));
-    centralHeating: SelectBoxItem[] = Object.values(HeatingCoolingType).map((item: string) => ({
+    heatingType: SelectBoxItem[] = Object.values(HeatingCoolingType).map((item: string) => ({
         displayValue: this.ls.l(item),
         value: item
     }));
@@ -101,6 +112,10 @@ export class PropertyInformationComponent implements OnInit {
         displayValue: this.ls.l(item),
         value: item
     }));
+    propertyResidents: SelectBoxItem[] = Object.values(PropertyResident).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
     parking: SelectBoxItem[] = Object.values(ParkingEnum).filter(isNaN).map((item: string) => ({
         displayValue: this.ls.l(item),
         value: ParkingEnum[item]
@@ -116,6 +131,14 @@ export class PropertyInformationComponent implements OnInit {
     weekDays: SelectBoxItem[] = Object.values(DayOfWeekEnum).filter(isNaN).map((item: string) => ({
         displayValue: this.ls.l(item),
         value: DayOfWeekEnum[item]
+    }));
+    appliences: SelectBoxItem[] = Object.values(AppliencesEnum).filter(isNaN).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: AppliencesEnum[item]
+    }));
+    utilityTypes: SelectBoxItem[] = Object.values(UtilityTypesEnum).filter(isNaN).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: UtilityTypesEnum[item]
     }));
 
     constructor(

@@ -1370,7 +1370,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     setDataGridInstance(dataGrid: DxDataGridComponent) {
         let instance = dataGrid && dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
-            instance.option('dataSource', this.dataSource);
+            dataGrid.dataSource = this.dataSource;
+            if (!instance.option('paging.pageSize'))
+                instance.option('paging.pageSize', 20);
         } else
             this.setGridDataLoaded();
     }

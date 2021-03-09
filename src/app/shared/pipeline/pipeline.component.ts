@@ -550,7 +550,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 filter['SortOrder'] = { lt: new oDataUtils.EdmLiteral(stage.lastStageIndex + 'd') };
             dataSource.pageSize(Math.max(!page && stage.entities
                 && stage.entities.length || 0, this.stagePageCount));
-            dataSource.sort({ getter: 'SortOrder', desc: true });
+            dataSource.sort([
+                { getter: 'SortOrder', desc: true },
+                { getter: 'Id', desc: true }
+            ]);
             const odataUrl = this.getODataUrl(
                 this._dataSource.uri,
                 this.queryWithSearch.filter(item => {

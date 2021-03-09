@@ -153,6 +153,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
     @ViewChild('categoriesPanel', { static: false }) categorizationComponent: CategorizationComponent;
+    @ViewChild('accountFilterContainer', { static: false }) accountFilterContainer: ElementRef;
+    @ViewChild('accountFilter', { static: false }) accountFilter: DxDropDownBoxComponent;
     @ViewChild('counterpartyFilterContainer', { static: false }) counterpartyFilterContainer: ElementRef;
     @ViewChild('counterpartyFilter', { static: false }) counterpartyFilter: DxDropDownBoxComponent;
     @ViewChild('becFilterContainer', { static: false }) businessEntitiesFilterContainer: ElementRef;
@@ -202,7 +204,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         )),
         options: { method: 'getFilterByDate' }
     });
-    private bankAccountFilter: FilterModel;
+    public bankAccountFilter: FilterModel;
     private businessEntityFilter: FilterModel;
     public transactionsFilterQuery: any[];
 
@@ -216,6 +218,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     public bankAccountCount;
     public bankAccounts: number[];
+    public syncAccountsLookup: any[] = [];
     public bankAccountsLookup: BankAccountDto[] = [];
     public creditTransactionCount = 0;
     public creditTransactionTotal = 0;
@@ -362,6 +365,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     isAdvicePeriod = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.AdvicePeriod;
     private updateAfterActivation: boolean;
     categoriesRowsData: Category[] = [];
+    filterCategoriesRowsData: Category[] = [];
     public showDataGridToolbar = !AppConsts.isMobile;
     departmentFeatureEnabled: boolean = this.feature.isEnabled(AppFeatures.CFODepartmentsManagement);
     showToggleCompactViewButton: boolean = !this._cfoService.hasStaticInstance;
@@ -439,7 +443,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         ) {
                             this.repaintDataGrid();
                         }
-                    }, 1500);
+                    });
                 }
             })
         });
@@ -491,11 +495,16 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         ).subscribe(([typeAndCategories, filtersInitialData, syncAccounts]:
                      [TransactionTypesAndCategoriesDto, FiltersInitialData, SyncAccountBankDto[]]) => {
             this.syncAccounts = syncAccounts;
-            this.types = typeAndCategories.types.map((item: TransactionTypeDto) => item.name);
-            this.categories = typeAndCategories.categories.map((item: StringFilterElementDto) => item.name);
+            this.syncAccountsLookup = syncAccounts.map(acc => {
+                acc['accountName'] = acc.name;
+                acc['id'] = acc.syncRef;
+                return acc;
+            }).filter(acc => acc.bankAccounts.length);
             this.bankAccountsLookup = syncAccounts.reduce((acc, item) => {
                 return acc.concat(item.bankAccounts);
             }, []);
+            this.types = typeAndCategories.types.map((item: TransactionTypeDto) => item.name);
+            this.categories = typeAndCategories.categories.map((item: StringFilterElementDto) => item.name);
             this.filtersInitialData = filtersInitialData;
             this.filters = [
                 this.dateFilter,
@@ -784,11 +793,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 {
                                     action: this.exportToXLS.bind(this),
                                     text: this.l('ExportToExcel'),
+                                    visible: !this.isAdvicePeriod,
                                     icon: 'xls',
                                 },
                                 {
                                     action: this.downloadExcelReport.bind(this),
-                                    text: this.l('ExportToExcelReport'),
+                                    text: this.isAdvicePeriod ? this.l('ExportToExcel') : this.l('ExportToExcelReport'),
                                     icon: 'xls'
                                 },
                                 {
@@ -799,11 +809,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                                 {
                                     action: this.exportToGoogleSheet.bind(this),
                                     text: this.l('ExportToGoogleSheets'),
+                                    visible: !this.isAdvicePeriod,
                                     icon: 'sheet'
                                 },
                                 {
                                     action: this.exportToGoogleSheetReport.bind(this),
-                                    text: this.l('ExportToGoogleSheetsReport'),
+                                    text: this.isAdvicePeriod ? this.l('ExportToGoogleSheets') : this.l('ExportToGoogleSheetsReport'),
                                     icon: 'sheet'
                                 },
                                 {
@@ -1067,6 +1078,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onPopupOpened(event) {
         event.component._popup.option('width', '340px');
+        this.filterCategoriesRowsData = this.categoriesRowsData.slice(0);
     }
 
     setDataSource() {
@@ -1113,6 +1125,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         );
 
         filterQuery$.subscribe((filterQuery: string) => {
+            if (filterQuery == 'canceled')
+                return;
+
             this.filterQuery = filterQuery;
 
             this.countDataSource['_store']['_url'] = super.getODataUrl(this.countDataSourceURI, filterQuery);
@@ -1156,6 +1171,11 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
 
         return data;
+    }
+
+    applyCashflowCategories(event) {
+        this.filterByCashflowCategories(event);
+        this.categoryChooser.instance.close();
     }
 
     filterByCashflowCategories(categories: Category[]) {
@@ -1304,15 +1324,18 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onCellPrepared($event) {
         if ($event.rowType === 'filter') {
-            if ($event.column.dataField == 'BusinessEntityId') {
+            if ($event.column.dataField == TransactionFields.BusinessEntityId) {
                 $event.cellElement.innerHTML = '';
                 $event.cellElement.appendChild(this.businessEntitiesFilterContainer.nativeElement);
-            } else if ($event.column.dataField == 'CashflowCategoryName') {
+            } else if ($event.column.dataField == TransactionFields.CashflowCategoryName) {
                 $event.cellElement.innerHTML = '';
                 $event.cellElement.appendChild(this.categoryChooserContainer.nativeElement);
-            } else if ($event.column.dataField == 'CounterpartyName') {
+            } else if ($event.column.dataField == TransactionFields.CounterpartyName) {
                 $event.cellElement.innerHTML = '';
                 $event.cellElement.appendChild(this.counterpartyFilterContainer.nativeElement);
+            } else if ($event.column.dataField == TransactionFields.BankAccountId) {
+                $event.cellElement.innerHTML = '';
+                $event.cellElement.appendChild(this.accountFilterContainer.nativeElement);
             }
         } else if ($event.rowType === 'data') {
             const transaction: TransactionDto = $event.data;
@@ -1558,7 +1581,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     calculateMonthYearDisplayValue = (data) => this.datePipe.transform(data.Date, 'MMM yyyy');
 
-    calculateIsPendingDisplayValue = (data) => this.l(data.isPendingTemplate ? 'Transactions_Pending' : 'Transactions_Settled');
+    calculateIsPendingDisplayValue = (data) => this.l(data.IsPending ? 'Transactions_Pending' : 'Transactions_Settled');
 
     toggleDataGridToolbar() {
         this.showDataGridToolbar = !this.showDataGridToolbar;
@@ -1579,10 +1602,35 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         });
     }
 
-    onCounterpartiesChanged(event) {
+    onCounterpartiesChanged(component) {
         this.counterpartiesFilter.isSelected =
-            event.component.option('selectedItems').length;
+            component.instance.option('selectedItems').length;
         this.processFilterInternal();
+        this.counterpartyFilter.instance.close();
+    }
+
+    onCounterpartiesClear(component) {
+        component.instance.unselectAll();
+        setTimeout(() => this.onCounterpartiesChanged(component));
+    }
+
+    onAccountsChanged() {
+        let keys = this.syncAccountsLookup.reduce((acc, item) => {
+            return acc.concat(item.bankAccounts.filter(bank => bank.selected).map(bank => bank.id));
+        }, []);
+        this.bankAccountFilter.isSelected = keys.length;
+        this.bankAccountFilter.items.element.value = keys;
+
+        this.filtersService.change([this.bankAccountFilter]);
+        this.accountFilter.instance.close();
+    }
+
+    onAccountsClear(component) {
+        component.instance.unselectAll();
+        this.bankAccountFilter.isSelected = false;
+        this.bankAccountFilter.clearFilterItems();
+        this.filtersService.change([this.bankAccountFilter]);
+        this.accountFilter.instance.close();
     }
 
     customizeExcelCell(e) {
@@ -1634,6 +1682,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         hostElement.appendChild(this.businessEntitiesFilterContainer.nativeElement);
         hostElement.appendChild(this.categoryChooserContainer.nativeElement);
         hostElement.appendChild(this.counterpartyFilterContainer.nativeElement);
+        hostElement.appendChild(this.accountFilterContainer.nativeElement);
     }
 
     ngOnDestroy() {

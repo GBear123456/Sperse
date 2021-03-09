@@ -5,7 +5,7 @@ import { Directive, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { finalize, filter, first, switchMap } from 'rxjs/operators';
 
 /** Application imports */
-import { GetSetupAccountsLinkOutput, SyncServiceProxy } from '@shared/service-proxies/service-proxies';
+import { RequestConnectionInput, RequestConnectionOutput, SyncServiceProxy, ConnectionMode } from '@shared/service-proxies/service-proxies';
 import { SyncTypeIds } from '@shared/AppEnums';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
@@ -15,6 +15,8 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     selector: 'quick-book-login'
 })
 export class QuickBookLoginComponent implements OnInit {
+    @Input() mode = ConnectionMode.Create;
+    @Input() accountId: number;
     @Input() loadingContainerElement: Element;
     @Output() onComplete: EventEmitter<number> = new EventEmitter();
 
@@ -34,16 +36,20 @@ export class QuickBookLoginComponent implements OnInit {
         this.cfoService.statusActive$.pipe(
             filter(Boolean),
             first(),
-            switchMap(() => this.syncServiceProxy.getSetupAccountsLink(
-                <any>this.cfoService.instanceType,
+            switchMap(() => this.syncServiceProxy.requestConnection(
+                this.cfoService.instanceType,
                 this.cfoService.instanceId,
-                SyncTypeIds.QuickBook
+                new RequestConnectionInput({
+                    syncTypeId: SyncTypeIds.QuickBook,
+                    mode: this.mode,
+                    syncAccountId: this.accountId
+                })
             ).pipe(
                 finalize(() => this.loadingService.finishLoading(this.loadingContainerElement))
             ))
-        ).subscribe((result: GetSetupAccountsLinkOutput) => {
+        ).subscribe((result: RequestConnectionOutput) => {
             const setupAccountWindow = window.open(
-                result.setupAccountsLink,
+                result.connectUrl,
                 '_blank',
                 `location=yes,height=680,width=640,scrollbars=yes,status=yes,left=${(window.innerWidth / 2) - 320},top=${(window.innerHeight / 2) - 340}`
             );
@@ -54,6 +60,8 @@ export class QuickBookLoginComponent implements OnInit {
                             this.cfoService.instanceChangeProcess(true).subscribe(() => {
                                 this.syncProgressService.runSynchProgress().subscribe();
                             });
+                        else
+                            this.syncProgressService.runSynchProgress().subscribe();
 
                         clearInterval(interval);
                         this.onComplete.emit();

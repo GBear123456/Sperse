@@ -92,7 +92,7 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     isCGManageAllowed = false;
     isCommissionsAllowed = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions)
-        && this.permissionService.isGranted(AppPermissions.CRMCommissions);
+        && this.permissionService.isGranted(AppPermissions.CRMAffiliatesCommissions);
 
     currencyFormat$: Observable<DevExpress.ui.format> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => {

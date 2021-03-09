@@ -61,6 +61,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     private readonly USER_PASSWORD = 'userPassword';
     private readonly DATE_CREATED = 'dateCreated';
+    private readonly FOLLOW_UP_DATE = 'followUpDate';
+    private readonly LEAD_DEAL_AMOUNT = 'leadDealAmount';
     private readonly FULL_NAME_FIELD = 'personalInfo_fullName';
     private readonly NAME_PREFIX_FIELD = 'personalInfo_fullName_namePrefix';
     private readonly FIRST_NAME_FIELD = 'personalInfo_fullName_firstName';
@@ -205,6 +207,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     ];
 
     private readonly FIELDS_AMOUNT = [
+        this.LEAD_DEAL_AMOUNT,
         this.BUSINESS_ANNUAL_REVENUE,
         this.SUBSCRIPTION1_AMOUNT,
         this.SUBSCRIPTION2_AMOUNT,
@@ -214,7 +217,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     ];
 
     private readonly FIELDS_DATE_TIME = [
-        this.DATE_CREATED
+        this.DATE_CREATED,
+        this.FOLLOW_UP_DATE
     ];
 
     private readonly FIELDS_DATE = [
@@ -559,14 +563,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                 'M': 1000000,
                 'B': 1000000000
             }[value.trim().split('').pop()] || 1);
-        this.setFieldIfDefined(isNaN(amount) ? ([
-                    this.SUBSCRIPTION1_AMOUNT,
-                    this.SUBSCRIPTION2_AMOUNT,
-                    this.SUBSCRIPTION3_AMOUNT,
-                    this.SUBSCRIPTION4_AMOUNT,
-                    this.SUBSCRIPTION5_AMOUNT
-                ].indexOf(field) >= 0 ? null : value)
-            : amount, field.mappedField, dataSource);
+
+        this.setFieldIfDefined(isNaN(amount) ? null : amount, field.mappedField, dataSource);
+
         return true;
     }
 

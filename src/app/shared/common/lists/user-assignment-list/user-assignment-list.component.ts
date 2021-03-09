@@ -107,6 +107,7 @@ export class UserAssignmentComponent implements OnDestroy {
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible)
             this.highlightSelectedFilters();
+        return this.tooltipVisible;
     }
 
     apply(selectedKeys?: number[]) {
