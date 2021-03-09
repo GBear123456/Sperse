@@ -74,6 +74,14 @@ export class PropertyInformationComponent implements OnInit {
         { displayValue: 'Received', value: true },
         { displayValue: 'N/A', value: false }
     ];
+    oneFiveDropdowns: SelectBoxItem[] = [
+        { displayValue: '0', value: 0 },
+        { displayValue: '1', value: 1 },
+        { displayValue: '2', value: 2 },
+        { displayValue: '3', value: 3 },
+        { displayValue: '4', value: 4 },
+        { displayValue: '5', value: 5 }
+    ];
 
     basement: SelectBoxItem[] = Object.values(BasementStatus).map((item: string) => ({
         displayValue: this.ls.l(item),
