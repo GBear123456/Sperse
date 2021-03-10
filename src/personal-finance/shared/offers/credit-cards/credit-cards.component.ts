@@ -31,6 +31,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { CustomItemOfOfferCollection } from '@root/personal-finance/shared/offers/credit-cards/custom-item-of-offer-collection.enum';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     selector: 'pfm-credit-cards-home',
@@ -129,7 +130,7 @@ export class CreditCardsComponent implements OnInit, OnDestroy {
             switchMap((memberInfo: GetMemberInfoResponse) => this.offerServiceProxy.getAll(GetAllInput.fromJS({
                 testMode: memberInfo.testMode,
                 category: CampaignCategory.CreditCards,
-                country: 'US',
+                country: AppConsts.defaultCountryCode,
                 isOfferCollection: isOfferCollection,
                 itemOfOfferCollection: CustomItemOfOfferCollection[collection] || OfferCollection[collection],
                 sortOrderType: collection === CustomItemOfOfferCollection.Newest ? SortOrderType.Newest : SortOrderType.Best,

@@ -11,7 +11,7 @@ export class PhoneFormatPipe implements PipeTransform {
         if (value) {
             const defaultParseOptions: ParseNumberOptions = {
                 extended: true,
-                defaultCountry: AppConsts.defaultCountry
+                defaultCountry: <any>AppConsts.defaultCountryCode
             };
             let parsedNumber: ParsedNumber;
             try {

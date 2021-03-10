@@ -125,7 +125,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
 
     private readonly defaultFilters = {
         category: undefined,
-        country: 'US',
+        country: AppConsts.defaultCountryCode,
         creditScore: null,
         issuingBank: undefined,
         cardNetworks: [],
@@ -268,9 +268,9 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
                 name: this.ls.l('Offers_Filter_ResidentState'),
                 selected$: this.offersService.state$,
                 values$: this.store$.pipe(
-                    select(StatesStoreSelectors.getCountryStates, { countryCode: 'US' }),
+                    select(StatesStoreSelectors.getCountryStates, { countryCode: AppConsts.defaultCountryCode }),
                     filter(states => !!(states && states.length)),
-                    map(states => [ { name: 'All USA', value: 'all' } ].concat(states.map(state => ({ name: state.name, value: state.code }))))
+                    map(states => [ { name: 'All States', value: 'all' } ].concat(states.map(state => ({ name: state.name, value: state.code }))))
                 ),
                 onChange: (e: MatSelectChange) => {
                     const value = e.value.name ? e.value.value : e.value;
@@ -502,7 +502,7 @@ export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
             filter((categoryGroup: CategoryGroupEnum) => categoryGroup === CategoryGroupEnum.Loans),
             takeUntil(this.deactivate$)
         ).subscribe(
-            () => this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'))
+            () => this.store$.dispatch(new StatesStoreActions.LoadRequestAction(AppConsts.defaultCountryCode))
         );
         this.category$.subscribe((category) => {
             if (!category)

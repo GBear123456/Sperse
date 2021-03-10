@@ -38,7 +38,7 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
 
     ngOnInit() {
         if (!this.phoneNumber)
-            this.phoneNumber = AppConsts.defaultCountryCode;
+            this.phoneNumber = AppConsts.defaultCountryPhoneCode;
         this.onInitialized.emit(this);
     }
 
@@ -47,7 +47,7 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
             this.phoneNumberChange.emit(this.value = value);
             this.phoneCountryChange.emit(this.intPhoneNumber.selectedCountry);
         });
-        if (this.phoneNumber !== AppConsts.defaultCountryCode) {
+        if (this.phoneNumber !== AppConsts.defaultCountryPhoneCode) {
             setTimeout(() => {
                 this.intPhoneNumber.writeValue(this.phoneNumber);
                 this.intPhoneNumber.updateValue();
@@ -84,7 +84,7 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     }
 
     reset() {
-        this.phoneNumber = AppConsts.defaultCountryCode;
+        this.phoneNumber = AppConsts.defaultCountryPhoneCode;
         this.model.control.markAsPristine();
         this.model.control.markAsUntouched();
     }

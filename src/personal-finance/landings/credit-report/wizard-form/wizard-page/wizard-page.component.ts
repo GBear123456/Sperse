@@ -12,6 +12,7 @@ import { Address } from 'ngx-google-places-autocomplete/objects/address';
 /** Application imports */
 import { RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppConsts } from '@shared/AppConsts';
+import { Country } from '@shared/AppEnums';
 import {
     ApplicationServiceProxy,
     CountryStateDto,
@@ -33,6 +34,7 @@ import { InputStatusesService } from '@shared/utils/input-statuses.service';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { StatesService } from '@root/store/states-store/states.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     selector: 'app-wizard-page',
@@ -60,7 +62,7 @@ export class CreditWizardPageComponent implements OnInit {
 
     registrationInProgress = false;
     paymentAuthorizationRequired = true;
-    countryCode = 'US';
+    countryCode = AppConsts.defaultCountryCode;
     packageId: number;
     paymentResult: any;
     model: RegisterModel = new RegisterModel();
@@ -92,7 +94,7 @@ export class CreditWizardPageComponent implements OnInit {
     public options = {
         types: ['address'],
         componentRestrictions: {
-            country: [ 'US', 'CA' ]
+            country: [ Country.USA, Country.Canada ]
         }
     };
 
@@ -101,6 +103,7 @@ export class CreditWizardPageComponent implements OnInit {
         private memberService: MemberServiceProxy,
         private store$: Store<RootStore.State>,
         private statesService: StatesService,
+        private sessionService: AppSessionService,
         private router: Router,
         public ls: AppLocalizationService,
         public inputStatusesService: InputStatusesService,
@@ -283,10 +286,9 @@ export class CreditWizardPageComponent implements OnInit {
             = this.street_number ? this.street_number + ' ' + this.street_name : this.street_name;
         this.model.address.zip = GooglePlaceService.getZipCode(address.address_components);
         const countryName = GooglePlaceService.getCountryName(address.address_components);
-        this.country = countryName === 'United States'
-            ? AppConsts.defaultCountryName
-            : countryName;
         const countryCode = GooglePlaceService.getCountryCode(address.address_components);
+        this.country = this.sessionService.getCountryNameByCode(countryCode) || countryName;
+
         if (this.countryCode !== countryCode) {
             this.model.address.countryId = this.countryCode = countryCode;
             this.getStates();

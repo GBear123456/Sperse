@@ -10,7 +10,7 @@ import { AppConsts } from '@shared/AppConsts';
 @Injectable()
 export class PhoneNumberService {
 
-    isPhoneNumberValid(value: string, defaultCountryCode: string = AppConsts.defaultCountry) {
+    isPhoneNumberValid(value: string, defaultCountryCode: string = AppConsts.defaultCountryCode) {
         if (!value)
             return true;
 

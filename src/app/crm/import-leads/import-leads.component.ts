@@ -800,10 +800,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     checkZipUSCountryFields(field, data, zipField, countryCodeField, countryNameField): boolean {
         if (field.mappedField === zipField) {
             if (data[countryCodeField])
-                return data[countryCodeField] == AppConsts.defaultCountry;
+                return data[countryCodeField] == AppConsts.defaultCountryCode;
             else if (data[countryNameField]) {
                 let country = _.findWhere(this.wizard.countries, {name: data[countryNameField].trim()});
-                return !country || country.code == AppConsts.defaultCountry;
+                return !country || country.code == AppConsts.defaultCountryCode;
             } else
                 return true;
         }

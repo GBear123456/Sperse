@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
+import { CountryService } from 'ngx-international-phone-number/src';
 import { Store, select } from '@ngrx/store';
 import * as _ from 'underscore';
 
@@ -32,6 +33,7 @@ export class AppSessionService {
 
     constructor(
         private store$: Store<RootStore.State>,
+        private countryPhoneService: CountryService,
         private sessionService: SessionServiceProxy,
         private featureService: FeatureCheckerService,
         private tenantHostProxy: TenantHostServiceProxy,
@@ -150,15 +152,16 @@ export class AppSessionService {
         if (!countryCode)
             countryCode = this.getDefaultCountryCode();
 
+        AppConsts.defaultCountryCode = countryCode;
         AppConsts.defaultCountryName = this.getCountryNameByCode(countryCode);
-        abp.setting.values['App.TenantManagement.DefaultCountryCode'] = countryCode;
+        AppConsts.defaultCountryPhoneCode = this.countryPhoneService.getPhoneCodeByCountryCode(countryCode);
     }
 
     getDefaultCountryCode() {
         return abp.setting.get('App.TenantManagement.DefaultCountryCode') || Country.USA;
     }
 
-    private getCountryNameByCode(code: string) {
+    getCountryNameByCode(code: string) {
         let country = _.findWhere(this.countries, { code: code });
         return country && country.name;
     }
