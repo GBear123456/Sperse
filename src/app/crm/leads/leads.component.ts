@@ -341,7 +341,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     );
     isPropertyPipeline$: Observable<boolean> = this.selectedPipeline$
         .pipe(
-            map(selectedPipeline => selectedPipeline.entityTypeSysId == EntityTypeSys.Acquisition || selectedPipeline.entityTypeSysId.startsWith(EntityTypeSys.Management))
+            map(selectedPipeline => selectedPipeline.entityTypeSysId &&
+                    (selectedPipeline.entityTypeSysId == EntityTypeSys.Acquisition || selectedPipeline.entityTypeSysId.startsWith(EntityTypeSys.Management)))
         );
     /** Get pipeline contactGroup @todo remove using of contact group in all places */
     selectedContactGroup$: Observable<ContactGroup> = this.selectedPipeline$.pipe(
