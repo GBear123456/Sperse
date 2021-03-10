@@ -20924,6 +20924,117 @@ export class LeadServiceProxy {
         }
         return _observableOf<StageChecklistPointInfoOutput[]>(<any>null);
     }
+
+    /**
+     * @propertyId (optional) 
+     * @return Success
+     */
+    getDealsForProperty(propertyId: number | null | undefined): Observable<LeadDealInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetDealsForProperty?";
+        if (propertyId !== undefined)
+            url_ += "propertyId=" + encodeURIComponent("" + propertyId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetDealsForProperty(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetDealsForProperty(<any>response_);
+                } catch (e) {
+                    return <Observable<LeadDealInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<LeadDealInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetDealsForProperty(response: HttpResponseBase): Observable<LeadDealInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(LeadDealInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<LeadDealInfo[]>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateDealInfo(body: UpdateLeadDealInfoInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/UpdateDealInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateDealInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateDealInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateDealInfo(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -51587,7 +51698,6 @@ export class PropertyInput implements IPropertyInput {
     name!: string | undefined;
     address!: CreateContactAddressInput | undefined;
     note!: string | undefined;
-    monthlyRentPrice!: number | undefined;
 
     constructor(data?: IPropertyInput) {
         if (data) {
@@ -51604,7 +51714,6 @@ export class PropertyInput implements IPropertyInput {
             this.name = data["name"];
             this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.note = data["note"];
-            this.monthlyRentPrice = data["monthlyRentPrice"];
         }
     }
 
@@ -51621,7 +51730,6 @@ export class PropertyInput implements IPropertyInput {
         data["name"] = this.name;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["note"] = this.note;
-        data["monthlyRentPrice"] = this.monthlyRentPrice;
         return data; 
     }
 }
@@ -51631,7 +51739,6 @@ export interface IPropertyInput {
     name: string | undefined;
     address: CreateContactAddressInput | undefined;
     note: string | undefined;
-    monthlyRentPrice: number | undefined;
 }
 
 export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
@@ -51675,6 +51782,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     leadTypeSysId!: string | undefined;
     stageId!: number | undefined;
     dealAmount!: number | undefined;
+    installmentAmount!: number | undefined;
     followUpDate!: moment.Moment | undefined;
     trackingInfo!: TrackingInfo | undefined;
     inviteUser!: boolean | undefined;
@@ -51764,6 +51872,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.leadTypeSysId = data["leadTypeSysId"];
             this.stageId = data["stageId"];
             this.dealAmount = data["dealAmount"];
+            this.installmentAmount = data["installmentAmount"];
             this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
             this.inviteUser = data["inviteUser"];
@@ -51853,6 +51962,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["leadTypeSysId"] = this.leadTypeSysId;
         data["stageId"] = this.stageId;
         data["dealAmount"] = this.dealAmount;
+        data["installmentAmount"] = this.installmentAmount;
         data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
         data["inviteUser"] = this.inviteUser;
@@ -51907,6 +52017,7 @@ export interface ICreateOrUpdateContactInput {
     leadTypeSysId: string | undefined;
     stageId: number | undefined;
     dealAmount: number | undefined;
+    installmentAmount: number | undefined;
     followUpDate: moment.Moment | undefined;
     trackingInfo: TrackingInfo | undefined;
     inviteUser: boolean | undefined;
@@ -64172,6 +64283,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     leadTypeSysId!: string | undefined;
     stageId!: number | undefined;
     dealAmount!: number | undefined;
+    installmentAmount!: number | undefined;
     followUpDate!: moment.Moment | undefined;
     trackingInfo!: TrackingInfo | undefined;
     inviteUser!: boolean | undefined;
@@ -64258,6 +64370,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.leadTypeSysId = data["leadTypeSysId"];
             this.stageId = data["stageId"];
             this.dealAmount = data["dealAmount"];
+            this.installmentAmount = data["installmentAmount"];
             this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.trackingInfo = data["trackingInfo"] ? TrackingInfo.fromJS(data["trackingInfo"]) : <any>undefined;
             this.inviteUser = data["inviteUser"];
@@ -64344,6 +64457,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["leadTypeSysId"] = this.leadTypeSysId;
         data["stageId"] = this.stageId;
         data["dealAmount"] = this.dealAmount;
+        data["installmentAmount"] = this.installmentAmount;
         data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["trackingInfo"] = this.trackingInfo ? this.trackingInfo.toJSON() : <any>undefined;
         data["inviteUser"] = this.inviteUser;
@@ -64395,6 +64509,7 @@ export interface ICreateOrUpdateLeadInput {
     leadTypeSysId: string | undefined;
     stageId: number | undefined;
     dealAmount: number | undefined;
+    installmentAmount: number | undefined;
     followUpDate: moment.Moment | undefined;
     trackingInfo: TrackingInfo | undefined;
     inviteUser: boolean | undefined;
@@ -65507,6 +65622,106 @@ export interface IStageChecklistPointInfoOutput {
     isDone: boolean | undefined;
     completionTime: moment.Moment | undefined;
     completedByUserId: number | undefined;
+}
+
+export class LeadDealInfo implements ILeadDealInfo {
+    leadId!: number | undefined;
+    leadDate!: moment.Moment | undefined;
+    leadTypeSysId!: string | undefined;
+    leadTypeName!: string | undefined;
+    dealAmount!: number | undefined;
+    installmentAmount!: number | undefined;
+
+    constructor(data?: ILeadDealInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadId = data["leadId"];
+            this.leadDate = data["leadDate"] ? moment(data["leadDate"].toString()) : <any>undefined;
+            this.leadTypeSysId = data["leadTypeSysId"];
+            this.leadTypeName = data["leadTypeName"];
+            this.dealAmount = data["dealAmount"];
+            this.installmentAmount = data["installmentAmount"];
+        }
+    }
+
+    static fromJS(data: any): LeadDealInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new LeadDealInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadId"] = this.leadId;
+        data["leadDate"] = this.leadDate ? this.leadDate.toISOString() : <any>undefined;
+        data["leadTypeSysId"] = this.leadTypeSysId;
+        data["leadTypeName"] = this.leadTypeName;
+        data["dealAmount"] = this.dealAmount;
+        data["installmentAmount"] = this.installmentAmount;
+        return data; 
+    }
+}
+
+export interface ILeadDealInfo {
+    leadId: number | undefined;
+    leadDate: moment.Moment | undefined;
+    leadTypeSysId: string | undefined;
+    leadTypeName: string | undefined;
+    dealAmount: number | undefined;
+    installmentAmount: number | undefined;
+}
+
+export class UpdateLeadDealInfoInput implements IUpdateLeadDealInfoInput {
+    leadId!: number;
+    dealAmount!: number | undefined;
+    installmentAmount!: number | undefined;
+
+    constructor(data?: IUpdateLeadDealInfoInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadId = data["leadId"];
+            this.dealAmount = data["dealAmount"];
+            this.installmentAmount = data["installmentAmount"];
+        }
+    }
+
+    static fromJS(data: any): UpdateLeadDealInfoInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLeadDealInfoInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadId"] = this.leadId;
+        data["dealAmount"] = this.dealAmount;
+        data["installmentAmount"] = this.installmentAmount;
+        return data; 
+    }
+}
+
+export interface IUpdateLeadDealInfoInput {
+    leadId: number;
+    dealAmount: number | undefined;
+    installmentAmount: number | undefined;
 }
 
 export class LeadTypeDto implements ILeadTypeDto {
@@ -73305,9 +73520,6 @@ export class PropertyDto implements IPropertyDto {
     houseOwningTime!: number | undefined;
     annualHOACondoFees!: number | undefined;
     depositPutAmount!: number | undefined;
-    krePurchasePrice!: number | undefined;
-    buyerPurchasePrice!: number | undefined;
-    monthlyRentPrice!: number | undefined;
     isHomeListed!: boolean | undefined;
     priceListed!: number | undefined;
     listedDate!: moment.Moment | undefined;
@@ -73464,9 +73676,6 @@ export class PropertyDto implements IPropertyDto {
             this.houseOwningTime = data["houseOwningTime"];
             this.annualHOACondoFees = data["annualHOACondoFees"];
             this.depositPutAmount = data["depositPutAmount"];
-            this.krePurchasePrice = data["krePurchasePrice"];
-            this.buyerPurchasePrice = data["buyerPurchasePrice"];
-            this.monthlyRentPrice = data["monthlyRentPrice"];
             this.isHomeListed = data["isHomeListed"];
             this.priceListed = data["priceListed"];
             this.listedDate = data["listedDate"] ? moment(data["listedDate"].toString()) : <any>undefined;
@@ -73623,9 +73832,6 @@ export class PropertyDto implements IPropertyDto {
         data["houseOwningTime"] = this.houseOwningTime;
         data["annualHOACondoFees"] = this.annualHOACondoFees;
         data["depositPutAmount"] = this.depositPutAmount;
-        data["krePurchasePrice"] = this.krePurchasePrice;
-        data["buyerPurchasePrice"] = this.buyerPurchasePrice;
-        data["monthlyRentPrice"] = this.monthlyRentPrice;
         data["isHomeListed"] = this.isHomeListed;
         data["priceListed"] = this.priceListed;
         data["listedDate"] = this.listedDate ? this.listedDate.toISOString() : <any>undefined;
@@ -73775,9 +73981,6 @@ export interface IPropertyDto {
     houseOwningTime: number | undefined;
     annualHOACondoFees: number | undefined;
     depositPutAmount: number | undefined;
-    krePurchasePrice: number | undefined;
-    buyerPurchasePrice: number | undefined;
-    monthlyRentPrice: number | undefined;
     isHomeListed: boolean | undefined;
     priceListed: number | undefined;
     listedDate: moment.Moment | undefined;

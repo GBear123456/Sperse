@@ -227,7 +227,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         propertyId: undefined,
         name: undefined,
         note: undefined,
-        monthlyRentPrice: undefined,
         address: new Address()
     };
     similarCustomers: SimilarContactOutput[] = [];
@@ -280,6 +279,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     showBankCodeField: boolean = this.userManagementService.checkBankCodeFeature();
     dontCheckSimilarEntities: boolean = this.data.dontCheckSimilarEntities;
     dealAmount: number;
+    installmentAmount: number;
     bankCode: string;
     today: Date = new Date();
     readonly leadFields: KeysEnum<LeadDto> = LeadFields;
@@ -395,6 +395,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             trackingInfo: trackingInfo,
             parentContactId: this.data.parentId,
             dealAmount: this.dealAmount,
+            installmentAmount: this.installmentAmount,
             bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null,
             leadTypeId: this.data.entityTypeId
         };
@@ -421,8 +422,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             });
         } else if (this.showPropertiesDropdown) {
             dataObj.propertyInfo = {
-                propertyId: this.propertyId,
-                monthlyRentPrice: this.property.monthlyRentPrice
+                propertyId: this.propertyId
             };
         }
 
@@ -1006,6 +1006,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.sourceContactId = undefined;
             this.notes = undefined;
             this.dealAmount = undefined;
+            this.installmentAmount = undefined;
             this.bankCode = '????';
 
             this.person = new PersonInfoDto();
