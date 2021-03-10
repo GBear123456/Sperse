@@ -847,7 +847,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     getFieldDefaultCountry(data, field) {
         let countryCode = this.getFieldCountryCode(data, field);
         if (countryCode)
-            return {defaultCountry: countryCode.length == 2 ? countryCode : AppConsts.defaultCountry};
+            return {defaultCountry: countryCode.length == 2 ? countryCode : AppConsts.defaultCountryCode};
     }
 
     getFieldCountryCode(data, field) {

@@ -115,6 +115,8 @@ import { LeadDto } from '@app/crm/leads/lead-dto.interface';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 import { AddressFieldsComponent } from './address-fields/address-fields.component';
+import { AppSessionService } from '@shared/common/session/app-session.service';
+import { Country } from '@shared/AppEnums';
 
 @Component({
     templateUrl: 'create-entity-dialog.component.html',
@@ -333,6 +335,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         private userManagementService: UserManagementService,
         private httpClient: HttpClient,
         private oDataService: ODataService,
+        private sessionService: AppSessionService,
         public ls: AppLocalizationService,
         public toolbarService: ToolbarService,
         @Inject(MAT_DIALOG_DATA) public data: CreateEntityDialogData
@@ -720,9 +723,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             name: stateName
         };
         const countryName = GooglePlaceService.getCountryName(event.address.address_components);
-        address.country = countryName === 'United States'
-            ? AppConsts.defaultCountryName
-            : countryName;
+        address.country = this.sessionService.getCountryNameByCode(countryCode) || countryName;
         address.zip = GooglePlaceService.getZipCode(event.address.address_components);
         address.neighborhood = GooglePlaceService.getNeighborhood(event.address.address_components);
         address.streetAddress = GooglePlaceService.getStreet(event.address.address_components);
@@ -749,9 +750,10 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     updateCountryInfo(countryName: string, addressIndex: number) {
-        this.contact.addresses[addressIndex]['country'] = countryName == 'United States'
-            ? AppConsts.defaultCountryName
-            : countryName;
+        this.contact.addresses[addressIndex]['country'] = 
+            this.sessionService.getCountryNameByCode(
+                this.contact.addresses[addressIndex].countryCode
+            ) || countryName;
         this.changeDetectorRef.detectChanges();
     }
 

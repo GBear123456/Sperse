@@ -30,6 +30,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { StatesService } from '@root/store/states-store/states.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { EditAddressDialogData } from '@app/crm/contacts/edit-address-dialog/edit-address-dialog-data.interface';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     selector: 'edit-address-dialog',
@@ -60,6 +61,7 @@ export class EditAddressDialog {
         private elementRef: ElementRef,
         private store$: Store<RootStore.State>,
         private statesService: StatesService,
+        private sessionService: AppSessionService,
         private permissionService: AppPermissionService,
         public dialogRef: MatDialogRef<EditAddressDialog>,
         public ls: AppLocalizationService,
@@ -105,9 +107,7 @@ export class EditAddressDialog {
     onAddressChanged(address: Address) {
         const countryCode = GooglePlaceService.getCountryCode(address.address_components);
         const countryName = GooglePlaceService.getCountryName(address.address_components);
-        this.data.country = countryName === 'United States'
-            ? AppConsts.defaultCountryName
-            : countryName;
+        this.data.country = this.sessionService.getCountryNameByCode(countryCode) || countryName;
         this.data.zip = GooglePlaceService.getZipCode(address.address_components);
         this.data.streetAddress = GooglePlaceService.getStreet(address.address_components);
         this.data.stateId = GooglePlaceService.getStateCode(address.address_components);

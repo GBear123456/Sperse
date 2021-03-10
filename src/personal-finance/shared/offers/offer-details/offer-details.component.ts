@@ -42,6 +42,7 @@ import {
     GetAllInput
 } from '@shared/service-proxies/service-proxies';
 import { CreditScoreInterface } from '@root/personal-finance/shared/offers/interfaces/credit-score.interface';
+import { AppConsts } from '@shared/AppConsts';
 
 @Component({
     templateUrl: 'offer-details.component.html',
@@ -152,7 +153,7 @@ export class OfferDetailsComponent implements OnInit, OnDestroy {
                     switchMap(([category, memberInfo]) => this.offerServiceProxy.getAll(GetAllInput.fromJS({
                         testMode: memberInfo.testMode,
                         category: category,
-                        country: 'US'
+                        country: AppConsts.defaultCountryCode
                     })).pipe(
                         catchError(() => of([]))
                     )),
