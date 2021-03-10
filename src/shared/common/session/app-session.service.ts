@@ -155,7 +155,7 @@ export class AppSessionService {
     }
 
     getDefaultCountryCode() {
-        return abp.setting.get('App.TenantManagement.DefaultCountryCode');
+        return abp.setting.get('App.TenantManagement.DefaultCountryCode') || Country.USA;
     }
 
     private getCountryNameByCode(code: string) {
