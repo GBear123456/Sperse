@@ -322,14 +322,17 @@ export class PipelineService {
     }
 
     private processLeadInternal(entity, data, complete) {
+        let processLeadInput = new ProcessLeadInput();
+        processLeadInput.leadId = this.getEntityId(entity);
+        processLeadInput.ignoreChecklist = data.ignoreChecklist;
+        processLeadInput.orderStageId = data.orderStageId;
+        if (data.orderStageId) {
+            processLeadInput.amount = data.amount;
+            processLeadInput.comment = data.comment;
+        }
+
         this.leadService.processLead(
-            ProcessLeadInput.fromJS({
-                leadId: this.getEntityId(entity),
-                orderStageId: data.orderStageId,
-                amount: data.amount,
-                comment: data.comment,
-                ignoreChecklist: data.ignoreChecklist
-            })
+            processLeadInput
         ).pipe(finalize(() => {
             entity.locked = false;
             complete && complete();
