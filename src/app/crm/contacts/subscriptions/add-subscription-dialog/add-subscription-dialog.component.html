@@ -109,8 +109,7 @@
             {{ls.l('OrderNumber')}}
             <small class="small-gray">*optional</small>
         </label>
-        <order-dropdown [(orderId)]="subscription.orderId"
-                        [(orderNumber)]="subscription.orderNumber"
+        <order-dropdown [(orderNumber)]="subscription.orderNumber"
                         placeholder=""
                         width="100%"
                         [contactId]="data.contactId">

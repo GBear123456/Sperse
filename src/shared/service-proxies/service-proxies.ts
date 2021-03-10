@@ -20926,65 +20926,6 @@ export class LeadServiceProxy {
     }
 
     /**
-     * @propertyId (optional) 
-     * @return Success
-     */
-    getDealsForProperty(propertyId: number | null | undefined): Observable<LeadDealInfo[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/GetDealsForProperty?";
-        if (propertyId !== undefined)
-            url_ += "propertyId=" + encodeURIComponent("" + propertyId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetDealsForProperty(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetDealsForProperty(<any>response_);
-                } catch (e) {
-                    return <Observable<LeadDealInfo[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<LeadDealInfo[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetDealsForProperty(response: HttpResponseBase): Observable<LeadDealInfo[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(LeadDealInfo.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<LeadDealInfo[]>(<any>null);
-    }
-
-    /**
      * @body (optional) 
      * @return Success
      */
@@ -28173,6 +28114,65 @@ export class PropertyServiceProxy {
             }));
         }
         return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @propertyId (optional) 
+     * @return Success
+     */
+    getDeals(propertyId: number | null | undefined): Observable<PropertyDealInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/GetDeals?";
+        if (propertyId !== undefined)
+            url_ += "propertyId=" + encodeURIComponent("" + propertyId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetDeals(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetDeals(<any>response_);
+                } catch (e) {
+                    return <Observable<PropertyDealInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PropertyDealInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetDeals(response: HttpResponseBase): Observable<PropertyDealInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(PropertyDealInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PropertyDealInfo[]>(<any>null);
     }
 }
 
@@ -65907,62 +65907,6 @@ export interface IStageChecklistPointInfoOutput {
     completedByUserId: number | undefined;
 }
 
-export class LeadDealInfo implements ILeadDealInfo {
-    leadId!: number | undefined;
-    leadDate!: moment.Moment | undefined;
-    leadTypeSysId!: string | undefined;
-    leadTypeName!: string | undefined;
-    dealAmount!: number | undefined;
-    installmentAmount!: number | undefined;
-
-    constructor(data?: ILeadDealInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.leadId = data["leadId"];
-            this.leadDate = data["leadDate"] ? moment(data["leadDate"].toString()) : <any>undefined;
-            this.leadTypeSysId = data["leadTypeSysId"];
-            this.leadTypeName = data["leadTypeName"];
-            this.dealAmount = data["dealAmount"];
-            this.installmentAmount = data["installmentAmount"];
-        }
-    }
-
-    static fromJS(data: any): LeadDealInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new LeadDealInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["leadId"] = this.leadId;
-        data["leadDate"] = this.leadDate ? this.leadDate.toISOString() : <any>undefined;
-        data["leadTypeSysId"] = this.leadTypeSysId;
-        data["leadTypeName"] = this.leadTypeName;
-        data["dealAmount"] = this.dealAmount;
-        data["installmentAmount"] = this.installmentAmount;
-        return data; 
-    }
-}
-
-export interface ILeadDealInfo {
-    leadId: number | undefined;
-    leadDate: moment.Moment | undefined;
-    leadTypeSysId: string | undefined;
-    leadTypeName: string | undefined;
-    dealAmount: number | undefined;
-    installmentAmount: number | undefined;
-}
-
 export class UpdateLeadDealInfoInput implements IUpdateLeadDealInfoInput {
     leadId!: number;
     dealAmount!: number | undefined;
@@ -74823,6 +74767,66 @@ export interface IPropertyDto {
     walkthroughDate: moment.Moment | undefined;
     exitStrategy: ExitStrategy | undefined;
     exitStrategyNotes: string | undefined;
+}
+
+export class PropertyDealInfo implements IPropertyDealInfo {
+    leadId!: number | undefined;
+    leadDate!: moment.Moment | undefined;
+    leadTypeSysId!: string | undefined;
+    leadTypeName!: string | undefined;
+    leadStageName!: string | undefined;
+    dealAmount!: number | undefined;
+    installmentAmount!: number | undefined;
+
+    constructor(data?: IPropertyDealInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadId = data["leadId"];
+            this.leadDate = data["leadDate"] ? moment(data["leadDate"].toString()) : <any>undefined;
+            this.leadTypeSysId = data["leadTypeSysId"];
+            this.leadTypeName = data["leadTypeName"];
+            this.leadStageName = data["leadStageName"];
+            this.dealAmount = data["dealAmount"];
+            this.installmentAmount = data["installmentAmount"];
+        }
+    }
+
+    static fromJS(data: any): PropertyDealInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new PropertyDealInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadId"] = this.leadId;
+        data["leadDate"] = this.leadDate ? this.leadDate.toISOString() : <any>undefined;
+        data["leadTypeSysId"] = this.leadTypeSysId;
+        data["leadTypeName"] = this.leadTypeName;
+        data["leadStageName"] = this.leadStageName;
+        data["dealAmount"] = this.dealAmount;
+        data["installmentAmount"] = this.installmentAmount;
+        return data; 
+    }
+}
+
+export interface IPropertyDealInfo {
+    leadId: number | undefined;
+    leadDate: moment.Moment | undefined;
+    leadTypeSysId: string | undefined;
+    leadTypeName: string | undefined;
+    leadStageName: string | undefined;
+    dealAmount: number | undefined;
+    installmentAmount: number | undefined;
 }
 
 export class OptionDto implements IOptionDto {

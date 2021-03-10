@@ -146,7 +146,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     @ViewChildren('linksComponent') linkComponents: QueryList<DxTextBoxComponent>;
 
     showPropertyFields: boolean = this.data.entityTypeSysId === EntityTypeSys.Acquisition;
-    showPropertiesDropdown: boolean = this.data.entityTypeSysId === EntityTypeSys.Management;
+    showPropertiesDropdown: boolean = this.data.entityTypeSysId && this.data.entityTypeSysId.startsWith(EntityTypeSys.Management);
 
     @HostBinding('class.hidePhotoArea') hidePhotoArea: boolean = this.data.hidePhotoArea || this.showPropertyFields;
     @HostBinding('class.hideToolbar') hideToolbar: boolean = this.data.hideToolbar;
