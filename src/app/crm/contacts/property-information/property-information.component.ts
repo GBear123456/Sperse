@@ -27,7 +27,9 @@ import {
     InterestRate,
     ExitStrategy,
     PropertyResident,
+    PetFeeType,
     InvoiceSettings,
+    PestsType
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
@@ -113,6 +115,14 @@ export class PropertyInformationComponent implements OnInit {
         value: item
     }));
     propertyResidents: SelectBoxItem[] = Object.values(PropertyResident).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    petFeeTypes: SelectBoxItem[] = Object.values(PetFeeType).map((item: string) => ({
+        displayValue: this.ls.l(item),
+        value: item
+    }));
+    pestsTypes: SelectBoxItem[] = Object.values(PestsType).map((item: string) => ({
         displayValue: this.ls.l(item),
         value: item
     }));

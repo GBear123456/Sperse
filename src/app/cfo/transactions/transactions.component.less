@@ -58,7 +58,7 @@
 
     & > .bec-filter,
     & > .category-filter,
-    & > .header-dropdown-filter {
+    & > .header-dropdown-filter {        
         display: none;
     }
 
@@ -77,6 +77,7 @@
     .bec-filter,
     .category-filter,
     .header-dropdown-filter {
+        min-height: 45px;
         ::ng-deep .dx-dropdownbox {
             .dx-placeholder {
                 font-size: 11px !important;
@@ -196,6 +197,7 @@
             align-self: flex-end;
             ghost-list {
                 position: absolute;
+                mask-image: none;
                 background: #fff;
                 z-index: 999;
             }

@@ -76,6 +76,10 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
         {
             code: 'ES',
             text: this.ls.l('Spanish')
+        },
+        {
+            code: 'DE',
+            text: this.ls.l('German')
         }
     ];
     showTooltip = false;
