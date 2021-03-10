@@ -55,7 +55,14 @@
             width: 100px;
             padding-left: 0;
             cursor: pointer;
-            margin-right: 10px;
+            margin-right: 20px;
+            white-space: nowrap;
+            &.wide {
+                width: 135px;
+            }
+            &.wide.gracePeriodDayCount {
+                width: 175px;
+            }
         }
 
         &.system-type {
@@ -74,12 +81,12 @@
         height: calc(100vh - 180px);
     }
 
-    .levels-header {
+    .services-header {
         margin: 17px 0;
         font: 600 17px Montserrat;
     }
 
-    .levels {
+    .services {
         padding: 10px 25px 15px 20px;
         border: 1px solid #ddd;
         border-radius: 5px;

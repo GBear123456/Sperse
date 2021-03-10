@@ -472,8 +472,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         fields: [
             {
                 area: 'row',
-                dataField: 'ServiceType',
-                name: 'serviceType',
+                dataField: 'ProductName',
+                name: 'productName',
                 expanded: true,
                 sortBy: 'displayText'
             },

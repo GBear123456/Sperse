@@ -2279,7 +2279,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     private getDefaultBillingPeriod(currentSubscriptionInfo: ModuleSubscriptionInfoExtended) {
-        return currentSubscriptionInfo && currentSubscriptionInfo.frequency === PaymentPeriodType._30
+        return currentSubscriptionInfo && currentSubscriptionInfo.frequency === PaymentPeriodType.Monthly
             && !this.tenantSubscriptionIsFree && !this.tenantSubscriptionIsTrial
             ? BillingPeriod.Monthly
             : BillingPeriod.Yearly;
@@ -2361,8 +2361,8 @@ export class PackageChooserComponent implements OnInit {
 
     private getSubscriptionFrequency(): PaymentPeriodType {
         return this.selectedBillingPeriod === BillingPeriod.Monthly
-            ? PaymentPeriodType._30
-            : PaymentPeriodType._365;
+            ? PaymentPeriodType.Monthly
+            : PaymentPeriodType.Annual;
     }
 
     goToNextStep() {

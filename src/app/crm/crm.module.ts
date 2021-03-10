@@ -101,6 +101,7 @@ import { RequestWithdrawalDialogComponent } from '@app/crm/commission-history/re
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 import { EditTypeItemDialogComponent } from '@app/crm/shared/types-dropdown/edit-type-item-dialog/edit-type-item-dialog.component';
+import { ProductsComponent } from './products/products.component';
 
 @NgModule({
     imports: [
@@ -170,6 +171,7 @@ import { EditTypeItemDialogComponent } from '@app/crm/shared/types-dropdown/edit
         ClientsComponent,
         DocumentsComponent,
         PartnersComponent,
+        ProductsComponent,
         LeadsComponent,
         OrdersComponent,
         ReportsComponent,

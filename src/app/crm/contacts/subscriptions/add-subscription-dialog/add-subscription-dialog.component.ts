@@ -22,7 +22,10 @@ import {
     SubscriptionInput,
     UpdateOrderSubscriptionInput,
     ServiceProductServiceProxy,
-    ServiceProductDto
+    ServiceProductDto,
+    ProductServiceProxy,
+    RecurringPaymentFrequency,
+    ProductDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -33,6 +36,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { AddProductDialogComponent } from './add-product-dialog/add-product-dialog.component';
 import { AddServiceProductDialogComponent } from './add-service-product-dialog/add-service-product-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -45,15 +49,19 @@ import { AppPermissions } from '@shared/AppPermissions';
         '../../../../shared/common/styles/form.less',
         './add-subscription-dialog.component.less'
     ],
-    providers: [ServiceProductServiceProxy]
+    providers: [ServiceProductServiceProxy, ProductServiceProxy]
 })
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
-    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
+    @ViewChild('productGroup', { static: false }) validationProductGroup: DxValidationGroupComponent;
+    @ViewChild('serviceGroup', { static: false }) validationServiceGroup: DxValidationGroupComponent;
     @ViewChild(OrderDropdownComponent, { static: true }) orderDropdownComponent: OrderDropdownComponent;
     today = new Date();
     private slider: any;
+    selectedTabIndex: number;
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
     readonly addNewItemId = -1;
+    products: ProductDto[];
+    paymentPeriodTypes: RecurringPaymentFrequency[] = [];
     serviceTypes: ServiceProductDto[] = null;
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         contactId: this.data.contactId,
@@ -69,16 +77,24 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                 amount: this.data.amount
             })
         ],
-        updateThirdParty: false
+        productId: undefined,
+        paymentPeriodType: undefined,
+        updateThirdParty: false,
+        hasRecurringBilling: false
     });
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
     );
 
+    get validationGroup() {
+        return this.selectedTabIndex ? this.validationServiceGroup : this.validationProductGroup;
+    }
+
     constructor(
         private elementRef: ElementRef,
         private orderSubscriptionProxy: OrderSubscriptionServiceProxy,
         private serviceProductProxy: ServiceProductServiceProxy,
+        private productProxy: ProductServiceProxy,
         private notify: NotifyService,
         private contactsService: ContactsService,
         private userManagementService: UserManagementService,
@@ -106,42 +122,55 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             right: '-100vw'
         });
         this.orderDropdownComponent.initOrderDataSource();
+
+        this.productProxy.getProducts().subscribe((products: ProductDto[]) => {
+            this.products = products;
+            this.checkAddManageOption(this.products);
+        });
         this.serviceProductProxy.getAll(false).subscribe(result => {
             this.serviceTypes = result;
-
-            if (this.permission.isGranted(AppPermissions.CRMOrdersManage)) {
-                let addNewItemElement = new ServiceProductDto();
-                addNewItemElement.id = this.addNewItemId;
-                addNewItemElement.code = '+ Add new item';
-                addNewItemElement.name = '+ Add new item';
-                this.serviceTypes.push(addNewItemElement);
-            }
+            this.checkAddManageOption(this.serviceTypes);
         });
     }
 
     ngAfterViewInit() {
         this.slider.classList.remove('hide');
         this.dialogRef.updateSize(undefined, '100vh');
-            this.dialogRef.updatePosition({
-                top: '75px',
-                right: '0px'
-            });
+        this.dialogRef.updatePosition({
+            top: '75px',
+            right: '0px'
+        });
+    }
+
+    checkAddManageOption(options) {
+        if (this.permission.isGranted(AppPermissions.CRMOrdersManage)) {
+            let addNewItemElement: any = {
+                id: this.addNewItemId
+            };
+            addNewItemElement.code = addNewItemElement.name = '+ ' + this.ls.l('Add new');
+            options.push(addNewItemElement);
+        }
     }
 
     saveSubscription() {
         if (this.validationGroup.instance.validate().isValid) {
             const subscriptionInput = new UpdateOrderSubscriptionInput(this.subscription);
             subscriptionInput.updateThirdParty = false;
-            subscriptionInput.subscriptions = subscriptionInput.subscriptions.map((subscription: SubscriptionInput) => {
-                let sub = new SubscriptionInput(subscription);
-                if (sub.startDate)
-                    sub.startDate = DateHelper.removeTimezoneOffset(new Date(sub.startDate), true, 'from');
-                if (sub.endDate)
-                    sub.endDate = DateHelper.removeTimezoneOffset(new Date(sub.endDate), true, 'to');
-                if (this.isBankCodeLayout && sub.code === BankCodeServiceType.BANKVault)
-                    subscriptionInput.updateThirdParty = true;
-                return sub;
-            });
+            if (this.selectedTabIndex) {
+                subscriptionInput.productId = undefined;
+                subscriptionInput.paymentPeriodType = undefined;
+                subscriptionInput.subscriptions = subscriptionInput.subscriptions.map((subscription: SubscriptionInput) => {
+                    let sub = new SubscriptionInput(subscription);
+                    if (sub.startDate)
+                        sub.startDate = DateHelper.removeTimezoneOffset(new Date(sub.startDate), true, 'from');
+                    if (sub.endDate)
+                        sub.endDate = DateHelper.removeTimezoneOffset(new Date(sub.endDate), true, 'to');
+                    if (this.isBankCodeLayout && sub.code === BankCodeServiceType.BANKVault)
+                        subscriptionInput.updateThirdParty = true;
+                    return sub;
+                });
+            } else
+                subscriptionInput.subscriptions = undefined;
             this.orderSubscriptionProxy.update(subscriptionInput).subscribe(() => {
                 this.notify.info(this.ls.l('SavedSuccessfully'));
                 this.contactsService.invalidate('subscriptions');
@@ -160,15 +189,27 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         );
     }
 
+    onProductChanged(event, sub: SubscriptionInput) {
+        if (!event.value)
+            return;
+
+        let selectedItem: ProductDto = event.component.option('selectedItem');
+        if (selectedItem.id == this.addNewItemId)
+            this.showAddProductDialog(event.component, event.previousValue);
+        else {
+            this.subscription.productId = selectedItem.id;
+            this.paymentPeriodTypes = selectedItem.paymentPeriodTypes;
+        }
+    }
+
     onServiceTypeChanged(event, sub: SubscriptionInput) {
         if (!event.value)
             return;
 
         let selectedItem: ServiceProductDto = event.component.option('selectedItem');
         if (selectedItem.id == this.addNewItemId) {
-            this.showAddServiceProductDialog(event.component, sub, event.previousValue);
-        }
-        else {
+            this.showAddServiceProductDialog(event.component, event.previousValue);
+        } else {
             this.setServiceProduct(selectedItem, sub);
         }
     }
@@ -178,12 +219,11 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         if (selectedItem) {
             sub.level = selectedItem.code;
             sub.amount = selectedItem.monthlyFee ? selectedItem.monthlyFee :
-                         sub['serviceProduct'].monthlyFee ? sub['serviceProduct'].monthlyFee : null;
+                sub['serviceProduct'].monthlyFee ? sub['serviceProduct'].monthlyFee : null;
 
             sub.startDate = selectedItem.activationTime ? (selectedItem.activationTime < this.today ? this.today : selectedItem.activationTime) : sub['serviceProduct'].activationTime;
             sub['maxStartDate'] = selectedItem.deactivationTime ? selectedItem.deactivationTime : sub['serviceProduct'].deactivationTime;
-        }
-        else {
+        } else {
             this.setServiceProduct(sub['serviceProduct'], sub);
         }
     }
@@ -204,7 +244,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         subscription.endDate = null;
     }
 
-    showAddServiceProductDialog(component, sub: SubscriptionInput, previousValue: string) {
+    showAddServiceProductDialog(component, previousValue: string) {
         let dialogRef = this.dialog.open(AddServiceProductDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
@@ -220,10 +260,26 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             if (res) {
                 this.serviceTypes.splice(this.serviceTypes.length - 1, 0, res);
                 component.option('value', res.code);
-            }
-            else {
+            } else {
                 component.option('value', previousValue);
             }
+        });
+    }
+
+    showAddProductDialog(component, previousValue: string) {
+        this.dialog.open(AddProductDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                title: this.ls.l('EditTemplate'),
+                templateType: 'Contact',
+                saveTitle: this.ls.l('Save')
+            }
+        }).afterClosed().subscribe((product: ProductDto) => {
+            if (product)
+                this.products.splice(this.products.length - 1, 0, product);
+            component.option('value', product ? product.id : previousValue);
         });
     }
 

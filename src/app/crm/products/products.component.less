@@ -1,0 +1,21 @@
+﻿:host {
+    position: relative;
+    height: 100%;
+
+    ::ng-deep .main-component-view {
+        .dx-command-edit + td::before {
+            display: none!important;
+        }
+
+        .dx-datagrid-rowsview {
+            .dx-column-lines {
+                cursor: pointer;
+                & > td {
+                    span {
+                        text-align: center;
+                    }
+                }
+            }
+        }
+    }
+}

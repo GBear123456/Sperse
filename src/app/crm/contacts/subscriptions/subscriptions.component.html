@@ -7,21 +7,20 @@
         {{ ls.l('AddSubscription') }}
     </span>
 </h2>
-
 <dx-data-grid #mainGrid
-              id="gridContainer"
-              keyExpr="id"
-              [pager]="pagerConfig"
-              [dataSource]="dataSource"
-              [allowColumnReordering]="true"
-              [columnAutoWidth]="true"
-              [allowColumnResizing]="true"
-              [masterDetail]="{ enabled: true, template: 'detail' }">
+    id="gridContainer"
+    keyExpr="id"
+    [pager]="pagerConfig"
+    [dataSource]="dataSource"
+    [allowColumnReordering]="true"
+    [columnAutoWidth]="true"
+    [allowColumnResizing]="true"
+    [masterDetail]="{ enabled: true, template: 'detail' }">
     <dxo-sorting mode="multiple"></dxo-sorting>
 
     <dxi-column dataField="id" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-    <dxi-column dataField="serviceType" [caption]="ls.l('Subscriptions.ServiceType')" cssClass="clipboard-holder"></dxi-column>
-    <dxi-column dataField="serviceName" [caption]="ls.l('Subscriptions.ServiceName')" cssClass="clipboard-holder"></dxi-column>
+    <dxi-column dataField="serviceType" [caption]="ls.l('ProductName')" cssClass="clipboard-holder"></dxi-column>
+    <dxi-column dataField="orderType" [caption]="ls.l('OrderType')" cssClass="clipboard-holder"></dxi-column>
     <dxi-column dataField="startDate" cellTemplate="dateTimeTemplate" [width]="appService.isHostTenant ? 180 : 215" cssClass="tabular"></dxi-column>
     <dxi-column dataField="endDate" cellTemplate="dateTimeTemplate" [width]="appService.isHostTenant ? 180 : 215" cssClass="tabular"></dxi-column>
     <dxi-column dataField="trialEndDate" cellTemplate="dateTemplate" cssClass="tabular"></dxi-column>
@@ -67,9 +66,16 @@
     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
         <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
     </div>
-    <div *dxTemplate="let payment of 'detail'">
-        <div class="master-detail-caption">{{'Payments info'}}</div>
-        <dx-data-grid [dataSource]="payment.data.orderSubscriptionPayments"
+    <div *dxTemplate="let detail of 'detail'">
+        <div class="master-detail-caption"><b>{{ls.l('Services info')}}</b></div>
+        <dx-data-grid [dataSource]="detail.data.services"
+                      [showBorders]="true"
+                      [columnAutoWidth]="true">
+
+            <dxi-column dataField="serviceName" [caption]="ls.l('Subscriptions.ServiceName')" cssClass="clipboard-holder"></dxi-column>
+        </dx-data-grid>
+        <div class="master-detail-caption"><b>{{ls.l('Payments info')}}</b></div>
+        <dx-data-grid [dataSource]="detail.data.payments"
                       [showBorders]="true"
                       [columnAutoWidth]="true">
 

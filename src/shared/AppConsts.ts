@@ -21,8 +21,8 @@ export class AppConsts {
     static recaptchaSiteKey: string;
     static googleSheetClientId: string;
     static subscriptionExpireNootifyDayCount: number;
-    static subscriptionRecurringBillingPeriod = 40; /* Days */
-    static subscriptionGracePeriod = 7; /* Days */
+    static subscriptionRecurringBillingPeriod = 20; /* Days */
+    static subscriptionGracePeriod = 20; /* Days */
 
     static localeMappings: any = [];
 

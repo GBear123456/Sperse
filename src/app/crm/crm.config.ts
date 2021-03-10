@@ -37,6 +37,11 @@ export class CrmConfig implements ConfigInterface {
             route: '/app/crm/orders'
         },
         {
+            text: 'Products',
+            permission: AppPermissions.CRM,
+            route: '/app/crm/products'
+        },
+        {
             text: 'Tasks',
             permission: AppPermissions.CRM,
             route: '/app/crm/activity'
@@ -46,9 +51,6 @@ export class CrmConfig implements ConfigInterface {
             permission: AppPermissions.CRMCustomers + '&' + AppPermissions.CRMOrders,
             layout: LayoutType.BankCode,
             route: '/app/crm/reports'
-        },
-        {
-            text: 'Products',
         }
     ];
 }

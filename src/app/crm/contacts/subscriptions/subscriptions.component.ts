@@ -102,9 +102,9 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
     setDataSource(data: OrderSubscriptionDto[]) {
         _.mapObject(
-            _.groupBy(data, (item: OrderSubscriptionDto) => item.serviceTypeId),
-            (values: OrderSubscriptionDto[]) => {
-                let chain = _.chain(values).sortBy('id').reverse().value();
+            _.groupBy(data, (item: OrderSubscriptionDto) => item.serviceType),
+            (subscriptions: OrderSubscriptionDto[]) => {
+                let chain = _.chain(subscriptions).sortBy('id').reverse().value();
                 if (!chain.some(item => {
                     if (item.status == 'Current')
                         return item['isLastSubscription'] = true;
@@ -209,10 +209,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             data = {
                 ...data,
                 endDate: subscription.endDate,
-                systemType: subscription.systemType,
-                code: subscription.serviceTypeId,
-                name: subscription.serviceType,
-                level: subscription.serviceId
+                name: subscription.serviceType
             };
         }
         this.dialog.open(AddSubscriptionDialogComponent, {
@@ -258,7 +255,10 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                 endDate: cell.column.dataField == 'endDate' ?
                     DateHelper.removeTimezoneOffset(new Date(event.value), true, 'to') : cell.data.endDate
             })],
-            updateThirdParty: this.isBankCodeLayout && cell.data.serviceTypeId === BankCodeServiceType.BANKVault
+            productId: undefined,
+            paymentPeriodType: undefined,
+            updateThirdParty: this.isBankCodeLayout && cell.data.serviceTypeId === BankCodeServiceType.BANKVault,
+            hasRecurringBilling: false
         })).pipe(
             finalize(() => this.loadingService.finishLoading())
         ).subscribe(() => {
