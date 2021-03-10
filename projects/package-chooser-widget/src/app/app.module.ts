@@ -7,7 +7,6 @@ import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser'
 import { GestureConfig } from '@angular/material';
 import { MatSlider, MatSliderModule } from '@angular/material/slider';
 import { MatSlideToggle, MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { CountryService } from 'ngx-international-phone-number/src/country.service';
 
 /** Application imports */
 import { PackageChooserComponent } from '@app/shared/common/payment-wizard/package-chooser/package-chooser.component';
@@ -28,7 +27,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { WidgetsService } from '../../../widgets.service';
 import { CustomNumberPipe } from '@shared/common/pipes/custom-number/custom-number.pipe';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { createCustomElement } from '@angular/elements';
 
@@ -60,8 +58,6 @@ export function initialize(widgetsService: WidgetsService, injector: Injector) {
     providers: [
         AppLocalizationService,
         AppHttpConfiguration,
-        CountryService,
-        AppSessionService,
         TenantHostServiceProxy,
         AbpMultiTenancyService,
         LocalizationResolver,
