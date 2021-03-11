@@ -347,6 +347,46 @@
                                     </div>
                                 </div>
                                 <div class="block">
+                                    <h3 class="property-deal-title">{{ ls.l('DealAmount') }}</h3>
+                                    <div class="fields">
+                                        <div class="dx-field property-deal">
+                                            <div class="dx-field-label"></div>
+                                            <div class="dx-field-value">
+                                                <div>{{ ls.l('PurchasePrice') }}</div>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                <div>{{ ls.l('MonthlyRent') }}</div>
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                    <div class="fields">
+                                        <div class="dx-field property-deal" *ngFor="let propertyDeal of propertyDeals;">
+                                            <div class="dx-field-label">{{propertyDeal.leadTypeName}}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyDeal.dealAmount"
+                                                                [stylingMode]="stylingMode"
+                                                                showClearButton="true"
+                                                                step="0"
+                                                                [format]="currencyFormat"
+                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                                (onValueChanged)="dealInfoChanged(propertyDeal.leadId, $event.value, propertyDeal.installmentAmount)">
+                                                </dx-number-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box *ngIf="propertyDeal.leadTypeSysId == managementLeadTypeSysId"
+                                                                [(value)]="propertyDeal.installmentAmount"
+                                                                [stylingMode]="stylingMode"
+                                                                showClearButton="true"
+                                                                step="0"
+                                                                [format]="currencyFormat"
+                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                                (onValueChanged)="dealInfoChanged(propertyDeal.leadId, propertyDeal.dealAmount, $event.value)">
+                                                </dx-number-box>
+                                            </div>                                            
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="block">
                                     <h3>{{ ls.l('Unit') }}</h3>
                                     <div class="fields">
                                         <div class="dx-field">
