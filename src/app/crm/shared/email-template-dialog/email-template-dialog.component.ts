@@ -249,9 +249,9 @@ export class EmailTemplateDialogComponent implements OnInit {
         this._refresh.next(null);
     }
 
-    emailInputFocusIn(event) {
-        if (!event.component.option('dataSource'))
-            event.component.option('opened', false);
+    onTagBoxInitialized(event) {
+        if (!event.component.option('dataSource') || !event.component.option('dataSource').length)
+            event.component.option("openOnFieldClick", false);
     }
 
     emailInputFocusOut(event, checkDisplay?) {
@@ -338,8 +338,8 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onCustomItemCreating(event, callback?) {
         let field = event.component.option('name'),
-            values = event.text.split(/[\s,|\s;]+/).map(item =>
-                AppConsts.regexPatterns.email.test(item) ? item : ''),
+            values = event.text.split(/[,|;]+/).map(item =>
+                AppConsts.regexPatterns.emailWithName.test(item) ? item : ''),
             validValues = values.filter(Boolean),
             currentList = this.data[field];
 

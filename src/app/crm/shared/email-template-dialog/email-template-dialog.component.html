@@ -55,7 +55,7 @@
                         [acceptCustomValue]="true"
                         [(value)]="data.replyTo"
                         (onKeyUp)="onKeyUp($event)"
-                        (onOpened)="emailInputFocusIn($event)"
+                        (onInitialized)="onTagBoxInitialized($event)"
                         (onFocusOut)="emailInputFocusOut($event)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
@@ -72,7 +72,7 @@
                         [acceptCustomValue]="true"
                         [(value)]="data.to"
                         [disabled]="templateEditMode"
-                        (onOpened)="emailInputFocusIn($event)"
+                        (onInitialized)="onTagBoxInitialized($event)"
                         (onFocusOut)="emailInputFocusOut($event)"
                         (onKeyUp)="onKeyUp($event)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
@@ -94,7 +94,7 @@
                         [acceptCustomValue]="true"
                         [(value)]="data.cc"
                         (onKeyUp)="onKeyUp($event)"
-                        (onOpened)="emailInputFocusIn($event)"
+                        (onInitialized)="onTagBoxInitialized($event)"
                         (onFocusOut)="emailInputFocusOut($event, true)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
@@ -111,7 +111,7 @@
                         [acceptCustomValue]="true"
                         [(value)]="data.bcc"
                         (onKeyUp)="onKeyUp($event)"
-                        (onOpened)="emailInputFocusIn($event)"
+                        (onInitialized)="onTagBoxInitialized($event)"
                         (onFocusOut)="emailInputFocusOut($event, true)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
