@@ -27662,6 +27662,110 @@ export class ProfileServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getEmailSettings(): Observable<ProfileEmailSettingsOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/GetEmailSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetEmailSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetEmailSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<ProfileEmailSettingsOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ProfileEmailSettingsOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetEmailSettings(response: HttpResponseBase): Observable<ProfileEmailSettingsOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ProfileEmailSettingsOutput.fromJS(resultData200) : new ProfileEmailSettingsOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ProfileEmailSettingsOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateEmailSettings(body: UpdateProfileEmailSettingsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/Profile/UpdateEmailSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateEmailSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateEmailSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateEmailSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -73208,6 +73312,78 @@ export class UpdateMonthlyGoalInput implements IUpdateMonthlyGoalInput {
 
 export interface IUpdateMonthlyGoalInput {
     monthlyGoal: number | undefined;
+}
+
+export class ProfileEmailSettingsOutput implements IProfileEmailSettingsOutput {
+    emailSignatureHtml!: string | undefined;
+
+    constructor(data?: IProfileEmailSettingsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.emailSignatureHtml = data["emailSignatureHtml"];
+        }
+    }
+
+    static fromJS(data: any): ProfileEmailSettingsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfileEmailSettingsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailSignatureHtml"] = this.emailSignatureHtml;
+        return data; 
+    }
+}
+
+export interface IProfileEmailSettingsOutput {
+    emailSignatureHtml: string | undefined;
+}
+
+export class UpdateProfileEmailSettingsInput implements IUpdateProfileEmailSettingsInput {
+    emailSignatureHtml!: string | undefined;
+
+    constructor(data?: IUpdateProfileEmailSettingsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.emailSignatureHtml = data["emailSignatureHtml"];
+        }
+    }
+
+    static fromJS(data: any): UpdateProfileEmailSettingsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateProfileEmailSettingsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailSignatureHtml"] = this.emailSignatureHtml;
+        return data; 
+    }
+}
+
+export interface IUpdateProfileEmailSettingsInput {
+    emailSignatureHtml: string | undefined;
 }
 
 export enum PropertyType {
