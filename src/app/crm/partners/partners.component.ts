@@ -110,6 +110,7 @@ import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -219,6 +220,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     action: () => {
                         const partner: PartnerDto = this.actionEvent.data || this.actionEvent;
                         this.impersonationService.impersonate(partner.UserId, this.appSession.tenantId);
+                    }
+                },
+                {
+                    text: this.l('LoginToPortal'),
+                    class: 'login',
+                    checkVisible: (partner: PartnerDto) => partner.UserId && AppConsts.appMemberPortalUrl && !this.authService.checkCurrentTopDomainByUri(),
+                    action: () => {
+                        const partner: PartnerDto = this.actionEvent.data || this.actionEvent;
+                        this.impersonationService.impersonate(partner.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl);
                     }
                 },
                 {
@@ -556,6 +566,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
+        private authService: AppAuthService,
         private contactService: ContactsService,
         private partnerService: PartnerServiceProxy,
         private pipelineService: PipelineService,
