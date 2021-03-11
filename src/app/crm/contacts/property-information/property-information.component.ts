@@ -46,7 +46,7 @@ import { GarbageEnum } from './enums/garbage.enum';
 import { ParkingEnum } from './enums/parking.enum';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { AppliencesEnum } from './enums/appliences.enum';
+import { AppliancesEnum } from './enums/appliances.enum';
 import { UtilityTypesEnum } from './enums/utilityTypes.enum';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 
@@ -148,9 +148,9 @@ export class PropertyInformationComponent implements OnInit {
         displayValue: this.ls.l(item),
         value: DayOfWeekEnum[item]
     }));
-    appliences: SelectBoxItem[] = Object.values(AppliencesEnum).filter(isNaN).map((item: string) => ({
+    appliances: SelectBoxItem[] = Object.values(AppliancesEnum).filter(isNaN).map((item: string) => ({
         displayValue: this.ls.l(item),
-        value: AppliencesEnum[item]
+        value: AppliancesEnum[item]
     }));
     utilityTypes: SelectBoxItem[] = Object.values(UtilityTypesEnum).filter(isNaN).map((item: string) => ({
         displayValue: this.ls.l(item),

@@ -50,7 +50,7 @@ import { AddressUpdate } from '@app/crm/contacts/addresses/address-update.interf
         './addresses.component.less',
         './addresses.styles.less'
     ],
-    providers: [ DialogService ]
+    providers: [DialogService]
 })
 export class AddressesComponent implements OnInit, OnDestroy {
     @Input() isCompany = false;
@@ -65,6 +65,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
     @Input() contactId: number;
     @Input() addresses: AddressDto[];
     @Input() isPlaceEditAllowed = true;
+    @Input() enableDoubleClick = false;
     @Input() isAddAllowed = true;
     @Input() isDeleteAllowed = true;
     @Input() isCopyAllowed = true;
@@ -162,6 +163,12 @@ export class AddressesComponent implements OnInit, OnDestroy {
     }
 
     showDialog(address: AddressDto, event, index?) {
+        if (event.type == 'dblclick') {
+            if (!this.enableDoubleClick)
+                return;
+            window.getSelection().removeAllRanges();
+        }
+
         if (!this.isCompany || this.contactId)
             this.showAddressDialog(address, event, index);
         else
@@ -244,7 +251,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
 
     inPlaceEdit(address: AddressDto, event, index) {
         if (!this.isPlaceEditAllowed || address.inplaceEdit)
-            return ;
+            return;
 
         this.clickCounter++;
         clearTimeout(this.clickTimeout);
