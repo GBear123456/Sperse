@@ -430,7 +430,7 @@
                                             </div>
                                         </div>
                                         <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('Appliences') }}</div>
+                                            <div class="dx-field-label">{{ ls.l('Appliances') }}</div>
                                             <div class="dx-field-value">
                                                 <dx-tag-box
                                                     showClearButton="true"
@@ -438,16 +438,16 @@
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
-                                                    [items]="appliences"
-                                                    [value]="getMultipleValues('appliences', appliences)"
-                                                    (onValueChanged)="tagValueChanged('appliences', $event)"
+                                                    [items]="appliances"
+                                                    [value]="getMultipleValues('appliances', appliances)"
+                                                    (onValueChanged)="tagValueChanged('appliances', $event)"
                                                 ></dx-tag-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('OtherAppliences') }}</div>
+                                            <div class="dx-field-label">{{ ls.l('OtherAppliances') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-text-box [(value)]="property.otherAppliences"
+                                                <dx-text-box [(value)]="property.otherAppliances"
                                                              [maxLength]="256"
                                                              showClearButton="true"
                                                              [stylingMode]="stylingMode"

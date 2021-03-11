@@ -74055,7 +74055,7 @@ export enum PropertyType {
     Townhouse = "Townhouse", 
 }
 
-export enum Appliences {
+export enum Appliances {
     _1 = 1, 
     _2 = 2, 
     _4 = 4, 
@@ -74177,8 +74177,8 @@ export class PropertyDto implements IPropertyDto {
     bathCount!: number | undefined;
     den!: boolean | undefined;
     office!: boolean | undefined;
-    appliences!: Appliences | undefined;
-    otherAppliences!: string | undefined;
+    appliances!: Appliances | undefined;
+    otherAppliances!: string | undefined;
     laundryInSuite!: boolean | undefined;
     isCentralHeating!: boolean | undefined;
     heatingType!: HeatingCoolingType | undefined;
@@ -74333,8 +74333,8 @@ export class PropertyDto implements IPropertyDto {
             this.bathCount = data["bathCount"];
             this.den = data["den"];
             this.office = data["office"];
-            this.appliences = data["appliences"];
-            this.otherAppliences = data["otherAppliences"];
+            this.appliances = data["appliances"];
+            this.otherAppliances = data["otherAppliances"];
             this.laundryInSuite = data["laundryInSuite"];
             this.isCentralHeating = data["isCentralHeating"];
             this.heatingType = data["heatingType"];
@@ -74489,8 +74489,8 @@ export class PropertyDto implements IPropertyDto {
         data["bathCount"] = this.bathCount;
         data["den"] = this.den;
         data["office"] = this.office;
-        data["appliences"] = this.appliences;
-        data["otherAppliences"] = this.otherAppliences;
+        data["appliances"] = this.appliances;
+        data["otherAppliances"] = this.otherAppliances;
         data["laundryInSuite"] = this.laundryInSuite;
         data["isCentralHeating"] = this.isCentralHeating;
         data["heatingType"] = this.heatingType;
@@ -74638,8 +74638,8 @@ export interface IPropertyDto {
     bathCount: number | undefined;
     den: boolean | undefined;
     office: boolean | undefined;
-    appliences: Appliences | undefined;
-    otherAppliences: string | undefined;
+    appliances: Appliances | undefined;
+    otherAppliances: string | undefined;
     laundryInSuite: boolean | undefined;
     isCentralHeating: boolean | undefined;
     heatingType: HeatingCoolingType | undefined;
