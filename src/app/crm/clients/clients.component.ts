@@ -123,6 +123,7 @@ import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -344,6 +345,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     class: 'login',
                     checkVisible: (client: ContactDto) => !!client.UserId && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation),
                     action: () => this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId)
+                },
+                {
+                    text: this.l('LoginToPortal'),
+                    class: 'login',
+                    checkVisible: (client: ContactDto) => client.UserId && AppConsts.appMemberPortalUrl && !this.authService.checkCurrentTopDomainByUri(),
+                    action: () => this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl)
                 },
                 {
                     text: this.l('NotesAndCallLog'),
@@ -591,6 +598,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     constructor(
         injector: Injector,
+        private authService: AppAuthService,
         private store$: Store<AppStore.State>,
         private reuseService: RouteReuseStrategy,
         private contactService: ContactsService,
