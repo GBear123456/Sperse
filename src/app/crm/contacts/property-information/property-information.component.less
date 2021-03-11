@@ -40,6 +40,10 @@
             margin-bottom: 10px;
             font-weight: 700 !important;
             text-transform: uppercase;
+
+            &.property-deal-title {
+                margin-bottom: 0px;
+            }
         }
     }
 
@@ -62,7 +66,13 @@
                 }
 
                 .addresses {
+                    .address-wrapper {
+                        top: -38px;
+                    }
+
                     .address {
+                        top: 38px;
+                        position: relative;
                         padding-left: 0;
                         width: 100%;
 
@@ -112,11 +122,13 @@
                 display: flex;
                 align-items: center;
 
-                &.combo-dropdown .dx-field-value {
-                    width: 29%;
+                &.combo-dropdown, &.property-deal {
+                    .dx-field-value {
+                        width: 29%;
 
-                    &:last-child {
-                        margin-left: 2%;
+                        &:last-child {
+                            margin-left: 2%;
+                        }
                     }
                 }
             }
