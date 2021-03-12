@@ -349,7 +349,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('LoginToPortal'),
                     class: 'login',
-                    checkVisible: (client: ContactDto) => client.UserId && AppConsts.appMemberPortalUrl && !this.authService.checkCurrentTopDomainByUri(),
+                    checkVisible: (client: ContactDto) => !!client.UserId && AppConsts.appMemberPortalUrl                         
+                        && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation)
+                        && !this.authService.checkCurrentTopDomainByUri(),
                     action: () => this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl)
                 },
                 {
