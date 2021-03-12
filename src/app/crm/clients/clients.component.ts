@@ -431,7 +431,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.filters,
                 loadOptions,
                 /** @todo change to strict typing and handle typescript error */
-                this.subscriptionStatusFilter.items.element['getObjectValue']()
+                {
+                    contactGroupId: ContactGroup.Client,
+                    ...this.subscriptionStatusFilter.items.element['getObjectValue']()
+                }
             );
         },
         onChanged: () => {
@@ -638,7 +641,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     this.dataSourceURI,
                     [
                         this.filterModelStatus.filterMethod(this.filterModelStatus),
-                        FiltersService.filterByClientGroupId(),
                         FiltersService.filterByParentId()
                     ]
                 ),
@@ -658,6 +660,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         ]
                     );
 */
+                    request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -675,12 +678,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             store: new ODataStore({
                 url: this.getODataUrl(this.totalDataSourceURI, [
                     this.filterModelStatus.filterMethod(this.filterModelStatus),
-                    FiltersService.filterByClientGroupId(),
                     FiltersService.filterByParentId()
                 ]),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     this.totalCount = undefined;
+                    request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -1064,10 +1067,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.filterModelTags,
             this.filterModelRating,
             this.filterModelStar,
-            new FilterModel({
-                caption: 'clientGroupId',
-                hidden: true
-            }),
             new FilterModel({
                 caption: 'parentId',
                 hidden: true
