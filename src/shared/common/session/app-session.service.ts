@@ -153,7 +153,6 @@ export class AppSessionService {
             countryCode = this.getDefaultCountryCode();
 
         AppConsts.defaultCountryCode = countryCode;
-        AppConsts.defaultCountryName = this.getCountryNameByCode(countryCode);
         AppConsts.defaultCountryPhoneCode = this.countryPhoneService.getPhoneCodeByCountryCode(countryCode);
     }
 

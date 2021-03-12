@@ -102,14 +102,11 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
             });
     }
 
-    onCountryChanged(event) {            
-        this.paymentSettings.currency = <any>this.supportedCurrencies[
-            Number(event.selectedItem.key == Country.Canada)
-        ].key;
-    }
-
-    onTimeZoneChange(event) {
-        console.log('onTimeZoneChange', event, this.initialTimezone);
+    onCountryChanged(event) {
+        if (event.selectedItem.key == Country.Canada)
+            this.paymentSettings.currency = Currency.CAD;
+        else if (event.selectedItem.key == Country.USA)
+            this.paymentSettings.currency = Currency.USD;
     }
 
     save(): Observable<any> {

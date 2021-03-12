@@ -413,6 +413,6 @@ export class AddressesComponent implements OnInit, OnDestroy {
                     })
                 );
         else
-            return of(AppConsts.defaultCountryName);
+            return of(this.sessionService.getCountryNameByCode(AppConsts.defaultCountryCode));
     }
 }

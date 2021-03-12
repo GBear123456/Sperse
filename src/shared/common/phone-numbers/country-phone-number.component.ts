@@ -7,7 +7,6 @@ import { PhoneNumberComponent } from '../../../node_modules/ngx-international-ph
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     selector: 'country-phone-number',
@@ -30,10 +29,9 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     focused = false;
 
     constructor(
-        private appSession: AppSessionService,
         public ls: AppLocalizationService
     ) {
-        this.defaultCountry = appSession.getDefaultCountryCode().toLowerCase();
+        this.defaultCountry = AppConsts.defaultCountryCode.toLowerCase();
     }
 
     ngOnInit() {
