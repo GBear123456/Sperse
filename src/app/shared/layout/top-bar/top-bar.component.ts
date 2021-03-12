@@ -21,6 +21,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { ConfigInterface } from '@app/shared/common/config.interface';
 import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
+import { ImpersonationService } from '@app/admin/users/impersonation.service';
 
 @Component({
     templateUrl: './top-bar.component.html',
@@ -49,6 +50,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
         private authService: AppAuthService,
         private appSessionService: AppSessionService,
         private appService: AppService,
+        private impersonationService: ImpersonationService,
         private permissionChecker: AppPermissionService,
         private lifecycleService: LifecycleSubjectsService,
         private router: Router,
@@ -151,7 +153,13 @@ export class TopBarComponent implements OnInit, OnDestroy {
         if (route && location.pathname !== event.itemData.route) {
             if (route.startsWith('/')) {
                 if (event.itemData.route == '/code-breaker' && AppConsts.appMemberPortalUrl) {
-                    this.authService.setTokenBeforeRedirect();
+                    if (this.authService.checkCurrentTopDomainByUri())
+                        this.authService.setTokenBeforeRedirect();
+                    else {
+                        return this.impersonationService.impersonate(
+                            abp.session.userId, abp.session.tenantId, AppConsts.appMemberPortalUrl
+                        );
+                    }
                     location.href = AppConsts.appMemberPortalUrl;
                 } else
                     this.router.navigate([event.itemData.route]);

@@ -22,6 +22,7 @@ import { ConfigInterface } from '@app/shared/common/config.interface';
 import { Module } from '@shared/common/module.interface';
 import { AppSessionService } from '@root/shared/common/session/app-session.service';
 import { LayoutType } from '@root/shared/service-proxies/service-proxies';
+import { ImpersonationService } from '@app/admin/users/impersonation.service';
 
 interface ModuleConfig extends Module {
     code: string;
@@ -50,6 +51,7 @@ export class PlatformSelectComponent {
     constructor(
         private appService: AppService,
         private authService: AppAuthService,
+        private impersonationService: ImpersonationService,
         private userManagementService: UserManagementService,
         private feature: FeatureCheckerService,
         private permission: PermissionCheckerService,
@@ -133,7 +135,15 @@ export class PlatformSelectComponent {
             } else if (module.name === 'CFO' && module.footerItem && this.permission.isGranted(AppPermissions.CFOMemberAccess)) {
                 return window.open(location.origin + '/app/cfo-portal', '_blank');
             } else if (module.name === 'BankCode' && this.userManagementService.checkBankCodeFeature()) {
-                AppConsts.appMemberPortalUrl && this.authService.setTokenBeforeRedirect();
+                if (AppConsts.appMemberPortalUrl) {
+                    if (this.authService.checkCurrentTopDomainByUri())
+                        this.authService.setTokenBeforeRedirect();
+                    else {
+                        return this.impersonationService.impersonate(
+                            abp.session.userId, abp.session.tenantId, AppConsts.appMemberPortalUrl
+                        );
+                    }
+                }
                 return window.open(AppConsts.appMemberPortalUrl || (location.origin + '/code-breaker/home'), '_blank');
             } else {
                 navigate = this.router.navigate(['app/' + module.name.toLowerCase() + (module.uri ? '/' + module.uri.toLowerCase() : '')]);
@@ -152,7 +162,15 @@ export class PlatformSelectComponent {
         }
 
         if (module.name === 'MemberPortal') {
-            AppConsts.appMemberPortalUrl && this.authService.setTokenBeforeRedirect();
+            if (AppConsts.appMemberPortalUrl) {
+                if (this.authService.checkCurrentTopDomainByUri())
+                    this.authService.setTokenBeforeRedirect();
+                else {
+                    return this.impersonationService.impersonate(
+                        abp.session.userId, abp.session.tenantId, AppConsts.appMemberPortalUrl
+                    );
+                }
+            }
             return window.open(AppConsts.appMemberPortalUrl, '_blank');
         }
     }
