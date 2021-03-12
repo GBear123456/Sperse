@@ -231,7 +231,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 {
                     text: this.l('LoginToPortal'),
                     class: 'login',
-                    checkVisible: (lead: LeadDto) => lead.UserId && AppConsts.appMemberPortalUrl && !this.authService.checkCurrentTopDomainByUri(),
+                    checkVisible: (lead: LeadDto) => !!lead.UserId && AppConsts.appMemberPortalUrl 
+                        && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation)
+                        && !this.authService.checkCurrentTopDomainByUri(),
                     action: (data?) => {
                         const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
                         this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl);

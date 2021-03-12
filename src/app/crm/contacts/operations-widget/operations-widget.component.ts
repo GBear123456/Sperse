@@ -272,8 +272,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                 },
                                 {
                                     text: this.l('LoginToPortal'),
-                                    visible: AppConsts.appMemberPortalUrl && 
-                                        !this.authService.checkCurrentTopDomainByUri(),
+                                    visible: this.canImpersonate && AppConsts.appMemberPortalUrl
+                                        && !this.authService.checkCurrentTopDomainByUri(),
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,

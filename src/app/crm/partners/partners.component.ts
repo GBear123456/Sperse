@@ -225,7 +225,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 {
                     text: this.l('LoginToPortal'),
                     class: 'login',
-                    checkVisible: (partner: PartnerDto) => partner.UserId && AppConsts.appMemberPortalUrl && !this.authService.checkCurrentTopDomainByUri(),
+                    checkVisible: (partner: PartnerDto) => !!partner.UserId && AppConsts.appMemberPortalUrl 
+                        && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation)
+                        && !this.authService.checkCurrentTopDomainByUri(),
                     action: () => {
                         const partner: PartnerDto = this.actionEvent.data || this.actionEvent;
                         this.impersonationService.impersonate(partner.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl);
