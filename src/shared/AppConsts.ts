@@ -114,7 +114,6 @@ export class AppConsts {
     };
 
     static readonly defaultCompanyName = 'Unknown company';
-    static defaultCountryName = 'United States of America';
     static defaultCountryPhoneCode = '+1';
     static defaultCountryCode = 'US';
 
