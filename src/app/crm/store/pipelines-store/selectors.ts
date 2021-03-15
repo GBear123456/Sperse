@@ -109,7 +109,7 @@ export const getPropertiesPipeline = () => createSelector(
     getPipelines(),
     (pipelines: PipelineDto[]) => {
         const acquisitionPipeline = pipelines && pipelines.find((pipeline: PipelineDto) => {
-            return pipeline.entityTypeSysId === EntityTypeSys.Acquisition;
+            return pipeline.entityTypeSysId === EntityTypeSys.PropertyAcquisition;
         });
         return acquisitionPipeline;
     }

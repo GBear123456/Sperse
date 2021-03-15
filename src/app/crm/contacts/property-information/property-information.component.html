@@ -374,7 +374,7 @@
                                                 </dx-number-box>
                                             </div>
                                             <div class="dx-field-value">
-                                                <dx-number-box *ngIf="propertyDeal.leadTypeSysId == managementLeadTypeSysId"
+                                                <dx-number-box *ngIf="leadTypesWithInstallment.indexOf(propertyDeal.leadTypeSysId) > -1"
                                                                 [(value)]="propertyDeal.installmentAmount"
                                                                 [stylingMode]="stylingMode"
                                                                 showClearButton="true"
