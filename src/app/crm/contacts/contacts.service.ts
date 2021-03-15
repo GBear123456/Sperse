@@ -351,6 +351,10 @@ export class ContactsService {
                 .filter(item => item.isActive).map(item => item.emailAddress);
             if (emailData.suggestionEmails.length)
                 emailData.to = [emailData.suggestionEmails[0]];
+
+            emailData.contact.personContactInfo.details.phones
+                .filter(item => item.usageTypeId == 'F' && item.isActive) //Home Fax
+                .map(item => emailData.suggestionEmails.push(item.phoneNumber + '@fax.clicksend.com'));
         }
     }
 
