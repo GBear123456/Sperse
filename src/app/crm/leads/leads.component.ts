@@ -232,7 +232,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     text: this.l('LoginToPortal'),
                     class: 'login',
                     checkVisible: (lead: LeadDto) => !!lead.UserId && AppConsts.appMemberPortalUrl 
-                        && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation)
+                        && (
+                            this.impersonationIsGranted ||
+                            this.permission.checkCGPermission(this.selectedContactGroup, 'UserInformation.AutoLogin')
+                        )
                         && !this.authService.checkCurrentTopDomainByUri(),
                     action: (data?) => {
                         const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;

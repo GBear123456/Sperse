@@ -272,7 +272,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                 },
                                 {
                                     text: this.l('LoginToPortal'),
-                                    visible: this.canImpersonate && AppConsts.appMemberPortalUrl
+                                    visible: (this.canImpersonate || this.autoLoginAllowed) 
+                                        && AppConsts.appMemberPortalUrl
                                         && !this.authService.checkCurrentTopDomainByUri(),
                                     action: () => {
                                         this.impersonationService.impersonate(
