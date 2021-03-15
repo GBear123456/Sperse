@@ -386,7 +386,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             return this.crmService.loadSlicePivotGridData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
-                loadOptions
+                loadOptions,
+                {contactGroupId: ContactGroup.Partner}
             );
         },
         onChanged: () => {
@@ -486,7 +487,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         this.getODataUrl(this.groupDataSourceURI),
                         odataRequestValues,
                         this.chartComponent.summaryBy.value,
-                        this.dateField
+                        this.dateField, 
+                        {contactGroupId: ContactGroup.Partner}
                     );
                     return this.oDataService.requestLengthIsValid(chartDataUrl)
                         ? this.httpClient.get(chartDataUrl)
@@ -517,6 +519,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     toolbarConfig: ToolbarGroupModel[];
     private filters: FilterModel[] = this.getFilters();
     odataRequestValues$: Observable<ODataRequestValues> = concat(
+        this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom),
         this.filterChanged$.pipe(
             switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
         )
@@ -544,13 +547,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.dataSourceURI,
             [
                 this.filterModelStatus.filterMethod(this.filterModelStatus),
-                FiltersService.filterByPartnerGroupId(),
                 FiltersService.filterByParentId()
             ]
         ),
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+            request.params.contactGroupId = ContactGroup.Partner;
             request.params.$select =
             this.pipelineSelectFields = DataGridService.getSelectFields(
                 this.dataGrid,
@@ -609,12 +612,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     this.totalDataSourceURI,
                     [
                         this.filterModelStatus.filterMethod(this.filterModelStatus),
-                        FiltersService.filterByPartnerGroupId(),
                         FiltersService.filterByParentId()
                     ]
                 ),
                 beforeSend: (request) => {
                     this.totalCount = undefined;
+                    request.params.contactGroupId = ContactGroup.Partner;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -623,7 +626,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 }
             })
         });
-        this.totalDataSource.load();
     }
 
     ngOnInit() {
@@ -686,7 +688,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
             filter(() => this.showDataGrid || this.showPivotGrid)
-        ).subscribe((data) => {
+        ).subscribe(() => {
             if (this.showPivotGrid)
                 this.pivotGridComponent.dataGrid.instance.updateDimensions();
             this.processFilterInternal();
@@ -735,7 +737,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 this.getODataUrl(this.groupDataSourceURI),
                 odataRequestValues,
                 summaryBy,
-                this.dateField
+                this.dateField,
+                {contactGroupId: ContactGroup.Partner}
             );
             if (!this.oDataService.requestLengthIsValid(chartDataUrl)) {
                 this.message.error(this.l('QueryStringIsTooLong'));
@@ -756,7 +759,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     this.getODataUrl(this.groupDataSourceURI),
                     odataRequestValues,
                     mapArea,
-                    this.dateField
+                    this.dateField,
+                    {contactGroupId: ContactGroup.Partner}
                 );
             }),
             filter((mapUrl: string) => {
@@ -1065,10 +1069,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                             }
                         })
                 }
-            }),
-            new FilterModel({
-                caption: 'partnerGroupId',
-                hidden: true
             }),
             new FilterModel({
                 caption: 'parentId',
@@ -1514,12 +1514,14 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     processFilterInternal() {
         if (this.showDataGrid || this.showPivotGrid) {
-            this.processODataFilter(
-                (this.showPivotGrid ? this.pivotGridComponent : this).dataGrid.instance,
-                this.dataSourceURI,
-                this.filters,
-                this.filtersService.getCheckCustom
-            );
+            let dataGrid = (this.showPivotGrid ? this.pivotGridComponent : this).dataGrid;
+            if (dataGrid)
+                this.processODataFilter(
+                    dataGrid.instance,
+                    this.dataSourceURI,
+                    this.filters,
+                    this.filtersService.getCheckCustom
+                );
         }
     }
 

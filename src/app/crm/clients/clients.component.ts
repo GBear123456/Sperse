@@ -559,7 +559,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         odataRequestValues,
                         this.chartComponent.summaryBy.value,
                         this.dateField,
-                        this.subscriptionStatusFilter.items.element['getObjectValue']()
+                        {
+                            contactGroupId: ContactGroup.Client,
+                            ...this.subscriptionStatusFilter.items.element['getObjectValue']()
+                        }
                     );
                     return this.httpClient.get(chartDataUrl);
                 })
@@ -819,7 +822,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.getODataUrl(this.groupDataSourceURI),
                 odataRequestValues,
                 summaryBy,
-                this.dateField
+                this.dateField,
+                {contactGroupId: ContactGroup.Client}
             );
             if (!this.oDataService.requestLengthIsValid(chartDataUrl)) {
                 this.message.error(this.l('QueryStringIsTooLong'));
@@ -841,7 +845,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     odataRequestValues,
                     mapArea,
                     this.dateField,
-                    this.subscriptionStatusFilter.items.element['getObjectValue']()
+                    {
+                        contactGroupId: ContactGroup.Client,
+                        ...this.subscriptionStatusFilter.items.element['getObjectValue']()
+                    }
                 );
             }),
             filter((mapUrl: string) => {
