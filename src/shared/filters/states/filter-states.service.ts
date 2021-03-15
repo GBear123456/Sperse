@@ -12,10 +12,11 @@ import { CountryDto, CountryStateDto } from '../../service-proxies/service-proxi
 import { ICountryState } from './country-state.interface';
 import { RootStore } from '../../../store';
 import { CountriesStoreActions, CountriesStoreSelectors } from '@root/store/countries-store';
+import { Country } from '@shared/AppEnums';
 
 @Injectable()
 export class FilterStatesService {
-    countriesCodesThatHaveStates = ['US', 'CA'];
+    countriesCodesThatHaveStates = [<string>Country.USA, <string>Country.Canada];
     constructor(private store$: Store<RootStore.State>) {}
 
     getCountries(selectedCountries?: string[], countriesToExpand?: string[]): Observable<ICountryState[]> {

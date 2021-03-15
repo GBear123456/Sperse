@@ -141,6 +141,7 @@
                             <dx-text-box class="state"
                                 width="210px"
                                 [value]="data?.name"
+                                [placeholder]="ls.l('Country')"
                                 [readOnly]="true">
                             </dx-text-box>
                         </div>
@@ -160,7 +161,7 @@
                     (onCustomItemCreating)="onCustomStateCreate($event)">
                     <div *dxTemplate="let data of 'field'">
                         <div class="custom-item">
-                            <dx-text-box class="state" [value]="data?.name"></dx-text-box>
+                            <dx-text-box class="state" [value]="data?.name" [placeholder]="ls.l('State')"></dx-text-box>
                         </div>
                     </div>
                 </dx-select-box>

@@ -114,7 +114,8 @@ export class AppConsts {
     };
 
     static readonly defaultCompanyName = 'Unknown company';
-    static readonly defaultCountryName = 'United States of America';
+    static defaultCountryPhoneCode = '+1';
+    static defaultCountryCode = 'US';
 
     /* System Action IDs */
     static readonly SYS_ID_CRM_CANCEL_LEAD           = 'CRM.CancelLead';
@@ -124,9 +125,6 @@ export class AppConsts {
     static readonly SYS_ID_CRM_CANCEL_ORDER          = 'CRM.CancelOrder';
     static readonly SYS_ID_CRM_UPDATE_ORDER_STAGE    = 'CRM.UpdateOrderStage';
     static readonly SYS_ID_CRM_PROCESS_ORDER         = 'CRM.ProcessOrder';
-
-    static readonly defaultCountry = 'US';
-    static readonly defaultCountryCode = '+1';
 
     static readonly ODataVersion = 4;
     static readonly ODataRequestTimeoutMilliseconds = 3 * 60 * 1000;

@@ -27,7 +27,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { WidgetsService } from '../../../widgets.service';
 import { CustomNumberPipe } from '@shared/common/pipes/custom-number/custom-number.pipe';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
 import { createCustomElement } from '@angular/elements';
 
@@ -59,7 +58,6 @@ export function initialize(widgetsService: WidgetsService, injector: Injector) {
     providers: [
         AppLocalizationService,
         AppHttpConfiguration,
-        AppSessionService,
         TenantHostServiceProxy,
         AbpMultiTenancyService,
         LocalizationResolver,

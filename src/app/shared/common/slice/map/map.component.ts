@@ -30,6 +30,7 @@ import { ExportService } from '@shared/common/export/export.service';
 import { MapService } from '@app/shared/common/slice/map/map.service';
 import { MapAreaItem } from '@app/shared/common/slice/map/map-area-item.model';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { Country } from '@shared/AppEnums';
 import { MapArea } from './map-area.enum';
 
 @Component({
@@ -162,7 +163,7 @@ export class MapComponent implements OnChanges {
                 filter['countryId'] = e.target.attribute('iso_a2');
             } else {
                 filter['stateId'] = e.target.attribute('postal');
-                filter['countryId'] = this.mapService.selectedMapAreaItem.value.key === MapArea.Canada ? 'CA' : 'US';
+                filter['countryId'] = this.mapService.selectedMapAreaItem.value.key === MapArea.Canada ? Country.Canada : Country.USA;
             }
             this.onMapItemClick.emit(filter);
         }

@@ -40,15 +40,6 @@
             </div>
             <div class="right-side">
                 <h3>{{ls.l('InvoiceEmail_OtherSettings')}}</h3>
-                <dx-select-box
-                    name="currency"
-                    displayExpr="text"
-                    valueExpr="id"
-                    [readOnly]="isManageUnallowed"
-                    [placeholder]="ls.l('Currency')"
-                    [(value)]="settings.currency"
-                    [dataSource]="currencies">
-                </dx-select-box>
                 <a (click)="showBankSettingsDialog()" 
                     href="javascript:void(0)">
                     {{ls.l('InvoiceEmail_BankTransferSettings')}}

@@ -172,10 +172,10 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
         });
     }
 
-    getStates(countryId = AppConsts.defaultCountry): any {
+    getStates(countryId = AppConsts.defaultCountryCode): any {
         this.store$.pipe(
             select(StatesStoreSelectors.getCountryStates, {
-                countryCode: countryId || AppConsts.defaultCountry
+                countryCode: countryId || AppConsts.defaultCountryCode
             }),
             filter(Boolean),
             first(),
@@ -189,8 +189,8 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
         this.store$.dispatch(new CountriesStoreActions.LoadRequestAction());
     }
 
-    private loadStates(countryId = AppConsts.defaultCountry) {
-        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryId));
+    private loadStates(countryCode = AppConsts.defaultCountryCode) {
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode));
     }
 
     getInputData(field): InplaceEditModel {

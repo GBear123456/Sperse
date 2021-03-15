@@ -65,6 +65,7 @@ import { CloseComponentAction } from '@app/shared/common/close-component.service
 import { ICloseComponent } from '@app/shared/common/close-component.service/close-component.interface';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppConsts } from '@shared/AppConsts';
+import { Country } from '@shared/AppEnums';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { OfferNotifyDialogComponent } from '@app/pfm/offer-edit/offer-notify-dialog/offer-notify-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -173,7 +174,7 @@ export class OfferEditComponent implements OnInit, OnDestroy, ICloseComponent {
         );
         this.section$ = this.route.paramMap.pipe(map((paramMap: ParamMap) => paramMap.get('section') || 'general'));
         this.states$  = this.offerDetails$.pipe(
-            map(offerDetails => offerDetails.countries ? offerDetails.countries[0] : 'US'),
+            map(offerDetails => offerDetails.countries ? offerDetails.countries[0] : AppConsts.defaultCountryCode),
             tap(countryCode => this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryCode))),
             switchMap(countryCode => this.store$.pipe(select(StatesStoreSelectors.getCountryStates, { countryCode: countryCode})))
         );

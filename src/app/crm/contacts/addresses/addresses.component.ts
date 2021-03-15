@@ -42,6 +42,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { EditAddressDialogData } from '@app/crm/contacts/edit-address-dialog/edit-address-dialog-data.interface';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
 import { AddressUpdate } from '@app/crm/contacts/addresses/address-update.interface';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     selector: 'addresses',
@@ -94,6 +95,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
     private _contactInfo: ContactInfoDto;
 
     constructor(
+        private sessionService: AppSessionService,
         private contactsService: ContactsService,
         private addressService: ContactAddressServiceProxy,
         private organizationContactService: OrganizationContactServiceProxy,
@@ -375,7 +377,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
         const countryCode = GooglePlaceService.getCountryCode(event.address_components);
         this.statesService.updateState(countryCode, this.stateCode, this.stateName);
         const countryName = GooglePlaceService.getCountryName(event.address_components);
-        this.country = countryName === 'United States' ? AppConsts.defaultCountryName : countryName;
+        this.country = this.sessionService.getCountryNameByCode(countryCode) || countryName;
         this.zip = GooglePlaceService.getZipCode(event.address_components);
         this.streetAddress = GooglePlaceService.getStreet(event.address_components);
         this.streetNumber = GooglePlaceService.getStreetNumber(event.address_components);
@@ -418,6 +420,6 @@ export class AddressesComponent implements OnInit, OnDestroy {
                     })
                 );
         else
-            return of(AppConsts.defaultCountryName);
+            return of(this.sessionService.getCountryNameByCode(AppConsts.defaultCountryCode));
     }
 }
