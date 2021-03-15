@@ -135,6 +135,7 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { TypeItem } from '@app/crm/shared/types-dropdown/type-item.interface';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 
 @Component({
@@ -225,6 +226,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     action: (data?) => {
                         const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
                         this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId);
+                    }
+                },
+                {
+                    text: this.l('LoginToPortal'),
+                    class: 'login',
+                    checkVisible: (lead: LeadDto) => !!lead.UserId && AppConsts.appMemberPortalUrl 
+                        && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation)
+                        && !this.authService.checkCurrentTopDomainByUri(),
+                    action: (data?) => {
+                        const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
+                        this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl);
                     }
                 },
                 {
@@ -342,7 +354,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     isPropertyPipeline$: Observable<boolean> = this.selectedPipeline$
         .pipe(
             map(selectedPipeline => selectedPipeline.entityTypeSysId &&
-                    (selectedPipeline.entityTypeSysId == EntityTypeSys.Acquisition || selectedPipeline.entityTypeSysId.startsWith(EntityTypeSys.Management)))
+                    (selectedPipeline.entityTypeSysId == EntityTypeSys.PropertyAcquisition || selectedPipeline.entityTypeSysId.startsWith(EntityTypeSys.PropertyRentAndSale)))
         );
     /** Get pipeline contactGroup @todo remove using of contact group in all places */
     selectedContactGroup$: Observable<ContactGroup> = this.selectedPipeline$.pipe(
@@ -665,6 +677,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     constructor(
         injector: Injector,
+        private authService: AppAuthService,
         private contactService: ContactsService,
         private leadService: LeadServiceProxy,
         private pipelineService: PipelineService,
@@ -1932,7 +1945,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             return;
         this.selectedPipeline$.pipe(first()).subscribe((selectedPipeline: PipelineDto) => {
             if (!section && typeof lead.PropertyId === 'number') {
-                if (selectedPipeline.entityTypeSysId === EntityTypeSys.Acquisition) {
+                if (selectedPipeline.entityTypeSysId === EntityTypeSys.PropertyAcquisition) {
                     section = 'property-information';
                 }
                 queryParams = { ...queryParams, propertyId: lead.PropertyId };

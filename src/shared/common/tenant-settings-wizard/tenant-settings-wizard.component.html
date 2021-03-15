@@ -18,7 +18,7 @@
     <mat-vertical-stepper #stepper>
         <mat-step *ngIf="showTimezoneSelection" #generalSettingsStep>
             <ng-container *ngIf="stepper.selected === null || stepper.selected === generalSettingsStep">
-                <general-settings [settings]="generalSettings$ | async"></general-settings>
+                <general-settings [settings]="generalSettings$ | async" (onOptionChanged)="onOptionChanged($event)"></general-settings>
             </ng-container>
         </mat-step>
         <mat-step *ngIf="!appService.isHostTenant && hasCustomizationsFeture" #appearanceStep>

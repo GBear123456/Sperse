@@ -71,7 +71,7 @@ export class CompanyDialogComponent implements OnInit {
         sizeId: null,
         annualRevenue: null,
         formedStateId: null,
-        formedCountryId: 'US',
+        formedCountryId: AppConsts.defaultCountryCode,
         industry: null,
         businessSicCode: null,
         description: null,

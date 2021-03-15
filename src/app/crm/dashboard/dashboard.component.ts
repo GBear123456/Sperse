@@ -128,7 +128,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         public ls: AppLocalizationService,
         public dialog: MatDialog
     ) {
-        this.store$.dispatch(new StatesStoreActions.LoadRequestAction('US'));
+        this.store$.dispatch(new StatesStoreActions.LoadRequestAction(AppConsts.defaultCountryCode));
         this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
     }
 

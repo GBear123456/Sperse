@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import { MessageService } from '@abp/message/message.service';
 import { MatVerticalStepper } from '@angular/material/stepper';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
@@ -89,6 +90,8 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     userLockOutSettings$: Observable<UserLockOutSettingsEditDto> = this.tenantSettingsService.getUserLockOutSettings();
     twoFactorLogin$: Observable<TwoFactorLoginSettingsEditDto> = this.tenantSettingsService.getTwoFactorLoginSettings();
     emailSettings$: Observable<EmailSettingsEditDto> = this.tenantSettingsService.getEmailSettings();
+    timezoneChanged: Boolean;
+    countryChanged: Boolean;
 
     constructor(
         private featureCheckerService: FeatureCheckerService,
@@ -99,10 +102,22 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
         private tenantSettingsService: TenantSettingsServiceProxy,
         private loadingService: LoadingService,
         private elementRef: ElementRef,
+        private messageService: MessageService,
         private commonLookupServiceProxy: CommonLookupServiceProxy,
         public ls: AppLocalizationService,
         public appService: AppService
-    ) {}
+    ) {
+        this.dialogRef.afterClosed().subscribe(() => {
+            if (this.timezoneChanged)
+                this.messageService.info(this.ls.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
+                    window.location.reload();
+                });
+            if (this.countryChanged)
+                this.messageService.info(this.ls.l('DefaultCountrySettingChangedRefreshPageNotification')).done(() => {
+                    window.location.reload();
+            });
+        });
+    }
 
     get visibleSteps() {
         return this.steps && this.steps.filter((step: TenantSettingsStep) => step.visible);
@@ -197,5 +212,12 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
     stepClick(index: number) {
         this.stepper.selectedIndex = index;
         this.changeDetectorRef.detectChanges();
+    }
+
+    onOptionChanged(option: string) {
+        if (option == 'timezone')
+            this.timezoneChanged = true;
+        if (option == 'defaultCountry')
+            this.countryChanged = true;                        
     }
 }

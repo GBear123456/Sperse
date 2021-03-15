@@ -191,11 +191,12 @@ export class ContactsAreaComponent {
     }
 
     inPlaceEdit(field, item, event, index) {
-        if (!this.checkEditEmailAllowed(item))
-            return ;
-
-        if (this.isUserEmail(item))
-            return this.editEmailAddress(item, event, index);
+        if (field == 'emailAddress') {
+            if (!this.checkEditEmailAllowed(item))
+                return ;
+            if (this.isUserEmail(item))
+                return this.editEmailAddress(item, event, index);
+        }
 
         this.clickCounter++;
         clearTimeout(this.clickTimeout);

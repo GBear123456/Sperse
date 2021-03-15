@@ -3,10 +3,10 @@ import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, Change
 
 /** Third party imports */
 import { forkJoin } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 
 /** Application imports */
-import { AppTimezoneScope } from '@shared/AppEnums';
+import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -38,9 +38,16 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
     yTelSettings: YTelSettingsEditDto = new YTelSettingsEditDto();
+    supportedCountries = Object.keys(Country).map(item => {
+        return {
+            key: Country[item],
+            text: this.l(item)
+        };
+    });
 
+    initialDefaultCountry: string;
     usingDefaultTimeZone = false;
-    initialTimeZone: string = undefined;
+    initialTimeZone: string;
     private rootComponent;
     masks = AppConsts.masks;
     headlineButtons: HeadlineButton[] = [
@@ -77,6 +84,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
             finalize(() => { this.changeDetection.detectChanges(); })
         ).subscribe(([allSettings, baseCommerceSettings, payPalSettings, achWorksSettings, recurlySettings, yTelSettings]) => {
             this.hostSettings = allSettings;
+            this.initialDefaultCountry = allSettings.general.defaultCountryCode;
             this.initialTimeZone = allSettings.general.timezone;
             this.usingDefaultTimeZone = allSettings.general.timezoneForComparison === this.setting.get('Abp.Timing.TimeZone');
             this.baseCommercePaymentSettings = baseCommerceSettings;
@@ -128,7 +136,9 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
 
     saveAll(): void {
         forkJoin(
-            this.hostSettingService.updateAllSettings(this.hostSettings),
+            this.hostSettingService.updateAllSettings(this.hostSettings).pipe(tap(() => {
+                this.appSessionService.checkSetDefaultCountry(this.hostSettings.general.defaultCountryCode);
+            })),
             this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
@@ -136,7 +146,15 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
             this.hostSettingService.updateYTelSettings(this.yTelSettings)
         ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
-            if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone && this.initialTimeZone !== this.hostSettings.general.timezone) {
+            if (this.initialDefaultCountry !== this.hostSettings.general.defaultCountryCode) {
+                this.message.info(this.l('DefaultCountrySettingChangedRefreshPageNotification')).done(function () {
+                    window.location.reload();
+                });
+            }
+
+            if (abp.clock.provider.supportsMultipleTimezone && this.usingDefaultTimeZone &&
+                this.initialTimeZone !== this.hostSettings.general.timezone
+            ) {
                 this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(function () {
                     window.location.reload();
                 });
