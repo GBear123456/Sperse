@@ -338,7 +338,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onCustomItemCreating(event, callback?) {
         let field = event.component.option('name'),
-            values = event.text.split(/[,|;]+(?=(([^"]*"){2})*[^"]*$)/).map(item =>
+            values = event.text.split(/(?<=^(?:(?:[^"]*"){2})*[^"]*)[,|;]+/).map(item =>
                 AppConsts.regexPatterns.emailWithName.test(item) ? item : ''),
             validValues = values.filter(Boolean),
             currentList = this.data[field];
