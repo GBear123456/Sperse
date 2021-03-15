@@ -354,7 +354,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     isPropertyPipeline$: Observable<boolean> = this.selectedPipeline$
         .pipe(
             map(selectedPipeline => selectedPipeline.entityTypeSysId &&
-                    (selectedPipeline.entityTypeSysId == EntityTypeSys.Acquisition || selectedPipeline.entityTypeSysId.startsWith(EntityTypeSys.Management)))
+                    (selectedPipeline.entityTypeSysId == EntityTypeSys.PropertyAcquisition || selectedPipeline.entityTypeSysId.startsWith(EntityTypeSys.PropertyRentAndSale)))
         );
     /** Get pipeline contactGroup @todo remove using of contact group in all places */
     selectedContactGroup$: Observable<ContactGroup> = this.selectedPipeline$.pipe(
@@ -1945,7 +1945,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             return;
         this.selectedPipeline$.pipe(first()).subscribe((selectedPipeline: PipelineDto) => {
             if (!section && typeof lead.PropertyId === 'number') {
-                if (selectedPipeline.entityTypeSysId === EntityTypeSys.Acquisition) {
+                if (selectedPipeline.entityTypeSysId === EntityTypeSys.PropertyAcquisition) {
                     section = 'property-information';
                 }
                 queryParams = { ...queryParams, propertyId: lead.PropertyId };

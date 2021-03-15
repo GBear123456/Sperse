@@ -68,7 +68,13 @@ export class PropertyInformationComponent implements OnInit {
     propertyAddresses: AddressDto[];
     leadInfoSubscription: Subscription;
     propertyDeals: PropertyDealInfo[];
-    managementLeadTypeSysId = EntityTypeSys.Management;
+    leadTypesWithInstallment = [
+        EntityTypeSys.PropertyRentAndSale,
+        EntityTypeSys.PropertyRentAndSaleAirbnbSysId,
+        EntityTypeSys.PropertyRentAndSaleJVSysId,
+        EntityTypeSys.PropertyRentAndSaleLTRSysId,
+        EntityTypeSys.PropertyRentAndSaleSTRSysId
+    ];
     stylingMode = 'filled';
 
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
