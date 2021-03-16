@@ -360,7 +360,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('LoginToPortal'),
                     class: 'login',
-                    checkVisible: (client: ContactDto) => !!client.UserId && AppConsts.appMemberPortalUrl                         
+                    checkVisible: (client: ContactDto) => !!client.UserId && !!AppConsts.appMemberPortalUrl                         
                         && (
                             this.impersonationIsGranted ||
                             this.permission.checkCGPermission(client.GroupId, 'UserInformation.AutoLogin')
