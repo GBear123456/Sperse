@@ -225,7 +225,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 {
                     text: this.l('LoginToPortal'),
                     class: 'login',
-                    checkVisible: (partner: PartnerDto) => !!partner.UserId && AppConsts.appMemberPortalUrl
+                    checkVisible: (partner: PartnerDto) => !!partner.UserId && !!AppConsts.appMemberPortalUrl
                         && (
                             this.impersonationIsGranted ||
                             this.permission.checkCGPermission(ContactGroup.Partner, 'UserInformation.AutoLogin')
