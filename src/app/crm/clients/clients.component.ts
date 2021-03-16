@@ -760,7 +760,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     private getUserIds(records) {
-        return records.reduce((ids, item) => {
+        return records ? records.reduce((ids, item) => {
             if (item.items)
                 Array.prototype.push.apply(ids,
                     this.getUserIds(item.items)
@@ -768,7 +768,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             else if (item.UserId)
                 ids.push(item.UserId);
             return ids;
-        }, []);
+        }, []) : [];
     }
 
     private handleTotalCountUpdate() {
