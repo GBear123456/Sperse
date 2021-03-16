@@ -81,12 +81,8 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
 
     private getParamsKey(odataKey: string, url: string, params: HttpParams) {
         let paramsKey;
-        if (odataKey === 'odata_Contact') {
-            const groupFilter: string = 'GroupId eq';
-            paramsKey = url.substr(url.indexOf(groupFilter), groupFilter.length + 4).split(' ').join('_');
-        } else if (odataKey === 'odata_Lead') {
+        if (['odata_Lead', 'odata_Contact'].includes(odataKey))
             paramsKey = params.get('contactGroupId');
-        }
         return paramsKey || '';
     }
 

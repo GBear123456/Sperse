@@ -109,8 +109,7 @@ export class GlobalSearchComponent implements OnInit {
         return this.getGlobalSearchGroup(
             this.oDataService.getODataUrl('Contact', [
                 { 'StatusId': { 'eq': 'A' }},
-                { 'ParentId': { 'eq': null }},
-                { 'GroupId': { 'eq': 'C' }}
+                { 'ParentId': { 'eq': null }}
             ]),
             this.ls.l('Customers'),
             'app/crm/clients',
@@ -121,7 +120,8 @@ export class GlobalSearchComponent implements OnInit {
                 ClientFields.Name,
                 ClientFields.Email,
                 ClientFields.PhotoPublicId
-            ]
+            ],
+            { contactGroupId: ContactGroup.Client }
         );
     }
     
@@ -129,8 +129,7 @@ export class GlobalSearchComponent implements OnInit {
         return this.getGlobalSearchGroup(
             this.oDataService.getODataUrl('Contact', [
                 { 'StatusId': { 'eq': 'A' }},
-                { 'ParentId': { 'eq': null }},
-                { 'GroupId': { 'eq': 'P' }}
+                { 'ParentId': { 'eq': null }}
             ]),
             this.ls.l('Partners'),
             'app/crm/partners',
@@ -141,7 +140,8 @@ export class GlobalSearchComponent implements OnInit {
                 PartnerFields.Name,
                 PartnerFields.Email,
                 PartnerFields.PhotoPublicId
-            ]
+            ],
+            { contactGroupId: ContactGroup.Partner }
         );
     }
     

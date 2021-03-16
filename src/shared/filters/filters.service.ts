@@ -248,7 +248,6 @@ export class FiltersService {
 
     static getCustomerFilters(): any[] {
         return [
-            { 'GroupId': { 'eq': ContactGroup.Client }},
             {
                 'or': [
                     { 'StatusId': { 'eq': ContactStatus.Active }},

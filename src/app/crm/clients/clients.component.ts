@@ -361,7 +361,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     text: this.l('LoginToPortal'),
                     class: 'login',
                     checkVisible: (client: ContactDto) => !!client.UserId && AppConsts.appMemberPortalUrl                         
-                        && this.permission.isGranted(AppPermissions.AdministrationUsersImpersonation)
+                        && (
+                            this.impersonationIsGranted ||
+                            this.permission.checkCGPermission(client.GroupId, 'UserInformation.AutoLogin')
+                        )
                         && !this.authService.checkCurrentTopDomainByUri(),
                     action: () => this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl)
                 },
@@ -559,7 +562,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         odataRequestValues,
                         this.chartComponent.summaryBy.value,
                         this.dateField,
-                        this.subscriptionStatusFilter.items.element['getObjectValue']()
+                        {
+                            contactGroupId: ContactGroup.Client,
+                            ...this.subscriptionStatusFilter.items.element['getObjectValue']()
+                        }
                     );
                     return this.httpClient.get(chartDataUrl);
                 })
@@ -819,7 +825,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.getODataUrl(this.groupDataSourceURI),
                 odataRequestValues,
                 summaryBy,
-                this.dateField
+                this.dateField,
+                {contactGroupId: ContactGroup.Client}
             );
             if (!this.oDataService.requestLengthIsValid(chartDataUrl)) {
                 this.message.error(this.l('QueryStringIsTooLong'));
@@ -841,7 +848,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     odataRequestValues,
                     mapArea,
                     this.dateField,
-                    this.subscriptionStatusFilter.items.element['getObjectValue']()
+                    {
+                        contactGroupId: ContactGroup.Client,
+                        ...this.subscriptionStatusFilter.items.element['getObjectValue']()
+                    }
                 );
             }),
             filter((mapUrl: string) => {
