@@ -190,7 +190,8 @@
                         [focusStateEnabled]="true"
                         [showColumnLines]="false"
                         [scrolling]="{showScrollbar: 'never'}"
-                        [allowColumnResizing]="false">
+                        [allowColumnResizing]="false"
+                        [loadPanel]="{enabled: false}">
 
                         <dxi-column dataField="Description" width="280" caption="{{ls.l('Description')}}" [allowSorting]="false" cellTemplate="description"></dxi-column>
                         <dxi-column dataField="Quantity" width="120" caption="{{ls.l('Quantity')}}" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
