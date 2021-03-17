@@ -412,10 +412,13 @@ export class EmailTemplateDialogComponent implements OnInit {
         } else {
             let value = this.getTagValue(event.itemData);
             if (value) {
-                if (event.itemData == EmailTags.SenderCompanyLogo)
+                if (event.itemData == EmailTags.SenderCompanyLogo) {
                     this.insertImageElement(value);
-                else
+                } else if (event.itemData == EmailTags.SenderEmailSignature) {
+                    this.insertHtml(value);
+                } else {
                     this.insertText(value);
+                }
             }
         }
         this.tagsTooltipVisible = false;
@@ -441,6 +444,12 @@ export class EmailTemplateDialogComponent implements OnInit {
             writer.insertElement('image', {src: src},
                 this.ckEditor.model.document.selection.getFirstPosition());
         });
+    }
+
+    insertHtml(html: string) {
+        let viewFragment = this.ckEditor.data.processor.toView(html);
+        let modelFragment = this.ckEditor.data.toModel(viewFragment);
+        this.ckEditor.model.insertContent(modelFragment);
     }
 
     insertText(text: string) {

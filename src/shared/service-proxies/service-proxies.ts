@@ -27666,7 +27666,7 @@ export class ProfileServiceProxy {
     /**
      * @return Success
      */
-    getEmailSettings(): Observable<ProfileEmailSettingsOutput> {
+    getEmailSettings(): Observable<UserEmailSettingsInfo> {
         let url_ = this.baseUrl + "/api/services/Platform/Profile/GetEmailSettings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -27686,14 +27686,14 @@ export class ProfileServiceProxy {
                 try {
                     return this.processGetEmailSettings(<any>response_);
                 } catch (e) {
-                    return <Observable<ProfileEmailSettingsOutput>><any>_observableThrow(e);
+                    return <Observable<UserEmailSettingsInfo>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<ProfileEmailSettingsOutput>><any>_observableThrow(response_);
+                return <Observable<UserEmailSettingsInfo>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetEmailSettings(response: HttpResponseBase): Observable<ProfileEmailSettingsOutput> {
+    protected processGetEmailSettings(response: HttpResponseBase): Observable<UserEmailSettingsInfo> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -27704,7 +27704,7 @@ export class ProfileServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? ProfileEmailSettingsOutput.fromJS(resultData200) : new ProfileEmailSettingsOutput();
+            result200 = resultData200 ? UserEmailSettingsInfo.fromJS(resultData200) : new UserEmailSettingsInfo();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -27712,14 +27712,14 @@ export class ProfileServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<ProfileEmailSettingsOutput>(<any>null);
+        return _observableOf<UserEmailSettingsInfo>(<any>null);
     }
 
     /**
      * @body (optional) 
      * @return Success
      */
-    updateEmailSettings(body: UpdateProfileEmailSettingsInput | null | undefined): Observable<void> {
+    updateEmailSettings(body: UserEmailSettingsInfo | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/Profile/UpdateEmailSettings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -73314,10 +73314,10 @@ export interface IUpdateMonthlyGoalInput {
     monthlyGoal: number | undefined;
 }
 
-export class ProfileEmailSettingsOutput implements IProfileEmailSettingsOutput {
+export class UserEmailSettingsInfo implements IUserEmailSettingsInfo {
     emailSignatureHtml!: string | undefined;
 
-    constructor(data?: IProfileEmailSettingsOutput) {
+    constructor(data?: IUserEmailSettingsInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -73332,9 +73332,9 @@ export class ProfileEmailSettingsOutput implements IProfileEmailSettingsOutput {
         }
     }
 
-    static fromJS(data: any): ProfileEmailSettingsOutput {
+    static fromJS(data: any): UserEmailSettingsInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new ProfileEmailSettingsOutput();
+        let result = new UserEmailSettingsInfo();
         result.init(data);
         return result;
     }
@@ -73346,43 +73346,7 @@ export class ProfileEmailSettingsOutput implements IProfileEmailSettingsOutput {
     }
 }
 
-export interface IProfileEmailSettingsOutput {
-    emailSignatureHtml: string | undefined;
-}
-
-export class UpdateProfileEmailSettingsInput implements IUpdateProfileEmailSettingsInput {
-    emailSignatureHtml!: string | undefined;
-
-    constructor(data?: IUpdateProfileEmailSettingsInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.emailSignatureHtml = data["emailSignatureHtml"];
-        }
-    }
-
-    static fromJS(data: any): UpdateProfileEmailSettingsInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new UpdateProfileEmailSettingsInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["emailSignatureHtml"] = this.emailSignatureHtml;
-        return data; 
-    }
-}
-
-export interface IUpdateProfileEmailSettingsInput {
+export interface IUserEmailSettingsInfo {
     emailSignatureHtml: string | undefined;
 }
 

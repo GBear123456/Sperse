@@ -362,7 +362,7 @@ export class ContactsService {
                 EmailTags.SenderWebSite2, EmailTags.SenderWebSite3, EmailTags.SenderCompany,
                 EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo, EmailTags.SenderCompanyPhone,
                 EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite, EmailTags.SenderCalendly,
-                EmailTags.SenderAffiliateCode
+                EmailTags.SenderAffiliateCode, EmailTags.SenderEmailSignature
             ];
         }
     }
