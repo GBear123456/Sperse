@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { CountryService } from 'ngx-international-phone-number/src';
+import { CountryService } from '@root/node_modules/ngx-international-phone-number/src/country.service';
 import { Store, select } from '@ngrx/store';
 import * as _ from 'underscore';
 
