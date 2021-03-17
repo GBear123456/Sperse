@@ -663,7 +663,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
-/*
                     request.params.$select = DataGridService.getSelectFields(
                         this.dataGrid,
                         [
@@ -675,7 +674,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.clientFields.Phone
                         ]
                     );
-*/
                     request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
