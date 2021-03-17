@@ -9,6 +9,8 @@ import { MatSlider, MatSliderModule } from '@angular/material/slider';
 import { MatSlideToggle, MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 /** Application imports */
+import { CountryService } from '@root/node_modules/ngx-international-phone-number/src/country.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PackageChooserComponent } from '@app/shared/common/payment-wizard/package-chooser/package-chooser.component';
 import { PackageCardComponent } from '@app/shared/common/payment-wizard/package-chooser/package-card/package-card.component';
 import { AbpModule } from '@abp/abp.module';
@@ -28,7 +30,9 @@ import { WidgetsService } from '../../../widgets.service';
 import { CustomNumberPipe } from '@shared/common/pipes/custom-number/custom-number.pipe';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
 import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { StatesService } from '@root/store/states-store/states.service';
 import { createCustomElement } from '@angular/elements';
+import { RootStoreModule } from '@root/store';
 
 export function getRemoteUrl() {
     return AppConsts.remoteServiceBaseUrl;
@@ -53,9 +57,13 @@ export function initialize(widgetsService: WidgetsService, injector: Injector) {
         BrowserModule,
         MatSliderModule,
         MatSlideToggleModule,
+        RootStoreModule,
         HttpClientModule
     ],
     providers: [
+        StatesService,
+        CountryService,
+        AppSessionService,
         AppLocalizationService,
         AppHttpConfiguration,
         TenantHostServiceProxy,
