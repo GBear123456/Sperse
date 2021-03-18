@@ -313,7 +313,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     impersonationIsGranted = this.permission.isGranted(
         AppPermissions.AdministrationUsersImpersonation
     );
-    
+
     actionEvent: any;
     actionMenuGroups: ActionMenuGroup[] = [
         {
@@ -360,7 +360,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('LoginToPortal'),
                     class: 'login',
-                    checkVisible: (client: ContactDto) => !!client.UserId && !!AppConsts.appMemberPortalUrl                         
+                    checkVisible: (client: ContactDto) => !!client.UserId && !!AppConsts.appMemberPortalUrl
                         && (
                             this.impersonationIsGranted ||
                             this.permission.checkCGPermission(client.GroupId, 'UserInformation.AutoLogin')
@@ -663,7 +663,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
-/*
                     request.params.$select = DataGridService.getSelectFields(
                         this.dataGrid,
                         [
@@ -675,7 +674,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.clientFields.Phone
                         ]
                     );
-*/
                     request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
