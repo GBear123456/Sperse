@@ -25,7 +25,8 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         'odata_SalesSlice',
         'odata_ContactSlice',
         'odata_SubscriptionSlice',
-        'Localization_GetLocalizationSource'
+        'Localization_GetLocalizationSource',
+        'Profile_GetFriendProfilePictureById'
     ];
 
     constructor(public configuration: AppHttpConfiguration) {
