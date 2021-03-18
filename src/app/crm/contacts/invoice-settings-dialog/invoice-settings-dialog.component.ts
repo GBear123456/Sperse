@@ -57,7 +57,8 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         EmailTags.SenderCompanyEmail,
         EmailTags.SenderCompanyWebSite,
         EmailTags.SenderCalendly,
-        EmailTags.SenderAffiliateCode
+        EmailTags.SenderAffiliateCode,
+        EmailTags.SenderEmailSignature
     ];
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);

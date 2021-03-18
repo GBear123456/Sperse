@@ -27666,7 +27666,7 @@ export class ProfileServiceProxy {
     /**
      * @return Success
      */
-    getEmailSettings(): Observable<UserEmailSettingsInfo> {
+    getEmailSettings(): Observable<UserEmailSettings> {
         let url_ = this.baseUrl + "/api/services/Platform/Profile/GetEmailSettings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -27686,14 +27686,14 @@ export class ProfileServiceProxy {
                 try {
                     return this.processGetEmailSettings(<any>response_);
                 } catch (e) {
-                    return <Observable<UserEmailSettingsInfo>><any>_observableThrow(e);
+                    return <Observable<UserEmailSettings>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<UserEmailSettingsInfo>><any>_observableThrow(response_);
+                return <Observable<UserEmailSettings>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetEmailSettings(response: HttpResponseBase): Observable<UserEmailSettingsInfo> {
+    protected processGetEmailSettings(response: HttpResponseBase): Observable<UserEmailSettings> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -27704,7 +27704,7 @@ export class ProfileServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? UserEmailSettingsInfo.fromJS(resultData200) : new UserEmailSettingsInfo();
+            result200 = resultData200 ? UserEmailSettings.fromJS(resultData200) : new UserEmailSettings();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -27712,14 +27712,14 @@ export class ProfileServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<UserEmailSettingsInfo>(<any>null);
+        return _observableOf<UserEmailSettings>(<any>null);
     }
 
     /**
      * @body (optional) 
      * @return Success
      */
-    updateEmailSettings(body: UserEmailSettingsInfo | null | undefined): Observable<void> {
+    updateEmailSettings(body: UserEmailSettings | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/Profile/UpdateEmailSettings";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -73314,10 +73314,10 @@ export interface IUpdateMonthlyGoalInput {
     monthlyGoal: number | undefined;
 }
 
-export class UserEmailSettingsInfo implements IUserEmailSettingsInfo {
+export class UserEmailSettings implements IUserEmailSettings {
     emailSignatureHtml!: string | undefined;
 
-    constructor(data?: IUserEmailSettingsInfo) {
+    constructor(data?: IUserEmailSettings) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -73332,9 +73332,9 @@ export class UserEmailSettingsInfo implements IUserEmailSettingsInfo {
         }
     }
 
-    static fromJS(data: any): UserEmailSettingsInfo {
+    static fromJS(data: any): UserEmailSettings {
         data = typeof data === 'object' ? data : {};
-        let result = new UserEmailSettingsInfo();
+        let result = new UserEmailSettings();
         result.init(data);
         return result;
     }
@@ -73346,7 +73346,7 @@ export class UserEmailSettingsInfo implements IUserEmailSettingsInfo {
     }
 }
 
-export interface IUserEmailSettingsInfo {
+export interface IUserEmailSettings {
     emailSignatureHtml: string | undefined;
 }
 
