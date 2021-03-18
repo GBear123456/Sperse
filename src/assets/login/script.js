@@ -401,8 +401,8 @@
             }
             $('.agree-rights').show();
 
-            var privacy = $('#privacy');
-            privacy.on('show.bs.modal', function() {
+            var  terms = $('#terms');
+            terms.on('show.bs.modal', function() {
                 $(this)
                     .addClass('modal-scrollfix')
                     .find('.modal-body')
@@ -416,8 +416,8 @@
                     });
             });
 
-            var terms = $('#terms');
-            terms.on('show.bs.modal', function() {
+            var privacy = $('#privacy');
+            privacy.on('show.bs.modal', function() {
                 $(this)
                     .addClass('modal-scrollfix')
                     .find('.modal-body')
