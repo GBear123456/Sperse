@@ -88,10 +88,12 @@ export class AppConsts {
 
     static readonly otherLinkTypeId = '-';
 
+    private static readonly emailRegexString = '(([^<>()\[\\]\\.,;:\\s@"]+(\\.[^<>()\[\\]\\.,;:\\s@"]+)*)|("[^"]+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))';
+
     static readonly regexPatterns = {
         name: /^[A-Z][a-zA-Z]+$/,
-        email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
-        emailWithName: /^(((".+")|([a-zA-Z ]+)) <(?=.*>))?(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))>?$/,
+        email: new RegExp(`^${AppConsts.emailRegexString}$`),
+        emailWithName: new RegExp(`^((("[^"]+")|([a-zA-Z\\s]+))\\s*<(?=.+>$)|(?!.+>$))${AppConsts.emailRegexString}>?$`),
         phone: /^[0-9]{10}$/,
         url: /^(http[s]?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
         fullName: /^[\w|\s]+$/,
