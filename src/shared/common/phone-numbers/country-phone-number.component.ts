@@ -2,7 +2,7 @@
 import { Component, OnInit, AfterViewInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
 
 /** Third party imports */
-import { PhoneNumberComponent } from '../../../node_modules/ngx-international-phone-number/src';
+import { PhoneNumberComponent } from '@root/node_modules/ngx-international-phone-number/src';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';

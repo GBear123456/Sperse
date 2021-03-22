@@ -13,7 +13,7 @@ import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
 import { CacheService } from 'ng2-cache-service';
 import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
 import { CacheLocalStorage } from 'ng2-cache-service/dist/src/services/storage/local-storage/cache-local-storage.service';
-import { CountryService } from 'ngx-international-phone-number/src/country.service';
+import { CountryService } from '@root/node_modules/ngx-international-phone-number/src/country.service';
 
 /** Application imports */
 import { AppPermissionService } from '@shared/common/auth/permission.service';
