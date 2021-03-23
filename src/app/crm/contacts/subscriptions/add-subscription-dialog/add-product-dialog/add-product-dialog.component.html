@@ -47,10 +47,9 @@
             </dx-select-box>
         </div>
         <div class="field">
-            <label for="monthlyFee">{{ls.l('Price')}}</label>
+            <label>{{ls.l('Price')}}</label>
             <dx-number-box name="price"
                 width="300px"
-                [inputAttr]="{ id: 'monthlyFee' }"
                 [format]="amountFormat$ | async"
                 [(value)]="product.price">
                 <dx-validator>
@@ -124,10 +123,9 @@
                 </dx-select-box>
             </div>
             <div class="field">
-                <label class="wide" for="monthlyFee">{{ls.l('Fee')}}</label>
+                <label class="wide">{{ls.l('Fee')}}</label>
                 <dx-number-box name="price"
                     width="200px"
-                    [inputAttr]="{ id: 'monthlyFee' }"
                     [format]="amountFormat$ | async"
                     [(value)]="option.fee">
                     <dx-validator>
