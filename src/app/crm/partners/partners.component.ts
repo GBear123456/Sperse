@@ -115,6 +115,7 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
 @Component({
     templateUrl: './partners.component.html',
     styleUrls: [
+        '../shared/styles/client-status.less',
         '../shared/styles/grouped-action-menu.less',
         './partners.component.less'
     ],
@@ -344,7 +345,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         items: {
             element: new FilterCheckBoxesModel(
                 {
-                    dataSource$: this.statuses$,
+                    dataSource$: this.store$.pipe(select(StatusesStoreSelectors.getFilterStatuses)),
                     nameField: 'name',
                     keyExpr: 'id',
                     selectedKeys$: of(['A'])
@@ -1154,6 +1155,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     },
                     {
                         name: 'status',
+                        disabled: this.selectedPartners.some(partner => partner.Status == 'Prospective'),
                         action: this.toggleStatus.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStatus && this.filterModelStatus.isSelected

@@ -35,7 +35,6 @@
         color: #ced5db;
         &:after {
             content: '';
-            background-color: #34bfa3;
             position: absolute;
             display: block;
             width: 7px;
@@ -44,6 +43,12 @@
             top: 50%;
             margin-top: -3.5px;
             border-radius: 100%;
+        }
+        &.UNREAD:after {
+            background-color: #34bfa3;
+        }
+        &.READ:after {
+            background-color: #c4c5d6;
         }
     }
 

@@ -53120,6 +53120,7 @@ export interface IContactGroupDto {
 export class ContactStatusDto implements IContactStatusDto {
     id!: string | undefined;
     name!: string | undefined;
+    forFilterOnly!: boolean | undefined;
 
     constructor(data?: IContactStatusDto) {
         if (data) {
@@ -53134,6 +53135,7 @@ export class ContactStatusDto implements IContactStatusDto {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.forFilterOnly = data["forFilterOnly"];
         }
     }
 
@@ -53148,6 +53150,7 @@ export class ContactStatusDto implements IContactStatusDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["forFilterOnly"] = this.forFilterOnly;
         return data; 
     }
 }
@@ -53155,6 +53158,7 @@ export class ContactStatusDto implements IContactStatusDto {
 export interface IContactStatusDto {
     id: string | undefined;
     name: string | undefined;
+    forFilterOnly: boolean | undefined;
 }
 
 export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {

@@ -31,7 +31,12 @@ import { ConfigInterface } from '@app/shared/common/config.interface';
 })
 export class HeaderNotificationsComponent implements OnInit {
     notifications: IFormattedUserNotification[] = [];
-    unreadNotificationCount = 0;
+    get unreadNotificationCount(): number {
+        return this.userNotificationHelper.unreadNotificationCount;
+    }
+    set unreadNotificationCount(val: number) {
+        this.userNotificationHelper.unreadNotificationCount = val;
+    }
     shownLoginInfo: { fullName, email, tenantName?};
     tenancyName = '';
     userName = '';
@@ -144,11 +149,13 @@ export class HeaderNotificationsComponent implements OnInit {
             if (this.unreadNotificationCount <= 0)
                 this.loadNotifications();
             else {
-                for (let i = 0; i < this.notifications.length; i++) {
-                    if (this.notifications[i].userNotificationId === userNotificationId) {
-                        this.notifications[i].state = 'READ';
+                this.notifications.some(notification => {
+                    if (notification.userNotificationId === userNotificationId) {
+                        notification.isUnread = false;
+                        notification.state = 'READ';
+                        return true;
                     }
-                }
+                });
             }
         });
     }

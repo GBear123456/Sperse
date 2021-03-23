@@ -67,7 +67,7 @@
                                      'user-notification-item-unread': notification.isUnread
                                  }"
                                  (click)="onNotificationClick(notification)">
-                                <span class="m-list-timeline__badge m-list-timeline__badge--success"></span>
+                                <span class="m-list-timeline__badge m-list-timeline__badge--{{notification.isUnread ? 'success' : 'metal' }}"></span>
                                 <span class="m-list-timeline__icon {{notification.icon}}"></span>
                                 <span class="m-list-timeline__text">
                                     {{notification.text}}
