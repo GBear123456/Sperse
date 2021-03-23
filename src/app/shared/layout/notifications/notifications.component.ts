@@ -27,6 +27,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
 export class NotificationsComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+
     readStateFilter: UserNotificationState;
     loading = false;
     selectBoxList = [
@@ -43,26 +44,26 @@ export class NotificationsComponent implements OnInit {
                 loadOptions.take,
                 loadOptions.skip
             ).pipe(
-                finalize(() => this.modalDialog.finishLoading()),
+                finalize(() => this.modalDialog.finishLoading())
             ).toPromise().then((notificationsOutput: GetNotificationsOutput) => {
                 let notifications = [];
                 notificationsOutput.items.forEach((item: UserNotificationDto) => {
                     notifications.push(this.userNotificationHelper.format(<any>item, false));
                 });
-                return {
-                    data: notifications,
-                    totalCount: notifications.length //TODO: separate AIP call needed for that (on grid view only)
-                };
+                return notifications;
             });
-        }
+        },
+        totalCount: () => this.notificationService.getUserNotificationCount(
+            this.readStateFilter
+        ).toPromise()
     });
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
 
     constructor(
+        private router: Router,
         private dialog: MatDialog,
         private notificationService: NotificationServiceProxy,
-        private userNotificationHelper: UserNotificationHelper,
-        private router: Router,
+        public userNotificationHelper: UserNotificationHelper,
         public ls: AppLocalizationService
     ) {}
 

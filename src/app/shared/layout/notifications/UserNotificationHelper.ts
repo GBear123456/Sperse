@@ -13,7 +13,7 @@ import { NotificationSettingsModalComponent } from './notification-settings-moda
 
 export interface IFormattedUserNotification {
     entityId: string;
-    entityTypeName: string; 
+    entityTypeName: string;
     userNotificationId: string;
     text: string;
     time: string;
@@ -27,6 +27,8 @@ export interface IFormattedUserNotification {
 
 @Injectable()
 export class UserNotificationHelper {
+    unreadNotificationCount = 0;
+
     constructor(
         private dialog: MatDialog,
         private notificationService: NotificationServiceProxy,
