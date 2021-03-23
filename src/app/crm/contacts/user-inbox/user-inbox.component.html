@@ -46,9 +46,8 @@
         <div class="inbox-content" *ngIf="activeMessage">
             <dx-tooltip width="670px"
                         [target]="'span.to'" 
-                        showEvent="mouseenter"
+                        [showEvent]="activeMessage?.recepients?.length && activeMessage?.deliveryType=='Email' ? 'mouseenter' : ''"
                         hideEvent="dxhoverend"
-                        [disabled]="!activeMessage?.recepients?.length"
                         position="bottom">
                 <div *dxTemplate="let data of 'content'">
                     <dx-data-grid [dataSource]="activeMessage?.recepients" id="inbox-delivery-statuses">

@@ -27,7 +27,6 @@ import { DxDataGridComponent } from 'devextreme-angular';
 export class NotificationsComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    unreadNotificationCount = 0;
     readStateFilter: UserNotificationState;
     loading = false;
     selectBoxList = [
@@ -47,13 +46,12 @@ export class NotificationsComponent implements OnInit {
                 finalize(() => this.modalDialog.finishLoading()),
             ).toPromise().then((notificationsOutput: GetNotificationsOutput) => {
                 let notifications = [];
-                this.unreadNotificationCount = notificationsOutput.unreadCount;
                 notificationsOutput.items.forEach((item: UserNotificationDto) => {
                     notifications.push(this.userNotificationHelper.format(<any>item, false));
                 });
                 return {
                     data: notifications,
-                    totalCount: notificationsOutput.totalCount
+                    totalCount: notifications.length //TODO: separate AIP call needed for that (on grid view only)
                 };
             });
         }
@@ -97,7 +95,6 @@ export class NotificationsComponent implements OnInit {
                     'state',
                     'READ'
                 );
-                this.unreadNotificationCount -= 1;
             }
         });
     }

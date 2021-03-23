@@ -1193,7 +1193,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             if (filterCashflowTypes.length) {
                 this.selectedCashflowTypeIds.next(filterCashflowTypes);
             }
-
             if (filterAccountingTypes.length || filterCategories.length) {
                 let field = {};
                 this.addCategorizationFilter(filterAccountingTypes, 'AccountingTypeId', field);
@@ -1203,7 +1202,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     new FilterModel({
                         items: field,
                         options: { method: 'filterMethod' },
-                        filterMethod: this.filterByCombinedCategories
+                        filterMethod: this.filterByCombinedCategories.bind(this, field)
                     })
                 ];
             }
@@ -1238,13 +1237,30 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return !isNaN(<number> key);
     }
 
-    private filterByCombinedCategories() {
-        let filterObj = { or: [] };
-        _.pairs(this.items)
-            .reduce((obj, pair) => {
-                let val = pair.pop().value, key = pair.pop();
-                if (val) obj.or.push(`${key} in (${val.join(',')})`);
-                return obj;
+    private filterByCombinedCategories(selectedItems) {
+        let filterObj = { or: [], and: [] };
+        _.pairs(selectedItems)
+            .reduce((filter, pair) => {
+                let selectedIds = pair.pop().value, key = pair.pop();
+                if (selectedIds) {
+                    let inversionIds = [];
+                    if (key == 'CashflowCategoryId') {
+                        let categories = this.categorizationComponent.categorization.categories,
+                            categoryIds = Object.keys(categories).filter(id => !categories[id].parentId),
+                            selectedCount = selectedIds.length,
+                            totalCount = categoryIds.length;
+                        if (selectedCount == totalCount)
+                            return filter;
+
+                        if (selectedCount > totalCount - selectedCount)
+                            inversionIds = categoryIds.filter(id => !selectedIds.includes(Number(id)));
+                    }
+                    if (inversionIds.length)
+                        filter.and.push(`not(${key} in (${inversionIds.join(',')}))`);
+                    else if (selectedIds.length)
+                        filter.or.push(`${key} in (${selectedIds.join(',')})`);
+                }
+                return filter;
             }, filterObj);
         return filterObj;
     }

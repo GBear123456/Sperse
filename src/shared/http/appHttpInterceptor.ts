@@ -25,7 +25,8 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         'odata_SalesSlice',
         'odata_ContactSlice',
         'odata_SubscriptionSlice',
-        'Localization_GetLocalizationSource'
+        'Localization_GetLocalizationSource',
+        'Profile_GetFriendProfilePictureById'
     ];
 
     constructor(public configuration: AppHttpConfiguration) {
@@ -33,33 +34,36 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        let key = this.getKeyFromUrl(request.url, request.params),
-            pool = this._poolRequests[key] || {request};
+        let key = this.getKeyFromUrl(request);
+        if (this.EXCEPTION_KEYS.some(item => key.includes(item)))
+            return super.intercept(request, next);
 
-        this._poolRequests[key] = pool;
-        if (pool.subject) {
-            if (pool.request.urlWithParams == request.urlWithParams
-                && pool.request.body == request.body
-            ) return pool.subject;
-
-            if (request.method == 'GET') {
-                if (this.EXCEPTION_KEYS.every((item) => key.indexOf(item) < 0)) {
-                    if (pool.subject.observers && pool.subject.observers.length)
-                        pool.subject.observers.forEach((sub) => {
-                            sub.unsubscribe();
-                        });
-                    pool.httpSubscriber.unsubscribe();
-                    this._poolRequests[key] = pool;
-                    pool.subject.complete();
-                }
-            }
+        let poolRequest = this._poolRequests[key];
+        if (!poolRequest) {
+            poolRequest = this._poolRequests[key] = {request};
+            return poolRequest.subject = this.interceptInternal(request, next);
         }
 
-        return pool.subject = this.interceptInternal(request, next);
+        if (poolRequest.request.urlWithParams == request.urlWithParams
+            && poolRequest.request.body == request.body
+        ) {
+            return poolRequest.subject;
+        }
+
+        if (request.method == 'GET') {
+            if (poolRequest.subject.observers && poolRequest.subject.observers.length)
+                poolRequest.subject.observers.forEach(sub => {
+                    sub.unsubscribe();
+                });
+            poolRequest.httpSubscriber.unsubscribe();
+            poolRequest.subject.complete();
+        }
+
+        return poolRequest.subject = this.interceptInternal(request, next);
     }
 
     private interceptInternal(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        let key = this.getKeyFromUrl(request.url, request.params),
+        let key = this.getKeyFromUrl(request),
             interceptObservable = new Subject<HttpEvent<any>>(),
             modifiedRequest = this.normalizeRequestHeaders(request);
 
@@ -73,17 +77,15 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         return interceptObservable;
     }
 
-    private getKeyFromUrl(url: string, params: HttpParams): string {
-        const odataKey = url.split('?').shift().split('/').slice(3).join('_');
-        const paramsKey = this.getParamsKey(odataKey, url, params);
-        return odataKey + (paramsKey ? '_' + paramsKey : '');
+    private getKeyFromUrl(request: HttpRequest<any>): string {
+        const path = request.url.split('?').shift().split('/').slice(3).join('_');
+        const paramsKey = this.getParamsKey(path, request.params);
+        return path + (paramsKey ? '_' + paramsKey : '');
     }
 
-    private getParamsKey(odataKey: string, url: string, params: HttpParams) {
-        let paramsKey;
-        if (['odata_Lead', 'odata_Contact'].includes(odataKey))
-            paramsKey = params.get('contactGroupId');
-        return paramsKey || '';
+    private getParamsKey(path: string, params: HttpParams) {
+        if (['odata_Lead', 'odata_Contact'].includes(path))
+            return params.get('contactGroupId');
     }
 
     addAuthorizationHeaders(header: HttpHeaders): HttpHeaders {
@@ -105,7 +107,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
 
     protected normalizeRequestHeaders(request: HttpRequest<any>): HttpRequest<any> {
         const isAssetsRequest = request.url.indexOf(AppConsts.appBaseHref + 'assets') === 0;
-        if (isAssetsRequest || this.getKeyFromUrl(request.url, request.params) == 'api_Localization_GetLocalizationSource') {
+        if (isAssetsRequest || request.url.includes('api/Localization/GetLocalizationSource')) {
             let modifiedHeaders = new HttpHeaders();
 
             this.addXRequestedWithHeader(modifiedHeaders);

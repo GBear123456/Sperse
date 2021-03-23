@@ -17528,39 +17528,36 @@ export class HostSettingsServiceProxy {
     }
 
     /**
-     * @body (optional) 
      * @return Success
      */
-    sendTestEmail(body: SendTestEmailInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/SendTestEmail";
+    getGeneralSettings(): Observable<GeneralSettingsEditDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/GetGeneralSettings";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_ : any = {
-            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSendTestEmail(response_);
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetGeneralSettings(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processSendTestEmail(<any>response_);
+                    return this.processGetGeneralSettings(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<GeneralSettingsEditDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<GeneralSettingsEditDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processSendTestEmail(response: HttpResponseBase): Observable<void> {
+    protected processGetGeneralSettings(response: HttpResponseBase): Observable<GeneralSettingsEditDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -17569,14 +17566,17 @@ export class HostSettingsServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GeneralSettingsEditDto.fromJS(resultData200) : new GeneralSettingsEditDto();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<GeneralSettingsEditDto>(<any>null);
     }
 
     /**
@@ -17613,6 +17613,58 @@ export class HostSettingsServiceProxy {
     }
 
     protected processUpdateGeneralSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    sendTestEmail(body: SendTestEmailInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/SendTestEmail";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendTestEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendTestEmail(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendTestEmail(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -22294,6 +22346,61 @@ export class NotificationServiceProxy {
             }));
         }
         return _observableOf<GetNotificationsOutput>(<any>null);
+    }
+
+    /**
+     * @state (optional) 
+     * @return Success
+     */
+    getUserNotificationCount(state: UserNotificationState | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/Platform/Notification/GetUserNotificationCount?";
+        if (state !== undefined)
+            url_ += "state=" + encodeURIComponent("" + state) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserNotificationCount(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserNotificationCount(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUserNotificationCount(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
     }
 
     /**
@@ -34066,58 +34173,6 @@ export class TenantSettingsServiceProxy {
     /**
      * @return Success
      */
-    getGeneralSettings(): Observable<GeneralSettingsEditDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetGeneralSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetGeneralSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetGeneralSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<GeneralSettingsEditDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GeneralSettingsEditDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetGeneralSettings(response: HttpResponseBase): Observable<GeneralSettingsEditDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GeneralSettingsEditDto.fromJS(resultData200) : new GeneralSettingsEditDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GeneralSettingsEditDto>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
     getUserManagementSettings(): Observable<TenantUserManagementSettingsEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetUserManagementSettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -35104,39 +35159,36 @@ export class TenantSettingsServiceProxy {
     }
 
     /**
-     * @body (optional) 
      * @return Success
      */
-    sendTestEmail(body: SendTestEmailInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/SendTestEmail";
+    getGeneralSettings(): Observable<GeneralSettingsEditDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetGeneralSettings";
         url_ = url_.replace(/[?&]$/, "");
 
-        const content_ = JSON.stringify(body);
-
         let options_ : any = {
-            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSendTestEmail(response_);
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetGeneralSettings(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processSendTestEmail(<any>response_);
+                    return this.processGetGeneralSettings(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<GeneralSettingsEditDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<GeneralSettingsEditDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processSendTestEmail(response: HttpResponseBase): Observable<void> {
+    protected processGetGeneralSettings(response: HttpResponseBase): Observable<GeneralSettingsEditDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -35145,14 +35197,17 @@ export class TenantSettingsServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GeneralSettingsEditDto.fromJS(resultData200) : new GeneralSettingsEditDto();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<GeneralSettingsEditDto>(<any>null);
     }
 
     /**
@@ -35189,6 +35244,58 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateGeneralSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    sendTestEmail(body: SendTestEmailInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/SendTestEmail";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendTestEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendTestEmail(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendTestEmail(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -67464,8 +67571,6 @@ export interface IUserNotificationDto {
 }
 
 export class GetNotificationsOutput implements IGetNotificationsOutput {
-    unreadCount!: number | undefined;
-    totalCount!: number | undefined;
     items!: UserNotificationDto[] | undefined;
 
     constructor(data?: IGetNotificationsOutput) {
@@ -67479,8 +67584,6 @@ export class GetNotificationsOutput implements IGetNotificationsOutput {
 
     init(data?: any) {
         if (data) {
-            this.unreadCount = data["unreadCount"];
-            this.totalCount = data["totalCount"];
             if (data["items"] && data["items"].constructor === Array) {
                 this.items = [];
                 for (let item of data["items"])
@@ -67498,8 +67601,6 @@ export class GetNotificationsOutput implements IGetNotificationsOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["unreadCount"] = this.unreadCount;
-        data["totalCount"] = this.totalCount;
         if (this.items && this.items.constructor === Array) {
             data["items"] = [];
             for (let item of this.items)
@@ -67510,8 +67611,6 @@ export class GetNotificationsOutput implements IGetNotificationsOutput {
 }
 
 export interface IGetNotificationsOutput {
-    unreadCount: number | undefined;
-    totalCount: number | undefined;
     items: UserNotificationDto[] | undefined;
 }
 
