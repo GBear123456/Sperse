@@ -245,7 +245,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         isSelected: true,
         items: {
             element: new FilterCheckBoxesModel({
-                dataSource$: this.statuses$,
+                dataSource$: this.store$.pipe(select(StatusesStoreSelectors.getFilterStatuses)),
                 nameField: 'name',
                 keyExpr: 'id',
                 selectedKeys$: of(['A'])
@@ -1164,6 +1164,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     },
                     {
                         name: 'status',
+                        disabled: this.dataGrid && this.dataGrid.instance.getVisibleRows().some(row => {
+                            return this.selectedClientKeys.includes(row.data.Id) && row.data.Status == 'Prospective';
+                        }),
                         action: this.toggleStatus.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStatus && this.filterModelStatus.isSelected
