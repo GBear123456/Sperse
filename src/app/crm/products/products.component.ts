@@ -34,7 +34,8 @@ import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/
 import { AddProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { ProductServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ProductServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
+import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ProductDto } from '@app/crm/products/products-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ProductFields } from '@app/crm/products/products-fields.enum';
@@ -98,6 +99,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         }
     ];
 
+    currency: string;
     permissions = AppPermissions;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     totalCount: number;
@@ -123,6 +125,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
+        private invoicesService: InvoicesService,
         private filtersService: FiltersService,
         private productProxy: ProductServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
@@ -131,6 +134,9 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     ) {
         super(injector);
         this.dataSource = new DataSource({store: new ODataStore(this.dataStore)});
+        invoicesService.settings$.pipe(filter(Boolean)).subscribe(
+            (res: InvoiceSettings) => this.currency = res.currency
+        );
     }
 
     ngOnInit() {
@@ -398,7 +404,8 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onCellClick(event) {
-        this.editProduct(event.data.Id);
+        if (event.data)
+            this.editProduct(event.data.Id);
     }
 
     toggleActionsMenu(event) {

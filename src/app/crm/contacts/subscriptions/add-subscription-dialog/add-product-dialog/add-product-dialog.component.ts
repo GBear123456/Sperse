@@ -98,11 +98,13 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             this.product = new CreateProductInput(data.product);
         productGroupProxy.getProductGroups().subscribe((groups: ProductGroupInfo[]) => {
             this.productGroups = groups;
+            this.detectChanges();
         });
 
         serviceProductProxy.getAll(false).subscribe((services: ServiceProductDto[]) => {
             this.services = services;
             this.checkAddManageOption(this.services);
+            this.detectChanges();
         });
 
         this.gracePeriodDefaultValue = this.setting.getInt('App.OrderSubscription.DefaultSubscriptionGracePeriodDayCount');
@@ -187,8 +189,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.product.productSubscriptionOptions.splice(index, 1);
     }
 
-    getServiceLevels(serviceId) {
-        let service = this.services.find(item => item.id == serviceId);
+    getServiceLevels(serviceId) {        
+        let service = (this.services || []).find(item => item.id == serviceId);
         return service ? service.serviceProductLevels : [];
     }
 
