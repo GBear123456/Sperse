@@ -63,7 +63,8 @@ export class MarkAsPaidDialogComponent {
             gatewayName: undefined,
             authorizationCode: undefined,
             gatewayTransactionId: undefined,
-            bankCardInfo: undefined
+            bankCardInfo: undefined,
+            hasRecurringBilling: undefined
         })).pipe(finalize(() => {
             this.loadingService.finishLoading(this.elementRef.nativeElement);
         })).subscribe(() => {
