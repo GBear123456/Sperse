@@ -153,7 +153,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                         id: res.productId,
                         name: this.product.name,
                         code: this.product.code,
-                        paymentPeriodTypes: this.product.productSubscriptionOptions.map(item => item.frequency)
+                        paymentPeriodTypes: this.product.productSubscriptionOptions && 
+                            this.product.productSubscriptionOptions.map(item => item.frequency)
                     }));
                 });
         }
@@ -208,7 +209,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             return;
 
         let selectedItem = event.component.option('selectedItem');
-        if (selectedItem.id == this.addNewItemId)
+        if (selectedItem && selectedItem.id == this.addNewItemId)
             this.showAddServiceProductDialog(event.component, event.previousValue);
     }
 
@@ -222,11 +223,12 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 templateType: 'Contact',
                 saveTitle: this.ls.l('Save')
             }
-        }).afterClosed().subscribe((res: ServiceProductDto) => {
-            if (res)
-                this.services.splice(this.services.length - 1, 0, res);
-            component.option('value', res ? res.code : previousValue);
-            this.detectChanges();
+        }).afterClosed().subscribe((service: ServiceProductDto) => {
+            if (service) {
+                this.services.splice(this.services.length - 1, 0, service);
+                setTimeout(() => component.option('value', service.id));
+                this.detectChanges();
+            }
         });
     }
 
