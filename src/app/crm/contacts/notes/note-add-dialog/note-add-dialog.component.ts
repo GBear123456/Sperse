@@ -265,6 +265,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 this.validator.reset();
                 this.notify.info(this.l('SavedSuccessfully'));
                 this.onSaved.emit();
+                this.close();
             });
         }
     }
