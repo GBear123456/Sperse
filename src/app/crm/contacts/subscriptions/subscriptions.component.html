@@ -35,7 +35,7 @@
     </div>
     <div *dxTemplate="let cellData of 'dateTemplate'" class="clipboard-holder">
         <span class="date-time" [title]="cellData.value | datetime: formatting.dateMoment">
-            {{cellData.value | datetime: formatting.dateMoment}}
+            {{cellData.value ? (cellData.value | datetime: formatting.dateMoment) : ''}}
         </span>
     </div>
 
