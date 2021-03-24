@@ -108,7 +108,7 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
 
             this.serviceProductProxy.createOrUpdate(this.serviceProduct).subscribe(serviceId => {
                 if (!this.serviceProduct.id)
-                    this.serviceProduct.id = serviceId;
+                    this.serviceProduct.id = Number(serviceId);
                 this.dialogRef.close(this.serviceProduct);
                 this.notify.info(this.ls.l('SavedSuccessfully'));
             });
