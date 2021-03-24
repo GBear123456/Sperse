@@ -1,4 +1,4 @@
-export enum AppliencesEnum {
+export enum AppliancesEnum {
     Dishwasher = 1,
     Dryer = 2,
     Fridge = 4,

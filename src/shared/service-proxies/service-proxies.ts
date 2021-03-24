@@ -17528,6 +17528,110 @@ export class HostSettingsServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getGeneralSettings(): Observable<GeneralSettingsEditDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/GetGeneralSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetGeneralSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetGeneralSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<GeneralSettingsEditDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GeneralSettingsEditDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetGeneralSettings(response: HttpResponseBase): Observable<GeneralSettingsEditDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GeneralSettingsEditDto.fromJS(resultData200) : new GeneralSettingsEditDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GeneralSettingsEditDto>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateGeneralSettings(body: GeneralSettingsEditDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/UpdateGeneralSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateGeneralSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateGeneralSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateGeneralSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -34014,58 +34118,6 @@ export class TenantSettingsServiceProxy {
     /**
      * @return Success
      */
-    getGeneralSettings(): Observable<GeneralSettingsEditDto> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetGeneralSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetGeneralSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetGeneralSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<GeneralSettingsEditDto>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<GeneralSettingsEditDto>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetGeneralSettings(response: HttpResponseBase): Observable<GeneralSettingsEditDto> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GeneralSettingsEditDto.fromJS(resultData200) : new GeneralSettingsEditDto();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<GeneralSettingsEditDto>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
     getUserManagementSettings(): Observable<TenantUserManagementSettingsEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetUserManagementSettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -34357,58 +34409,6 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateAllSettings(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
-    updateGeneralSettings(body: GeneralSettingsEditDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateGeneralSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateGeneralSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateGeneralSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateGeneralSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -35085,6 +35085,110 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateMemberPortalSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getGeneralSettings(): Observable<GeneralSettingsEditDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetGeneralSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetGeneralSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetGeneralSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<GeneralSettingsEditDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GeneralSettingsEditDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetGeneralSettings(response: HttpResponseBase): Observable<GeneralSettingsEditDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GeneralSettingsEditDto.fromJS(resultData200) : new GeneralSettingsEditDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GeneralSettingsEditDto>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateGeneralSettings(body: GeneralSettingsEditDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateGeneralSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateGeneralSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateGeneralSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateGeneralSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -52961,6 +53065,7 @@ export interface IContactGroupDto {
 export class ContactStatusDto implements IContactStatusDto {
     id!: string | undefined;
     name!: string | undefined;
+    forFilterOnly!: boolean | undefined;
 
     constructor(data?: IContactStatusDto) {
         if (data) {
@@ -52975,6 +53080,7 @@ export class ContactStatusDto implements IContactStatusDto {
         if (data) {
             this.id = data["id"];
             this.name = data["name"];
+            this.forFilterOnly = data["forFilterOnly"];
         }
     }
 
@@ -52989,6 +53095,7 @@ export class ContactStatusDto implements IContactStatusDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["name"] = this.name;
+        data["forFilterOnly"] = this.forFilterOnly;
         return data; 
     }
 }
@@ -52996,6 +53103,7 @@ export class ContactStatusDto implements IContactStatusDto {
 export interface IContactStatusDto {
     id: string | undefined;
     name: string | undefined;
+    forFilterOnly: boolean | undefined;
 }
 
 export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
@@ -60424,6 +60532,7 @@ export interface IGetEditionTenantStatisticsOutput {
 }
 
 export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
+    defaultCountryCode!: string | undefined;
     timezone!: string | undefined;
     timezoneForComparison!: string | undefined;
     zendeskAccountUrl!: string | undefined;
@@ -60440,6 +60549,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
 
     init(data?: any) {
         if (data) {
+            this.defaultCountryCode = data["defaultCountryCode"];
             this.timezone = data["timezone"];
             this.timezoneForComparison = data["timezoneForComparison"];
             this.zendeskAccountUrl = data["zendeskAccountUrl"];
@@ -60456,6 +60566,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["defaultCountryCode"] = this.defaultCountryCode;
         data["timezone"] = this.timezone;
         data["timezoneForComparison"] = this.timezoneForComparison;
         data["zendeskAccountUrl"] = this.zendeskAccountUrl;
@@ -60465,6 +60576,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
 }
 
 export interface IGeneralSettingsEditDto {
+    defaultCountryCode: string | undefined;
     timezone: string | undefined;
     timezoneForComparison: string | undefined;
     zendeskAccountUrl: string | undefined;
@@ -73999,7 +74111,7 @@ export enum PropertyType {
     Townhouse = "Townhouse", 
 }
 
-export enum Appliences {
+export enum Appliances {
     _1 = 1, 
     _2 = 2, 
     _4 = 4, 
@@ -74121,8 +74233,8 @@ export class PropertyDto implements IPropertyDto {
     bathCount!: number | undefined;
     den!: boolean | undefined;
     office!: boolean | undefined;
-    appliences!: Appliences | undefined;
-    otherAppliences!: string | undefined;
+    appliances!: Appliances | undefined;
+    otherAppliances!: string | undefined;
     laundryInSuite!: boolean | undefined;
     isCentralHeating!: boolean | undefined;
     heatingType!: HeatingCoolingType | undefined;
@@ -74277,8 +74389,8 @@ export class PropertyDto implements IPropertyDto {
             this.bathCount = data["bathCount"];
             this.den = data["den"];
             this.office = data["office"];
-            this.appliences = data["appliences"];
-            this.otherAppliences = data["otherAppliences"];
+            this.appliances = data["appliances"];
+            this.otherAppliances = data["otherAppliances"];
             this.laundryInSuite = data["laundryInSuite"];
             this.isCentralHeating = data["isCentralHeating"];
             this.heatingType = data["heatingType"];
@@ -74433,8 +74545,8 @@ export class PropertyDto implements IPropertyDto {
         data["bathCount"] = this.bathCount;
         data["den"] = this.den;
         data["office"] = this.office;
-        data["appliences"] = this.appliences;
-        data["otherAppliences"] = this.otherAppliences;
+        data["appliances"] = this.appliances;
+        data["otherAppliances"] = this.otherAppliances;
         data["laundryInSuite"] = this.laundryInSuite;
         data["isCentralHeating"] = this.isCentralHeating;
         data["heatingType"] = this.heatingType;
@@ -74582,8 +74694,8 @@ export interface IPropertyDto {
     bathCount: number | undefined;
     den: boolean | undefined;
     office: boolean | undefined;
-    appliences: Appliences | undefined;
-    otherAppliences: string | undefined;
+    appliances: Appliances | undefined;
+    otherAppliances: string | undefined;
     laundryInSuite: boolean | undefined;
     isCentralHeating: boolean | undefined;
     heatingType: HeatingCoolingType | undefined;

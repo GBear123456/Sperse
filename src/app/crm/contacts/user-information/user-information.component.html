@@ -88,10 +88,10 @@
                     <h2>{{ls.l('SelectRoles')}}</h2><span class="optional">({{ls.l('optional')}})</span>
                     <p>{{ls.l('SelectRolesDescription')}}</p>
                     <ul class="items-list roles">
-                        <li *ngFor="let role of roles" [title]="role.displayName">
+                        <li *ngFor="let role of roles" [title]="role.roleDisplayName">
                             <dx-check-box [disabled]="!isInviteAllowed"
-                                        [text]="role.displayName"
-                                        [value]="isPartner() && roleIsCheckedByDefault(role.name)"
+                                        [text]="role.roleDisplayName"
+                                        [value]="isPartner() && roleIsCheckedByDefault(role.roleName)"
                                         (onValueChanged)="inviteRoleUpdate($event, role)">
                             </dx-check-box>
                         </li>

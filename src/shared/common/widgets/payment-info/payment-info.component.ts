@@ -19,6 +19,8 @@ import { InputStatusesService } from '@shared/utils/input-statuses.service';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { StatesService } from '@root/store/states-store/states.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppConsts } from '@shared/AppConsts';
+import { Country } from '@shared/AppEnums';
 
 @Component({
     selector: 'payment-info',
@@ -34,12 +36,12 @@ export class PaymentInfoComponent {
     bankCard: BankCardInfoDto = BankCardInfoDto.fromJS({});
     states: CountryStateDto[];
     googleAutoComplete: Boolean = Boolean(window['google']);
-    countryCode = 'US';
+    countryCode = AppConsts.defaultCountryCode;
     conditions = ConditionsType;
     public options = {
         types: ['address'],
         componentRestrictions: {
-            country: [ 'US', 'CA' ]
+            country: [ Country.USA, Country.Canada ]
         }
     };
 

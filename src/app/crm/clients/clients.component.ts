@@ -123,6 +123,7 @@ import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -244,7 +245,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         isSelected: true,
         items: {
             element: new FilterCheckBoxesModel({
-                dataSource$: this.statuses$,
+                dataSource$: this.store$.pipe(select(StatusesStoreSelectors.getFilterStatuses)),
                 nameField: 'name',
                 keyExpr: 'id',
                 selectedKeys$: of(['A'])
@@ -357,6 +358,17 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     }
                 },
                 {
+                    text: this.l('LoginToPortal'),
+                    class: 'login',
+                    checkVisible: (client: ContactDto) => !!client.UserId && !!AppConsts.appMemberPortalUrl                         
+                        && (
+                            this.impersonationIsGranted ||
+                            this.permission.checkCGPermission(client.GroupId, 'UserInformation.AutoLogin')
+                        )
+                        && !this.authService.checkCurrentTopDomainByUri(),
+                    action: () => this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl)
+                },
+                {
                     text: this.l('NotesAndCallLog'),
                     class: 'notes',
                     action: () => {
@@ -431,7 +443,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.filters,
                 loadOptions,
                 /** @todo change to strict typing and handle typescript error */
-                this.subscriptionStatusFilter.items.element['getObjectValue']()
+                {
+                    contactGroupId: ContactGroup.Client,
+                    ...this.subscriptionStatusFilter.items.element['getObjectValue']()
+                }
             );
         },
         onChanged: () => {
@@ -547,7 +562,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         odataRequestValues,
                         this.chartComponent.summaryBy.value,
                         this.dateField,
-                        this.subscriptionStatusFilter.items.element['getObjectValue']()
+                        {
+                            contactGroupId: ContactGroup.Client,
+                            ...this.subscriptionStatusFilter.items.element['getObjectValue']()
+                        }
                     );
                     return this.httpClient.get(chartDataUrl);
                 })
@@ -602,6 +620,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
 
     constructor(
         injector: Injector,
+        private authService: AppAuthService,
         private store$: Store<AppStore.State>,
         private reuseService: RouteReuseStrategy,
         private contactService: ContactsService,
@@ -638,14 +657,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     this.dataSourceURI,
                     [
                         this.filterModelStatus.filterMethod(this.filterModelStatus),
-                        FiltersService.filterByClientGroupId(),
                         FiltersService.filterByParentId()
                     ]
                 ),
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
-/*
                     request.params.$select = DataGridService.getSelectFields(
                         this.dataGrid,
                         [
@@ -657,7 +674,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.clientFields.Phone
                         ]
                     );
-*/
+                    request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -675,12 +692,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             store: new ODataStore({
                 url: this.getODataUrl(this.totalDataSourceURI, [
                     this.filterModelStatus.filterMethod(this.filterModelStatus),
-                    FiltersService.filterByClientGroupId(),
                     FiltersService.filterByParentId()
                 ]),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     this.totalCount = undefined;
+                    request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -741,7 +758,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     private getUserIds(records) {
-        return records.reduce((ids, item) => {
+        return records ? records.reduce((ids, item) => {
             if (item.items)
                 Array.prototype.push.apply(ids,
                     this.getUserIds(item.items)
@@ -749,7 +766,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             else if (item.UserId)
                 ids.push(item.UserId);
             return ids;
-        }, []);
+        }, []) : [];
     }
 
     private handleTotalCountUpdate() {
@@ -806,7 +823,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.getODataUrl(this.groupDataSourceURI),
                 odataRequestValues,
                 summaryBy,
-                this.dateField
+                this.dateField,
+                {contactGroupId: ContactGroup.Client}
             );
             if (!this.oDataService.requestLengthIsValid(chartDataUrl)) {
                 this.message.error(this.l('QueryStringIsTooLong'));
@@ -828,7 +846,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     odataRequestValues,
                     mapArea,
                     this.dateField,
-                    this.subscriptionStatusFilter.items.element['getObjectValue']()
+                    {
+                        contactGroupId: ContactGroup.Client,
+                        ...this.subscriptionStatusFilter.items.element['getObjectValue']()
+                    }
                 );
             }),
             filter((mapUrl: string) => {
@@ -1065,10 +1086,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.filterModelRating,
             this.filterModelStar,
             new FilterModel({
-                caption: 'clientGroupId',
-                hidden: true
-            }),
-            new FilterModel({
                 caption: 'parentId',
                 hidden: true
             })
@@ -1147,6 +1164,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     },
                     {
                         name: 'status',
+                        disabled: this.dataGrid && this.dataGrid.instance.getVisibleRows().some(row => {
+                            return this.selectedClientKeys.includes(row.data.Id) && row.data.Status == 'Prospective';
+                        }),
                         action: this.toggleStatus.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStatus && this.filterModelStatus.isSelected

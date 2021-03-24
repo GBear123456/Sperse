@@ -2,14 +2,18 @@ import { Injectable } from '@angular/core';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { AccountServiceProxy, ImpersonateInput, ImpersonateOutput } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { NotifyService } from '@abp/notify/notify.service';
 import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class ImpersonationService {
 
     constructor(
+        private notifyService: NotifyService,
         private accountService: AccountServiceProxy,
         private appUrlService: AppUrlService,
+        private ls: AppLocalizationService,
         private authService: AppAuthService
     ) {}
 
@@ -21,7 +25,10 @@ export class ImpersonationService {
 
         this.accountService.impersonate(input)
             .subscribe((result: ImpersonateOutput) => {
-                this.authService.logout(false);
+                let isExternalLogin = path && path.startsWith('http') &&
+                    !this.authService.checkCurrentTopDomainByUri(path);
+                if (!isExternalLogin)
+                    this.authService.logout(false);
 
                 let targetUrl = (path && path.startsWith('http') ? '' : AppConsts.appBaseUrl) +
                     (path ? path : '') + '?secureId=' + result.impersonationToken;
@@ -29,7 +36,11 @@ export class ImpersonationService {
                     targetUrl = targetUrl + '&tenantId=' + input.tenantId;
                 }
 
-                location.href = targetUrl;
+                if (isExternalLogin) {
+                    if (!window.open(targetUrl, '_blank'))
+                        this.notifyService.info(this.ls.l('TurnOffPopupBlockerMessage'));
+                } else
+                    location.href = targetUrl;
             });
     }
 

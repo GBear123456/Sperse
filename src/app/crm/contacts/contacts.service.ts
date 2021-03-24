@@ -20,7 +20,6 @@ import {
     OrganizationContactInfoDto,
     UserServiceProxy,
     ContactServiceProxy,
-    ContactUserServiceProxy,
     ContactCommunicationServiceProxy,
     ISendEmailInput,
     SendEmailInput,
@@ -112,7 +111,6 @@ export class ContactsService {
         private leadService: LeadServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
         private documentProxy: DocumentServiceProxy,
-        private contactUserService: ContactUserServiceProxy,
         private communicationProxy: ContactCommunicationServiceProxy,
         private permission: AppPermissionService,
         private userService: UserServiceProxy,
@@ -351,6 +349,10 @@ export class ContactsService {
                 .filter(item => item.isActive).map(item => item.emailAddress);
             if (emailData.suggestionEmails.length)
                 emailData.to = [emailData.suggestionEmails[0]];
+
+            emailData.contact.personContactInfo.details.phones
+                .filter(item => item.usageTypeId == 'F' && item.isActive) //Home Fax
+                .map(item => emailData.suggestionEmails.push(item.phoneNumber + '@fax.clicksend.com'));
         }
     }
 

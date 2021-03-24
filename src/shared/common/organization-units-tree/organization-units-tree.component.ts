@@ -31,6 +31,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
     @Input() selectionMode = 'multiple';
     @Input() showFilterButton = false;
     @Input() showCheckBoxesMode = 'normal';
+    @Input() height = 'calc(100vh - 330px)';
 
     public oranizationUnitsDataSource: DataSource;
     public searchEnabled = false;

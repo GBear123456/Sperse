@@ -88,9 +88,12 @@ export class AppConsts {
 
     static readonly otherLinkTypeId = '-';
 
+    private static readonly emailRegexString = '(([^<>()\[\\]\\.,;:\\s@"]+(\\.[^<>()\[\\]\\.,;:\\s@"]+)*)|("[^"]+"))@((\\[[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))';
+
     static readonly regexPatterns = {
         name: /^[A-Z][a-zA-Z]+$/,
-        email: /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+")[a-zA-Z]+)@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/,
+        email: new RegExp(`^${AppConsts.emailRegexString}$`),
+        emailWithName: new RegExp(`^((("[^"]+")|([a-zA-Z\\s]+))\\s*<(?=.+>$)|(?!.+>$))${AppConsts.emailRegexString}>?$`),
         phone: /^[0-9]{10}$/,
         url: /^(http[s]?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
         fullName: /^[\w|\s]+$/,
@@ -113,7 +116,8 @@ export class AppConsts {
     };
 
     static readonly defaultCompanyName = 'Unknown company';
-    static readonly defaultCountryName = 'United States of America';
+    static defaultCountryPhoneCode = '+1';
+    static defaultCountryCode = 'US';
 
     /* System Action IDs */
     static readonly SYS_ID_CRM_CANCEL_LEAD           = 'CRM.CancelLead';
@@ -123,9 +127,6 @@ export class AppConsts {
     static readonly SYS_ID_CRM_CANCEL_ORDER          = 'CRM.CancelOrder';
     static readonly SYS_ID_CRM_UPDATE_ORDER_STAGE    = 'CRM.UpdateOrderStage';
     static readonly SYS_ID_CRM_PROCESS_ORDER         = 'CRM.ProcessOrder';
-
-    static readonly defaultCountry = 'US';
-    static readonly defaultCountryCode = '+1';
 
     static readonly ODataVersion = 4;
     static readonly ODataRequestTimeoutMilliseconds = 3 * 60 * 1000;

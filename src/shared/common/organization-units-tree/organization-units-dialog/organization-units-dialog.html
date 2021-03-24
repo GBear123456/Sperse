@@ -7,5 +7,5 @@
 </div>
 <span class="close" (click)="close()"></span>
 <mat-dialog-content>
-    <organization-units-tree #orgUnits [selectionMode]="data?.selectionMode"></organization-units-tree>
+    <organization-units-tree #orgUnits [height]="'calc(100vh - ' + (data?.title ? '305px' : '400px') + ')'" [selectionMode]="data?.selectionMode"></organization-units-tree>
 </mat-dialog-content>

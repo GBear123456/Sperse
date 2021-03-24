@@ -133,7 +133,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         remoteOperations: true,
         load: (loadOptions) => {
             return this.crmService.loadSlicePivotGridData(
-                this.oDataService.getODataUrl('SalesSlice'),
+                this.oDataService.getODataUrl(
+                    this.salesReportDataSourceURI
+                ),
                 this.filters,
                 loadOptions
             );

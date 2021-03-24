@@ -42,6 +42,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { EditAddressDialogData } from '@app/crm/contacts/edit-address-dialog/edit-address-dialog-data.interface';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
 import { AddressUpdate } from '@app/crm/contacts/addresses/address-update.interface';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     selector: 'addresses',
@@ -50,7 +51,7 @@ import { AddressUpdate } from '@app/crm/contacts/addresses/address-update.interf
         './addresses.component.less',
         './addresses.styles.less'
     ],
-    providers: [ DialogService ]
+    providers: [DialogService]
 })
 export class AddressesComponent implements OnInit, OnDestroy {
     @Input() isCompany = false;
@@ -65,6 +66,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
     @Input() contactId: number;
     @Input() addresses: AddressDto[];
     @Input() isPlaceEditAllowed = true;
+    @Input() enableDoubleClick = false;
     @Input() isAddAllowed = true;
     @Input() isDeleteAllowed = true;
     @Input() isCopyAllowed = true;
@@ -93,6 +95,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
     private _contactInfo: ContactInfoDto;
 
     constructor(
+        private sessionService: AppSessionService,
         private contactsService: ContactsService,
         private addressService: ContactAddressServiceProxy,
         private organizationContactService: OrganizationContactServiceProxy,
@@ -162,6 +165,12 @@ export class AddressesComponent implements OnInit, OnDestroy {
     }
 
     showDialog(address: AddressDto, event, index?) {
+        if (event.type == 'dblclick') {
+            if (!this.enableDoubleClick)
+                return;
+            window.getSelection().removeAllRanges();
+        }
+
         if (!this.isCompany || this.contactId)
             this.showAddressDialog(address, event, index);
         else
@@ -244,7 +253,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
 
     inPlaceEdit(address: AddressDto, event, index) {
         if (!this.isPlaceEditAllowed || address.inplaceEdit)
-            return ;
+            return;
 
         this.clickCounter++;
         clearTimeout(this.clickTimeout);
@@ -368,7 +377,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
         const countryCode = GooglePlaceService.getCountryCode(event.address_components);
         this.statesService.updateState(countryCode, this.stateCode, this.stateName);
         const countryName = GooglePlaceService.getCountryName(event.address_components);
-        this.country = countryName === 'United States' ? AppConsts.defaultCountryName : countryName;
+        this.country = this.sessionService.getCountryNameByCode(countryCode) || countryName;
         this.zip = GooglePlaceService.getZipCode(event.address_components);
         this.streetAddress = GooglePlaceService.getStreet(event.address_components);
         this.streetNumber = GooglePlaceService.getStreetNumber(event.address_components);
@@ -411,6 +420,6 @@ export class AddressesComponent implements OnInit, OnDestroy {
                     })
                 );
         else
-            return of(AppConsts.defaultCountryName);
+            return of(this.sessionService.getCountryNameByCode(AppConsts.defaultCountryCode));
     }
 }

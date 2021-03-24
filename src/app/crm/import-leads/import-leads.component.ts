@@ -25,6 +25,7 @@ import { RatingComponent } from '@app/shared/common/lists/rating/rating.componen
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-wizard.component';
+import { Country } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -798,13 +799,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     checkZipUSCountryFields(field, data, zipField, countryCodeField, countryNameField): boolean {
         if (field.mappedField === zipField) {
+            const isUSDefaultCountry = AppConsts.defaultCountryCode == Country.USA;
             if (data[countryCodeField])
-                return data[countryCodeField] == AppConsts.defaultCountry;
+                return data[countryCodeField] == Country.USA;
             else if (data[countryNameField]) {
                 let country = _.findWhere(this.wizard.countries, {name: data[countryNameField].trim()});
-                return !country || country.code == AppConsts.defaultCountry;
+                return !country && isUSDefaultCountry || country.code == Country.USA;
             } else
-                return true;
+                return isUSDefaultCountry;
         }
         return false;
     }

@@ -1,0 +1,29 @@
+{
+  "name": "ngx-international-phone-number",
+  "version": "0.1.3",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nikhiln/ngx-international-phone-number"
+  },
+  "author": {
+    "name": "Nikhil Navadiya",
+    "email": "nikhil.navadiya@gmail.com"
+  },
+  "keywords": [
+    "angular"
+  ],
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/nikhiln/ngx-international-phone-number/issues"
+  },
+  "main": "ngx-international-phone-number.umd.js",
+  "module": "index.js",
+  "jsnext:main": "index.js",
+  "typings": "ngx-international-phone-number.d.ts",
+  "peerDependencies": {
+    "@angular/core": "^4.0.0",
+    "@angular/forms": "^4.0.0",
+    "rxjs": "^5.1.0",
+    "zone.js": "^0.8.4"
+  }
+}

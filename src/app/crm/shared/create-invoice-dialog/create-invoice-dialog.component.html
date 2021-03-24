@@ -90,7 +90,7 @@
                         <div *ngIf="selectedBillingAddress?.address1 as address">{{ address }}</div>
                         <div *ngIf="selectedBillingAddress?.city as city">{{ city }}</div>
                         <div *ngIf="[selectedBillingAddress?.stateId, selectedBillingAddress?.zip].filter(filterBoolean).join(' ') as state">{{ state }}</div>
-                        <div *ngIf="selectedBillingAddress?.countryId as countryId">{{ countryId == 'US' ? '' : countryId }}</div>
+                        <div *ngIf="selectedBillingAddress?.countryId as countryId">{{ countryId == defaultCountryCode ? '' : countryId }}</div>
                     </div>
                 </div>
                 <div class="ship-to" [hidden]="!invoiceSettings.showShippingAddress">
@@ -134,7 +134,7 @@
                         <div *ngIf="selectedShippingAddress?.address1 as address">{{ address }}</div>
                         <div *ngIf="selectedShippingAddress?.city as city">{{ city }}</div>
                         <div *ngIf="[selectedShippingAddress?.stateId, selectedShippingAddress?.zip].filter(filterBoolean).join(' ') as state">{{ state }}</div>
-                        <div *ngIf="selectedShippingAddress?.countryId as country">{{ country == 'US' ? '' : country }}</div>
+                        <div *ngIf="selectedShippingAddress?.countryId as country">{{ country == defaultCountryCode ? '' : country }}</div>
                     </div>
                 </div>
                 <div class="billed-from">
@@ -190,7 +190,8 @@
                         [focusStateEnabled]="true"
                         [showColumnLines]="false"
                         [scrolling]="{showScrollbar: 'never'}"
-                        [allowColumnResizing]="false">
+                        [allowColumnResizing]="false"
+                        [loadPanel]="{enabled: false}">
 
                         <dxi-column dataField="Description" width="280" caption="{{ls.l('Description')}}" [allowSorting]="false" cellTemplate="description"></dxi-column>
                         <dxi-column dataField="Quantity" width="120" caption="{{ls.l('Quantity')}}" [allowSorting]="false" cellTemplate="quantity"></dxi-column>

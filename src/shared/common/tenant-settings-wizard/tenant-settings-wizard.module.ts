@@ -13,6 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { InlineSVGModule } from 'ng-inline-svg';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { NgxFileDropModule } from 'ngx-file-drop';
 
 /** Application imports */
@@ -37,6 +38,7 @@ import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/mem
         MatFormFieldModule,
         MatSelectModule,
         DxCheckBoxModule,
+        DxSelectBoxModule,
         InlineSVGModule,
         MatInputModule,
         FormsModule,

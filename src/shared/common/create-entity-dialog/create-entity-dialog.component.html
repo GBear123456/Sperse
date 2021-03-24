@@ -208,7 +208,7 @@
                     </dx-text-area>
                 </div>
                 <div class="field">
-                    <label class="currency-label">{{ls.l('KREPurchasePrice')}}</label>
+                    <label class="currency-label">{{ls.l('PurchasePrice')}}</label>
                     <dx-number-box width="270px"
                                    height="34px"
                                    step="0"
@@ -231,7 +231,7 @@
                     </dx-select-box>
                 </div>
                 <div class="field">
-                    <label class="currency-label">{{ls.l('BuyerPurchasePrice')}}</label>
+                    <label class="currency-label">{{ls.l('PurchasePrice')}}</label>
                     <dx-number-box width="270px"
                                    height="34px"
                                    step="0"
@@ -257,8 +257,10 @@
                     <h3>{{ ls.l('SellerInformation') }}:</h3>
                     <div class="field">
                         <label class="name-label">{{ls.l('Contact')}}</label>
-                        <dx-text-box [value]="contactName"
+                        <dx-text-box name="fullName"
+                                     [value]="contactName"
                                      [placeholder]="ls.l('Contact.FullName')"
+                                     (onValueChanged)="onFullNameChanged($event)"
                                      (onKeyUp)="onFullNameKeyUp($event.element.getElementsByTagName('input')[0].value)">
                             <dx-validator>
                                 <dxi-validation-rule type="pattern"

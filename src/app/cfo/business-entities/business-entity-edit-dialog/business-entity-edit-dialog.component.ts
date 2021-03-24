@@ -38,6 +38,7 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { StatesService } from '@root/store/states-store/states.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
     templateUrl: 'business-entity-edit-dialog.component.html',
@@ -91,6 +92,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
     ];
 
     constructor(
+        private sessionService: AppSessionService,
         private businessEntityService: BusinessEntityServiceProxy,
         private notifyService: NotifyService,
         private changeDetectorRef: ChangeDetectorRef,
@@ -307,9 +309,7 @@ export class BusinessEntityEditDialogComponent implements OnInit {
         const stateName = GooglePlaceService.getStateName(address.address_components);
         this.statesService.updateState(countryCode, stateCode, stateName);
         const countryName = GooglePlaceService.getCountryName(address.address_components);
-        this.address.countryName = countryName === 'United States'
-            ? AppConsts.defaultCountryName
-            : countryName;
+        this.address.countryName = this.sessionService.getCountryNameByCode(countryCode) || countryName;
         this.businessEntity.zip = GooglePlaceService.getZipCode(address.address_components);
         this.address.street = GooglePlaceService.getStreet(address.address_components);
         this.address.streetNumber = GooglePlaceService.getStreetNumber(address.address_components);

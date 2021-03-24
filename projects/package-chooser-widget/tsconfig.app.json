@@ -5,6 +5,8 @@
     "outDir": "../../out-tsc/app"
   },
   "include": [
-    "./**/*"
+    "./**/*",
+    "./src/node_modules/ngx-international-phone-number/src/",
+    "../../src/node_modules/ngx-international-phone-number/src/"
   ]
 }

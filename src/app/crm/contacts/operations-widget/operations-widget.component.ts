@@ -37,6 +37,7 @@ import { CrmService } from '@app/crm/crm.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { AppConsts } from '@shared/AppConsts';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Component({
     selector: 'operations-widget',
@@ -129,6 +130,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         injector: Injector,
         private elementRef: ElementRef,
         private appService: AppService,
+        private authService: AppAuthService,
         private userService: UserServiceProxy,
         private contactService: ContactsService,
         private impersonationService: ImpersonationService,
@@ -265,6 +267,19 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                             this.contactInfo.personContactInfo.userId,
                                             this.appSession.tenantId,
                                             '/app/api'
+                                        );
+                                    }
+                                },
+                                {
+                                    text: this.l('LoginToPortal'),
+                                    visible: (this.canImpersonate || this.autoLoginAllowed) 
+                                        && !!AppConsts.appMemberPortalUrl
+                                        && !this.authService.checkCurrentTopDomainByUri(),
+                                    action: () => {
+                                        this.impersonationService.impersonate(
+                                            this.contactInfo.personContactInfo.userId,
+                                            this.appSession.tenantId,
+                                            AppConsts.appMemberPortalUrl
                                         );
                                     }
                                 },

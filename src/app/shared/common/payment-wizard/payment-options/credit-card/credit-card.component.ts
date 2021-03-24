@@ -17,6 +17,7 @@ import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank
 import { AppConsts } from '@shared/AppConsts';
 import { GooglePlaceService } from '@shared/common/google-place/google-place.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 
 export interface Country {
     code: string;
@@ -59,6 +60,7 @@ export class CreditCardComponent implements OnInit {
     constructor(
         private formBuilder: FormBuilder,
         private store$: Store<RootStore.State>,
+        private sessionService: AppSessionService,
         public ls: AppLocalizationService
     ) {
         this.creditCardData.get('billingStateCode').disable();
@@ -121,8 +123,8 @@ export class CreditCardComponent implements OnInit {
         let concatAddress = number ? number + ' ' + street : street;
         this.creditCardData.controls.billingAddress.setValue(concatAddress); // event.name - short form of address
         let countryName = GooglePlaceService.getCountryName(address.address_components);
-        if (countryName == 'United States')
-            countryName = AppConsts.defaultCountryName;
+        let countryCode = GooglePlaceService.getCountryCode(address.address_components);
+        countryName = this.sessionService.getCountryNameByCode(countryCode) || countryName;
 
         this.updateCountryInfo(countryName);
         const stateName = GooglePlaceService.getStateName(address.address_components);

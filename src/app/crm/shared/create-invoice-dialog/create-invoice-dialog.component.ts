@@ -107,6 +107,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     status = InvoiceStatus.Draft;
     startCase = startCase;
 
+    defaultCountryCode = AppConsts.defaultCountryCode;
     saveButtonId = 'saveInvoiceOptions';
     invoiceInfo = new GetNewInvoiceInfoOutput();
     invoiceSettings: InvoiceSettings = new InvoiceSettings();

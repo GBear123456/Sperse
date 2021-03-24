@@ -189,7 +189,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         let entityName: string;
         if (entity) {
             let prioritizedName = entity.Name;
-            if (this.pipeline.entityTypeSysId === EntityTypeSys.Acquisition) {
+            if (this.pipeline.entityTypeSysId === EntityTypeSys.PropertyAcquisition) {
                 prioritizedName = entity.PropertyName;
             }
             entityName = prioritizedName || entity.Title || entity.Email || entity.Phone || entity.CompanyName;
@@ -201,9 +201,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         let subtitle: string;
         if (entity) {
             let prioritizedSubtitle = this.currencyPipe.transform(entity.Amount, this.currency);
-            if (this.pipeline.entityTypeSysId && this.pipeline.entityTypeSysId.startsWith(EntityTypeSys.Management)) {
+            if (this.pipeline.entityTypeSysId && this.pipeline.entityTypeSysId.startsWith(EntityTypeSys.PropertyRentAndSale)) {
                 prioritizedSubtitle = prioritizedSubtitle || entity.PropertyName;
-            } else if (this.pipeline.entityTypeSysId === EntityTypeSys.Acquisition) {
+            } else if (this.pipeline.entityTypeSysId === EntityTypeSys.PropertyAcquisition) {
                 prioritizedSubtitle = prioritizedSubtitle || entity.Name;
             } else {
                 prioritizedSubtitle = entity.Name || entity.Title

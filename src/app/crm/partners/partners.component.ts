@@ -110,10 +110,12 @@ import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
+import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Component({
     templateUrl: './partners.component.html',
     styleUrls: [
+        '../shared/styles/client-status.less',
         '../shared/styles/grouped-action-menu.less',
         './partners.component.less'
     ],
@@ -219,6 +221,20 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     action: () => {
                         const partner: PartnerDto = this.actionEvent.data || this.actionEvent;
                         this.impersonationService.impersonate(partner.UserId, this.appSession.tenantId);
+                    }
+                },
+                {
+                    text: this.l('LoginToPortal'),
+                    class: 'login',
+                    checkVisible: (partner: PartnerDto) => !!partner.UserId && !!AppConsts.appMemberPortalUrl
+                        && (
+                            this.impersonationIsGranted ||
+                            this.permission.checkCGPermission(ContactGroup.Partner, 'UserInformation.AutoLogin')
+                        )
+                        && !this.authService.checkCurrentTopDomainByUri(),
+                    action: () => {
+                        const partner: PartnerDto = this.actionEvent.data || this.actionEvent;
+                        this.impersonationService.impersonate(partner.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl);
                     }
                 },
                 {
@@ -329,7 +345,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         items: {
             element: new FilterCheckBoxesModel(
                 {
-                    dataSource$: this.statuses$,
+                    dataSource$: this.store$.pipe(select(StatusesStoreSelectors.getFilterStatuses)),
                     nameField: 'name',
                     keyExpr: 'id',
                     selectedKeys$: of(['A'])
@@ -374,7 +390,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             return this.crmService.loadSlicePivotGridData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
-                loadOptions
+                loadOptions,
+                {contactGroupId: ContactGroup.Partner}
             );
         },
         onChanged: () => {
@@ -474,7 +491,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         this.getODataUrl(this.groupDataSourceURI),
                         odataRequestValues,
                         this.chartComponent.summaryBy.value,
-                        this.dateField
+                        this.dateField, 
+                        {contactGroupId: ContactGroup.Partner}
                     );
                     return this.oDataService.requestLengthIsValid(chartDataUrl)
                         ? this.httpClient.get(chartDataUrl)
@@ -505,6 +523,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     toolbarConfig: ToolbarGroupModel[];
     private filters: FilterModel[] = this.getFilters();
     odataRequestValues$: Observable<ODataRequestValues> = concat(
+        this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom),
         this.filterChanged$.pipe(
             switchMap(() => this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom))
         )
@@ -532,13 +551,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.dataSourceURI,
             [
                 this.filterModelStatus.filterMethod(this.filterModelStatus),
-                FiltersService.filterByPartnerGroupId(),
                 FiltersService.filterByParentId()
             ]
         ),
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+            request.params.contactGroupId = ContactGroup.Partner;
             request.params.$select =
             this.pipelineSelectFields = DataGridService.getSelectFields(
                 this.dataGrid,
@@ -556,6 +575,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
+        private authService: AppAuthService,
         private contactService: ContactsService,
         private partnerService: PartnerServiceProxy,
         private pipelineService: PipelineService,
@@ -596,12 +616,12 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     this.totalDataSourceURI,
                     [
                         this.filterModelStatus.filterMethod(this.filterModelStatus),
-                        FiltersService.filterByPartnerGroupId(),
                         FiltersService.filterByParentId()
                     ]
                 ),
                 beforeSend: (request) => {
                     this.totalCount = undefined;
+                    request.params.contactGroupId = ContactGroup.Partner;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
@@ -610,7 +630,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 }
             })
         });
-        this.totalDataSource.load();
     }
 
     ngOnInit() {
@@ -673,7 +692,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
             filter(() => this.showDataGrid || this.showPivotGrid)
-        ).subscribe((data) => {
+        ).subscribe(() => {
             if (this.showPivotGrid)
                 this.pivotGridComponent.dataGrid.instance.updateDimensions();
             this.processFilterInternal();
@@ -722,7 +741,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 this.getODataUrl(this.groupDataSourceURI),
                 odataRequestValues,
                 summaryBy,
-                this.dateField
+                this.dateField,
+                {contactGroupId: ContactGroup.Partner}
             );
             if (!this.oDataService.requestLengthIsValid(chartDataUrl)) {
                 this.message.error(this.l('QueryStringIsTooLong'));
@@ -743,7 +763,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     this.getODataUrl(this.groupDataSourceURI),
                     odataRequestValues,
                     mapArea,
-                    this.dateField
+                    this.dateField,
+                    {contactGroupId: ContactGroup.Partner}
                 );
             }),
             filter((mapUrl: string) => {
@@ -1054,10 +1075,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }),
             new FilterModel({
-                caption: 'partnerGroupId',
-                hidden: true
-            }),
-            new FilterModel({
                 caption: 'parentId',
                 hidden: true
             })
@@ -1138,6 +1155,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     },
                     {
                         name: 'status',
+                        disabled: this.selectedPartners.some(partner => partner.Status == 'Prospective'),
                         action: this.toggleStatus.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStatus && this.filterModelStatus.isSelected
@@ -1501,12 +1519,14 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     processFilterInternal() {
         if (this.showDataGrid || this.showPivotGrid) {
-            this.processODataFilter(
-                (this.showPivotGrid ? this.pivotGridComponent : this).dataGrid.instance,
-                this.dataSourceURI,
-                this.filters,
-                this.filtersService.getCheckCustom
-            );
+            let dataGrid = (this.showPivotGrid ? this.pivotGridComponent : this).dataGrid;
+            if (dataGrid)
+                this.processODataFilter(
+                    dataGrid.instance,
+                    this.dataSourceURI,
+                    this.filters,
+                    this.filtersService.getCheckCustom
+                );
         }
     }
 

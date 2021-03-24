@@ -172,13 +172,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
             },
             this.ident
         );
-
-        if (!(this.roles = this.roleServiceProxy['data']))
-            this.roleServiceProxy.getRoles(undefined, undefined).subscribe((res) => {
-                this.roleServiceProxy['data'] = this.roles = res.items;
-                this.updateInviteDataRoles();
-            });
-        this.updateInviteDataRoles();
+        this.loadData();
     }
 
     ngAfterViewInit() {
@@ -276,13 +270,20 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
                         this.dataIsloading = false;
                         this.loadingService.finishLoading();
                     })
-                ).subscribe((userEditOutput: GetUserForEditOutput) => this.fillUserData(userEditOutput));
+                ).subscribe((userEditOutput: GetUserForEditOutput) => {
+                    if (contactInfo.personContactInfo.userId)
+                        this.fillUserData(userEditOutput);
+                    else {
+                        this.roles = userEditOutput.roles;
+                        this.updateInviteDataRoles();
+                    }
+                });
         }
     }
 
     isPartner() {
         return this.contactInfoData && this.contactInfoData.contactInfo &&
-               this.contactInfoData.contactInfo.groupId === ContactGroup.Partner;
+            this.contactInfoData.contactInfo.groupId === ContactGroup.Partner;
     }
 
     fillUserData(data) {
@@ -354,11 +355,11 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
         );
     }
 
-    inviteRoleUpdate(event, item) {
+    inviteRoleUpdate(event, role) {
         let roles = this.inviteData.assignedRoleNames, roleIndex;
         if (event.value)
-            roles.push(item.name);
-        else if ((roleIndex = roles.indexOf(item.name)) >= 0)
+            roles.push(role.roleName);
+        else if ((roleIndex = roles.indexOf(role.roleName)) >= 0)
             this.inviteData.assignedRoleNames.splice(roleIndex, 1);
     }
 

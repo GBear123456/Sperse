@@ -9,7 +9,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
-import { Observable, Subscription, merge, race } from 'rxjs';
+import { Observable, Subscription, merge, race, forkJoin } from 'rxjs';
 import { filter, map, switchMap, pluck, finalize, skip, first } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 import * as moment from 'moment';
@@ -20,8 +20,11 @@ import {
     ContactInfoDto, CreateContactAddressInput, HeatingCoolingType,
     LeadInfoDto,
     PropertyDto,
+    PropertyDealInfo,
     PropertyServiceProxy,
     PropertyType,
+    LeadServiceProxy,
+    UpdateLeadDealInfoInput,
     YardPatioEnum,
     SellPeriod,
     InterestRate,
@@ -43,8 +46,9 @@ import { GarbageEnum } from './enums/garbage.enum';
 import { ParkingEnum } from './enums/parking.enum';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { AppliencesEnum } from './enums/appliences.enum';
+import { AppliancesEnum } from './enums/appliances.enum';
 import { UtilityTypesEnum } from './enums/utilityTypes.enum';
+import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 
 interface SelectBoxItem {
     displayValue: string;
@@ -63,6 +67,14 @@ export class PropertyInformationComponent implements OnInit {
     property: PropertyDto;
     propertyAddresses: AddressDto[];
     leadInfoSubscription: Subscription;
+    propertyDeals: PropertyDealInfo[];
+    leadTypesWithInstallment = [
+        EntityTypeSys.PropertyRentAndSale,
+        EntityTypeSys.PropertyRentAndSaleAirbnbSysId,
+        EntityTypeSys.PropertyRentAndSaleJVSysId,
+        EntityTypeSys.PropertyRentAndSaleLTRSysId,
+        EntityTypeSys.PropertyRentAndSaleSTRSysId
+    ];
     stylingMode = 'filled';
 
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
@@ -76,14 +88,8 @@ export class PropertyInformationComponent implements OnInit {
         { displayValue: 'Received', value: true },
         { displayValue: 'N/A', value: false }
     ];
-    oneFiveDropdowns: SelectBoxItem[] = [
-        { displayValue: '0', value: 0 },
-        { displayValue: '1', value: 1 },
-        { displayValue: '2', value: 2 },
-        { displayValue: '3', value: 3 },
-        { displayValue: '4', value: 4 },
-        { displayValue: '5', value: 5 }
-    ];
+
+    oneFiveDropdowns = Array(6).fill(0).map((v, i) => i);
 
     basement: SelectBoxItem[] = Object.values(BasementStatus).map((item: string) => ({
         displayValue: this.ls.l(item),
@@ -142,9 +148,9 @@ export class PropertyInformationComponent implements OnInit {
         displayValue: this.ls.l(item),
         value: DayOfWeekEnum[item]
     }));
-    appliences: SelectBoxItem[] = Object.values(AppliencesEnum).filter(isNaN).map((item: string) => ({
+    appliances: SelectBoxItem[] = Object.values(AppliancesEnum).filter(isNaN).map((item: string) => ({
         displayValue: this.ls.l(item),
-        value: AppliencesEnum[item]
+        value: AppliancesEnum[item]
     }));
     utilityTypes: SelectBoxItem[] = Object.values(UtilityTypesEnum).filter(isNaN).map((item: string) => ({
         displayValue: this.ls.l(item),
@@ -155,6 +161,7 @@ export class PropertyInformationComponent implements OnInit {
         private contactsService: ContactsService,
         private route: ActivatedRoute,
         private propertyServiceProxy: PropertyServiceProxy,
+        private LeadServiceProxy: LeadServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
         private loadingService: LoadingService,
         private invoicesService: InvoicesService,
@@ -182,10 +189,11 @@ export class PropertyInformationComponent implements OnInit {
         ).pipe(
             filter(Boolean),
             switchMap((propertyId: number) => {
-                return this.propertyServiceProxy.getPropertyDetails(propertyId);
+                return forkJoin(this.propertyServiceProxy.getPropertyDetails(propertyId), this.propertyServiceProxy.getDeals(propertyId));
             })
-        ).subscribe((property: PropertyDto) => {
+        ).subscribe(([property, deals]) => {
             this.initialProperty = property;
+            this.propertyDeals = deals;
             this.savePropertyInfo(property);
             this.changeDetectorRef.detectChanges();
         });
@@ -363,6 +371,17 @@ export class PropertyInformationComponent implements OnInit {
             this.currencyFormat.currency = settings.currency;
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+    dealInfoChanged(leadId, dealAmount, installmentAmount) {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+        this.LeadServiceProxy.updateDealInfo(new UpdateLeadDealInfoInput({
+            leadId: leadId,
+            dealAmount: dealAmount,
+            installmentAmount: installmentAmount
+        })).pipe(
+            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+        ).subscribe(() => {});
     }
 
     ngOnDestroy() {

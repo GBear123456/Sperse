@@ -1,6 +1,11 @@
+/** Core imports */
 import { Component, OnInit, AfterViewInit, Input, ViewChild, Output, EventEmitter } from '@angular/core';
+
+/** Third party imports */
+import { PhoneNumberComponent } from '@root/node_modules/ngx-international-phone-number/src';
+
+/** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { PhoneNumberComponent } from '../../../node_modules/ngx-international-phone-number/src';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -14,6 +19,7 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     @Input() phoneNumber: string;
     @Input() required = true;
     @Input() disabled = false;
+    @Input() defaultCountry;
     @Output() phoneNumberChange: EventEmitter<string> = new EventEmitter<string>();
     @Output() phoneCountryChange = new EventEmitter();
     @Output() onInitialized = new EventEmitter();
@@ -22,11 +28,15 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     value = '';
     focused = false;
 
-    constructor(public ls: AppLocalizationService) {}
+    constructor(
+        public ls: AppLocalizationService
+    ) {
+        this.defaultCountry = AppConsts.defaultCountryCode.toLowerCase();
+    }
 
     ngOnInit() {
         if (!this.phoneNumber)
-            this.phoneNumber = AppConsts.defaultCountryCode;
+            this.phoneNumber = AppConsts.defaultCountryPhoneCode;
         this.onInitialized.emit(this);
     }
 
@@ -35,7 +45,7 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
             this.phoneNumberChange.emit(this.value = value);
             this.phoneCountryChange.emit(this.intPhoneNumber.selectedCountry);
         });
-        if (this.phoneNumber !== AppConsts.defaultCountryCode) {
+        if (this.phoneNumber !== AppConsts.defaultCountryPhoneCode) {
             setTimeout(() => {
                 this.intPhoneNumber.writeValue(this.phoneNumber);
                 this.intPhoneNumber.updateValue();
@@ -72,7 +82,7 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     }
 
     reset() {
-        this.phoneNumber = AppConsts.defaultCountryCode;
+        this.phoneNumber = AppConsts.defaultCountryPhoneCode;
         this.model.control.markAsPristine();
         this.model.control.markAsUntouched();
     }

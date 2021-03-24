@@ -72,7 +72,7 @@ export class OffersWizardService {
     timeZones$: Observable<NameValueDto[]>;
     applicationDetails$: Observable<GetApplicationDetailsOutput> = this.offersServiceProxy.getApplicationDetails().pipe(publishReplay(), refCount());
     public defaultTimezoneScope: SettingScopes = AppTimezoneScope.User;
-    countryCode = 'US';
+    countryCode = AppConsts.defaultCountryCode;
     states$: Observable<CountryStateDto[]> = this.store$.pipe(
         select(StatesStoreSelectors.getCountryStates, { countryCode: this.countryCode }),
         filter(Boolean)

@@ -27,7 +27,7 @@ export function statesReducer(state: State = initialState, action): State {
             if (!state.entities[action.payload.countryCode]) {
                 state.entities[action.payload.countryCode] = {
                     items: [],
-                    loadedTime: new Date().getTime()
+                    loadedTime: null
                 };
             }
             const countryStates = state.entities[action.payload.countryCode].items;
