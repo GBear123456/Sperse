@@ -63047,6 +63047,12 @@ export enum InvoiceLineUnit {
     Year = "Year", 
 }
 
+export enum PaymentPeriodType {
+    Monthly = "Monthly", 
+    Annual = "Annual", 
+    LifeTime = "LifeTime", 
+}
+
 export class InvoiceLineInfo implements IInvoiceLineInfo {
     id!: number | undefined;
     quantity!: number | undefined;
@@ -63056,6 +63062,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     commissionableAmount!: number | undefined;
     productCode!: string | undefined;
     description!: string | undefined;
+    paymentPeriodType!: PaymentPeriodType | undefined;
     sortOrder!: number | undefined;
 
     constructor(data?: IInvoiceLineInfo) {
@@ -63077,6 +63084,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.commissionableAmount = data["commissionableAmount"];
             this.productCode = data["productCode"];
             this.description = data["description"];
+            this.paymentPeriodType = data["paymentPeriodType"];
             this.sortOrder = data["sortOrder"];
         }
     }
@@ -63098,6 +63106,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["commissionableAmount"] = this.commissionableAmount;
         data["productCode"] = this.productCode;
         data["description"] = this.description;
+        data["paymentPeriodType"] = this.paymentPeriodType;
         data["sortOrder"] = this.sortOrder;
         return data; 
     }
@@ -63112,6 +63121,7 @@ export interface IInvoiceLineInfo {
     commissionableAmount: number | undefined;
     productCode: string | undefined;
     description: string | undefined;
+    paymentPeriodType: PaymentPeriodType | undefined;
     sortOrder: number | undefined;
 }
 
@@ -63311,6 +63321,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
     unitId!: InvoiceLineUnit;
     productCode!: string | undefined;
     description!: string | undefined;
+    paymentPeriodType!: PaymentPeriodType | undefined;
     sortOrder!: number;
 
     constructor(data?: ICreateInvoiceLineInput) {
@@ -63331,6 +63342,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
             this.unitId = data["unitId"];
             this.productCode = data["productCode"];
             this.description = data["description"];
+            this.paymentPeriodType = data["paymentPeriodType"];
             this.sortOrder = data["sortOrder"];
         }
     }
@@ -63351,6 +63363,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
         data["unitId"] = this.unitId;
         data["productCode"] = this.productCode;
         data["description"] = this.description;
+        data["paymentPeriodType"] = this.paymentPeriodType;
         data["sortOrder"] = this.sortOrder;
         return data; 
     }
@@ -63364,6 +63377,7 @@ export interface ICreateInvoiceLineInput {
     unitId: InvoiceLineUnit;
     productCode: string | undefined;
     description: string | undefined;
+    paymentPeriodType: PaymentPeriodType | undefined;
     sortOrder: number;
 }
 
@@ -63492,6 +63506,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
     unitId!: InvoiceLineUnit;
     productCode!: string | undefined;
     description!: string | undefined;
+    paymentPeriodType!: PaymentPeriodType | undefined;
     sortOrder!: number;
 
     constructor(data?: IUpdateInvoiceLineInput) {
@@ -63513,6 +63528,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
             this.unitId = data["unitId"];
             this.productCode = data["productCode"];
             this.description = data["description"];
+            this.paymentPeriodType = data["paymentPeriodType"];
             this.sortOrder = data["sortOrder"];
         }
     }
@@ -63534,6 +63550,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
         data["unitId"] = this.unitId;
         data["productCode"] = this.productCode;
         data["description"] = this.description;
+        data["paymentPeriodType"] = this.paymentPeriodType;
         data["sortOrder"] = this.sortOrder;
         return data; 
     }
@@ -63548,6 +63565,7 @@ export interface IUpdateInvoiceLineInput {
     unitId: InvoiceLineUnit;
     productCode: string | undefined;
     description: string | undefined;
+    paymentPeriodType: PaymentPeriodType | undefined;
     sortOrder: number;
 }
 
@@ -63810,6 +63828,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
     gatewayTransactionId!: string | undefined;
     authorizationCode!: string | undefined;
     bankCardInfo!: BankCardInput | undefined;
+    hasRecurringBilling!: boolean | undefined;
 
     constructor(data?: IAddBankCardPaymentInput) {
         if (data) {
@@ -63832,6 +63851,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
             this.gatewayTransactionId = data["gatewayTransactionId"];
             this.authorizationCode = data["authorizationCode"];
             this.bankCardInfo = data["bankCardInfo"] ? BankCardInput.fromJS(data["bankCardInfo"]) : <any>undefined;
+            this.hasRecurringBilling = data["hasRecurringBilling"];
         }
     }
 
@@ -63854,6 +63874,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
         data["gatewayTransactionId"] = this.gatewayTransactionId;
         data["authorizationCode"] = this.authorizationCode;
         data["bankCardInfo"] = this.bankCardInfo ? this.bankCardInfo.toJSON() : <any>undefined;
+        data["hasRecurringBilling"] = this.hasRecurringBilling;
         return data; 
     }
 }
@@ -63869,6 +63890,7 @@ export interface IAddBankCardPaymentInput {
     gatewayTransactionId: string | undefined;
     authorizationCode: string | undefined;
     bankCardInfo: BankCardInput | undefined;
+    hasRecurringBilling: boolean | undefined;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
@@ -64968,12 +64990,6 @@ export interface ICreateOrUpdateLeadOutput {
     userKey: string | undefined;
     userEmailAddress: string | undefined;
     autoLoginLink: string | undefined;
-}
-
-export enum PaymentPeriodType {
-    Monthly = "Monthly", 
-    Annual = "Annual", 
-    LifeTime = "LifeTime", 
 }
 
 export class PackageInfoDto implements IPackageInfoDto {
@@ -73128,6 +73144,7 @@ export interface IPipelineRenameInput {
 }
 
 export enum ProductType {
+    General = "General", 
     Subscription = "Subscription", 
 }
 
@@ -73404,7 +73421,7 @@ export class CreateProductInput implements ICreateProductInput {
     name!: string;
     description!: string | undefined;
     groupId!: number | undefined;
-    type!: ProductType | undefined;
+    type!: ProductType;
     price!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
@@ -73473,7 +73490,7 @@ export interface ICreateProductInput {
     name: string;
     description: string | undefined;
     groupId: number | undefined;
-    type: ProductType | undefined;
+    type: ProductType;
     price: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
@@ -73521,7 +73538,7 @@ export class UpdateProductInput implements IUpdateProductInput {
     name!: string;
     description!: string | undefined;
     groupId!: number | undefined;
-    type!: ProductType | undefined;
+    type!: ProductType;
     price!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
@@ -73593,7 +73610,7 @@ export interface IUpdateProductInput {
     name: string;
     description: string | undefined;
     groupId: number | undefined;
-    type: ProductType | undefined;
+    type: ProductType;
     price: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;

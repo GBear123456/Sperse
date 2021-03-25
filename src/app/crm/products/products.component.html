@@ -34,7 +34,6 @@
                     [allowColumnReordering]="true"
                     [columnAutoWidth]="true"
                     [allowColumnResizing]="true"
-                    [hoverStateEnabled]="true"
                     [columnChooser]="{
                         height: rowsViewHeight
                     }"
@@ -56,7 +55,7 @@
                     (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                     <dxo-selection selectAllMode="page"
                         showCheckBoxesMode="none"
-                        mode="multiple">
+                        mode="none">
                     </dxo-selection>
                     <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                     <dxo-editing mode="popup"

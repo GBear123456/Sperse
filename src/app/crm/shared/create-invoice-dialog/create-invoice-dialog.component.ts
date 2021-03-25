@@ -408,7 +408,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     productCode: '',
                     description: row['description'],
                     sortOrder: index,
-                    commissionableAmount: undefined
+                    commissionableAmount: undefined,
+                    paymentPeriodType: undefined
                 });
             });
             subscription$ = this.invoiceProxy.update(data);
@@ -431,7 +432,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     productCode: '',
                     description: row['description'],
                     sortOrder: index,
-                    commissionableAmount: undefined
+                    commissionableAmount: undefined,
+                    paymentPeriodType: undefined
                 });
             });
             subscription$ = this.invoiceProxy.create(data);

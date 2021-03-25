@@ -89,11 +89,13 @@
             </div>
             <div class="field">
                 <label for="level">{{ls.l('Level')}}</label>
-                <dx-select-box name="level"
+                <dx-select-box *ngIf="getServiceLevels(service.memberServiceId) as levels"
+                    name="level"
                     width="250px"
                     valueExpr="id"
                     displayExpr="name"
-                    [dataSource]="getServiceLevels(service.memberServiceId)"
+                    [disabled]="!levels.length"
+                    [dataSource]="levels"
                     placeholder="Select level..."
                     [(value)]="service.memberServiceLevelId">
                     <dx-validator>
