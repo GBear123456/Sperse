@@ -94,11 +94,14 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             });
         });
 
-        if (data.product && data.product.id)
+        if (data.product && data.product.id) {
             this.product = new UpdateProductInput(data.product);
-        else
+        } else {
             this.product = new CreateProductInput(data.product);
-        this.product.type = this.defaultProductType;
+            if (!this.product.type) {
+                this.product.type = this.defaultProductType;
+            }
+        }
         productGroupProxy.getProductGroups().subscribe((groups: ProductGroupInfo[]) => {
             this.productGroups = groups;
             this.detectChanges();
