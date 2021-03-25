@@ -40,8 +40,8 @@ import { MessageService } from '@abp/message/message.service';
 @Component({
     selector: 'editTenantModal',
     templateUrl: './edit-tenant-modal.component.html',
-    styleUrls: [ '../modal.less' ],
-    providers: [ TenantsService ],
+    styleUrls: ['../modal.less', './edit-tenant-modal.component.less'],
+    providers: [TenantsService],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditTenantModalComponent implements OnInit {
@@ -77,7 +77,7 @@ export class EditTenantModalComponent implements OnInit {
         private messageService: MessageService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.modalDialog.startLoading();
@@ -148,8 +148,8 @@ export class EditTenantModalComponent implements OnInit {
         forkJoin(savings).pipe(
             finalize(() => this.modalDialog.finishLoading())
         ).subscribe(
-            () => {},
-            () => {},
+            () => { },
+            () => { },
             () => {
                 this.notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.dialogRef.close(tenantChanged);
