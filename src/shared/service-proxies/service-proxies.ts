@@ -60914,6 +60914,7 @@ export class ImportAddressInput implements IImportAddressInput {
     city!: string | undefined;
     stateName!: string | undefined;
     stateId!: string | undefined;
+    neighborhood!: string | undefined;
     zip!: string | undefined;
     countryName!: string | undefined;
     countryId!: string | undefined;
@@ -60934,6 +60935,7 @@ export class ImportAddressInput implements IImportAddressInput {
             this.city = data["city"];
             this.stateName = data["stateName"];
             this.stateId = data["stateId"];
+            this.neighborhood = data["neighborhood"];
             this.zip = data["zip"];
             this.countryName = data["countryName"];
             this.countryId = data["countryId"];
@@ -60954,6 +60956,7 @@ export class ImportAddressInput implements IImportAddressInput {
         data["city"] = this.city;
         data["stateName"] = this.stateName;
         data["stateId"] = this.stateId;
+        data["neighborhood"] = this.neighborhood;
         data["zip"] = this.zip;
         data["countryName"] = this.countryName;
         data["countryId"] = this.countryId;
@@ -60967,6 +60970,7 @@ export interface IImportAddressInput {
     city: string | undefined;
     stateName: string | undefined;
     stateId: string | undefined;
+    neighborhood: string | undefined;
     zip: string | undefined;
     countryName: string | undefined;
     countryId: string | undefined;
@@ -61456,6 +61460,54 @@ export interface IImportBusinessInput {
     affiliateCode: string | undefined;
 }
 
+export class ImportPropertyInput implements IImportPropertyInput {
+    leadType!: string | undefined;
+    name!: string | undefined;
+    note!: string | undefined;
+    propertyAddress!: ImportAddressInput | undefined;
+
+    constructor(data?: IImportPropertyInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadType = data["leadType"];
+            this.name = data["name"];
+            this.note = data["note"];
+            this.propertyAddress = data["propertyAddress"] ? ImportAddressInput.fromJS(data["propertyAddress"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ImportPropertyInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportPropertyInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadType"] = this.leadType;
+        data["name"] = this.name;
+        data["note"] = this.note;
+        data["propertyAddress"] = this.propertyAddress ? this.propertyAddress.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IImportPropertyInput {
+    leadType: string | undefined;
+    name: string | undefined;
+    note: string | undefined;
+    propertyAddress: ImportAddressInput | undefined;
+}
+
 export class ImportSubscriptionInput implements IImportSubscriptionInput {
     systemType!: string | undefined;
     code!: string | undefined;
@@ -61582,6 +61634,7 @@ export class ImportItemInput implements IImportItemInput {
     userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
+    propertyInfo!: ImportPropertyInput | undefined;
     assignedUser!: string | undefined;
     followUpDate!: moment.Moment | undefined;
     notes!: string | undefined;
@@ -61633,6 +61686,7 @@ export class ImportItemInput implements IImportItemInput {
             this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
+            this.propertyInfo = data["propertyInfo"] ? ImportPropertyInput.fromJS(data["propertyInfo"]) : <any>undefined;
             this.assignedUser = data["assignedUser"];
             this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.notes = data["notes"];
@@ -61684,6 +61738,7 @@ export class ImportItemInput implements IImportItemInput {
         data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
+        data["propertyInfo"] = this.propertyInfo ? this.propertyInfo.toJSON() : <any>undefined;
         data["assignedUser"] = this.assignedUser;
         data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["notes"] = this.notes;
@@ -61728,6 +61783,7 @@ export interface IImportItemInput {
     userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
+    propertyInfo: ImportPropertyInput | undefined;
     assignedUser: string | undefined;
     followUpDate: moment.Moment | undefined;
     notes: string | undefined;
@@ -62045,6 +62101,7 @@ export class ImportContactInput implements IImportContactInput {
     userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
+    propertyInfo!: ImportPropertyInput | undefined;
     assignedUser!: string | undefined;
     followUpDate!: moment.Moment | undefined;
     notes!: string | undefined;
@@ -62103,6 +62160,7 @@ export class ImportContactInput implements IImportContactInput {
             this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
+            this.propertyInfo = data["propertyInfo"] ? ImportPropertyInput.fromJS(data["propertyInfo"]) : <any>undefined;
             this.assignedUser = data["assignedUser"];
             this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.notes = data["notes"];
@@ -62158,6 +62216,7 @@ export class ImportContactInput implements IImportContactInput {
         data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
+        data["propertyInfo"] = this.propertyInfo ? this.propertyInfo.toJSON() : <any>undefined;
         data["assignedUser"] = this.assignedUser;
         data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["notes"] = this.notes;
@@ -62206,6 +62265,7 @@ export interface IImportContactInput {
     userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
+    propertyInfo: ImportPropertyInput | undefined;
     assignedUser: string | undefined;
     followUpDate: moment.Moment | undefined;
     notes: string | undefined;
