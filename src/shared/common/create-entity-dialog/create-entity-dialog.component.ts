@@ -156,7 +156,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     currentUserId = abp.session.userId;
     person = new PersonInfoDto();
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
-    currencyFormat = { style: "currency", currency: "USD", useGrouping: true };
+    currencyFormat = { style: 'currency', currency: 'USD', useGrouping: true };
 
     emailsComponent: any;
     phonesComponent: any;
@@ -750,7 +750,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     updateCountryInfo(countryName: string, addressIndex: number) {
-        this.contact.addresses[addressIndex]['country'] = 
+        this.contact.addresses[addressIndex]['country'] =
             this.sessionService.getCountryNameByCode(
                 this.contact.addresses[addressIndex].countryCode
             ) || countryName;
@@ -1044,6 +1044,11 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     onSaveOptionSelectionChanged() {
         this.save();
+    }
+
+    onFullNameChanged(event) {
+        if (!event.event && this.contactName != event.value)
+            event.component.option('value', this.contactName);
     }
 
     onFullNameKeyUp(inputValue: string) {
