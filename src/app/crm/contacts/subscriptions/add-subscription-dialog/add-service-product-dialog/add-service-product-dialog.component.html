@@ -30,7 +30,7 @@
                 </dx-validator>
             </dx-text-box>
         </div>
-        <div class="field">
+        <!-- div class="field">
             <label for="activationTime">{{ls.l('StartDate')}}</label>
             <dx-date-box [min]="today"
                 width="300px"
@@ -46,7 +46,7 @@
                 type="date"
                 [(value)]="serviceProduct.deactivationTime">
             </dx-date-box>
-        </div>
+        </div -->
         <div class="levels-header">
             {{ls.l('ServiceLevels')}}:
         </div>
@@ -74,7 +74,7 @@
                     </dx-validator>
                 </dx-text-box>
             </div>
-            <div class="field">
+            <!-- div class="field">
                 <label for="activationTime">{{ls.l('StartDate')}}</label>
                 <dx-date-box [min]="today"
                     width="250px"
@@ -90,7 +90,7 @@
                     type="date"
                     [(value)]="serviceLevel.deactivationTime">
                 </dx-date-box>
-            </div>
+            </div -->
         </div>
         <div class="field">
             <div class="add-new-button" (click)="addNewLevelFields()"><span>+ Add</span></div>

@@ -39,6 +39,18 @@
             </dx-text-box>
         </div>
         <div class="field">
+            <label for="deactivationTime">{{ls.l('Group')}}</label>
+            <dx-select-box [dataSource]="productGroups"
+                [acceptCustomValue]="true"
+                width="300px"
+                displayExpr="name"
+                valueExpr="id"
+                placeholder="Select group..."                
+                [(value)]="product.groupId"
+                (onCustomItemCreating)="onCustomGroupCreating($event)">
+            </dx-select-box>
+        </div>
+        <div class="field">
             <label for="activationTime">{{ls.l('Type')}}</label>
             <dx-select-box [dataSource]="productTypes"
                 width="300px"
@@ -46,7 +58,7 @@
                 [(value)]="product.type">
             </dx-select-box>
         </div>
-        <div class="field">
+        <div class="field" *ngIf="product.type == defaultProductType">
             <label>{{ls.l('Price')}}</label>
             <dx-number-box name="price"
                 width="300px"
@@ -57,107 +69,99 @@
                 </dx-validator>
             </dx-number-box>
         </div>
-        <div class="field">
-            <label for="deactivationTime">{{ls.l('Group')}}</label>
-            <dx-select-box [dataSource]="productGroups"
-                width="300px"
-                displayExpr="name"
-                valueExpr="id"
-                placeholder="Select group..."
-                [(value)]="product.groupId">
-            </dx-select-box>
-        </div>
-        <div class="services-header">
-            {{ls.l('Services')}}:
-        </div>
-        <div class="services" *ngFor="let service of product.productServices; let i = index">
-            <i class="fa fa-close" (click)="removeServiceFields(i)"></i>
-            <div class="field">
-                <label for="name">{{ls.l('Name')}}</label>
-                <dx-select-box name="name"
-                    width="250px"
-                    valueExpr="id"
-                    displayExpr="name"
-                    [dataSource]="services"
-                    placeholder="Select service..."
-                    [(value)]="service.memberServiceId"
-                    (onValueChanged)="onServiceChanged($event)">
-                    <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
-                    </dx-validator>
-                </dx-select-box>
+        <ng-container *ngIf="product.type != defaultProductType">
+            <div class="services-header">
+                {{ls.l('Services')}}:
+            </div>
+            <div class="services" *ngFor="let service of product.productServices; let i = index">
+                <i class="fa fa-close" (click)="removeServiceFields(i)"></i>
+                <div class="field">
+                    <label for="name">{{ls.l('Name')}}</label>
+                    <dx-select-box name="name"
+                        width="250px"
+                        valueExpr="id"
+                        displayExpr="name"
+                        [dataSource]="services"
+                        placeholder="Select service..."
+                        [(value)]="service.memberServiceId"
+                        (onValueChanged)="onServiceChanged($event)">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-select-box>
+                </div>
+                <div class="field">
+                    <label for="level">{{ls.l('Level')}}</label>
+                    <dx-select-box *ngIf="getServiceLevels(service.memberServiceId) as levels"
+                        name="level"
+                        width="250px"
+                        valueExpr="id"
+                        displayExpr="name"
+                        [disabled]="!levels.length"
+                        [dataSource]="levels"
+                        placeholder="Select level..."
+                        [(value)]="service.memberServiceLevelId">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-select-box>
+                </div>
             </div>
             <div class="field">
-                <label for="level">{{ls.l('Level')}}</label>
-                <dx-select-box *ngIf="getServiceLevels(service.memberServiceId) as levels"
-                    name="level"
-                    width="250px"
-                    valueExpr="id"
-                    displayExpr="name"
-                    [disabled]="!levels.length"
-                    [dataSource]="levels"
-                    placeholder="Select level..."
-                    [(value)]="service.memberServiceLevelId">
-                    <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
-                    </dx-validator>
-                </dx-select-box>
+                <div class="add-new-button" (click)="addNewServiceFields()"><span>+ {{ls.l('Add')}}</span></div>
             </div>
-        </div>
-        <div class="field">
-            <div class="add-new-button" (click)="addNewServiceFields()"><span>+ {{ls.l('Add')}}</span></div>
-        </div>
-        <div class="services-header">
-            {{ls.l('PaymentPeriodType')}}:
-        </div>
-        <div class="services" *ngFor="let option of product.productSubscriptionOptions; let i = index">
-            <i class="fa fa-close" (click)="removePaymentPeriod(i)"></i>
-            <div class="field">
-                <label class="wide" for="name">{{ls.l('Frequency')}}</label>
-                <dx-select-box name="name"
-                    width="200px"
-                    [dataSource]="getFrequencies(option)"
-                    placeholder="Select frequency..."
-                    [(value)]="option.frequency">
-                    <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
-                    </dx-validator>
-                </dx-select-box>
+            <div class="services-header">
+                {{ls.l('PaymentPeriodType')}}:
             </div>
-            <div class="field">
-                <label class="wide">{{ls.l('Fee')}}</label>
-                <dx-number-box name="price"
-                    width="200px"
-                    [format]="amountFormat$ | async"
-                    [(value)]="option.fee">
-                    <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
-                    </dx-validator>
-                </dx-number-box>
-            </div>
-            <div class="field">
-                <label class="wide" for="level">{{ls.l('TrialDayCount')}}</label>
-                <dx-number-box name="count"
-                    width="200px"
-                    [min]="0"
-                    [(value)]="option.trialDayCount">
-                    <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
-                    </dx-validator>
-                </dx-number-box>
+            <div class="services" *ngFor="let option of product.productSubscriptionOptions; let i = index">
+                <i class="fa fa-close" (click)="removePaymentPeriod(i)"></i>
+                <div class="field">
+                    <label class="wide" for="name">{{ls.l('Frequency')}}</label>
+                    <dx-select-box name="name"
+                        width="200px"
+                        [dataSource]="getFrequencies(option)"
+                        placeholder="Select frequency..."
+                        [(value)]="option.frequency">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-select-box>
+                </div>
+                <div class="field">
+                    <label class="wide">{{ls.l('Fee')}}</label>
+                    <dx-number-box name="price"
+                        width="200px"
+                        [format]="amountFormat$ | async"
+                        [(value)]="option.fee">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-number-box>
+                </div>
+                <div class="field">
+                    <label class="wide" for="level">{{ls.l('TrialDayCount')}}</label>
+                    <dx-number-box name="count"
+                        width="200px"
+                        [min]="0"
+                        [(value)]="option.trialDayCount">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-number-box>
+                </div>
+                <div class="field">
+                    <label class="wide gracePeriodDayCount" for="gracePeriodDayCount">{{ls.l('GracePeriodDayCount')}}</label>
+                    <dx-number-box name="gracePeriodDayCount"
+                        placeholder="{{ls.l('ByDefault', gracePeriodDefaultValue ? gracePeriodDefaultValue : 0)}}"
+                        width="160px"
+                        [min]="0"
+                        [(value)]="option.gracePeriodDayCount">
+                    </dx-number-box>
+                </div>            
             </div>
             <div class="field">
-                <label class="wide gracePeriodDayCount" for="gracePeriodDayCount">{{ls.l('GracePeriodDayCount')}}</label>
-                <dx-number-box name="gracePeriodDayCount"
-                    placeholder="{{ls.l('ByDefault', gracePeriodDefaultValue ? gracePeriodDefaultValue : 0)}}"
-                    width="160px"
-                    [min]="0"
-                    [(value)]="option.gracePeriodDayCount">
-                </dx-number-box>
-            </div>            
-        </div>
-        <div class="field">
-            <div class="add-new-button" (click)="addNewPaymentPeriod()"><span>+ {{ls.l('Add')}}</span></div>
-        </div>
+                <div class="add-new-button" (click)="addNewPaymentPeriod()"><span>+ {{ls.l('Add')}}</span></div>
+            </div>
+        </ng-container>
     </dx-validation-group>
 </mat-dialog-content>
