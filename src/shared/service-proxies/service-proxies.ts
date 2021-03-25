@@ -29940,7 +29940,7 @@ export class ServiceProductServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    createOrUpdate(body: ServiceProductDto | null | undefined): Observable<void> {
+    createOrUpdate(body: ServiceProductDto | null | undefined): Observable<CreateOrUpdateServiceProductOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/ServiceProduct/CreateOrUpdate";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -29952,6 +29952,7 @@ export class ServiceProductServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -29962,14 +29963,14 @@ export class ServiceProductServiceProxy {
                 try {
                     return this.processCreateOrUpdate(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<CreateOrUpdateServiceProductOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<CreateOrUpdateServiceProductOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreateOrUpdate(response: HttpResponseBase): Observable<void> {
+    protected processCreateOrUpdate(response: HttpResponseBase): Observable<CreateOrUpdateServiceProductOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -29978,14 +29979,17 @@ export class ServiceProductServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateOrUpdateServiceProductOutput.fromJS(resultData200) : new CreateOrUpdateServiceProductOutput();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<CreateOrUpdateServiceProductOutput>(<any>null);
     }
 
     /**
@@ -62992,6 +62996,12 @@ export enum InvoiceLineUnit {
     Year = "Year", 
 }
 
+export enum PaymentPeriodType {
+    Monthly = "Monthly", 
+    Annual = "Annual", 
+    LifeTime = "LifeTime", 
+}
+
 export class InvoiceLineInfo implements IInvoiceLineInfo {
     id!: number | undefined;
     quantity!: number | undefined;
@@ -63001,6 +63011,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     commissionableAmount!: number | undefined;
     productCode!: string | undefined;
     description!: string | undefined;
+    paymentPeriodType!: PaymentPeriodType | undefined;
     sortOrder!: number | undefined;
 
     constructor(data?: IInvoiceLineInfo) {
@@ -63022,6 +63033,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.commissionableAmount = data["commissionableAmount"];
             this.productCode = data["productCode"];
             this.description = data["description"];
+            this.paymentPeriodType = data["paymentPeriodType"];
             this.sortOrder = data["sortOrder"];
         }
     }
@@ -63043,6 +63055,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["commissionableAmount"] = this.commissionableAmount;
         data["productCode"] = this.productCode;
         data["description"] = this.description;
+        data["paymentPeriodType"] = this.paymentPeriodType;
         data["sortOrder"] = this.sortOrder;
         return data; 
     }
@@ -63057,6 +63070,7 @@ export interface IInvoiceLineInfo {
     commissionableAmount: number | undefined;
     productCode: string | undefined;
     description: string | undefined;
+    paymentPeriodType: PaymentPeriodType | undefined;
     sortOrder: number | undefined;
 }
 
@@ -63256,6 +63270,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
     unitId!: InvoiceLineUnit;
     productCode!: string | undefined;
     description!: string | undefined;
+    paymentPeriodType!: PaymentPeriodType | undefined;
     sortOrder!: number;
 
     constructor(data?: ICreateInvoiceLineInput) {
@@ -63276,6 +63291,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
             this.unitId = data["unitId"];
             this.productCode = data["productCode"];
             this.description = data["description"];
+            this.paymentPeriodType = data["paymentPeriodType"];
             this.sortOrder = data["sortOrder"];
         }
     }
@@ -63296,6 +63312,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
         data["unitId"] = this.unitId;
         data["productCode"] = this.productCode;
         data["description"] = this.description;
+        data["paymentPeriodType"] = this.paymentPeriodType;
         data["sortOrder"] = this.sortOrder;
         return data; 
     }
@@ -63309,6 +63326,7 @@ export interface ICreateInvoiceLineInput {
     unitId: InvoiceLineUnit;
     productCode: string | undefined;
     description: string | undefined;
+    paymentPeriodType: PaymentPeriodType | undefined;
     sortOrder: number;
 }
 
@@ -63437,6 +63455,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
     unitId!: InvoiceLineUnit;
     productCode!: string | undefined;
     description!: string | undefined;
+    paymentPeriodType!: PaymentPeriodType | undefined;
     sortOrder!: number;
 
     constructor(data?: IUpdateInvoiceLineInput) {
@@ -63458,6 +63477,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
             this.unitId = data["unitId"];
             this.productCode = data["productCode"];
             this.description = data["description"];
+            this.paymentPeriodType = data["paymentPeriodType"];
             this.sortOrder = data["sortOrder"];
         }
     }
@@ -63479,6 +63499,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
         data["unitId"] = this.unitId;
         data["productCode"] = this.productCode;
         data["description"] = this.description;
+        data["paymentPeriodType"] = this.paymentPeriodType;
         data["sortOrder"] = this.sortOrder;
         return data; 
     }
@@ -63493,6 +63514,7 @@ export interface IUpdateInvoiceLineInput {
     unitId: InvoiceLineUnit;
     productCode: string | undefined;
     description: string | undefined;
+    paymentPeriodType: PaymentPeriodType | undefined;
     sortOrder: number;
 }
 
@@ -63755,6 +63777,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
     gatewayTransactionId!: string | undefined;
     authorizationCode!: string | undefined;
     bankCardInfo!: BankCardInput | undefined;
+    hasRecurringBilling!: boolean | undefined;
 
     constructor(data?: IAddBankCardPaymentInput) {
         if (data) {
@@ -63777,6 +63800,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
             this.gatewayTransactionId = data["gatewayTransactionId"];
             this.authorizationCode = data["authorizationCode"];
             this.bankCardInfo = data["bankCardInfo"] ? BankCardInput.fromJS(data["bankCardInfo"]) : <any>undefined;
+            this.hasRecurringBilling = data["hasRecurringBilling"];
         }
     }
 
@@ -63799,6 +63823,7 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
         data["gatewayTransactionId"] = this.gatewayTransactionId;
         data["authorizationCode"] = this.authorizationCode;
         data["bankCardInfo"] = this.bankCardInfo ? this.bankCardInfo.toJSON() : <any>undefined;
+        data["hasRecurringBilling"] = this.hasRecurringBilling;
         return data; 
     }
 }
@@ -63814,6 +63839,7 @@ export interface IAddBankCardPaymentInput {
     gatewayTransactionId: string | undefined;
     authorizationCode: string | undefined;
     bankCardInfo: BankCardInput | undefined;
+    hasRecurringBilling: boolean | undefined;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
@@ -64913,12 +64939,6 @@ export interface ICreateOrUpdateLeadOutput {
     userKey: string | undefined;
     userEmailAddress: string | undefined;
     autoLoginLink: string | undefined;
-}
-
-export enum PaymentPeriodType {
-    Monthly = "Monthly", 
-    Annual = "Annual", 
-    LifeTime = "LifeTime", 
 }
 
 export class PackageInfoDto implements IPackageInfoDto {
@@ -73081,6 +73101,7 @@ export interface IPipelineRenameInput {
 }
 
 export enum ProductType {
+    General = "General", 
     Subscription = "Subscription", 
 }
 
@@ -73357,7 +73378,8 @@ export class CreateProductInput implements ICreateProductInput {
     name!: string;
     description!: string | undefined;
     groupId!: number | undefined;
-    type!: ProductType | undefined;
+    groupName!: string | undefined;
+    type!: ProductType;
     price!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
@@ -73377,6 +73399,7 @@ export class CreateProductInput implements ICreateProductInput {
             this.name = data["name"];
             this.description = data["description"];
             this.groupId = data["groupId"];
+            this.groupName = data["groupName"];
             this.type = data["type"];
             this.price = data["price"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
@@ -73405,6 +73428,7 @@ export class CreateProductInput implements ICreateProductInput {
         data["name"] = this.name;
         data["description"] = this.description;
         data["groupId"] = this.groupId;
+        data["groupName"] = this.groupName;
         data["type"] = this.type;
         data["price"] = this.price;
         if (this.productServices && this.productServices.constructor === Array) {
@@ -73426,7 +73450,8 @@ export interface ICreateProductInput {
     name: string;
     description: string | undefined;
     groupId: number | undefined;
-    type: ProductType | undefined;
+    groupName: string | undefined;
+    type: ProductType;
     price: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
@@ -73474,7 +73499,8 @@ export class UpdateProductInput implements IUpdateProductInput {
     name!: string;
     description!: string | undefined;
     groupId!: number | undefined;
-    type!: ProductType | undefined;
+    groupName!: string | undefined;
+    type!: ProductType;
     price!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
@@ -73495,6 +73521,7 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.name = data["name"];
             this.description = data["description"];
             this.groupId = data["groupId"];
+            this.groupName = data["groupName"];
             this.type = data["type"];
             this.price = data["price"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
@@ -73524,6 +73551,7 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["name"] = this.name;
         data["description"] = this.description;
         data["groupId"] = this.groupId;
+        data["groupName"] = this.groupName;
         data["type"] = this.type;
         data["price"] = this.price;
         if (this.productServices && this.productServices.constructor === Array) {
@@ -73546,7 +73574,8 @@ export interface IUpdateProductInput {
     name: string;
     description: string | undefined;
     groupId: number | undefined;
-    type: ProductType | undefined;
+    groupName: string | undefined;
+    type: ProductType;
     price: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
@@ -76384,6 +76413,42 @@ export interface IServiceProductDto {
     activationTime: moment.Moment | undefined;
     deactivationTime: moment.Moment | undefined;
     serviceProductLevels: ServiceProductLevelDto[] | undefined;
+}
+
+export class CreateOrUpdateServiceProductOutput implements ICreateOrUpdateServiceProductOutput {
+    id!: number | undefined;
+
+    constructor(data?: ICreateOrUpdateServiceProductOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateOrUpdateServiceProductOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrUpdateServiceProductOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateOrUpdateServiceProductOutput {
+    id: number | undefined;
 }
 
 export class UserLoginInfoDto implements IUserLoginInfoDto {

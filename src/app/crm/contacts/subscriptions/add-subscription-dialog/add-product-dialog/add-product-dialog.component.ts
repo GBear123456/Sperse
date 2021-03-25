@@ -64,6 +64,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     readonly addNewItemId = -1;
     productTypes: string[] = Object.keys(ProductType);
+    defaultProductType = ProductType.General;
     productGroups: ProductGroupInfo[];
     services: ServiceProductDto[];
     frequencies = Object.keys(RecurringPaymentFrequency);
@@ -96,6 +97,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             this.product = new UpdateProductInput(data.product);
         else
             this.product = new CreateProductInput(data.product);
+        this.product.type = this.defaultProductType;
         productGroupProxy.getProductGroups().subscribe((groups: ProductGroupInfo[]) => {
             this.productGroups = groups;
             this.detectChanges();
