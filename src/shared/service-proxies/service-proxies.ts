@@ -73262,6 +73262,7 @@ export class CreateProductInput implements ICreateProductInput {
     name!: string;
     description!: string | undefined;
     groupId!: number | undefined;
+    groupName!: string | undefined;
     type!: ProductType;
     price!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
@@ -73282,6 +73283,7 @@ export class CreateProductInput implements ICreateProductInput {
             this.name = data["name"];
             this.description = data["description"];
             this.groupId = data["groupId"];
+            this.groupName = data["groupName"];
             this.type = data["type"];
             this.price = data["price"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
@@ -73310,6 +73312,7 @@ export class CreateProductInput implements ICreateProductInput {
         data["name"] = this.name;
         data["description"] = this.description;
         data["groupId"] = this.groupId;
+        data["groupName"] = this.groupName;
         data["type"] = this.type;
         data["price"] = this.price;
         if (this.productServices && this.productServices.constructor === Array) {
@@ -73331,6 +73334,7 @@ export interface ICreateProductInput {
     name: string;
     description: string | undefined;
     groupId: number | undefined;
+    groupName: string | undefined;
     type: ProductType;
     price: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
@@ -73379,6 +73383,7 @@ export class UpdateProductInput implements IUpdateProductInput {
     name!: string;
     description!: string | undefined;
     groupId!: number | undefined;
+    groupName!: string | undefined;
     type!: ProductType;
     price!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
@@ -73400,6 +73405,7 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.name = data["name"];
             this.description = data["description"];
             this.groupId = data["groupId"];
+            this.groupName = data["groupName"];
             this.type = data["type"];
             this.price = data["price"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
@@ -73429,6 +73435,7 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["name"] = this.name;
         data["description"] = this.description;
         data["groupId"] = this.groupId;
+        data["groupName"] = this.groupName;
         data["type"] = this.type;
         data["price"] = this.price;
         if (this.productServices && this.productServices.constructor === Array) {
@@ -73451,6 +73458,7 @@ export interface IUpdateProductInput {
     name: string;
     description: string | undefined;
     groupId: number | undefined;
+    groupName: string | undefined;
     type: ProductType;
     price: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
