@@ -273,7 +273,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                 items: [
                     {
                         name: 'search',
-                        visible: false,
                         widget: 'dxTextBox',
                         options: {
                             value: this.searchValue,
