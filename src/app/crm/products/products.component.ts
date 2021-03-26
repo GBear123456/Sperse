@@ -81,7 +81,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                     action: () => {
                         this.editProduct(this.actionEvent.Id);
                     }
-                }            
+                }
             ]
         },
         {
@@ -160,10 +160,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
-    onSelectionChanged($event) {
-        this.initToolbarConfig();
-    }
-
     invalidate() {
         if (this.dataGrid && this.dataGrid.instance)
             this.dependencyChanged = false;
@@ -179,7 +175,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                 id: id,
                 ...product
             });
-        })
+        });
     }
 
     deteleProduct(id: number) {
@@ -187,10 +183,10 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         this.productProxy.deleteProduct(id).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(() => {
-            this.invalidate();            
-        })
+            this.invalidate();
+        });
     }
-        
+
     showProductDialog(product?) {
         const dialogData = {
             fullHeigth: true,
@@ -277,7 +273,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                 items: [
                     {
                         name: 'search',
-                        visible: false,
                         widget: 'dxTextBox',
                         options: {
                             value: this.searchValue,

@@ -61255,6 +61255,7 @@ export class ImportAddressInput implements IImportAddressInput {
     city!: string | undefined;
     stateName!: string | undefined;
     stateId!: string | undefined;
+    neighborhood!: string | undefined;
     zip!: string | undefined;
     countryName!: string | undefined;
     countryId!: string | undefined;
@@ -61275,6 +61276,7 @@ export class ImportAddressInput implements IImportAddressInput {
             this.city = data["city"];
             this.stateName = data["stateName"];
             this.stateId = data["stateId"];
+            this.neighborhood = data["neighborhood"];
             this.zip = data["zip"];
             this.countryName = data["countryName"];
             this.countryId = data["countryId"];
@@ -61295,6 +61297,7 @@ export class ImportAddressInput implements IImportAddressInput {
         data["city"] = this.city;
         data["stateName"] = this.stateName;
         data["stateId"] = this.stateId;
+        data["neighborhood"] = this.neighborhood;
         data["zip"] = this.zip;
         data["countryName"] = this.countryName;
         data["countryId"] = this.countryId;
@@ -61308,6 +61311,7 @@ export interface IImportAddressInput {
     city: string | undefined;
     stateName: string | undefined;
     stateId: string | undefined;
+    neighborhood: string | undefined;
     zip: string | undefined;
     countryName: string | undefined;
     countryId: string | undefined;
@@ -61797,6 +61801,54 @@ export interface IImportBusinessInput {
     affiliateCode: string | undefined;
 }
 
+export class ImportPropertyInput implements IImportPropertyInput {
+    leadType!: string | undefined;
+    name!: string | undefined;
+    note!: string | undefined;
+    propertyAddress!: ImportAddressInput | undefined;
+
+    constructor(data?: IImportPropertyInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.leadType = data["leadType"];
+            this.name = data["name"];
+            this.note = data["note"];
+            this.propertyAddress = data["propertyAddress"] ? ImportAddressInput.fromJS(data["propertyAddress"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ImportPropertyInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ImportPropertyInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadType"] = this.leadType;
+        data["name"] = this.name;
+        data["note"] = this.note;
+        data["propertyAddress"] = this.propertyAddress ? this.propertyAddress.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IImportPropertyInput {
+    leadType: string | undefined;
+    name: string | undefined;
+    note: string | undefined;
+    propertyAddress: ImportAddressInput | undefined;
+}
+
 export class ImportSubscriptionInput implements IImportSubscriptionInput {
     systemType!: string | undefined;
     code!: string | undefined;
@@ -61923,6 +61975,7 @@ export class ImportItemInput implements IImportItemInput {
     userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
+    propertyInfo!: ImportPropertyInput | undefined;
     assignedUser!: string | undefined;
     followUpDate!: moment.Moment | undefined;
     notes!: string | undefined;
@@ -61974,6 +62027,7 @@ export class ImportItemInput implements IImportItemInput {
             this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
+            this.propertyInfo = data["propertyInfo"] ? ImportPropertyInput.fromJS(data["propertyInfo"]) : <any>undefined;
             this.assignedUser = data["assignedUser"];
             this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.notes = data["notes"];
@@ -62025,6 +62079,7 @@ export class ImportItemInput implements IImportItemInput {
         data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
+        data["propertyInfo"] = this.propertyInfo ? this.propertyInfo.toJSON() : <any>undefined;
         data["assignedUser"] = this.assignedUser;
         data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["notes"] = this.notes;
@@ -62069,6 +62124,7 @@ export interface IImportItemInput {
     userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
+    propertyInfo: ImportPropertyInput | undefined;
     assignedUser: string | undefined;
     followUpDate: moment.Moment | undefined;
     notes: string | undefined;
@@ -62386,6 +62442,7 @@ export class ImportContactInput implements IImportContactInput {
     userPassword!: string | undefined;
     personalInfo!: ImportPersonalInput | undefined;
     businessInfo!: ImportBusinessInput | undefined;
+    propertyInfo!: ImportPropertyInput | undefined;
     assignedUser!: string | undefined;
     followUpDate!: moment.Moment | undefined;
     notes!: string | undefined;
@@ -62444,6 +62501,7 @@ export class ImportContactInput implements IImportContactInput {
             this.userPassword = data["userPassword"];
             this.personalInfo = data["personalInfo"] ? ImportPersonalInput.fromJS(data["personalInfo"]) : <any>undefined;
             this.businessInfo = data["businessInfo"] ? ImportBusinessInput.fromJS(data["businessInfo"]) : <any>undefined;
+            this.propertyInfo = data["propertyInfo"] ? ImportPropertyInput.fromJS(data["propertyInfo"]) : <any>undefined;
             this.assignedUser = data["assignedUser"];
             this.followUpDate = data["followUpDate"] ? moment(data["followUpDate"].toString()) : <any>undefined;
             this.notes = data["notes"];
@@ -62499,6 +62557,7 @@ export class ImportContactInput implements IImportContactInput {
         data["userPassword"] = this.userPassword;
         data["personalInfo"] = this.personalInfo ? this.personalInfo.toJSON() : <any>undefined;
         data["businessInfo"] = this.businessInfo ? this.businessInfo.toJSON() : <any>undefined;
+        data["propertyInfo"] = this.propertyInfo ? this.propertyInfo.toJSON() : <any>undefined;
         data["assignedUser"] = this.assignedUser;
         data["followUpDate"] = this.followUpDate ? this.followUpDate.toISOString() : <any>undefined;
         data["notes"] = this.notes;
@@ -62547,6 +62606,7 @@ export interface IImportContactInput {
     userPassword: string | undefined;
     personalInfo: ImportPersonalInput | undefined;
     businessInfo: ImportBusinessInput | undefined;
+    propertyInfo: ImportPropertyInput | undefined;
     assignedUser: string | undefined;
     followUpDate: moment.Moment | undefined;
     notes: string | undefined;
@@ -63049,11 +63109,6 @@ export enum InvoiceLineUnit {
     Piece = "Piece", 
     Unit = "Unit", 
     Year = "Year", 
-}
-
-export enum PaymentPeriodType {
-    Monthly = "Monthly", 
-    Annual = "Annual", 
     LifeTime = "LifeTime", 
 }
 
@@ -63066,7 +63121,6 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     commissionableAmount!: number | undefined;
     productCode!: string | undefined;
     description!: string | undefined;
-    paymentPeriodType!: PaymentPeriodType | undefined;
     sortOrder!: number | undefined;
 
     constructor(data?: IInvoiceLineInfo) {
@@ -63088,7 +63142,6 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.commissionableAmount = data["commissionableAmount"];
             this.productCode = data["productCode"];
             this.description = data["description"];
-            this.paymentPeriodType = data["paymentPeriodType"];
             this.sortOrder = data["sortOrder"];
         }
     }
@@ -63110,7 +63163,6 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["commissionableAmount"] = this.commissionableAmount;
         data["productCode"] = this.productCode;
         data["description"] = this.description;
-        data["paymentPeriodType"] = this.paymentPeriodType;
         data["sortOrder"] = this.sortOrder;
         return data; 
     }
@@ -63125,7 +63177,6 @@ export interface IInvoiceLineInfo {
     commissionableAmount: number | undefined;
     productCode: string | undefined;
     description: string | undefined;
-    paymentPeriodType: PaymentPeriodType | undefined;
     sortOrder: number | undefined;
 }
 
@@ -63325,7 +63376,6 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
     unitId!: InvoiceLineUnit;
     productCode!: string | undefined;
     description!: string | undefined;
-    paymentPeriodType!: PaymentPeriodType | undefined;
     sortOrder!: number;
 
     constructor(data?: ICreateInvoiceLineInput) {
@@ -63346,7 +63396,6 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
             this.unitId = data["unitId"];
             this.productCode = data["productCode"];
             this.description = data["description"];
-            this.paymentPeriodType = data["paymentPeriodType"];
             this.sortOrder = data["sortOrder"];
         }
     }
@@ -63367,7 +63416,6 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
         data["unitId"] = this.unitId;
         data["productCode"] = this.productCode;
         data["description"] = this.description;
-        data["paymentPeriodType"] = this.paymentPeriodType;
         data["sortOrder"] = this.sortOrder;
         return data; 
     }
@@ -63381,7 +63429,6 @@ export interface ICreateInvoiceLineInput {
     unitId: InvoiceLineUnit;
     productCode: string | undefined;
     description: string | undefined;
-    paymentPeriodType: PaymentPeriodType | undefined;
     sortOrder: number;
 }
 
@@ -63510,7 +63557,6 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
     unitId!: InvoiceLineUnit;
     productCode!: string | undefined;
     description!: string | undefined;
-    paymentPeriodType!: PaymentPeriodType | undefined;
     sortOrder!: number;
 
     constructor(data?: IUpdateInvoiceLineInput) {
@@ -63532,7 +63578,6 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
             this.unitId = data["unitId"];
             this.productCode = data["productCode"];
             this.description = data["description"];
-            this.paymentPeriodType = data["paymentPeriodType"];
             this.sortOrder = data["sortOrder"];
         }
     }
@@ -63554,7 +63599,6 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
         data["unitId"] = this.unitId;
         data["productCode"] = this.productCode;
         data["description"] = this.description;
-        data["paymentPeriodType"] = this.paymentPeriodType;
         data["sortOrder"] = this.sortOrder;
         return data; 
     }
@@ -63569,7 +63613,6 @@ export interface IUpdateInvoiceLineInput {
     unitId: InvoiceLineUnit;
     productCode: string | undefined;
     description: string | undefined;
-    paymentPeriodType: PaymentPeriodType | undefined;
     sortOrder: number;
 }
 
@@ -64994,6 +65037,12 @@ export interface ICreateOrUpdateLeadOutput {
     userKey: string | undefined;
     userEmailAddress: string | undefined;
     autoLoginLink: string | undefined;
+}
+
+export enum PaymentPeriodType {
+    Monthly = "Monthly", 
+    Annual = "Annual", 
+    LifeTime = "LifeTime", 
 }
 
 export class PackageInfoDto implements IPackageInfoDto {
@@ -76335,12 +76384,12 @@ export interface IBankAccountUsers {
 }
 
 export class ServiceProductLevelDto implements IServiceProductLevelDto {
-    id!: number | undefined;
-    code!: string;
     name!: string;
     monthlyFee!: number | undefined;
     activationTime!: moment.Moment | undefined;
     deactivationTime!: moment.Moment | undefined;
+    id!: number | undefined;
+    code!: string;
 
     constructor(data?: IServiceProductLevelDto) {
         if (data) {
@@ -76353,12 +76402,12 @@ export class ServiceProductLevelDto implements IServiceProductLevelDto {
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
-            this.code = data["code"];
             this.name = data["name"];
             this.monthlyFee = data["monthlyFee"];
             this.activationTime = data["activationTime"] ? moment(data["activationTime"].toString()) : <any>undefined;
             this.deactivationTime = data["deactivationTime"] ? moment(data["deactivationTime"].toString()) : <any>undefined;
+            this.id = data["id"];
+            this.code = data["code"];
         }
     }
 
@@ -76371,23 +76420,23 @@ export class ServiceProductLevelDto implements IServiceProductLevelDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["code"] = this.code;
         data["name"] = this.name;
         data["monthlyFee"] = this.monthlyFee;
         data["activationTime"] = this.activationTime ? this.activationTime.toISOString() : <any>undefined;
         data["deactivationTime"] = this.deactivationTime ? this.deactivationTime.toISOString() : <any>undefined;
+        data["id"] = this.id;
+        data["code"] = this.code;
         return data; 
     }
 }
 
 export interface IServiceProductLevelDto {
-    id: number | undefined;
-    code: string;
     name: string;
     monthlyFee: number | undefined;
     activationTime: moment.Moment | undefined;
     deactivationTime: moment.Moment | undefined;
+    id: number | undefined;
+    code: string;
 }
 
 export class ServiceProductDto implements IServiceProductDto {
@@ -76462,8 +76511,49 @@ export interface IServiceProductDto {
     serviceProductLevels: ServiceProductLevelDto[] | undefined;
 }
 
-export class CreateOrUpdateServiceProductOutput implements ICreateOrUpdateServiceProductOutput {
+export class ServiceProductLevelBaseDto implements IServiceProductLevelBaseDto {
     id!: number | undefined;
+    code!: string;
+
+    constructor(data?: IServiceProductLevelBaseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.code = data["code"];
+        }
+    }
+
+    static fromJS(data: any): ServiceProductLevelBaseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ServiceProductLevelBaseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["code"] = this.code;
+        return data; 
+    }
+}
+
+export interface IServiceProductLevelBaseDto {
+    id: number | undefined;
+    code: string;
+}
+
+export class CreateOrUpdateServiceProductOutput implements ICreateOrUpdateServiceProductOutput {
+    memberServiceId!: number | undefined;
+    memberServiceLevels!: ServiceProductLevelBaseDto[] | undefined;
 
     constructor(data?: ICreateOrUpdateServiceProductOutput) {
         if (data) {
@@ -76476,7 +76566,12 @@ export class CreateOrUpdateServiceProductOutput implements ICreateOrUpdateServic
 
     init(data?: any) {
         if (data) {
-            this.id = data["id"];
+            this.memberServiceId = data["memberServiceId"];
+            if (data["memberServiceLevels"] && data["memberServiceLevels"].constructor === Array) {
+                this.memberServiceLevels = [];
+                for (let item of data["memberServiceLevels"])
+                    this.memberServiceLevels.push(ServiceProductLevelBaseDto.fromJS(item));
+            }
         }
     }
 
@@ -76489,13 +76584,19 @@ export class CreateOrUpdateServiceProductOutput implements ICreateOrUpdateServic
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
+        data["memberServiceId"] = this.memberServiceId;
+        if (this.memberServiceLevels && this.memberServiceLevels.constructor === Array) {
+            data["memberServiceLevels"] = [];
+            for (let item of this.memberServiceLevels)
+                data["memberServiceLevels"].push(item.toJSON());
+        }
         return data; 
     }
 }
 
 export interface ICreateOrUpdateServiceProductOutput {
-    id: number | undefined;
+    memberServiceId: number | undefined;
+    memberServiceLevels: ServiceProductLevelBaseDto[] | undefined;
 }
 
 export class UserLoginInfoDto implements IUserLoginInfoDto {

@@ -31,6 +31,7 @@
                     accesskey="narrowHeaderPanel"
                     [renderAsync]="true"
                     [dataSource]="dataSource"
+                    [hoverStateEnabled]="true"
                     [allowColumnReordering]="true"
                     [columnAutoWidth]="true"
                     [allowColumnResizing]="true"
@@ -51,7 +52,6 @@
                     (onContentReady)="onContentReady($event)"
                     (onCellClick)="onCellClick($event)"
                     (onEditingStart)="toggleActionsMenu($event)"
-                    (onSelectionChanged)="onSelectionChanged($event)"
                     (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                     <dxo-selection selectAllMode="page"
                         showCheckBoxesMode="none"

@@ -58,7 +58,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
     private slider: any;
     product: CreateProductInput | UpdateProductInput;
-    amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(filter(Boolean), 
+    amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(filter(Boolean),
         map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
     );
 
@@ -69,6 +69,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     services: ServiceProductDto[];
     frequencies = Object.keys(RecurringPaymentFrequency);
     gracePeriodDefaultValue: number;
+    customGroup: string;
 
     constructor(
         private elementRef: ElementRef,
@@ -93,11 +94,14 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             });
         });
 
-        if (data.product && data.product.id)
+        if (data.product && data.product.id) {
             this.product = new UpdateProductInput(data.product);
-        else
+        } else {
             this.product = new CreateProductInput(data.product);
-        this.product.type = this.defaultProductType;
+            if (!this.product.type) {
+                this.product.type = this.defaultProductType;
+            }
+        }
         productGroupProxy.getProductGroups().subscribe((groups: ProductGroupInfo[]) => {
             this.productGroups = groups;
             this.detectChanges();
@@ -125,7 +129,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     checkAddManageOption(options) {
         if (this.permission.isGranted(AppPermissions.CRMOrdersManage)) {
             let addNewItemElement: any = {
-                id: this.addNewItemId                
+                id: this.addNewItemId
             };
             addNewItemElement.code = addNewItemElement.name = '+ ' + this.ls.l('Add new');
             options.push(addNewItemElement);
@@ -143,6 +147,9 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     saveProduct() {
         if (this.validationGroup.instance.validate().isValid) {
+            if (!this.product.groupId)
+                this.product.groupName = this.customGroup;
+
             if (this.product instanceof UpdateProductInput)
                 this.productProxy.updateProduct(this.product).subscribe(() => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
@@ -155,7 +162,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                         id: res.productId,
                         name: this.product.name,
                         code: this.product.code,
-                        paymentPeriodTypes: this.product.productSubscriptionOptions && 
+                        paymentPeriodTypes: this.product.productSubscriptionOptions &&
                             this.product.productSubscriptionOptions.map(item => item.frequency)
                     }));
                 });
@@ -192,7 +199,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.product.productSubscriptionOptions.splice(index, 1);
     }
 
-    getServiceLevels(serviceId) {        
+    getServiceLevels(serviceId) {
         let service = (this.services || []).find(item => item.id == serviceId);
         return service ? service.serviceProductLevels : [];
     }
@@ -232,6 +239,14 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 this.detectChanges();
             }
         });
+    }
+
+    onCustomGroupCreating(event) {
+        if (!event.customItem)
+            event.customItem = {
+                id: null,
+                name: this.customGroup = event.text
+            };
     }
 
     detectChanges() {
