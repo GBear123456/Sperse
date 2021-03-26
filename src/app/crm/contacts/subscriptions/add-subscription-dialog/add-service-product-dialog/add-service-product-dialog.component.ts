@@ -106,11 +106,11 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
                     level.deactivationTime = DateHelper.removeTimezoneOffset(new Date(level.deactivationTime), true, 'to');
             });
 
-            this.serviceProductProxy.createOrUpdate(this.serviceProduct).subscribe((res: any) => {
+            this.serviceProductProxy.createOrUpdate(this.serviceProduct).subscribe(res => {
                 if (!this.serviceProduct.id)
-                    this.serviceProduct.id = res.id;
+                    this.serviceProduct.id = res.memberServiceId;
                 this.serviceProduct.serviceProductLevels.forEach(level => {
-                    res.serviceProductLevels.some(item => {
+                    res.memberServiceLevels.some(item => {
                         if (level.code == item.code) {
                             level.id = item.id;
                             return true;
