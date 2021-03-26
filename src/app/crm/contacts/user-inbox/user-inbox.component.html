@@ -46,7 +46,7 @@
         <div class="inbox-content" *ngIf="activeMessage">
             <dx-tooltip width="670px"
                         [target]="'span.to'" 
-                        [showEvent]="activeMessage?.recepients?.length && activeMessage?.deliveryType=='Email' ? 'mouseenter' : ''"
+                        [showEvent]="activeMessage?.recepients?.length ? 'mouseenter' : ''"
                         hideEvent="dxhoverend"
                         position="bottom">
                 <div *dxTemplate="let data of 'content'">
