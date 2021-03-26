@@ -877,7 +877,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             this.updateAccountingType($event);
         } else {
             let category = this.categorization.categories[$event.key];
-            $event.element.querySelector('.dx-treelist-focus-overlay').style.display = '';
             this.categoryTreeServiceProxy.updateCategory(
                 InstanceType[this._cfoService.instanceType], this._cfoService.instanceId,
                 UpdateCategoryInput.fromJS({
