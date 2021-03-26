@@ -183,6 +183,7 @@
                     <dx-data-grid
                         width="810px"
                         height="auto"
+                        class="alone"
                         [disabled]="disabledForUpdate"
                         [(dataSource)]="lines"
                         [allowColumnReordering]="false"
@@ -193,17 +194,42 @@
                         [allowColumnResizing]="false"
                         [loadPanel]="{enabled: false}">
 
-                        <dxi-column dataField="Description" width="280" caption="{{ls.l('Description')}}" [allowSorting]="false" cellTemplate="description"></dxi-column>
-                        <dxi-column dataField="Quantity" width="120" caption="{{ls.l('Quantity')}}" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
-                        <dxi-column dataField="Rate" width="120" caption="{{ls.l('Rate')}}" [allowSorting]="false" cellTemplate="rate"></dxi-column>
-                        <dxi-column dataField="Unit" width="125" caption="{{ls.l('Unit')}}" [allowSorting]="false" cellTemplate="unit"></dxi-column>
-                        <dxi-column dataField="Total" cssClass="total" alignment="right" width="115" caption="{{ls.l('Total')}}" [allowSorting]="false" [allowEditing]="false" cellTemplate="total"></dxi-column>
-                        <dxi-column width="30" caption="" [allowSorting]="false" [allowEditing]="false" cellTemplate="actions"></dxi-column>
+                        <dxi-column width="145px" [caption]="ls.l('Product')" [allowSorting]="false" cellTemplate="product"></dxi-column>
+                        <dxi-column width="230px" [caption]="ls.l('Description')" [allowSorting]="false" cellTemplate="description"></dxi-column>
+                        <dxi-column width="75px" [caption]="ls.l('Quantity')" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
+                        <dxi-column width="70px" [caption]="ls.l('Rate')" [allowSorting]="false" cellTemplate="rate"></dxi-column>
+                        <dxi-column width="100px" [caption]="ls.l('Unit')" [allowSorting]="false" cellTemplate="unit"></dxi-column>
+                        <dxi-column width="100px" [caption]="ls.l('Total')" [allowSorting]="false" cellTemplate="total" cssClass="total"></dxi-column>
+                        <dxi-column width="30px" caption="" [allowSorting]="false" [allowEditing]="false" cellTemplate="actions"></dxi-column>
 
+                        <div *dxTemplate="let cellData of 'product'">
+                            <dx-select-box
+                                name="product"
+                                width="145px"
+                                height="32px"
+                                valueExpr="id"
+                                displayExpr="name"
+                                [showClearButton]="false"
+                                [showDropDownButton]="false"
+                                [placeholder]="ls.l('Product')"
+                                [(value)]="cellData.data.productId"
+                                [dataSource]="products"
+                                [searchEnabled]="true"
+                                [searchTimeout]="0"
+                                (onValueChanged)="selectProduct($event, cellData)">
+                                <div *dxTemplate="let cell of 'item'">
+                                    <span title="{{cell.name}}">{{cell.name}}</span>
+                                </div>
+                            </dx-select-box>
+
+                            <div class="row-actions add-new" *ngIf="cellData.rowIndex == lines.length - 1">
+                                <span [class.disabled]="lines.length != getFilteredLines().length" class="add-new" (click)="addNewLine()">{{ls.l('+ Add new line')}}</span>
+                            </div>
+                        </div>
                         <div *dxTemplate="let cellData of 'description'">
                             <dx-select-box
                                 name="customer"
-                                width="280px"
+                                width="230px"
                                 height="32px"
                                 valueChangeEvent="keyup"
                                 [showClearButton]="true"
@@ -215,7 +241,7 @@
                                 [searchTimeout]="0"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 (onInput)="productLookupItems($event, cellData)"
-                                (onValueChanged)="selectProduct($event, cellData)">
+                                (onValueChanged)="selectLookupProduct($event, cellData)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
@@ -223,14 +249,10 @@
                                     <span title="{{cellValue}}">{{cellValue}}</span>
                                 </div>
                             </dx-select-box>
-
-                            <div class="row-actions add-new" *ngIf="cellData.rowIndex == lines.length - 1">
-                                <span [class.disabled]="lines.length != getFilteredLines().length" class="add-new" (click)="addNewLine()">{{ls.l('+ Add new line')}}</span>
-                            </div>
                         </div>
                         <div *dxTemplate="let cellData of 'quantity'">
                             <dx-text-box
-                                width="120px"
+                                width="75px"
                                 height="32px"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
@@ -245,7 +267,7 @@
                         </div>
                         <div *dxTemplate="let cellData of 'rate'">
                             <dx-text-box
-                                width="120px"
+                                width="70px"
                                 height="32px"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
@@ -261,12 +283,12 @@
                         <div *dxTemplate="let cellData of 'unit'">
                             <dx-select-box
                                 name="unit"
-                                width="125px"
+                                width="100px"
                                 height="32px"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 [placeholder]="ls.lr('Select')"
                                 [(value)]="cellData.data.unitId"
-                                [dataSource]="invoiceUnits">
+                                [dataSource]="productUnits">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
@@ -274,7 +296,7 @@
                         </div>
                         <div *dxTemplate="let cellData of 'total'" class="alr">
                             <dx-text-box
-                                width="110px"
+                                width="100px"
                                 height="32px"
                                 placeholder=""
                                 dataType="number"

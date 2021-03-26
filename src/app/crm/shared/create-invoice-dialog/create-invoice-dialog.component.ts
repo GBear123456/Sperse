@@ -53,8 +53,8 @@ import {
     ContactInfoDetailsDto,
     PersonContactInfoDto,
     EntityAddressInfo,
-
-    ProductServiceProxy
+    ProductServiceProxy,
+    ProductDto
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -107,6 +107,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     status = InvoiceStatus.Draft;
     startCase = startCase;
 
+    products: ProductDto[];
     defaultCountryCode = AppConsts.defaultCountryCode;
     saveButtonId = 'saveInvoiceOptions';
     invoiceInfo = new GetNewInvoiceInfoOutput();
@@ -118,7 +119,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     selectedShippingAddress: InvoiceAddressInput;
     customer: string;
     contactId: number;
-    products = [];
+    lookupProducts = [];
     descriptions = [];
     lastProductPhrase: string;
     date = new Date();
@@ -185,6 +186,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     ];
 
     invoiceUnits = Object.keys(InvoiceLineUnit);
+    productUnits = this.invoiceUnits;
     billingAddresses: InvoiceAddressInfo[] = [];
     shippingAddresses: InvoiceAddressInfo[] = [];
     filterBoolean = Boolean;
@@ -214,6 +216,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
     ) {
         this.dialogRef.afterClosed().subscribe(() => {
             this.closeAddressDialogs();
+        });
+        this.productProxy.getProducts().subscribe((products: ProductDto[]) => {
+            this.products = products;
         });
     }
 
@@ -592,7 +597,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     productsLookupRequest(phrase = '', callback?) {
         this.productProxy.getProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
-                this.descriptions = (this.products = res).map(item => item.description);
+                this.descriptions = (this.lookupProducts = res).map(item => item.description);
                 this.changeDetectorRef.markForCheck();
                 callback && callback(res);
             }
@@ -601,8 +606,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     productLookupItems($event, cellData) {
         this.lastProductPhrase = $event.event.target.value;
-        if (this.products.length)
-            this.products = [];
+        if (this.lookupProducts.length)
+            this.lookupProducts = [];
 
         $event.component.option('opened', true);
         $event.component.option('noDataText', this.ls.l('LookingForItems'));
@@ -664,13 +669,34 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
     }
 
+    selectLookupProduct(event, cellData) {
+        if (event.event) {
+            cellData.data.productId = undefined;
+            this.productUnits = this.invoiceUnits;
+            this.lookupProducts.some(item => {
+                if (item.description == event.value) {
+                    cellData.data.unitId = item.unitId;
+                    cellData.data.rate = item.rate;
+                    this.changeDetectorRef.detectChanges();
+                    return true;
+                }
+            });
+        }
+    }
+
     selectProduct(event, cellData) {
-        this.products.some(item => {
-            if (item.description == event.value) {
-                cellData.data.unitId = item.unitId;
-                cellData.data.rate = item.rate;
-                this.changeDetectorRef.detectChanges();
-                return true;
+        this.products.some((item: any) => {
+            if (item.id == event.value) {
+                if (item.paymentPeriodTypes.length) {
+                    this.productUnits = item.paymentPeriodTypes;
+                    cellData.data.productCode = item.code;
+                    cellData.data.unitId = this.productUnits[0];
+                    cellData.data.description = item.description || item.name;
+                    cellData.data.rate = item.price;
+                    cellData.data.quantity = 1;
+                    this.changeDetectorRef.detectChanges();
+                } else
+                    this.productUnits = this.invoiceUnits;
             }
         });
     }

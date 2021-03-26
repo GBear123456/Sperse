@@ -22,7 +22,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 
 @Directive({
-    selector: 'dx-data-grid'
+    selector: 'dx-data-grid:not(.alone)'
 })
 export class DxDataGridDirective implements OnInit, OnDestroy {
 
