@@ -405,6 +405,14 @@
                 white-space: nowrap;
             }
 
+            dx-select-box[name="product"] {
+                padding-left: 10px;
+                input {
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                }
+            }
+
             dx-text-box[name="description"],
             dx-date-box, dx-drop-down-box {
                 height: 34px !important;
@@ -615,7 +623,7 @@
             align-items: center;
 
             &.add-new {
-                width: 810px;
+                width: 860px;
                 left: -50px;                
                 margin-top: 9px;
                 position: relative;
@@ -652,7 +660,7 @@
                     opacity: 0;
                     transition: 0.2s;
                     top: 0;
-                    right: -20px;
+                    right: -10px;
                 }
             }
 
