@@ -146,6 +146,15 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     saveProduct() {
+        if (this.product.type != this.defaultProductType) {
+            let services = this.product.productServices,
+                options = this.product.productSubscriptionOptions;
+            if (!services || !services.length)
+                return this.notify.error(this.ls.l('AtLeastOneServiceShouldBeSpecified'));
+            if (!options || !options.length)
+                return this.notify.error(this.ls.l('AtLeastOnePaymentPeriodTypeShouldBeSpecified'));
+        }
+
         if (this.validationGroup.instance.validate().isValid) {
             if (!this.product.groupId)
                 this.product.groupName = this.customGroup;
@@ -247,6 +256,12 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 id: null,
                 name: this.customGroup = event.text
             };
+    }
+
+    onValueChanged(event) {
+        this.product.price = undefined;
+        this.product.productServices = undefined;
+        this.product.productSubscriptionOptions = undefined;
     }
 
     detectChanges() {

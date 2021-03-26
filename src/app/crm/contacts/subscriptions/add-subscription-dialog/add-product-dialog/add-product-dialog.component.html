@@ -55,7 +55,8 @@
             <dx-select-box [dataSource]="productTypes"
                 width="300px"
                 placeholder="Select type..."
-                [(value)]="product.type">
+                [(value)]="product.type"
+                (onValueChanged)="onValueChanged($event)">
             </dx-select-box>
         </div>
         <div class="field" *ngIf="product.type == defaultProductType">
