@@ -65,10 +65,6 @@
                             </div>
                             <div class="form-group form-md-line-input form-md-floating-label no-hint">
                                 <input type="text" name="AzureConnectionString" class="form-control" [(ngModel)]="tenant.azureConnectionString" [ngClass]="{'edited':tenant.azureConnectionString}" maxlength="1024">
-                                <div>
-                                    <input type="checkbox" name="CopyFiles" class="form-control checkbox" [(ngModel)]="tenant.copyFiles" />
-                                    <label>{{ls.l("CopyFiles")}}</label>
-                                </div>
                                 <label>{{ls.l("StorageAcountChangeMessage")}}</label>
                             </div>
                             <div>
