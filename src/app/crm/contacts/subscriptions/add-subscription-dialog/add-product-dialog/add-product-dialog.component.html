@@ -134,9 +134,6 @@
                         width="200px"
                         [format]="amountFormat$ | async"
                         [(value)]="option.setupFee">
-                        <dx-validator>
-                            <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
-                        </dx-validator>
                     </dx-number-box>
                 </div>                
                 <div class="field">
