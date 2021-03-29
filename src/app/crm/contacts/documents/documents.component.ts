@@ -136,7 +136,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                            this.refresh.next(false);
                        })
                    )
-                   : of(this.documentProxy['data'].source)
+                   : of(this.documentProxy['data'].source);
         })
     );
 
@@ -525,6 +525,9 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                             }
                             this.showViewerType = viewerType;
                             super.finishLoading(true);
+                        }, false, (event) => {
+                            super.finishLoading(true);
+                            this.message.error(event.statusText);
                         });
                     });
                     break;
