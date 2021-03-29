@@ -29,8 +29,6 @@ import {
     PersonShortInfoDto,
     OrganizationShortInfo,
     NoteType,
-    UserListDtoPagedResultDto,
-    UserListDto,
     ContactPhoneInfo,
     PropertyServiceProxy,
     PropertyDto,
@@ -46,7 +44,6 @@ import { InvoiceDto } from '@app/crm/contacts/notes/note-add-dialog/invoice-dto.
 import { InvoiceFields } from '@app/crm/contacts/notes/note-add-dialog/invoice-fields.enum';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
-import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 class PhoneNumber {
     id: any;
