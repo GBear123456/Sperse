@@ -63098,7 +63098,7 @@ export interface IInvoiceAddressInfo {
     usageTypeId: string | undefined;
 }
 
-export enum InvoiceLineUnit {
+export enum ProductMeasurementUnit {
     Day = "Day", 
     Feet = "Feet", 
     Hour = "Hour", 
@@ -63115,7 +63115,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     id!: number | undefined;
     quantity!: number | undefined;
     rate!: number | undefined;
-    unitId!: InvoiceLineUnit | undefined;
+    unitId!: ProductMeasurementUnit | undefined;
     total!: number | undefined;
     commissionableAmount!: number | undefined;
     productCode!: string | undefined;
@@ -63171,7 +63171,7 @@ export interface IInvoiceLineInfo {
     id: number | undefined;
     quantity: number | undefined;
     rate: number | undefined;
-    unitId: InvoiceLineUnit | undefined;
+    unitId: ProductMeasurementUnit | undefined;
     total: number | undefined;
     commissionableAmount: number | undefined;
     productCode: string | undefined;
@@ -63372,7 +63372,7 @@ export class CreateInvoiceLineInput implements ICreateInvoiceLineInput {
     rate!: number;
     total!: number;
     commissionableAmount!: number | undefined;
-    unitId!: InvoiceLineUnit;
+    unitId!: ProductMeasurementUnit;
     productCode!: string | undefined;
     description!: string | undefined;
     sortOrder!: number;
@@ -63425,7 +63425,7 @@ export interface ICreateInvoiceLineInput {
     rate: number;
     total: number;
     commissionableAmount: number | undefined;
-    unitId: InvoiceLineUnit;
+    unitId: ProductMeasurementUnit;
     productCode: string | undefined;
     description: string | undefined;
     sortOrder: number;
@@ -63553,7 +63553,7 @@ export class UpdateInvoiceLineInput implements IUpdateInvoiceLineInput {
     rate!: number;
     total!: number;
     commissionableAmount!: number | undefined;
-    unitId!: InvoiceLineUnit;
+    unitId!: ProductMeasurementUnit;
     productCode!: string | undefined;
     description!: string | undefined;
     sortOrder!: number;
@@ -63609,7 +63609,7 @@ export interface IUpdateInvoiceLineInput {
     rate: number;
     total: number;
     commissionableAmount: number | undefined;
-    unitId: InvoiceLineUnit;
+    unitId: ProductMeasurementUnit;
     productCode: string | undefined;
     description: string | undefined;
     sortOrder: number;
@@ -73299,6 +73299,7 @@ export class ProductInfo implements IProductInfo {
     groupId!: number | undefined;
     type!: ProductType | undefined;
     price!: number | undefined;
+    unit!: ProductMeasurementUnit | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
 
@@ -73319,6 +73320,7 @@ export class ProductInfo implements IProductInfo {
             this.groupId = data["groupId"];
             this.type = data["type"];
             this.price = data["price"];
+            this.unit = data["unit"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
                 for (let item of data["productServices"])
@@ -73347,6 +73349,7 @@ export class ProductInfo implements IProductInfo {
         data["groupId"] = this.groupId;
         data["type"] = this.type;
         data["price"] = this.price;
+        data["unit"] = this.unit;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -73368,6 +73371,7 @@ export interface IProductInfo {
     groupId: number | undefined;
     type: ProductType | undefined;
     price: number | undefined;
+    unit: ProductMeasurementUnit | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
 }
@@ -73430,7 +73434,7 @@ export interface IProductDto {
 
 export class ProductShortInfo implements IProductShortInfo {
     description!: string | undefined;
-    unitId!: InvoiceLineUnit | undefined;
+    unitId!: ProductMeasurementUnit | undefined;
     rate!: number | undefined;
 
     constructor(data?: IProductShortInfo) {
@@ -73468,7 +73472,7 @@ export class ProductShortInfo implements IProductShortInfo {
 
 export interface IProductShortInfo {
     description: string | undefined;
-    unitId: InvoiceLineUnit | undefined;
+    unitId: ProductMeasurementUnit | undefined;
     rate: number | undefined;
 }
 
@@ -73480,6 +73484,7 @@ export class CreateProductInput implements ICreateProductInput {
     groupName!: string | undefined;
     type!: ProductType;
     price!: number | undefined;
+    unit!: ProductMeasurementUnit | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
 
@@ -73501,6 +73506,7 @@ export class CreateProductInput implements ICreateProductInput {
             this.groupName = data["groupName"];
             this.type = data["type"];
             this.price = data["price"];
+            this.unit = data["unit"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
                 for (let item of data["productServices"])
@@ -73530,6 +73536,7 @@ export class CreateProductInput implements ICreateProductInput {
         data["groupName"] = this.groupName;
         data["type"] = this.type;
         data["price"] = this.price;
+        data["unit"] = this.unit;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -73552,6 +73559,7 @@ export interface ICreateProductInput {
     groupName: string | undefined;
     type: ProductType;
     price: number | undefined;
+    unit: ProductMeasurementUnit | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
 }
@@ -73601,6 +73609,7 @@ export class UpdateProductInput implements IUpdateProductInput {
     groupName!: string | undefined;
     type!: ProductType;
     price!: number | undefined;
+    unit!: ProductMeasurementUnit | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
 
@@ -73623,6 +73632,7 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.groupName = data["groupName"];
             this.type = data["type"];
             this.price = data["price"];
+            this.unit = data["unit"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
                 for (let item of data["productServices"])
@@ -73653,6 +73663,7 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["groupName"] = this.groupName;
         data["type"] = this.type;
         data["price"] = this.price;
+        data["unit"] = this.unit;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -73676,6 +73687,7 @@ export interface IUpdateProductInput {
     groupName: string | undefined;
     type: ProductType;
     price: number | undefined;
+    unit: ProductMeasurementUnit | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
 }

@@ -30,7 +30,8 @@ import {
     ProductType,
     UpdateProductInput,
     RecurringPaymentFrequency,
-    ProductSubscriptionOptionInfo
+    ProductSubscriptionOptionInfo,
+    ProductMeasurementUnit
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
@@ -67,6 +68,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     defaultProductType = ProductType.General;
     productGroups: ProductGroupInfo[];
     services: ServiceProductDto[];
+    productUnits = Object.keys(ProductMeasurementUnit);
     frequencies = Object.keys(RecurringPaymentFrequency);
     gracePeriodDefaultValue: number;
     customGroup: string;
@@ -259,6 +261,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     onValueChanged(event) {
+        this.product.unit = undefined;
         this.product.price = undefined;
         this.product.productServices = undefined;
         this.product.productSubscriptionOptions = undefined;
