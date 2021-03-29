@@ -53635,7 +53635,7 @@ export enum CommunicationMessageDeliveryStatus {
 }
 
 export class RecepientInfo implements IRecepientInfo {
-    email!: string | undefined;
+    recipient!: string | undefined;
     deliveryStatus!: CommunicationMessageDeliveryStatus | undefined;
     deliveryDate!: moment.Moment | undefined;
     openDate!: moment.Moment | undefined;
@@ -53651,7 +53651,7 @@ export class RecepientInfo implements IRecepientInfo {
 
     init(data?: any) {
         if (data) {
-            this.email = data["email"];
+            this.recipient = data["recipient"];
             this.deliveryStatus = data["deliveryStatus"];
             this.deliveryDate = data["deliveryDate"] ? moment(data["deliveryDate"].toString()) : <any>undefined;
             this.openDate = data["openDate"] ? moment(data["openDate"].toString()) : <any>undefined;
@@ -53667,7 +53667,7 @@ export class RecepientInfo implements IRecepientInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["email"] = this.email;
+        data["recipient"] = this.recipient;
         data["deliveryStatus"] = this.deliveryStatus;
         data["deliveryDate"] = this.deliveryDate ? this.deliveryDate.toISOString() : <any>undefined;
         data["openDate"] = this.openDate ? this.openDate.toISOString() : <any>undefined;
@@ -53676,7 +53676,7 @@ export class RecepientInfo implements IRecepientInfo {
 }
 
 export interface IRecepientInfo {
-    email: string | undefined;
+    recipient: string | undefined;
     deliveryStatus: CommunicationMessageDeliveryStatus | undefined;
     deliveryDate: moment.Moment | undefined;
     openDate: moment.Moment | undefined;
