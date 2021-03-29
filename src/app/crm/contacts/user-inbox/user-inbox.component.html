@@ -27,7 +27,7 @@
                             <span class="subject">{{item.subject}}</span>
                         </div>
                         <div class="date">{{item.creationTime | datetime: formatting.monthDay.toUpperCase()}}</div>
-                        <div class="status {{item.status | lowercase}}">{{item.status}}</div>
+                        <div class="status {{item.statusCalculated | lowercase}}">{{item.statusCalculated}}</div>
                     </div>
                 </div>
                 <div *dxTemplate="let item of 'item'" class="sub-item" [ngClass]="{selected: item.id == activeMessage?.id}">
@@ -38,6 +38,7 @@
                             <span class="subject">{{item.subject}}</span>
                         </div>
                         <div class="date">{{item.creationTime | datetime: formatting.monthDay.toUpperCase()}}</div>
+                        <div class="status {{item.statusCalculated | lowercase}}">{{item.statusCalculated}}</div>
                     </div>
                 </div>
         </dx-list>
@@ -45,13 +46,13 @@
     <div #contentView class="content-view">
         <div class="inbox-content" *ngIf="activeMessage">
             <dx-tooltip width="670px"
-                        [target]="'span.to'" 
-                        [showEvent]="activeMessage?.recepients?.length ? 'mouseenter' : ''"
+                        [target]="'span.to'"
+                        [showEvent]="activeMessage?.recepients?.length && !activeMessage?.isInbound ? 'mouseenter' : ''"
                         hideEvent="dxhoverend"
                         position="bottom">
                 <div *dxTemplate="let data of 'content'">
                     <dx-data-grid [dataSource]="activeMessage?.recepients" id="inbox-delivery-statuses">
-                        <dxi-column dataField="email" width="200px"></dxi-column>
+                        <dxi-column dataField="recipient" width="200px"></dxi-column>
                         <dxi-column dataField="deliveryStatus" [caption]="ls.l('Status')" width="100px" cellTemplate="statusCell"></dxi-column>
                         <dxi-column dataField="deliveryDate" width="170px" cellTemplate="dateCell"></dxi-column>
                         <dxi-column dataField="openDate" width="170px" cellTemplate="dateCell"></dxi-column>
@@ -66,7 +67,7 @@
             </dx-tooltip>
             <app-toolbar [config]="contentToolbar"></app-toolbar>
             <ng-container [ngSwitch]="activeMessage.deliveryType">
-                <ng-container *ngSwitchCase="'SMS'">                
+                <ng-container *ngSwitchCase="'SMS'">
                     <div class="header sms">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(activeMessage?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar"></div>  
                         <div class="details">
@@ -74,8 +75,8 @@
                             <span class="to">{{activeMessage?.to}}</span>
                         </div>
                         <div class="date">{{activeMessage?.creationTime | datetime: formatting.fieldDateTime}}</div>
-                        <div class="status {{activeMessage?.status | lowercase}}">{{activeMessage?.status}}</div>
-                    </div>                
+                        <div class="status {{activeMessage?.statusCalculated | lowercase}}">{{activeMessage?.statusCalculated}}</div>
+                    </div>
                 </ng-container>
                 <ng-container *ngSwitchCase="'Email'">
                     <div class="header">
@@ -86,13 +87,13 @@
                             <span class="to" (click)="activeMessage.showTooltip = true">{{ls.l('to')}} {{activeMessage?.to}} <i class="info dx-icon-info"></i></span>
                         </div>
                         <div class="date">{{activeMessage?.creationTime | datetime: formatting.fieldDateTime}}</div>
-                        <div class="status {{activeMessage?.status | lowercase}}">{{activeMessage?.status}}</div>
+                        <div class="status {{activeMessage?.statusCalculated | lowercase}}">{{activeMessage?.statusCalculated}}</div>
                     </div>
                 </ng-container>
             </ng-container>
             <div class="content {{activeMessage.deliveryType | lowercase}}">
                 <iframe [hidden]="!isActiveEmilType" #emailContent frameborder="0" width="100%"></iframe>
-                <dx-scroll-view *ngIf="!isActiveEmilType" showScrollbar="onHover">                    
+                <dx-scroll-view *ngIf="!isActiveEmilType" showScrollbar="onHover">
                     <div class="message-wrapper">
                         <div [ngClass]="{to: activeMessage.isInbound}" [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(activeMessage?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar small"></div>                        
                         <div [ngClass]="{from: !activeMessage.isInbound, to: activeMessage.isInbound}" class="body date" [innerHtml]="activeMessage?.body" [attr.date]="activeMessage?.creationTime | datetime: formatting.fieldDateTime"></div>
@@ -112,11 +113,11 @@
                     </div>
                 </dx-scroll-view>
                 <div class="attachments" *ngIf="activeMessage?.attachments?.length">
-                    <dx-scroll-view showScrollbar="onHover">                    
+                    <dx-scroll-view showScrollbar="onHover">
                         <div *ngFor="let attachment of activeMessage?.attachments" class="attachment">
                             <a [download]="attachment.name" href="javascript:void(0)" class="name" (click)="openAttachment(attachment)"><i class="dx-icon-{{getExtension(attachment)}}file"></i>{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span>
                         </div>
-                    </dx-scroll-view>                    
+                    </dx-scroll-view>
                 </div>
                 <div class="input-form" *ngIf="!isActiveEmilType">
                     <div>
