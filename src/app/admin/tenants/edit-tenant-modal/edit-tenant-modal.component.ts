@@ -12,7 +12,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Observable, forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
@@ -36,12 +36,13 @@ import { ModulesEditionsSelectComponent } from '../modules-edtions-select.compon
 import { FeatureTreeComponent } from '@admin/shared/feature-tree.component';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { MessageService } from '@abp/message/message.service';
+import { StorageChangeDialog } from './storage-change-dialog/storage-change-dialog.component';
 
 @Component({
     selector: 'editTenantModal',
     templateUrl: './edit-tenant-modal.component.html',
-    styleUrls: [ '../modal.less' ],
-    providers: [ TenantsService ],
+    styleUrls: ['../modal.less', './edit-tenant-modal.component.less'],
+    providers: [TenantsService],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditTenantModalComponent implements OnInit {
@@ -75,9 +76,10 @@ export class EditTenantModalComponent implements OnInit {
         private changeDetectorRef: ChangeDetectorRef,
         private dialogRef: MatDialogRef<EditTenantModalComponent>,
         private messageService: MessageService,
+        private dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.modalDialog.startLoading();
@@ -123,6 +125,21 @@ export class EditTenantModalComponent implements OnInit {
         if (!this.editionsSelect.validateModel())
             return;
 
+        if (this.initialTenant.azureConnectionString != this.tenant.azureConnectionString) {
+            this.dialog.open(StorageChangeDialog).afterClosed().subscribe(result => {
+                if (!result && result !== false)
+                    return;
+
+                this.tenant.copyFiles = result;
+                this.saveTenant();
+            });
+        }
+        else {
+            this.saveTenant();
+        }
+    }
+
+    saveTenant() {
         this.modalDialog.startLoading();
         this.tenant.editions = this.tenantsService.getTenantEditions();
         const savings: Observable<any>[] = [];
@@ -148,8 +165,8 @@ export class EditTenantModalComponent implements OnInit {
         forkJoin(savings).pipe(
             finalize(() => this.modalDialog.finishLoading())
         ).subscribe(
-            () => {},
-            () => {},
+            () => { },
+            () => { },
             () => {
                 this.notifyService.info(this.ls.l('SavedSuccessfully'));
                 this.dialogRef.close(tenantChanged);
@@ -157,5 +174,4 @@ export class EditTenantModalComponent implements OnInit {
             }
         );
     }
-
 }
