@@ -1187,6 +1187,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 setTimeout(() => this.dataGrid.instance.repaint());
             }
         }
+        this._router.navigate([], {
+            relativeTo: this._activatedRoute,
+            queryParams: { dataLayoutType: null },
+            queryParamsHandling: 'merge'
+        });
     }
 
     initFilterConfig(): void {
