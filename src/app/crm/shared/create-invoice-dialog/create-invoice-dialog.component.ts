@@ -42,7 +42,7 @@ import {
     InvoiceStatus,
     CreateInvoiceLineInput,
     InvoiceInfo,
-    InvoiceLineUnit,
+    ProductMeasurementUnit,
     InvoiceSettings,
     GetNewInvoiceInfoOutput,
     ContactServiceProxy,
@@ -185,7 +185,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     ];
 
-    invoiceUnits = Object.keys(InvoiceLineUnit);
+    invoiceUnits = Object.keys(ProductMeasurementUnit);
     productUnits = this.invoiceUnits;
     billingAddresses: InvoiceAddressInfo[] = [];
     shippingAddresses: InvoiceAddressInfo[] = [];
@@ -409,7 +409,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     quantity: row['quantity'],
                     rate: row['rate'],
                     total: row['total'],
-                    unitId: row['unitId'] as InvoiceLineUnit,
+                    unitId: row['unitId'] as ProductMeasurementUnit,
                     productCode: '',
                     description: row['description'],
                     sortOrder: index,
@@ -432,7 +432,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     quantity: row['quantity'],
                     rate: row['rate'],
                     total: row['total'],
-                    unitId: row['unitId'] as InvoiceLineUnit,
+                    unitId: row['unitId'] as ProductMeasurementUnit,
                     productCode: '',
                     description: row['description'],
                     sortOrder: index,
