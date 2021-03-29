@@ -129,6 +129,14 @@
                     </dx-select-box>
                 </div>
                 <div class="field">
+                    <label class="wide">{{ls.l('SetupFee')}}</label>
+                    <dx-number-box name="price"
+                        width="200px"
+                        [format]="amountFormat$ | async"
+                        [(value)]="option.setupFee">
+                    </dx-number-box>
+                </div>                
+                <div class="field">
                     <label class="wide">{{ls.l('Fee')}}</label>
                     <dx-number-box name="price"
                         width="200px"

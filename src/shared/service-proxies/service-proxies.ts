@@ -63109,7 +63109,6 @@ export enum InvoiceLineUnit {
     Piece = "Piece", 
     Unit = "Unit", 
     Year = "Year", 
-    LifeTime = "LifeTime", 
 }
 
 export class InvoiceLineInfo implements IInvoiceLineInfo {
@@ -73243,6 +73242,7 @@ export interface IProductServiceInfo {
 
 export class ProductSubscriptionOptionInfo implements IProductSubscriptionOptionInfo {
     frequency!: RecurringPaymentFrequency | undefined;
+    setupFee!: number | undefined;
     fee!: number | undefined;
     trialDayCount!: number | undefined;
     gracePeriodDayCount!: number | undefined;
@@ -73259,6 +73259,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
     init(data?: any) {
         if (data) {
             this.frequency = data["frequency"];
+            this.setupFee = data["setupFee"];
             this.fee = data["fee"];
             this.trialDayCount = data["trialDayCount"];
             this.gracePeriodDayCount = data["gracePeriodDayCount"];
@@ -73275,6 +73276,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["frequency"] = this.frequency;
+        data["setupFee"] = this.setupFee;
         data["fee"] = this.fee;
         data["trialDayCount"] = this.trialDayCount;
         data["gracePeriodDayCount"] = this.gracePeriodDayCount;
@@ -73284,6 +73286,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
 
 export interface IProductSubscriptionOptionInfo {
     frequency: RecurringPaymentFrequency | undefined;
+    setupFee: number | undefined;
     fee: number | undefined;
     trialDayCount: number | undefined;
     gracePeriodDayCount: number | undefined;
