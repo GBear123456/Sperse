@@ -145,7 +145,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 ).toPromise().then(response => {
                     return {
                         data: response.items,
-                        totalCount: response.totalCount
+                        totalCount: response.items.length //TODO: use getUserCount
                     };
                 });
             }

@@ -37523,7 +37523,7 @@ export class UserServiceProxy {
      * @skipCount (optional) 
      * @return Success
      */
-    getUsers(filter: string | null | undefined, permissions: string[] | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, group: UserGroup | null | undefined, isActive: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<UserListDtoPagedResultDto> {
+    getUsers(filter: string | null | undefined, permissions: string[] | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, group: UserGroup | null | undefined, isActive: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<UserListDtoListResultDto> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUsers?";
         if (filter !== undefined)
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
@@ -37561,14 +37561,14 @@ export class UserServiceProxy {
                 try {
                     return this.processGetUsers(<any>response_);
                 } catch (e) {
-                    return <Observable<UserListDtoPagedResultDto>><any>_observableThrow(e);
+                    return <Observable<UserListDtoListResultDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<UserListDtoPagedResultDto>><any>_observableThrow(response_);
+                return <Observable<UserListDtoListResultDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetUsers(response: HttpResponseBase): Observable<UserListDtoPagedResultDto> {
+    protected processGetUsers(response: HttpResponseBase): Observable<UserListDtoListResultDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -37579,7 +37579,7 @@ export class UserServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? UserListDtoPagedResultDto.fromJS(resultData200) : new UserListDtoPagedResultDto();
+            result200 = resultData200 ? UserListDtoListResultDto.fromJS(resultData200) : new UserListDtoListResultDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -37587,7 +37587,7 @@ export class UserServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<UserListDtoPagedResultDto>(<any>null);
+        return _observableOf<UserListDtoListResultDto>(<any>null);
     }
 
     /**
@@ -82202,11 +82202,10 @@ export interface IUserListDto {
     id: number | undefined;
 }
 
-export class UserListDtoPagedResultDto implements IUserListDtoPagedResultDto {
-    totalCount!: number | undefined;
+export class UserListDtoListResultDto implements IUserListDtoListResultDto {
     items!: UserListDto[] | undefined;
 
-    constructor(data?: IUserListDtoPagedResultDto) {
+    constructor(data?: IUserListDtoListResultDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -82217,7 +82216,6 @@ export class UserListDtoPagedResultDto implements IUserListDtoPagedResultDto {
 
     init(data?: any) {
         if (data) {
-            this.totalCount = data["totalCount"];
             if (data["items"] && data["items"].constructor === Array) {
                 this.items = [];
                 for (let item of data["items"])
@@ -82226,16 +82224,15 @@ export class UserListDtoPagedResultDto implements IUserListDtoPagedResultDto {
         }
     }
 
-    static fromJS(data: any): UserListDtoPagedResultDto {
+    static fromJS(data: any): UserListDtoListResultDto {
         data = typeof data === 'object' ? data : {};
-        let result = new UserListDtoPagedResultDto();
+        let result = new UserListDtoListResultDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["totalCount"] = this.totalCount;
         if (this.items && this.items.constructor === Array) {
             data["items"] = [];
             for (let item of this.items)
@@ -82245,8 +82242,7 @@ export class UserListDtoPagedResultDto implements IUserListDtoPagedResultDto {
     }
 }
 
-export interface IUserListDtoPagedResultDto {
-    totalCount: number | undefined;
+export interface IUserListDtoListResultDto {
     items: UserListDto[] | undefined;
 }
 

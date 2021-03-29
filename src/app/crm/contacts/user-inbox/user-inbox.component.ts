@@ -495,7 +495,7 @@ export class UserInboxComponent implements OnDestroy {
                 contactId: this.contactId,
                 parentId: parentId,
                 message: this.instantMessageText,
-                phoneNumber: this.activeMessage.to
+                phoneNumber: this.activeMessage.isInbound ? this.activeMessage.from : this.activeMessage.to
             })
         ).subscribe(res => {
             if (!isNaN(res)) {

@@ -19,7 +19,7 @@ import {
     Permissions,
     UserServiceProxy,
     UserListDto,
-    UserListDtoPagedResultDto
+    UserListDtoListResultDto
 } from 'shared/service-proxies/service-proxies';
 import { AccountPermission } from './account-permission.model';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
@@ -125,7 +125,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
             bankAccountsObservable,
             usersPermissionsObservable
         ).subscribe(
-            ([ users, syncAccounts, usersPermissions ]: [ UserListDtoPagedResultDto, SyncAccountBankDto[], BankAccountUsers[]]) => {
+            ([ users, syncAccounts, usersPermissions ]: [ UserListDtoListResultDto, SyncAccountBankDto[], BankAccountUsers[]]) => {
                 this.users = users && users.items ? users.items : null;
                 this.syncAccounts = syncAccounts;
                 this.bankAccountsUsers = usersPermissions;

@@ -1,9 +1,13 @@
 export class RequestHelper {
-    static downloadFileBlob(url, callback, includeAuth = false) {
+    static downloadFileBlob(url, callback, includeAuth = false, errorHandler?) {
         let xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function () {
-            if (this.readyState == 4 && this.status == 200)
-                callback(this.response, RequestHelper.getFileName(this));
+        xhr.onreadystatechange = function() {
+            if (this.readyState == 4) {
+                if (this.status == 200)
+                    callback(this.response, RequestHelper.getFileName(this));
+                else if (errorHandler)
+                    errorHandler(this);
+            }
         };
 
         xhr.open('GET', url);
