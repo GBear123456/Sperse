@@ -66,6 +66,7 @@ import { PermissionTreeComponent } from './shared/permission-tree.component';
 import { RoleComboComponent } from './shared/role-combo.component';
 import { CreateTenantModalComponent } from './tenants/create-tenant-modal/create-tenant-modal.component';
 import { EditTenantModalComponent } from './tenants/edit-tenant-modal/edit-tenant-modal.component';
+import { StorageChangeDialog } from './tenants/edit-tenant-modal/storage-change-dialog/storage-change-dialog.component';
 import { TenantsComponent } from './tenants/tenants.component';
 import { UiCustomizationComponent } from './ui-customization/ui-customization.component';
 import { ImpersonationService } from './users/impersonation.service';
@@ -174,6 +175,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         TenantsComponent,
         CreateTenantModalComponent,
         EditTenantModalComponent,
+        StorageChangeDialog,
         ModulesEditionsSelectComponent,
         CreateUserDialogComponent
     ],
@@ -181,6 +183,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         CreateUserDialogComponent,
         CreateTenantModalComponent,
         EditTenantModalComponent,
+        StorageChangeDialog,
         CreateOrEditEditionModalComponent,
         CreateOrEditLanguageModalComponent,
         CreateOrEditRoleModalComponent,
@@ -190,7 +193,8 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         AddOrEditSSLBindingModalComponent
     ],
     exports: [
-        AddMemberModalComponent
+        AddMemberModalComponent,
+        StorageChangeDialog
     ],
     providers: [
         ImpersonationService,
