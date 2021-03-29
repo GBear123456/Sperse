@@ -73252,6 +73252,7 @@ export class ProductInfo implements IProductInfo {
     groupId!: number | undefined;
     type!: ProductType | undefined;
     price!: number | undefined;
+    unit!: ProductMeasurementUnit | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
 
@@ -73272,6 +73273,7 @@ export class ProductInfo implements IProductInfo {
             this.groupId = data["groupId"];
             this.type = data["type"];
             this.price = data["price"];
+            this.unit = data["unit"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
                 for (let item of data["productServices"])
@@ -73300,6 +73302,7 @@ export class ProductInfo implements IProductInfo {
         data["groupId"] = this.groupId;
         data["type"] = this.type;
         data["price"] = this.price;
+        data["unit"] = this.unit;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -73321,6 +73324,7 @@ export interface IProductInfo {
     groupId: number | undefined;
     type: ProductType | undefined;
     price: number | undefined;
+    unit: ProductMeasurementUnit | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
 }
