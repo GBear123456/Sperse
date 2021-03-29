@@ -1,8 +1,38 @@
 :host {
-    .form-group.inline {
-        width: 50%;
-        display:inline-block;
-        vertical-align: top;
+    .form-group {
+        &.inline {
+            width: 50%;
+            display:inline-block;
+            vertical-align: top;
+        }
+        &.ck-container {
+            margin-bottom: 0;
+            ::ng-deep ckeditor #cke_1_contents {
+                height: 140px!important;
+            }
+            .tags-button {
+                font-size: 13px;
+                padding: 10px 10px 6px 5px;
+                border-radius: 2px;
+                line-height: 10px;
+                &:hover {
+                    background: #e6e6e6;
+                }
+                &:after {
+                    content: "";
+                    position: relative;
+                    left: 4px;
+                    bottom: 2px;
+                    cursor: default;
+                    height: 0;
+                    width: 0;
+                    font-size: 0;
+                    border-left: 3px solid transparent;
+                    border-right: 3px solid transparent;
+                    border-top: 3px solid #484848;
+                }
+            }
+        }
     }
     ::ng-deep .phoneNumber {
         display: block;
