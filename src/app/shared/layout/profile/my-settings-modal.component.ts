@@ -11,13 +11,16 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import startCase from 'lodash/startCase';
 import { MatDialog } from '@angular/material/dialog';
+import { forkJoin } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { GetCurrentUserProfileEditDto, CurrentUserProfileEditDto, SettingScopes, ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
+import { GetCurrentUserProfileEditDto, CurrentUserProfileEditDto, SettingScopes, UserEmailSettings,
+    ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
@@ -43,6 +46,21 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     @ViewChild('smsVerificationModal', { static: false }) smsVerificationModal: SmsVerificationModalComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
+    ckConfig: any = {
+        toolbarGroups: [
+            { name: 'document', groups: [ 'mode' ] },
+            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
+            { name: 'links', groups: [ 'Link', 'Unlink' ] },
+            { name: 'paragraph', groups: [ 'list', 'align' ] },
+            { name: 'styles', groups: [ 'styles' ] },
+            { name: 'other', groups: [ 'simplebutton' ] }
+        ],
+        removeButtons: 'Anchor,Subscript,Superscript'
+    };
+
+    public tagsList = [];
+    public tagsTooltipVisible = false;
+    public userEmailSettings = new UserEmailSettings();
     public isGoogleAuthenticatorEnabled = false;
     public isPhoneNumberConfirmed: boolean;
     public isPhoneNumberEmpty = false;
@@ -78,6 +96,9 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
 
     ngOnInit() {
         this.modalDialog.startLoading();
+        this.profileService.getEmailSettings().subscribe((settings: UserEmailSettings) => {
+            this.userEmailSettings.emailSignatureHtml = settings.emailSignatureHtml;
+        });
         this.profileService.getCurrentUserProfileForEdit()
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe((result) => {
@@ -112,23 +133,31 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
         this.changeDetectorRef.detectChanges();
     }
 
+    onTagClick(event) {
+        /*
+            Will be added soon
+        */
+        this.tagsTooltipVisible = false;
+    }
+
     save(): void {
         this.modalDialog.startLoading();
-        this.profileService.updateCurrentUserProfile(CurrentUserProfileEditDto.fromJS(this.user))
-            .pipe(finalize(() => this.modalDialog.finishLoading()))
-            .subscribe(() => {
-                this.appSessionService.user.name = this.user.name;
-                this.appSessionService.user.surname = this.user.surname;
-                this.appSessionService.user.userName = this.user.name;
-                this.appSessionService.user.emailAddress = this.user.emailAddress;
-                this.notifyService.info(this.ls.l('SavedSuccessfully'));
-                this.modalDialog.close(true);
-                this.modalSave.emit(null);
-                if (abp.clock.provider.supportsMultipleTimezone && this._initialTimezone !== this.user.timezone) {
-                    this.messageService.info(this.ls.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
-                        window.location.reload();
-                    });
-                }
-            });
+        forkJoin(
+            this.profileService.updateEmailSettings(this.userEmailSettings),
+            this.profileService.updateCurrentUserProfile(CurrentUserProfileEditDto.fromJS(this.user))
+        ).pipe(finalize(() => this.modalDialog.finishLoading())).subscribe(() => {
+            this.appSessionService.user.name = this.user.name;
+            this.appSessionService.user.surname = this.user.surname;
+            this.appSessionService.user.userName = this.user.name;
+            this.appSessionService.user.emailAddress = this.user.emailAddress;
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
+            this.modalDialog.close(true);
+            this.modalSave.emit(null);
+            if (abp.clock.provider.supportsMultipleTimezone && this._initialTimezone !== this.user.timezone) {
+                this.messageService.info(this.ls.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
+                    window.location.reload();
+                });
+            }
+        });
     }
 }
