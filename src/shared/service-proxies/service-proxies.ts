@@ -77200,6 +77200,7 @@ export class CreateTenantInput implements ICreateTenantInput {
     crmConnectionString!: string | undefined;
     memberDbConnectionString!: string | undefined;
     cfoConnectionString!: string | undefined;
+    azureConnectionString!: string | undefined;
     editions!: TenantEditEditionDto[] | undefined;
     isActive!: boolean | undefined;
 
@@ -77226,6 +77227,7 @@ export class CreateTenantInput implements ICreateTenantInput {
             this.crmConnectionString = data["crmConnectionString"];
             this.memberDbConnectionString = data["memberDbConnectionString"];
             this.cfoConnectionString = data["cfoConnectionString"];
+            this.azureConnectionString = data["azureConnectionString"];
             if (data["editions"] && data["editions"].constructor === Array) {
                 this.editions = [];
                 for (let item of data["editions"])
@@ -77256,6 +77258,7 @@ export class CreateTenantInput implements ICreateTenantInput {
         data["crmConnectionString"] = this.crmConnectionString;
         data["memberDbConnectionString"] = this.memberDbConnectionString;
         data["cfoConnectionString"] = this.cfoConnectionString;
+        data["azureConnectionString"] = this.azureConnectionString;
         if (this.editions && this.editions.constructor === Array) {
             data["editions"] = [];
             for (let item of this.editions)
@@ -77279,18 +77282,21 @@ export interface ICreateTenantInput {
     crmConnectionString: string | undefined;
     memberDbConnectionString: string | undefined;
     cfoConnectionString: string | undefined;
+    azureConnectionString: string | undefined;
     editions: TenantEditEditionDto[] | undefined;
     isActive: boolean | undefined;
 }
 
 export class TenantEditDto implements ITenantEditDto {
     id!: number;
+    copyFiles!: boolean | undefined;
     tenancyName!: string;
     name!: string;
     connectionString!: string | undefined;
     crmConnectionString!: string | undefined;
     memberDbConnectionString!: string | undefined;
     cfoConnectionString!: string | undefined;
+    azureConnectionString!: string | undefined;
     editions!: TenantEditEditionDto[] | undefined;
     isActive!: boolean | undefined;
 
@@ -77306,12 +77312,14 @@ export class TenantEditDto implements ITenantEditDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.copyFiles = data["copyFiles"];
             this.tenancyName = data["tenancyName"];
             this.name = data["name"];
             this.connectionString = data["connectionString"];
             this.crmConnectionString = data["crmConnectionString"];
             this.memberDbConnectionString = data["memberDbConnectionString"];
             this.cfoConnectionString = data["cfoConnectionString"];
+            this.azureConnectionString = data["azureConnectionString"];
             if (data["editions"] && data["editions"].constructor === Array) {
                 this.editions = [];
                 for (let item of data["editions"])
@@ -77331,12 +77339,14 @@ export class TenantEditDto implements ITenantEditDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["copyFiles"] = this.copyFiles;
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
         data["connectionString"] = this.connectionString;
         data["crmConnectionString"] = this.crmConnectionString;
         data["memberDbConnectionString"] = this.memberDbConnectionString;
         data["cfoConnectionString"] = this.cfoConnectionString;
+        data["azureConnectionString"] = this.azureConnectionString;
         if (this.editions && this.editions.constructor === Array) {
             data["editions"] = [];
             for (let item of this.editions)
@@ -77349,12 +77359,14 @@ export class TenantEditDto implements ITenantEditDto {
 
 export interface ITenantEditDto {
     id: number;
+    copyFiles: boolean | undefined;
     tenancyName: string;
     name: string;
     connectionString: string | undefined;
     crmConnectionString: string | undefined;
     memberDbConnectionString: string | undefined;
     cfoConnectionString: string | undefined;
+    azureConnectionString: string | undefined;
     editions: TenantEditEditionDto[] | undefined;
     isActive: boolean | undefined;
 }
