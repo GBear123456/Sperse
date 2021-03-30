@@ -527,7 +527,10 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
                             super.finishLoading(true);
                         }, false, (event) => {
                             super.finishLoading(true);
-                            this.message.error(event.statusText);
+                            if (event.status == 404)
+                                this.message.error(this.ls('Platform', 'FileIsNotAccessible'));
+                            else
+                                this.message.error(event.statusText);
                         });
                     });
                     break;
