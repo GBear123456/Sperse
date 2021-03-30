@@ -67,6 +67,7 @@
 <div [ngClass]="{ 'grid-container': true, 'highlight-used-rows' : highlightUsedRows }">
     <ghost-list [hidden]="isDataLoaded"></ghost-list>
     <dx-data-grid id="gridContainer"
+                  class="alone"
                   width="99.9%"
                   [renderAsync]="true"
                   [height]="calculateHeight()"
@@ -386,13 +387,13 @@
             <div class="expand-div"></div>
         </div>
         <div *dxTemplate="let cell of 'actionsTemplate'" style="height: 30px;">
-            <a *ngIf="allowUpdateAccount && isInstanceAdmin && isMemberAccessManage" 
-                class="dx-link dx-link-edit options-button" (click)="openActionsMenu(cell)">&nbsp;</a>
+            <a *ngIf="allowUpdateAccount && isInstanceAdmin && isMemberAccessManage"
+               class="dx-link dx-link-edit options-button" (click)="openActionsMenu(cell)">&nbsp;</a>
         </div>
         <div *dxTemplate="let cell of 'syncDateTemplate'">
             <ng-container *ngIf="(cell.text)">
                 <div class="sync-date clipboard-holder" title="Last good sync: {{cell.text | datetime: 'MMM D, YYYY hh:mm a'}}">
-                    Last sync: {{cell.text | datetime: 'MMM D, YYYY'}} 
+                    Last sync: {{cell.text | datetime: 'MMM D, YYYY'}}
                     <a [hidden]="!cell.data.autoSyncTime" class="time-icon" title="Auto-sync at {{cell.data.autoSyncTime}}"></a>
                     <i class="save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, cell.text)"></i>
                 </div>
