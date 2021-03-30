@@ -112,6 +112,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     dataSource: DataSource;
     toolbarConfig: ToolbarGroupModel[];
     headerLabels: string[] = [this.l('Users')];
+    totalCount: number;
 
     constructor(
         injector: Injector,
@@ -142,12 +143,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     (loadOptions.sort || []).map((item) => {
                         return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
                     }).join(','), loadOptions.take || -1, loadOptions.skip
-                ).toPromise().then(response => {
-                    return {
-                        data: response.items,
-                        totalCount: response.items.length //TODO: use getUserCount
-                    };
-                });
+                ).toPromise().then(response => response.items);
+            },
+            totalCount: (loadOptions: any) => {
+                return this.totalCount || loadOptions.take;
             }
         });
 
@@ -155,6 +154,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     processUserCountRequest() {
+        this.totalCount = undefined;
+        this.headerLabels = [this.l('Users')];
         this.userServiceProxy.getUserCount(
             this.searchValue || undefined,
             this.selectedPermissions || undefined,
@@ -162,8 +163,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             false,
             this.group,
             this.isActive
-        ).subscribe(res => {
-            this.headerLabels = [this.l('Users') + ' (' + res + ')'];
+        ).subscribe(totalCount => {
+            this.headerLabels = [this.l('Users') + ' (' + totalCount + ')'];
+            this.dataSource['_totalCount'] = this.totalCount = totalCount;
+            this.dataGrid.instance.repaint();
         });
     }
 
