@@ -1008,6 +1008,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (pipeline) {
                 this._selectedPipelineId.next(pipeline.id);
             }
+            this.clearQueryParams();
         });
     }
 
@@ -1017,7 +1018,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             filter((dataLayoutType: DataLayoutType) => dataLayoutType && dataLayoutType != this.dataLayoutType.value)
         );
         queryDataLayoutType$.subscribe((dataLayoutType: DataLayoutType) => {
-            this.toggleDataLayout(+dataLayoutType);
+            this.toggleDataLayout(+dataLayoutType);            
         });
         queryDataLayoutType$.pipe(
             filter((dataLayoutType: DataLayoutType) => dataLayoutType == DataLayoutType.DataGrid),
@@ -1187,11 +1188,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 setTimeout(() => this.dataGrid.instance.repaint());
             }
         }
-        this._router.navigate([], {
-            relativeTo: this._activatedRoute,
-            queryParams: { dataLayoutType: null },
-            queryParamsHandling: 'merge'
-        });
+        this.clearQueryParams();
     }
 
     initFilterConfig(): void {
@@ -1861,6 +1858,19 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         } else if (this.showChart) {
             this.setChartInstance();
         }
+    }
+
+    private clearQueryParams() {
+        setTimeout(() =>
+            this._router.navigate([], {
+                relativeTo: this._activatedRoute,
+                queryParams: { 
+                    dataLayoutType: null,
+                    contactGroup: null
+                },
+                queryParamsHandling: 'merge'
+            }), 500
+        );
     }
 
     private setDataGridInstance() {
