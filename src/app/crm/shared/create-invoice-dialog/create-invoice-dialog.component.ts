@@ -595,7 +595,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     productsLookupRequest(phrase = '', callback?) {
-        this.productProxy.getProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
+        this.productProxy.getInvoiceProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
                 this.descriptions = (this.lookupProducts = res).map(item => item.description);
                 this.changeDetectorRef.markForCheck();
