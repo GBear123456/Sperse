@@ -233,10 +233,19 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.detectChanges();
         if (!event.value)
             return;
-
         let selectedItem = event.component.option('selectedItem');
         if (selectedItem && selectedItem.id == this.addNewItemId)
             this.showAddServiceProductDialog(event.component, event.previousValue);
+        else {
+            selectedItem['disabled'] = true;
+            if (event.previousValue)
+                this.services.some(item => {
+                    if (event.previousValue == item.id) {
+                        item['disabled'] = false;
+                        return true;
+                    }
+                });
+        }
     }
 
     showAddServiceProductDialog(component, previousValue: string) {
