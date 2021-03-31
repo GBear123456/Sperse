@@ -4,13 +4,14 @@ import { HttpEvent, HttpRequest, HttpHandler, HttpHeaders, HttpParams } from '@a
 
 /** Third party imports */
 import { finalize } from 'rxjs/operators';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, throwError } from 'rxjs';
 
 /** Application imports */
 import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { AppConsts } from '@shared/AppConsts';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { MessageService } from '@abp/message/message.service';
 
 @Injectable()
 export class AppHttpInterceptor extends AbpHttpInterceptor {
@@ -29,12 +30,19 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         'Profile_GetFriendProfilePictureById'
     ];
 
-    constructor(public configuration: AppHttpConfiguration) {
+    constructor(public configuration: AppHttpConfiguration,
+        public message: MessageService) {
         super(configuration);
     }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+        if (request.urlWithParams && request.urlWithParams.length > 2048) {
+            this.message.error('Too long request');
+            return throwError('Too long request');
+        }
+
         let key = this.getKeyFromUrl(request);
+
         if (this.EXCEPTION_KEYS.some(item => key.includes(item)))
             return super.intercept(request, next);
 
