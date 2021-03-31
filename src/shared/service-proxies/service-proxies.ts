@@ -70150,7 +70150,7 @@ export class PersonShortInfoDto implements IPersonShortInfoDto {
     fullName!: string | undefined;
     jobTitle!: string | undefined;
     ratingId!: number | undefined;
-    thumbnail!: string | undefined;
+    photoPublicId!: string | undefined;
 
     constructor(data?: IPersonShortInfoDto) {
         if (data) {
@@ -70167,7 +70167,7 @@ export class PersonShortInfoDto implements IPersonShortInfoDto {
             this.fullName = data["fullName"];
             this.jobTitle = data["jobTitle"];
             this.ratingId = data["ratingId"];
-            this.thumbnail = data["thumbnail"];
+            this.photoPublicId = data["photoPublicId"];
         }
     }
 
@@ -70184,7 +70184,7 @@ export class PersonShortInfoDto implements IPersonShortInfoDto {
         data["fullName"] = this.fullName;
         data["jobTitle"] = this.jobTitle;
         data["ratingId"] = this.ratingId;
-        data["thumbnail"] = this.thumbnail;
+        data["photoPublicId"] = this.photoPublicId;
         return data; 
     }
 }
@@ -70194,7 +70194,7 @@ export interface IPersonShortInfoDto {
     fullName: string | undefined;
     jobTitle: string | undefined;
     ratingId: number | undefined;
-    thumbnail: string | undefined;
+    photoPublicId: string | undefined;
 }
 
 export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
