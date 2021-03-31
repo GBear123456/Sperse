@@ -54,6 +54,8 @@ import {
     PersonContactInfoDto,
     EntityAddressInfo,
     ProductServiceProxy,
+    ProductPaymentOptionsInfo,
+    ProductShortInfo,
     ProductDto
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -107,7 +109,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     status = InvoiceStatus.Draft;
     startCase = startCase;
 
-    products: ProductDto[];
     defaultCountryCode = AppConsts.defaultCountryCode;
     saveButtonId = 'saveInvoiceOptions';
     invoiceInfo = new GetNewInvoiceInfoOutput();
@@ -119,8 +120,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
     selectedShippingAddress: InvoiceAddressInput;
     customer: string;
     contactId: number;
-    lookupProducts = [];
-    descriptions = [];
+    products: ProductPaymentOptionsInfo[] = [];
+    invoiceProducts: ProductShortInfo[] = [];
     lastProductPhrase: string;
     date = new Date();
     dueDate;
@@ -185,8 +186,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     ];
 
-    invoiceUnits = Object.keys(ProductMeasurementUnit);
-    productUnits = this.invoiceUnits;
+    invoiceUnits = Object.keys(ProductMeasurementUnit).map(item => {
+        return {
+            unitId: item,
+            unitName: item
+        };
+    });
     billingAddresses: InvoiceAddressInfo[] = [];
     shippingAddresses: InvoiceAddressInfo[] = [];
     filterBoolean = Boolean;
@@ -216,9 +221,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     ) {
         this.dialogRef.afterClosed().subscribe(() => {
             this.closeAddressDialogs();
-        });
-        this.productProxy.getProducts().subscribe((products: ProductDto[]) => {
-            this.products = products;
         });
     }
 
@@ -264,6 +266,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             }
             this.contactId = invoice.ContactId;
             this.productsLookupRequest();
+            this.invoiceProductsLookupRequest();
             this.orderDropdown.initOrderDataSource();
             this.invoiceProxy.getInvoiceInfo(invoice.InvoiceId)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
@@ -351,6 +354,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 isActive: true
             });
             this.productsLookupRequest();
+            this.invoiceProductsLookupRequest();
         }
     }
 
@@ -594,20 +598,30 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    productsLookupRequest(phrase = '', callback?) {
+    invoiceProductsLookupRequest(phrase = '', callback?) {
         this.productProxy.getInvoiceProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
-                this.descriptions = (this.lookupProducts = res).map(item => item.description);
-                this.changeDetectorRef.markForCheck();
+                this.invoiceProducts = res;
                 callback && callback(res);
+                this.changeDetectorRef.markForCheck();
             }
         });
     }
 
-    productLookupItems($event, cellData) {
+    productsLookupRequest(phrase = '', callback?) {
+        this.productProxy.getProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
+            if (!phrase || phrase == this.lastProductPhrase) {
+                this.products = res;
+                callback && callback(res);
+                this.changeDetectorRef.markForCheck();
+            }
+        });
+    }
+
+    productLookupItems($event, cellData, fromInvoice = true) {
         this.lastProductPhrase = $event.event.target.value;
-        if (this.lookupProducts.length)
-            this.lookupProducts = [];
+        if (fromInvoice)
+            cellData.data.productId = undefined;
 
         $event.component.option('opened', true);
         $event.component.option('noDataText', this.ls.l('LookingForItems'));
@@ -617,11 +631,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
             $event.component.option('opened', true);
             $event.component.option('noDataText', this.ls.l('LookingForItems'));
 
-            this.productsLookupRequest(this.lastProductPhrase, res => {
-                cellData.data.description = this.lastProductPhrase;
-                if (!res['length'])
-                    $event.component.option('noDataText', this.ls.l('NoItemsFound'));
-            });
+            if (fromInvoice)
+                this.invoiceProductsLookupRequest(this.lastProductPhrase, res => {
+                    if (!res['length'])
+                        $event.component.option('noDataText', this.ls.l('NoItemsFound'));
+                });
+            else
+                this.productsLookupRequest(this.lastProductPhrase, res => {
+                    if (!res['length'])
+                        $event.component.option('noDataText', this.ls.l('NoItemsFound'));
+                });
         }, 500);
     }
 
@@ -669,36 +688,29 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
     }
 
-    selectLookupProduct(event, cellData) {
-        if (event.event) {
+    selectInvoiceProduct(event, cellData) {
+        let item = event.selectedItem;
+        if (item) {
             cellData.data.productId = undefined;
-            this.productUnits = this.invoiceUnits;
-            this.lookupProducts.some(item => {
-                if (item.description == event.value) {
-                    cellData.data.unitId = item.unitId;
-                    cellData.data.rate = item.rate;
-                    this.changeDetectorRef.detectChanges();
-                    return true;
-                }
-            });
+            cellData.data.units = undefined;
+            cellData.data.unitId = item.unitId;
+            cellData.data.rate = item.rate;
+            cellData.data.quantity = 1;
+            this.changeDetectorRef.detectChanges();
         }
     }
 
     selectProduct(event, cellData) {
-        this.products.some((item: any) => {
-            if (item.id == event.value) {
-                if (item.paymentPeriodTypes.length) {
-                    this.productUnits = item.paymentPeriodTypes;
-                    cellData.data.productCode = item.code;
-                    cellData.data.unitId = this.productUnits[0];
-                    cellData.data.description = item.description || item.name;
-                    cellData.data.rate = item.price;
-                    cellData.data.quantity = 1;
-                    this.changeDetectorRef.detectChanges();
-                } else
-                    this.productUnits = this.invoiceUnits;
-            }
-        });
+        let item = event.selectedItem;
+        if (item) {
+            cellData.data.units = item.paymentOptions;
+            cellData.data.productCode = item.code;
+            cellData.data.description = item.description || item.name;
+            cellData.data.unitId = item.paymentOptions[0].unitId;
+            cellData.data.rate = item.paymentOptions[0].price;
+            cellData.data.quantity = 1;
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     selectContact(contact: EntityContactInfo) {
@@ -713,6 +725,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.orderNumber = undefined;
             }
             this.productsLookupRequest();
+            this.invoiceProductsLookupRequest();
             this.orderDropdown.initOrderDataSource();
             this.initContactAddresses(this.contactId);
             this.changeDetectorRef.detectChanges();
@@ -774,6 +787,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
             value = value.replace(/(?!\.)\D/igm, '');
         cell.data.rate = value;
         this.calculateLineTotal(cell.data);
+    }
+
+    onUnitChanged(event, cellData) {
+        if (cellData.data.units) {
+            let unit = cellData.data.units.find(
+                item => item.unitId == event.value
+            );
+            if (unit)
+                cellData.data.rate = unit.price;
+        }
     }
 
     allowDigitsOnly(event, exceptions = []) {

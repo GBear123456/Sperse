@@ -197,8 +197,8 @@
                         <dxi-column width="145px" [caption]="ls.l('Product')" [allowSorting]="false" cellTemplate="product"></dxi-column>
                         <dxi-column width="230px" [caption]="ls.l('Description')" [allowSorting]="false" cellTemplate="description"></dxi-column>
                         <dxi-column width="75px" [caption]="ls.l('Quantity')" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
-                        <dxi-column width="70px" [caption]="ls.l('Rate')" [allowSorting]="false" cellTemplate="rate"></dxi-column>
-                        <dxi-column width="100px" [caption]="ls.l('Unit')" [allowSorting]="false" cellTemplate="unit"></dxi-column>
+                        <dxi-column width="90px" [caption]="ls.l('Rate')" [allowSorting]="false" cellTemplate="rate"></dxi-column>
+                        <dxi-column width="80px" [caption]="ls.l('Unit')" [allowSorting]="false" cellTemplate="unit"></dxi-column>
                         <dxi-column width="100px" [caption]="ls.l('Total')" [allowSorting]="false" cellTemplate="total" cssClass="total"></dxi-column>
                         <dxi-column width="30px" caption="" [allowSorting]="false" [allowEditing]="false" cellTemplate="actions"></dxi-column>
 
@@ -212,11 +212,14 @@
                                 [showClearButton]="false"
                                 [showDropDownButton]="false"
                                 [placeholder]="ls.l('Product')"
+                                [acceptCustomValue]="true"
                                 [(value)]="cellData.data.productId"
                                 [dataSource]="products"
                                 [searchEnabled]="true"
                                 [searchTimeout]="0"
-                                (onValueChanged)="selectProduct($event, cellData)">
+                                (onFocusIn)="onFieldFocusIn($event)"
+                                (onInput)="productLookupItems($event, cellData, false)"
+                                (onSelectionChanged)="selectProduct($event, cellData)">
                                 <div *dxTemplate="let cell of 'item'">
                                     <span title="{{cell.name}}">{{cell.name}}</span>
                                 </div>
@@ -231,22 +234,23 @@
                                 name="customer"
                                 width="230px"
                                 height="32px"
-                                valueChangeEvent="keyup"
+                                displayExpr="description"
+                                valueExpr="description"                                
                                 [showClearButton]="true"
                                 [placeholder]="ls.lr('Invoice_EnterDescription')"
                                 [acceptCustomValue]="true"
                                 [(value)]="cellData.data.description"
-                                [dataSource]="descriptions"
+                                [dataSource]="invoiceProducts"
                                 [searchEnabled]="true"
                                 [searchTimeout]="0"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 (onInput)="productLookupItems($event, cellData)"
-                                (onValueChanged)="selectLookupProduct($event, cellData)">
+                                (onSelectionChanged)="selectInvoiceProduct($event, cellData)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" [message]="ls.l('RequiredAllFields')"></dxi-validation-rule>
                                 </dx-validator>
-                                <div *dxTemplate="let cellValue of 'item'">
-                                    <span title="{{cellValue}}">{{cellValue}}</span>
+                                <div *dxTemplate="let cell of 'item'">
+                                    <span title="{{cell.description}}">{{cell.description}}</span>
                                 </div>
                             </dx-select-box>
                         </div>
@@ -267,7 +271,7 @@
                         </div>
                         <div *dxTemplate="let cellData of 'rate'">
                             <dx-text-box
-                                width="70px"
+                                width="90px"
                                 height="32px"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
@@ -283,12 +287,16 @@
                         <div *dxTemplate="let cellData of 'unit'">
                             <dx-select-box
                                 name="unit"
-                                width="100px"
+                                width="90px"
                                 height="32px"
+                                displayExpr="unitName"
+                                valueExpr="unitId"
+                                [showDropDownButton]="false"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 [placeholder]="ls.lr('Select')"
                                 [(value)]="cellData.data.unitId"
-                                [dataSource]="productUnits">
+                                [dataSource]="cellData.data.units || invoiceUnits"
+                                (onValueChanged)="onUnitChanged($event, cellData)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
