@@ -207,13 +207,13 @@
                                 name="product"
                                 width="145px"
                                 height="32px"
-                                valueExpr="id"
+                                valueExpr="code"
                                 displayExpr="name"
                                 [showClearButton]="false"
                                 [showDropDownButton]="false"
                                 [placeholder]="ls.l('Product')"
                                 [acceptCustomValue]="true"
-                                [(value)]="cellData.data.productId"
+                                [(value)]="cellData.data.productCode"
                                 [dataSource]="products"
                                 [searchEnabled]="true"
                                 [searchTimeout]="0"
@@ -244,6 +244,7 @@
                                 [searchEnabled]="true"
                                 [searchTimeout]="0"
                                 (onFocusIn)="onFieldFocusIn($event)"
+                                (onCustomItemCreating)="onCustomDescriptionCreating($event)"
                                 (onInput)="productLookupItems($event, cellData)"
                                 (onSelectionChanged)="selectInvoiceProduct($event, cellData)">
                                 <dx-validator>

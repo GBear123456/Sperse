@@ -254,6 +254,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
         if (invoice && invoice.InvoiceId) {
             this.modalDialog.startLoading();
+            this.productsLookupRequest();
             if (this.data.addNew)
                 this.status = InvoiceStatus.Draft;
             else {
@@ -265,8 +266,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.dueDate = invoice.InvoiceDueDate;
             }
             this.contactId = invoice.ContactId;
-            this.productsLookupRequest();
-            this.invoiceProductsLookupRequest();
             this.orderDropdown.initOrderDataSource();
             this.invoiceProxy.getInvoiceInfo(invoice.InvoiceId)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
@@ -294,10 +293,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             ...res
                         };
                     });
-                    this.changeDetectorRef.detectChanges();
                 });
         } else {
             this.resetNoteDefault();
+            this.productsLookupRequest();
+            this.invoiceProductsLookupRequest();
         }
 
         this.initNewInvoiceInfo();
@@ -353,8 +353,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 } : {}),
                 isActive: true
             });
-            this.productsLookupRequest();
-            this.invoiceProductsLookupRequest();
         }
     }
 
@@ -414,7 +412,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     rate: row['rate'],
                     total: row['total'],
                     unitId: row['unitId'] as ProductMeasurementUnit,
-                    productCode: '',
+                    productCode: row['productCode'],
                     description: row['description'],
                     sortOrder: index,
                     commissionableAmount: undefined
@@ -437,7 +435,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     rate: row['rate'],
                     total: row['total'],
                     unitId: row['unitId'] as ProductMeasurementUnit,
-                    productCode: '',
+                    productCode: row['productCode'],
                     description: row['description'],
                     sortOrder: index,
                     commissionableAmount: undefined
@@ -603,7 +601,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             if (!phrase || phrase == this.lastProductPhrase) {
                 this.invoiceProducts = res;
                 callback && callback(res);
-                this.changeDetectorRef.markForCheck();
+                this.changeDetectorRef.detectChanges();
             }
         });
     }
@@ -613,15 +611,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
             if (!phrase || phrase == this.lastProductPhrase) {
                 this.products = res;
                 callback && callback(res);
-                this.changeDetectorRef.markForCheck();
+                this.changeDetectorRef.detectChanges();
             }
         });
     }
 
     productLookupItems($event, cellData, fromInvoice = true) {
+        if (fromInvoice && cellData.data.productCode)
+            return ;
+
         this.lastProductPhrase = $event.event.target.value;
-        if (fromInvoice)
-            cellData.data.productId = undefined;
 
         $event.component.option('opened', true);
         $event.component.option('noDataText', this.ls.l('LookingForItems'));
@@ -690,8 +689,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     selectInvoiceProduct(event, cellData) {
         let item = event.selectedItem;
-        if (item) {
-            cellData.data.productId = undefined;
+        if (item && !cellData.data.productCode) {
             cellData.data.units = undefined;
             cellData.data.unitId = item.unitId;
             cellData.data.rate = item.rate;
@@ -702,9 +700,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     selectProduct(event, cellData) {
         let item = event.selectedItem;
-        if (item) {
+        if (item && item.code) {
             cellData.data.units = item.paymentOptions;
-            cellData.data.productCode = item.code;
             cellData.data.description = item.description || item.name;
             cellData.data.unitId = item.paymentOptions[0].unitId;
             cellData.data.rate = item.paymentOptions[0].price;
@@ -724,8 +721,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.orderId = undefined;
                 this.orderNumber = undefined;
             }
-            this.productsLookupRequest();
-            this.invoiceProductsLookupRequest();
             this.orderDropdown.initOrderDataSource();
             this.initContactAddresses(this.contactId);
             this.changeDetectorRef.detectChanges();
@@ -861,6 +856,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
             showMaskOnHover: false,
             showMaskOnFocus: true
         }).mask(event.component.field());
+    }
+
+    onCustomDescriptionCreating(event) {
+        if (!event.customItem)
+            event.customItem = {description: event.text};
     }
 
     showEditAddressDialog(event, field) {
