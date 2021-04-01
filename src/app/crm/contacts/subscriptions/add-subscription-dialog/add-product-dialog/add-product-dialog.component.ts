@@ -265,7 +265,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 this.services.splice(this.services.length - 1, 0, service);
                 setTimeout(() => component.option('value', service.id));
                 this.detectChanges();
-            }
+            } else
+                component.option('value', previousValue);
         });
     }
 
