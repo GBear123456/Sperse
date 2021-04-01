@@ -13183,18 +13183,18 @@ export class DashboardServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
-     * @bankAccountIds (optional) 
+     * @bankAccountIdsString (optional) 
      * @startDate (optional) 
      * @return Success
      */
-    getDailyBalanceStats(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, currencyId: string, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetDailyBalanceStatsOutput> {
+    getDailyBalanceStats(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, bankAccountIdsString: string | null | undefined, currencyId: string, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetDailyBalanceStatsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetDailyBalanceStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (bankAccountIds !== undefined)
-            bankAccountIds && bankAccountIds.forEach(item => { url_ += "BankAccountIds=" + encodeURIComponent("" + item) + "&"; });
+        if (bankAccountIdsString !== undefined)
+            url_ += "BankAccountIdsString=" + encodeURIComponent("" + bankAccountIdsString) + "&"; 
         if (currencyId === undefined || currencyId === null)
             throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
         else
@@ -13256,11 +13256,11 @@ export class DashboardServiceProxy {
      * @instanceType (optional) 
      * @instanceId (optional) 
      * @maxCount (optional) 
-     * @bankAccountIds (optional) 
+     * @bankAccountIdsString (optional) 
      * @startDate (optional) 
      * @return Success
      */
-    getSpendingCategories(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, maxCount: number | null | undefined, bankAccountIds: number[] | null | undefined, currencyId: string, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetSpendingCategoriesOutput[]> {
+    getSpendingCategories(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, maxCount: number | null | undefined, bankAccountIdsString: string | null | undefined, currencyId: string, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetSpendingCategoriesOutput[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetSpendingCategories?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -13268,8 +13268,8 @@ export class DashboardServiceProxy {
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (maxCount !== undefined)
             url_ += "MaxCount=" + encodeURIComponent("" + maxCount) + "&"; 
-        if (bankAccountIds !== undefined)
-            bankAccountIds && bankAccountIds.forEach(item => { url_ += "BankAccountIds=" + encodeURIComponent("" + item) + "&"; });
+        if (bankAccountIdsString !== undefined)
+            url_ += "BankAccountIdsString=" + encodeURIComponent("" + bankAccountIdsString) + "&"; 
         if (currencyId === undefined || currencyId === null)
             throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
         else
@@ -70685,7 +70685,7 @@ export class PersonShortInfoDto implements IPersonShortInfoDto {
     fullName!: string | undefined;
     jobTitle!: string | undefined;
     ratingId!: number | undefined;
-    thumbnail!: string | undefined;
+    photoPublicId!: string | undefined;
 
     constructor(data?: IPersonShortInfoDto) {
         if (data) {
@@ -70702,7 +70702,7 @@ export class PersonShortInfoDto implements IPersonShortInfoDto {
             this.fullName = data["fullName"];
             this.jobTitle = data["jobTitle"];
             this.ratingId = data["ratingId"];
-            this.thumbnail = data["thumbnail"];
+            this.photoPublicId = data["photoPublicId"];
         }
     }
 
@@ -70719,7 +70719,7 @@ export class PersonShortInfoDto implements IPersonShortInfoDto {
         data["fullName"] = this.fullName;
         data["jobTitle"] = this.jobTitle;
         data["ratingId"] = this.ratingId;
-        data["thumbnail"] = this.thumbnail;
+        data["photoPublicId"] = this.photoPublicId;
         return data; 
     }
 }
@@ -70729,7 +70729,7 @@ export interface IPersonShortInfoDto {
     fullName: string | undefined;
     jobTitle: string | undefined;
     ratingId: number | undefined;
-    thumbnail: string | undefined;
+    photoPublicId: string | undefined;
 }
 
 export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
