@@ -408,7 +408,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         hidden: true,
         caption: 'pipelineId',
         items: {
-            PipelineId: new FilterItemModel()
+            PipelineId: new FilterItemModel({ isClearAllowed: false }, true)
         }
     });
 
