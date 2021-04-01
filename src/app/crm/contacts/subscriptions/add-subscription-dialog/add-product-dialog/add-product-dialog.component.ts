@@ -229,14 +229,16 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         }) : this.frequencies;
     }
 
-    onServiceChanged(event) {
+    onServiceChanged(event, service) {
         this.detectChanges();
         if (!event.value)
             return;
-        let selectedItem = event.component.option('selectedItem');
-        if (selectedItem && selectedItem.id == this.addNewItemId)
-            this.showAddServiceProductDialog(event.component, event.previousValue);
-        else {
+        let selectedItem = event.component.option('selectedItem');       
+        if (selectedItem) {
+            service.memberServiceLevelId = undefined;
+            if (selectedItem.id == this.addNewItemId)
+                this.showAddServiceProductDialog(event.component, event.previousValue);
+        } else {
             selectedItem['disabled'] = true;
             if (event.previousValue)
                 this.services.some(item => {

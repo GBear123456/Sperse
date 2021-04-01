@@ -254,7 +254,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
         if (invoice && invoice.InvoiceId) {
             this.modalDialog.startLoading();
-            this.productsLookupRequest();
             if (this.data.addNew)
                 this.status = InvoiceStatus.Draft;
             else {
@@ -286,6 +285,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.selectedBillingAddress = invoiceInfo.billingAddress;
                     this.selectedShippingAddress = invoiceInfo.shippingAddress;
                     this.lines = invoiceInfo.lines.map(res => {
+                        this.invoiceProducts.push(<any>{description: res.description});
                         return {
                             Quantity: res.quantity,
                             Rate: res.rate,
@@ -295,13 +295,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     });
                 });
         } else {
-            this.resetNoteDefault();
-            this.productsLookupRequest();
-            this.invoiceProductsLookupRequest();
+            this.resetNoteDefault();            
         }
 
         this.initNewInvoiceInfo();
         this.initContextMenuItems();
+        this.productsLookupRequest();
         this.initContactInfo(this.data.contactInfo);
         this.changeDetectorRef.detectChanges();
     }
@@ -630,16 +629,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
             $event.component.option('opened', true);
             $event.component.option('noDataText', this.ls.l('LookingForItems'));
 
-            if (fromInvoice)
-                this.invoiceProductsLookupRequest(this.lastProductPhrase, res => {
-                    if (!res['length'])
-                        $event.component.option('noDataText', this.ls.l('NoItemsFound'));
-                });
-            else
-                this.productsLookupRequest(this.lastProductPhrase, res => {
-                    if (!res['length'])
-                        $event.component.option('noDataText', this.ls.l('NoItemsFound'));
-                });
+            (fromInvoice 
+                ? this.invoiceProductsLookupRequest 
+                : this.productsLookupRequest
+            ).bind(this)(this.lastProductPhrase, res => {
+                if (!res['length'])
+                    $event.component.option('noDataText', this.ls.l('NoItemsFound'));
+            });
         }, 500);
     }
 
@@ -703,6 +699,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (item && item.code) {
             cellData.data.units = item.paymentOptions;
             cellData.data.description = item.description || item.name;
+            this.invoiceProducts.push(<any>{description: cellData.data.description});
             cellData.data.unitId = item.paymentOptions[0].unitId;
             cellData.data.rate = item.paymentOptions[0].price;
             cellData.data.quantity = 1;
