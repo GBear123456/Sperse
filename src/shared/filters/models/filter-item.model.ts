@@ -58,6 +58,9 @@ export class FilterItemModel {
     }
 
     removeFilterItem(filter: FilterModel, args?: any, id?: string) {
+        if (!this.isClearAllowed)
+            return;
+
         if ((typeof (this.value) == 'string') || (this.value instanceof Date))
             this.value = '';
         else if (typeof (this.value) == 'boolean')
