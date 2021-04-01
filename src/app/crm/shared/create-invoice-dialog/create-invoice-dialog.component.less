@@ -405,11 +405,24 @@
                 white-space: nowrap;
             }
 
-            dx-select-box[name="product"] {
+            ::ng-deep dx-select-box[name="product"] {
                 padding-left: 10px;
                 input {
                     text-overflow: ellipsis;
                     overflow: hidden;
+                }
+                .dx-selectbox-container, 
+                .dx-texteditor-container {
+                    overflow: visible;
+                }
+                .dx-icon.dx-icon-clear {
+                    left: 20px;
+                    top: 20px;
+                }
+                &.dx-state-focused {
+                    .dx-placeholder {
+                        display: none!important;
+                    }
                 }
             }
 

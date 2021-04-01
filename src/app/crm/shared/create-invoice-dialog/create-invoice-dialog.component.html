@@ -194,10 +194,10 @@
                         [allowColumnResizing]="false"
                         [loadPanel]="{enabled: false}">
 
-                        <dxi-column width="145px" [caption]="ls.l('Product')" [allowSorting]="false" cellTemplate="product"></dxi-column>
+                        <dxi-column width="180px" [caption]="ls.l('Product')" [allowSorting]="false" cellTemplate="product"></dxi-column>
                         <dxi-column width="230px" [caption]="ls.l('Description')" [allowSorting]="false" cellTemplate="description"></dxi-column>
                         <dxi-column width="75px" [caption]="ls.l('Quantity')" [allowSorting]="false" cellTemplate="quantity"></dxi-column>
-                        <dxi-column width="90px" [caption]="ls.l('Rate')" [allowSorting]="false" cellTemplate="rate"></dxi-column>
+                        <dxi-column width="100px" [caption]="ls.l('Rate')" [allowSorting]="false" cellTemplate="rate"></dxi-column>
                         <dxi-column width="80px" [caption]="ls.l('Unit')" [allowSorting]="false" cellTemplate="unit"></dxi-column>
                         <dxi-column width="100px" [caption]="ls.l('Total')" [allowSorting]="false" cellTemplate="total" cssClass="total"></dxi-column>
                         <dxi-column width="30px" caption="" [allowSorting]="false" [allowEditing]="false" cellTemplate="actions"></dxi-column>
@@ -205,11 +205,11 @@
                         <div *dxTemplate="let cellData of 'product'">
                             <dx-select-box
                                 name="product"
-                                width="145px"
+                                width="180px"
                                 height="32px"
                                 valueExpr="code"
                                 displayExpr="name"
-                                [showClearButton]="false"
+                                [showClearButton]="true"
                                 [showDropDownButton]="false"
                                 [placeholder]="ls.l('Product')"
                                 [acceptCustomValue]="true"
@@ -237,6 +237,7 @@
                                 displayExpr="description"
                                 valueExpr="description"                                
                                 [showClearButton]="true"
+                                valueChangeEvent="keyup"
                                 [placeholder]="ls.lr('Invoice_EnterDescription')"
                                 [acceptCustomValue]="true"
                                 [(value)]="cellData.data.description"
@@ -272,7 +273,7 @@
                         </div>
                         <div *dxTemplate="let cellData of 'rate'">
                             <dx-text-box
-                                width="90px"
+                                width="100px"
                                 height="32px"
                                 (onFocusIn)="onFieldFocusIn($event)"
                                 [placeholder]="ls.lr('EditValuePlaceholder')"
