@@ -26962,7 +26962,7 @@ export class ProductServiceProxy {
      * @topCount (optional) 
      * @return Success
      */
-    getProductsByPhrase(contactId: number | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<ProductPaymentInfo[]> {
+    getProductsByPhrase(contactId: number | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<ProductPaymentOptionsInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Product/GetProductsByPhrase?";
         if (contactId !== undefined)
             url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
@@ -26988,14 +26988,14 @@ export class ProductServiceProxy {
                 try {
                     return this.processGetProductsByPhrase(<any>response_);
                 } catch (e) {
-                    return <Observable<ProductPaymentInfo[]>><any>_observableThrow(e);
+                    return <Observable<ProductPaymentOptionsInfo[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<ProductPaymentInfo[]>><any>_observableThrow(response_);
+                return <Observable<ProductPaymentOptionsInfo[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetProductsByPhrase(response: HttpResponseBase): Observable<ProductPaymentInfo[]> {
+    protected processGetProductsByPhrase(response: HttpResponseBase): Observable<ProductPaymentOptionsInfo[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -27009,7 +27009,7 @@ export class ProductServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(ProductPaymentInfo.fromJS(item));
+                    result200.push(ProductPaymentOptionsInfo.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -27018,7 +27018,7 @@ export class ProductServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<ProductPaymentInfo[]>(<any>null);
+        return _observableOf<ProductPaymentOptionsInfo[]>(<any>null);
     }
 
     /**
@@ -73604,7 +73604,7 @@ export interface IProductDto {
 export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
     unitId!: ProductMeasurementUnit | undefined;
     unitName!: string | undefined;
-    fee!: number | undefined;
+    price!: number | undefined;
 
     constructor(data?: IProductPaymentOptionInfo) {
         if (data) {
@@ -73619,7 +73619,7 @@ export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
         if (data) {
             this.unitId = data["unitId"];
             this.unitName = data["unitName"];
-            this.fee = data["fee"];
+            this.price = data["price"];
         }
     }
 
@@ -73634,7 +73634,7 @@ export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
         data = typeof data === 'object' ? data : {};
         data["unitId"] = this.unitId;
         data["unitName"] = this.unitName;
-        data["fee"] = this.fee;
+        data["price"] = this.price;
         return data; 
     }
 }
@@ -73642,10 +73642,10 @@ export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
 export interface IProductPaymentOptionInfo {
     unitId: ProductMeasurementUnit | undefined;
     unitName: string | undefined;
-    fee: number | undefined;
+    price: number | undefined;
 }
 
-export class ProductPaymentInfo implements IProductPaymentInfo {
+export class ProductPaymentOptionsInfo implements IProductPaymentOptionsInfo {
     id!: number | undefined;
     code!: string | undefined;
     name!: string | undefined;
@@ -73653,7 +73653,7 @@ export class ProductPaymentInfo implements IProductPaymentInfo {
     type!: ProductType | undefined;
     paymentOptions!: ProductPaymentOptionInfo[] | undefined;
 
-    constructor(data?: IProductPaymentInfo) {
+    constructor(data?: IProductPaymentOptionsInfo) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -73677,9 +73677,9 @@ export class ProductPaymentInfo implements IProductPaymentInfo {
         }
     }
 
-    static fromJS(data: any): ProductPaymentInfo {
+    static fromJS(data: any): ProductPaymentOptionsInfo {
         data = typeof data === 'object' ? data : {};
-        let result = new ProductPaymentInfo();
+        let result = new ProductPaymentOptionsInfo();
         result.init(data);
         return result;
     }
@@ -73700,7 +73700,7 @@ export class ProductPaymentInfo implements IProductPaymentInfo {
     }
 }
 
-export interface IProductPaymentInfo {
+export interface IProductPaymentOptionsInfo {
     id: number | undefined;
     code: string | undefined;
     name: string | undefined;

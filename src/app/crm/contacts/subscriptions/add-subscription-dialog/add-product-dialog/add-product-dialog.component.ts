@@ -161,6 +161,12 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             if (!this.product.groupId)
                 this.product.groupName = this.customGroup;
 
+            if (this.product.productSubscriptionOptions)
+                this.product.productSubscriptionOptions.forEach(item => {
+                    if (isNaN(item.trialDayCount))
+                        item.trialDayCount = 0;
+                });
+
             if (this.product instanceof UpdateProductInput)
                 this.productProxy.updateProduct(this.product).subscribe(() => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
@@ -227,10 +233,19 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.detectChanges();
         if (!event.value)
             return;
-
         let selectedItem = event.component.option('selectedItem');
         if (selectedItem && selectedItem.id == this.addNewItemId)
             this.showAddServiceProductDialog(event.component, event.previousValue);
+        else {
+            selectedItem['disabled'] = true;
+            if (event.previousValue)
+                this.services.some(item => {
+                    if (event.previousValue == item.id) {
+                        item['disabled'] = false;
+                        return true;
+                    }
+                });
+        }
     }
 
     showAddServiceProductDialog(component, previousValue: string) {
@@ -265,6 +280,12 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.product.price = undefined;
         this.product.productServices = undefined;
         this.product.productSubscriptionOptions = undefined;
+    }
+
+    validateTrialDayCount(option) {
+        return (event) => {
+            return !option.setupFee || event.value && event.value > 0;
+        };
     }
 
     detectChanges() {
