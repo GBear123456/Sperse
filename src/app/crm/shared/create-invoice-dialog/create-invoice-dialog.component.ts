@@ -284,8 +284,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.customer = invoiceInfo.contactName;
                     this.selectedBillingAddress = invoiceInfo.billingAddress;
                     this.selectedShippingAddress = invoiceInfo.shippingAddress;
-                    this.lines = invoiceInfo.lines.map(res => {
-                        this.invoiceProducts.push(<any>{description: res.description});
+                    this.lines = invoiceInfo.lines.map((res: any) => {
+                        this.invoiceProducts.push(<any>{
+                            description: res.description
+                        });
+                        if (res.productCode)
+                            this.products.push(<any>{
+                                code: res.productCode,
+                                name: res.productName || res.productCode
+                            });
                         return {
                             Quantity: res.quantity,
                             Rate: res.rate,
@@ -293,14 +300,15 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             ...res
                         };
                     });
+                    this.changeDetectorRef.detectChanges();
                 });
         } else {
-            this.resetNoteDefault();            
+            this.resetNoteDefault();
+            this.productsLookupRequest();
         }
 
         this.initNewInvoiceInfo();
         this.initContextMenuItems();
-        this.productsLookupRequest();
         this.initContactInfo(this.data.contactInfo);
         this.changeDetectorRef.detectChanges();
     }
@@ -518,10 +526,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (!this.validateField(this.ls.l('Date'), this.date))
             return this.dateComponent.instance.option('isValid', false);
 
-        this.lines = this.getFilteredLines(false);
-        if (!this.lines.length)
-            this.lines.push({});
-        this.changeDetectorRef.detectChanges();
         setTimeout(() => {
             if (!this.linesValidationGroup.instance.validate().isValid)
                 return this.notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
@@ -629,8 +633,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
             $event.component.option('opened', true);
             $event.component.option('noDataText', this.ls.l('LookingForItems'));
 
-            (fromInvoice 
-                ? this.invoiceProductsLookupRequest 
+            (fromInvoice
+                ? this.invoiceProductsLookupRequest
                 : this.productsLookupRequest
             ).bind(this)(this.lastProductPhrase, res => {
                 if (!res['length'])
@@ -685,7 +689,9 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     selectInvoiceProduct(event, cellData) {
         let item = event.selectedItem;
-        if (item && !cellData.data.productCode) {
+        if (item && !cellData.data.productCode
+            && item.hasOwnProperty('rate')
+        ) {
             cellData.data.units = undefined;
             cellData.data.unitId = item.unitId;
             cellData.data.rate = item.rate;
@@ -696,10 +702,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     selectProduct(event, cellData) {
         let item = event.selectedItem;
-        if (item && item.code) {
+        if (item && item.hasOwnProperty('paymentOptions')) {
+            cellData.data.description = item.description ||
+                cellData.data.description || item.name;
+            if (!this.invoiceProducts.some(item => item.description == cellData.data.description))
+                this.invoiceProducts.push(<any>{description: cellData.data.description});
             cellData.data.units = item.paymentOptions;
-            cellData.data.description = item.description || item.name;
-            this.invoiceProducts.push(<any>{description: cellData.data.description});
             cellData.data.unitId = item.paymentOptions[0].unitId;
             cellData.data.rate = item.paymentOptions[0].price;
             cellData.data.quantity = 1;
