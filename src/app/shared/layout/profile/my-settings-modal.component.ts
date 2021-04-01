@@ -47,15 +47,24 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     ckConfig: any = {
-        toolbarGroups: [
-            { name: 'document', groups: [ 'mode' ] },
-            { name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
-            { name: 'links', groups: [ 'Link', 'Unlink' ] },
-            { name: 'paragraph', groups: [ 'list', 'align' ] },
-            { name: 'styles', groups: [ 'styles' ] },
-            { name: 'other', groups: [ 'simplebutton' ] }
+        heigth: '160px',
+        allowedContent: true,
+        startupShowBorders: false,
+        toolbar: [
+            { name: 'document', items: [ 'Source', '-', 'Preview'] },
+            { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', '-', 'Undo', 'Redo' ] },
+            { name: 'editing', items: [ 'Find', 'Replace', '-', 'SelectAll' ] },
+            { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike' ] },
+            { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote' ] },
+            { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+            '/',
+            { name: 'insert', items: [ 'Image', 'Table', 'HorizontalRule', 'SpecialChar', 'PageBreak' ] },
+            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+            { name: 'tools', items: [ 'Maximize' ] },
         ],
-        removeButtons: 'Anchor,Subscript,Superscript'
+        extraPlugins: 'preview,colorbutton,font',
+        skin: 'moono' //kama,moono-lisa
     };
 
     public tagsList = [];
@@ -98,6 +107,7 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
         this.modalDialog.startLoading();
         this.profileService.getEmailSettings().subscribe((settings: UserEmailSettings) => {
             this.userEmailSettings.emailSignatureHtml = settings.emailSignatureHtml;
+            this.changeDetectorRef.detectChanges();
         });
         this.profileService.getCurrentUserProfileForEdit()
             .pipe(finalize(() => this.modalDialog.finishLoading()))
