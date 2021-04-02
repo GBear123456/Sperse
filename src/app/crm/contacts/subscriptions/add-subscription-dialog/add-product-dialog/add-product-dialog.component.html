@@ -55,8 +55,7 @@
             <dx-select-box [dataSource]="productTypes"
                 width="300px"
                 placeholder="Select type..."
-                [(value)]="product.type"
-                (onValueChanged)="onValueChanged($event)">
+                [(value)]="product.type">
             </dx-select-box>
         </div>
         <ng-container *ngIf="product.type == defaultProductType">
@@ -72,7 +71,7 @@
                 </dx-number-box>
             </div>
             <div class="field">
-                <label for="activationTime">{{ls.l('Units')}}</label>
+                <label for="activationTime">{{ls.l('Unit')}}</label>
                 <dx-select-box [dataSource]="productUnits"
                     width="300px"
                     placeholder="Select unit..."
@@ -121,7 +120,7 @@
                 <div class="add-new-button" (click)="addNewServiceFields()"><span>+ {{ls.l('Add')}}</span></div>
             </div>
             <div class="services-header">
-                {{ls.l('PaymentPeriodType')}}:
+                {{ls.l('PaymentOptions')}}:
             </div>
             <div class="services" *ngFor="let option of product.productSubscriptionOptions; let i = index">
                 <i class="fa fa-close" (click)="removePaymentPeriod(i)"></i>

@@ -8,5 +8,6 @@ export const ProductFields: KeysEnum<ProductDto> = {
     Description: 'Description',
     Group: 'Group',
     Type: 'Type',
-    Price: 'Price'
+    Price: 'Price',
+    Unit: 'Unit'
 };
