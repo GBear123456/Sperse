@@ -68,7 +68,9 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     defaultProductType = ProductType.General;
     productGroups: ProductGroupInfo[];
     services: ServiceProductDto[];
-    productUnits = Object.keys(ProductMeasurementUnit);
+    productUnits = Object.keys(ProductMeasurementUnit).map(
+        key => this.ls.l('ProductMeasurementUnit_' + key)
+    );
     frequencies = Object.keys(RecurringPaymentFrequency);
     gracePeriodDefaultValue: number;
     customGroup: string;
@@ -155,6 +157,11 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 return this.notify.error(this.ls.l('AtLeastOneServiceShouldBeSpecified'));
             if (!options || !options.length)
                 return this.notify.error(this.ls.l('AtLeastOnePaymentPeriodTypeShouldBeSpecified'));
+            this.product.unit = undefined;
+            this.product.price = undefined;
+        } else {
+            this.product.productServices = undefined;
+            this.product.productSubscriptionOptions = undefined;
         }
 
         if (this.validationGroup.instance.validate().isValid) {
@@ -284,13 +291,6 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 id: null,
                 name: this.customGroup = event.text
             };
-    }
-
-    onValueChanged(event) {
-        this.product.unit = undefined;
-        this.product.price = undefined;
-        this.product.productServices = undefined;
-        this.product.productSubscriptionOptions = undefined;
     }
 
     validateTrialDayCount(option) {
