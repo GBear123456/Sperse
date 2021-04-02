@@ -199,7 +199,15 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     removeServiceFields(index) {
+        let service = this.product.productServices[index];
+        this.services.some(item => {
+            if (service.memberServiceId == item.id) {
+                item['disabled'] = false;
+                return true;
+            }
+        });
         this.product.productServices.splice(index, 1);
+        this.detectChanges();
     }
 
     addNewPaymentPeriod() {
@@ -230,15 +238,14 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     onServiceChanged(event, service) {
-        this.detectChanges();
         if (!event.value)
             return;
-        let selectedItem = event.component.option('selectedItem');       
+        let selectedItem = event.component.option('selectedItem');
         if (selectedItem) {
             service.memberServiceLevelId = undefined;
             if (selectedItem.id == this.addNewItemId)
                 this.showAddServiceProductDialog(event.component, event.previousValue);
-        } else {
+
             selectedItem['disabled'] = true;
             if (event.previousValue)
                 this.services.some(item => {
@@ -248,6 +255,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                     }
                 });
         }
+        this.detectChanges();
     }
 
     showAddServiceProductDialog(component, previousValue: string) {
@@ -265,7 +273,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 this.services.splice(this.services.length - 1, 0, service);
                 setTimeout(() => component.option('value', service.id));
                 this.detectChanges();
-            }
+            } else
+                component.option('value', previousValue);
         });
     }
 
