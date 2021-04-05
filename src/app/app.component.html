@@ -18,7 +18,5 @@
             <router-outlet></router-outlet>
         </div>
     </div>
-
-  <!-- chat-bar.component here... -->
 </div>
-<chat-bar></chat-bar>
+<chat-bar *ngIf="isChatEnabled"></chat-bar>

@@ -72,13 +72,15 @@ export class HeaderComponent implements OnInit {
     }
 
     registerToEvents() {
-        abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
-            this.unreadChatMessageCount = messageCount;
-        });
+        if (this.chatEnabled && this.layoutService.showChatButton) {
+            abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
+                this.unreadChatMessageCount = messageCount;
+            });
 
-        abp.event.on('app.chat.connected', () => {
-            this.chatConnected = true;
-        });
+            abp.event.on('app.chat.connected', () => {
+                this.chatConnected = true;
+            });
+        }
     }
 
     changeLanguage(languageName: string): void {

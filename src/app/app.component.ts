@@ -20,6 +20,7 @@ import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './app.component.html',
@@ -47,6 +48,8 @@ export class AppComponent implements OnInit {
         this.isFullscreenMode = document['fullScreen'] || document['mozFullScreen'] || document['webkitIsFullScreen'];
         this.fullScreenService.isFullScreenMode.next(this.isFullscreenMode);
     }
+
+    isChatEnabled = this.appService.feature.isEnabled(AppFeatures.AppChatFeature);
 
     public constructor(
         private ngZone: NgZone,
@@ -103,7 +106,7 @@ export class AppComponent implements OnInit {
         this.appService.initModule();
 
         this.appService.subscribeModuleChange(this.initModuleAttribute.bind(this));
-        if (this.appSession.application) {
+        if (this.appSession.application && this.isChatEnabled) {
             SignalRHelper.initSignalR(() => { this.chatSignalrService.init(); });
         }
 

@@ -55,7 +55,7 @@ export class AppService extends AppServiceBase {
     private moduleSubscriptions: ModuleSubscriptionInfoDto[];
     public subscriptionIsFree$: Observable<boolean>;
     private permission: AppPermissionService;
-    private feature: FeatureCheckerService;
+    public feature: FeatureCheckerService;
     private instanceServiceProxy: InstanceServiceProxy;
     private personContactServiceProxy: PersonContactServiceProxy;
     private notify: NotifyService;
