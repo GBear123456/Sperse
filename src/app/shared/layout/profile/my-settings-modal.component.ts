@@ -11,13 +11,16 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import startCase from 'lodash/startCase';
 import { MatDialog } from '@angular/material/dialog';
+import { forkJoin } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { GetCurrentUserProfileEditDto, CurrentUserProfileEditDto, SettingScopes, ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
+import { GetCurrentUserProfileEditDto, CurrentUserProfileEditDto, SettingScopes, UserEmailSettings,
+    ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
@@ -43,6 +46,30 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     @ViewChild('smsVerificationModal', { static: false }) smsVerificationModal: SmsVerificationModalComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
+    ckConfig: any = {
+        heigth: '160px',
+        allowedContent: true,
+        startupShowBorders: false,
+        toolbar: [
+            { name: 'document', items: [ 'Source', '-', 'Preview'] },
+            { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', '-', 'Undo', 'Redo' ] },
+            { name: 'editing', items: [ 'Find', 'Replace', '-', 'SelectAll' ] },
+            { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strike' ] },
+            { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote' ] },
+            { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+            '/',
+            { name: 'insert', items: [ 'Image', 'Table', 'HorizontalRule', 'SpecialChar', 'PageBreak' ] },
+            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+            { name: 'tools', items: [ 'Maximize' ] },
+        ],
+        extraPlugins: 'preview,colorbutton,font',
+        skin: 'moono' //kama,moono-lisa
+    };
+
+    public tagsList = [];
+    public tagsTooltipVisible = false;
+    public userEmailSettings = new UserEmailSettings();
     public isGoogleAuthenticatorEnabled = false;
     public isPhoneNumberConfirmed: boolean;
     public isPhoneNumberEmpty = false;
@@ -78,6 +105,10 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
 
     ngOnInit() {
         this.modalDialog.startLoading();
+        this.profileService.getEmailSettings().subscribe((settings: UserEmailSettings) => {
+            this.userEmailSettings.emailSignatureHtml = settings.emailSignatureHtml;
+            this.changeDetectorRef.detectChanges();
+        });
         this.profileService.getCurrentUserProfileForEdit()
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe((result) => {
@@ -112,23 +143,31 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
         this.changeDetectorRef.detectChanges();
     }
 
+    onTagClick(event) {
+        /*
+            Will be added soon
+        */
+        this.tagsTooltipVisible = false;
+    }
+
     save(): void {
         this.modalDialog.startLoading();
-        this.profileService.updateCurrentUserProfile(CurrentUserProfileEditDto.fromJS(this.user))
-            .pipe(finalize(() => this.modalDialog.finishLoading()))
-            .subscribe(() => {
-                this.appSessionService.user.name = this.user.name;
-                this.appSessionService.user.surname = this.user.surname;
-                this.appSessionService.user.userName = this.user.name;
-                this.appSessionService.user.emailAddress = this.user.emailAddress;
-                this.notifyService.info(this.ls.l('SavedSuccessfully'));
-                this.modalDialog.close(true);
-                this.modalSave.emit(null);
-                if (abp.clock.provider.supportsMultipleTimezone && this._initialTimezone !== this.user.timezone) {
-                    this.messageService.info(this.ls.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
-                        window.location.reload();
-                    });
-                }
-            });
+        forkJoin(
+            this.profileService.updateEmailSettings(this.userEmailSettings),
+            this.profileService.updateCurrentUserProfile(CurrentUserProfileEditDto.fromJS(this.user))
+        ).pipe(finalize(() => this.modalDialog.finishLoading())).subscribe(() => {
+            this.appSessionService.user.name = this.user.name;
+            this.appSessionService.user.surname = this.user.surname;
+            this.appSessionService.user.userName = this.user.name;
+            this.appSessionService.user.emailAddress = this.user.emailAddress;
+            this.notifyService.info(this.ls.l('SavedSuccessfully'));
+            this.modalDialog.close(true);
+            this.modalSave.emit(null);
+            if (abp.clock.provider.supportsMultipleTimezone && this._initialTimezone !== this.user.timezone) {
+                this.messageService.info(this.ls.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
+                    window.location.reload();
+                });
+            }
+        });
     }
 }
