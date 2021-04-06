@@ -65,8 +65,8 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
 
-    @Input() editorHeight;
     @Input() tagsList = [];
+    @Input() editorHeight;
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
     @Output() onTemplateCreate: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
@@ -90,6 +90,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     ckConfig: any = {
         allowedContent: true,
+        toolbarCanCollapse: true,
         startupShowBorders: false,
         toolbar: [
             { name: 'document', items: [ 'Source', '-', 'Preview', 'Templates', '-', 'ExportPdf', 'Print' ] },
@@ -106,6 +107,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
             { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] }
         ],
+        removePlugins: 'elementspath',
         extraPlugins: 'div,preview,colorbutton,font,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,flash,pagebreak,iframe,language,bidi,copyformatting,mathjax',
         skin: 'moono-lisa' //kama,moono,moono-lisa
     };
