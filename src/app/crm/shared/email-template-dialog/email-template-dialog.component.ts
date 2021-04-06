@@ -65,6 +65,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
 
+    @Input() editorHeight;
     @Input() tagsList = [];
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
@@ -88,8 +89,6 @@ export class EmailTemplateDialogComponent implements OnInit {
     forceValidationBypass = true;
 
     ckConfig: any = {
-        height: innerHeight - (this.sessionService.tenant && 
-            this.sessionService.tenant.customLayoutType == LayoutType.BankCode ? 460 : 420) + 'px',
         allowedContent: true,
         startupShowBorders: false,
         toolbar: [
@@ -150,6 +149,10 @@ export class EmailTemplateDialogComponent implements OnInit {
         });
         this.showCC = Boolean(this.data.cc && this.data.cc.length);
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
+
+        let tenant = this.sessionService.tenant;
+        this.ckConfig.height = this.editorHeight ? this.editorHeight : innerHeight -
+            (tenant && tenant.customLayoutType == LayoutType.BankCode ? 460 : 420) + 'px';
 
         this.initDialogButtons();
         this.changeDetectorRef.detectChanges();
