@@ -28,7 +28,8 @@ import {
     UpdateEmailTemplateRequest,
     GetTemplateReponse,
     ContactServiceProxy,
-    GetEmailDataOutput
+    GetEmailDataOutput,
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
@@ -87,7 +88,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     forceValidationBypass = true;
 
     ckConfig: any = {
-        height: innerHeight - 460 + 'px',
+        height: innerHeight - (this.sessionService.tenant && 
+            this.sessionService.tenant.customLayoutType == LayoutType.BankCode ? 460 : 420) + 'px',
         allowedContent: true,
         startupShowBorders: false,
         toolbar: [
