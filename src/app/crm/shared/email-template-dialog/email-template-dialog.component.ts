@@ -28,7 +28,8 @@ import {
     UpdateEmailTemplateRequest,
     GetTemplateReponse,
     ContactServiceProxy,
-    GetEmailDataOutput
+    GetEmailDataOutput,
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
@@ -65,6 +66,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
 
     @Input() tagsList = [];
+    @Input() editorHeight;
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
     @Output() onTemplateCreate: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
@@ -87,8 +89,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     forceValidationBypass = true;
 
     ckConfig: any = {
-        height: innerHeight - 420 + 'px',
         allowedContent: true,
+        toolbarCanCollapse: true,
         startupShowBorders: false,
         toolbar: [
             { name: 'document', items: [ 'Source', '-', 'Preview', 'Templates', '-', 'ExportPdf', 'Print' ] },
@@ -105,8 +107,9 @@ export class EmailTemplateDialogComponent implements OnInit {
             { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
             { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] }
         ],
+        removePlugins: 'elementspath',
         extraPlugins: 'div,preview,colorbutton,font,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,flash,pagebreak,iframe,language,bidi,copyformatting,mathjax',
-        skin: 'moono' //kama,moono-lisa
+        skin: 'moono-lisa' //kama,moono,moono-lisa
     };
 
     constructor(
@@ -148,6 +151,10 @@ export class EmailTemplateDialogComponent implements OnInit {
         });
         this.showCC = Boolean(this.data.cc && this.data.cc.length);
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
+
+        let tenant = this.sessionService.tenant;
+        this.ckConfig.height = this.editorHeight ? this.editorHeight : innerHeight -
+            (tenant && tenant.customLayoutType == LayoutType.BankCode ? 460 : 420) + 'px';
 
         this.initDialogButtons();
         this.changeDetectorRef.detectChanges();

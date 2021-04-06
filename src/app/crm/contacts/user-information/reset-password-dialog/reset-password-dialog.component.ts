@@ -65,19 +65,15 @@ export class ResetPasswordDialog extends AppComponentBase {
     validatePassword = (e) => {
         let result = this.passwordValidator.validate(<any>{ value: e.value });
         e.rule.isValid = true;
-        let message = '';
-
         if (result) {
-            message = '<ul class="validation-error-list">';
-            Object.keys(result).forEach(prop => {
+            Object.keys(result).every(prop => {
                 if (result[prop]) {
-                    e.rule.isValid = false;
-                    message = message + '<li>' + this.passwordErrorsMessages[prop] + '</li>';
+                    e.rule.message = this.passwordErrorsMessages[prop];
+                    return e.rule.isValid = false;
                 }
+                return true;
             });
-            message += '</ul>';
         }
-        e.rule.message = message;
         return e.rule.isValid;
     }
 

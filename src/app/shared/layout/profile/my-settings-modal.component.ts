@@ -63,8 +63,9 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
             { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
             { name: 'tools', items: [ 'Maximize' ] },
         ],
+        removePlugins: 'elementspath',
         extraPlugins: 'preview,colorbutton,font',
-        skin: 'moono' //kama,moono-lisa
+        skin: 'moono-lisa' //kama,moono-lisa
     };
 
     public tagsList = [];

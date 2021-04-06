@@ -148,7 +148,7 @@
                     <span #tagsButton [class]="'cke_toolgroup tags-button id' + uniqId" *ngIf="tagsList.length">
                         <a (click)="tagsTooltipVisible = true">Tags</a>
                     </span>
-                    <ckeditor [config]="ckConfig" [(data)]="this.data.body" (ready)="onCKReady($event)" (change)="updateDataLength()"></ckeditor>
+                    <ckeditor *ngIf="ckConfig.height" [config]="ckConfig" [(data)]="this.data.body" (ready)="onCKReady($event)" (change)="updateDataLength()"></ckeditor>
                     <p class="char-count">{{charCount}}</p>
                     <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)" *ngIf="!templateEditMode">
                         <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
