@@ -251,7 +251,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         if (selectedItem) {
             service.memberServiceLevelId = undefined;
             if (selectedItem.id == this.addNewItemId)
-                this.showAddServiceProductDialog(event.component, event.previousValue);
+                return this.showAddServiceProductDialog(event.component, event.previousValue);
 
             selectedItem['disabled'] = true;
             if (event.previousValue)
