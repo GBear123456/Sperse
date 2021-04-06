@@ -16,6 +16,8 @@ import startCase from 'lodash/startCase';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
+import { AppFeatures } from '@shared/AppFeatures';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -28,8 +30,7 @@ import {
     UpdateEmailTemplateRequest,
     GetTemplateReponse,
     ContactServiceProxy,
-    GetEmailDataOutput,
-    LayoutType
+    GetEmailDataOutput
 } from '@shared/service-proxies/service-proxies';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
@@ -122,6 +123,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         private emailTemplateProxy: EmailTemplateServiceProxy,
         private sessionService: AppSessionService,
         private permission: AppPermissionService,
+        private features: FeatureCheckerService,
         private communicationProxy: ContactCommunicationServiceProxy,
         private documentsService: DocumentsService,
         public changeDetectorRef: ChangeDetectorRef,
@@ -152,9 +154,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.showCC = Boolean(this.data.cc && this.data.cc.length);
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
 
-        let tenant = this.sessionService.tenant;
         this.ckConfig.height = this.editorHeight ? this.editorHeight : innerHeight -
-            (tenant && tenant.customLayoutType == LayoutType.BankCode ? 460 : 420) + 'px';
+            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 460 : 420) + 'px';
 
         this.initDialogButtons();
         this.changeDetectorRef.detectChanges();
