@@ -87,7 +87,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     forceValidationBypass = true;
 
     ckConfig: any = {
-        height: innerHeight - 420 + 'px',
+        height: innerHeight - 460 + 'px',
         allowedContent: true,
         startupShowBorders: false,
         toolbar: [
@@ -106,7 +106,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] }
         ],
         extraPlugins: 'div,preview,colorbutton,font,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,flash,pagebreak,iframe,language,bidi,copyformatting,mathjax',
-        skin: 'moono' //kama,moono-lisa
+        skin: 'moono-lisa' //kama,moono,moono-lisa
     };
 
     constructor(
