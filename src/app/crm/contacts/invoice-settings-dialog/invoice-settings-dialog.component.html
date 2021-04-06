@@ -1,6 +1,7 @@
 <email-template-dialog
     [tagsList]="tagsList"
     [templateEditMode]="true" 
+    [editorHeight]="editorHeight"
     (onTemplateChange)="templateChanged($event)" 
     (onTagItemClick)="onTagItemClick($event)"
     (onSave)="save()">

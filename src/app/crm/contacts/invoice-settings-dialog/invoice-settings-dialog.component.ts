@@ -28,7 +28,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 export class InvoiceSettingsDialogComponent implements AfterViewInit {
     @ViewChild(EmailTemplateDialogComponent, { static: false }) modalDialog: EmailTemplateDialogComponent;
     settings = new InvoiceSettings();
-
+    editorHeight = innerHeight - 560 + 'px';
     tagsList = [
         EmailTags.ClientFirstName,
         EmailTags.ClientLastName,
