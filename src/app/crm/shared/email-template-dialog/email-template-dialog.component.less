@@ -116,35 +116,40 @@
     }
 
     .tags-button {
-        font-size: 13px;
-        padding: 10px 10px 6px 5px;
-        border-radius: 2px;
-        line-height: 10px;
-        &:hover {
-            background: #e6e6e6;
-        }
-        &:after {
-            content: "";
-            position: relative;
-            left: 4px;
-            bottom: 2px;
-            cursor: default;
-            height: 0;
-            width: 0;
-            font-size: 0;
-            border-left: 3px solid transparent;
-            border-right: 3px solid transparent;
-            border-top: 3px solid #484848;
+        display: none;
+        a {
+            display: inline-block;
+            font-size: 12px;
+            padding: 7px 10px 3px 5px;
+            border-radius: 2px;
+            line-height: 12px;
+            &:hover {
+                background: #e6e6e6;
+            }
+            &:after {
+                content: "";
+                position: relative;
+                left: 4px;
+                bottom: 2px;
+                cursor: default;
+                height: 0;
+                width: 0;
+                font-size: 0;
+                border-left: 3px solid transparent;
+                border-right: 3px solid transparent;
+                border-top: 3px solid #484848;
+            }
         }
     }
 
     .char-count {
         position: absolute;
-        bottom: 12px;
+        bottom: -5px;
         right: 24px;
     }
 
     i.insert-html {
+        display: none;
         position: absolute;
         cursor: pointer;
         color: #00AEEF;
@@ -262,7 +267,7 @@
                 & > p {
                     font-size: 12px;
                     color: #8a969b;
-                    margin: 10px 0;
+                    margin: 7px 0;
                     white-space: initial;
                 }
 
@@ -274,7 +279,7 @@
 
                 ::ng-deep ngx-file-drop {
                     position: absolute;
-                    bottom: 17px;
+                    bottom: 0px;
                     right: 60px;
                     .ngx-file-drop__drop-zone {
                         height: 30px;
