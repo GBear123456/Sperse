@@ -34,142 +34,178 @@
     </ng-container>
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover" #scrollView>
-            <div class="row">
-                <div class="field-area from">
-                    <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>
-                    <dx-text-box
-                        name="from"
-                        width="calc(50% - 52px)"
-                        height="40px"
-                        placeholder=""
-                        [(value)]="data.from"
-                        [disabled]="templateEditMode">
-                    </dx-text-box>
-                    <label class="caption">{{ls.l('ReplyTo')}}:</label>
-                    <dx-tag-box
-                        name="replyTo"
-                        width="calc(50% - 62px)"
-                        noDataText=""
-                        placeholder=""
-                        [multiline]="false"
-                        [acceptCustomValue]="true"
-                        [(value)]="data.replyTo"
-                        (onKeyUp)="onKeyUp($event)"
-                        (onInitialized)="onTagBoxInitialized($event)"
-                        (onFocusOut)="emailInputFocusOut($event)"
-                        (onCustomItemCreating)="onCustomItemCreating($event)">
-                    </dx-tag-box>
-                </div>
-                <div class="field-area to">
-                    <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('To')}}:</label>
-                    <dx-tag-box
-                        name="to"
-                        width="calc(100% - 31px)"
-                        noDataText=""
-                        placeholder=""
-                        [dataSource]="data.suggestionEmails"
-                        [multiline]="false"
-                        [acceptCustomValue]="true"
-                        [(value)]="data.to"
-                        [disabled]="templateEditMode"
-                        (onInitialized)="onTagBoxInitialized($event)"
-                        (onFocusOut)="emailInputFocusOut($event)"
-                        (onKeyUp)="onKeyUp($event)"
-                        (onCustomItemCreating)="onCustomItemCreating($event)">
-                    </dx-tag-box>
-                    <div class="bcc-links">
-                        <span (click)="showInputField(CCElement, 'showCC')" [ngClass]="{disabled: showCC}">{{ls.l('CC')}}</span>
-                        <span (click)="showInputField(BCCElement, 'showBCC')" [ngClass]="{disabled: showBCC}">{{ls.l('BCC')}}</span>
+            <dx-validation-group>
+                <div class="row">
+                    <div class="field-area from">
+                        <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>
+                        <dx-text-box
+                            name="from"
+                            width="calc(50% - 52px)"
+                            height="40px"
+                            placeholder=""
+                            [(value)]="data.from"
+                            [disabled]="templateEditMode">
+                            <dx-validator>
+                                <dxi-validation-rule type="pattern"
+                                                     [pattern]="emailRegEx"
+                                                     [message]="ls.l('InvalidEmailAddress')">
+                                </dxi-validation-rule>
+                                <dxi-validation-rule
+                                                    type="required" 
+                                                    [message]="ls.l('ThisFieldIsRequired')">
+                                </dxi-validation-rule>
+                            </dx-validator>
+                        </dx-text-box>
+                        <label class="caption">{{ls.l('ReplyTo')}}:</label>
+                        <dx-tag-box #ReplyToElement
+                            name="replyTo"
+                            width="calc(50% - 62px)"
+                            noDataText=""
+                            placeholder=""
+                            [multiline]="false"
+                            [acceptCustomValue]="true"
+                            [(value)]="data.replyTo"
+                            (onKeyUp)="onKeyUp($event)"
+                            (onInitialized)="onTagBoxInitialized($event)"
+                            (onFocusOut)="emailInputFocusOut($event)"
+                            (onCustomItemCreating)="onCustomItemCreating($event)">
+                            <dx-validator>
+                                <dxi-validation-rule type="custom" 
+                                    [message]="ls.l('InvalidField', ls.l('ReplyTo'))" 
+                                    [validationCallback]="validateEmailList(ReplyToElement)">
+                                </dxi-validation-rule>
+                            </dx-validator>
+                        </dx-tag-box>
                     </div>
-                </div>
-                <div class="field-area" [hidden]="!showCC">
-                    <label class="caption">{{ls.l('CC')}}:</label>
-                    <dx-tag-box #CCElement
-                        name="cc"
-                        height="40px"
-                        width="calc(100% - 35px)"
-                        placeholder=""
-                        noDataText=""
-                        [multiline]="false"
-                        [acceptCustomValue]="true"
-                        [(value)]="data.cc"
-                        (onKeyUp)="onKeyUp($event)"
-                        (onInitialized)="onTagBoxInitialized($event)"
-                        (onFocusOut)="emailInputFocusOut($event, true)"
-                        (onCustomItemCreating)="onCustomItemCreating($event)">
-                    </dx-tag-box>
-                </div>
-                <div class="field-area" [hidden]="!showBCC">
-                    <label class="caption">{{ls.l('BCC')}}:</label>
-                    <dx-tag-box #BCCElement
-                        name="bcc"
-                        height="40px"
-                        width="calc(100% - 46px)"
-                        noDataText=""
-                        placeholder=""
-                        [multiline]="false"
-                        [acceptCustomValue]="true"
-                        [(value)]="data.bcc"
-                        (onKeyUp)="onKeyUp($event)"
-                        (onInitialized)="onTagBoxInitialized($event)"
-                        (onFocusOut)="emailInputFocusOut($event, true)"
-                        (onCustomItemCreating)="onCustomItemCreating($event)">
-                    </dx-tag-box>
-                </div>
-                <div class="field-area subject">
-                    <label class="caption">{{ls.l('Subject')}}:</label>
-                    <dx-text-box
-                        name="subject"
-                        width="calc(100% - 69px)"
-                        height="40px"
-                        placeholder=""
-                        [(value)]="data.subject">
-                    </dx-text-box>
-                </div>
-                <div class="field-area ckeditor">
-                    <dx-tooltip [width]="250"
-                         position="bottom"
-                         [(visible)]="tagsTooltipVisible"
-                         [target]="'.tags-button.id' + uniqId">
-                        <div *dxTemplate="let data of 'content'" class="tags-container">
-                            <p class="tags-note">{{ls.l('InvoiceEmail_SupportedTags')}}</p>
-                            <dx-list
-                                height="calc(100% - 40px)"
-                                [selectionMode]="'single'"
-                                [dataSource]="tagsList"
-                                [itemTemplate]="'startCase'"
-                                (onItemClick)="onTagClick($event)">
-                                <div *dxTemplate="let data of 'startCase'" class="tags-list-item" [ngClass]="{disabled: !templateEditMode && !getTagValue(data)}">
-                                    {{ startCase(data) }}
-                                </div>                
-                            </dx-list>
+                    <div class="field-area to">
+                        <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('To')}}:</label>
+                        <dx-tag-box #ToElement
+                            name="to"
+                            width="calc(100% - 31px)"
+                            noDataText=""
+                            placeholder=""
+                            [dataSource]="data.suggestionEmails"
+                            [multiline]="false"
+                            [acceptCustomValue]="true"
+                            [(value)]="data.to"
+                            [disabled]="templateEditMode"
+                            (onKeyUp)="onKeyUp($event)"                        
+                            (onInitialized)="onTagBoxInitialized($event)"
+                            (onFocusOut)="emailInputFocusOut($event)"
+                            (onCustomItemCreating)="onCustomItemCreating($event)">
+                            <dx-validator>
+                                <dxi-validation-rule type="custom" 
+                                    [message]="ls.l('InvalidField', ls.l('To'))" 
+                                    [validationCallback]="validateEmailList(ToElement)">
+                                </dxi-validation-rule>
+                            </dx-validator>
+                        </dx-tag-box>
+                        <div class="bcc-links">
+                            <span (click)="showInputField(CCElement, 'showCC')" [ngClass]="{disabled: showCC}">{{ls.l('CC')}}</span>
+                            <span (click)="showInputField(BCCElement, 'showBCC')" [ngClass]="{disabled: showBCC}">{{ls.l('BCC')}}</span>
                         </div>
-                    </dx-tooltip>
-                    <a #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
-                    <dx-text-area [visible]="insertAsHTML" height="calc(100vh - 330px)"></dx-text-area>
-                    <ckeditor [hidden]="insertAsHTML || isComplexTemplate"
-                              [editor]="Editor"
-                              (ready)="onCKReady($event)"
-                              (config)="{ allowedContent: true }"
-                              (change)="updateDataLength()">
-                    </ckeditor>
-                    <iframe #preview [hidden]="insertAsHTML || !isComplexTemplate" frameborder="0" width="100%"></iframe>
-                    <p class="char-count" *ngIf="!insertAsHTML">{{charCount}}</p>
-                    <i class="insert-html" (click)="showInsertAsHTML()">{{ls.l(insertAsHTML ? 'Apply' : 'Insert as HTML')}}</i>
-                    <i class="cancel-html" *ngIf="insertAsHTML" (click)="insertAsHTML = false">{{ls.l('Cancel')}}</i>
-                    <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)" *ngIf="!templateEditMode">
-                        <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
-                            <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>
-                        </ng-template>
-                    </ngx-file-drop>
-                </div>
-                <div class="field-area attachments" *ngIf="!templateEditMode">
-                    <div *ngFor="let attachment of attachments; let i = index" class="attachment" [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}">
-                        <a target="_blank" [download]="attachment.name" [href]="attachment.url" (click)="attachmentClick($event, attachment)" class="name">{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span><i (click)="removeAttachment(attachment, i)" aria-hidden="true" class="delete fa fa-times"></i>
                     </div>
+                    <div class="field-area" [hidden]="!showCC">
+                        <label class="caption">{{ls.l('CC')}}:</label>
+                        <dx-tag-box #CCElement
+                            name="cc"
+                            height="40px"
+                            width="calc(100% - 35px)"
+                            placeholder=""
+                            noDataText=""
+                            [multiline]="false"
+                            [acceptCustomValue]="true"
+                            [(value)]="data.cc"
+                            (onKeyUp)="onKeyUp($event)"
+                            (onInitialized)="onTagBoxInitialized($event)"
+                            (onFocusOut)="emailInputFocusOut($event, true)"
+                            (onCustomItemCreating)="onCustomItemCreating($event)">
+                            <dx-validator>
+                                <dxi-validation-rule type="custom" 
+                                    [message]="ls.l('InvalidField', ls.l('CC'))" 
+                                    [validationCallback]="validateEmailList(CCElement)">
+                                </dxi-validation-rule>
+                            </dx-validator>
+                        </dx-tag-box>
+                    </div>
+                    <div class="field-area" [hidden]="!showBCC">
+                        <label class="caption">{{ls.l('BCC')}}:</label>
+                        <dx-tag-box #BCCElement
+                            name="bcc"
+                            height="40px"
+                            width="calc(100% - 46px)"
+                            noDataText=""
+                            placeholder=""
+                            [multiline]="false"
+                            [acceptCustomValue]="true"
+                            [(value)]="data.bcc"
+                            (onKeyUp)="onKeyUp($event)"
+                            (onInitialized)="onTagBoxInitialized($event)"
+                            (onFocusOut)="emailInputFocusOut($event, true)"
+                            (onCustomItemCreating)="onCustomItemCreating($event)">
+                            <dx-validator>
+                                <dxi-validation-rule type="custom" 
+                                    [message]="ls.l('InvalidField', ls.l('BCC'))" 
+                                    [validationCallback]="validateEmailList(BCCElement)">
+                                </dxi-validation-rule>
+                            </dx-validator>
+                        </dx-tag-box>
+                    </div>
+                    <div class="field-area subject">
+                        <label class="caption">{{ls.l('Subject')}}:</label>
+                        <dx-text-box
+                            name="subject"
+                            width="calc(100% - 69px)"
+                            height="40px"
+                            placeholder=""
+                            [(value)]="data.subject">
+                        </dx-text-box>
+                    </div>
+                    <div class="field-area ckeditor">
+                        <dx-tooltip [width]="250"
+                             position="bottom"
+                             [(visible)]="tagsTooltipVisible"
+                             [target]="'.tags-button.id' + uniqId">
+                            <div *dxTemplate="let data of 'content'" class="tags-container">
+                                <p class="tags-note">{{ls.l('InvoiceEmail_SupportedTags')}}</p>
+                                <dx-list
+                                    height="calc(100% - 40px)"
+                                    [selectionMode]="'single'"
+                                    [dataSource]="tagsList"
+                                    [itemTemplate]="'startCase'"
+                                    (onItemClick)="onTagClick($event)">
+                                    <div *dxTemplate="let data of 'startCase'" class="tags-list-item" [ngClass]="{disabled: !templateEditMode && !getTagValue(data)}">
+                                        {{ startCase(data) }}
+                                    </div>                
+                                </dx-list>
+                            </div>
+                        </dx-tooltip>
+                        <a #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
+                        <dx-text-area [visible]="insertAsHTML" height="calc(100vh - 330px)"></dx-text-area>
+                        <ckeditor [hidden]="insertAsHTML || isComplexTemplate"
+                                  [editor]="Editor"
+                                  (ready)="onCKReady($event)"
+                                  (config)="{ allowedContent: true }"
+                                  (change)="updateDataLength()">
+                        </ckeditor>
+                        <iframe #preview [hidden]="insertAsHTML || !isComplexTemplate" frameborder="0" width="100%"></iframe>
+                        <p class="char-count" *ngIf="!insertAsHTML">{{charCount}}</p>
+                        <i class="insert-html" (click)="showInsertAsHTML()">{{ls.l(insertAsHTML ? 'Apply' : 'Insert as HTML')}}</i>
+                        <i class="cancel-html" *ngIf="insertAsHTML" (click)="insertAsHTML = false">{{ls.l('Cancel')}}</i>
+                        <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)" *ngIf="!templateEditMode">
+                            <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
+                                <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>
+                            </ng-template>
+                        </ngx-file-drop>
+                    </div>
+                    <div class="field-area attachments" *ngIf="!templateEditMode">
+                        <div *ngFor="let attachment of attachments; let i = index" class="attachment" [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}">
+                            <a target="_blank" [download]="attachment.name" [href]="attachment.url" (click)="attachmentClick($event, attachment)" class="name">{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span><i (click)="removeAttachment(attachment, i)" aria-hidden="true" class="delete fa fa-times"></i>
+                        </div>
+                    </div>
+                    <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
                 </div>
-                <ng-content *ngIf="data.templateType" select="[templateSettings]"></ng-content>
-            </div>
+            </dx-validation-group>
         </dx-scroll-view>
         <div class="bank-decode-wrapper" *ngIf="!templateEditMode">
             <bank-code-decode [content]="data.body" (onDecodeStart)="startLoading()" (onDecodeFinish)="finishLoading()"></bank-code-decode>
