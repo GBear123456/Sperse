@@ -7,6 +7,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 import { Observable, Subject } from 'rxjs';
 import { finalize, startWith, switchMap } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
+import { DxValidationGroupComponent } from 'devextreme-angular';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxValidatorComponent } from 'devextreme-angular/ui/validator';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
@@ -51,6 +52,7 @@ import { AppPermissions } from '@shared/AppPermissions';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailTemplateDialogComponent implements OnInit {
+    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
     @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
     @ViewChild(DxSelectBoxComponent, { static: false }) templateComponent: DxSelectBoxComponent;
     @ViewChild(DxValidatorComponent, { static: false }) validator: DxValidatorComponent;
@@ -88,6 +90,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     uniqId = Math.random().toString().slice(-7);
     charCount: number;
     forceValidationBypass = true;
+    emailRegEx = AppConsts.regexPatterns.email;
 
     ckConfig: any = {
         allowedContent: true,
@@ -211,6 +214,9 @@ export class EmailTemplateDialogComponent implements OnInit {
                 return this.notifyService.error(
                     this.ls.l('RequiredField', this.ls.l('Template')));
         } else {
+            if (!this.validationGroup.instance.validate().isValid)
+                return this.notifyService.error(this.ls.l('InvalidEmailAddress'));
+
             if (!this.data.from)
                 return this.notifyService.error(
                     this.ls.l('RequiredField', this.ls.l('From')));
@@ -280,14 +286,16 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.tagLastValue = '';
         this.onCustomItemCreating(event, field => {
             let isComboListEmpty = !this.data[field].length;
-            if (checkDisplay && isComboListEmpty) {
+            if (checkDisplay && isComboListEmpty
+                && !event.component.field().value
+            ) {
                 if (field == 'cc')
                     this.showCC = false;
                 else
                     this.showBCC = false;
                 this.changeDetectorRef.detectChanges();
-            } else if (field == 'to')
-                event.component.option('isValid', !isComboListEmpty);
+            } else if (field == 'to' && isComboListEmpty)
+                event.component.option('isValid', false);
         });
     }
 
@@ -346,6 +354,13 @@ export class EmailTemplateDialogComponent implements OnInit {
         });
     }
 
+    validateEmailList(element) {
+        return (event) => {
+            return element.instance.field() === document.activeElement
+                || !event.value || !element.instance.field().value;
+        };
+    }
+
     invalidate() {
         this.updateDataLength();
         this.changeDetectorRef.markForCheck();
@@ -353,15 +368,28 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onCustomItemCreating(event, callback?) {
         let field = event.component.option('name'),
-            values = event.text.split(/[,|;]+(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(item =>
-                AppConsts.regexPatterns.emailWithName.test(item) ? item : ''),
-            validValues = values.filter(Boolean),
+            values = event.text.split(/[,|;]+(?=(?:(?:[^"]*"){2})*[^"]*$)/),
+            validValues = [], invalidValues = [],
             currentList = this.data[field];
+
+        values.forEach(item => {
+            if (AppConsts.regexPatterns.emailWithName.test(item))
+                validValues.push(item);
+            else if (item.trim())
+                invalidValues.push(item);
+        });
 
         validValues = validValues.filter((item, pos) => {
             return validValues.indexOf(item) == pos &&
                 (!currentList || currentList.indexOf(item) < 0);
         });
+
+        if (invalidValues.length) {
+            event.component.option('isValid', false);
+            setTimeout(() =>
+                event.component.field().value = invalidValues.join(','));
+        } else
+            event.component.option('isValid', true);
 
         setTimeout(() => {
             if (currentList)
@@ -371,8 +399,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             callback && callback(field);
             this.changeDetectorRef.markForCheck();
         });
-
-        return event.customItem = '';
+        event.customItem = '';
     }
 
     onNewTemplate(event) {
