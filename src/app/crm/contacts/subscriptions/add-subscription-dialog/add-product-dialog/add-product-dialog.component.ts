@@ -170,7 +170,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
             if (this.product.productSubscriptionOptions)
                 this.product.productSubscriptionOptions.forEach(item => {
-                    if (isNaN(item.trialDayCount))
+                    if (item.trialDayCount == null || isNaN(item.trialDayCount))
                         item.trialDayCount = 0;
                 });
 
