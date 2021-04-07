@@ -32,8 +32,6 @@ export class AccountConnectorChooserComponent implements OnInit {
         [name: string]: AccountConnector
     };
 
-    isSaltEdgeAllowed: boolean = this.appSessionService.tenantName.includes('SaltEdge');
-
     constructor(
         private dialog: MatDialog,
         private appSessionService: AppSessionService,
@@ -55,8 +53,7 @@ export class AccountConnectorChooserComponent implements OnInit {
                 iconName: 'salt-edge-connector',
                 title: this.ls.l('SaltEdgeConnectorTitle'),
                 description: this.ls.l('SaltEdgeConnectorDescription'),
-                disabled: !this.isSaltEdgeAllowed || 
-                    this.checkDisabled(AccountConnectors.SaltEdge)
+                disabled: this.checkDisabled(AccountConnectors.SaltEdge)
             },        
             [AccountConnectors.QuickBook]: {
                 name: AccountConnectors.QuickBook,
