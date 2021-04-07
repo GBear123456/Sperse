@@ -5,10 +5,13 @@ import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 /** Third party modules */
+import { CKEditorModule } from 'ckeditor4-angular';
 import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
 import { FileUploadModule as PrimeNgFileUploadModule, ProgressBarModule, PaginatorModule } from 'primeng/primeng';
 import { TableModule } from 'primeng/table';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
+import { DxListModule } from 'devextreme-angular/ui/list';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
@@ -68,12 +71,15 @@ let COMPONENTS = [
         PrimeNgFileUploadModule,
         ProgressBarModule,
         TableModule,
+        CKEditorModule,
         PaginatorModule,
         DxScrollViewModule,
         DxSelectBoxModule,
         DxCheckBoxModule,
         DxDataGridModule,
         ModalDialogModule,
+        DxTooltipModule,
+        DxListModule,
         CountryPhoneNumberModule
     ],
     declarations: COMPONENTS,

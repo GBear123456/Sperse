@@ -45,7 +45,7 @@ import { VgControlsModule } from 'videogular2/controls';
 import { VgOverlayPlayModule } from 'videogular2/overlay-play';
 import { VgBufferingModule } from 'videogular2/buffering';
 import { NgxMaskModule } from '@node_modules/ngx-mask';
-import { CKEditorModule } from '@ckeditor/ckeditor5-angular';
+import { CKEditorModule } from 'ckeditor4-angular';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';

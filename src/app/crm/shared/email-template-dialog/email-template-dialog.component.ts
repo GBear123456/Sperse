@@ -9,16 +9,16 @@ import { finalize, startWith, switchMap } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
-import { DxTextAreaComponent } from 'devextreme-angular/ui/text-area';
 import { DxValidatorComponent } from 'devextreme-angular/ui/validator';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import startCase from 'lodash/startCase';
-import * as ClassicEditor from 'ckeditor5-custom';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
+import { AppFeatures } from '@shared/AppFeatures';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -55,28 +55,21 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
     @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
     @ViewChild(DxSelectBoxComponent, { static: false }) templateComponent: DxSelectBoxComponent;
-    @ViewChild(DxTextAreaComponent, { static: false }) htmlComponent: DxTextAreaComponent;
     @ViewChild(DxValidatorComponent, { static: false }) validator: DxValidatorComponent;
     @ViewChild('scrollView', { static: false }) scrollView: DxScrollViewComponent;
     @ViewChild('tagsButton', { static: false }) tagsButton: ElementRef;
-    @ViewChild('preview', { static: false }) preview: ElementRef;
 
-    Editor = ClassicEditor;
     ckEditor: any;
     showCC = false;
     showBCC = false;
     tagLastValue: string;
     startCase = startCase;
     tagsTooltipVisible = false;
-    insertAsHTML = false;
-
-    get isComplexTemplate(): Boolean {
-        return this.data && this.data.body && this.data.body.indexOf('<html') >= 0;
-    }
 
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
 
     @Input() tagsList = [];
+    @Input() editorHeight;
     @Input() templateEditMode = false;
     @Output() onSave: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
     @Output() onTemplateCreate: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
@@ -99,6 +92,30 @@ export class EmailTemplateDialogComponent implements OnInit {
     forceValidationBypass = true;
     emailRegEx = AppConsts.regexPatterns.email;
 
+    ckConfig: any = {
+        allowedContent: true,
+        toolbarCanCollapse: true,
+        startupShowBorders: false,
+        toolbar: [
+            { name: 'document', items: [ 'Source', '-', 'Preview', 'Templates', '-', 'ExportPdf', 'Print' ] },
+            { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
+            { name: 'editing', items: [ 'Find', 'Replace', '-', 'Scayt' ] },
+            { name: 'forms', items: [ 'Form', 'Checkbox', 'Radio', 'TextField', 'Textarea', 'Select', 'Button', 'ImageButton', 'HiddenField' ] },
+            '/',
+            { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strikethrough', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat' ] },
+            { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] },
+            { name: 'insert', items: [ 'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe', 'Mathjax' ] },
+            '/',
+            { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
+            { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
+            { name: 'colors', items: [ 'TextColor', 'BGColor' ] },
+            { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] }
+        ],
+        removePlugins: 'elementspath',
+        extraPlugins: 'div,preview,colorbutton,font,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,flash,pagebreak,iframe,language,bidi,copyformatting,mathjax',
+        skin: 'moono-lisa' //kama,moono,moono-lisa
+    };
+
     constructor(
         private phonePipe: PhoneFormatPipe,
         private domSanitizer: DomSanitizer,
@@ -109,6 +126,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         private emailTemplateProxy: EmailTemplateServiceProxy,
         private sessionService: AppSessionService,
         private permission: AppPermissionService,
+        private features: FeatureCheckerService,
         private communicationProxy: ContactCommunicationServiceProxy,
         private documentsService: DocumentsService,
         public changeDetectorRef: ChangeDetectorRef,
@@ -138,6 +156,9 @@ export class EmailTemplateDialogComponent implements OnInit {
         });
         this.showCC = Boolean(this.data.cc && this.data.cc.length);
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
+
+        this.ckConfig.height = this.editorHeight ? this.editorHeight : innerHeight -
+            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 460 : 420) + 'px';
 
         this.initDialogButtons();
         this.changeDetectorRef.detectChanges();
@@ -341,13 +362,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     invalidate() {
-        this.insertAsHTML = false;
-        if (this.isComplexTemplate)
-            this.initTemplatePreview();
-        else {
-            this.ckEditor.setData(this.data.body || '');
-            this.updateDataLength();
-        }
+        this.updateDataLength();
         this.changeDetectorRef.markForCheck();
     }
 
@@ -409,21 +424,16 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onCKReady(event) {
-        this.ckEditor = event.ui.editor;
+        this.ckEditor = event.editor;
         setTimeout(() => {
+            this.ckEditor.container.find('.cke_toolbox').$[0].append(
+                this.tagsButton.nativeElement);
+            this.tagsButton.nativeElement.style.display = 'inline';
             this.invalidate();
-            if (this.tagsButton) {
-                let root = this.ckEditor.sourceElement.parentNode,
-                    headingElement = root.querySelector('.ck-heading-dropdown');
-                root.querySelector('.ck-toolbar__items').insertBefore(
-                    this.tagsButton.nativeElement, headingElement);
-                headingElement.style.width = '100px';
-            }
-        }, 1000);
+        });
     }
 
     updateDataLength() {
-        this.data.body = this.ckEditor.getData();
         this.charCount = Math.max(this.data.body.replace(/(<([^>]+)>|\&nbsp;)/ig, '').length - 1, 0);
         this.changeDetectorRef.markForCheck();
     }
@@ -439,10 +449,13 @@ export class EmailTemplateDialogComponent implements OnInit {
         } else {
             let value = this.getTagValue(event.itemData);
             if (value) {
-                if (event.itemData == EmailTags.SenderCompanyLogo)
+                if (event.itemData == EmailTags.SenderCompanyLogo) {
                     this.insertImageElement(value);
-                else
+                } else if (event.itemData == EmailTags.SenderEmailSignature) {
+                    this.insertHtml(value);
+                } else {
                     this.insertText(value);
+                }
             }
         }
         this.tagsTooltipVisible = false;
@@ -464,16 +477,15 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     insertImageElement(src) {
-        this.ckEditor.model.change(writer => {
-            writer.insertElement('image', {src: src},
-                this.ckEditor.model.document.selection.getFirstPosition());
-        });
+        this.insertHtml('<img src="' + src + '">');
+    }
+
+    insertHtml(html: string) {
+        this.ckEditor.insertHtml(html);
     }
 
     insertText(text: string) {
-        this.ckEditor.model.change(writer => {
-            writer.insertText(text, this.ckEditor.model.document.selection.getFirstPosition());
-        });
+        this.ckEditor.insertText(text);
     }
 
     addTextTag(tag: string) {
@@ -481,9 +493,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     addLinkTag(tag: string, link: string) {
-        this.ckEditor.model.change(writer => {
-            writer.insertText(link, { linkHref: '#' + tag + '#' },  this.ckEditor.model.document.selection.getFirstPosition());
-        });
+        this.ckEditor.insertHtml('<a href="#' + tag + '#">' + link + '</a>');
     }
 
     addAttachments(files: NgxFileDropEntry[]) {
@@ -547,28 +557,6 @@ export class EmailTemplateDialogComponent implements OnInit {
             attachment.loader = undefined;
         });
         this.attachments.push(attachment);
-    }
-
-    showInsertAsHTML() {
-        if (this.insertAsHTML = !this.insertAsHTML) {
-            this.htmlComponent.instance.option('value', this.data.body);
-            setTimeout(() => this.htmlComponent.instance.focus(), 300);
-        } else {
-            this.data.body = this.htmlComponent.instance.option('value');
-            if (this.isComplexTemplate)
-                this.initTemplatePreview();
-            else {
-                this.ckEditor.setData(this.data.body);
-                this.updateDataLength();
-            }
-        }
-    }
-
-    initTemplatePreview() {
-        let win = this.preview.nativeElement.contentWindow;
-        win.document.open();
-        win.document.write(this.data.body || '');
-        win.document.close();
     }
 
     sendAttachment(file) {

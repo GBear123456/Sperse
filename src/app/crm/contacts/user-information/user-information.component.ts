@@ -493,6 +493,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
 
         this.dialog.closeAll();
         this.dialog.open(ResetPasswordDialog, {
+            width: '400px',
             data: this.data,
             hasBackdrop: true
         });

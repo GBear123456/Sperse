@@ -180,18 +180,11 @@
                                 </dx-list>
                             </div>
                         </dx-tooltip>
-                        <a #tagsButton [class]="'tags-button id' + uniqId" *ngIf="tagsList.length" (click)="tagsTooltipVisible = true">Tags</a>
-                        <dx-text-area [visible]="insertAsHTML" height="calc(100vh - 330px)"></dx-text-area>
-                        <ckeditor [hidden]="insertAsHTML || isComplexTemplate"
-                                  [editor]="Editor"
-                                  (ready)="onCKReady($event)"
-                                  (config)="{ allowedContent: true }"
-                                  (change)="updateDataLength()">
-                        </ckeditor>
-                        <iframe #preview [hidden]="insertAsHTML || !isComplexTemplate" frameborder="0" width="100%"></iframe>
-                        <p class="char-count" *ngIf="!insertAsHTML">{{charCount}}</p>
-                        <i class="insert-html" (click)="showInsertAsHTML()">{{ls.l(insertAsHTML ? 'Apply' : 'Insert as HTML')}}</i>
-                        <i class="cancel-html" *ngIf="insertAsHTML" (click)="insertAsHTML = false">{{ls.l('Cancel')}}</i>
+                        <span #tagsButton [class]="'cke_toolgroup tags-button id' + uniqId" *ngIf="tagsList.length">
+                            <a (click)="tagsTooltipVisible = true">Tags</a>
+                        </span>
+                        <ckeditor *ngIf="ckConfig.height" [config]="ckConfig" [(data)]="this.data.body" (ready)="onCKReady($event)" (change)="updateDataLength()"></ckeditor>
+                        <p class="char-count">{{charCount}}</p>
                         <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)" *ngIf="!templateEditMode">
                             <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
                                 <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>

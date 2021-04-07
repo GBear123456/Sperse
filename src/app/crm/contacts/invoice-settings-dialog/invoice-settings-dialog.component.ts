@@ -28,7 +28,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 export class InvoiceSettingsDialogComponent implements AfterViewInit {
     @ViewChild(EmailTemplateDialogComponent, { static: false }) modalDialog: EmailTemplateDialogComponent;
     settings = new InvoiceSettings();
-
+    editorHeight = innerHeight - 560 + 'px';
     tagsList = [
         EmailTags.ClientFirstName,
         EmailTags.ClientLastName,
@@ -51,7 +51,8 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         EmailTags.SenderCompanyEmail,
         EmailTags.SenderCompanyWebSite,
         EmailTags.SenderCalendly,
-        EmailTags.SenderAffiliateCode
+        EmailTags.SenderAffiliateCode,
+        EmailTags.SenderEmailSignature
     ];
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
