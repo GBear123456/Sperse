@@ -154,9 +154,9 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             let services = this.product.productServices,
                 options = this.product.productSubscriptionOptions;
             if (!services || !services.length)
-                return this.notify.error(this.ls.l('AtLeastOneServiceShouldBeSpecified'));
+                return this.notify.error(this.ls.l('SubscriptionServicesAreRequired'));
             if (!options || !options.length)
-                return this.notify.error(this.ls.l('AtLeastOnePaymentPeriodTypeShouldBeSpecified'));
+                return this.notify.error(this.ls.l('SubscriptionPaymentOptionsAreRequired'));
             this.product.unit = undefined;
             this.product.price = undefined;
         } else {
