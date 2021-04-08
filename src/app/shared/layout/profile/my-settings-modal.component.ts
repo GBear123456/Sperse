@@ -47,7 +47,7 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     ckConfig: any = {
-        heigth: '160px',
+        height: innerHeight - 320 + 'px',
         pasteFilter: null,
         allowedContent: true,
         startupShowBorders: false,
