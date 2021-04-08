@@ -90,6 +90,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     forceValidationBypass = true;
 
     ckConfig: any = {
+        pasteFilter: null,
         allowedContent: true,
         toolbarCanCollapse: true,
         startupShowBorders: false,
