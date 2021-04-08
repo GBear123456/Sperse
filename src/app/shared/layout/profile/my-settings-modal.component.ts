@@ -48,6 +48,7 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
 
     ckConfig: any = {
         heigth: '160px',
+        pasteFilter: null,
         allowedContent: true,
         startupShowBorders: false,
         toolbar: [
