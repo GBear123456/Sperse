@@ -5,7 +5,7 @@
             <span *ngIf="showSelectAll" class="select-all" (click)="toggleSelection()">{{l(checkSelectedAll() ? 'DeselectAll': 'SelectAll')}}</span>
             <div class="apply-all">
                 <span *ngIf="showApplySelection" class="btn-apply" (click)="applyFilterSelection()">{{l('Apply')}}</span>
-                <span *ngIf="showClearSelection" class="btn-clear" (click)="clearSelection()">{{l('Clear')}}</span>
+                <span *ngIf="showClearSelection" class="btn-clear" (click)="clearFilterSelection()">{{l('Clear')}}</span>
             </div>
             <span *ngIf="showCloseButton" class="close" (click)="close.emit(null)"></span>
         </h3>

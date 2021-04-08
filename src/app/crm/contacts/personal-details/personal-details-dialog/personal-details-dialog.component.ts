@@ -680,8 +680,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     openSourceContactList(event) {
         if (this.affiliateManageAllowed) {
-            event.stopPropagation();
+            this.sourceComponent.leadId =
+                this.leadInfo && this.leadInfo.id;
             this.sourceComponent.toggle();
+            event.stopPropagation();
         }
     }
 

@@ -999,7 +999,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     searchAllClick() {
         this.clearCategoriesFilters();
-        this.categorizationComponent.clearSelection();
+        this.categorizationComponent.clearFilterSelection();
 
         this.filtersService.clearAllFilters();
         this.selectedCashflowCategoryKeys = null;
@@ -1048,7 +1048,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (this._activatedRoute.snapshot.queryParams.filters) {
             this.categoriesRowsData = [];
             this.clearCategoriesFilters();
-            this.categorizationComponent.clearSelection();
+            this.categorizationComponent.clearFilterSelection();
         }
 
         this.filtersService.apply((filters: FilterModel[]) => {
@@ -1064,7 +1064,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     if (filterName == 'classified') {
                         if (this.selectedCashflowCategoryKeys && filter.items['no'].value === true && filter.items['yes'].value !== true) {
                             this.clearCategoriesFilters();
-                            this.categorizationComponent.clearSelection();
+                            this.categorizationComponent.clearFilterSelection();
                             this.selectedCashflowCategoryKeys = null;
                         }
                     }
@@ -1186,23 +1186,15 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     filterByCashflowCategories(categories: Category[]) {
         this.clearCategoriesFilters();
         if (Array.isArray(categories)) {
-            let filterCashflowTypes = categories.filter((category: Category) => this.isCashflowType(category)).map((category: Category) => <string>category.key);
-            let filterAccountingTypes = categories.filter((category: Category) => this.isAccountingTypeId(category));
-            let filterCategories = categories.filter((category: Category) => this.isCategory(category.key));
-
-            if (filterCashflowTypes.length) {
-                this.selectedCashflowTypeIds.next(filterCashflowTypes);
-            }
-            if (filterAccountingTypes.length || filterCategories.length) {
-                let field = {};
-                this.addCategorizationFilter(filterAccountingTypes, 'AccountingTypeId', field);
-                this.addCategorizationFilter(filterCategories.filter((category: Category) => !this.isCategory(category.parent)), 'CashflowCategoryId', field);
-                this.addCategorizationFilter(filterCategories.filter((category: Category) => this.isCategory(category.parent)), 'CashflowSubCategoryId', field);
+            let filterCategories = categories.filter((category: Category) => this.isCategory(category));
+            if (filterCategories.length) {
+                let filterItems = {};
+                this.addCategorizationFilter(filterCategories, 'OriginCashflowCategoryId', filterItems);
                 this.cashFlowCategoryFilter = [
                     new FilterModel({
-                        items: field,
+                        items: filterItems,
                         options: { method: 'filterMethod' },
-                        filterMethod: this.filterByCombinedCategories.bind(this, field)
+                        filterMethod: this.filterByOriginCategories.bind(this, filterItems)
                     })
                 ];
             }
@@ -1225,40 +1217,30 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     }
 
-    private isCashflowType(category: Category): boolean {
-        return !parseInt(<string>category.key);
+    private isCategory(category: Category): boolean {
+        return !isNaN(<number>category.key);
     }
 
-    private isAccountingTypeId(category: Category): boolean {
-        return isNaN(<number>category.key);
-    }
-
-    private isCategory(key: string | number): boolean {
-        return !isNaN(<number> key);
-    }
-
-    private filterByCombinedCategories(selectedItems) {
-        let filterObj = { or: [], and: [] };
+    private filterByOriginCategories(selectedItems) {
+        let filterObj = [];
         _.pairs(selectedItems)
             .reduce((filter, pair) => {
                 let selectedIds = pair.pop().value, key = pair.pop();
                 if (selectedIds) {
-                    let inversionIds = [];
-                    if (key == 'CashflowCategoryId') {
-                        let categories = this.categorizationComponent.categorization.categories,
-                            categoryIds = Object.keys(categories).filter(id => !categories[id].parentId),
-                            selectedCount = selectedIds.length,
-                            totalCount = categoryIds.length;
-                        if (selectedCount == totalCount)
-                            return filter;
+                    let categories = this.categorizationComponent.categories.filter(item => this.isCategory(item)),
+                        selectedCount = selectedIds.length,
+                        totalCount = categories.length;
 
-                        if (selectedCount > totalCount - selectedCount)
-                            inversionIds = categoryIds.filter(id => !selectedIds.includes(Number(id)));
-                    }
-                    if (inversionIds.length)
-                        filter.and.push(`not(${key} in (${inversionIds.join(',')}))`);
-                    else if (selectedIds.length)
-                        filter.or.push(`${key} in (${selectedIds.join(',')})`);
+                    if (selectedCount == totalCount)
+                        filter.push(`not(${key} eq null)`);
+                    else if (selectedCount > totalCount - selectedCount) {
+                        filter.push(`not(${key} in (${
+                            categories.filter(
+                                category => !selectedIds.includes(category.key)
+                            ).map(category => category.key).join(',')
+                        })) and not(${key} eq null)`);
+                    } else if (selectedCount)
+                        filter.push(`${key} in (${selectedIds.join(',')})`);
                 }
                 return filter;
             }, filterObj);

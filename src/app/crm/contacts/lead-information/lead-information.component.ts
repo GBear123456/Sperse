@@ -189,7 +189,8 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
     ngOnInit() {
         this.contactsService.leadInfoSubscribe(leadInfo => {
             this.data.leadInfo = leadInfo;
-            this.updateSourceContactName();
+            this.sourceContactName = leadInfo
+                && leadInfo.sourceContactName;
         }, this.ident);
         this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo) {
@@ -198,7 +199,6 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                 this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
                 this.showApplicationAllowed = this.permissionCheckerService.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
                     contactInfo.personContactInfo.userId && contactInfo.groupId == ContactGroup.Client;
-                this.updateSourceContactName();
                 this.loadOrganizationUnits();
             }
         }, this.ident);
@@ -330,15 +330,8 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
             || field.toLowerCase().indexOf('amount') >= 0;
     }
 
-    updateSourceContactName() {
-        let contact = this.sourceContacts.find(item =>
-            item.id == (this.data && this.data.leadInfo && this.data.leadInfo.sourceContactId));
-        this.sourceContactName = contact && contact.name;
-    }
-
     onSourceContactLoaded(contacts: SourceContact[]) {
         this.sourceContacts = contacts;
-        this.updateSourceContactName();
     }
 
     onSourceContactChanged(event) {
@@ -394,6 +387,14 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
         event.stopPropagation();
         this.clipboardService.copyFromContent(value);
         this.notifyService.info(this.ls.l('SavedToClipboard'));
+    }
+
+    openSourceContactList() {
+        if (this.isCGManageAllowed) {
+            this.sourceComponent.leadId = this.data &&
+                this.data.leadInfo && this.data.leadInfo.id;
+            this.sourceComponent.toggle();
+        }
     }
 
     ngOnDestroy() {
