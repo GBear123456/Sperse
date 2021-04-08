@@ -45,7 +45,7 @@
     </div>
     <div #contentView class="content-view">
         <div class="inbox-content" *ngIf="activeMessage">
-            <dx-tooltip width="670px"
+            <dx-tooltip [width]="activeMessage?.deliveryType=='SMS'?'530px':'700px'"
                         [target]="'span.to'"
                         [showEvent]="activeMessage?.recepients?.length && !activeMessage?.isInbound ? 'mouseenter' : ''"
                         hideEvent="dxhoverend"
@@ -54,8 +54,8 @@
                     <dx-data-grid [dataSource]="activeMessage?.recepients" id="inbox-delivery-statuses">
                         <dxi-column dataField="recipient" width="200px"></dxi-column>
                         <dxi-column dataField="deliveryStatus" [caption]="ls.l('Status')" width="100px" cellTemplate="statusCell"></dxi-column>
-                        <dxi-column dataField="deliveryDate" width="170px" cellTemplate="dateCell"></dxi-column>
-                        <dxi-column dataField="openDate" width="170px" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="deliveryDate" width="180px" cellTemplate="dateCell"></dxi-column>
+                        <dxi-column dataField="openDate" width="180px" cellTemplate="dateCell" [visible]="activeMessage?.deliveryType=='Email'"></dxi-column>
                         <div *dxTemplate="let cellData of 'dateCell'">
                             {{cellData.value | datetime: formatting.fieldDateTime }}
                         </div>
