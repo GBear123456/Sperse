@@ -97,6 +97,9 @@ export class EmailTemplateDialogComponent implements OnInit {
         allowedContent: true,
         toolbarCanCollapse: true,
         startupShowBorders: false,
+        qtBorder: 0,
+        stylesSet: [],
+        contentsCss: [],
         toolbar: [
             { name: 'document', items: [ 'Source', '-', 'Preview', 'Templates', '-', 'ExportPdf', 'Print' ] },
             { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo' ] },
@@ -113,7 +116,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] }
         ],
         removePlugins: 'elementspath',
-        extraPlugins: 'div,preview,colorbutton,font,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,flash,pagebreak,iframe,language,bidi,copyformatting,mathjax',
+        extraPlugins: 'preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,flash,pagebreak,iframe,language,bidi,copyformatting',
         skin: 'moono-lisa' //kama,moono,moono-lisa
     };
 
