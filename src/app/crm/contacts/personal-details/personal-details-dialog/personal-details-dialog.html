@@ -47,7 +47,6 @@
                             <ng-container *ngIf="sourceContactInfo$ | async as sourceContactInfo">
                                 <div class="field">
                                     <source-contact-list
-                                        [leadId]="leadInfo?.id"
                                         [selectedKey]="sourceContactInfo.sourceContactLevel1?.id"
                                         [targetSelector]="'#affiliateContactLink'"
                                         (onItemSelected)="onSourceContactChanged($event)">
