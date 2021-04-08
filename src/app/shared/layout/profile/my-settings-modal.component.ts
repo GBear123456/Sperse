@@ -51,6 +51,9 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
         pasteFilter: null,
         allowedContent: true,
         startupShowBorders: false,
+        qtBorder: 0,
+        stylesSet: [],
+        contentsCss: [],
         toolbar: [
             { name: 'document', items: [ 'Source', '-', 'Preview'] },
             { name: 'clipboard', items: [ 'Cut', 'Copy', 'Paste', 'PasteText', '-', 'Undo', 'Redo' ] },
