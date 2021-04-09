@@ -72,7 +72,7 @@
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(activeMessage?.fromUserContactPhotoPublicId) + ')'}" class="img-circle avatar"></div>  
                         <div class="details">
                             <span class="from">{{activeMessage?.fromUserName}}</span>
-                            <span class="to">{{activeMessage?.isInbound ? ls.l('to') : ls.l('from')}} {{activeMessage?.isInbound ? activeMessage?.from : activeMessage?.to}}</span>
+                            <span class="to" *ngIf="(activeMessage?.isInbound ? activeMessage?.from : activeMessage?.to) as contact">{{ls.l(activeMessage?.isInbound ? 'to' : 'from')}} {{contact}}</span>
                         </div>
                         <div class="date">{{activeMessage?.creationTime | datetime: formatting.fieldDateTime}}</div>
                         <div class="status {{activeMessage?.statusCalculated | lowercase}}">{{activeMessage?.statusCalculated}}</div>
