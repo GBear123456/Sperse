@@ -29,7 +29,7 @@
         </div>
         <div data-scrollable="true">
             <dx-data-grid id="gridContainer"
-                          [elementAttr]="{ class: 'notificationGrid' }"
+                          class="alone notificationGrid"
                           [dataSource]="notificationsDataSource"
                           sorting="none"
                           height="calc(100vh - 158px)"
@@ -58,7 +58,7 @@
                 <div *dxTemplate="let options of 'iconCellTemplate'">
                     <i class="fa {{options.data.icon}} {{options.data.state}}"></i>
                 </div>
-                <div *dxTemplate="let options of 'dateCellTemplate'">
+                <div *dxTemplate="let options of 'dateCellTemplate'" style="margin-rigth: 20px">
                     {{options.data.time}}
                     <div *ngIf="options.data.state === 'UNREAD'">
                         <a class="set-notification-as-read"

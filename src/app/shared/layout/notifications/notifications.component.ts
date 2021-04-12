@@ -28,6 +28,7 @@ export class NotificationsComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
 
+    totalCount: number;
     readStateFilter: UserNotificationState;
     loading = false;
     selectBoxList = [
@@ -39,6 +40,7 @@ export class NotificationsComponent implements OnInit {
         key: 'userNotificationId',
         load: (loadOptions) => {
             this.modalDialog.startLoading();
+            this.processToalCountRequest();
             return this.notificationService.getUserNotifications(
                 this.readStateFilter,
                 loadOptions.take,
@@ -53,9 +55,9 @@ export class NotificationsComponent implements OnInit {
                 return notifications;
             });
         },
-        totalCount: () => this.notificationService.getUserNotificationCount(
-            this.readStateFilter
-        ).toPromise()
+        totalCount: (loadOptions: any) => {
+            return this.totalCount || loadOptions.take;
+        }
     });
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
 
@@ -71,7 +73,18 @@ export class NotificationsComponent implements OnInit {
         this.registerToEvents();
     }
 
+    processToalCountRequest() {
+        if (!this.totalCount)
+            this.notificationService.getUserNotificationCount(
+                this.readStateFilter
+            ).subscribe(totalCount => {
+                this.notificationsDataSource['_totalCount'] = this.totalCount = totalCount;
+                this.dataGrid.instance.repaint();
+            });
+    }
+
     loadNotifications(): void {
+        this.totalCount = undefined;
         this.dataGrid.instance.refresh();
     }
 
