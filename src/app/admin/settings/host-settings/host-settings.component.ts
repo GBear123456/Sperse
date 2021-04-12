@@ -4,6 +4,7 @@ import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, Change
 /** Third party imports */
 import { forkJoin } from 'rxjs';
 import { finalize, tap } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
@@ -17,6 +18,7 @@ import {
 import { AppPermissions } from '@shared/AppPermissions';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppConsts } from '@root/shared/AppConsts';
+import { WelcomeEmailDialogComponent } from '@shared/common/tenant-settings-wizard/user-management/weclome-email-dialog/welcome-email-dialog.component';
 
 @Component({
     templateUrl: './host-settings.component.html',
@@ -65,7 +67,8 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         private commonLookupService: CommonLookupServiceProxy,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private appSessionService: AppSessionService,
-        private changeDetection: ChangeDetectorRef
+        private changeDetection: ChangeDetectorRef,
+        public dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -123,6 +126,24 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden(false);
+    }
+
+    onWelcomeEmailTemplateClick() {
+        let dialogComponent = this.dialog.open(WelcomeEmailDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                templateId: this.hostSettings.userManagement.welcomeEmailTemplateId,
+                title: this.l('Template')
+            }
+        }).componentInstance;
+        dialogComponent.onSave.subscribe((data) => {
+            if (data)
+                this.hostSettings.userManagement.welcomeEmailTemplateId = data.templateId
+            dialogComponent.close();
+        });
+        return dialogComponent;
     }
 
     sendTestEmail(): void {

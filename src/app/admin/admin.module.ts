@@ -84,6 +84,7 @@ import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading
 import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.module';
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
+import { TenantSettingsWizardModule } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.module';
 
 @NgModule({
     imports: [
@@ -138,7 +139,8 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         ItemDetailsLayoutModule,
         LoadingSpinnerModule,
         ActionMenuModule,
-        ModalDialogModule
+        ModalDialogModule,
+        TenantSettingsWizardModule
     ],
     declarations: [
         UsersComponent,

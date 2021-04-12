@@ -14,7 +14,12 @@ import { InlineSVGModule } from 'ng-inline-svg';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
+import { DxListModule } from 'devextreme-angular/ui/list';
+import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { NgxFileDropModule } from 'ngx-file-drop';
+import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
+import { CKEditorModule } from 'ckeditor4-angular';
 
 /** Application imports */
 import { TenantSettingsWizardComponent } from './tenant-settings-wizard.component';
@@ -27,6 +32,7 @@ import { SecurityComponent } from '@shared/common/tenant-settings-wizard/securit
 import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard/tenant-management/tenant-management.component';
 import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/user-management/user-management.component';
 import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/member-portal/member-portal.component';
+import { WelcomeEmailDialogComponent } from './user-management/weclome-email-dialog/welcome-email-dialog.component';
 
 @NgModule({
     imports: [
@@ -39,13 +45,18 @@ import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/mem
         MatSelectModule,
         DxCheckBoxModule,
         DxSelectBoxModule,
+        DxTooltipModule,
+        DxListModule,
+        DxTextBoxModule,
         InlineSVGModule,
         MatInputModule,
         FormsModule,
         TimeZoneComboModule,
-        NgxFileDropModule
+        NgxFileDropModule,
+        ModalDialogModule,
+        CKEditorModule
     ],
-    exports: [ TenantSettingsWizardComponent ],
+    exports: [TenantSettingsWizardComponent],
     declarations: [
         TenantSettingsWizardComponent,
         AppearanceComponent,
@@ -55,8 +66,12 @@ import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/mem
         SecurityComponent,
         TenantManagementComponent,
         MemberPortalComponent,
-        UserManagementComponent
+        UserManagementComponent,
+        WelcomeEmailDialogComponent
     ],
-    entryComponents: [ TenantSettingsWizardComponent ]
+    entryComponents: [
+        TenantSettingsWizardComponent,
+        WelcomeEmailDialogComponent
+    ]
 })
-export class TenantSettingsWizardModule {}
+export class TenantSettingsWizardModule { }

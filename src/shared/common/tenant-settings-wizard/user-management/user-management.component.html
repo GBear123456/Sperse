@@ -31,6 +31,10 @@
                       [text]="ls.l('EmailConfirmationRequiredForLogin')"
                       [(value)]="tenantSettings.isEmailConfirmationRequiredForLogin">
         </dx-check-box>
+        <div class="email-template-link">
+            <i class="edit fa fa-pencil"></i>
+            <span (click)="onWelcomeEmailTemplateClick()">{{ls.l("InvitationEmailTemplate")}}</span>
+        </div>
     </div>
 </ng-container>
 <ng-container *ngIf="hostSettings">
@@ -45,5 +49,9 @@
                       [text]="ls.l('SmsVerificationEnabled')"
                       [(value)]="hostSettings.smsVerificationEnabled">
         </dx-check-box>
+    </div>
+    <div class="email-template-link">
+        <i class="edit fa fa-pencil"></i>
+        <span (click)="onWelcomeEmailTemplateClick()">{{ls.l("InvitationEmailTemplate")}}</span>
     </div>
 </ng-container>
