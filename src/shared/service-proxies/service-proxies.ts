@@ -63129,6 +63129,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     total!: number | undefined;
     commissionableAmount!: number | undefined;
     productCode!: string | undefined;
+    productName!: string | undefined;
     description!: string | undefined;
     sortOrder!: number | undefined;
 
@@ -63150,6 +63151,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.total = data["total"];
             this.commissionableAmount = data["commissionableAmount"];
             this.productCode = data["productCode"];
+            this.productName = data["productName"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
         }
@@ -63171,6 +63173,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["total"] = this.total;
         data["commissionableAmount"] = this.commissionableAmount;
         data["productCode"] = this.productCode;
+        data["productName"] = this.productName;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         return data; 
@@ -63185,6 +63188,7 @@ export interface IInvoiceLineInfo {
     total: number | undefined;
     commissionableAmount: number | undefined;
     productCode: string | undefined;
+    productName: string | undefined;
     description: string | undefined;
     sortOrder: number | undefined;
 }
@@ -70262,11 +70266,13 @@ export enum RecurringPaymentFrequency {
 }
 
 export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInput {
-    contactId!: number;
+    contactId!: number | undefined;
+    contactXref!: string | undefined;
     leadId!: number | undefined;
     orderNumber!: string | undefined;
     subscriptions!: SubscriptionInput[] | undefined;
     productId!: number | undefined;
+    productCode!: string | undefined;
     paymentPeriodType!: RecurringPaymentFrequency | undefined;
     updateThirdParty!: boolean | undefined;
     hasRecurringBilling!: boolean | undefined;
@@ -70283,6 +70289,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
+            this.contactXref = data["contactXref"];
             this.leadId = data["leadId"];
             this.orderNumber = data["orderNumber"];
             if (data["subscriptions"] && data["subscriptions"].constructor === Array) {
@@ -70291,6 +70298,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
                     this.subscriptions.push(SubscriptionInput.fromJS(item));
             }
             this.productId = data["productId"];
+            this.productCode = data["productCode"];
             this.paymentPeriodType = data["paymentPeriodType"];
             this.updateThirdParty = data["updateThirdParty"];
             this.hasRecurringBilling = data["hasRecurringBilling"];
@@ -70307,6 +70315,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["contactXref"] = this.contactXref;
         data["leadId"] = this.leadId;
         data["orderNumber"] = this.orderNumber;
         if (this.subscriptions && this.subscriptions.constructor === Array) {
@@ -70315,6 +70324,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
                 data["subscriptions"].push(item.toJSON());
         }
         data["productId"] = this.productId;
+        data["productCode"] = this.productCode;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["updateThirdParty"] = this.updateThirdParty;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
@@ -70323,11 +70333,13 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
 }
 
 export interface IUpdateOrderSubscriptionInput {
-    contactId: number;
+    contactId: number | undefined;
+    contactXref: string | undefined;
     leadId: number | undefined;
     orderNumber: string | undefined;
     subscriptions: SubscriptionInput[] | undefined;
     productId: number | undefined;
+    productCode: string | undefined;
     paymentPeriodType: RecurringPaymentFrequency | undefined;
     updateThirdParty: boolean | undefined;
     hasRecurringBilling: boolean | undefined;
