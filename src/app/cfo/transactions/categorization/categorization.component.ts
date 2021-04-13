@@ -65,7 +65,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         let instance = this.categoryList
             && this.categoryList.instance;
         if (instance)
-            instance.refresh();
+            instance.repaint();
     }
     get filteredRowsData(): Category[] {
         return this._filteredRowsData;
@@ -826,7 +826,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     reloadTransactionsCountDataSource(): Promise<any> & JQueryPromise<any> {
         if (!this.transactionsCountDataSource)
             this.initTransactionsTotalCount();
-        this.transactionsCountDataSource.store()['_url'] = this.getODataUrl('TransactionCount', this._transactionsFilterQuery);
+        this.transactionsCountDataSource.store()['_url'] = 
+            this.getODataUrl('TransactionCount', this._transactionsFilterQuery);
         return this.transactionsCountDataSource.load();
     }
 
@@ -1021,27 +1022,22 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     updateFilterSelection(wrapper?: HTMLElement, itemKey?: number) {
-        const filterClass = 'filtered-category';
         if (wrapper) {
             let category = this.categories.find(
                 (category: Category) => category.key === itemKey
             );
             if (category) {
                 let children = this.getChildren(category);
-                if (wrapper.classList.contains(filterClass)) {
-                    wrapper.classList.remove(filterClass);
+                if (wrapper.classList.contains('filtered-category')) {
                     this.filteredRowsData = this.filteredRowsData.filter(entity => {
                         return category.key != entity.key && children.every(child => child.key != entity.key);
                     });
                 } else {
-                    wrapper.classList.add(filterClass);
-                    this.filteredRowsData = this.filteredRowsData.concat([category], children);
+                    this.filteredRowsData = _.union(this.filteredRowsData, [category], children);
                 }
             }
-        } else {
-            $('.' + filterClass).removeClass(filterClass);
+        } else
             this.filteredRowsData = [];
-        }
     }
 
     getChildren(parent) {
