@@ -5,6 +5,7 @@ export enum WelcomeEmailTags {
     Password = "Password",
     BaseUrl = "BaseUrl",
     SenderSystemName = "SenderSystemName",
+    SenderEmailSignature = "SenderEmailSignature",
     AutologinLink = "AutologinLink",
     TrackingPixel = "TrackingPixel"
 }

@@ -47,7 +47,7 @@ export class WelcomeEmailDialogComponent implements OnInit {
     startCase = startCase;
     tagLastValue: string;
     tagsTooltipVisible = false;
-    tagsList = [WelcomeEmailTags.FirstName, WelcomeEmailTags.LastName, WelcomeEmailTags.UserEmail, WelcomeEmailTags.Password, WelcomeEmailTags.BaseUrl, WelcomeEmailTags.SenderSystemName,
+    tagsList = [WelcomeEmailTags.FirstName, WelcomeEmailTags.LastName, WelcomeEmailTags.UserEmail, WelcomeEmailTags.Password, WelcomeEmailTags.BaseUrl, WelcomeEmailTags.SenderSystemName, WelcomeEmailTags.SenderEmailSignature,
         WelcomeEmailTags.AutologinLink, WelcomeEmailTags.TrackingPixel];
     readonly SystemDefaultId = -1;
     disableControls = false;
