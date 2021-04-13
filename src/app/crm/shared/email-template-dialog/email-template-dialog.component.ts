@@ -93,6 +93,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     emailRegEx = AppConsts.regexPatterns.email;
 
     ckConfig: any = {
+        enterMode: 3, /*CKEDITOR.ENTER_DIV*/
         pasteFilter: null,
         allowedContent: true,
         toolbarCanCollapse: true,
