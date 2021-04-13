@@ -27,7 +27,8 @@
                 <div>
                     <div id="tenantsGrid">
                         <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                        <dx-data-grid class="main-component-view"
+                        <dx-data-grid id="gridContainer"
+                                      class="main-component-view"
                                       [renderAsync]="true"
                                       [remoteOperations]="true"
                                       [allowColumnReordering]="true"
