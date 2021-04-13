@@ -241,6 +241,8 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
         this.loadingService.startLoading();
         this.orderSubscriptionProxy.update(new UpdateOrderSubscriptionInput({
+            productCode: undefined,
+            contactXref: undefined,
             contactId: this.data.contactInfo.id,
             leadId: leadId,
             orderNumber: undefined,
