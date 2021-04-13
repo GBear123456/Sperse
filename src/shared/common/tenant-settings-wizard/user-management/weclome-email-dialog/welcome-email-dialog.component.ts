@@ -13,6 +13,7 @@ import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppFeatures } from '@shared/AppFeatures';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
@@ -44,8 +45,10 @@ export class WelcomeEmailDialogComponent implements OnInit {
 
     ckEditor: any;
     startCase = startCase;
+    tagLastValue: string;
     tagsTooltipVisible = false;
-    tagsList = [WelcomeEmailTags.FirstName, WelcomeEmailTags.LastName, WelcomeEmailTags.UserEmail, WelcomeEmailTags.Password, WelcomeEmailTags.AutologinLink, WelcomeEmailTags.TrackingPixel];
+    tagsList = [WelcomeEmailTags.FirstName, WelcomeEmailTags.LastName, WelcomeEmailTags.UserEmail, WelcomeEmailTags.Password, WelcomeEmailTags.BaseUrl, WelcomeEmailTags.SenderSystemName,
+        WelcomeEmailTags.AutologinLink, WelcomeEmailTags.TrackingPixel];
     readonly SystemDefaultId = -1;
     disableControls = false;
     loaded = false;
@@ -162,8 +165,8 @@ export class WelcomeEmailDialogComponent implements OnInit {
             name: this.getTemplateName(),
             type: EmailTemplateType.WelcomeEmail,
             subject: this.data.subject,
-            cc: null,
-            bcc: null,
+            cc: this.data.cc,
+            bcc: this.data.bcc,
             body: this.data.body
         };
 
@@ -185,6 +188,17 @@ export class WelcomeEmailDialogComponent implements OnInit {
 
     refresh() {
         this._refresh.next(null);
+    }
+
+    onTagBoxInitialized(event) {
+        if (!event.component.option('dataSource') || !event.component.option('dataSource').length)
+            event.component.option('openOnFieldClick', false);
+    }
+
+    emailInputFocusOut(event) {
+        event.text = this.tagLastValue || event.event.target.value;
+        this.tagLastValue = '';
+        this.onCustomItemCreating(event);
     }
 
     startLoading() {
@@ -216,6 +230,8 @@ export class WelcomeEmailDialogComponent implements OnInit {
         ).subscribe((res: GetTemplateReponse) => {
             this.data.body = res.body;
             this.data.subject = res.subject;
+            this.data.cc = res.cc;
+            this.data.bcc = res.bcc;
             this.loaded = true;
             this.invalidate();
         });
@@ -224,6 +240,29 @@ export class WelcomeEmailDialogComponent implements OnInit {
     invalidate() {
         this.updateDataLength();
         this.changeDetectorRef.markForCheck();
+    }
+
+    onCustomItemCreating(event) {
+        let field = event.component.option('name'),
+            values = event.text.split(/[,|;]+(?=(?:(?:[^"]*"){2})*[^"]*$)/).map(item =>
+                AppConsts.regexPatterns.emailWithName.test(item) ? item : ''),
+            validValues = values.filter(Boolean),
+            currentList = this.data[field];
+
+        validValues = validValues.filter((item, pos) => {
+            return validValues.indexOf(item) == pos &&
+                (!currentList || currentList.indexOf(item) < 0);
+        });
+
+        setTimeout(() => {
+            if (currentList)
+                Array.prototype.push.apply(currentList, validValues);
+            else
+                this.data[field] = validValues;
+            this.changeDetectorRef.markForCheck();
+        });
+
+        return event.customItem = '';
     }
 
     onNewTemplate(event) {
@@ -254,6 +293,8 @@ export class WelcomeEmailDialogComponent implements OnInit {
     clearControlValues() {
         this.data.subject = '';
         this.data.body = '';
+        this.data.cc = '';
+        this.data.bcc = '';
     }
 
     onCKReady(event) {
@@ -274,6 +315,10 @@ export class WelcomeEmailDialogComponent implements OnInit {
     onTagClick(event) {
         this.addTextTag(event.itemData);
         this.tagsTooltipVisible = false;
+    }
+
+    onKeyUp(event) {
+        this.tagLastValue = event.event.target.value;
     }
 
     insertText(text: string) {

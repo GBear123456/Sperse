@@ -27,6 +27,40 @@
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover" #scrollView>
             <div class="row">
+                <div class="field-area">
+                    <label class="caption">{{ls.l('CC')}}:</label>
+                    <dx-tag-box name="cc"
+                                height="40px"
+                                width="calc(100% - 35px)"
+                                placeholder=""
+                                noDataText=""
+                                [multiline]="false"
+                                [acceptCustomValue]="true"
+                                [disabled]="disableControls"
+                                [(value)]="data.cc"
+                                (onKeyUp)="onKeyUp($event)"
+                                (onInitialized)="onTagBoxInitialized($event)"
+                                (onFocusOut)="emailInputFocusOut($event)"
+                                (onCustomItemCreating)="onCustomItemCreating($event)">
+                    </dx-tag-box>
+                </div>
+                <div class="field-area">
+                    <label class="caption">{{ls.l('BCC')}}:</label>
+                    <dx-tag-box name="bcc"
+                                height="40px"
+                                width="calc(100% - 46px)"
+                                noDataText=""
+                                placeholder=""
+                                [multiline]="false"
+                                [acceptCustomValue]="true"
+                                [disabled]="disableControls"
+                                [(value)]="data.bcc"
+                                (onKeyUp)="onKeyUp($event)"
+                                (onInitialized)="onTagBoxInitialized($event)"
+                                (onFocusOut)="emailInputFocusOut($event)"
+                                (onCustomItemCreating)="onCustomItemCreating($event)">
+                    </dx-tag-box>
+                </div>
                 <div class="field-area subject">
                     <label class="caption">{{ls.l('Subject')}}:</label>
                     <dx-text-box name="subject"

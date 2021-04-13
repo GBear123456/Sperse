@@ -17,6 +17,7 @@ import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { CKEditorModule } from 'ckeditor4-angular';
@@ -48,6 +49,7 @@ import { WelcomeEmailDialogComponent } from './user-management/weclome-email-dia
         DxTooltipModule,
         DxListModule,
         DxTextBoxModule,
+        DxTagBoxModule,
         InlineSVGModule,
         MatInputModule,
         FormsModule,

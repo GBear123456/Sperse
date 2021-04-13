@@ -291,7 +291,28 @@
                 }
             }
 
-            dx-text-box {
+            dx-tag-box {
+                cursor: text;
+
+                &.dx-state-disabled {
+                    opacity: 0.5;
+                }
+
+                input {
+                    border-bottom: none;
+                    height: 30px;
+                }
+
+                .dx-texteditor-input-container {
+                    flex-wrap: wrap;
+                }
+
+                &[name="to"] .dx-texteditor-container:after {
+                    margin-right: 75px;
+                }
+            }
+
+            dx-text-box, dx-tag-box {
                 display: inline-block;
 
                 &.dx-invalid {
