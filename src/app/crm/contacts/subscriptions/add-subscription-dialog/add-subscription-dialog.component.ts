@@ -63,7 +63,10 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     products: ProductDto[];
     paymentPeriodTypes: RecurringPaymentFrequency[] = [];
     serviceTypes: ServiceProductDto[] = null;
+
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
+        productCode: undefined,
+        contactXref: undefined,
         contactId: this.data.contactId,
         leadId: this.data.leadId,
         orderNumber: this.data.orderNumber,
