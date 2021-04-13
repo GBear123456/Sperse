@@ -4,6 +4,14 @@
     <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
         <div class="form-group clearfix options row" [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', '<b>' + userEmail + '</b>', tenantName)"></div>
         <div class="form-actions">
+            <dx-text-box *ngIf="isLinkSent"
+                width="130px"
+                height="40px"
+                mask="000-000"
+                accessKey="AccessCode"
+                [placeholder]="ls.l('EnterCode')"
+                (onKeyUp)="onAutoLoginCodeChanged($event)">
+            </dx-text-box>
             <button type="submit" class="submit" [hidden]="isLinkSent">
                 {{ls.l("Auto Login")}}
                 <img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">
