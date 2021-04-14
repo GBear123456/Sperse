@@ -729,12 +729,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     {
                         name: 'searchAll',
                         action: this.searchAllClick.bind(this),
-                        visible: !!(!AppConsts.isMobile && this.searchValue && this.searchValue.length > 0 && (this.filtersService.hasFilterSelected || this.isCategoriesSelected())),
+                        visible: !!(!AppConsts.isMobile && this.searchValue && this.searchValue.length > 0 && (this.filtersService.hasFilterSelected || this.areCategoriesSelected())),
                         options: {
                             text: this.l('Search All')
                         },
                         attr: {
-                            'filter-selected': this.searchValue && this.searchValue.length > 0 && (this.filtersService.hasFilterSelected || this.isCategoriesSelected()),
+                            'filter-selected': this.searchValue && this.searchValue.length > 0 && (this.filtersService.hasFilterSelected || this.areCategoriesSelected()),
                             'custaccesskey': 'search-container'
                         }
                     }
@@ -1059,7 +1059,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     }
 
                     if (filterName == 'classified') {
-                        if (this.isCategoriesSelected() && filter.items['no'].value === true && filter.items['yes'].value !== true) {
+                        if (this.areCategoriesSelected() && filter.items['no'].value === true && filter.items['yes'].value !== true) {
                             this.clearCategoriesFilters();
                             this.categorizationComponent.clearFilterSelection();
                         }
@@ -1198,7 +1198,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.initToolbarConfig();
     }
 
-    private isCategoriesSelected() {
+    private areCategoriesSelected() {
         return Boolean(this.categoriesRowsData && this.categoriesRowsData.length);
     }
 
@@ -1253,7 +1253,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             return;
 
         let transactionKeys = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowKeys() : [];
-        if (!initial && (this.isCategoriesSelected() || Boolean(transactionKeys.length)))
+        if (!initial && (this.areCategoriesSelected() || Boolean(transactionKeys.length)))
             this.categoriesShowed = true;
 
         let img = new Image();
@@ -1385,7 +1385,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         suppressCashflowMismatch: suppressCashflowTypeMismatch
                     })
                 ).subscribe(() => {
-                    if (this.filtersService.hasFilterSelected || this.isCategoriesSelected()) {
+                    if (this.filtersService.hasFilterSelected || this.areCategoriesSelected()) {
                         this.dataGrid.instance.deselectAll();
                         this.refreshDataGrid();
                     } else {
