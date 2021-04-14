@@ -58,6 +58,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild('tagsButton', { static: false }) tagsButton: ElementRef;
 
     ckEditor: any;
+    templateLoaded: boolean;
     showCC = false;
     showBCC = false;
     tagLastValue: string;
@@ -141,12 +142,15 @@ export class EmailTemplateDialogComponent implements OnInit {
 
         if (this.data.templateId)
             this.loadTemplateById(this.data.templateId);
-        else if (!this.data.tags && this.data.contact)
-            this.communicationProxy.getEmailData(
-                undefined, this.data.contact.id
-            ).subscribe((res: GetEmailDataOutput) => {
-                this.data.tags = res.tags;
-            });
+        else {
+            if (!this.data.tags && this.data.contact)
+                this.communicationProxy.getEmailData(
+                    undefined, this.data.contact.id
+                ).subscribe((res: GetEmailDataOutput) => {
+                    this.data.tags = res.tags;
+                });
+            this.templateLoaded = true;
+        }
     }
 
     ngOnInit() {
@@ -325,8 +329,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onTemplateChanged(event) {
+        this.data.templateId = event.value;
         if (event.value) {
-            this.data.templateId = event.value;
             if (this.templateEditMode || this.data.switchTemplate)
                 this.loadTemplateById(event.value);
             else
@@ -347,6 +351,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.showBCC = Boolean(res.bcc && res.bcc.length);
             this.onTemplateChange.emit(templateId);
             this.invalidate();
+            this.templateLoaded = true;
         });
     }
 
