@@ -6,7 +6,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
-import { InstanceServiceProxy, NotificationServiceProxy, TenantSubscriptionServiceProxy, UserNotificationDto } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, NotificationServiceProxy, TenantSubscriptionServiceProxy, UserNotificationDto, UserNotificationState, GetNotificationsOutput } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from '../UserNotificationHelper';
 import { PaymentWizardComponent } from '../../../common/payment-wizard/payment-wizard.component';
 import { AppService } from '@app/app.service';
@@ -17,6 +17,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { ConfigInterface } from '@app/shared/common/config.interface';
+
 
 @Component({
     templateUrl: './header-notifications.component.html',
@@ -30,7 +31,12 @@ import { ConfigInterface } from '@app/shared/common/config.interface';
 })
 export class HeaderNotificationsComponent implements OnInit {
     notifications: IFormattedUserNotification[] = [];
-    unreadNotificationCount = 0;
+    get unreadNotificationCount(): number {
+        return this.userNotificationHelper.unreadNotificationCount;
+    }
+    set unreadNotificationCount(val: number) {
+        this.userNotificationHelper.unreadNotificationCount = val;
+    }
     shownLoginInfo: { fullName, email, tenantName?};
     tenancyName = '';
     userName = '';
@@ -119,8 +125,8 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     loadNotifications(): void {
-        this.notificationService.getUserNotifications(undefined, 3, 0).subscribe(result => {
-            this.unreadNotificationCount = result.unreadCount;
+        this.notificationService.getUserNotifications(UserNotificationState._0, 3, 0).subscribe((result: GetNotificationsOutput) => {
+            this.unreadNotificationCount = result.items.length;
             this.notifications = [];
             $.each(result.items, (index, item: UserNotificationDto) => {
                 this.notifications.push(this.userNotificationHelper.format(<any>item));
@@ -139,13 +145,18 @@ export class HeaderNotificationsComponent implements OnInit {
         });
 
         abp.event.on('app.notifications.read', userNotificationId => {
-            for (let i = 0; i < this.notifications.length; i++) {
-                if (this.notifications[i].userNotificationId === userNotificationId) {
-                    this.notifications[i].state = 'READ';
-                }
-            }
-
             this.unreadNotificationCount -= 1;
+            if (this.unreadNotificationCount <= 0)
+                this.loadNotifications();
+            else {
+                this.notifications.some(notification => {
+                    if (notification.userNotificationId === userNotificationId) {
+                        notification.isUnread = false;
+                        notification.state = 'READ';
+                        return true;
+                    }
+                });
+            }
         });
     }
 

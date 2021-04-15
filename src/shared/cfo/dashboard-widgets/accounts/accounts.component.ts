@@ -95,11 +95,11 @@ export class AccountsComponent extends CFOComponentBase implements OnInit {
             takeUntil(this.destroy$),
             switchMap((data) => this.componentIsActivated ? of(data) : this.lifeCycleService.activate$.pipe(first(), mapTo(data))),
             tap(() => this.loadingService.startLoading(this.dailyStats.nativeElement)),
-            switchMap(([currencyId, bankAccountIds, period, ]: [string, number[], CalendarValuesModel, null]) => {
+            switchMap(([currencyId, bankAccountIds, period,]: [string, number[], CalendarValuesModel, null]) => {
                 return this.dashboardProxy.getDailyBalanceStats(
                     InstanceType[this.instanceType],
                     this.instanceId,
-                    bankAccountIds,
+                    bankAccountIds && bankAccountIds.length ? bankAccountIds.join('_') : undefined,
                     currencyId,
                     DateHelper.getStartDate(period.from.value),
                     DateHelper.getEndDate(period.to.value)

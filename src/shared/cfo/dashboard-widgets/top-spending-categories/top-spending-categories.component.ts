@@ -53,7 +53,7 @@ export class TopSpendingCategoriesComponent implements OnInit, OnDestroy {
                 this.cfoService.instanceType as InstanceType,
                 this.cfoService.instanceId,
                 5,
-                selectedBankAccountsIds,
+                selectedBankAccountsIds && selectedBankAccountsIds.length ? selectedBankAccountsIds.join('_') : undefined,
                 currencyId,
                 DateHelper.getStartDate(period.from.value),
                 DateHelper.getEndDate(period.to.value)

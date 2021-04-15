@@ -13183,18 +13183,18 @@ export class DashboardServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
-     * @bankAccountIds (optional) 
+     * @bankAccountIdsString (optional) 
      * @startDate (optional) 
      * @return Success
      */
-    getDailyBalanceStats(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, bankAccountIds: number[] | null | undefined, currencyId: string, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetDailyBalanceStatsOutput> {
+    getDailyBalanceStats(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, bankAccountIdsString: string | null | undefined, currencyId: string, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetDailyBalanceStatsOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetDailyBalanceStats?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
-        if (bankAccountIds !== undefined)
-            bankAccountIds && bankAccountIds.forEach(item => { url_ += "BankAccountIds=" + encodeURIComponent("" + item) + "&"; });
+        if (bankAccountIdsString !== undefined)
+            url_ += "BankAccountIdsString=" + encodeURIComponent("" + bankAccountIdsString) + "&"; 
         if (currencyId === undefined || currencyId === null)
             throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
         else
@@ -13256,11 +13256,11 @@ export class DashboardServiceProxy {
      * @instanceType (optional) 
      * @instanceId (optional) 
      * @maxCount (optional) 
-     * @bankAccountIds (optional) 
+     * @bankAccountIdsString (optional) 
      * @startDate (optional) 
      * @return Success
      */
-    getSpendingCategories(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, maxCount: number | null | undefined, bankAccountIds: number[] | null | undefined, currencyId: string, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetSpendingCategoriesOutput[]> {
+    getSpendingCategories(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, maxCount: number | null | undefined, bankAccountIdsString: string | null | undefined, currencyId: string, startDate: moment.Moment | null | undefined, endDate: moment.Moment): Observable<GetSpendingCategoriesOutput[]> {
         let url_ = this.baseUrl + "/api/services/CFO/Dashboard/GetSpendingCategories?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -13268,8 +13268,8 @@ export class DashboardServiceProxy {
             url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
         if (maxCount !== undefined)
             url_ += "MaxCount=" + encodeURIComponent("" + maxCount) + "&"; 
-        if (bankAccountIds !== undefined)
-            bankAccountIds && bankAccountIds.forEach(item => { url_ += "BankAccountIds=" + encodeURIComponent("" + item) + "&"; });
+        if (bankAccountIdsString !== undefined)
+            url_ += "BankAccountIdsString=" + encodeURIComponent("" + bankAccountIdsString) + "&"; 
         if (currencyId === undefined || currencyId === null)
             throw new Error("The parameter 'currencyId' must be defined and cannot be null.");
         else
@@ -22346,6 +22346,61 @@ export class NotificationServiceProxy {
             }));
         }
         return _observableOf<GetNotificationsOutput>(<any>null);
+    }
+
+    /**
+     * @state (optional) 
+     * @return Success
+     */
+    getUserNotificationCount(state: UserNotificationState | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/Platform/Notification/GetUserNotificationCount?";
+        if (state !== undefined)
+            url_ += "state=" + encodeURIComponent("" + state) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserNotificationCount(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserNotificationCount(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUserNotificationCount(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
     }
 
     /**
@@ -37182,7 +37237,7 @@ export class UserServiceProxy {
      * @skipCount (optional) 
      * @return Success
      */
-    getUsers(filter: string | null | undefined, permissions: string[] | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, group: UserGroup | null | undefined, isActive: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<UserListDtoPagedResultDto> {
+    getUsers(filter: string | null | undefined, permissions: string[] | null | undefined, role: number | null | undefined, onlyLockedUsers: boolean | null | undefined, group: UserGroup | null | undefined, isActive: boolean | null | undefined, sorting: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<UserListDtoListResultDto> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetUsers?";
         if (filter !== undefined)
             url_ += "Filter=" + encodeURIComponent("" + filter) + "&"; 
@@ -37220,14 +37275,14 @@ export class UserServiceProxy {
                 try {
                     return this.processGetUsers(<any>response_);
                 } catch (e) {
-                    return <Observable<UserListDtoPagedResultDto>><any>_observableThrow(e);
+                    return <Observable<UserListDtoListResultDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<UserListDtoPagedResultDto>><any>_observableThrow(response_);
+                return <Observable<UserListDtoListResultDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetUsers(response: HttpResponseBase): Observable<UserListDtoPagedResultDto> {
+    protected processGetUsers(response: HttpResponseBase): Observable<UserListDtoListResultDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -37238,7 +37293,7 @@ export class UserServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? UserListDtoPagedResultDto.fromJS(resultData200) : new UserListDtoPagedResultDto();
+            result200 = resultData200 ? UserListDtoListResultDto.fromJS(resultData200) : new UserListDtoListResultDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -37246,7 +37301,7 @@ export class UserServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<UserListDtoPagedResultDto>(<any>null);
+        return _observableOf<UserListDtoListResultDto>(<any>null);
     }
 
     /**
@@ -53684,7 +53739,7 @@ export enum CommunicationMessageDeliveryStatus {
 }
 
 export class RecepientInfo implements IRecepientInfo {
-    email!: string | undefined;
+    recipient!: string | undefined;
     deliveryStatus!: CommunicationMessageDeliveryStatus | undefined;
     deliveryDate!: moment.Moment | undefined;
     openDate!: moment.Moment | undefined;
@@ -53700,7 +53755,7 @@ export class RecepientInfo implements IRecepientInfo {
 
     init(data?: any) {
         if (data) {
-            this.email = data["email"];
+            this.recipient = data["recipient"];
             this.deliveryStatus = data["deliveryStatus"];
             this.deliveryDate = data["deliveryDate"] ? moment(data["deliveryDate"].toString()) : <any>undefined;
             this.openDate = data["openDate"] ? moment(data["openDate"].toString()) : <any>undefined;
@@ -53716,7 +53771,7 @@ export class RecepientInfo implements IRecepientInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["email"] = this.email;
+        data["recipient"] = this.recipient;
         data["deliveryStatus"] = this.deliveryStatus;
         data["deliveryDate"] = this.deliveryDate ? this.deliveryDate.toISOString() : <any>undefined;
         data["openDate"] = this.openDate ? this.openDate.toISOString() : <any>undefined;
@@ -53725,7 +53780,7 @@ export class RecepientInfo implements IRecepientInfo {
 }
 
 export interface IRecepientInfo {
-    email: string | undefined;
+    recipient: string | undefined;
     deliveryStatus: CommunicationMessageDeliveryStatus | undefined;
     deliveryDate: moment.Moment | undefined;
     openDate: moment.Moment | undefined;
@@ -67402,8 +67457,6 @@ export interface IUserNotificationDto {
 }
 
 export class GetNotificationsOutput implements IGetNotificationsOutput {
-    unreadCount!: number | undefined;
-    totalCount!: number | undefined;
     items!: UserNotificationDto[] | undefined;
 
     constructor(data?: IGetNotificationsOutput) {
@@ -67417,8 +67470,6 @@ export class GetNotificationsOutput implements IGetNotificationsOutput {
 
     init(data?: any) {
         if (data) {
-            this.unreadCount = data["unreadCount"];
-            this.totalCount = data["totalCount"];
             if (data["items"] && data["items"].constructor === Array) {
                 this.items = [];
                 for (let item of data["items"])
@@ -67436,8 +67487,6 @@ export class GetNotificationsOutput implements IGetNotificationsOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["unreadCount"] = this.unreadCount;
-        data["totalCount"] = this.totalCount;
         if (this.items && this.items.constructor === Array) {
             data["items"] = [];
             for (let item of this.items)
@@ -67448,8 +67497,6 @@ export class GetNotificationsOutput implements IGetNotificationsOutput {
 }
 
 export interface IGetNotificationsOutput {
-    unreadCount: number | undefined;
-    totalCount: number | undefined;
     items: UserNotificationDto[] | undefined;
 }
 
@@ -70220,7 +70267,7 @@ export class PersonShortInfoDto implements IPersonShortInfoDto {
     fullName!: string | undefined;
     jobTitle!: string | undefined;
     ratingId!: number | undefined;
-    thumbnail!: string | undefined;
+    photoPublicId!: string | undefined;
 
     constructor(data?: IPersonShortInfoDto) {
         if (data) {
@@ -70237,7 +70284,7 @@ export class PersonShortInfoDto implements IPersonShortInfoDto {
             this.fullName = data["fullName"];
             this.jobTitle = data["jobTitle"];
             this.ratingId = data["ratingId"];
-            this.thumbnail = data["thumbnail"];
+            this.photoPublicId = data["photoPublicId"];
         }
     }
 
@@ -70254,7 +70301,7 @@ export class PersonShortInfoDto implements IPersonShortInfoDto {
         data["fullName"] = this.fullName;
         data["jobTitle"] = this.jobTitle;
         data["ratingId"] = this.ratingId;
-        data["thumbnail"] = this.thumbnail;
+        data["photoPublicId"] = this.photoPublicId;
         return data; 
     }
 }
@@ -70264,7 +70311,7 @@ export interface IPersonShortInfoDto {
     fullName: string | undefined;
     jobTitle: string | undefined;
     ratingId: number | undefined;
-    thumbnail: string | undefined;
+    photoPublicId: string | undefined;
 }
 
 export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
@@ -81269,11 +81316,10 @@ export interface IUserListDto {
     id: number | undefined;
 }
 
-export class UserListDtoPagedResultDto implements IUserListDtoPagedResultDto {
-    totalCount!: number | undefined;
+export class UserListDtoListResultDto implements IUserListDtoListResultDto {
     items!: UserListDto[] | undefined;
 
-    constructor(data?: IUserListDtoPagedResultDto) {
+    constructor(data?: IUserListDtoListResultDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -81284,7 +81330,6 @@ export class UserListDtoPagedResultDto implements IUserListDtoPagedResultDto {
 
     init(data?: any) {
         if (data) {
-            this.totalCount = data["totalCount"];
             if (data["items"] && data["items"].constructor === Array) {
                 this.items = [];
                 for (let item of data["items"])
@@ -81293,16 +81338,15 @@ export class UserListDtoPagedResultDto implements IUserListDtoPagedResultDto {
         }
     }
 
-    static fromJS(data: any): UserListDtoPagedResultDto {
+    static fromJS(data: any): UserListDtoListResultDto {
         data = typeof data === 'object' ? data : {};
-        let result = new UserListDtoPagedResultDto();
+        let result = new UserListDtoListResultDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["totalCount"] = this.totalCount;
         if (this.items && this.items.constructor === Array) {
             data["items"] = [];
             for (let item of this.items)
@@ -81312,8 +81356,7 @@ export class UserListDtoPagedResultDto implements IUserListDtoPagedResultDto {
     }
 }
 
-export interface IUserListDtoPagedResultDto {
-    totalCount: number | undefined;
+export interface IUserListDtoListResultDto {
     items: UserListDto[] | undefined;
 }
 

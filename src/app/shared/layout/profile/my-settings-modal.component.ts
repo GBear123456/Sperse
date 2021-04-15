@@ -47,6 +47,7 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     ckConfig: any = {
+        enterMode: 3, /*CKEDITOR.ENTER_DIV*/
         height: innerHeight - 320 + 'px',
         pasteFilter: null,
         allowedContent: true,

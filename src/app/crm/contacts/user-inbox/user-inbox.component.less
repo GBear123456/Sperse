@@ -32,6 +32,12 @@
             &.failed {
                 color: #f52222;
             }
+            &.delivered {
+                color: #0484ab;
+            }
+            &.inbox {
+                color: #eb9d35;
+            }
         }
 
         .avatar {
@@ -115,8 +121,8 @@
                             content: '';
                             display: block;
                             position: absolute;
-                            right: 20px;
-                            top: 40px;
+                            right: 50%;
+                            bottom: 5px;
                             border-right: 6px solid transparent;
                             border-left: 6px solid transparent;
                             border-top: 6px solid #000;
@@ -154,7 +160,7 @@
                         display: flex;
                         flex-flow: column;
                         padding-left: 12px;
-                        width: calc(100% - 80px);
+                        width: calc(100% - 115px);
                         .from {
                             font-size: 15px;
                             font-weight: 500;

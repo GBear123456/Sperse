@@ -231,7 +231,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 {
                     text: this.l('LoginToPortal'),
                     class: 'login',
-                    checkVisible: (lead: LeadDto) => !!lead.UserId && !!AppConsts.appMemberPortalUrl 
+                    checkVisible: (lead: LeadDto) => !!lead.UserId && !!AppConsts.appMemberPortalUrl
                         && (
                             this.impersonationIsGranted ||
                             this.permission.checkCGPermission(this.selectedContactGroup, 'UserInformation.AutoLogin')
@@ -408,7 +408,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         hidden: true,
         caption: 'pipelineId',
         items: {
-            PipelineId: new FilterItemModel()
+            PipelineId: new FilterItemModel({ isClearAllowed: false }, true)
         }
     });
 
@@ -648,12 +648,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.leadFields.CompanyName,
         this.leadFields[this.dateField],
         this.leadFields.PhotoPublicId,
+        this.leadFields.PropertyName,
+        this.leadFields.PropertyId,
         this.leadFields.Email,
         this.leadFields.Phone,
-        this.leadFields.AffiliateContactName,
-        this.leadFields.AffiliateContactAffiliateCode,
-        this.leadFields.PropertyId,
-        this.leadFields.PropertyName,
         this.leadFields.Amount
     ].concat(
         this.isSmsAndEmailSendingAllowed ? [ this.leadFields.Phone ] : []
@@ -727,15 +725,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             [
                                 this.leadFields.Id,
                                 this.leadFields.CustomerId,
+                                this.leadFields.PropertyId,
                                 this.leadFields.OrganizationId,
                                 this.leadFields.UserId,
                                 this.leadFields.Email,
-                                this.leadFields.Phone,
-                                this.leadFields.StageChecklistPointDoneCount,
-                                this.leadFields.AffiliateContactName,
-                                this.leadFields.AffiliateContactAffiliateCode,
-                                this.leadFields.PropertyId,
-                                this.leadFields.PropertyName
+                                this.leadFields.Phone
                             ]
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;

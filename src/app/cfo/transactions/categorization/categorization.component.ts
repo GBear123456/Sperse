@@ -62,10 +62,10 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     @Input() categoryId: number;
     @Input() set filteredRowsData(values: Category[]) {
         this._filteredRowsData = values.slice(0);
-        let instance = this.categoryList 
+        let instance = this.categoryList
             && this.categoryList.instance;
-        if (instance) 
-            instance.refresh();            
+        if (instance)
+            instance.repaint();
     }
     get filteredRowsData(): Category[] {
         return this._filteredRowsData;
@@ -826,7 +826,8 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     reloadTransactionsCountDataSource(): Promise<any> & JQueryPromise<any> {
         if (!this.transactionsCountDataSource)
             this.initTransactionsTotalCount();
-        this.transactionsCountDataSource.store()['_url'] = this.getODataUrl('TransactionCount', this._transactionsFilterQuery);
+        this.transactionsCountDataSource.store()['_url'] = 
+            this.getODataUrl('TransactionCount', this._transactionsFilterQuery);
         return this.transactionsCountDataSource.load();
     }
 
@@ -848,9 +849,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 this.addActionButton('filter', $event.cellElement, () => {
                     const category: Category = $event.data;
                     let wrapper = $event.cellElement.parentElement;
-                    if (!this.clearSelection(wrapper, <number>category.key))
-                        this.filteredRowsData.push(category);
-        
+                    this.updateFilterSelection(wrapper, <number>category.key);
                     if (!this.showApplySelection)
                         this.applyFilterSelection();
                 });
@@ -877,7 +876,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             this.updateAccountingType($event);
         } else {
             let category = this.categorization.categories[$event.key];
-            $event.element.querySelector('.dx-treelist-focus-overlay').style.display = '';
             this.categoryTreeServiceProxy.updateCategory(
                 InstanceType[this._cfoService.instanceType], this._cfoService.instanceId,
                 UpdateCategoryInput.fromJS({
@@ -1007,9 +1005,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
                 this._prevClickDate = nowDate;
             }
         } else if (this.showFilterIcon && $event.event.target.nodeName != 'SPAN') {
-            if (!this.clearSelection($event.rowElement, $event.data.key))
-                this.filteredRowsData.push($event.data);
-
+            this.updateFilterSelection($event.rowElement, $event.data.key);
             if (!this.showApplySelection)
                 this.applyFilterSelection();
         }
@@ -1019,32 +1015,37 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         this.onFilterSelected.emit(this.filteredRowsData);
     }
 
-    clearSelection(wrapper?: HTMLElement, clearedItemKey?: number): boolean {
-        let clearFilter = true;
+    clearFilterSelection() {
         this.categoryList.instance.deselectAll();
-        if (wrapper) {
-            clearFilter = wrapper.classList.contains('filtered-category');
-            if (clearFilter)
-                wrapper.classList.remove('filtered-category');
-            else
-                wrapper.classList.add('filtered-category');
+        this.updateFilterSelection();
+        this.applyFilterSelection();
+    }
 
-            if (this.filteredRowsData && this.filteredRowsData.length) {
-                let filterItemIndex;
-                if (clearFilter && clearedItemKey) {
-                    filterItemIndex = this.filteredRowsData.findIndex(
-                        (category: Category) => category.key === clearedItemKey
-                    );
-                    if (filterItemIndex !== -1)
-                        this.filteredRowsData.splice(filterItemIndex, 1);
+    updateFilterSelection(wrapper?: HTMLElement, itemKey?: number) {
+        if (wrapper) {
+            let category = this.categories.find(
+                (category: Category) => category.key === itemKey
+            );
+            if (category) {
+                let children = this.getChildren(category);
+                if (wrapper.classList.contains('filtered-category')) {
+                    this.filteredRowsData = this.filteredRowsData.filter(entity => {
+                        return category.key != entity.key && children.every(child => child.key != entity.key);
+                    });
+                } else {
+                    this.filteredRowsData = _.union(this.filteredRowsData, [category], children);
                 }
             }
-        } else {
+        } else
             this.filteredRowsData = [];
-            $('.filtered-category').removeClass('filtered-category');
-            this.applyFilterSelection();
-        }
-        return clearFilter;
+    }
+
+    getChildren(parent) {
+        return (<any>this.categories).filter(
+            entity => entity.parent == parent.key
+        ).reduce((acc, val) => {
+            return acc.concat(val, this.getChildren(val));
+        }, []);
     }
 
     onRowPrepared($event) {
@@ -1094,7 +1095,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     addAccountingTypeRow(typeId) {
-        if (!this.settings.showAT) 
+        if (!this.settings.showAT)
             return;
 
         this.currentTypeId = typeId;
@@ -1109,8 +1110,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
         if (this.checkSelectedAll())
             this.filteredRowsData = [];
         else
-            this.filteredRowsData = this.categories.slice(0);
-        this.categoryList.instance.refresh();
+            this.filteredRowsData = this.categories;
     }
 
     insertAccountingType(typeId, name) {

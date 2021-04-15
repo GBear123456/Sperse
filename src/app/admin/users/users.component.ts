@@ -59,11 +59,13 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
 
     //Filters
+    invalidateTimeout: any;
     private filters: FilterModel[];
     selectedPermissions: string[] = [];
-    role: number;
     group = UserGroup.Employee;
     isActive = true;
+    role: number;
+
     public actionMenuItems: ActionMenuItem[] = [
         {
             text: this.l('LoginAsThisUser'),
@@ -112,6 +114,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     dataSource: DataSource;
     toolbarConfig: ToolbarGroupModel[];
     headerLabels: string[] = [this.l('Users')];
+    totalCount: number;
 
     constructor(
         injector: Injector,
@@ -142,12 +145,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     (loadOptions.sort || []).map((item) => {
                         return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
                     }).join(','), loadOptions.take || -1, loadOptions.skip
-                ).toPromise().then(response => {
-                    return {
-                        data: response.items,
-                        totalCount: response.totalCount
-                    };
-                });
+                ).toPromise().then(response => response.items);
+            },
+            totalCount: (loadOptions: any) => {
+                return this.totalCount || loadOptions.take;
             }
         });
 
@@ -155,16 +156,21 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     processUserCountRequest() {
-        this.userServiceProxy.getUserCount(
-            this.searchValue || undefined,
-            this.selectedPermissions || undefined,
-            this.role || undefined,
-            false,
-            this.group,
-            this.isActive
-        ).subscribe(res => {
-            this.headerLabels = [this.l('Users') + ' (' + res + ')'];
-        });
+        if (!this.totalCount) {
+            this.headerLabels = [this.l('Users')];
+            this.userServiceProxy.getUserCount(
+                this.searchValue || undefined,
+                this.selectedPermissions || undefined,
+                this.role || undefined,
+                false,
+                this.group,
+                this.isActive
+            ).subscribe(totalCount => {
+                this.headerLabels = [this.l('Users') + ' (' + totalCount + ')'];
+                this.dataSource['_totalCount'] = this.totalCount = totalCount;
+                this.dataGrid.instance.repaint();
+            });
+        }
     }
 
     repaintDataGrid(delay = 0) {
@@ -507,9 +513,13 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     invalidate(quietly = false) {
         this.isDataLoaded = false;
+        this.totalCount = undefined;
         let grid = this.dataGrid && this.dataGrid.instance;
         grid && grid.option('loadPanel.enabled', !quietly);
-        setTimeout(() => super.invalidate());
+        clearTimeout(this.invalidateTimeout);
+        this.invalidateTimeout = setTimeout(
+            () => super.invalidate()
+        );
     }
 
     createUser(): void {

@@ -40,9 +40,10 @@ export class HeaderComponent implements OnInit {
     userName = '';
     unreadChatMessageCount = 0;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;
-    chatConnected = false;
+    isChatConnected = false;
     userCompany$: Observable<string>;
     dropdownMenuItems: UserDropdownMenuItemModel[] = this.userManagementService.defaultDropDownItems;
+    isChatEnabled = this.feature.isEnabled(AppFeatures.AppChatFeature);
 
     constructor(
         injector: Injector,
@@ -72,13 +73,15 @@ export class HeaderComponent implements OnInit {
     }
 
     registerToEvents() {
-        abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
-            this.unreadChatMessageCount = messageCount;
-        });
+        if (this.isChatEnabled && this.layoutService.showChatButton) {
+            abp.event.on('app.chat.unreadMessageCountChanged', messageCount => {
+                this.unreadChatMessageCount = messageCount;
+            });
 
-        abp.event.on('app.chat.connected', () => {
-            this.chatConnected = true;
-        });
+            abp.event.on('app.chat.connected', () => {
+                this.isChatConnected = true;
+            });
+        }
     }
 
     changeLanguage(languageName: string): void {
@@ -95,11 +98,7 @@ export class HeaderComponent implements OnInit {
 
             window.location.reload();
         });
-    }
-
-    get chatEnabled(): boolean {
-        return !this.abpSessionService.tenantId || this.feature.isEnabled(AppFeatures.AppChatFeature);
-    }
+    }    
 
     logoClick() {
         if (AppConsts.appMemberPortalUrl && this.authService.checkCurrentTopDomainByUri()) {

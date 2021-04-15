@@ -214,7 +214,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public manageAllowed = this._cfoService.classifyTransactionsAllowed(false);
     public dragInProgress = false;
     private draggedTransactionId: number;
-    public selectedCashflowCategoryKeys: number[];
 
     public bankAccountCount;
     public bankAccounts: number[];
@@ -365,7 +364,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     isAdvicePeriod = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.AdvicePeriod;
     private updateAfterActivation: boolean;
     categoriesRowsData: Category[] = [];
-    filterCategoriesRowsData: Category[] = [];
     public showDataGridToolbar = !AppConsts.isMobile;
     departmentFeatureEnabled: boolean = this.feature.isEnabled(AppFeatures.CFODepartmentsManagement);
     showToggleCompactViewButton: boolean = !this._cfoService.hasStaticInstance;
@@ -731,12 +729,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     {
                         name: 'searchAll',
                         action: this.searchAllClick.bind(this),
-                        visible: !!(!AppConsts.isMobile && this.searchValue && this.searchValue.length > 0 && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKeys)),
+                        visible: !!(!AppConsts.isMobile && this.searchValue && this.searchValue.length > 0 && (this.filtersService.hasFilterSelected || this.areCategoriesSelected())),
                         options: {
                             text: this.l('Search All')
                         },
                         attr: {
-                            'filter-selected': this.searchValue && this.searchValue.length > 0 && (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKeys),
+                            'filter-selected': this.searchValue && this.searchValue.length > 0 && (this.filtersService.hasFilterSelected || this.areCategoriesSelected()),
                             'custaccesskey': 'search-container'
                         }
                     }
@@ -999,10 +997,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     searchAllClick() {
         this.clearCategoriesFilters();
-        this.categorizationComponent.clearSelection();
+        this.categorizationComponent.clearFilterSelection();
 
         this.filtersService.clearAllFilters();
-        this.selectedCashflowCategoryKeys = null;
         this.initToolbarConfig();
     }
 
@@ -1048,7 +1045,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         if (this._activatedRoute.snapshot.queryParams.filters) {
             this.categoriesRowsData = [];
             this.clearCategoriesFilters();
-            this.categorizationComponent.clearSelection();
+            this.categorizationComponent.clearFilterSelection();
         }
 
         this.filtersService.apply((filters: FilterModel[]) => {
@@ -1062,10 +1059,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     }
 
                     if (filterName == 'classified') {
-                        if (this.selectedCashflowCategoryKeys && filter.items['no'].value === true && filter.items['yes'].value !== true) {
+                        if (this.areCategoriesSelected() && filter.items['no'].value === true && filter.items['yes'].value !== true) {
                             this.clearCategoriesFilters();
-                            this.categorizationComponent.clearSelection();
-                            this.selectedCashflowCategoryKeys = null;
+                            this.categorizationComponent.clearFilterSelection();
                         }
                     }
                 });
@@ -1082,7 +1078,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onPopupOpened(event) {
         event.component._popup.option('width', '340px');
-        this.filterCategoriesRowsData = this.categoriesRowsData.slice(0);
     }
 
     setDataSource() {
@@ -1184,39 +1179,27 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     filterByCashflowCategories(categories: Category[]) {
-        this.clearCategoriesFilters();
-        if (Array.isArray(categories)) {
-            let filterCashflowTypes = categories.filter((category: Category) => this.isCashflowType(category)).map((category: Category) => <string>category.key);
-            let filterAccountingTypes = categories.filter((category: Category) => this.isAccountingTypeId(category));
-            let filterCategories = categories.filter((category: Category) => this.isCategory(category.key));
+        let filterCategories = categories.filter((category: Category) => this.isCategory(category));
+        if (filterCategories.length) {
+            let filterItems = {};
+            this.addCategorizationFilter(filterCategories, 'OriginCashflowCategoryId', filterItems);
+            this.cashFlowCategoryFilter = [
+                new FilterModel({
+                    items: filterItems,
+                    options: { method: 'filterMethod' },
+                    filterMethod: this.filterByOriginCategories.bind(this, filterItems)
+                })
+            ];
+        } else
+            this.clearCategoriesFilters();
 
-            if (filterCashflowTypes.length) {
-                this.selectedCashflowTypeIds.next(filterCashflowTypes);
-            }
-
-            if (filterAccountingTypes.length || filterCategories.length) {
-                let field = {};
-                this.addCategorizationFilter(filterAccountingTypes, 'AccountingTypeId', field);
-                this.addCategorizationFilter(filterCategories.filter((category: Category) => !this.isCategory(category.parent)), 'CashflowCategoryId', field);
-                this.addCategorizationFilter(filterCategories.filter((category: Category) => this.isCategory(category.parent)), 'CashflowSubCategoryId', field);
-                this.cashFlowCategoryFilter = [
-                    new FilterModel({
-                        items: field,
-                        options: { method: 'filterMethod' },
-                        filterMethod: this.filterByCombinedCategories
-                    })
-                ];
-            }
-
-            this.clearClassifiedFilter();
-        } else if (this.selectedCashflowCategoryKeys) {
-            this.processFilterInternal();
-        }
+        this.clearClassifiedFilter();
         this.categoriesRowsData = categories.slice();
-        this.selectedCashflowCategoryKeys = categories && categories.map((category: Category) => {
-            return <number>category.key;
-        });
         this.initToolbarConfig();
+    }
+
+    private areCategoriesSelected() {
+        return Boolean(this.categoriesRowsData && this.categoriesRowsData.length);
     }
 
     private addCategorizationFilter(categories: Category[], filterName: string, filterObject) {
@@ -1226,25 +1209,33 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     }
 
-    private isCashflowType(category: Category): boolean {
-        return !parseInt(<string>category.key);
+    private isCategory(category: Category): boolean {
+        return !isNaN(<number>category.key);
     }
 
-    private isAccountingTypeId(category: Category): boolean {
-        return isNaN(<number>category.key);
-    }
-
-    private isCategory(key: string | number): boolean {
-        return !isNaN(<number> key);
-    }
-
-    private filterByCombinedCategories() {
-        let filterObj = { or: [] };
-        _.pairs(this.items)
-            .reduce((obj, pair) => {
-                let val = pair.pop().value, key = pair.pop();
-                if (val) obj.or.push(`${key} in (${val.join(',')})`);
-                return obj;
+    private filterByOriginCategories(selectedItems) {
+        let filterObj = [];
+        _.pairs(selectedItems)
+            .reduce((filter, pair) => {
+                let selectedIds = pair.pop().value, key = pair.pop();
+                if (selectedIds) {
+                    let categories = this.categorizationComponent.categories.filter(item => this.isCategory(item)),
+                        selectedCount = selectedIds.length,
+                        totalCount = categories.length;
+            
+                    if (totalCount > 0 && selectedCount == totalCount)
+                        filter.push(`not(${key} eq null)`);
+                    else if (selectedCount > totalCount - selectedCount) {
+                        let lookupSelected = _.object(selectedIds, selectedIds);
+                        filter.push(`not(${key} in (${
+                            categories.filter(
+                                category => !lookupSelected.hasOwnProperty(category.key)
+                            ).map(category => category.key).join(',')
+                        })) and not(${key} eq null)`);
+                    } else if (selectedCount)
+                        filter.push(`${key} in (${selectedIds.join(',')})`);
+                }
+                return filter;
             }, filterObj);
         return filterObj;
     }
@@ -1262,7 +1253,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             return;
 
         let transactionKeys = this.dataGrid.instance ? this.dataGrid.instance.getSelectedRowKeys() : [];
-        if (!initial && (Boolean(this.selectedCashflowCategoryKeys) || Boolean(transactionKeys.length)))
+        if (!initial && (this.areCategoriesSelected() || Boolean(transactionKeys.length)))
             this.categoriesShowed = true;
 
         let img = new Image();
@@ -1394,7 +1385,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         suppressCashflowMismatch: suppressCashflowTypeMismatch
                     })
                 ).subscribe(() => {
-                    if (this.filtersService.hasFilterSelected || this.selectedCashflowCategoryKeys) {
+                    if (this.filtersService.hasFilterSelected || this.areCategoriesSelected()) {
                         this.dataGrid.instance.deselectAll();
                         this.refreshDataGrid();
                     } else {
