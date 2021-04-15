@@ -25,7 +25,7 @@ import { AsyncFilter } from '@shared/filters/models/async-filter.model';
 export class ODataService {
     private dxRequestPool = {};
     private pivotGridInitialBeforeSend;
-    private readonly maxRequestLength = 1400;
+    private readonly maxRequestLength = 2048;
     private readonly maxFilterItemsCount = 1000;
 
     constructor(

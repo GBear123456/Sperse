@@ -1173,12 +1173,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return data;
     }
 
-    applyCashflowCategories(event) {
-        this.filterByCashflowCategories(event);
+    applyCashflowCategories(categories: Category[], component: CategorizationComponent) {
+        this.filterByCashflowCategories(categories, component);
         this.categoryChooser.instance.close();
     }
 
-    filterByCashflowCategories(categories: Category[]) {
+    filterByCashflowCategories(categories: Category[], component: CategorizationComponent) {
         let filterCategories = categories.filter((category: Category) => this.isCategory(category));
         if (filterCategories.length) {
             let filterItems = {};
@@ -1187,7 +1187,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 new FilterModel({
                     items: filterItems,
                     options: { method: 'filterMethod' },
-                    filterMethod: this.filterByOriginCategories.bind(this, filterItems)
+                    filterMethod: this.filterByOriginCategories.bind(
+                        this, filterItems, component.categories
+                    )
                 })
             ];
         } else
@@ -1213,13 +1215,13 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         return !isNaN(<number>category.key);
     }
 
-    private filterByOriginCategories(selectedItems) {
+    private filterByOriginCategories(selectedItems, categorizationTree) {
         let filterObj = [];
         _.pairs(selectedItems)
             .reduce((filter, pair) => {
                 let selectedIds = pair.pop().value, key = pair.pop();
                 if (selectedIds) {
-                    let categories = this.categorizationComponent.categories.filter(item => this.isCategory(item)),
+                    let categories = categorizationTree.filter(item => this.isCategory(item)),
                         selectedCount = selectedIds.length,
                         totalCount = categories.length;
             

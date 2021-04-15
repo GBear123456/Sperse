@@ -16,7 +16,7 @@
         [placeholder]="(categoriesRowsData?.length ? categoriesRowsData?.length : l('Select')) + ' ' + l('Categor' + (categoriesRowsData?.length > 1 ? 'ies' : 'y')) + ' \u25BE'"
         (onOpened)="onPopupOpened($event)">
         <div #wrapper *dxTemplate="let data of 'content'" style="height: calc(100vh - 400px)">
-            <categorization
+            <categorization #categoriesFilter
                 width="340px"
                 [height]="wrapper.offsetHeight - 80 + 'px'"
                 [showTitle]="false"
@@ -33,7 +33,7 @@
                 [showClearSelection]="true"
                 [filteredRowsData]="categoriesRowsData"
                 [transactionsFilter]="transactionsFilterQuery"
-                (onFilterSelected)="applyCashflowCategories($event)">
+                (onFilterSelected)="applyCashflowCategories($event, categoriesFilter)">
             </categorization>
         </div>
     </dx-drop-down-box>
@@ -120,7 +120,7 @@
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
     <div class="portlet light no-padding margin-bottom-0">
         <div class="portlet-body">
-            <div class="wrapper" [ngClass]="{ 'expanded': categoriesShowed }">
+            <div class="wrapper" [ngClass]="{ 'expanded': categoriesShowed, 'toolbar-hidden': appService.toolbarIsHidden$ | async }">
                 <div class="categories" *ngIf="!isAdvicePeriod">
                     <categorization #categoriesPanel
                         [hidden]="!toggleTabContent"
@@ -135,7 +135,7 @@
                         [filteredRowsData]="categoriesRowsData"
                         [transactionsFilter]="transactionsFilterQuery"
                         (onTransactionDrop)="categorizeTransactions($event)"
-                        (onFilterSelected)="filterByCashflowCategories($event)"
+                        (onFilterSelected)="filterByCashflowCategories($event, categoriesPanel)"
                         (onCategoriesChanged)="refreshDataGrid()">
                     </categorization>
                 </div>

@@ -45,6 +45,7 @@
 :host {
     display: block;
     position: relative;
+
     .total-count {
         font-size: 24px;
         font-weight: 600;
@@ -168,11 +169,22 @@
         }
     }
 
+    &.fullscreen {
+        .wrapper {
+            max-height: initial;
+            display: -webkit-box;
+        }
+    }
+
     .wrapper {
         max-width: 100vw;
         max-height: calc(100vh - 210px);
         display: flex;
 
+        &.toolbar-hidden {
+            max-height: calc(100vh - 150px);
+        }
+        
         &.expanded {
             .categories {
                 width: 340px;
