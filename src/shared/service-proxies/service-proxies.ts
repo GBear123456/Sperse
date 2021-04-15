@@ -69997,11 +69997,12 @@ export interface ICancelOrderInfo {
 
 export class SubscriptionServiceDto implements ISubscriptionServiceDto {
     id!: number | undefined;
-    serviceId!: string | undefined;
-    serviceName!: string | undefined;
-    serviceLevelName!: string | undefined;
-    serviceTypeId!: string | undefined;
     systemType!: string | undefined;
+    productName!: string | undefined;
+    serviceCode!: string | undefined;
+    serviceName!: string | undefined;
+    levelCode!: string | undefined;
+    levelName!: string | undefined;
 
     constructor(data?: ISubscriptionServiceDto) {
         if (data) {
@@ -70015,11 +70016,12 @@ export class SubscriptionServiceDto implements ISubscriptionServiceDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.serviceId = data["serviceId"];
-            this.serviceName = data["serviceName"];
-            this.serviceLevelName = data["serviceLevelName"];
-            this.serviceTypeId = data["serviceTypeId"];
             this.systemType = data["systemType"];
+            this.productName = data["productName"];
+            this.serviceCode = data["serviceCode"];
+            this.serviceName = data["serviceName"];
+            this.levelCode = data["levelCode"];
+            this.levelName = data["levelName"];
         }
     }
 
@@ -70033,22 +70035,24 @@ export class SubscriptionServiceDto implements ISubscriptionServiceDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["serviceId"] = this.serviceId;
-        data["serviceName"] = this.serviceName;
-        data["serviceLevelName"] = this.serviceLevelName;
-        data["serviceTypeId"] = this.serviceTypeId;
         data["systemType"] = this.systemType;
+        data["productName"] = this.productName;
+        data["serviceCode"] = this.serviceCode;
+        data["serviceName"] = this.serviceName;
+        data["levelCode"] = this.levelCode;
+        data["levelName"] = this.levelName;
         return data; 
     }
 }
 
 export interface ISubscriptionServiceDto {
     id: number | undefined;
-    serviceId: string | undefined;
-    serviceName: string | undefined;
-    serviceLevelName: string | undefined;
-    serviceTypeId: string | undefined;
     systemType: string | undefined;
+    productName: string | undefined;
+    serviceCode: string | undefined;
+    serviceName: string | undefined;
+    levelCode: string | undefined;
+    levelName: string | undefined;
 }
 
 export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
