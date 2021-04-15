@@ -69999,6 +69999,7 @@ export class SubscriptionServiceDto implements ISubscriptionServiceDto {
     id!: number | undefined;
     serviceId!: string | undefined;
     serviceName!: string | undefined;
+    serviceLevelName!: string | undefined;
     serviceTypeId!: string | undefined;
     systemType!: string | undefined;
 
@@ -70016,6 +70017,7 @@ export class SubscriptionServiceDto implements ISubscriptionServiceDto {
             this.id = data["id"];
             this.serviceId = data["serviceId"];
             this.serviceName = data["serviceName"];
+            this.serviceLevelName = data["serviceLevelName"];
             this.serviceTypeId = data["serviceTypeId"];
             this.systemType = data["systemType"];
         }
@@ -70033,6 +70035,7 @@ export class SubscriptionServiceDto implements ISubscriptionServiceDto {
         data["id"] = this.id;
         data["serviceId"] = this.serviceId;
         data["serviceName"] = this.serviceName;
+        data["serviceLevelName"] = this.serviceLevelName;
         data["serviceTypeId"] = this.serviceTypeId;
         data["systemType"] = this.systemType;
         return data; 
@@ -70043,6 +70046,7 @@ export interface ISubscriptionServiceDto {
     id: number | undefined;
     serviceId: string | undefined;
     serviceName: string | undefined;
+    serviceLevelName: string | undefined;
     serviceTypeId: string | undefined;
     systemType: string | undefined;
 }
