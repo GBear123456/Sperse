@@ -14,13 +14,7 @@ import { InlineSVGModule } from 'ng-inline-svg';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
-import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
-import { DxListModule } from 'devextreme-angular/ui/list';
-import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
-import { DxTagBoxModule } from 'devextreme-angular/ui/tag-box';
 import { NgxFileDropModule } from 'ngx-file-drop';
-import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
-import { CKEditorModule } from 'ckeditor4-angular';
 
 /** Application imports */
 import { TenantSettingsWizardComponent } from './tenant-settings-wizard.component';
@@ -33,7 +27,7 @@ import { SecurityComponent } from '@shared/common/tenant-settings-wizard/securit
 import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard/tenant-management/tenant-management.component';
 import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/user-management/user-management.component';
 import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/member-portal/member-portal.component';
-import { WelcomeEmailDialogComponent } from './user-management/weclome-email-dialog/welcome-email-dialog.component';
+import { ContactsModule } from '@app/crm/contacts/contacts.module';
 
 @NgModule({
     imports: [
@@ -46,17 +40,12 @@ import { WelcomeEmailDialogComponent } from './user-management/weclome-email-dia
         MatSelectModule,
         DxCheckBoxModule,
         DxSelectBoxModule,
-        DxTooltipModule,
-        DxListModule,
-        DxTextBoxModule,
-        DxTagBoxModule,
         InlineSVGModule,
         MatInputModule,
         FormsModule,
         TimeZoneComboModule,
         NgxFileDropModule,
-        ModalDialogModule,
-        CKEditorModule
+        ContactsModule
     ],
     exports: [TenantSettingsWizardComponent],
     declarations: [
@@ -68,12 +57,10 @@ import { WelcomeEmailDialogComponent } from './user-management/weclome-email-dia
         SecurityComponent,
         TenantManagementComponent,
         MemberPortalComponent,
-        UserManagementComponent,
-        WelcomeEmailDialogComponent
+        UserManagementComponent
     ],
     entryComponents: [
-        TenantSettingsWizardComponent,
-        WelcomeEmailDialogComponent
+        TenantSettingsWizardComponent
     ]
 })
 export class TenantSettingsWizardModule { }

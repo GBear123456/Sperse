@@ -57,7 +57,7 @@ import { SmsDialogData } from '@app/crm/shared/sms-dialog/sms-dialog-data.interf
 import { AppPermissions } from '@shared/AppPermissions';
 import { ContactGroup } from '@shared/AppEnums';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
-import { EmailTags } from './contacts.const';
+import { EmailTags, WelcomeEmailTags } from './contacts.const';
 import { TemplateDocumentsDialogComponent } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog.component';
 import { NoteAddDialogComponent } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog.component';
 import { EmailTemplateData } from '@app/crm/shared/email-template-dialog/email-template-data.interface';
@@ -472,6 +472,32 @@ export class ContactsService {
                 }
             })
         );
+    }
+
+    showWelcomeEmailDialog(templateId, saveCallback: (number) => void) {
+        let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                templateId: templateId,
+                saveTitle: this.ls.l('Send'),
+                title: this.ls.l('Template'),
+                templateType: EmailTemplateType.WelcomeEmail,
+                addDefaultTemplate: true,
+                showEmptyCCAndBcc: true
+            }
+        }).componentInstance;
+        dialogComponent.templateEditMode = true;
+        dialogComponent.showTo = dialogComponent.showFrom = false;
+        dialogComponent.tagsList = [WelcomeEmailTags.FirstName, WelcomeEmailTags.LastName, WelcomeEmailTags.UserEmail, WelcomeEmailTags.Password, WelcomeEmailTags.BaseUrl, WelcomeEmailTags.SenderSystemName, WelcomeEmailTags.SenderEmailSignature,
+        WelcomeEmailTags.AutologinLink, WelcomeEmailTags.TrackingPixel];
+        dialogComponent.onSave.subscribe((data) => {
+            if (data && saveCallback)
+                saveCallback(data.templateId)
+            dialogComponent.close();
+        });
+        return dialogComponent;
     }
 
     sendEmail(input: ISendEmailInput): Observable<number> {

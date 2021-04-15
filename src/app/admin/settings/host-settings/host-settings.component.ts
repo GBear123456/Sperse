@@ -18,7 +18,7 @@ import {
 import { AppPermissions } from '@shared/AppPermissions';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppConsts } from '@root/shared/AppConsts';
-import { WelcomeEmailDialogComponent } from '@shared/common/tenant-settings-wizard/user-management/weclome-email-dialog/welcome-email-dialog.component';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     templateUrl: './host-settings.component.html',
@@ -68,6 +68,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private appSessionService: AppSessionService,
         private changeDetection: ChangeDetectorRef,
+        private contactService: ContactsService,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -129,21 +130,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     }
 
     onWelcomeEmailTemplateClick() {
-        let dialogComponent = this.dialog.open(WelcomeEmailDialogComponent, {
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {
-                templateId: this.hostSettings.userManagement.welcomeEmailTemplateId,
-                title: this.l('Template')
-            }
-        }).componentInstance;
-        dialogComponent.onSave.subscribe((data) => {
-            if (data)
-                this.hostSettings.userManagement.welcomeEmailTemplateId = data.templateId
-            dialogComponent.close();
-        });
-        return dialogComponent;
+        this.contactService.showWelcomeEmailDialog(this.hostSettings.userManagement.welcomeEmailTemplateId, (templateId) => this.hostSettings.userManagement.welcomeEmailTemplateId = templateId);
     }
 
     sendTestEmail(): void {

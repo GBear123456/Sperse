@@ -14,7 +14,6 @@ import { ImpersonationService } from '@admin/users/impersonation.service';
 import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank-code-letters.module';
 import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.module';
 import { AccessCodeInstructionsModule } from '@shared/common/access-code-instructions/access-code-instructions.module';
-import { TenantSettingsWizardModule } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.module';
 
 @NgModule({
     declarations: [
@@ -27,8 +26,7 @@ import { TenantSettingsWizardModule } from '@shared/common/tenant-settings-wizar
         DxTooltipModule,
         BankCodeLettersModule,
         InplaceEditModule,
-        AccessCodeInstructionsModule,
-        TenantSettingsWizardModule
+        AccessCodeInstructionsModule
     ],
     exports: [
         UserManagementListComponent,

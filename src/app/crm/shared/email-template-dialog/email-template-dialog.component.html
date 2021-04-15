@@ -35,7 +35,7 @@
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover" #scrollView>
             <div class="row">
-                <div class="field-area from">
+                <div class="field-area from" [hidden]="!showFrom">
                     <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>
                     <dx-text-box
                         name="from"
@@ -43,7 +43,7 @@
                         height="40px"
                         placeholder=""
                         [(value)]="data.from"
-                        [disabled]="templateEditMode">
+                        [disabled]="templateEditMode || disableControls">
                     </dx-text-box>
                     <label class="caption">{{ls.l('ReplyTo')}}:</label>
                     <dx-tag-box
@@ -53,6 +53,7 @@
                         placeholder=""
                         [multiline]="false"
                         [acceptCustomValue]="true"
+                        [disabled]="disableControls"
                         [(value)]="data.replyTo"
                         (onKeyUp)="onKeyUp($event)"
                         (onInitialized)="onTagBoxInitialized($event)"
@@ -60,7 +61,7 @@
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                 </div>
-                <div class="field-area to">
+                <div class="field-area to" [hidden]="!showTo">
                     <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('To')}}:</label>
                     <dx-tag-box
                         name="to"
@@ -71,7 +72,7 @@
                         [multiline]="false"
                         [acceptCustomValue]="true"
                         [(value)]="data.to"
-                        [disabled]="templateEditMode"
+                        [disabled]="templateEditMode || disableControls"
                         (onInitialized)="onTagBoxInitialized($event)"
                         (onFocusOut)="emailInputFocusOut($event)"
                         (onKeyUp)="onKeyUp($event)"
@@ -92,10 +93,11 @@
                         noDataText=""
                         [multiline]="false"
                         [acceptCustomValue]="true"
+                        [disabled]="disableControls"
                         [(value)]="data.cc"
                         (onKeyUp)="onKeyUp($event)"
                         (onInitialized)="onTagBoxInitialized($event)"
-                        (onFocusOut)="emailInputFocusOut($event, true)"
+                        (onFocusOut)="emailInputFocusOut($event, !data.showEmptyCCAndBcc)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                 </div>
@@ -109,10 +111,11 @@
                         placeholder=""
                         [multiline]="false"
                         [acceptCustomValue]="true"
+                        [disabled]="disableControls"
                         [(value)]="data.bcc"
                         (onKeyUp)="onKeyUp($event)"
                         (onInitialized)="onTagBoxInitialized($event)"
-                        (onFocusOut)="emailInputFocusOut($event, true)"
+                        (onFocusOut)="emailInputFocusOut($event, !data.showEmptyCCAndBcc)"
                         (onCustomItemCreating)="onCustomItemCreating($event)">
                     </dx-tag-box>
                 </div>
@@ -123,7 +126,8 @@
                         width="calc(100% - 69px)"
                         height="40px"
                         placeholder=""
-                        [(value)]="data.subject">
+                        [(value)]="data.subject"
+                        [disabled]="disableControls">
                     </dx-text-box>
                 </div>
                 <div class="field-area ckeditor">

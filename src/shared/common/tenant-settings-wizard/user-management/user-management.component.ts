@@ -7,10 +7,9 @@ import {
     HostSettingsServiceProxy,
     HostUserManagementSettingsEditDto,
     TenantSettingsServiceProxy,
-    TenantUserManagementSettingsEditDto,
-    EmailTemplateType
+    TenantUserManagementSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
-import { WelcomeEmailDialogComponent } from './weclome-email-dialog/welcome-email-dialog.component';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     selector: 'user-management',
@@ -24,31 +23,19 @@ export class UserManagementComponent implements ITenantSettingsStepComponent {
     constructor(
         private hostSettingsServiceProxy: HostSettingsServiceProxy,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
+        private contactsService: ContactsService,
         public ls: AppLocalizationService,
         public dialog: MatDialog
     ) { }
 
     onWelcomeEmailTemplateClick() {
-        let dialogComponent = this.dialog.open(WelcomeEmailDialogComponent, {
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {
-                templateId: this.tenantSettings ? this.tenantSettings.welcomeEmailTemplateId : this.hostSettings.welcomeEmailTemplateId,
-                title: this.ls.l('Template')
-            }
-        }).componentInstance;
-        dialogComponent.onSave.subscribe((data) => {
-            if (data) {
-                if (this.tenantSettings)
-                    this.tenantSettings.welcomeEmailTemplateId = data.templateId;
-                else
-                    this.hostSettings.welcomeEmailTemplateId = data.templateId;
-            }
-
-            dialogComponent.close();
+        let currentTemplateId = this.tenantSettings ? this.tenantSettings.welcomeEmailTemplateId : this.hostSettings.welcomeEmailTemplateId;
+        this.contactsService.showWelcomeEmailDialog(currentTemplateId, (templateId) => {
+            if (this.tenantSettings)
+                this.tenantSettings.welcomeEmailTemplateId = templateId;
+            else
+                this.hostSettings.welcomeEmailTemplateId = templateId;
         });
-        return dialogComponent;
     }
 
     save(): Observable<void> {

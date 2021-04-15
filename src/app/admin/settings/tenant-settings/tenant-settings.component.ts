@@ -45,7 +45,7 @@ import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { WelcomeEmailDialogComponent } from '@shared/common/tenant-settings-wizard/user-management/weclome-email-dialog/welcome-email-dialog.component';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -128,6 +128,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private tokenService: TokenService,
         private tenantOfferProviderSettingsService: TenantOfferProviderSettingsServiceProxy,
         private faviconsService: FaviconService,
+        private contactService: ContactsService,
         public changeDetection: ChangeDetectorRef,
         public dialog: MatDialog
     ) {
@@ -275,21 +276,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     onWelcomeEmailTemplateClick() {
-        let dialogComponent = this.dialog.open(WelcomeEmailDialogComponent, {
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {
-                templateId: this.settings.userManagement.welcomeEmailTemplateId,
-                title: this.l('Template')
-            }
-        }).componentInstance;
-        dialogComponent.onSave.subscribe((data) => {
-            if (data)
-                this.settings.userManagement.welcomeEmailTemplateId = data.templateId
-            dialogComponent.close();
-        });
-        return dialogComponent;
+        this.contactService.showWelcomeEmailDialog(this.settings.userManagement.welcomeEmailTemplateId, (templateId) => this.settings.userManagement.welcomeEmailTemplateId = templateId);
     }
 
     uploadLogo(): void {
