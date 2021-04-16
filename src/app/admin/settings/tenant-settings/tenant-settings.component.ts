@@ -39,7 +39,8 @@ import {
     SendGridSettingsDto,
     YTelSettingsEditDto,
     LayoutType,
-    RapidSettingsDto
+    RapidSettingsDto,
+    EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -117,6 +118,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             label: this.l('SaveAll')
         }
     ];
+    EmailTemplateType = EmailTemplateType;
 
     constructor(
         injector: Injector,
@@ -273,10 +275,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         uploaderOptions.removeAfterUpload = true;
         uploader.setOptions(uploaderOptions);
         return uploader;
-    }
-
-    onWelcomeEmailTemplateClick() {
-        this.contactService.showWelcomeEmailDialog(this.settings.userManagement.welcomeEmailTemplateId, (templateId) => this.settings.userManagement.welcomeEmailTemplateId = templateId);
     }
 
     uploadLogo(): void {

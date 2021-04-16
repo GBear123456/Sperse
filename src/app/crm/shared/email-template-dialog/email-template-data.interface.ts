@@ -21,6 +21,4 @@ export interface EmailTemplateData {
     tags: { [key: string]: string; } | undefined;
     hideContextMenu?: boolean;
     addMode?: boolean;
-    addDefaultTemplate?: boolean;
-    showEmptyCCAndBcc?: boolean
 }
