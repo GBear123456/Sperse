@@ -6,6 +6,7 @@ import { IAjaxResponse } from '@abp/abpHttpInterceptor';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of } from 'rxjs';
 import { finalize, tap } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { TokenService } from '@abp/auth/token.service';
@@ -44,6 +45,7 @@ import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -126,7 +128,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private tokenService: TokenService,
         private tenantOfferProviderSettingsService: TenantOfferProviderSettingsServiceProxy,
         private faviconsService: FaviconService,
-        public changeDetection: ChangeDetectorRef
+        private contactService: ContactsService,
+        public changeDetection: ChangeDetectorRef,
+        public dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -269,6 +273,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         uploaderOptions.removeAfterUpload = true;
         uploader.setOptions(uploaderOptions);
         return uploader;
+    }
+
+    onWelcomeEmailTemplateClick() {
+        this.contactService.showWelcomeEmailDialog(this.settings.userManagement.welcomeEmailTemplateId, (templateId) => this.settings.userManagement.welcomeEmailTemplateId = templateId);
     }
 
     uploadLogo(): void {

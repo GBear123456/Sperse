@@ -27,6 +27,7 @@ import { SecurityComponent } from '@shared/common/tenant-settings-wizard/securit
 import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard/tenant-management/tenant-management.component';
 import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/user-management/user-management.component';
 import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/member-portal/member-portal.component';
+import { ContactsModule } from '@app/crm/contacts/contacts.module';
 
 @NgModule({
     imports: [
@@ -43,9 +44,10 @@ import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/mem
         MatInputModule,
         FormsModule,
         TimeZoneComboModule,
-        NgxFileDropModule
+        NgxFileDropModule,
+        ContactsModule
     ],
-    exports: [ TenantSettingsWizardComponent ],
+    exports: [TenantSettingsWizardComponent],
     declarations: [
         TenantSettingsWizardComponent,
         AppearanceComponent,
@@ -57,6 +59,8 @@ import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/mem
         MemberPortalComponent,
         UserManagementComponent
     ],
-    entryComponents: [ TenantSettingsWizardComponent ]
+    entryComponents: [
+        TenantSettingsWizardComponent
+    ]
 })
-export class TenantSettingsWizardModule {}
+export class TenantSettingsWizardModule { }

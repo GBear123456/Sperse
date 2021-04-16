@@ -2,6 +2,7 @@
 import { ChangeDetectionStrategy, Component, Output, Input, EventEmitter, OnInit } from '@angular/core';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -13,7 +14,7 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
 import { AppFeatures } from '@shared/AppFeatures';
-import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -35,7 +36,7 @@ export class LeftMenuComponent implements OnInit {
         private appSessionService: AppSessionService,
         private permission: PermissionCheckerService,
         private feature: FeatureCheckerService,
-        private userManagementService: UserManagementService,
+        private dialog: MatDialog,
         public appService: AppService,
         public ls: AppLocalizationService
     ) {}
@@ -67,7 +68,7 @@ export class LeftMenuComponent implements OnInit {
                 component: '/editions',
                 iconSrc: 'assets/common/icons/setup.svg',
                 isModalDialog: true,
-                onClick: () => this.userManagementService.openProfileTenantSettingsDialog(),
+                onClick: () => this.openProfileTenantSettingsDialog(),
                 visible: this.appService.isHostTenant ?
                     this.permission.isGranted(AppPermissions.AdministrationHostSettings) :
                     this.permission.isGranted(AppPermissions.AdministrationTenantSettings)
@@ -101,6 +102,15 @@ export class LeftMenuComponent implements OnInit {
                 iconSrc: './assets/common/icons/folder.svg'
             }
         ];
+    }
+
+    openProfileTenantSettingsDialog() {
+        this.dialog.open(TenantSettingsWizardComponent, {
+            width: '960px',
+            height: '700px',
+            id: 'tenant-settings',
+            panelClass: ['tenant-settings']
+        });
     }
     //
     // onClick(event, elem) {

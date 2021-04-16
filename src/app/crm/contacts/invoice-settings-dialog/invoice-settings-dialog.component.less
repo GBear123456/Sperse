@@ -1,17 +1,50 @@
 :host {
+    ::ng-deep .mat-dialog-actions {
+        width: 300px;
+
+        .mat-dialog-buttons {
+            height: 50px !important;
+        }
+
+        #saveTemplateOptions, #cancelTemplateOptions {
+            width: 140px;
+        }
+    }
+
     ::ng-deep .form-content {
-        padding: 25px 0px 20px 50px!important;
+        padding: 25px 0px 20px 50px !important;
+        display: flex;
+        flex-direction: column;
+        height: calc(~"100vh - 82px");
+        min-width: 900px;
+
+        .email-template-link {
+            color: #00aeef;
+            cursor: pointer;
+
+            i {
+                margin-right: 5px;
+            }
+        }
+
+        .row {
+            min-width: 820px;
+            max-width: calc(40vw - 100px);
+            margin-left: 0 !important;
+        }
     }
 
     ::ng-deep ckeditor .cke_chrome .cke_contents {
-        min-height: 310px!important;
+        min-height: 310px !important;
     }
 
     .settings-wrapper {
         width: 100%;
         display: flex;
+
         & > div {
             width: 50%;
+
             h3 {
                 padding: 15px 0 0;
                 font-family: Montserrat;
@@ -22,6 +55,7 @@
                 line-height: 1.33;
                 letter-spacing: 0.3px;
                 color: #202b35;
+
                 a {
                     float: right;
                 }
@@ -38,7 +72,8 @@
             }
 
             ::ng-deep dx-check-box {
-                padding-top: 15px!important;
+                padding-top: 15px !important;
+
                 .dx-checkbox-text {
                     font-size: 14px;
                     font-weight: 300;
@@ -48,45 +83,55 @@
                     letter-spacing: 0.28px;
                     color: #424c56;
                 }
+
                 .dx-checkbox-icon {
                     vertical-align: top;
                 }
             }
+
             ::ng-deep .dx-widget {
                 padding-top: 5px;
+
                 &.dx-textarea {
                     .dx-placeholder.dx-state-invisible,
                     &.dx-state-focused .dx-placeholder {
-                        top: -15px!important;
+                        top: -15px !important;
                     }
                 }
+
                 .dx-placeholder {
                     font-size: 15px;
                     font-weight: 400;
                     line-height: 2.2;
                     letter-spacing: 0.3px;
                     padding: 0px;
+
                     &.dx-state-invisible {
-                        display: block!important;
-                        font-size: 11px!important;
-                        opacity: 1!important;
+                        display: block !important;
+                        font-size: 11px !important;
+                        opacity: 1 !important;
                     }
                 }
+
                 &.dx-state-focused .dx-placeholder {
-                    font-size: 11px!important;
+                    font-size: 11px !important;
                 }
+
                 input, textarea {
                     font-size: 16px;
                     font-weight: 300;
                 }
             }
         }
+
         .left-side {
             padding-right: 15px;
             border-right: 1px solid #dedede;
         }
+
         .right-side {
             padding-left: 15px;
+
             a {
                 font-size: 14px;
                 font-weight: 300;
@@ -97,12 +142,14 @@
                 color: #58a3dc;
                 float: right;
                 margin: 10px 0;
+
                 &.disabled {
                     pointer-events: none;
-                    color: #dfdfdf;             
+                    color: #dfdfdf;
                 }
             }
         }
+
         ::ng-deep .dx-placeholder {
             top: -17px;
         }

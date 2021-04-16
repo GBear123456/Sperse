@@ -36,7 +36,7 @@
         <dx-scroll-view showScrollbar="onHover" #scrollView>
             <dx-validation-group>
                 <div class="row">
-                    <div class="field-area from">
+                    <div class="field-area from" [hidden]="!showFrom">
                         <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>
                         <dx-text-box
                             name="from"
@@ -44,7 +44,7 @@
                             height="40px"
                             placeholder=""
                             [(value)]="data.from"
-                            [disabled]="templateEditMode">
+                            [disabled]="templateEditMode || disableControls">
                             <dx-validator>
                                 <dxi-validation-rule type="pattern"
                                                      [pattern]="emailRegEx"
@@ -64,6 +64,7 @@
                             placeholder=""
                             [multiline]="false"
                             [acceptCustomValue]="true"
+                            [disabled]="disableControls"
                             [(value)]="data.replyTo"
                             (onKeyUp)="onKeyUp($event)"
                             (onInitialized)="onTagBoxInitialized($event)"
@@ -77,7 +78,7 @@
                             </dx-validator>
                         </dx-tag-box>
                     </div>
-                    <div class="field-area to">
+                    <div class="field-area to" [hidden]="!showTo">
                         <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('To')}}:</label>
                         <dx-tag-box #ToElement
                             name="to"
@@ -88,8 +89,8 @@
                             [multiline]="false"
                             [acceptCustomValue]="true"
                             [(value)]="data.to"
-                            [disabled]="templateEditMode"
-                            (onKeyUp)="onKeyUp($event)"                        
+                            [disabled]="templateEditMode || disableControls"
+                            (onKeyUp)="onKeyUp($event)"
                             (onInitialized)="onTagBoxInitialized($event)"
                             (onFocusOut)="emailInputFocusOut($event)"
                             (onCustomItemCreating)="onCustomItemCreating($event)">
@@ -115,10 +116,11 @@
                             noDataText=""
                             [multiline]="false"
                             [acceptCustomValue]="true"
+                            [disabled]="disableControls"
                             [(value)]="data.cc"
                             (onKeyUp)="onKeyUp($event)"
                             (onInitialized)="onTagBoxInitialized($event)"
-                            (onFocusOut)="emailInputFocusOut($event, true)"
+                            (onFocusOut)="emailInputFocusOut($event, !data.showEmptyCCAndBcc)"
                             (onCustomItemCreating)="onCustomItemCreating($event)">
                             <dx-validator>
                                 <dxi-validation-rule type="custom" 
@@ -138,10 +140,11 @@
                             placeholder=""
                             [multiline]="false"
                             [acceptCustomValue]="true"
+                            [disabled]="disableControls"
                             [(value)]="data.bcc"
                             (onKeyUp)="onKeyUp($event)"
                             (onInitialized)="onTagBoxInitialized($event)"
-                            (onFocusOut)="emailInputFocusOut($event, true)"
+                            (onFocusOut)="emailInputFocusOut($event, !data.showEmptyCCAndBcc)"
                             (onCustomItemCreating)="onCustomItemCreating($event)">
                             <dx-validator>
                                 <dxi-validation-rule type="custom" 
@@ -158,7 +161,8 @@
                             width="calc(100% - 69px)"
                             height="40px"
                             placeholder=""
-                            [(value)]="data.subject">
+                            [(value)]="data.subject"
+                            [disabled]="disableControls">
                         </dx-text-box>
                     </div>
                     <div class="field-area ckeditor">
@@ -183,7 +187,7 @@
                         <span #tagsButton [class]="'cke_toolgroup tags-button id' + uniqId" *ngIf="tagsList.length">
                             <a (click)="tagsTooltipVisible = true">Tags</a>
                         </span>
-                        <ckeditor *ngIf="ckConfig.height" [config]="ckConfig" [(data)]="this.data.body" (ready)="onCKReady($event)" (change)="updateDataLength()"></ckeditor>
+                        <ckeditor *ngIf="ckConfig.height && templateLoaded" [config]="ckConfig" [(data)]="this.data.body" (ready)="onCKReady($event)" (change)="updateDataLength()"></ckeditor>
                         <p class="char-count">{{charCount}}</p>
                         <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)" *ngIf="!templateEditMode">
                             <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">

@@ -102,6 +102,7 @@ import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 import { EditTypeItemDialogComponent } from '@app/crm/shared/types-dropdown/edit-type-item-dialog/edit-type-item-dialog.component';
 import { ProductsComponent } from './products/products.component';
+import { TenantSettingsWizardModule } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.module';
 
 @NgModule({
     imports: [
@@ -165,7 +166,8 @@ import { ProductsComponent } from './products/products.component';
         ListsModule,
         GooglePlaceModule,
         MatInputModule,
-        MatButtonModule
+        MatButtonModule,
+        TenantSettingsWizardModule
     ],
     declarations: [
         ClientsComponent,

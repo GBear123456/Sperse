@@ -59723,6 +59723,7 @@ export interface ICreateOrUpdateEditionDto {
 export enum EmailTemplateType {
     Invoice = "Invoice", 
     Contact = "Contact", 
+    WelcomeEmail = "WelcomeEmail", 
 }
 
 export class GetTemplatesResponse implements IGetTemplatesResponse {
@@ -60870,6 +60871,7 @@ export interface IGeneralSettingsEditDto {
 export class HostUserManagementSettingsEditDto implements IHostUserManagementSettingsEditDto {
     isEmailConfirmationRequiredForLogin!: boolean | undefined;
     smsVerificationEnabled!: boolean | undefined;
+    welcomeEmailTemplateId!: number | undefined;
 
     constructor(data?: IHostUserManagementSettingsEditDto) {
         if (data) {
@@ -60884,6 +60886,7 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
         if (data) {
             this.isEmailConfirmationRequiredForLogin = data["isEmailConfirmationRequiredForLogin"];
             this.smsVerificationEnabled = data["smsVerificationEnabled"];
+            this.welcomeEmailTemplateId = data["welcomeEmailTemplateId"];
         }
     }
 
@@ -60898,6 +60901,7 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
         data = typeof data === 'object' ? data : {};
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
         data["smsVerificationEnabled"] = this.smsVerificationEnabled;
+        data["welcomeEmailTemplateId"] = this.welcomeEmailTemplateId;
         return data; 
     }
 }
@@ -60905,6 +60909,7 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
 export interface IHostUserManagementSettingsEditDto {
     isEmailConfirmationRequiredForLogin: boolean | undefined;
     smsVerificationEnabled: boolean | undefined;
+    welcomeEmailTemplateId: number | undefined;
 }
 
 export class EmailSettingsEditDto implements IEmailSettingsEditDto {
@@ -79627,6 +79632,7 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
     isNewRegisteredUserActiveByDefault!: boolean | undefined;
     isEmailConfirmationRequiredForLogin!: boolean | undefined;
     useCaptchaOnRegistration!: boolean | undefined;
+    welcomeEmailTemplateId!: number | undefined;
 
     constructor(data?: ITenantUserManagementSettingsEditDto) {
         if (data) {
@@ -79643,6 +79649,7 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
             this.isNewRegisteredUserActiveByDefault = data["isNewRegisteredUserActiveByDefault"];
             this.isEmailConfirmationRequiredForLogin = data["isEmailConfirmationRequiredForLogin"];
             this.useCaptchaOnRegistration = data["useCaptchaOnRegistration"];
+            this.welcomeEmailTemplateId = data["welcomeEmailTemplateId"];
         }
     }
 
@@ -79659,6 +79666,7 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
         data["isNewRegisteredUserActiveByDefault"] = this.isNewRegisteredUserActiveByDefault;
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
         data["useCaptchaOnRegistration"] = this.useCaptchaOnRegistration;
+        data["welcomeEmailTemplateId"] = this.welcomeEmailTemplateId;
         return data; 
     }
 }
@@ -79668,6 +79676,7 @@ export interface ITenantUserManagementSettingsEditDto {
     isNewRegisteredUserActiveByDefault: boolean | undefined;
     isEmailConfirmationRequiredForLogin: boolean | undefined;
     useCaptchaOnRegistration: boolean | undefined;
+    welcomeEmailTemplateId: number | undefined;
 }
 
 export class LdapSettingsEditDto implements ILdapSettingsEditDto {

@@ -224,15 +224,6 @@ export class UserManagementService {
         private profileService: ProfileService
     ) {}
 
-    openProfileTenantSettingsDialog() {
-        this.dialog.open(TenantSettingsWizardComponent, {
-            width: '960px',
-            height: '700px',
-            id: 'tenant-settings',
-            panelClass: ['tenant-settings']
-        });
-    }
-
     backToMyAccount(): void {
         this.impersonationService.backToImpersonator();
     }

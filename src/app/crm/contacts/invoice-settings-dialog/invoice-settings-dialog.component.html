@@ -1,67 +1,65 @@
-<email-template-dialog
-    [tagsList]="tagsList"
-    [templateEditMode]="true" 
-    [editorHeight]="editorHeight"
-    (onTemplateChange)="templateChanged($event)" 
-    (onTagItemClick)="onTagItemClick($event)"
-    (onSave)="save()">
-    <ng-container templateSettings>
-        <div class="settings-wrapper">
-            <div class="left-side">
-                <h3 >{{ls.l('Company Info')}}</h3>
-                <dx-text-box 
-                    [placeholder]="ls.l('LegalName')"
-                    [(value)]="settings.legalName"
-                    [readOnly]="isManageUnallowed"
-                    [maxLength]="150">
-                </dx-text-box>
-                <dx-text-area 
-                    height="90px"
-                    [placeholder]="ls.l('Address')"
-                    [(value)]="settings.address"
-                    [readOnly]="isManageUnallowed"
-                    [maxLength]="500">
-                </dx-text-area>
-                <dx-text-area
-                    [readOnly]="isManageUnallowed"
-                    [placeholder]="ls.l('Invoice_DefaultNote')"
-                    [(value)]="settings.defaultNote">
-                </dx-text-area>
-                <dx-number-box
-                    *ngIf="hasCommissionsFeature"
-                    [min]="0"
-                    [max]="99"
-                    mode="number"
-                    [showClearButton]="true"
-                    [readOnly]="isRateDisabled"
-                    [placeholder]="ls.l('Default') + ' ' + ls.l('AffiliateRate') + ', %'"
-                    [(value)]="settings.defaultAffiliateRate"
-                    [showSpinButtons]="true">
-                </dx-number-box>
+<modal-dialog [title]="ls.l('Invoice Settings')"
+              [titleClearButton]="false"
+              [buttons]="buttons"
+              [editTitle]="false">
+    <div class="form-content">
+        <dx-scroll-view showScrollbar="onHover" #scrollView>
+            <div class="email-template-link">
+                <i class="edit fa fa-pencil"></i>
+                <span (click)="showEmailTemplateDialog()">Email template</span>
             </div>
-            <div class="right-side">
-                <h3>{{ls.l('InvoiceEmail_OtherSettings')}}</h3>
-                <a (click)="showBankSettingsDialog()" 
-                    href="javascript:void(0)">
-                    {{ls.l('InvoiceEmail_BankTransferSettings')}}
-                </a>
-                <dx-check-box
-                    [readOnly]="isManageUnallowed"
-                    [text]="ls.l('InvoiceEmail_ShowShippingAddress')"
-                    [(value)]="settings.showShippingAddress">
-                </dx-check-box>
-                <dx-check-box
-                    [readOnly]="isManageUnallowed"
-                    [text]="ls.l('InvoiceEmail_AttachPDF')"
-                    [(value)]="settings.attachPDF">
-                </dx-check-box>
-                <dx-text-box
-                    [readOnly]="isManageUnallowed"
-                    [placeholder]="ls.l('Tax/VatNo')"
-                    [(value)]="settings.taxVatNo"
-                    [maxLength]="20">
-                </dx-text-box>
+            <div class="row">
+                <div class="settings-wrapper">
+                    <div class="left-side">
+                        <h3>{{ls.l('Company Info')}}</h3>
+                        <dx-text-box [placeholder]="ls.l('LegalName')"
+                                     [(value)]="settings.legalName"
+                                     [readOnly]="isManageUnallowed"
+                                     [maxLength]="150">
+                        </dx-text-box>
+                        <dx-text-area height="90px"
+                                      [placeholder]="ls.l('Address')"
+                                      [(value)]="settings.address"
+                                      [readOnly]="isManageUnallowed"
+                                      [maxLength]="500">
+                        </dx-text-area>
+                        <dx-text-area [readOnly]="isManageUnallowed"
+                                      [placeholder]="ls.l('Invoice_DefaultNote')"
+                                      [(value)]="settings.defaultNote">
+                        </dx-text-area>
+                        <dx-number-box *ngIf="hasCommissionsFeature"
+                                       [min]="0"
+                                       [max]="99"
+                                       mode="number"
+                                       [showClearButton]="true"
+                                       [readOnly]="isRateDisabled"
+                                       [placeholder]="ls.l('Default') + ' ' + ls.l('AffiliateRate') + ', %'"
+                                       [(value)]="settings.defaultAffiliateRate"
+                                       [showSpinButtons]="true">
+                        </dx-number-box>
+                    </div>
+                    <div class="right-side">
+                        <h3>{{ls.l('InvoiceEmail_OtherSettings')}}</h3>
+                        <a (click)="showBankSettingsDialog()"
+                           href="javascript:void(0)">
+                            {{ls.l('InvoiceEmail_BankTransferSettings')}}
+                        </a>
+                        <dx-check-box [readOnly]="isManageUnallowed"
+                                      [text]="ls.l('InvoiceEmail_ShowShippingAddress')"
+                                      [(value)]="settings.showShippingAddress">
+                        </dx-check-box>
+                        <dx-check-box [readOnly]="isManageUnallowed"
+                                      [text]="ls.l('InvoiceEmail_AttachPDF')"
+                                      [(value)]="settings.attachPDF">
+                        </dx-check-box>
+                        <dx-text-box [readOnly]="isManageUnallowed"
+                                     [placeholder]="ls.l('Tax/VatNo')"
+                                     [(value)]="settings.taxVatNo"
+                                     [maxLength]="20">
+                        </dx-text-box>
+                    </div>
+                </div>
             </div>
-        </div>
-    </ng-container>
-</email-template-dialog>
+        </dx-scroll-view>
+    </div>
+</modal-dialog>

@@ -5,7 +5,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 
 /** Third party imports */
 import { Observable, Subject } from 'rxjs';
-import { finalize, startWith, switchMap } from 'rxjs/operators';
+import { finalize, startWith, switchMap, map } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
@@ -31,7 +31,9 @@ import {
     UpdateEmailTemplateRequest,
     GetTemplateReponse,
     ContactServiceProxy,
-    GetEmailDataOutput
+    GetEmailDataOutput,
+
+    EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
@@ -60,11 +62,16 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild('tagsButton', { static: false }) tagsButton: ElementRef;
 
     ckEditor: any;
+    templateLoaded: boolean;
+    showTo = true;
+    showFrom = true;
     showCC = false;
     showBCC = false;
     tagLastValue: string;
     startCase = startCase;
     tagsTooltipVisible = false;
+    disableControls = false;
+    readonly SystemDefaultId = -1;
 
     private readonly WEBSITE_LINK_TYPE_ID = 'J';
 
@@ -84,7 +91,12 @@ export class EmailTemplateDialogComponent implements OnInit {
     refresh$: Observable<null> = this._refresh.asObservable();
     templates$: Observable<GetTemplatesResponse[]> = this.refresh$.pipe(
         startWith(null),
-        switchMap(() => this.emailTemplateProxy.getTemplates(this.data.templateType))
+        switchMap(() => this.emailTemplateProxy.getTemplates(this.data.templateType)),
+        map(response => {
+            if (this.data.addDefaultTemplate)
+                response.unshift(GetTemplatesResponse.fromJS({ name: 'System Default', id: this.SystemDefaultId }));
+            return response;
+        })
     );
     attachments: Partial<EmailAttachment>[] = this.data.attachments || [];
     uniqId = Math.random().toString().slice(-7);
@@ -129,7 +141,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         private contactProxy: ContactServiceProxy,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
-        private sessionService: AppSessionService,
+        sessionService: AppSessionService,
         private permission: AppPermissionService,
         private features: FeatureCheckerService,
         private communicationProxy: ContactCommunicationServiceProxy,
@@ -145,12 +157,19 @@ export class EmailTemplateDialogComponent implements OnInit {
 
         if (this.data.templateId)
             this.loadTemplateById(this.data.templateId);
-        else if (!this.data.tags && this.data.contact)
-            this.communicationProxy.getEmailData(
-                undefined, this.data.contact.id
-            ).subscribe((res: GetEmailDataOutput) => {
-                this.data.tags = res.tags;
-            });
+        else {
+            if (!this.data.tags && this.data.contact)
+                this.communicationProxy.getEmailData(
+                    undefined, this.data.contact.id
+                ).subscribe((res: GetEmailDataOutput) => {
+                    this.data.tags = res.tags;
+                });
+            if (data.addDefaultTemplate) {
+                this.data.templateId = this.SystemDefaultId;
+                this.setDisabledControls(true);
+            }
+            this.templateLoaded = true;
+        }
     }
 
     ngOnInit() {
@@ -159,8 +178,8 @@ export class EmailTemplateDialogComponent implements OnInit {
             if (this.attachments.length && !this.data.attachments)
                 this.attachments.forEach(item => this.removeAttachment(item));
         });
-        this.showCC = Boolean(this.data.cc && this.data.cc.length);
-        this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
+        this.showCC = this.data.showEmptyCCAndBcc || Boolean(this.data.cc && this.data.cc.length);
+        this.showBCC = this.data.showEmptyCCAndBcc || Boolean(this.data.bcc && this.data.bcc.length);
 
         this.ckConfig.height = this.editorHeight ? this.editorHeight : innerHeight -
             (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 460 : 420) + 'px';
@@ -196,6 +215,11 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     save() {
+        if (this.data.templateId == this.SystemDefaultId) {
+            this.onSave.emit(<any>{ templateId: undefined });
+            return;
+        }
+
         if (this.validateData()) {
             if (this.templateEditMode)
                 this.saveTemplateData();
@@ -218,6 +242,10 @@ export class EmailTemplateDialogComponent implements OnInit {
             if (!this.getTemplateName())
                 return this.notifyService.error(
                     this.ls.l('RequiredField', this.ls.l('Template')));
+
+            if (this.data.templateType == EmailTemplateType.WelcomeEmail && !this.data.subject)
+                return this.notifyService.error(
+                    this.ls.l('RequiredField', this.ls.l('Subject')));
         } else {
             if (!this.validationGroup.instance.validate().isValid)
                 return this.notifyService.error(this.ls.l('InvalidEmailAddress'));
@@ -334,8 +362,15 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onTemplateChanged(event) {
+        this.data.templateId = event.value;
+        if (this.data.addDefaultTemplate && event.value == this.SystemDefaultId) {
+            this.setDisabledControls(true);
+            this.reset();
+            return;
+        }
+        this.setDisabledControls(false);
+
         if (event.value) {
-            this.data.templateId = event.value;
             if (this.templateEditMode || this.data.switchTemplate)
                 this.loadTemplateById(event.value);
             else
@@ -352,10 +387,11 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.data.body = res.body;
             this.data.cc = res.cc;
             this.data.subject = res.subject;
-            this.showCC = Boolean(res.cc && res.cc.length);
-            this.showBCC = Boolean(res.bcc && res.bcc.length);
+            this.showCC = this.data.showEmptyCCAndBcc || Boolean(res.cc && res.cc.length);
+            this.showBCC = this.data.showEmptyCCAndBcc || Boolean(res.bcc && res.bcc.length);
             this.onTemplateChange.emit(templateId);
             this.invalidate();
+            this.templateLoaded = true;
         });
     }
 
@@ -421,6 +457,17 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.invalidate();
             });
         }
+    }
+
+    setDisabledControls(value: boolean) {
+        if (this.disableControls == value)
+            return;
+
+        this.disableControls = value;
+        if (this.ckEditor)
+            this.ckEditor.setReadOnly(value);
+        else
+            this.ckConfig.readOnly = value;
     }
 
     reset() {
@@ -604,7 +651,10 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
                 this.refresh();
                 if (this.data.templateId === templateId) {
-                    this.data.templateId = null;
+                    if (this.data.addDefaultTemplate)
+                        this.data.templateId = this.SystemDefaultId;
+                    else
+                        this.data.templateId = null;
                 }
                 this.onTemplateDelete.emit(templateId);
             });
