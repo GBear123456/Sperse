@@ -179,12 +179,19 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     deteleProduct(id: number) {
-        this.startLoading();
-        this.productProxy.deleteProduct(id).pipe(
-            finalize(() => this.finishLoading())
-        ).subscribe(() => {
-            this.invalidate();
-        });
+        this.message.confirm('',
+            this.l('DeleteConfiramtion'),
+            isConfirmed => {
+                if (isConfirmed) {
+                    this.startLoading();
+                    this.productProxy.deleteProduct(id).pipe(
+                        finalize(() => this.finishLoading())
+                    ).subscribe(() => {
+                        this.invalidate();
+                    });
+                }
+            }
+        );
     }
 
     showProductDialog(product?) {
