@@ -299,6 +299,13 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         };
     }
 
+    validateFee(option) {
+        return (event) => {
+            return option.frequency == RecurringPaymentFrequency.LifeTime
+                || event.value && event.value > 0;
+        };
+    }
+
     detectChanges() {
         this.changeDetection.detectChanges();
     }

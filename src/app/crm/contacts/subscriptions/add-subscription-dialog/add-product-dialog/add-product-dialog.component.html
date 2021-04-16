@@ -82,6 +82,9 @@
         <ng-container *ngIf="product.type != defaultProductType">
             <div class="services-header">
                 {{ls.l('Services')}}:
+                <div class="field">
+                    <div class="add-new-button" (click)="addNewServiceFields()"><span>+ {{ls.l('Add')}}</span></div>
+                </div>
             </div>
             <div class="services" *ngFor="let service of product.productServices; let i = index">
                 <i class="fa fa-close" (click)="removeServiceFields(i)"></i>
@@ -116,11 +119,11 @@
                     </dx-select-box>
                 </div>
             </div>
-            <div class="field">
-                <div class="add-new-button" (click)="addNewServiceFields()"><span>+ {{ls.l('Add')}}</span></div>
-            </div>
             <div class="services-header">
                 {{ls.l('PaymentOptions')}}:
+                <div class="field">
+                    <div class="add-new-button" (click)="addNewPaymentPeriod()"><span>+ {{ls.l('Add')}}</span></div>
+                </div>
             </div>
             <div class="services" *ngFor="let option of product.productSubscriptionOptions; let i = index">
                 <i class="fa fa-close" (click)="removePaymentPeriod(i)"></i>
@@ -129,27 +132,34 @@
                     <dx-number-box name="count"
                         width="200px"
                         [min]="0"
+                        mode="number"
+                        format="###0"
+                        valueChangeEvent="keyup"
                         [placeholder]="ls.l('ByDefault', 0)"
-                        [(value)]="option.trialDayCount">
+                        [(value)]="option.trialDayCount"
+                        (onValueChanged)="option.setupFee = $event.value ? option.setupFee : 0">
                         <dx-validator>
                             <dxi-validation-rule type="custom" [validationCallback]="validateTrialDayCount(option)" message="{{ls.l('TrialDayCountRequired')}}."></dxi-validation-rule>
                         </dx-validator>
                     </dx-number-box>
                 </div>
-                <div class="field">
+                <div class="field" *ngIf="option.trialDayCount">
                     <label class="wide">{{ls.l('SetupFee')}}</label>
                     <dx-number-box name="price"
                         width="200px"
                         [format]="amountFormat$ | async"
                         [(value)]="option.setupFee">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                        </dx-validator>
                     </dx-number-box>
                 </div>
                 <div class="field">
-                    <label class="wide" for="name">{{ls.l('Frequency')}}</label>
+                    <label class="wide" for="name">{{ls.l('PaymentPeriod')}}</label>
                     <dx-select-box name="name"
                         width="200px"
                         [dataSource]="getFrequencies(option)"
-                        placeholder="Select frequency..."
+                        [placeholder]="ls.l('Select') + ' ' + ls.l('PaymentPeriod') + '...'"
                         [(value)]="option.frequency">
                         <dx-validator>
                             <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
@@ -164,6 +174,7 @@
                         [(value)]="option.fee">
                         <dx-validator>
                             <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                            <dxi-validation-rule type="custom" [validationCallback]="validateFee(option)" message="{{ls.l('FeeRequired')}}."></dxi-validation-rule>
                         </dx-validator>
                     </dx-number-box>
                 </div>
@@ -173,12 +184,11 @@
                         [placeholder]="ls.l('ByDefault', gracePeriodDefaultValue ? gracePeriodDefaultValue : 0)"
                         width="160px"
                         [min]="0"
+                        format="###0"
+                        mode="number"
                         [(value)]="option.gracePeriodDayCount">
                     </dx-number-box>
                 </div>            
-            </div>
-            <div class="field">
-                <div class="add-new-button" (click)="addNewPaymentPeriod()"><span>+ {{ls.l('Add')}}</span></div>
             </div>
         </ng-container>
     </dx-validation-group>
