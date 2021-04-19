@@ -118,7 +118,7 @@
                             [(value)]="data.cc"
                             (onKeyUp)="onKeyUp($event)"
                             (onInitialized)="onTagBoxInitialized($event)"
-                            (onFocusOut)="emailInputFocusOut($event, !data.showEmptyCCAndBcc)"
+                            (onFocusOut)="emailInputFocusOut($event, true)"
                             (onCustomItemCreating)="onCustomItemCreating($event)">
                             <dx-validator>
                                 <dxi-validation-rule type="custom" 
@@ -141,7 +141,7 @@
                             [(value)]="data.bcc"
                             (onKeyUp)="onKeyUp($event)"
                             (onInitialized)="onTagBoxInitialized($event)"
-                            (onFocusOut)="emailInputFocusOut($event, !data.showEmptyCCAndBcc)"
+                            (onFocusOut)="emailInputFocusOut($event, true)"
                             (onCustomItemCreating)="onCustomItemCreating($event)">
                             <dx-validator>
                                 <dxi-validation-rule type="custom" 
