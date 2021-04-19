@@ -474,7 +474,7 @@ export class ContactsService {
         );
     }
 
-    showWelcomeEmailDialog(templateId, saveCallback: (number) => void) {
+    showWelcomeEmailDialog(templateId, saveCallback: (data) => void) {
         let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
@@ -483,18 +483,15 @@ export class ContactsService {
                 templateId: templateId,
                 saveTitle: this.ls.l('Send'),
                 title: this.ls.l('Template'),
-                templateType: EmailTemplateType.WelcomeEmail,
-                addDefaultTemplate: true,
-                showEmptyCCAndBcc: true
+                templateType: EmailTemplateType.WelcomeEmail
             }
         }).componentInstance;
         dialogComponent.templateEditMode = true;
-        dialogComponent.showTo = dialogComponent.showFrom = false;
         dialogComponent.tagsList = [WelcomeEmailTags.FirstName, WelcomeEmailTags.LastName, WelcomeEmailTags.UserEmail, WelcomeEmailTags.Password, WelcomeEmailTags.BaseUrl, WelcomeEmailTags.SenderSystemName, WelcomeEmailTags.SenderEmailSignature,
         WelcomeEmailTags.AutologinLink, WelcomeEmailTags.TrackingPixel];
         dialogComponent.onSave.subscribe((data) => {
             if (data && saveCallback)
-                saveCallback(data.templateId)
+                saveCallback(data)
             dialogComponent.close();
         });
         return dialogComponent;

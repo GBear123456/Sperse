@@ -7,7 +7,8 @@ import {
     HostSettingsServiceProxy,
     HostUserManagementSettingsEditDto,
     TenantSettingsServiceProxy,
-    TenantUserManagementSettingsEditDto
+    TenantUserManagementSettingsEditDto,
+    EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 
@@ -20,6 +21,9 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 export class UserManagementComponent implements ITenantSettingsStepComponent {
     @Input() tenantSettings: TenantUserManagementSettingsEditDto;
     @Input() hostSettings: HostUserManagementSettingsEditDto;
+
+    EmailTemplateType = EmailTemplateType;
+
     constructor(
         private hostSettingsServiceProxy: HostSettingsServiceProxy,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
@@ -27,16 +31,6 @@ export class UserManagementComponent implements ITenantSettingsStepComponent {
         public ls: AppLocalizationService,
         public dialog: MatDialog
     ) { }
-
-    onWelcomeEmailTemplateClick() {
-        let currentTemplateId = this.tenantSettings ? this.tenantSettings.welcomeEmailTemplateId : this.hostSettings.welcomeEmailTemplateId;
-        this.contactsService.showWelcomeEmailDialog(currentTemplateId, (templateId) => {
-            if (this.tenantSettings)
-                this.tenantSettings.welcomeEmailTemplateId = templateId;
-            else
-                this.hostSettings.welcomeEmailTemplateId = templateId;
-        });
-    }
 
     save(): Observable<void> {
         return this.tenantSettings

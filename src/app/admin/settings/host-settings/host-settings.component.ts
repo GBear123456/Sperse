@@ -13,7 +13,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     ComboboxItemDto, CommonLookupServiceProxy, SettingScopes, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput, PayPalSettings,
-    BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings, YTelSettingsEditDto
+    BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings, YTelSettingsEditDto, EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
@@ -60,6 +60,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
             label: this.l('SaveAll')
         }
     ];
+    EmailTemplateType = EmailTemplateType;
 
     constructor(
         injector: Injector,
@@ -127,10 +128,6 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
 
     ngOnDestroy() {
         this.rootComponent.overflowHidden(false);
-    }
-
-    onWelcomeEmailTemplateClick() {
-        this.contactService.showWelcomeEmailDialog(this.hostSettings.userManagement.welcomeEmailTemplateId, (templateId) => this.hostSettings.userManagement.welcomeEmailTemplateId = templateId);
     }
 
     sendTestEmail(): void {

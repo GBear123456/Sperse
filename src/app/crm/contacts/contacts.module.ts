@@ -129,6 +129,7 @@ import { BankCodeLettersModule } from '@app/shared/common/bank-code-letters/bank
 import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.component';
 import { InvoiceSettingsDialogComponent } from './invoice-settings-dialog/invoice-settings-dialog.component';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
+import { EmailTemplateSelectorComponent } from '@app/crm/shared/email-template-dialog/email-template-selector/email-template-selector.component';
 import { CrmService } from '@app/crm/crm.service';
 import { AddSubscriptionDialogComponent } from './subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { CancelSubscriptionDialogComponent } from './subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
@@ -194,6 +195,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         ContactListDialogComponent,
         NotSupportedTypeDialogComponent,
         EmailTemplateDialogComponent,
+        EmailTemplateSelectorComponent,
         InvoiceSettingsDialogComponent,
         HistoryListDialogComponent,
         UserInboxComponent,
@@ -330,6 +332,9 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         DocumentsService,
         InvoicesService,
         CrmService
+    ],
+    exports: [
+        EmailTemplateSelectorComponent
     ]
 })
 export class ContactsModule {}

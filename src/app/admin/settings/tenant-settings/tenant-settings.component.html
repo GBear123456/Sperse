@@ -183,10 +183,7 @@
                             {{l("EmailConfirmationRequiredForLogin")}}
                             <span></span>
                         </label>
-                        <div class="email-template-link">
-                            <i class="edit fa fa-pencil"></i>
-                            <span (click)="onWelcomeEmailTemplateClick()">{{l("UserRegistrationEmail")}}</span>
-                        </div>
+                        <email-template-selector [(templateId)]="settings.userManagement.welcomeEmailTemplateId" [templateType]="EmailTemplateType.WelcomeEmail"></email-template-selector>
                     </div>
                 </dx-scroll-view>
             </mat-tab>
