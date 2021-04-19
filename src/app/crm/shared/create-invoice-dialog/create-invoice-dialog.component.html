@@ -180,10 +180,11 @@
             </div>
             <div class="field-area lines">
                 <dx-validation-group>
-                    <dx-data-grid
+                    <dx-data-grid #productLines
                         width="810px"
                         height="auto"
                         class="alone"
+                        [renderAsync]="true"
                         [disabled]="disabledForUpdate"
                         [(dataSource)]="lines"
                         [allowColumnReordering]="false"
@@ -193,6 +194,8 @@
                         [scrolling]="{showScrollbar: 'never'}"
                         [allowColumnResizing]="false"
                         [loadPanel]="{enabled: false}">
+
+                        <dxo-editing [texts]="{confirmDeleteMessage: ''}"></dxo-editing>
 
                         <dxi-column width="180px" [caption]="ls.l('Product')" [allowSorting]="false" cellTemplate="product"></dxi-column>
                         <dxi-column width="230px" [caption]="ls.l('Description')" [allowSorting]="false" cellTemplate="description"></dxi-column>
@@ -225,8 +228,8 @@
                                 </div>
                             </dx-select-box>
 
-                            <div class="row-actions add-new" *ngIf="cellData.rowIndex == lines.length - 1">
-                                <span [class.disabled]="lines.length != getFilteredLines().length" class="add-new" (click)="addNewLine()">{{ls.l('+ Add new line')}}</span>
+                            <div class="row-actions add-new" [hidden]="hideAddNew" *ngIf="cellData.rowIndex == lines.length - 1">
+                                <span [class.disabled]="lines.length != getFilteredLines().length" class="add-new" (click)="addNewLine(productLines)">{{ls.l('+ Add new line')}}</span>
                             </div>
                         </div>
                         <div *dxTemplate="let cellData of 'description'">
@@ -315,7 +318,7 @@
                             </dx-text-box>
                         </div>
                         <div *dxTemplate="let cellData of 'actions'" class="row-actions">
-                            <i [class.disabled]="!cellData.rowIndex && lines.length == 1" (click)="deleteLine(cellData)" class="delete-icon"></i>
+                            <i [class.disabled]="!cellData.rowIndex && lines.length == 1" (click)="deleteLine(cellData, productLines)" class="delete-icon"></i>
                         </div>
                     </dx-data-grid>
                 </dx-validation-group>

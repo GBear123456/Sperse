@@ -70218,7 +70218,6 @@ export interface ICancelOrderInfo {
 export class SubscriptionServiceDto implements ISubscriptionServiceDto {
     id!: number | undefined;
     systemType!: string | undefined;
-    productName!: string | undefined;
     serviceCode!: string | undefined;
     serviceName!: string | undefined;
     levelCode!: string | undefined;
@@ -70237,7 +70236,6 @@ export class SubscriptionServiceDto implements ISubscriptionServiceDto {
         if (data) {
             this.id = data["id"];
             this.systemType = data["systemType"];
-            this.productName = data["productName"];
             this.serviceCode = data["serviceCode"];
             this.serviceName = data["serviceName"];
             this.levelCode = data["levelCode"];
@@ -70256,7 +70254,6 @@ export class SubscriptionServiceDto implements ISubscriptionServiceDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["systemType"] = this.systemType;
-        data["productName"] = this.productName;
         data["serviceCode"] = this.serviceCode;
         data["serviceName"] = this.serviceName;
         data["levelCode"] = this.levelCode;
@@ -70268,7 +70265,6 @@ export class SubscriptionServiceDto implements ISubscriptionServiceDto {
 export interface ISubscriptionServiceDto {
     id: number | undefined;
     systemType: string | undefined;
-    productName: string | undefined;
     serviceCode: string | undefined;
     serviceName: string | undefined;
     levelCode: string | undefined;
@@ -70337,7 +70333,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     endDate!: moment.Moment | undefined;
     fee!: number | undefined;
     tenantId!: string | undefined;
-    serviceType!: string | undefined;
+    productName!: string | undefined;
     orderType!: string | undefined;
     trialEndDate!: moment.Moment | undefined;
     statusCode!: string | undefined;
@@ -70362,7 +70358,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.fee = data["fee"];
             this.tenantId = data["tenantId"];
-            this.serviceType = data["serviceType"];
+            this.productName = data["productName"];
             this.orderType = data["orderType"];
             this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
             this.statusCode = data["statusCode"];
@@ -70395,7 +70391,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["fee"] = this.fee;
         data["tenantId"] = this.tenantId;
-        data["serviceType"] = this.serviceType;
+        data["productName"] = this.productName;
         data["orderType"] = this.orderType;
         data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
         data["statusCode"] = this.statusCode;
@@ -70421,7 +70417,7 @@ export interface IOrderSubscriptionDto {
     endDate: moment.Moment | undefined;
     fee: number | undefined;
     tenantId: string | undefined;
-    serviceType: string | undefined;
+    productName: string | undefined;
     orderType: string | undefined;
     trialEndDate: moment.Moment | undefined;
     statusCode: string | undefined;

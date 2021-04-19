@@ -195,6 +195,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     billingAddresses: InvoiceAddressInfo[] = [];
     shippingAddresses: InvoiceAddressInfo[] = [];
     filterBoolean = Boolean;
+    hideAddNew = false;
 
     constructor(
         private reuseService: RouteReuseStrategy,
@@ -542,7 +543,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     checkFulfilledLine(line, fulfilled = true) {
-        return ['description', 'quantity', 'rate', 'unitId'][fulfilled ? 'every' : 'some'](field => line[field]);
+        return ['description', 'quantity', 'rate', 'unitId'][fulfilled ? 'every' : 'some'](field => line[field] != undefined);
     }
 
     onFieldFocusIn(event) {
@@ -689,9 +690,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     selectInvoiceProduct(event, cellData) {
         let item = event.selectedItem;
-        if (item && !cellData.data.productCode
-            && item.hasOwnProperty('rate')
+        if (item && item.hasOwnProperty('rate')
+            && !cellData.data.productCode
         ) {
+            cellData.data.productId = undefined;
             cellData.data.units = undefined;
             cellData.data.unitId = item.unitId;
             cellData.data.rate = item.rate;
@@ -702,7 +704,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     selectProduct(event, cellData) {
         let item = event.selectedItem;
-        if (item && item.hasOwnProperty('paymentOptions')) {
+        if (item && item.hasOwnProperty('paymentOptions') 
+            && cellData.data.productId != item.id
+        ) {
+            cellData.data.productId = item.id;
             cellData.data.description = item.description ||
                 cellData.data.description || item.name;
             if (!this.invoiceProducts.some(item => item.description == cellData.data.description))
@@ -807,15 +812,23 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     }
 
-    addNewLine() {
+    addNewLine(component) {
         this.lines.push({});
+        component.instance.repaint();
         this.changeDetectorRef.detectChanges();
     }
 
-    deleteLine(data) {
+    deleteLine(data, component) {
         if (data.rowIndex || this.lines.length > 1) {
-            this.lines.splice(data.rowIndex, 1);
-            this.calculateBalance();
+            this.hideAddNew = true;
+            setTimeout(() => {
+                this.lines.splice(data.rowIndex, 1);
+                this.calculateBalance(); 
+                setTimeout(() => {
+                    this.hideAddNew = false;
+                    this.changeDetectorRef.detectChanges();                    
+                }, 300);
+            });
         }
     }
 

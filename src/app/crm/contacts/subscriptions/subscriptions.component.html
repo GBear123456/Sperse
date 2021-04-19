@@ -19,7 +19,7 @@
     <dxo-sorting mode="multiple"></dxo-sorting>
 
     <dxi-column dataField="id" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-    <dxi-column dataField="serviceType" [caption]="ls.l('ProductName')" cssClass="clipboard-holder"></dxi-column>
+    <dxi-column dataField="productName" [caption]="ls.l('ProductName')" cssClass="clipboard-holder"></dxi-column>
     <dxi-column dataField="orderType" [caption]="ls.l('OrderType')" cssClass="clipboard-holder"></dxi-column>
     <dxi-column dataField="startDate" cellTemplate="dateTimeTemplate" [width]="appService.isHostTenant ? 180 : 215" cssClass="tabular"></dxi-column>
     <dxi-column dataField="endDate" cellTemplate="dateTimeTemplate" [width]="appService.isHostTenant ? 180 : 215" cssClass="tabular"></dxi-column>

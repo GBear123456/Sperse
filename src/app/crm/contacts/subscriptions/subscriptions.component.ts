@@ -102,7 +102,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
     setDataSource(data: OrderSubscriptionDto[]) {
         _.mapObject(
-            _.groupBy(data, (item: OrderSubscriptionDto) => item.serviceType),
+            _.groupBy(data, (item: OrderSubscriptionDto) => item.productName),
             (subscriptions: OrderSubscriptionDto[]) => {
                 let chain = _.chain(subscriptions).sortBy('id').reverse().value();
                 if (!chain.some(item => {
@@ -209,7 +209,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             data = {
                 ...data,
                 endDate: subscription.endDate,
-                name: subscription.serviceType
+                name: subscription.productName
             };
         }
         this.dialog.open(AddSubscriptionDialogComponent, {
