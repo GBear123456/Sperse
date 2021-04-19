@@ -31,32 +31,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
 
     settings = new InvoiceSettings();
-    editorHeight = innerHeight - 560 + 'px';
-    tagsList = [
-        EmailTags.ClientFirstName,
-        EmailTags.ClientLastName,
-        EmailTags.LegalName,
-        EmailTags.InvoiceNumber,
-        EmailTags.InvoiceGrandTotal,
-        EmailTags.InvoiceDueDate,
-        EmailTags.InvoiceLink,
-        EmailTags.InvoiceAnchor,
-        EmailTags.SenderFullName,
-        EmailTags.SenderPhone,
-        EmailTags.SenderEmail,
-        EmailTags.SenderWebSite1,
-        EmailTags.SenderWebSite2,
-        EmailTags.SenderWebSite3,
-        EmailTags.SenderCompany,
-        EmailTags.SenderCompanyTitle,
-        EmailTags.SenderCompanyLogo,
-        EmailTags.SenderCompanyPhone,
-        EmailTags.SenderCompanyEmail,
-        EmailTags.SenderCompanyWebSite,
-        EmailTags.SenderCalendly,
-        EmailTags.SenderAffiliateCode,
-        EmailTags.SenderEmailSignature
-    ];
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
     isRateDisabled = this.isManageUnallowed || !this.permission.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
@@ -75,6 +49,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             action: this.save.bind(this)
         }
     ]
+    EmailTemplateType = EmailTemplateType;
 
     constructor(
         public dialog: MatDialog,
@@ -123,30 +98,6 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         });
     }
 
-    showEmailTemplateDialog() {
-        let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {
-                title: this.ls.l('Template'),
-                templateType: EmailTemplateType.Invoice,
-                saveTitle: this.ls.l('Save'),
-                hideContextMenu: false,
-                templateId: this.settings.defaultTemplateId
-            }
-        }).componentInstance;
-        dialogComponent.tagsList = this.tagsList;
-        dialogComponent.editorHeight = this.editorHeight;
-        dialogComponent.templateEditMode = true;
-        dialogComponent.onSave.subscribe((data) => {
-            this.settings.defaultTemplateId = data.templateId;
-            dialogComponent.close();
-        });
-        dialogComponent.onTagItemClick.subscribe((e) => this.onTagItemClick(e, dialogComponent));
-        return dialogComponent;
-    }
-
     showBankSettingsDialog() {
         this.dialog.open(BankSettingsDialogComponent, {
             panelClass: 'slider',
@@ -156,12 +107,5 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
                 isManageUnallowed: this.isManageUnallowed
             }
         });
-    }
-
-    onTagItemClick(tag: string, modalDialog) {
-        if (tag == 'InvoiceAnchor')
-            modalDialog.addLinkTag('InvoiceLink', this.ls.l('Invoice'));
-        else
-            modalDialog.addTextTag(tag);
     }
 }

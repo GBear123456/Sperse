@@ -358,14 +358,35 @@ export class ContactsService {
 
     initEmailDialogTagsList(dialogComponent) {
         if (!dialogComponent.tagsList || !dialogComponent.tagsList.length) {
-            dialogComponent.tagsList = [
-                EmailTags.FirstName, EmailTags.LastName, EmailTags.SenderFullName, EmailTags.DayOfWeek, EmailTags.LastReferralContact, EmailTags.CompanyIndustry,
-                EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite1,
-                EmailTags.SenderWebSite2, EmailTags.SenderWebSite3, EmailTags.SenderCompany,
-                EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo, EmailTags.SenderCompanyPhone,
-                EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite, EmailTags.SenderCalendly,
-                EmailTags.SenderAffiliateCode, EmailTags.SenderEmailSignature
-            ];
+            dialogComponent.tagsList = this.getEmailTemplateTags(EmailTemplateType.Contact);
+        }
+    }
+
+    getEmailTemplateTags(templateType: EmailTemplateType) : any[] {
+        switch (templateType) {
+            case EmailTemplateType.Contact:
+                return [
+                    EmailTags.FirstName, EmailTags.LastName, EmailTags.SenderFullName, EmailTags.DayOfWeek, EmailTags.LastReferralContact, EmailTags.CompanyIndustry,
+                    EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite1,
+                    EmailTags.SenderWebSite2, EmailTags.SenderWebSite3, EmailTags.SenderCompany,
+                    EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo, EmailTags.SenderCompanyPhone,
+                    EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite, EmailTags.SenderCalendly,
+                    EmailTags.SenderAffiliateCode, EmailTags.SenderEmailSignature
+                ];
+            case EmailTemplateType.Invoice:
+                return [
+                    EmailTags.ClientFirstName, EmailTags.ClientLastName, EmailTags.LegalName, EmailTags.InvoiceNumber, EmailTags.InvoiceGrandTotal, EmailTags.InvoiceDueDate, EmailTags.InvoiceLink,
+                    EmailTags.InvoiceAnchor, EmailTags.SenderFullName, EmailTags.SenderPhone, EmailTags.SenderEmail, EmailTags.SenderWebSite1, EmailTags.SenderWebSite2, EmailTags.SenderWebSite3,
+                    EmailTags.SenderCompany, EmailTags.SenderCompanyTitle, EmailTags.SenderCompanyLogo, EmailTags.SenderCompanyPhone, EmailTags.SenderCompanyEmail, EmailTags.SenderCompanyWebSite,
+                    EmailTags.SenderCalendly, EmailTags.SenderAffiliateCode, EmailTags.SenderEmailSignature
+                ];
+            case EmailTemplateType.WelcomeEmail:
+                return [
+                    WelcomeEmailTags.FirstName, WelcomeEmailTags.LastName, WelcomeEmailTags.UserEmail, WelcomeEmailTags.Password, WelcomeEmailTags.BaseUrl, WelcomeEmailTags.SenderSystemName,
+                    WelcomeEmailTags.SenderEmailSignature, WelcomeEmailTags.AutologinLink, WelcomeEmailTags.TrackingPixel
+                ];
+            default:
+                return [];
         }
     }
 
@@ -474,26 +495,34 @@ export class ContactsService {
         );
     }
 
-    showWelcomeEmailDialog(templateId, saveCallback: (data) => void) {
+    showEmailTemplateSelectorDialog(templateId, templateType: EmailTemplateType, saveCallback: (data) => void) {
         let dialogComponent = this.dialog.open(EmailTemplateDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: {
                 templateId: templateId,
-                saveTitle: this.ls.l('Send'),
                 title: this.ls.l('Template'),
-                templateType: EmailTemplateType.WelcomeEmail
+                templateType: templateType
             }
         }).componentInstance;
         dialogComponent.templateEditMode = true;
-        dialogComponent.tagsList = [WelcomeEmailTags.FirstName, WelcomeEmailTags.LastName, WelcomeEmailTags.UserEmail, WelcomeEmailTags.Password, WelcomeEmailTags.BaseUrl, WelcomeEmailTags.SenderSystemName, WelcomeEmailTags.SenderEmailSignature,
-        WelcomeEmailTags.AutologinLink, WelcomeEmailTags.TrackingPixel];
+        dialogComponent.tagsList = this.getEmailTemplateTags(templateType);
         dialogComponent.onSave.subscribe((data) => {
             if (data && saveCallback)
                 saveCallback(data)
             dialogComponent.close();
         });
+
+        if (templateType == EmailTemplateType.Invoice) {
+            dialogComponent.onTagItemClick.subscribe(tag => {
+                if (tag == 'InvoiceAnchor')
+                    dialogComponent.addLinkTag('InvoiceLink', this.ls.l('Invoice'));
+                else
+                    dialogComponent.addTextTag(tag);
+            });
+        }
+
         return dialogComponent;
     }
 
