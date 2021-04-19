@@ -634,7 +634,7 @@
         .row-actions {
             display: flex;
             height: 43px;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
 
             &.add-new {
@@ -648,6 +648,11 @@
             span {
                 height: 40px;
                 padding: 0 10px 0 50px;
+                &.add-custom-line,
+                &.separator {
+                    font-size: 18px;
+                    padding-left: 10px;    
+                }
                 &.add-new {
                     font-size: 14px;
                     font-weight: 500;
