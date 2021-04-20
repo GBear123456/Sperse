@@ -4,6 +4,7 @@ import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, Change
 /** Third party imports */
 import { forkJoin } from 'rxjs';
 import { finalize, tap } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
@@ -12,11 +13,12 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     ComboboxItemDto, CommonLookupServiceProxy, SettingScopes, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput, PayPalSettings,
-    BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings, YTelSettingsEditDto
+    BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings, YTelSettingsEditDto, EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppConsts } from '@root/shared/AppConsts';
+import { ContactsService } from '@app/crm/contacts/contacts.service';
 
 @Component({
     templateUrl: './host-settings.component.html',
@@ -58,6 +60,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
             label: this.l('SaveAll')
         }
     ];
+    EmailTemplateType = EmailTemplateType;
 
     constructor(
         injector: Injector,
@@ -65,7 +68,9 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         private commonLookupService: CommonLookupServiceProxy,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private appSessionService: AppSessionService,
-        private changeDetection: ChangeDetectorRef
+        private changeDetection: ChangeDetectorRef,
+        private contactService: ContactsService,
+        public dialog: MatDialog
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();

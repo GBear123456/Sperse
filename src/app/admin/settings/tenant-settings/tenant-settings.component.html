@@ -183,6 +183,7 @@
                             {{l("EmailConfirmationRequiredForLogin")}}
                             <span></span>
                         </label>
+                        <email-template-selector [(templateId)]="settings.userManagement.welcomeEmailTemplateId" [templateType]="EmailTemplateType.WelcomeEmail"></email-template-selector>
                     </div>
                 </dx-scroll-view>
             </mat-tab>
