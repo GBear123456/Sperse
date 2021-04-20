@@ -60,14 +60,11 @@ export class EmailTemplateSelectorComponent {
 
     showEmailTemplateDialog(createMode: boolean = false) {
         let id = createMode ? undefined : this.internalTemplateId;
-        console.log(this.templateType);
-        console.log(EmailTemplateType.WelcomeEmail);
-        console.log(EmailTemplateType.WelcomeEmail == this.templateType);
-        if (this.templateType == EmailTemplateType.WelcomeEmail) {
-            this.contactService.showWelcomeEmailDialog(id, (data) => {
-                this._refresh.next();
-                this.internalTemplateId = data.templateId;
-            })
-        }
+        this.contactService.showEmailTemplateSelectorDialog(id, this.templateType, this.dialogSaveCallback.bind(this));
+    }
+
+    dialogSaveCallback(data) {
+        this._refresh.next();
+        this.internalTemplateId = data.templateId;
     }
 }

@@ -4,10 +4,7 @@
               [editTitle]="false">
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover" #scrollView>
-            <div class="email-template-link">
-                <i class="edit fa fa-pencil"></i>
-                <span (click)="showEmailTemplateDialog()">Email template</span>
-            </div>
+            <email-template-selector [(templateId)]="settings.defaultTemplateId" [templateType]="EmailTemplateType.Invoice"></email-template-selector>
             <div class="row">
                 <div class="settings-wrapper">
                     <div class="left-side">
@@ -17,7 +14,12 @@
                                      [readOnly]="isManageUnallowed"
                                      [maxLength]="150">
                         </dx-text-box>
-                        <dx-text-area height="90px"
+                        <dx-text-box [readOnly]="isManageUnallowed"
+                                     [placeholder]="ls.l('Tax/VatNo')"
+                                     [(value)]="settings.taxVatNo"
+                                     [maxLength]="20">
+                        </dx-text-box>
+                        <dx-text-area height="155px"
                                       [placeholder]="ls.l('Address')"
                                       [(value)]="settings.address"
                                       [readOnly]="isManageUnallowed"
@@ -27,16 +29,6 @@
                                       [placeholder]="ls.l('Invoice_DefaultNote')"
                                       [(value)]="settings.defaultNote">
                         </dx-text-area>
-                        <dx-number-box *ngIf="hasCommissionsFeature"
-                                       [min]="0"
-                                       [max]="99"
-                                       mode="number"
-                                       [showClearButton]="true"
-                                       [readOnly]="isRateDisabled"
-                                       [placeholder]="ls.l('Default') + ' ' + ls.l('AffiliateRate') + ', %'"
-                                       [(value)]="settings.defaultAffiliateRate"
-                                       [showSpinButtons]="true">
-                        </dx-number-box>
                     </div>
                     <div class="right-side">
                         <h3>{{ls.l('InvoiceEmail_OtherSettings')}}</h3>
@@ -52,11 +44,16 @@
                                       [text]="ls.l('InvoiceEmail_AttachPDF')"
                                       [(value)]="settings.attachPDF">
                         </dx-check-box>
-                        <dx-text-box [readOnly]="isManageUnallowed"
-                                     [placeholder]="ls.l('Tax/VatNo')"
-                                     [(value)]="settings.taxVatNo"
-                                     [maxLength]="20">
-                        </dx-text-box>
+                        <dx-number-box *ngIf="hasCommissionsFeature"
+                                       [min]="0"
+                                       [max]="99"
+                                       mode="number"
+                                       [showClearButton]="true"
+                                       [readOnly]="isRateDisabled"
+                                       [placeholder]="ls.l('Default') + ' ' + ls.l('AffiliateRate') + ', %'"
+                                       [(value)]="settings.defaultAffiliateRate"
+                                       [showSpinButtons]="true">
+                        </dx-number-box>
                     </div>
                 </div>
             </div>
