@@ -192,7 +192,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
         if (this.dataGrid && this.dataGrid.instance)
             this.dataGrid.instance.clearSorting();
-        this.dataSource.sort(['serviceType', { getter: 'id', desc: true }]);
+        this.dataSource.sort(['productName', { getter: 'id', desc: true }]);
         this.dataSource.load();
     }
 
@@ -248,9 +248,9 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             orderNumber: undefined,
             subscriptions: [new SubscriptionInput({
                 ...cell.data,
-                code: cell.data.serviceTypeId,
-                name: cell.data.serviceType,
-                level: cell.data.serviceId,
+                code: cell.data.serviceCode,
+                name: cell.data.productName,
+                level: cell.data.levelCode,
                 amount: cell.data.fee,
                 startDate: cell.column.dataField == 'startDate' ?
                     DateHelper.removeTimezoneOffset(new Date(event.value), true, 'from') : cell.data.startDate,
@@ -259,7 +259,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             })],
             productId: undefined,
             paymentPeriodType: undefined,
-            updateThirdParty: this.isBankCodeLayout && cell.data.serviceTypeId === BankCodeServiceType.BANKVault,
+            updateThirdParty: this.isBankCodeLayout && cell.data.serviceCode === BankCodeServiceType.BANKVault,
             hasRecurringBilling: false
         })).pipe(
             finalize(() => this.loadingService.finishLoading())
