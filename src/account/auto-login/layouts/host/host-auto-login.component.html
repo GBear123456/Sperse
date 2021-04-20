@@ -5,7 +5,7 @@
 
             <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
                 <div class="form-group clearfix">
-                    <p [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', '<b>' + userEmail + '</b>', tenantName)"></p>
+                    <p [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', (isLinkSent ? '<br>' : '') + '<b>' + userEmail + '</b>' + (isLinkSent ? '<br>' : ''), tenantName)"></p>
                     <div *ngIf="!isLinkSent && detectedTenancies.length > 1">
                         <p>{{ls.l('SelectTenant_Information')}}</p>
                         <div class="list-group">
@@ -18,11 +18,14 @@
 
                 <div class="form-actions">
                     <dx-text-box *ngIf="isLinkSent"
-                        width="130px"
+                        width="150px"
                         height="40px"
                         mask="000-000"
                         accessKey="AccessCode"
+                        [buttons]="applyButton"
+                        valueChangeEvent="keyup"
                         [placeholder]="ls.l('EnterCode')"
+                        [visible]="accessCodeMaxTriesCount"
                         (onKeyUp)="onAutoLoginCodeChanged($event)">
                     </dx-text-box>
                     <button type="submit" class="submit" *ngIf="!(isLinkSent || detectedTenancies.length > 1)">

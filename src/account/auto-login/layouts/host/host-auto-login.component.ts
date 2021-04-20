@@ -38,7 +38,23 @@ export class HostAutoLoginComponent {
     tenantName = this.appSession.tenant
         ? this.appSession.tenant.name
         : AppConsts.defaultTenantName;
+    accessCodeMaxTriesCount = 3;
+    accessCodeIsValid: boolean;
+    accessCode: string;
     userEmail: string;
+    applyButton = [{
+        name: 'apply',
+        location: 'after',
+        options: {
+            icon: 'check',
+            onClick: () => {
+                if (this.accessCodeIsValid)
+                    this.authenticateByCode();
+                else
+                    this.checkAccessCodeMaxTries();
+            }
+        }
+    }];
 
     constructor(
         injector: Injector,
@@ -52,6 +68,15 @@ export class HostAutoLoginComponent {
     ) {
         this.activatedRoute.queryParams.pipe(first())
             .subscribe((params: Params) => this.userEmail = params.email);
+    }
+
+    checkAccessCodeMaxTries(showInvalidMessage = true) {
+        this.accessCodeMaxTriesCount--;
+        if (this.accessCodeMaxTriesCount > 0) {
+            if (showInvalidMessage)
+                abp.message.warn(this.ls.l('AutoLoginCodeIsIncorrect'));
+        } else
+            abp.message.warn(this.ls.l('AutoLoginMaxTriesMessage'));
     }
 
     sendloginLink(tenantId?: number): void {
@@ -82,18 +107,28 @@ export class HostAutoLoginComponent {
         return !path || path.indexOf('auto-login') > 0 ? '' : path;
     }
 
+    authenticateByCode() {
+        abp.ui.setBusy();
+        this.authProxy.authenticateByCode(new AuthenticateByCodeModel({
+            emailAddress: this.userEmail,
+            code: this.accessCode
+        })).pipe(
+            finalize(() => abp.ui.clearBusy())
+        ).subscribe((res: AuthenticateResultModel) => {
+            this.loginService.processAuthenticateResult(res, AppConsts.appBaseUrl);
+        }, () => {
+            this.checkAccessCodeMaxTries(false);
+        });
+    }
+
     onAutoLoginCodeChanged(event) {
-        if (event.event.keyCode === 13/*Enter*/ && event.component.option('isValid')) {
-            abp.ui.setBusy();
-            event.component.option('disabled', true);
-            this.authProxy.authenticateByCode(new AuthenticateByCodeModel({
-                emailAddress: this.userEmail,
-                code: event.component.option('value')
-            })).pipe(
-                finalize(() => abp.ui.clearBusy())
-            ).subscribe((res: AuthenticateResultModel) => {
-                this.loginService.processAuthenticateResult(res, AppConsts.appBaseUrl);
-            });
+        this.accessCodeIsValid = event.component.option('isValid');
+        this.accessCode = event.component.option('value');
+        if (event.event.keyCode === 13/*Enter*/) {
+            if (this.accessCodeIsValid)
+                this.authenticateByCode();
+            else
+                this.checkAccessCodeMaxTries();
         }
     }
 
