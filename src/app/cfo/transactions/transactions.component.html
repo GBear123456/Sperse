@@ -204,7 +204,6 @@
                                     dataType="string"
                                     [renderAsync]="true"
                                     cellTemplate="CashflowCategoryNameTemplate"
-                                    [calculateDisplayValue]="calculateCashflowCategoryNameDisplayValue"
                                     cssClass="category">
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.CounterpartyName"
@@ -405,7 +404,7 @@
 
                         <div *dxTemplate="let data of 'CashflowCategoryNameTemplate'">
                             <span [ngClass]="{'uncategorized': !data.value}">
-                                <span class="clipboard-holder clickable-item"> {{ data.text }} </span>
+                                <span class="clipboard-holder clickable-item"> {{ data.text || l('Unclassified') }} </span>
                             </span>
                         </div>
 
