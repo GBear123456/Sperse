@@ -285,8 +285,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.selectedBillingAddress = invoiceInfo.billingAddress;
                     this.selectedShippingAddress = invoiceInfo.shippingAddress;
                     this.lines = invoiceInfo.lines.map((res: any) => {
-                        res.description = res.productCode ? 
-                            res.productName : res.description;
                         if (!this.products.some(item => item.description == res.description))
                             this.products.push(<any>{
                                 description: res.description,
@@ -715,7 +713,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             && cellData.data.productId != item.id
         ) {
             cellData.data.productId = item.id;
-            cellData.data.productCode = item.productCode;
+            cellData.data.productCode = item.code;
             cellData.data.description = 
                 cellData.data.description || item.name;
             cellData.data.units = item.paymentOptions;
