@@ -120,8 +120,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     selectedShippingAddress: InvoiceAddressInput;
     customer: string;
     contactId: number;
-    products: ProductPaymentOptionsInfo[] = [];
-    invoiceProducts: ProductShortInfo[] = [];
+    products: (ProductPaymentOptionsInfo | ProductShortInfo)[] = [];
     lastProductPhrase: string;
     date = new Date();
     dueDate;
@@ -129,7 +128,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     description = '';
     notes = '';
-    lines = [{}];
+    lines = [{isCrmProduct: true}];
 
     subTotal = 0;
     total = 0;
@@ -286,13 +285,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.selectedBillingAddress = invoiceInfo.billingAddress;
                     this.selectedShippingAddress = invoiceInfo.shippingAddress;
                     this.lines = invoiceInfo.lines.map((res: any) => {
-                        this.invoiceProducts.push(<any>{
-                            description: res.description
-                        });
-                        if (res.productCode)
+                        res.description = res.productCode ? 
+                            res.productName : res.description;
+                        if (!this.products.some(item => item.description == res.description))
                             this.products.push(<any>{
+                                description: res.description,
                                 code: res.productCode,
-                                name: res.productName || res.productCode
+                                name: res.productName
                             });
                         return {
                             Quantity: res.quantity,
@@ -547,7 +546,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     onFieldFocusIn(event) {
+        let value = event.component.option('value');
         event.component.option('isValid', true);
+        if (value && !this.products.some(item => item.description == value))
+            this.products.push(<any>{description: value});
     }
 
     initContactAddresses(contactId: number) {
@@ -603,7 +605,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceProductsLookupRequest(phrase = '', callback?) {
         this.productProxy.getInvoiceProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
-                this.invoiceProducts = res;
+                this.products = res;
                 callback && callback(res);
                 this.changeDetectorRef.detectChanges();
             }
@@ -613,7 +615,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     productsLookupRequest(phrase = '', callback?) {
         this.productProxy.getProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
-                this.products = res;
+                this.products = res.map(item => {
+                    item.description = item.name;
+                    return item;
+                });
                 callback && callback(res);
                 this.changeDetectorRef.detectChanges();
             }
@@ -653,7 +658,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.dueDate = undefined;
             this.description = '';
             this.notes = '';
-            this.lines = [{}];
+            this.lines = [{isCrmProduct: true}];
             this.changeDetectorRef.detectChanges();
         };
 
@@ -690,28 +695,29 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     selectInvoiceProduct(event, cellData) {
         let item = event.selectedItem;
-        if (item && item.hasOwnProperty('rate')
-            && !cellData.data.productCode
-        ) {
+        if (item && item.hasOwnProperty('rate')) {
             cellData.data.productId = undefined;
+            cellData.data.productCode = undefined;
             cellData.data.units = undefined;
-            cellData.data.unitId = item.unitId;
-            cellData.data.rate = item.rate;
-            cellData.data.quantity = 1;
+            cellData.data.unitId = cellData.data.unitId || item.unitId;
+            cellData.data.rate = cellData.data.rate || item.rate;
+            cellData.data.quantity = cellData.data.quantity || 1;
             this.changeDetectorRef.detectChanges();
         }
     }
 
     selectProduct(event, cellData) {
+        if (!cellData.data.isCrmProduct) 
+            return this.selectInvoiceProduct(event, cellData);
+
         let item = event.selectedItem;
         if (item && item.hasOwnProperty('paymentOptions') 
             && cellData.data.productId != item.id
         ) {
             cellData.data.productId = item.id;
-            cellData.data.description = item.description ||
+            cellData.data.productCode = item.productCode;
+            cellData.data.description = 
                 cellData.data.description || item.name;
-            if (!this.invoiceProducts.some(item => item.description == cellData.data.description))
-                this.invoiceProducts.push(<any>{description: cellData.data.description});
             cellData.data.units = item.paymentOptions;
             cellData.data.unitId = item.paymentOptions[0].unitId;
             cellData.data.rate = item.paymentOptions[0].price;
@@ -812,8 +818,17 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     }
 
-    addNewLine(component) {
-        this.lines.push({});
+    addNewLine(component, isCrmProduct = false) {
+        if (this.lines.length != this.getFilteredLines().length)
+            this.lines[this.lines.length - 1].isCrmProduct = isCrmProduct;
+        else
+            this.lines.push({isCrmProduct: isCrmProduct});
+
+        if (isCrmProduct)
+            this.productsLookupRequest();
+        else
+            this.invoiceProductsLookupRequest();
+
         component.instance.repaint();
         this.changeDetectorRef.detectChanges();
     }
