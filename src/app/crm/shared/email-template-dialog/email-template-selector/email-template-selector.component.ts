@@ -24,6 +24,7 @@ export class EmailTemplateSelectorComponent {
     internalTemplateId: number;
     systemDefaultId = -1;
 
+    @Input() title: string = this.ls.l("UserRegistrationEmail");
     @Input() templateType: EmailTemplateType;
     @Input() showSystemDefault: boolean = true;
     @Input()

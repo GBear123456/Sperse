@@ -4,7 +4,11 @@
               [editTitle]="false">
     <div class="form-content">
         <dx-scroll-view showScrollbar="onHover" #scrollView>
-            <email-template-selector [(templateId)]="settings.defaultTemplateId" [templateType]="EmailTemplateType.Invoice"></email-template-selector>
+            <email-template-selector [(templateId)]="settings.defaultTemplateId"
+                                     [templateType]="EmailTemplateType.Invoice"
+                                     [showSystemDefault]="false"
+                                     [title]="ls.l('InvoiceEmail_TemplateTitle')">
+            </email-template-selector>
             <div class="row">
                 <div class="settings-wrapper">
                     <div class="left-side">
