@@ -61,9 +61,9 @@ export class HostAutoLoginComponent {
         this.accessCodeMaxTriesCount--;
         if (this.accessCodeMaxTriesCount > 0) {
             if (showInvalidMessage)
-                abp.message.warn(this.ls.l('AutoLoginCodeIsIncorrect'));
+                abp.message.error(this.ls.l('AutoLoginCodeIsIncorrect'));
         } else
-            abp.message.warn(this.ls.l('LoginFailed'));
+            abp.message.error(this.ls.l('LoginFailed'));
     }
 
     sendloginLink(tenantId?: number): void {
@@ -109,7 +109,7 @@ export class HostAutoLoginComponent {
     }
 
     onAccessCodeProcess() {
-        if (this.accessCodeIsValid)
+        if (this.accessCode && this.accessCodeIsValid)
             this.authenticateByCode();
         else
             this.checkAccessCodeMaxTries();
