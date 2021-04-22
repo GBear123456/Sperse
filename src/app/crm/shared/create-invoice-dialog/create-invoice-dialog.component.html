@@ -219,7 +219,7 @@
                                 [dataSource]="products"
                                 [searchEnabled]="true"
                                 [searchTimeout]="0"
-                                (onFocusIn)="onFieldFocusIn($event)"
+                                (onFocusIn)="onFieldFocusIn($event, cellData)"
                                 (onCustomItemCreating)="onCustomDescriptionCreating($event)"
                                 (onInput)="productLookupItems($event, cellData, !cellData.data.isCrmProduct)"
                                 (onSelectionChanged)="selectProduct($event, cellData)">
