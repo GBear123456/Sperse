@@ -865,7 +865,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onGridOptionChanged(event) {
         super.onGridOptionChanged(event);
-        if ((event.name == 'columnChooser') || event.name == 'columns' && (
+        if (event.name == 'columns' && (
             event.fullName.includes('visibleIndex') ||
             event.fullName.includes('sortOrder') ||
             event.fullName.includes('visible')
@@ -1327,7 +1327,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 event.cellElement.innerHTML = '';
                 event.cellElement.appendChild(filter.nativeElement);
             }
-        }), 100);
+        }), 300);
     }
 
     onCellPrepared($event) {
@@ -1567,14 +1567,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         });
         this.bankAccountsService.applyFilter();
     }
-
-    calculateTransactionsAmountDisplayValue = (data) => this.amountCustomizer(data['Amount']);
-
-    calculateTransactionsDebitDisplayValue = (data) => this.amountCustomizer(data['Debit']);
-
-    calculateTransactionsCreditDisplayValue = (data) => this.amountCustomizer(data['Credit']);
-
-    calculateEndingBalanceDisplayValue = (data) => this.amountCustomizer(data['EndingBalance']);
 
     customizeGroupAmountCell = (cellInfo) => this.amountCustomizer(cellInfo.value);
 

@@ -189,7 +189,7 @@
                         <dxi-column [dataField]="transactionFields.BusinessEntityId"
                                     [renderAsync]="true"
                                     [caption]="l('Transactions_BusinessEntity')"
-                                    [minWidth]="160"
+                                    minWidth="160px"
                                     [lookup]="{
                                         allowClearing: false,
                                         dataSource: filtersInitialData?.businessEntities,
@@ -199,7 +199,7 @@
                         </dxi-column>
                         <dxi-column [caption]="l('Transactions_CashflowCategoryName')"
                                     [dataField]="transactionFields.CashflowCategoryName"
-                                    [minWidth]="200"
+                                    minWidth="200px"
                                     name="cashflowCategoryName"
                                     dataType="string"
                                     [renderAsync]="true"
@@ -209,12 +209,13 @@
                         <dxi-column [dataField]="transactionFields.CounterpartyName"
                                     dataType="string"
                                     [caption]="l('Transactions_Vendor')"
-                                    [minWidth]="200"
+                                    minWidth="200px"
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.Description"
                                     cssClass="description-column"
                                     dataType="string"
+                                    minWidth="330px"
                                     [name]="l('Description')"
                                     cellTemplate="descriptionTemplate"
                                     [caption]="l('Transactions_Description')">
@@ -223,10 +224,10 @@
                                     dataType="number"
                                     cssClass="tabular"
                                     name="Amount"
+                                    minWidth="100px"
                                     [caption]="l('Transactions_Amount')"
                                     cellTemplate="amountTemplate"
-                                    calculateSortValue="Amount"
-                                    [calculateDisplayValue]="calculateTransactionsAmountDisplayValue">
+                                    calculateSortValue="Amount">
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.BankAccountId"
                                     cssClass="tabular clipboard-holder"
@@ -265,7 +266,6 @@
                                     cssClass="tabular"
                                     [caption]="l('Transactions_EndingBalance')"
                                     cellTemplate="endBalanceTemplate"
-                                    [calculateDisplayValue]="calculateEndingBalanceDisplayValue"
                                     calculateSortValue="EndingBalance"
                                     [visible]="false">
                         </dxi-column>
@@ -328,7 +328,6 @@
                                     name="Debit"
                                     [renderAsync]="true"
                                     [caption]="l('Transactions_Debit')"
-                                    [calculateDisplayValue]="calculateTransactionsDebitDisplayValue"
                                     calculateSortValue="Debit"
                                     cellTemplate="amountTemplate"
                                     [visible]="false">
@@ -340,7 +339,6 @@
                                     [renderAsync]="true"
                                     [caption]="l('Transactions_Credit')"
                                     calculateSortValue="Credit"
-                                    [calculateDisplayValue]="calculateTransactionsCreditDisplayValue"
                                     cellTemplate="amountTemplate"
                                     [visible]="false">
                         </dxi-column>
@@ -379,6 +377,7 @@
                         </dxi-column>
                         <dxi-column [dataField]="transactionFields.Department"
                                     dataType="string"
+                                    minWidth="150px"
                                     cssClass="clipboard-holder"
                                     [caption]="l('Transactions_Department')"
                                     [visible]="departmentFeatureEnabled"
@@ -387,7 +386,7 @@
 
                         <div *dxTemplate="let cell of 'amountTemplate'">
                             <ng-container *ngIf="cell.text && ((cell.column.name == 'Amount') || (cell.value < 0 && cell.column.name == 'Debit') || (cell.value >= 0 && cell.column.name == 'Credit'))">
-                                <span [class]="'clipboard-holder ' + (cell.value < 0 ? 'negative' : 'positive') + '-values'"> {{ cell.text }} </span>
+                                <span [class]="'clipboard-holder ' + (cell.value < 0 ? 'negative' : 'positive') + '-values'"> {{ amountCustomizer(cell.text) }} </span>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'isPendingTemplate'">
@@ -395,7 +394,7 @@
                         </div>
                         <div *dxTemplate="let cell of 'endBalanceTemplate'">
                             <ng-container *ngIf="cell.text">
-                                <span class="clipboard-holder end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ cell.text }} </span>
+                                <span class="clipboard-holder end-balance{{cell.data['IsBalanceConfirmed'] ? '' : '-not'}}-confirmed"> {{ amountCustomizer(cell.text) }} </span>
                             </ng-container>
                         </div>
                         <div *dxTemplate="let cell of 'descriptionTemplate'">
