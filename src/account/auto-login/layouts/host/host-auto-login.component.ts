@@ -42,19 +42,6 @@ export class HostAutoLoginComponent {
     accessCodeIsValid: boolean;
     accessCode: string;
     userEmail: string;
-    applyButton = [{
-        name: 'apply',
-        location: 'after',
-        options: {
-            icon: 'check',
-            onClick: () => {
-                if (this.accessCodeIsValid)
-                    this.authenticateByCode();
-                else
-                    this.checkAccessCodeMaxTries();
-            }
-        }
-    }];
 
     constructor(
         injector: Injector,
@@ -76,7 +63,7 @@ export class HostAutoLoginComponent {
             if (showInvalidMessage)
                 abp.message.warn(this.ls.l('AutoLoginCodeIsIncorrect'));
         } else
-            abp.message.warn(this.ls.l('AutoLoginMaxTriesMessage'));
+            abp.message.warn(this.ls.l('LoginFailed'));
     }
 
     sendloginLink(tenantId?: number): void {
@@ -121,15 +108,21 @@ export class HostAutoLoginComponent {
         });
     }
 
+    onAccessCodeProcess() {
+        if (this.accessCodeIsValid)
+            this.authenticateByCode();
+        else
+            this.checkAccessCodeMaxTries();
+    }
+
+    onAutoLoginCodeFocusOut(event) {
+        this.accessCodeIsValid = event.component.option('isValid');
+    }
+
     onAutoLoginCodeChanged(event) {
         this.accessCodeIsValid = event.component.option('isValid');
-        this.accessCode = event.component.option('value');
-        if (event.event.keyCode === 13/*Enter*/) {
-            if (this.accessCodeIsValid)
-                this.authenticateByCode();
-            else
-                this.checkAccessCodeMaxTries();
-        }
+        if (event.event.keyCode === 13/*Enter*/)
+            this.onAccessCodeProcess();
     }
 
     openConditionsDialog(type: ConditionsType) {

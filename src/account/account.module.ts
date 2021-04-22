@@ -60,6 +60,7 @@ import { HoaForgotPasswordComponent } from "@root/account/password/layouts/hoa/h
 import { SperserLayoutComponent } from '@root/account/layouts/sperser/sperser-layout.component';
 import { SperserLoginComponent } from '@root/account/login/layouts/sperser/sperser-login.component';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
+import { DxButtonModule } from 'devextreme-angular/ui/button';
 
 // import { HoaLoginComponent } from "@root/account/login/layouts/hoa/hoa-login.component";
 // import { HoaAutoLoginComponent } from "@root/account/auto-login/layouts/hoa/hoa-auto-login.component";
@@ -81,7 +82,8 @@ import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
         AccountRoutingModule,
         PersonalFinanceLayoutModule,
         BankCodeLayoutModule,
-        DxTextBoxModule
+        DxTextBoxModule,
+        DxButtonModule
     ],
     declarations: [
         AccountComponent,

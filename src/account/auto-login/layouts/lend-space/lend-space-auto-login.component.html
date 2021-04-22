@@ -3,17 +3,27 @@
     <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
         <div class="form-group clearfix" [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', (isLinkSent ? '<br>' : '') + '<b>' + userEmail + '</b>' + (isLinkSent ? '<br>' : ''), tenantName)"></div>
         <div class="form-actions">
-            <dx-text-box *ngIf="isLinkSent"
-                width="150px"
-                height="40px"
-                mask="000-000"
-                accessKey="AccessCode"
-                [buttons]="applyButton"
-                valueChangeEvent="keyup"
-                [placeholder]="ls.l('EnterCode')"
-                [visible]="accessCodeMaxTriesCount"
-                (onKeyUp)="onAutoLoginCodeChanged($event)">
-            </dx-text-box>
+            <ng-container *ngIf="isLinkSent && accessCodeMaxTriesCount">
+                <dx-text-box
+                    width="115px"
+                    height="40px"
+                    mask="000-000"
+                    [(value)]="accessCode"
+                    accessKey="AccessCode"
+                    validationMessageMode="always"
+                    [placeholder]="ls.l('EnterCode')"
+                    (onFocusOut)="onAutoLoginCodeFocusOut($event)"
+                    (onKeyUp)="onAutoLoginCodeChanged($event)">
+                </dx-text-box>
+                <dx-button icon="check" 
+                    height="40px"
+                    accessKey="AccessCode"
+                    (onClick)="onAccessCodeProcess()">
+                </dx-button>
+            </ng-container>
+            <ng-container *ngIf="accessCodeMaxTriesCount <= 0">
+                <div class="auto-login-error">{{ ls.l('AutoLoginMaxTriesMessage') }}</div>
+            </ng-container>
             <button type="submit" class="submit teal" [hidden]="isLinkSent">
                 {{ls.l("Auto Login")}}
                 <img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">
