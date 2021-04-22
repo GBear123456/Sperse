@@ -1578,8 +1578,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     customizeGroupAmountCell = (cellInfo) => this.amountCustomizer(cellInfo.value);
 
-    calculateCashflowCategoryNameDisplayValue = (data) => data.CashflowCategoryName || this.l('Unclassified');
-
     calculateDateDisplayValue = (data) => this.datePipe.transform(data.Date, 'MM/dd/yyyy');
 
     calculateMonthYearDisplayValue = (data) => this.datePipe.transform(data.Date, 'MMM yyyy');
