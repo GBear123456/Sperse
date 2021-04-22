@@ -43279,6 +43279,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
     stateName!: string | undefined;
     zip!: string | undefined;
     countryId!: string | undefined;
+    countryName!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     isActive!: boolean | undefined;
@@ -43306,6 +43307,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
             this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.countryId = data["countryId"];
+            this.countryName = data["countryName"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
@@ -43333,6 +43335,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
+        data["countryName"] = this.countryName;
         data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
         data["isActive"] = this.isActive;
@@ -43353,6 +43356,7 @@ export interface ICreateContactAddressInputWithoutCheck {
     stateName: string | undefined;
     zip: string | undefined;
     countryId: string | undefined;
+    countryName: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     isActive: boolean | undefined;
@@ -51821,6 +51825,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     stateName!: string | undefined;
     zip!: string | undefined;
     countryId!: string | undefined;
+    countryName!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     isActive!: boolean | undefined;
@@ -51848,6 +51853,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
             this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.countryId = data["countryId"];
+            this.countryName = data["countryName"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
@@ -51875,6 +51881,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
+        data["countryName"] = this.countryName;
         data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
         data["isActive"] = this.isActive;
@@ -51895,6 +51902,7 @@ export interface ICreateContactAddressInput {
     stateName: string | undefined;
     zip: string | undefined;
     countryId: string | undefined;
+    countryName: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     isActive: boolean | undefined;
@@ -53416,6 +53424,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
     stateName!: string | undefined;
     zip!: string | undefined;
     countryId!: string | undefined;
+    countryName!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     isActive!: boolean | undefined;
@@ -53444,6 +53453,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
             this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.countryId = data["countryId"];
+            this.countryName = data["countryName"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
@@ -53472,6 +53482,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
+        data["countryName"] = this.countryName;
         data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
         data["isActive"] = this.isActive;
@@ -53493,6 +53504,7 @@ export interface IUpdateContactAddressInput {
     stateName: string | undefined;
     zip: string | undefined;
     countryId: string | undefined;
+    countryName: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     isActive: boolean | undefined;
