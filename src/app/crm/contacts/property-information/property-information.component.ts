@@ -239,6 +239,7 @@ export class PropertyInformationComponent implements OnInit {
             stateName: dialogData.stateName,
             zip: dialogData.zip,
             countryId: dialogData.countryCode,
+            countryName: null,
             startDate: undefined,
             endDate: undefined,
             isActive: dialogData.isActive,
