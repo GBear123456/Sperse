@@ -188,7 +188,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     invoiceUnits = Object.keys(ProductMeasurementUnit).map(item => {
         return {
             unitId: item,
-            unitName: item
+            unitName: this.ls.l(item)
         };
     });
     billingAddresses: InvoiceAddressInfo[] = [];
@@ -536,18 +536,20 @@ export class CreateInvoiceDialogComponent implements OnInit {
         return ['description', 'quantity', 'rate', 'unitId'][fulfilled ? 'every' : 'some'](field => line[field] != undefined);
     }
 
-    onFieldFocusIn(event, cellData) {
-        let value = event.component.option('value');
+    onFieldFocusIn(event, cellData) {        
         event.component.option('isValid', true);
-        if (cellData.data.isCrmProduct) {
-            if (!this.products || !this.products.length || !this.products[0]['code'])
-                this.productsLookupRequest();
-        } else {
-            if (!this.products || !this.products.length || this.products[0]['code'])
-                this.invoiceProductsLookupRequest();
+        if (cellData) {
+            let value = event.component.option('value');
+            if (cellData.data.isCrmProduct) {
+                if (!this.products || !this.products.length || !this.products[0]['code'])
+                    this.productsLookupRequest();
+            } else {
+                if (!this.products || !this.products.length || this.products[0]['code'])
+                    this.invoiceProductsLookupRequest();
+            }
+            if (value && !this.products.some(item => item.description == value))
+                this.products.push(<any>cellData.data);
         }
-        if (value && !this.products.some(item => item.description == value))
-            this.products.push(<any>cellData.data);
     }
 
     initContactAddresses(contactId: number) {
@@ -711,7 +713,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
         let item = event.selectedItem;
         if (item && item.hasOwnProperty('paymentOptions')
-            && cellData.data.productId != item.id
+            && cellData.data.productCode != item.code
         ) {
             cellData.data.productId = item.id;
             cellData.data.productCode = item.code;
