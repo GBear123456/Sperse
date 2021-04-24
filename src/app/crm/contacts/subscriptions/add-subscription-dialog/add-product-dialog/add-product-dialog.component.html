@@ -137,18 +137,18 @@
                         valueChangeEvent="keyup"
                         [placeholder]="ls.l('ByDefault', 0)"
                         [(value)]="option.trialDayCount"
-                        (onValueChanged)="option.setupFee = $event.value ? option.setupFee : 0">
+                        (onValueChanged)="option.signupFee = $event.value ? option.signupFee : 0">
                         <dx-validator>
                             <dxi-validation-rule type="custom" [validationCallback]="validateTrialDayCount(option)" message="{{ls.l('TrialDayCountRequired')}}."></dxi-validation-rule>
                         </dx-validator>
                     </dx-number-box>
                 </div>
                 <div class="field" *ngIf="option.trialDayCount">
-                    <label class="wide">{{ls.l('SetupFee')}}</label>
+                    <label class="wide">{{ls.l('SignupFee')}}</label>
                     <dx-number-box name="price"
                         width="200px"
                         [format]="amountFormat$ | async"
-                        [(value)]="option.setupFee">
+                        [(value)]="option.signupFee">
                         <dx-validator>
                             <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
                         </dx-validator>
