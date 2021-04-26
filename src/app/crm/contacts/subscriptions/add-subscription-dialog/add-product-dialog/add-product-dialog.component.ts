@@ -295,7 +295,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     validateTrialDayCount(option) {
         return (event) => {
-            return !option.setupFee || event.value && event.value > 0;
+            return !option.signupFee || event.value && event.value > 0;
         };
     }
 
