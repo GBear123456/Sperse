@@ -679,11 +679,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (records) => {
-                    let userIds = this.getUserIds(records);
-                    this.usersInstancesLoadingSubscription = this.appService.isCfoLinkOrVerifyEnabled && userIds.length ?
-                        this.crmService.getUsersWithInstances(userIds).subscribe(() => {
-                            this.changeDetectorRef.markForCheck();
-                        }) : of().subscribe();
+                    if (records instanceof Array) {
+                        let userIds = this.getUserIds(records);
+                        this.usersInstancesLoadingSubscription = this.appService.isCfoLinkOrVerifyEnabled && userIds.length ?
+                            this.crmService.getUsersWithInstances(userIds).subscribe(() => {
+                                this.changeDetectorRef.markForCheck();
+                            }) : of().subscribe();
+                    }
                 }
             })
         });
