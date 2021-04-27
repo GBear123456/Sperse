@@ -183,7 +183,10 @@
                             {{l("EmailConfirmationRequiredForLogin")}}
                             <span></span>
                         </label>
-                        <email-template-selector [(templateId)]="settings.userManagement.welcomeEmailTemplateId" [templateType]="EmailTemplateType.WelcomeEmail"></email-template-selector>
+                        <contact-group-templates [title]="l('UserRegistrationEmail')"
+                                                 [(customTemplates)]="settings.userManagement.customWelcomeEmailTemplates"
+                                                 [templateType]="EmailTemplateType.WelcomeEmail">
+                        </contact-group-templates>
                     </div>
                 </dx-scroll-view>
             </mat-tab>

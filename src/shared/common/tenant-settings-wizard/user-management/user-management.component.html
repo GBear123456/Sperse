@@ -33,7 +33,10 @@
         </dx-check-box>
     </div>
     <div class="form-group">
-        <email-template-selector [(templateId)]="tenantSettings.welcomeEmailTemplateId" [templateType]="EmailTemplateType.WelcomeEmail"></email-template-selector>
+        <contact-group-templates [title]="ls.l('UserRegistrationEmail')"
+                                 [(customTemplates)]="tenantSettings.customWelcomeEmailTemplates"
+                                 [templateType]="EmailTemplateType.WelcomeEmail">
+        </contact-group-templates>
     </div>
 </ng-container>
 <ng-container *ngIf="hostSettings">
@@ -50,6 +53,9 @@
         </dx-check-box>
     </div>
     <div class="form-group">
-        <email-template-selector [(templateId)]="hostSettings.welcomeEmailTemplateId" [templateType]="EmailTemplateType.WelcomeEmail"></email-template-selector>
+        <contact-group-templates [title]="ls.l('UserRegistrationEmail')"
+                                 [(customTemplates)]="hostSettings.customWelcomeEmailTemplates"
+                                 [templateType]="EmailTemplateType.WelcomeEmail">
+        </contact-group-templates>
     </div>
 </ng-container>

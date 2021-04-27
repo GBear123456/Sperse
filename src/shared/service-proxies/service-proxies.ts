@@ -60473,10 +60473,50 @@ export interface IGeneralSettingsEditDto {
     publicSiteUrl: string | undefined;
 }
 
+export class CustomWelcomeTemplate implements ICustomWelcomeTemplate {
+    groupId!: string | undefined;
+    templateId!: number | undefined;
+
+    constructor(data?: ICustomWelcomeTemplate) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.groupId = data["groupId"];
+            this.templateId = data["templateId"];
+        }
+    }
+
+    static fromJS(data: any): CustomWelcomeTemplate {
+        data = typeof data === 'object' ? data : {};
+        let result = new CustomWelcomeTemplate();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["groupId"] = this.groupId;
+        data["templateId"] = this.templateId;
+        return data; 
+    }
+}
+
+export interface ICustomWelcomeTemplate {
+    groupId: string | undefined;
+    templateId: number | undefined;
+}
+
 export class HostUserManagementSettingsEditDto implements IHostUserManagementSettingsEditDto {
     isEmailConfirmationRequiredForLogin!: boolean | undefined;
     smsVerificationEnabled!: boolean | undefined;
-    welcomeEmailTemplateId!: number | undefined;
+    customWelcomeEmailTemplates!: CustomWelcomeTemplate[] | undefined;
 
     constructor(data?: IHostUserManagementSettingsEditDto) {
         if (data) {
@@ -60491,7 +60531,11 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
         if (data) {
             this.isEmailConfirmationRequiredForLogin = data["isEmailConfirmationRequiredForLogin"];
             this.smsVerificationEnabled = data["smsVerificationEnabled"];
-            this.welcomeEmailTemplateId = data["welcomeEmailTemplateId"];
+            if (data["customWelcomeEmailTemplates"] && data["customWelcomeEmailTemplates"].constructor === Array) {
+                this.customWelcomeEmailTemplates = [];
+                for (let item of data["customWelcomeEmailTemplates"])
+                    this.customWelcomeEmailTemplates.push(CustomWelcomeTemplate.fromJS(item));
+            }
         }
     }
 
@@ -60506,7 +60550,11 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
         data = typeof data === 'object' ? data : {};
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
         data["smsVerificationEnabled"] = this.smsVerificationEnabled;
-        data["welcomeEmailTemplateId"] = this.welcomeEmailTemplateId;
+        if (this.customWelcomeEmailTemplates && this.customWelcomeEmailTemplates.constructor === Array) {
+            data["customWelcomeEmailTemplates"] = [];
+            for (let item of this.customWelcomeEmailTemplates)
+                data["customWelcomeEmailTemplates"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -60514,7 +60562,7 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
 export interface IHostUserManagementSettingsEditDto {
     isEmailConfirmationRequiredForLogin: boolean | undefined;
     smsVerificationEnabled: boolean | undefined;
-    welcomeEmailTemplateId: number | undefined;
+    customWelcomeEmailTemplates: CustomWelcomeTemplate[] | undefined;
 }
 
 export class EmailSettingsEditDto implements IEmailSettingsEditDto {
@@ -78492,7 +78540,7 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
     isNewRegisteredUserActiveByDefault!: boolean | undefined;
     isEmailConfirmationRequiredForLogin!: boolean | undefined;
     useCaptchaOnRegistration!: boolean | undefined;
-    welcomeEmailTemplateId!: number | undefined;
+    customWelcomeEmailTemplates!: CustomWelcomeTemplate[] | undefined;
 
     constructor(data?: ITenantUserManagementSettingsEditDto) {
         if (data) {
@@ -78509,7 +78557,11 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
             this.isNewRegisteredUserActiveByDefault = data["isNewRegisteredUserActiveByDefault"];
             this.isEmailConfirmationRequiredForLogin = data["isEmailConfirmationRequiredForLogin"];
             this.useCaptchaOnRegistration = data["useCaptchaOnRegistration"];
-            this.welcomeEmailTemplateId = data["welcomeEmailTemplateId"];
+            if (data["customWelcomeEmailTemplates"] && data["customWelcomeEmailTemplates"].constructor === Array) {
+                this.customWelcomeEmailTemplates = [];
+                for (let item of data["customWelcomeEmailTemplates"])
+                    this.customWelcomeEmailTemplates.push(CustomWelcomeTemplate.fromJS(item));
+            }
         }
     }
 
@@ -78526,7 +78578,11 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
         data["isNewRegisteredUserActiveByDefault"] = this.isNewRegisteredUserActiveByDefault;
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
         data["useCaptchaOnRegistration"] = this.useCaptchaOnRegistration;
-        data["welcomeEmailTemplateId"] = this.welcomeEmailTemplateId;
+        if (this.customWelcomeEmailTemplates && this.customWelcomeEmailTemplates.constructor === Array) {
+            data["customWelcomeEmailTemplates"] = [];
+            for (let item of this.customWelcomeEmailTemplates)
+                data["customWelcomeEmailTemplates"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -78536,7 +78592,7 @@ export interface ITenantUserManagementSettingsEditDto {
     isNewRegisteredUserActiveByDefault: boolean | undefined;
     isEmailConfirmationRequiredForLogin: boolean | undefined;
     useCaptchaOnRegistration: boolean | undefined;
-    welcomeEmailTemplateId: number | undefined;
+    customWelcomeEmailTemplates: CustomWelcomeTemplate[] | undefined;
 }
 
 export class LdapSettingsEditDto implements ILdapSettingsEditDto {
