@@ -218,11 +218,10 @@ export class PropertyInformationComponent implements OnInit {
                 comment: addr.comment,
                 contactId: addr.contactId,
                 confirmationDate: null,
-                countryId: null,
-                countryName: null,
+                countryId: addr.countryId,
+                countryName: addr.countryName,
                 id: null
-            },
-            property.address.countryId)
+            })
         ];
     }
 
@@ -239,8 +238,8 @@ export class PropertyInformationComponent implements OnInit {
             stateId: dialogData.stateId,
             stateName: dialogData.stateName,
             zip: dialogData.zip,
-            countryId: dialogData.countryCode,
-            countryName: null,
+            countryId: dialogData.countryId,
+            countryName: dialogData.countryName,
             startDate: undefined,
             endDate: undefined,
             isActive: dialogData.isActive,
@@ -265,10 +264,10 @@ export class PropertyInformationComponent implements OnInit {
                     comment: dialogData.comment,
                     contactId: null,
                     confirmationDate: null,
-                    countryId: dialogData.countryCode,
-                    countryName: dialogData.country,
+                    countryId: dialogData.countryId,
+                    countryName: dialogData.countryName,
                     id: null
-                }, dialogData.countryCode)
+                })
             ];
             this.changeDetectorRef.detectChanges();
         });

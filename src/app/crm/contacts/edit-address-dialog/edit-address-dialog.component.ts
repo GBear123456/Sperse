@@ -55,7 +55,7 @@ export class EditAddressDialog {
     state: string;
     googleAutoComplete: Boolean;
     localization = AppConsts.localization;
-    countryCode: string;
+    countryId: string;
 
     constructor(
         private elementRef: ElementRef,
@@ -73,7 +73,7 @@ export class EditAddressDialog {
             if (this.googleAutoComplete) {
                 if (data.showNeighborhood)
                     address += `,${data.neighborhood}`;
-                address += `,${data.city},${data.stateName},${data.country}`;
+                address += `,${data.city},${data.stateName},${data.countryName}`;
             }
             this.address = address;
         } else
@@ -90,30 +90,30 @@ export class EditAddressDialog {
             .subscribe((countries: CountryDto[]) => {
                 this.countries = countries;
                 this.onCountryChange({
-                    value: this.data.country
+                    value: this.data.countryName
                 });
             });
     }
 
     onCountryChange(event) {
         const country = _.findWhere(this.countries, { name: event.value });
-        this.data.countryCode = country ? country['code'] : null;
+        this.data.countryId = country ? country['code'] : null;
         if (country) {
-            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.data.countryCode));
+            this.store$.dispatch(new StatesStoreActions.LoadRequestAction(this.data.countryId));
         }
-        this.statesService.updateState(this.data.countryCode, this.data.stateId, this.data.stateName);
+        this.statesService.updateState(this.data.countryId, this.data.stateId, this.data.stateName);
     }
 
     onAddressChanged(address: Address) {
         const countryCode = GooglePlaceService.getCountryCode(address.address_components);
         const countryName = GooglePlaceService.getCountryName(address.address_components);
-        this.data.country = this.sessionService.getCountryNameByCode(countryCode) || countryName;
+        this.data.countryName = this.sessionService.getCountryNameByCode(countryCode) || countryName;
         this.data.zip = GooglePlaceService.getZipCode(address.address_components);
         this.data.streetAddress = GooglePlaceService.getStreet(address.address_components);
         this.data.stateId = GooglePlaceService.getStateCode(address.address_components);
         this.data.stateName = GooglePlaceService.getStateName(address.address_components);
         this.statesService.updateState(countryCode, this.data.stateId, this.data.stateName);
-        this.data.countryCode = countryCode;
+        this.data.countryId = countryCode;
         this.data.city = GooglePlaceService.getCity(address.address_components);
         this.data.neighborhood = GooglePlaceService.getNeighborhood(address.address_components);
         this.data.formattedAddress = address.formatted_address;
@@ -141,8 +141,8 @@ export class EditAddressDialog {
     onSave() {
         this.data.streetAddress = this.address;
         if (this.validator.validate().isValid && this.validateAddress(this.data)) {
-            if (this.data.country)
-                this.data.countryCode = _.findWhere(this.countries, { name: this.data.country })['code'];
+            if (this.data.countryName)
+                this.data.countryId = _.findWhere(this.countries, { name: this.data.countryName })['code'];
             this.data.stateId = this.statesService.getAdjustedStateCode(this.data.stateId, this.data.stateName);
             this.dialogRef.close(true);
         }
@@ -150,7 +150,7 @@ export class EditAddressDialog {
 
     getCountryStates(): Observable<CountryStateDto[]> {
         return this.store$.pipe(
-            select(StatesStoreSelectors.getCountryStates, { countryCode: this.data.countryCode }),
+            select(StatesStoreSelectors.getCountryStates, { countryCode: this.data.countryId }),
             map((states: CountryStateDto[]) => states || [])
         );
     }
@@ -158,7 +158,7 @@ export class EditAddressDialog {
     stateChanged(e) {
         this.store$.pipe(
             select(StatesStoreSelectors.getStateCodeFromStateName, {
-                countryCode: this.data.countryCode,
+                countryCode: this.data.countryId,
                 stateName: e.value
             }),
             first()
@@ -170,7 +170,7 @@ export class EditAddressDialog {
     onCustomStateCreate(e) {
         this.data.stateId = null;
         this.data.stateName = e.text;
-        this.statesService.updateState(this.data.countryCode, null, e.text);
+        this.statesService.updateState(this.data.countryId, null, e.text);
         e.customItem = {
             code: null,
             name: e.text
@@ -179,7 +179,7 @@ export class EditAddressDialog {
 
     validateAddress(data: EditAddressDialogData) {
         return data.streetAddress ||
-            data.country ||
+            data.countryName ||
             data.stateId ||
             data.city ||
             data.zip;

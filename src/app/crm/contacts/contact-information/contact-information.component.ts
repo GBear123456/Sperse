@@ -90,7 +90,8 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
         ).subscribe(result => {
             if (!result && address) {
                 address.city = dialogData.city;
-                address.country = dialogData.country;
+                address.countryId = dialogData.countryId;
+                address.countryName = dialogData.countryName;
                 address.isActive = dialogData.isActive;
                 address.isConfirmed = dialogData.isConfirmed;
                 address.stateId = dialogData.stateId;
