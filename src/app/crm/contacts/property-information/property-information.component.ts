@@ -218,7 +218,8 @@ export class PropertyInformationComponent implements OnInit {
                 comment: addr.comment,
                 contactId: addr.contactId,
                 confirmationDate: null,
-                country: null,
+                countryId: null,
+                countryName: null,
                 id: null
             },
             property.address.countryId)
@@ -264,7 +265,8 @@ export class PropertyInformationComponent implements OnInit {
                     comment: dialogData.comment,
                     contactId: null,
                     confirmationDate: null,
-                    country: dialogData.country,
+                    countryId: dialogData.countryCode,
+                    countryName: dialogData.country,
                     id: null
                 }, dialogData.countryCode)
             ];

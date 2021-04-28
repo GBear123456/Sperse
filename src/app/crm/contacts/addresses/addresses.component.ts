@@ -329,7 +329,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
                 ).subscribe(() => {
                     if (this.country && this.streetNumber && this.stateName &&
                         this.streetAddress && this.city &&
-                        ((this.country != address.country) ||
+                        ((this.country != address.countryName) ||
                             (address.streetAddress != (this.streetAddress + ' ' + this.streetNumber)) ||
                             (this.neighborhood != address.neighborhood) ||
                             (this.city != address.city) ||
@@ -367,7 +367,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
             address.city,
             address.stateName || address.stateId,
             address.zip,
-            address.country
+            address.countryName
         ].join(',');
     }
 
@@ -409,8 +409,8 @@ export class AddressesComponent implements OnInit, OnDestroy {
 
     getCountryName(address: AddressDto): Observable<string> {
         if (address)
-            return address.country
-                ? of(address.country)
+            return address.countryName
+                ? of(address.countryName)
                 : this.getCountries().pipe(
                     first()
                 ).pipe(
