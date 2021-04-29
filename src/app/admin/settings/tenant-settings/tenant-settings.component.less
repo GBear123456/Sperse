@@ -10,12 +10,14 @@
 
     ::ng-deep dx-select-box {
         width: 100%;
+
         input, .dx-placeholder {
             font-family: sans-serif, Arial;
             font-size: 1rem;
             font-weight: 400;
             line-height: 1.25;
         }
+
         input {
             background-color: #fff;
             border: 1px solid #ebedf2;
@@ -46,6 +48,7 @@
 
     input {
         outline: none;
+
         &:required, &:invalid {
             box-shadow: none;
         }
@@ -54,6 +57,17 @@
     ::ng-deep {
         .mat-tab-body-wrapper {
             flex-grow: 1;
+        }
+    }
+
+    ::ng-deep .contact-group-templates {
+        margin-top: 20px;
+
+        dx-select-box input {
+            border-top: none;
+            border-right: none;
+            border-left: none;
+            border-radius: 0;
         }
     }
 }
