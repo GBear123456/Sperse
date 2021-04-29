@@ -76,7 +76,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
     @Output() onAddressUpdate: EventEmitter<AddressUpdate> = new EventEmitter();
 
     types: Object = {};
-    country: string;
+    countryName: string;
     streetNumber: string;
     streetAddress: string;
     neighborhood: string;
@@ -197,8 +197,8 @@ export class AddressesComponent implements OnInit, OnDestroy {
                 },
                 city: address && address.city,
                 comment: address && address.comment,
-                country: countryName,
-                countryCode: address && address.countryCode,
+                countryName: countryName,
+                countryId: address && address.countryId,
                 isActive: address ? address.isActive : true,
                 isConfirmed: address ? address.isConfirmed : false,
                 stateId: address && address.stateId,
@@ -284,7 +284,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
     }
 
     clearInplaceData() {
-        this.country = '';
+        this.countryName = '';
         this.streetNumber = '';
         this.streetAddress = '';
         this.neighborhood = '';
@@ -318,7 +318,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
         this.getCountries().pipe(
             first()
         ).subscribe((countries: CountryDto[]) => {
-            let country = _.findWhere(countries, { name: this.country }),
+            let country = _.findWhere(countries, { name: this.countryName }),
                 countryId = country && country.code;
             if (countryId) {
                 this.store$.dispatch(new StatesStoreActions.LoadRequestAction(countryId));
@@ -327,9 +327,9 @@ export class AddressesComponent implements OnInit, OnDestroy {
                     filter(Boolean),
                     first()
                 ).subscribe(() => {
-                    if (this.country && this.streetNumber && this.stateName &&
+                    if (this.countryName && this.streetNumber && this.stateName &&
                         this.streetAddress && this.city &&
-                        ((this.country != address.country) ||
+                        ((this.countryName != address.countryName) ||
                             (address.streetAddress != (this.streetAddress + ' ' + this.streetNumber)) ||
                             (this.neighborhood != address.neighborhood) ||
                             (this.city != address.city) ||
@@ -341,7 +341,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
                                 id: address.id,
                                 contactId: this.contactId,
                                 city: this.city,
-                                country: this.country,
+                                countryName: this.countryName,
                                 isActive: address.isActive,
                                 isConfirmed: address.isConfirmed,
                                 streetAddress: this.streetAddress + ' ' + this.streetNumber,
@@ -367,7 +367,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
             address.city,
             address.stateName || address.stateId,
             address.zip,
-            address.country
+            address.countryName
         ].join(',');
     }
 
@@ -377,7 +377,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
         const countryCode = GooglePlaceService.getCountryCode(event.address_components);
         this.statesService.updateState(countryCode, this.stateCode, this.stateName);
         const countryName = GooglePlaceService.getCountryName(event.address_components);
-        this.country = this.sessionService.getCountryNameByCode(countryCode) || countryName;
+        this.countryName = this.sessionService.getCountryNameByCode(countryCode) || countryName;
         this.zip = GooglePlaceService.getZipCode(event.address_components);
         this.streetAddress = GooglePlaceService.getStreet(event.address_components);
         this.streetNumber = GooglePlaceService.getStreetNumber(event.address_components);
@@ -409,13 +409,13 @@ export class AddressesComponent implements OnInit, OnDestroy {
 
     getCountryName(address: AddressDto): Observable<string> {
         if (address)
-            return address.country
-                ? of(address.country)
+            return address.countryName
+                ? of(address.countryName)
                 : this.getCountries().pipe(
                     first()
                 ).pipe(
                     map((countries: CountryDto[]) => {
-                        const country = countries.find((country: CountryDto) => country.code == address.countryCode);
+                        const country = countries.find((country: CountryDto) => country.code == address.countryId);
                         return country && country.name || '';
                     })
                 );

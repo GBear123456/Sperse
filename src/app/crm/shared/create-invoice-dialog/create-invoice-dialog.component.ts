@@ -346,7 +346,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     city: address.city,
                     stateId: address.stateId,
                     stateName: address.stateName,
-                    country: address.country,
+                    country: address.countryName,
                     zip: address.zip
                 } : {}),
                 isActive: true

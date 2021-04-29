@@ -4,8 +4,8 @@ export interface EditAddressDialogData {
     streetAddress: string;
     city: string;
     stateName: string;
-    country: string;
-    countryCode?: string;
+    countryName: string;
+    countryId?: string;
     stateId: string;
     neighborhood: string;
     zip: string;

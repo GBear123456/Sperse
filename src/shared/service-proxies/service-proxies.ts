@@ -50438,7 +50438,8 @@ export class ContactAddressDto implements IContactAddressDto {
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
-    country!: string | undefined;
+    countryId!: string | undefined;
+    countryName!: string | undefined;
     zip!: string | undefined;
     isActive!: boolean | undefined;
     comment!: string | undefined;
@@ -50464,7 +50465,8 @@ export class ContactAddressDto implements IContactAddressDto {
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
-            this.country = data["country"];
+            this.countryId = data["countryId"];
+            this.countryName = data["countryName"];
             this.zip = data["zip"];
             this.isActive = data["isActive"];
             this.comment = data["comment"];
@@ -50490,7 +50492,8 @@ export class ContactAddressDto implements IContactAddressDto {
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
-        data["country"] = this.country;
+        data["countryId"] = this.countryId;
+        data["countryName"] = this.countryName;
         data["zip"] = this.zip;
         data["isActive"] = this.isActive;
         data["comment"] = this.comment;
@@ -50509,7 +50512,8 @@ export interface IContactAddressDto {
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
-    country: string | undefined;
+    countryId: string | undefined;
+    countryName: string | undefined;
     zip: string | undefined;
     isActive: boolean | undefined;
     comment: string | undefined;
