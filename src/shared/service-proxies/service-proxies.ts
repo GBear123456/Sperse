@@ -63365,6 +63365,50 @@ export enum ProductMeasurementUnit {
     Year = "Year", 
 }
 
+export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
+    unitId!: ProductMeasurementUnit | undefined;
+    unitName!: string | undefined;
+    price!: number | undefined;
+
+    constructor(data?: IProductPaymentOptionInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.unitId = data["unitId"];
+            this.unitName = data["unitName"];
+            this.price = data["price"];
+        }
+    }
+
+    static fromJS(data: any): ProductPaymentOptionInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductPaymentOptionInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["unitId"] = this.unitId;
+        data["unitName"] = this.unitName;
+        data["price"] = this.price;
+        return data; 
+    }
+}
+
+export interface IProductPaymentOptionInfo {
+    unitId: ProductMeasurementUnit | undefined;
+    unitName: string | undefined;
+    price: number | undefined;
+}
+
 export class InvoiceLineInfo implements IInvoiceLineInfo {
     id!: number | undefined;
     quantity!: number | undefined;
@@ -63372,10 +63416,11 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     unitId!: ProductMeasurementUnit | undefined;
     total!: number | undefined;
     commissionableAmount!: number | undefined;
-    productCode!: string | undefined;
-    productName!: string | undefined;
     description!: string | undefined;
     sortOrder!: number | undefined;
+    productCode!: string | undefined;
+    productName!: string | undefined;
+    productPaymentOptions!: ProductPaymentOptionInfo[] | undefined;
 
     constructor(data?: IInvoiceLineInfo) {
         if (data) {
@@ -63394,10 +63439,15 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.unitId = data["unitId"];
             this.total = data["total"];
             this.commissionableAmount = data["commissionableAmount"];
-            this.productCode = data["productCode"];
-            this.productName = data["productName"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
+            this.productCode = data["productCode"];
+            this.productName = data["productName"];
+            if (data["productPaymentOptions"] && data["productPaymentOptions"].constructor === Array) {
+                this.productPaymentOptions = [];
+                for (let item of data["productPaymentOptions"])
+                    this.productPaymentOptions.push(ProductPaymentOptionInfo.fromJS(item));
+            }
         }
     }
 
@@ -63416,10 +63466,15 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["unitId"] = this.unitId;
         data["total"] = this.total;
         data["commissionableAmount"] = this.commissionableAmount;
-        data["productCode"] = this.productCode;
-        data["productName"] = this.productName;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
+        data["productCode"] = this.productCode;
+        data["productName"] = this.productName;
+        if (this.productPaymentOptions && this.productPaymentOptions.constructor === Array) {
+            data["productPaymentOptions"] = [];
+            for (let item of this.productPaymentOptions)
+                data["productPaymentOptions"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -63431,15 +63486,18 @@ export interface IInvoiceLineInfo {
     unitId: ProductMeasurementUnit | undefined;
     total: number | undefined;
     commissionableAmount: number | undefined;
-    productCode: string | undefined;
-    productName: string | undefined;
     description: string | undefined;
     sortOrder: number | undefined;
+    productCode: string | undefined;
+    productName: string | undefined;
+    productPaymentOptions: ProductPaymentOptionInfo[] | undefined;
 }
 
 export class InvoiceInfo implements IInvoiceInfo {
+    contactId!: number | undefined;
     contactName!: string | undefined;
     orderNumber!: string | undefined;
+    id!: number | undefined;
     status!: InvoiceStatus | undefined;
     number!: string | undefined;
     date!: moment.Moment | undefined;
@@ -63466,8 +63524,10 @@ export class InvoiceInfo implements IInvoiceInfo {
 
     init(data?: any) {
         if (data) {
+            this.contactId = data["contactId"];
             this.contactName = data["contactName"];
             this.orderNumber = data["orderNumber"];
+            this.id = data["id"];
             this.status = data["status"];
             this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
@@ -63498,8 +63558,10 @@ export class InvoiceInfo implements IInvoiceInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
         data["contactName"] = this.contactName;
         data["orderNumber"] = this.orderNumber;
+        data["id"] = this.id;
         data["status"] = this.status;
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
@@ -63523,8 +63585,10 @@ export class InvoiceInfo implements IInvoiceInfo {
 }
 
 export interface IInvoiceInfo {
+    contactId: number | undefined;
     contactName: string | undefined;
     orderNumber: string | undefined;
+    id: number | undefined;
     status: InvoiceStatus | undefined;
     number: string | undefined;
     date: moment.Moment | undefined;
@@ -73700,50 +73764,6 @@ export interface IProductDto {
     code: string | undefined;
     name: string | undefined;
     paymentPeriodTypes: RecurringPaymentFrequency[] | undefined;
-}
-
-export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
-    unitId!: ProductMeasurementUnit | undefined;
-    unitName!: string | undefined;
-    price!: number | undefined;
-
-    constructor(data?: IProductPaymentOptionInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.unitId = data["unitId"];
-            this.unitName = data["unitName"];
-            this.price = data["price"];
-        }
-    }
-
-    static fromJS(data: any): ProductPaymentOptionInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new ProductPaymentOptionInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["unitId"] = this.unitId;
-        data["unitName"] = this.unitName;
-        data["price"] = this.price;
-        return data; 
-    }
-}
-
-export interface IProductPaymentOptionInfo {
-    unitId: ProductMeasurementUnit | undefined;
-    unitName: string | undefined;
-    price: number | undefined;
 }
 
 export class ProductPaymentOptionsInfo implements IProductPaymentOptionsInfo {
