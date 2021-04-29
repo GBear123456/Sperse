@@ -63121,11 +63121,6 @@ export enum ProductMeasurementUnit {
     Year = "Year", 
 }
 
-export enum ProductType {
-    General = "General", 
-    Subscription = "Subscription", 
-}
-
 export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
     unitId!: ProductMeasurementUnit | undefined;
     unitName!: string | undefined;
@@ -63181,7 +63176,6 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     sortOrder!: number | undefined;
     productCode!: string | undefined;
     productName!: string | undefined;
-    productType!: ProductType | undefined;
     productPaymentOptions!: ProductPaymentOptionInfo[] | undefined;
 
     constructor(data?: IInvoiceLineInfo) {
@@ -63205,7 +63199,6 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.sortOrder = data["sortOrder"];
             this.productCode = data["productCode"];
             this.productName = data["productName"];
-            this.productType = data["productType"];
             if (data["productPaymentOptions"] && data["productPaymentOptions"].constructor === Array) {
                 this.productPaymentOptions = [];
                 for (let item of data["productPaymentOptions"])
@@ -63233,7 +63226,6 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["sortOrder"] = this.sortOrder;
         data["productCode"] = this.productCode;
         data["productName"] = this.productName;
-        data["productType"] = this.productType;
         if (this.productPaymentOptions && this.productPaymentOptions.constructor === Array) {
             data["productPaymentOptions"] = [];
             for (let item of this.productPaymentOptions)
@@ -63254,7 +63246,6 @@ export interface IInvoiceLineInfo {
     sortOrder: number | undefined;
     productCode: string | undefined;
     productName: string | undefined;
-    productType: ProductType | undefined;
     productPaymentOptions: ProductPaymentOptionInfo[] | undefined;
 }
 
@@ -65126,7 +65117,6 @@ export interface ICreateOrUpdateLeadOutput {
 }
 
 export enum PaymentPeriodType {
-    Unspecified = "Unspecified", 
     Monthly = "Monthly", 
     Annual = "Annual", 
     LifeTime = "LifeTime", 
@@ -70341,7 +70331,6 @@ export enum RecurringPaymentFrequency {
     Monthly = "Monthly", 
     Annual = "Annual", 
     LifeTime = "LifeTime", 
-    Unspecified = "Unspecified", 
 }
 
 export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInput {
@@ -73302,6 +73291,11 @@ export class PipelineRenameInput implements IPipelineRenameInput {
 export interface IPipelineRenameInput {
     id: number;
     name: string;
+}
+
+export enum ProductType {
+    General = "General", 
+    Subscription = "Subscription", 
 }
 
 export class ProductServiceInfo implements IProductServiceInfo {
