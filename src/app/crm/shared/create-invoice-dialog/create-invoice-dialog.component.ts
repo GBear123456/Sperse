@@ -603,7 +603,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     invoiceProductsLookupRequest(phrase = '', callback?) {
-        this.productProxy.getInvoiceProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
+        this.productProxy.getInvoiceProductsByPhrase(this.contactId, phrase, undefined, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
                 this.products = res;
                 callback && callback(res);
@@ -613,7 +613,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     productsLookupRequest(phrase = '', callback?) {
-        this.productProxy.getProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
+        this.productProxy.getProductsByPhrase(this.contactId, phrase, undefined, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
                 this.products = res.map(item => {
                     item.description = item.name;
