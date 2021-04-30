@@ -26959,15 +26959,18 @@ export class ProductServiceProxy {
     /**
      * @contactId (optional) 
      * @searchPhrase (optional) 
+     * @code (optional) 
      * @topCount (optional) 
      * @return Success
      */
-    getProductsByPhrase(contactId: number | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<ProductPaymentOptionsInfo[]> {
+    getProductsByPhrase(contactId: number | null | undefined, searchPhrase: string | null | undefined, code: string | null | undefined, topCount: number | null | undefined): Observable<ProductPaymentOptionsInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Product/GetProductsByPhrase?";
         if (contactId !== undefined)
             url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (code !== undefined)
+            url_ += "Code=" + encodeURIComponent("" + code) + "&"; 
         if (topCount !== undefined)
             url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -27024,15 +27027,18 @@ export class ProductServiceProxy {
     /**
      * @contactId (optional) 
      * @searchPhrase (optional) 
+     * @code (optional) 
      * @topCount (optional) 
      * @return Success
      */
-    getInvoiceProductsByPhrase(contactId: number | null | undefined, searchPhrase: string | null | undefined, topCount: number | null | undefined): Observable<ProductShortInfo[]> {
+    getInvoiceProductsByPhrase(contactId: number | null | undefined, searchPhrase: string | null | undefined, code: string | null | undefined, topCount: number | null | undefined): Observable<ProductShortInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Product/GetInvoiceProductsByPhrase?";
         if (contactId !== undefined)
             url_ += "ContactId=" + encodeURIComponent("" + contactId) + "&"; 
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
+        if (code !== undefined)
+            url_ += "Code=" + encodeURIComponent("" + code) + "&"; 
         if (topCount !== undefined)
             url_ += "TopCount=" + encodeURIComponent("" + topCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -63413,48 +63419,9 @@ export enum ProductMeasurementUnit {
     Year = "Year", 
 }
 
-export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
-    unitId!: ProductMeasurementUnit | undefined;
-    unitName!: string | undefined;
-    price!: number | undefined;
-
-    constructor(data?: IProductPaymentOptionInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.unitId = data["unitId"];
-            this.unitName = data["unitName"];
-            this.price = data["price"];
-        }
-    }
-
-    static fromJS(data: any): ProductPaymentOptionInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new ProductPaymentOptionInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["unitId"] = this.unitId;
-        data["unitName"] = this.unitName;
-        data["price"] = this.price;
-        return data; 
-    }
-}
-
-export interface IProductPaymentOptionInfo {
-    unitId: ProductMeasurementUnit | undefined;
-    unitName: string | undefined;
-    price: number | undefined;
+export enum ProductType {
+    General = "General", 
+    Subscription = "Subscription", 
 }
 
 export class InvoiceLineInfo implements IInvoiceLineInfo {
@@ -63462,13 +63429,14 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     quantity!: number | undefined;
     rate!: number | undefined;
     unitId!: ProductMeasurementUnit | undefined;
+    unitName!: string | undefined;
     total!: number | undefined;
     commissionableAmount!: number | undefined;
     description!: string | undefined;
     sortOrder!: number | undefined;
     productCode!: string | undefined;
     productName!: string | undefined;
-    productPaymentOptions!: ProductPaymentOptionInfo[] | undefined;
+    productType!: ProductType | undefined;
 
     constructor(data?: IInvoiceLineInfo) {
         if (data) {
@@ -63485,17 +63453,14 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.quantity = data["quantity"];
             this.rate = data["rate"];
             this.unitId = data["unitId"];
+            this.unitName = data["unitName"];
             this.total = data["total"];
             this.commissionableAmount = data["commissionableAmount"];
             this.description = data["description"];
             this.sortOrder = data["sortOrder"];
             this.productCode = data["productCode"];
             this.productName = data["productName"];
-            if (data["productPaymentOptions"] && data["productPaymentOptions"].constructor === Array) {
-                this.productPaymentOptions = [];
-                for (let item of data["productPaymentOptions"])
-                    this.productPaymentOptions.push(ProductPaymentOptionInfo.fromJS(item));
-            }
+            this.productType = data["productType"];
         }
     }
 
@@ -63512,17 +63477,14 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["quantity"] = this.quantity;
         data["rate"] = this.rate;
         data["unitId"] = this.unitId;
+        data["unitName"] = this.unitName;
         data["total"] = this.total;
         data["commissionableAmount"] = this.commissionableAmount;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
         data["productCode"] = this.productCode;
         data["productName"] = this.productName;
-        if (this.productPaymentOptions && this.productPaymentOptions.constructor === Array) {
-            data["productPaymentOptions"] = [];
-            for (let item of this.productPaymentOptions)
-                data["productPaymentOptions"].push(item.toJSON());
-        }
+        data["productType"] = this.productType;
         return data; 
     }
 }
@@ -63532,17 +63494,17 @@ export interface IInvoiceLineInfo {
     quantity: number | undefined;
     rate: number | undefined;
     unitId: ProductMeasurementUnit | undefined;
+    unitName: string | undefined;
     total: number | undefined;
     commissionableAmount: number | undefined;
     description: string | undefined;
     sortOrder: number | undefined;
     productCode: string | undefined;
     productName: string | undefined;
-    productPaymentOptions: ProductPaymentOptionInfo[] | undefined;
+    productType: ProductType | undefined;
 }
 
 export class InvoiceInfo implements IInvoiceInfo {
-    contactId!: number | undefined;
     contactName!: string | undefined;
     orderNumber!: string | undefined;
     id!: number | undefined;
@@ -63572,7 +63534,6 @@ export class InvoiceInfo implements IInvoiceInfo {
 
     init(data?: any) {
         if (data) {
-            this.contactId = data["contactId"];
             this.contactName = data["contactName"];
             this.orderNumber = data["orderNumber"];
             this.id = data["id"];
@@ -63606,7 +63567,6 @@ export class InvoiceInfo implements IInvoiceInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["contactId"] = this.contactId;
         data["contactName"] = this.contactName;
         data["orderNumber"] = this.orderNumber;
         data["id"] = this.id;
@@ -63633,7 +63593,6 @@ export class InvoiceInfo implements IInvoiceInfo {
 }
 
 export interface IInvoiceInfo {
-    contactId: number | undefined;
     contactName: string | undefined;
     orderNumber: string | undefined;
     id: number | undefined;
@@ -73577,11 +73536,6 @@ export interface IPipelineRenameInput {
     name: string;
 }
 
-export enum ProductType {
-    General = "General", 
-    Subscription = "Subscription", 
-}
-
 export class ProductServiceInfo implements IProductServiceInfo {
     memberServiceId!: number | undefined;
     memberServiceLevelId!: number | undefined;
@@ -73812,6 +73766,50 @@ export interface IProductDto {
     code: string | undefined;
     name: string | undefined;
     paymentPeriodTypes: RecurringPaymentFrequency[] | undefined;
+}
+
+export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
+    unitId!: ProductMeasurementUnit | undefined;
+    unitName!: string | undefined;
+    price!: number | undefined;
+
+    constructor(data?: IProductPaymentOptionInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.unitId = data["unitId"];
+            this.unitName = data["unitName"];
+            this.price = data["price"];
+        }
+    }
+
+    static fromJS(data: any): ProductPaymentOptionInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductPaymentOptionInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["unitId"] = this.unitId;
+        data["unitName"] = this.unitName;
+        data["price"] = this.price;
+        return data; 
+    }
+}
+
+export interface IProductPaymentOptionInfo {
+    unitId: ProductMeasurementUnit | undefined;
+    unitName: string | undefined;
+    price: number | undefined;
 }
 
 export class ProductPaymentOptionsInfo implements IProductPaymentOptionsInfo {
