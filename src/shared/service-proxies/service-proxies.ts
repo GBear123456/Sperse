@@ -24355,6 +24355,58 @@ export class OrderSubscriptionServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    updatePeriod(body: UpdateOrderSubscriptionPeriodInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/UpdatePeriod";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdatePeriod(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdatePeriod(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdatePeriod(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     cancel(body: CancelOrderSubscriptionInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/Cancel";
         url_ = url_.replace(/[?&]$/, "");
@@ -70654,6 +70706,50 @@ export interface IUpdateOrderSubscriptionInput {
     paymentPeriodType: RecurringPaymentFrequency | undefined;
     updateThirdParty: boolean | undefined;
     hasRecurringBilling: boolean | undefined;
+}
+
+export class UpdateOrderSubscriptionPeriodInput implements IUpdateOrderSubscriptionPeriodInput {
+    subscriptionId!: number;
+    startDate!: moment.Moment;
+    endDate!: moment.Moment | undefined;
+
+    constructor(data?: IUpdateOrderSubscriptionPeriodInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.subscriptionId = data["subscriptionId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UpdateOrderSubscriptionPeriodInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateOrderSubscriptionPeriodInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["subscriptionId"] = this.subscriptionId;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IUpdateOrderSubscriptionPeriodInput {
+    subscriptionId: number;
+    startDate: moment.Moment;
+    endDate: moment.Moment | undefined;
 }
 
 export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInput {
