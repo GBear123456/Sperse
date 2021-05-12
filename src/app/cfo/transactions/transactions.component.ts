@@ -358,6 +358,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     });
 
+    private repaintTimeout;
     private categoriesShowedBefore = !AppConsts.isMobile;
     private _categoriesShowed = this.categoriesShowedBefore;
     private syncAccounts: any;
@@ -439,9 +440,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     }
 
                     setTimeout(() => {
-                       if (this.isHeaderFilterVisible &&
-                           this.getElementRef().nativeElement === this.categoryChooserContainer.nativeElement.parentElement
-                       ) this.repaintDataGrid();
+                        if (this.isHeaderFilterVisible && this.repaintTimeout &&
+                            this.getElementRef().nativeElement === this.categoryChooserContainer.nativeElement.parentElement
+                        ) {
+                             this.repaintDataGrid();
+                        }
+                        this.repaintTimeout = true;
                     });
                 }
             })
@@ -836,7 +840,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     repaintDataGrid(delay = 0) {
-        setTimeout(() => this.dataGrid.instance.repaint(), delay);
+        clearTimeout(this.repaintTimeout);
+        this.repaintTimeout = setTimeout(() => {
+            this.dataGrid.instance.repaint();
+        }, delay);
     }
 
     onToolbarPreparing(e) {
