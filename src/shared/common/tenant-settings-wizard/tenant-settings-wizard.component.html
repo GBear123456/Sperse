@@ -33,9 +33,11 @@
         </mat-step>
         <mat-step #userManagementStep>
             <ng-container *ngIf="stepper.selected === userManagementStep">
-                <user-management [hostSettings]="hostUserManagementSettings$ | async"
-                                 [tenantSettings]="tenantUserManagementSettings$ | async">
-                </user-management>
+                <dx-scroll-view [height]="529">
+                    <user-management [hostSettings]="hostUserManagementSettings$ | async"
+                                     [tenantSettings]="tenantUserManagementSettings$ | async">
+                    </user-management>
+                </dx-scroll-view>
             </ng-container>
         </mat-step>
         <mat-step #securityStep>
