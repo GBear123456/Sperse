@@ -704,7 +704,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (count: any) => {
-                    this.totalCount = count;
+                    if (!isNaN(count))
+                        this.totalCount = count;
                 }
             })
         });

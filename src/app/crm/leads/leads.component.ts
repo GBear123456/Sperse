@@ -748,7 +748,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
                     onLoaded: (count: any) => {
-                        this.totalCount = count;
+                        if (!isNaN(count))
+                            this.totalCount = count;
                     }
                 })
             });

@@ -458,8 +458,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (count: any) => {
-                    this.totalCount = count;
-                    this.changeDetectionRef.detectChanges();
+                    if (!isNaN(count)) {
+                        this.totalCount = count;
+                        this.changeDetectionRef.detectChanges();
+                    }
                 }
             })
         });

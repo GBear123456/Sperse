@@ -626,7 +626,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (count: any) => {
-                    this.totalCount = count;
+                    if (!isNaN(count))
+                        this.totalCount = count;
                 }
             })
         });
