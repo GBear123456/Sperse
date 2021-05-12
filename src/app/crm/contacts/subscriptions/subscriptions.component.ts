@@ -20,6 +20,7 @@ import {
     NameValueDto,
     CommonLookupServiceProxy,
     CancelOrderSubscriptionInput,
+    UpdateOrderSubscriptionPeriodInput,
     LeadInfoDto,
     LayoutType
 } from '@shared/service-proxies/service-proxies';
@@ -240,27 +241,12 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             null;
 
         this.loadingService.startLoading();
-        this.orderSubscriptionProxy.update(new UpdateOrderSubscriptionInput({
-            productCode: undefined,
-            contactXref: undefined,
-            contactId: this.data.contactInfo.id,
-            leadId: leadId,
-            orderNumber: undefined,
-            subscriptions: [new SubscriptionInput({
-                ...cell.data,
-                code: cell.data.serviceCode,
-                name: cell.data.productName,
-                level: cell.data.levelCode,
-                amount: cell.data.fee,
-                startDate: cell.column.dataField == 'startDate' ?
-                    DateHelper.removeTimezoneOffset(new Date(event.value), true, 'from') : cell.data.startDate,
-                endDate: cell.column.dataField == 'endDate' ?
-                    DateHelper.removeTimezoneOffset(new Date(event.value), true, 'to') : cell.data.endDate
-            })],
-            productId: undefined,
-            paymentPeriodType: undefined,
-            updateThirdParty: this.isBankCodeLayout && cell.data.serviceCode === BankCodeServiceType.BANKVault,
-            hasRecurringBilling: false
+        this.orderSubscriptionProxy.updatePeriod(new UpdateOrderSubscriptionPeriodInput({
+            subscriptionId: cell.data.id,
+            startDate: cell.column.dataField == 'startDate' ?
+                DateHelper.removeTimezoneOffset(new Date(event.value), true, 'from') : cell.data.startDate,
+            endDate: cell.column.dataField == 'endDate' ?
+                DateHelper.removeTimezoneOffset(new Date(event.value), true, 'to') : cell.data.endDate
         })).pipe(
             finalize(() => this.loadingService.finishLoading())
         ).subscribe(() => {

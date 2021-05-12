@@ -279,7 +279,8 @@
                                 [placeholder]="ls.lr('Select')"
                                 [(value)]="cellData.data.unitId"
                                 [dataSource]="cellData.data.units || invoiceUnits"
-                                (onValueChanged)="onUnitChanged($event, cellData)">
+                                (onValueChanged)="onUnitChanged($event, cellData)"
+                                (onOpened)="onUnitOpened($event, cellData)">
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>

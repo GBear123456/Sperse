@@ -290,6 +290,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
                             Quantity: res.quantity,
                             Rate: res.rate,
                             Description: res.description,
+                            units: res.productType == 'Subscription' ? [{
+                                unitId: res.unitId, 
+                                unitName: res.unitName
+                            }] : undefined,
                             ...res
                         };
                     });
@@ -602,8 +606,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    invoiceProductsLookupRequest(phrase = '', callback?) {
-        this.productProxy.getInvoiceProductsByPhrase(this.contactId, phrase, undefined, 10).subscribe(res => {
+    invoiceProductsLookupRequest(phrase = '', callback?, code?: string) {
+        this.productProxy.getInvoiceProductsByPhrase(this.contactId, phrase, code, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
                 this.products = res;
                 callback && callback(res);
@@ -612,8 +616,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    productsLookupRequest(phrase = '', callback?) {
-        this.productProxy.getProductsByPhrase(this.contactId, phrase, undefined, 10).subscribe(res => {
+    productsLookupRequest(phrase = '', callback?, code?: string) {
+        this.productProxy.getProductsByPhrase(this.contactId, phrase, code, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
                 this.products = res.map(item => {
                     item.description = item.name;
@@ -810,6 +814,18 @@ export class CreateInvoiceDialogComponent implements OnInit {
             value = value.replace(/(?!\.)\D/igm, '');
         cell.data.rate = value;
         this.calculateLineTotal(cell.data);
+    }
+
+    onUnitOpened(event, cellData) {
+        if (cellData.data.productCode &&
+            cellData.data.productType == 'Subscription' &&
+            !cellData.data.units[0].hasOwnProperty('price')
+        ) {
+            this.productsLookupRequest('', (products) => {
+                if (products && products[0])
+                    cellData.data.units = products[0].paymentOptions;
+            }, cellData.data.productCode);
+        }
     }
 
     onUnitChanged(event, cellData) {
