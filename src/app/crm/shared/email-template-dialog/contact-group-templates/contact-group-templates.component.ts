@@ -71,6 +71,7 @@ export class ContactGroupTemplatesComponent {
         }
         this.internalTemplates = values;
         this.resetGroupsDisabled();
+        this.setAddButtonVisibility();
         this.internalTemplates.forEach(v => this.changeContactGroupAviability(v.groupId, true));
 
         if (triggerChange) {
@@ -112,20 +113,25 @@ export class ContactGroupTemplatesComponent {
     }
 
     addRow() {
-        this.internalTemplates.push(new CustomWelcomeTemplate({ groupId: null, templateId: null }));
-        if (this.internalTemplates.length == this.contactGroups.length)
-            this.hideAddButton = true;
+        if (this.internalTemplates.length < this.contactGroups.length) {
+            this.internalTemplates.push(new CustomWelcomeTemplate({ groupId: null, templateId: null }));
+        }
+        this.setAddButtonVisibility();
     }
 
     removeRow(i, templateItem) {
         this.internalTemplates.splice(i, 1);
         this.changeContactGroupAviability(templateItem.groupId, false);
-        this.hideAddButton = this.contactGroups.every(v => v.disabled);
+        this.setAddButtonVisibility();
         this.customTemplatesChange.emit(this.getTemplates());
     }
 
     resetGroupsDisabled() {
         this.contactGroups.forEach(v => v.disabled = false);
+    }
+
+    setAddButtonVisibility() {
+        this.hideAddButton = this.internalTemplates.length >= this.contactGroups.length;
     }
 
     changeContactGroupAviability(itemId, isDisabled) {
