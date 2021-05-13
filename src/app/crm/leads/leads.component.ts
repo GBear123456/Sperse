@@ -872,6 +872,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
+            filter(() => !this.showPipeline),
             debounceTime(300)
         ).subscribe(([odataRequestValues, ]) => {
             let url = this.getODataUrl(this.totalDataSourceURI,
@@ -2187,6 +2188,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.contactService.mergeContact(source, target, false, true, () => this.refresh(), true);
             });
         }
+    }
+
+    onTotalChange(totalCount: number) {
+        this.totalCount = totalCount;
     }
 
     openEntityChecklistDialog(data?) {
