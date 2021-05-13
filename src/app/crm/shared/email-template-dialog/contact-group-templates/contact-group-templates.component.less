@@ -1,0 +1,80 @@
+:host {
+    .contact-group-templates {
+        width: 465px;
+    }
+
+    .item-row {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    ::ng-deep .contact-groups-select {
+        width: 30%;
+
+        .dx-texteditor-input {
+            padding-top: 9px;
+            padding-bottom: 9px;
+        }
+
+        .dx-placeholder {
+            font-size: 15px;
+        }
+
+        input {
+            font-size: 15px;
+            font-weight: normal;
+        }
+    }
+
+    ::ng-deep .email-temlate-select {
+        width: 65%;
+
+        .email-template-selector {
+            h5 {
+                display: none;
+            }
+
+            .dx-selectbox {
+                width: 100% !important;
+
+                input {
+                    font-size: 15px;
+                    font-weight: 400;
+                    padding-top: 9px;
+                    padding-bottom: 9px;
+                }
+            }
+        }
+    }
+
+    .remove-group {
+        width: 5%;
+
+        i {
+            &:before {
+                font-size: 20px;
+                line-height: 38px;
+                color: #f44336;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .add-row {
+        margin-top: 15px;
+        margin-left: 5px;
+
+        .add-group {
+            font: 20px/1 DXIcons;
+
+            &:before {
+                content: '+';
+                font-size: 27px;
+                font-weight: 600;
+                line-height: 15px;
+                color: #00aeef;
+                cursor: pointer;
+            }
+        }
+    }
+}

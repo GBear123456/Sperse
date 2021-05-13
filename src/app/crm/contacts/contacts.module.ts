@@ -130,6 +130,7 @@ import { SMSDialogComponent } from '@app/crm/shared/sms-dialog/sms-dialog.compon
 import { InvoiceSettingsDialogComponent } from './invoice-settings-dialog/invoice-settings-dialog.component';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 import { EmailTemplateSelectorComponent } from '@app/crm/shared/email-template-dialog/email-template-selector/email-template-selector.component';
+import { ContactGroupTemplatesComponent } from '@app/crm/shared/email-template-dialog/contact-group-templates/contact-group-templates.component';
 import { CrmService } from '@app/crm/crm.service';
 import { AddSubscriptionDialogComponent } from './subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { CancelSubscriptionDialogComponent } from './subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
@@ -194,6 +195,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         ContactListDialogComponent,
         NotSupportedTypeDialogComponent,
         EmailTemplateDialogComponent,
+        ContactGroupTemplatesComponent,
         EmailTemplateSelectorComponent,
         InvoiceSettingsDialogComponent,
         HistoryListDialogComponent,
@@ -331,7 +333,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         CrmService
     ],
     exports: [
-        EmailTemplateSelectorComponent
+        ContactGroupTemplatesComponent
     ]
 })
 export class ContactsModule {}
