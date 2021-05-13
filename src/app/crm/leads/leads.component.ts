@@ -734,6 +734,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
+                    onLoaded: (records) => {
+                        if (records instanceof Array)
+                            this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
+                    },
                     deserializeDates: false
                 }
             };
@@ -749,7 +753,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     onLoaded: (count: any) => {
                         if (!isNaN(count))
-                            this.totalCount = count;
+                            this.dataSource['total'] = this.totalCount = count;
                     }
                 })
             });

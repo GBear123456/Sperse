@@ -681,6 +681,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 onLoaded: (records) => {
                     if (records instanceof Array) {
                         let userIds = this.getUserIds(records);
+                        this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
                         this.usersInstancesLoadingSubscription = this.appService.isCfoLinkOrVerifyEnabled && userIds.length ?
                             this.crmService.getUsersWithInstances(userIds).subscribe(() => {
                                 this.changeDetectorRef.markForCheck();
@@ -705,7 +706,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 },
                 onLoaded: (count: any) => {
                     if (!isNaN(count))
-                        this.totalCount = count;
+                        this.dataSource['total'] = this.totalCount = count;
                 }
             })
         });
