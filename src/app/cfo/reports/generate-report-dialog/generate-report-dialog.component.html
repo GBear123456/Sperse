@@ -36,16 +36,21 @@
             </dx-radio-group>
         </div>
         <div *ngIf="currentStep == generateReportSteps.Calendar" class="calendar-container">
-            <dx-calendar *ngIf="currentConfig.showYearCalendar; else default"
+            <dx-calendar *ngIf="currentConfig.showSingleDateCalendar"
+                         [(value)]="calendarData.from.value">
+            </dx-calendar>
+            <dx-calendar *ngIf="currentConfig.showYearCalendar"
+                         accessKey="year"
                          zoomLevel="year"
                          maxZoomLevel="year"
                          minZoomLevel="year"
                          [value]="budgetReportDate"
                          (onOptionChanged)="onCalendarOptionChanged($event)">
             </dx-calendar>
-            <ng-template #default>
-                <calendar [values]="calendarData" [options]="calendarData.options"></calendar>
-            </ng-template>
+            <calendar *ngIf="!currentConfig.showYearCalendar && !currentConfig.showSingleDateCalendar"
+                [values]="calendarData" 
+                [options]="calendarData.options">
+            </calendar>
         </div>
         <div *ngIf="currentStep == generateReportSteps.Final" class="final-container">
             <div class="container">
@@ -70,19 +75,21 @@
                     </div>
                 </div>
                 <div class="row date-range">
-                    <div class="text-left">{{ currentConfig.showYearCalendar ? ls.l('Selected') + ' ' + ls.l('Year') : ls.l('Reports_DateRange') }}</div>
-                    <div *ngIf="currentConfig.showYearCalendar; else defaultDate" class="text-right">
+                    <div class="text-left">{{ currentConfig.showYearCalendar ? ls.l('Selected') + ' ' + ls.l('Year') : (currentConfig.showSingleDateCalendar ? ls.l('Date') : ls.l('Reports_DateRange')) }}</div>
+                    <div *ngIf="currentConfig.showYearCalendar" class="text-right">
                         <span class="date">{{budgetReportDate | date : 'yyyy' : 'UTC' }}</span>
                         <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
                     </div>
-                    <ng-template #defaultDate>
-                        <div class="text-right">
-                            <span class="date">{{dateFrom | date : 'MM/dd/yyyy' : 'UTC' }}</span>
-                            <img class="arrow" src="./assets/common/icons/date-arrow-right.svg">
-                            <span class="date">{{dateTo | date : 'MM/dd/yyyy' : 'UTC' }}</span>
-                            <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
-                        </div>
-                    </ng-template>
+                    <div *ngIf="currentConfig.showSingleDateCalendar" class="text-right">
+                        <span class="date">{{dateFrom | date : 'MM/dd/yyyy' : 'UTC' }}</span>
+                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
+                    </div>
+                    <div *ngIf="!currentConfig.showSingleDateCalendar && !currentConfig.showYearCalendar" class="text-right">
+                        <span class="date">{{dateFrom | date : 'MM/dd/yyyy' : 'UTC' }}</span>
+                        <img class="arrow" src="./assets/common/icons/date-arrow-right.svg">
+                        <span class="date">{{dateTo | date : 'MM/dd/yyyy' : 'UTC' }}</span>
+                        <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
+                    </div>
                 </div>
                 <div class="row business-entities">
                     <div class="text-left">{{ ls.l('BusinessEntities') }}</div>

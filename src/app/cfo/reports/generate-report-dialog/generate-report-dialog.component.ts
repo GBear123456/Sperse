@@ -23,10 +23,10 @@ import {
     DepartmentsServiceProxy,
     ReportsServiceProxy,
     GenerateInput,
+    GenerateBalanceSheetReportInput,
     InstanceServiceProxy,
     InstanceType,
     ReportTemplate,
-    GenerateInputBase,
     ReportPeriod
 } from '@root/shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -81,6 +81,7 @@ export class GenerateReportDialogComponent implements OnInit {
         },
         BalanceReport: {
             allowMultipleBE: true,
+            showSingleDateCalendar: true,
             generateMethod: this.getBalanceSheetReportRequest.bind(this)
         }
     };
@@ -352,11 +353,9 @@ export class GenerateReportDialogComponent implements OnInit {
 
     getBalanceSheetReportRequest(currencyId: string) {
         return this.reportsProxy.generateBalanceSheetReport(<any>this.data.instanceType, this.data.instanceId,
-            new GenerateInputBase({
+            new GenerateBalanceSheetReportInput({
                 businessEntityIds: this.selectedBusinessEntityIds,
-                from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
-                to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
-                period: this.data.period,
+                date: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
                 currencyId: currencyId,
                 notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
                     ? new SendReportNotificationInfo({
