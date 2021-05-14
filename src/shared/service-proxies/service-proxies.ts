@@ -29148,7 +29148,7 @@ export class ReportsServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    generateBalanceSheetReport(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: GenerateInputBase | null | undefined): Observable<void> {
+    generateBalanceSheetReport(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: GenerateBalanceSheetReportInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Reports/GenerateBalanceSheetReport?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -36245,6 +36245,62 @@ export class TokenAuthServiceProxy {
     }
 
     /**
+     * @body (optional) 
+     * @return Success
+     */
+    authenticateByCode(body: AuthenticateByCodeModel | null | undefined): Observable<AuthenticateResultModel> {
+        let url_ = this.baseUrl + "/api/TokenAuth/AuthenticateByCode";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processAuthenticateByCode(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processAuthenticateByCode(<any>response_);
+                } catch (e) {
+                    return <Observable<AuthenticateResultModel>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<AuthenticateResultModel>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processAuthenticateByCode(response: HttpResponseBase): Observable<AuthenticateResultModel> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? AuthenticateResultModel.fromJS(resultData200) : new AuthenticateResultModel();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AuthenticateResultModel>(<any>null);
+    }
+
+    /**
      * @return Success
      */
     logOut(): Observable<void> {
@@ -43279,6 +43335,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
     stateName!: string | undefined;
     zip!: string | undefined;
     countryId!: string | undefined;
+    countryName!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     isActive!: boolean | undefined;
@@ -43306,6 +43363,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
             this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.countryId = data["countryId"];
+            this.countryName = data["countryName"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
@@ -43333,6 +43391,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
+        data["countryName"] = this.countryName;
         data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
         data["isActive"] = this.isActive;
@@ -43353,6 +43412,7 @@ export interface ICreateContactAddressInputWithoutCheck {
     stateName: string | undefined;
     zip: string | undefined;
     countryId: string | undefined;
+    countryName: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     isActive: boolean | undefined;
@@ -50027,7 +50087,8 @@ export class ContactAddressDto implements IContactAddressDto {
     city!: string | undefined;
     stateId!: string | undefined;
     stateName!: string | undefined;
-    country!: string | undefined;
+    countryId!: string | undefined;
+    countryName!: string | undefined;
     zip!: string | undefined;
     isActive!: boolean | undefined;
     comment!: string | undefined;
@@ -50053,7 +50114,8 @@ export class ContactAddressDto implements IContactAddressDto {
             this.city = data["city"];
             this.stateId = data["stateId"];
             this.stateName = data["stateName"];
-            this.country = data["country"];
+            this.countryId = data["countryId"];
+            this.countryName = data["countryName"];
             this.zip = data["zip"];
             this.isActive = data["isActive"];
             this.comment = data["comment"];
@@ -50079,7 +50141,8 @@ export class ContactAddressDto implements IContactAddressDto {
         data["city"] = this.city;
         data["stateId"] = this.stateId;
         data["stateName"] = this.stateName;
-        data["country"] = this.country;
+        data["countryId"] = this.countryId;
+        data["countryName"] = this.countryName;
         data["zip"] = this.zip;
         data["isActive"] = this.isActive;
         data["comment"] = this.comment;
@@ -50098,7 +50161,8 @@ export interface IContactAddressDto {
     city: string | undefined;
     stateId: string | undefined;
     stateName: string | undefined;
-    country: string | undefined;
+    countryId: string | undefined;
+    countryName: string | undefined;
     zip: string | undefined;
     isActive: boolean | undefined;
     comment: string | undefined;
@@ -51821,6 +51885,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     stateName!: string | undefined;
     zip!: string | undefined;
     countryId!: string | undefined;
+    countryName!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     isActive!: boolean | undefined;
@@ -51848,6 +51913,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
             this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.countryId = data["countryId"];
+            this.countryName = data["countryName"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
@@ -51875,6 +51941,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
+        data["countryName"] = this.countryName;
         data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
         data["isActive"] = this.isActive;
@@ -51895,6 +51962,7 @@ export interface ICreateContactAddressInput {
     stateName: string | undefined;
     zip: string | undefined;
     countryId: string | undefined;
+    countryName: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     isActive: boolean | undefined;
@@ -53416,6 +53484,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
     stateName!: string | undefined;
     zip!: string | undefined;
     countryId!: string | undefined;
+    countryName!: string | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     isActive!: boolean | undefined;
@@ -53444,6 +53513,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
             this.stateName = data["stateName"];
             this.zip = data["zip"];
             this.countryId = data["countryId"];
+            this.countryName = data["countryName"];
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.isActive = data["isActive"];
@@ -53472,6 +53542,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
         data["stateName"] = this.stateName;
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
+        data["countryName"] = this.countryName;
         data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
         data["isActive"] = this.isActive;
@@ -53493,6 +53564,7 @@ export interface IUpdateContactAddressInput {
     stateName: string | undefined;
     zip: string | undefined;
     countryId: string | undefined;
+    countryName: string | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     isActive: boolean | undefined;
@@ -59316,6 +59388,7 @@ export interface ICreateOrUpdateEditionDto {
 export enum EmailTemplateType {
     Invoice = "Invoice", 
     Contact = "Contact", 
+    WelcomeEmail = "WelcomeEmail", 
 }
 
 export class GetTemplatesResponse implements IGetTemplatesResponse {
@@ -60463,6 +60536,7 @@ export interface IGeneralSettingsEditDto {
 export class HostUserManagementSettingsEditDto implements IHostUserManagementSettingsEditDto {
     isEmailConfirmationRequiredForLogin!: boolean | undefined;
     smsVerificationEnabled!: boolean | undefined;
+    welcomeEmailTemplateId!: number | undefined;
 
     constructor(data?: IHostUserManagementSettingsEditDto) {
         if (data) {
@@ -60477,6 +60551,7 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
         if (data) {
             this.isEmailConfirmationRequiredForLogin = data["isEmailConfirmationRequiredForLogin"];
             this.smsVerificationEnabled = data["smsVerificationEnabled"];
+            this.welcomeEmailTemplateId = data["welcomeEmailTemplateId"];
         }
     }
 
@@ -60491,6 +60566,7 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
         data = typeof data === 'object' ? data : {};
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
         data["smsVerificationEnabled"] = this.smsVerificationEnabled;
+        data["welcomeEmailTemplateId"] = this.welcomeEmailTemplateId;
         return data; 
     }
 }
@@ -60498,6 +60574,7 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
 export interface IHostUserManagementSettingsEditDto {
     isEmailConfirmationRequiredForLogin: boolean | undefined;
     smsVerificationEnabled: boolean | undefined;
+    welcomeEmailTemplateId: number | undefined;
 }
 
 export class EmailSettingsEditDto implements IEmailSettingsEditDto {
@@ -62255,6 +62332,8 @@ export class ImportContactInput implements IImportContactInput {
     importType!: ImportTypeInput | undefined;
     ignoreInvalidValues!: boolean | undefined;
     overrideLists!: boolean | undefined;
+    createUser!: boolean | undefined;
+    sendWelcomeEmail!: boolean | undefined;
     contactId!: number | undefined;
     contactXref!: string | undefined;
     userPassword!: string | undefined;
@@ -62314,6 +62393,8 @@ export class ImportContactInput implements IImportContactInput {
             this.importType = data["importType"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
             this.overrideLists = data["overrideLists"] !== undefined ? data["overrideLists"] : false;
+            this.createUser = data["createUser"];
+            this.sendWelcomeEmail = data["sendWelcomeEmail"];
             this.contactId = data["contactId"];
             this.contactXref = data["contactXref"];
             this.userPassword = data["userPassword"];
@@ -62370,6 +62451,8 @@ export class ImportContactInput implements IImportContactInput {
         data["importType"] = this.importType;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
         data["overrideLists"] = this.overrideLists;
+        data["createUser"] = this.createUser;
+        data["sendWelcomeEmail"] = this.sendWelcomeEmail;
         data["contactId"] = this.contactId;
         data["contactXref"] = this.contactXref;
         data["userPassword"] = this.userPassword;
@@ -62419,6 +62502,8 @@ export interface IImportContactInput {
     importType: ImportTypeInput | undefined;
     ignoreInvalidValues: boolean | undefined;
     overrideLists: boolean | undefined;
+    createUser: boolean | undefined;
+    sendWelcomeEmail: boolean | undefined;
     contactId: number | undefined;
     contactXref: string | undefined;
     userPassword: string | undefined;
@@ -75154,6 +75239,7 @@ export enum ReportPeriod {
     Monthly = "Monthly", 
     Quarterly = "Quarterly", 
     Annual = "Annual", 
+    Instant = "Instant", 
 }
 
 export class GenerateInput implements IGenerateInput {
@@ -75248,15 +75334,13 @@ export interface IGenerateInput {
     notificationData: SendReportNotificationInfo | undefined;
 }
 
-export class GenerateInputBase implements IGenerateInputBase {
-    from!: moment.Moment;
-    to!: moment.Moment;
-    period!: ReportPeriod;
+export class GenerateBalanceSheetReportInput implements IGenerateBalanceSheetReportInput {
+    date!: moment.Moment;
     currencyId!: string;
     businessEntityIds!: number[] | undefined;
     notificationData!: SendReportNotificationInfo | undefined;
 
-    constructor(data?: IGenerateInputBase) {
+    constructor(data?: IGenerateBalanceSheetReportInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -75267,9 +75351,7 @@ export class GenerateInputBase implements IGenerateInputBase {
 
     init(data?: any) {
         if (data) {
-            this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
-            this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
-            this.period = data["period"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
             if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
                 this.businessEntityIds = [];
@@ -75280,18 +75362,16 @@ export class GenerateInputBase implements IGenerateInputBase {
         }
     }
 
-    static fromJS(data: any): GenerateInputBase {
+    static fromJS(data: any): GenerateBalanceSheetReportInput {
         data = typeof data === 'object' ? data : {};
-        let result = new GenerateInputBase();
+        let result = new GenerateBalanceSheetReportInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["from"] = this.from ? this.from.toISOString() : <any>undefined;
-        data["to"] = this.to ? this.to.toISOString() : <any>undefined;
-        data["period"] = this.period;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
         if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
             data["businessEntityIds"] = [];
@@ -75303,10 +75383,8 @@ export class GenerateInputBase implements IGenerateInputBase {
     }
 }
 
-export interface IGenerateInputBase {
-    from: moment.Moment;
-    to: moment.Moment;
-    period: ReportPeriod;
+export interface IGenerateBalanceSheetReportInput {
+    date: moment.Moment;
     currencyId: string;
     businessEntityIds: number[] | undefined;
     notificationData: SendReportNotificationInfo | undefined;
@@ -75863,6 +75941,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
     affiliateRate!: number | undefined;
     group!: UserGroup | undefined;
     contactId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
     id!: number | undefined;
 
     constructor(data?: IUserLoginInfoDto) {
@@ -75887,6 +75966,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
             this.affiliateRate = data["affiliateRate"];
             this.group = data["group"];
             this.contactId = data["contactId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.id = data["id"];
         }
     }
@@ -75911,6 +75991,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
         data["affiliateRate"] = this.affiliateRate;
         data["group"] = this.group;
         data["contactId"] = this.contactId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
         return data; 
     }
@@ -75928,6 +76009,7 @@ export interface IUserLoginInfoDto {
     affiliateRate: number | undefined;
     group: UserGroup | undefined;
     contactId: number | undefined;
+    creationTime: moment.Moment | undefined;
     id: number | undefined;
 }
 
@@ -78467,6 +78549,7 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
     isNewRegisteredUserActiveByDefault!: boolean | undefined;
     isEmailConfirmationRequiredForLogin!: boolean | undefined;
     useCaptchaOnRegistration!: boolean | undefined;
+    welcomeEmailTemplateId!: number | undefined;
 
     constructor(data?: ITenantUserManagementSettingsEditDto) {
         if (data) {
@@ -78483,6 +78566,7 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
             this.isNewRegisteredUserActiveByDefault = data["isNewRegisteredUserActiveByDefault"];
             this.isEmailConfirmationRequiredForLogin = data["isEmailConfirmationRequiredForLogin"];
             this.useCaptchaOnRegistration = data["useCaptchaOnRegistration"];
+            this.welcomeEmailTemplateId = data["welcomeEmailTemplateId"];
         }
     }
 
@@ -78499,6 +78583,7 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
         data["isNewRegisteredUserActiveByDefault"] = this.isNewRegisteredUserActiveByDefault;
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
         data["useCaptchaOnRegistration"] = this.useCaptchaOnRegistration;
+        data["welcomeEmailTemplateId"] = this.welcomeEmailTemplateId;
         return data; 
     }
 }
@@ -78508,6 +78593,7 @@ export interface ITenantUserManagementSettingsEditDto {
     isNewRegisteredUserActiveByDefault: boolean | undefined;
     isEmailConfirmationRequiredForLogin: boolean | undefined;
     useCaptchaOnRegistration: boolean | undefined;
+    welcomeEmailTemplateId: number | undefined;
 }
 
 export class LdapSettingsEditDto implements ILdapSettingsEditDto {
@@ -79936,6 +80022,46 @@ export interface IAuthenticateModel {
     returnUrl: string | undefined;
     autoDetectTenancy: boolean | undefined;
     features: string[] | undefined;
+}
+
+export class AuthenticateByCodeModel implements IAuthenticateByCodeModel {
+    emailAddress!: string;
+    code!: string;
+
+    constructor(data?: IAuthenticateByCodeModel) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.emailAddress = data["emailAddress"];
+            this.code = data["code"];
+        }
+    }
+
+    static fromJS(data: any): AuthenticateByCodeModel {
+        data = typeof data === 'object' ? data : {};
+        let result = new AuthenticateByCodeModel();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailAddress"] = this.emailAddress;
+        data["code"] = this.code;
+        return data; 
+    }
+}
+
+export interface IAuthenticateByCodeModel {
+    emailAddress: string;
+    code: string;
 }
 
 export class SendTwoFactorAuthCodeModel implements ISendTwoFactorAuthCodeModel {
