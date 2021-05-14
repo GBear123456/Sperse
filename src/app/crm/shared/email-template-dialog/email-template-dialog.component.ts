@@ -31,7 +31,9 @@ import {
     UpdateEmailTemplateRequest,
     GetTemplateReponse,
     ContactServiceProxy,
-    GetEmailDataOutput
+    GetEmailDataOutput,
+
+    EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
@@ -60,6 +62,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @ViewChild('tagsButton', { static: false }) tagsButton: ElementRef;
 
     ckEditor: any;
+    templateLoaded: boolean;
     showCC = false;
     showBCC = false;
     tagLastValue: string;
@@ -129,7 +132,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         private contactProxy: ContactServiceProxy,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
-        private sessionService: AppSessionService,
+        sessionService: AppSessionService,
         private permission: AppPermissionService,
         private features: FeatureCheckerService,
         private communicationProxy: ContactCommunicationServiceProxy,
@@ -145,12 +148,15 @@ export class EmailTemplateDialogComponent implements OnInit {
 
         if (this.data.templateId)
             this.loadTemplateById(this.data.templateId);
-        else if (!this.data.tags && this.data.contact)
-            this.communicationProxy.getEmailData(
-                undefined, this.data.contact.id
-            ).subscribe((res: GetEmailDataOutput) => {
-                this.data.tags = res.tags;
-            });
+        else {
+            if (!this.data.tags && this.data.contact)
+                this.communicationProxy.getEmailData(
+                    undefined, this.data.contact.id
+                ).subscribe((res: GetEmailDataOutput) => {
+                    this.data.tags = res.tags;
+                });
+            this.templateLoaded = true;
+        }
     }
 
     ngOnInit() {
@@ -218,6 +224,10 @@ export class EmailTemplateDialogComponent implements OnInit {
             if (!this.getTemplateName())
                 return this.notifyService.error(
                     this.ls.l('RequiredField', this.ls.l('Template')));
+
+            if (this.data.templateType == EmailTemplateType.WelcomeEmail && !this.data.subject)
+                return this.notifyService.error(
+                    this.ls.l('RequiredField', this.ls.l('Subject')));
         } else {
             if (!this.validationGroup.instance.validate().isValid)
                 return this.notifyService.error(this.ls.l('InvalidEmailAddress'));
@@ -334,8 +344,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onTemplateChanged(event) {
+        this.data.templateId = event.value;
         if (event.value) {
-            this.data.templateId = event.value;
             if (this.templateEditMode || this.data.switchTemplate)
                 this.loadTemplateById(event.value);
             else
@@ -356,6 +366,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.showBCC = Boolean(res.bcc && res.bcc.length);
             this.onTemplateChange.emit(templateId);
             this.invalidate();
+            this.templateLoaded = true;
         });
     }
 

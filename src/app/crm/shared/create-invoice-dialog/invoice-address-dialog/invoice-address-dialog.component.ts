@@ -80,7 +80,7 @@ export class InvoiceAddressDialog {
                     item.streetAddress,
                     item.city,
                     item.stateId,
-                    item.country
+                    item.countryName
                 ].filter(Boolean).join(',');
                 return item;
             });
@@ -206,7 +206,7 @@ export class InvoiceAddressDialog {
 
     onAddressSelected(event, component) {
         let address = this.contactDetails.addresses[event.itemIndex];
-        this.data.country = address.country;
+        this.data.country = address.countryName;
         this.data.stateId = address.stateId;
         this.data.stateName = address.stateName;
         this.data.city = address.city;

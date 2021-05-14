@@ -61,7 +61,7 @@
                     [disabled]="!isEditAllowed"
                     name="country"
                     [searchEnabled]="true"
-                    [(value)]="data.country"
+                    [(value)]="data.countryName"
                     fieldTemplate="field"
                     (onValueChanged)="onCountryChange($event)">
                     <div *dxTemplate="let data of 'field'">

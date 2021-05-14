@@ -76,6 +76,7 @@
                                       [(value)]="hostSettings.userManagement.smsVerificationEnabled">
                         </dx-check-box>
                     </div>
+                    <email-template-selector [(templateId)]="hostSettings.userManagement.welcomeEmailTemplateId" [templateType]="EmailTemplateType.WelcomeEmail"></email-template-selector>
                 </dx-scroll-view>
             </mat-tab>
             <mat-tab label="{{l('Security')}}" *ngIf="hostSettings.security">

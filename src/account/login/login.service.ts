@@ -181,7 +181,7 @@ export class LoginService {
         this.initExternalLoginProviders();
     }
 
-    private processAuthenticateResult(authenticateResult, redirectUrl?: string) {
+    processAuthenticateResult(authenticateResult, redirectUrl?: string) {
         this.authenticateResult = authenticateResult;
 
         if (authenticateResult.shouldResetPassword) {

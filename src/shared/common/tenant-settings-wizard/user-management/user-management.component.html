@@ -25,12 +25,15 @@
             </div>
         </div>
     </div>
-    <div>
+    <div class="form-group">
         <h5 class="margin-top-20">{{ls.l("OtherSettings")}}</h5>
         <dx-check-box id="Setting_IsEmailConfirmationRequiredForLogin"
                       [text]="ls.l('EmailConfirmationRequiredForLogin')"
                       [(value)]="tenantSettings.isEmailConfirmationRequiredForLogin">
         </dx-check-box>
+    </div>
+    <div class="form-group">
+        <email-template-selector [(templateId)]="tenantSettings.welcomeEmailTemplateId" [templateType]="EmailTemplateType.WelcomeEmail"></email-template-selector>
     </div>
 </ng-container>
 <ng-container *ngIf="hostSettings">
@@ -45,5 +48,8 @@
                       [text]="ls.l('SmsVerificationEnabled')"
                       [(value)]="hostSettings.smsVerificationEnabled">
         </dx-check-box>
+    </div>
+    <div class="form-group">
+        <email-template-selector [(templateId)]="hostSettings.welcomeEmailTemplateId" [templateType]="EmailTemplateType.WelcomeEmail"></email-template-selector>
     </div>
 </ng-container>
