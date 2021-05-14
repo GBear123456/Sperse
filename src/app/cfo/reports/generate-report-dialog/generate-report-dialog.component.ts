@@ -71,6 +71,7 @@ export class GenerateReportDialogComponent implements OnInit {
             showDepartments: true,
             showYearCalendar: false,
             allowMultipleBE: true,
+            showSingleDateCalendar: false,
             generateMethod: this.getDefaultReportRequest.bind(this),
             reportPeriod: null
         },
@@ -233,12 +234,14 @@ export class GenerateReportDialogComponent implements OnInit {
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.Departments) {
             this.title = this.ls.l('SelectDepartments');
+            this.buttons[this.NEXT_BTN_INDEX].disabled = false;
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.ReportTemplate) {
             this.title = this.ls.l('SelectReportTemplate');
             this.buttons[this.BACK_BTN_INDEX].disabled = true;
         } else if (this.currentStep == GenerateReportStep.Calendar) {
-            this.title = this.currentConfig.showYearCalendar ? this.ls.l('Select') + ' ' + this.ls.l('Year') : this.ls.l('SelectDateRange');
+            this.title = this.currentConfig.showYearCalendar ? this.ls.l('Select') + ' ' + this.ls.l('Year') :
+                this.ls.l(this.currentConfig.showSingleDateCalendar ? 'SelectDate' : 'SelectDateRange');
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.Final) {
             this.title = this.ls.l('ReportGenerationOptions');
