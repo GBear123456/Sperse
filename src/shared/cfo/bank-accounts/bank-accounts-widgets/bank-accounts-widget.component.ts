@@ -752,6 +752,17 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
         event.preventDefault();
     }
 
+    getLastSyncTitle(cell) {
+        let lastSyncDate = cell.data.lastSyncDate ? this.datePipe.transform(
+                cell.data.lastSyncDate, 'MMM d, y hh:mm a', this.userTimezone) : this.l('Never'),
+            lastGoodSyncDate = cell.data.lastGoodSyncDate ? this.datePipe.transform(
+                cell.data.lastGoodSyncDate, 'MMM d, y hh:mm a', this.userTimezone) : this.l('Never'),
+            title = 'Last sync: ' + lastSyncDate;
+        if (lastSyncDate != lastGoodSyncDate)
+            title += '\r\nLast good sync: ' + lastGoodSyncDate;
+        return title;
+    }
+
     ngOnDestroy() {
         super.ngOnDestroy();
     }
