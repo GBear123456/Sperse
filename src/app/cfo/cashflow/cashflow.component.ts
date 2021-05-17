@@ -1048,7 +1048,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
                 items: [
                     {
                         name: 'filters',
-                        visible: !this._cfoService.hasStaticInstance,
+                        visible: !this.isAdvicePeriod && !this._cfoService.hasStaticInstance,
                         action: () => {
                             setTimeout(this.repaintDataGrid.bind(this), 1000);
                             this.filtersService.fixed = !this.filtersService.fixed;

@@ -361,7 +361,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private categoriesShowedBefore = !AppConsts.isMobile;
     private _categoriesShowed = this.categoriesShowedBefore;
     private syncAccounts: any;
-    isAdvicePeriod = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.AdvicePeriod;
     private updateAfterActivation: boolean;
     categoriesRowsData: Category[] = [];
     public showDataGridToolbar = !AppConsts.isMobile;

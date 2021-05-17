@@ -189,7 +189,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 items: [
                     {
                         name: 'filters',
-                        visible: this.showDepartmentFilter,
+                        visible: this.showDepartmentFilter && !this.isAdvicePeriod && !this._cfoService.hasStaticInstance,
                         action: () => {
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
