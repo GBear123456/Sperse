@@ -52478,6 +52478,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     newUserPassword!: string | undefined;
     changeNewUserPasswordOnNextLogin!: boolean | undefined;
     noWelcomeEmail!: boolean | undefined;
+    welcomeEmailTemplateRef!: string | undefined;
     propertyInfo!: PropertyInput | undefined;
     bypassValidation!: boolean | undefined;
 
@@ -52568,6 +52569,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.newUserPassword = data["newUserPassword"];
             this.changeNewUserPasswordOnNextLogin = data["changeNewUserPasswordOnNextLogin"];
             this.noWelcomeEmail = data["noWelcomeEmail"];
+            this.welcomeEmailTemplateRef = data["welcomeEmailTemplateRef"];
             this.propertyInfo = data["propertyInfo"] ? PropertyInput.fromJS(data["propertyInfo"]) : <any>undefined;
             this.bypassValidation = data["bypassValidation"];
         }
@@ -52658,6 +52660,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["newUserPassword"] = this.newUserPassword;
         data["changeNewUserPasswordOnNextLogin"] = this.changeNewUserPasswordOnNextLogin;
         data["noWelcomeEmail"] = this.noWelcomeEmail;
+        data["welcomeEmailTemplateRef"] = this.welcomeEmailTemplateRef;
         data["propertyInfo"] = this.propertyInfo ? this.propertyInfo.toJSON() : <any>undefined;
         data["bypassValidation"] = this.bypassValidation;
         return data; 
@@ -52713,6 +52716,7 @@ export interface ICreateOrUpdateContactInput {
     newUserPassword: string | undefined;
     changeNewUserPasswordOnNextLogin: boolean | undefined;
     noWelcomeEmail: boolean | undefined;
+    welcomeEmailTemplateRef: string | undefined;
     propertyInfo: PropertyInput | undefined;
     bypassValidation: boolean | undefined;
 }
@@ -62580,6 +62584,7 @@ export class ImportInput implements IImportInput {
     fileContent!: string;
     ignoreInvalidValues!: boolean | undefined;
     sendWelcomeEmail!: boolean | undefined;
+    welcomeEmailTemplateRef!: string | undefined;
 
     constructor(data?: IImportInput) {
         if (data) {
@@ -62623,6 +62628,7 @@ export class ImportInput implements IImportInput {
             this.fileContent = data["fileContent"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
+            this.welcomeEmailTemplateRef = data["welcomeEmailTemplateRef"];
         }
     }
 
@@ -62666,6 +62672,7 @@ export class ImportInput implements IImportInput {
         data["fileContent"] = this.fileContent;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
         data["sendWelcomeEmail"] = this.sendWelcomeEmail;
+        data["welcomeEmailTemplateRef"] = this.welcomeEmailTemplateRef;
         return data; 
     }
 }
@@ -62686,6 +62693,7 @@ export interface IImportInput {
     fileContent: string;
     ignoreInvalidValues: boolean | undefined;
     sendWelcomeEmail: boolean | undefined;
+    welcomeEmailTemplateRef: string | undefined;
 }
 
 export class GetImportStatusOutput implements IGetImportStatusOutput {
@@ -62791,6 +62799,7 @@ export class ImportContactInput implements IImportContactInput {
     overrideLists!: boolean | undefined;
     createUser!: boolean | undefined;
     sendWelcomeEmail!: boolean | undefined;
+    welcomeEmailTemplateRef!: string | undefined;
     contactId!: number | undefined;
     contactXref!: string | undefined;
     userPassword!: string | undefined;
@@ -62852,6 +62861,7 @@ export class ImportContactInput implements IImportContactInput {
             this.overrideLists = data["overrideLists"] !== undefined ? data["overrideLists"] : false;
             this.createUser = data["createUser"];
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
+            this.welcomeEmailTemplateRef = data["welcomeEmailTemplateRef"];
             this.contactId = data["contactId"];
             this.contactXref = data["contactXref"];
             this.userPassword = data["userPassword"];
@@ -62910,6 +62920,7 @@ export class ImportContactInput implements IImportContactInput {
         data["overrideLists"] = this.overrideLists;
         data["createUser"] = this.createUser;
         data["sendWelcomeEmail"] = this.sendWelcomeEmail;
+        data["welcomeEmailTemplateRef"] = this.welcomeEmailTemplateRef;
         data["contactId"] = this.contactId;
         data["contactXref"] = this.contactXref;
         data["userPassword"] = this.userPassword;
@@ -62961,6 +62972,7 @@ export interface IImportContactInput {
     overrideLists: boolean | undefined;
     createUser: boolean | undefined;
     sendWelcomeEmail: boolean | undefined;
+    welcomeEmailTemplateRef: string | undefined;
     contactId: number | undefined;
     contactXref: string | undefined;
     userPassword: string | undefined;
@@ -65133,6 +65145,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     newUserPassword!: string | undefined;
     changeNewUserPasswordOnNextLogin!: boolean | undefined;
     noWelcomeEmail!: boolean | undefined;
+    welcomeEmailTemplateRef!: string | undefined;
     propertyInfo!: PropertyInput | undefined;
     bypassValidation!: boolean | undefined;
 
@@ -65220,6 +65233,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.newUserPassword = data["newUserPassword"];
             this.changeNewUserPasswordOnNextLogin = data["changeNewUserPasswordOnNextLogin"];
             this.noWelcomeEmail = data["noWelcomeEmail"];
+            this.welcomeEmailTemplateRef = data["welcomeEmailTemplateRef"];
             this.propertyInfo = data["propertyInfo"] ? PropertyInput.fromJS(data["propertyInfo"]) : <any>undefined;
             this.bypassValidation = data["bypassValidation"];
         }
@@ -65307,6 +65321,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["newUserPassword"] = this.newUserPassword;
         data["changeNewUserPasswordOnNextLogin"] = this.changeNewUserPasswordOnNextLogin;
         data["noWelcomeEmail"] = this.noWelcomeEmail;
+        data["welcomeEmailTemplateRef"] = this.welcomeEmailTemplateRef;
         data["propertyInfo"] = this.propertyInfo ? this.propertyInfo.toJSON() : <any>undefined;
         data["bypassValidation"] = this.bypassValidation;
         return data; 
@@ -65359,6 +65374,7 @@ export interface ICreateOrUpdateLeadInput {
     newUserPassword: string | undefined;
     changeNewUserPasswordOnNextLogin: boolean | undefined;
     noWelcomeEmail: boolean | undefined;
+    welcomeEmailTemplateRef: string | undefined;
     propertyInfo: PropertyInput | undefined;
     bypassValidation: boolean | undefined;
 }
