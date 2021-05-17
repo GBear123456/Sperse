@@ -13,8 +13,7 @@ export interface SubscriptionDto {
     CountryCode: string;
     PersonalAffiliateCode: string;
     ContactDate: string;
-    ServiceType: string;
-    ServiceName: string;
+    ProductName: string;
     StartDate: string;
     EndDate: string;
     Fee: string;

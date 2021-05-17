@@ -44,6 +44,14 @@
             [(value)]="amount">
         </dx-number-box>
     </div>
+    <div class="recurring">
+        <label>{{ls.l('Recurring')}}</label>
+        <dx-check-box
+            width="50px"
+            name="recurring"
+            [(value)]="recurring">
+        </dx-check-box>
+    </div>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-button mat-dialog-close class="button-layout button-default">{{ls.l('Cancel')}}</button>

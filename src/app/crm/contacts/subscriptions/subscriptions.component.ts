@@ -20,6 +20,7 @@ import {
     NameValueDto,
     CommonLookupServiceProxy,
     CancelOrderSubscriptionInput,
+    UpdateOrderSubscriptionPeriodInput,
     LeadInfoDto,
     LayoutType
 } from '@shared/service-proxies/service-proxies';
@@ -102,9 +103,9 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
     setDataSource(data: OrderSubscriptionDto[]) {
         _.mapObject(
-            _.groupBy(data, (item: OrderSubscriptionDto) => item.serviceTypeId),
-            (values: OrderSubscriptionDto[]) => {
-                let chain = _.chain(values).sortBy('id').reverse().value();
+            _.groupBy(data, (item: OrderSubscriptionDto) => item.productName),
+            (subscriptions: OrderSubscriptionDto[]) => {
+                let chain = _.chain(subscriptions).sortBy('id').reverse().value();
                 if (!chain.some(item => {
                     if (item.status == 'Current')
                         return item['isLastSubscription'] = true;
@@ -192,7 +193,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
         if (this.dataGrid && this.dataGrid.instance)
             this.dataGrid.instance.clearSorting();
-        this.dataSource.sort(['serviceType', { getter: 'id', desc: true }]);
+        this.dataSource.sort(['productName', { getter: 'id', desc: true }]);
         this.dataSource.load();
     }
 
@@ -209,10 +210,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             data = {
                 ...data,
                 endDate: subscription.endDate,
-                systemType: subscription.systemType,
-                code: subscription.serviceTypeId,
-                name: subscription.serviceType,
-                level: subscription.serviceId
+                name: subscription.productName
             };
         }
         this.dialog.open(AddSubscriptionDialogComponent, {
@@ -243,22 +241,12 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             null;
 
         this.loadingService.startLoading();
-        this.orderSubscriptionProxy.update(new UpdateOrderSubscriptionInput({
-            contactId: this.data.contactInfo.id,
-            leadId: leadId,
-            orderNumber: undefined,
-            subscriptions: [new SubscriptionInput({
-                ...cell.data,
-                code: cell.data.serviceTypeId,
-                name: cell.data.serviceType,
-                level: cell.data.serviceId,
-                amount: cell.data.fee,
-                startDate: cell.column.dataField == 'startDate' ?
-                    DateHelper.removeTimezoneOffset(new Date(event.value), true, 'from') : cell.data.startDate,
-                endDate: cell.column.dataField == 'endDate' ?
-                    DateHelper.removeTimezoneOffset(new Date(event.value), true, 'to') : cell.data.endDate
-            })],
-            updateThirdParty: this.isBankCodeLayout && cell.data.serviceTypeId === BankCodeServiceType.BANKVault
+        this.orderSubscriptionProxy.updatePeriod(new UpdateOrderSubscriptionPeriodInput({
+            subscriptionId: cell.data.id,
+            startDate: cell.column.dataField == 'startDate' ?
+                DateHelper.removeTimezoneOffset(new Date(event.value), true, 'from') : cell.data.startDate,
+            endDate: cell.column.dataField == 'endDate' ?
+                DateHelper.removeTimezoneOffset(new Date(event.value), true, 'to') : cell.data.endDate
         })).pipe(
             finalize(() => this.loadingService.finishLoading())
         ).subscribe(() => {
