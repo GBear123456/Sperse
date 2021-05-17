@@ -71,7 +71,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             data: {
                 period: ReportPeriod.Quarterly,
             },
-            iconSrc: './assets/common/icons/reports/monthly-reports.svg',
+            iconSrc: './assets/common/icons/reports/quarterly-reports.svg',
             onClick: this.onMenuClick.bind(this)
         },
         {
@@ -80,6 +80,14 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             },
             iconSrc: './assets/common/icons/reports/annual-reports.svg',
             caption: this.l('AnnualReports'),
+            onClick: this.onMenuClick.bind(this)
+        },
+        {
+            data: {
+                period: ReportPeriod.Instant
+            },
+            iconSrc: './assets/common/icons/reports/annual-reports.svg',
+            caption: this.l('InstantReports'),
             onClick: this.onMenuClick.bind(this)
         }
     ];

@@ -29553,7 +29553,7 @@ export class ReportsServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    generateBalanceSheetReport(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: GenerateInputBase | null | undefined): Observable<void> {
+    generateBalanceSheetReport(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: GenerateBalanceSheetReportInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Reports/GenerateBalanceSheetReport?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -76405,6 +76405,7 @@ export enum ReportPeriod {
     Monthly = "Monthly", 
     Quarterly = "Quarterly", 
     Annual = "Annual", 
+    Instant = "Instant", 
 }
 
 export class GenerateInput implements IGenerateInput {
@@ -76499,15 +76500,13 @@ export interface IGenerateInput {
     notificationData: SendReportNotificationInfo | undefined;
 }
 
-export class GenerateInputBase implements IGenerateInputBase {
-    from!: moment.Moment;
-    to!: moment.Moment;
-    period!: ReportPeriod;
+export class GenerateBalanceSheetReportInput implements IGenerateBalanceSheetReportInput {
+    date!: moment.Moment;
     currencyId!: string;
     businessEntityIds!: number[] | undefined;
     notificationData!: SendReportNotificationInfo | undefined;
 
-    constructor(data?: IGenerateInputBase) {
+    constructor(data?: IGenerateBalanceSheetReportInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -76518,9 +76517,7 @@ export class GenerateInputBase implements IGenerateInputBase {
 
     init(data?: any) {
         if (data) {
-            this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
-            this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
-            this.period = data["period"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
             if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
                 this.businessEntityIds = [];
@@ -76531,18 +76528,16 @@ export class GenerateInputBase implements IGenerateInputBase {
         }
     }
 
-    static fromJS(data: any): GenerateInputBase {
+    static fromJS(data: any): GenerateBalanceSheetReportInput {
         data = typeof data === 'object' ? data : {};
-        let result = new GenerateInputBase();
+        let result = new GenerateBalanceSheetReportInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["from"] = this.from ? this.from.toISOString() : <any>undefined;
-        data["to"] = this.to ? this.to.toISOString() : <any>undefined;
-        data["period"] = this.period;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
         if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
             data["businessEntityIds"] = [];
@@ -76554,10 +76549,8 @@ export class GenerateInputBase implements IGenerateInputBase {
     }
 }
 
-export interface IGenerateInputBase {
-    from: moment.Moment;
-    to: moment.Moment;
-    period: ReportPeriod;
+export interface IGenerateBalanceSheetReportInput {
+    date: moment.Moment;
     currencyId: string;
     businessEntityIds: number[] | undefined;
     notificationData: SendReportNotificationInfo | undefined;
@@ -77202,6 +77195,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
     affiliateRate!: number | undefined;
     group!: UserGroup | undefined;
     contactId!: number | undefined;
+    creationTime!: moment.Moment | undefined;
     id!: number | undefined;
 
     constructor(data?: IUserLoginInfoDto) {
@@ -77226,6 +77220,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
             this.affiliateRate = data["affiliateRate"];
             this.group = data["group"];
             this.contactId = data["contactId"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.id = data["id"];
         }
     }
@@ -77250,6 +77245,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
         data["affiliateRate"] = this.affiliateRate;
         data["group"] = this.group;
         data["contactId"] = this.contactId;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
         return data; 
     }
@@ -77267,6 +77263,7 @@ export interface IUserLoginInfoDto {
     affiliateRate: number | undefined;
     group: UserGroup | undefined;
     contactId: number | undefined;
+    creationTime: moment.Moment | undefined;
     id: number | undefined;
 }
 
