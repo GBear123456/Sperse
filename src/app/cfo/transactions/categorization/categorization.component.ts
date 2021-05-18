@@ -154,7 +154,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     ngAfterViewInit(): void {
         if (this.isInstanceAdmin) {
             this.categoryList.editing.allowAdding = this.addingAllowed;
-            this.categoryList.editing.allowUpdating = true;
             this.categoryList.instance.refresh();
         }
         this.onNodesInitialized();
@@ -826,7 +825,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     reloadTransactionsCountDataSource(): Promise<any> & JQueryPromise<any> {
         if (!this.transactionsCountDataSource)
             this.initTransactionsTotalCount();
-        this.transactionsCountDataSource.store()['_url'] = 
+        this.transactionsCountDataSource.store()['_url'] =
             this.getODataUrl('TransactionCount', this._transactionsFilterQuery);
         return this.transactionsCountDataSource.load();
     }
@@ -841,7 +840,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
 
     onCellPrepared($event) {
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
-            if ($event.data.key)
+            if (this.isInstanceAdmin && $event.data.key)
                 this.addActionButton('delete', $event.cellElement, () => {
                     this.onCategoryRemoving($event.data);
                 });
@@ -1016,7 +1015,6 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
     }
 
     clearFilterSelection() {
-        this.categoryList.instance.deselectAll();
         this.updateFilterSelection();
         this.applyFilterSelection();
     }
@@ -1038,6 +1036,7 @@ export class CategorizationComponent extends CFOComponentBase implements OnInit,
             }
         } else
             this.filteredRowsData = [];
+        this.categoryList.instance.deselectAll();
     }
 
     getChildren(parent) {
