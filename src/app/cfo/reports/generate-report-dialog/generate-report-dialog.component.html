@@ -29,12 +29,14 @@
             </dx-list>
         </div>
         <div *ngIf="currentStep == generateReportSteps.ReportTemplate" class="reportTemplate-container">
-            <dx-radio-group 
-                valueExpr="value"
-                displayExpr="name"
-                [(value)]="reportTemplate"
-                [items]="reportTemplateItems"
-                (onValueChanged)="onReportTemplateValueChanged($event)">
+            <dx-radio-group valueExpr="value"
+                            [(value)]="reportTemplate"
+                            [items]="reportTemplateItems"
+                            itemTemplate="itemTemplate"
+                            (onValueChanged)="onReportTemplateValueChanged($event)">
+                <div *dxTemplate="let data of 'itemTemplate'">
+                    <img [attr.src]="getImageSrc(data.type)"/><span>{{data.name}}</span> 
+                </div>
             </dx-radio-group>
         </div>
         <div *ngIf="currentStep == generateReportSteps.Calendar" class="calendar-container">

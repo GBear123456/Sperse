@@ -27,7 +27,8 @@ import {
     InstanceType,
     ReportTemplate,
     GenerateInputBase,
-    ReportPeriod
+    ReportPeriod,
+    GenerateBusinessIncomeStatementReportInput
 } from '@root/shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { GenerateReportStep } from './generate-report-step.enum';
@@ -43,7 +44,7 @@ import { AppFeatures } from '@shared/AppFeatures';
         '../report-dialog.less',
         'generate-report-dialog.component.less'
     ],
-    providers: [ DepartmentsServiceProxy, ReportsServiceProxy, BudgetServiceProxy ]
+    providers: [DepartmentsServiceProxy, ReportsServiceProxy, BudgetServiceProxy]
 })
 export class GenerateReportDialogComponent implements OnInit {
     @ViewChild(DxTreeListComponent, { static: false }) treeList: DxTreeListComponent;
@@ -82,6 +83,10 @@ export class GenerateReportDialogComponent implements OnInit {
         BalanceReport: {
             allowMultipleBE: true,
             generateMethod: this.getBalanceSheetReportRequest.bind(this)
+        },
+        BusinessIncomeStatement: {
+            allowMultipleBE: true,
+            generateMethod: this.getBusinessIncomeStatementRequest.bind(this)
         }
     };
     currentConfig = this.templateConfig.default;
@@ -119,11 +124,13 @@ export class GenerateReportDialogComponent implements OnInit {
     reportTemplateItems: any[] = Object.keys(ReportTemplate).map(item => {
         return {
             name: this.ls.l(item),
-            value: item
+            value: item,
+            type: 'pdf'
         };
-    }).concat(this.feature.isEnabled(AppFeatures.CFOBudgets)
-        ? { name: this.ls.l('IncomeStatementAndBudget'), value: 'IncomeStatementAndBudget'} : []
-    ).concat({ name: this.ls.l('BalanceReport'), value: 'BalanceReport' });
+    }).concat({ name: this.ls.l('BalanceReport'), value: 'BalanceReport', type: 'pdf' }, { name: this.ls.l('BusinessIncomeStatement'), value: 'BusinessIncomeStatement', type: 'excel' })
+        .concat(this.feature.isEnabled(AppFeatures.CFOBudgets)
+            ? { name: this.ls.l('IncomeStatementAndBudget'), value: 'IncomeStatementAndBudget', type: 'pdf' } : []
+        );
     firstReportTemplateVisit = true;
 
     private readonly BACK_BTN_INDEX = 0;
@@ -280,7 +287,7 @@ export class GenerateReportDialogComponent implements OnInit {
 
     generateReport() {
         if (this.submitButtonDisabled)
-            return ;
+            return;
 
         this.generatingStarted = true;
         this.store$.pipe(
@@ -347,12 +354,28 @@ export class GenerateReportDialogComponent implements OnInit {
                         recipientUserEmailAddress: this.notificationToEmail,
                         sendReportInAttachments: this.sendReportInAttachments
                     }) : null
-        }));
+            }));
     }
 
     getBalanceSheetReportRequest(currencyId: string) {
         return this.reportsProxy.generateBalanceSheetReport(<any>this.data.instanceType, this.data.instanceId,
             new GenerateInputBase({
+                businessEntityIds: this.selectedBusinessEntityIds,
+                from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
+                to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
+                period: this.data.period,
+                currencyId: currencyId,
+                notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
+                    ? new SendReportNotificationInfo({
+                        recipientUserEmailAddress: this.notificationToEmail,
+                        sendReportInAttachments: this.sendReportInAttachments
+                    }) : null
+            }));
+    }
+
+    getBusinessIncomeStatementRequest(currencyId: string) {
+        return this.reportsProxy.generateBusinessIncomeStatementReport(<any>this.data.instanceType, this.data.instanceId,
+            new GenerateBusinessIncomeStatementReportInput({
                 businessEntityIds: this.selectedBusinessEntityIds,
                 from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
                 to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
@@ -416,5 +439,12 @@ export class GenerateReportDialogComponent implements OnInit {
         setTimeout(() => {
             event.component.repaint();
         }, 300);
+    }
+
+    getImageSrc(type: string) : string {
+        switch (type) {
+            case 'pdf': return './assets/common/icons/pdf.svg';
+            case 'excel': return './assets/common/icons/xls.svg';
+        }
     }
 }
