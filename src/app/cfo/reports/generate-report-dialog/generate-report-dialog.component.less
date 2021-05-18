@@ -14,6 +14,7 @@
                     padding-left: 21px!important;
                 }
                 .dx-treelist-text-content {
+                    display: inline-block;
                     line-height: 20px;
                     padding-left: 20px;
                 }
@@ -21,6 +22,9 @@
             td {
                 background: transparent!important;
                 border: none!important;
+            }
+            .dx-treelist-text-content {
+                cursor: pointer;
             }
             .dx-select-checkbox {
                 position: static;
@@ -32,6 +36,7 @@
 
     ::ng-deep dx-calendar {
         .dx-calendar-body {
+            display: none;
             pointer-events: none;
             opacity: 0.5;
         }
@@ -67,7 +72,9 @@
     .final-container {
         padding-right: 35px;
         .container .row {
-
+            ::ng-deep dx-date-box input {
+                border: none;
+            }
             ::ng-deep .custom-radio-2-btn {
                 align-content: flex-end;
                 .dx-radiobutton {

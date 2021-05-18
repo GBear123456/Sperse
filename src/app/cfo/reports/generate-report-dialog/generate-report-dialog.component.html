@@ -10,9 +10,11 @@
                           [dataSource]="bankAccountsService.sortedBusinessEntities$ | async"
                           (onContentReady)="onBEContentReady($event)"
                           (onSelectionChanged)="onBESelectionChanged($event)"
-                          (onInitialized)="onInitialized($event)">
-                <dxo-selection [allowSelectAll]="true" mode="multiple" [recursive]="currentConfig.allowMultipleBE"></dxo-selection>
-                <dxi-column dataField="name" [caption]="ls.l('BusinessEntityName') | uppercase"></dxi-column>
+                          (onInitialized)="onInitialized($event)"
+                          (onCellClick)="onBECellClick($event)"
+                          (onRowClick)="onBERowClick($event)">
+                <dxo-selection [allowSelectAll]="currentConfig.allowMultipleBE" mode="multiple" [recursive]="currentConfig.allowMultipleBE"></dxo-selection>
+                <dxi-column dataField="name" [caption]="currentConfig.allowMultipleBE ? ls.l('SelectAll') : ''" [allowSorting]="false"></dxi-column>
                 <dxo-scrolling mode="virtual"></dxo-scrolling>
             </dx-tree-list>
         </div>
@@ -77,9 +79,25 @@
                     </div>
                     <ng-template #defaultDate>
                         <div class="text-right">
-                            <span class="date">{{dateFrom | date : 'MM/dd/yyyy' : 'UTC' }}</span>
+                            <dx-date-box 
+                                width="140px" 
+                                height="30px"
+                                [max]="calendarData.to.value" 
+                                displayFormat="MM/dd/yyyy" 
+                                [(value)]="calendarData.from.value" 
+                                [acceptCustomValue]="false"
+                                (onValueChanged)="applyDateRange()">
+                            </dx-date-box>
                             <img class="arrow" src="./assets/common/icons/date-arrow-right.svg">
-                            <span class="date">{{dateTo | date : 'MM/dd/yyyy' : 'UTC' }}</span>
+                            <dx-date-box 
+                                width="140px" 
+                                height="30px" 
+                                [min]="calendarData.from.value" 
+                                displayFormat="MM/dd/yyyy"
+                                [(value)]="calendarData.to.value" 
+                                [acceptCustomValue]="false"
+                                (onValueChanged)="applyDateRange()">
+                            </dx-date-box>
                             <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
                         </div>
                     </ng-template>

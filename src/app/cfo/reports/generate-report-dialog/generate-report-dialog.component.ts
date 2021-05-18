@@ -187,7 +187,7 @@ export class GenerateReportDialogComponent implements OnInit {
         });
     }
 
-    private applyDateRange() {
+    applyDateRange() {
         let dateFrom = this.calendarData.from.value && DateHelper.removeTimezoneOffset(new Date(this.calendarData.from.value));
         let dateTo = this.calendarData.to.value ? DateHelper.removeTimezoneOffset(new Date(this.calendarData.to.value)) : dateFrom;
         if ((this.dateTo ? this.dateTo.diff(dateTo, 'days') : dateTo) ||
@@ -383,6 +383,23 @@ export class GenerateReportDialogComponent implements OnInit {
         if (this.currentStep === GenerateReportStep.BusinessEntities) {
             this.buttons[this.NEXT_BTN_INDEX].disabled = !(this.currentConfig.allowMultipleBE ||
                 !event.currentSelectedRowKeys ? event.selectedRowKeys : currentKeys).length;
+        }
+    }
+
+    onBERowClick(event) {
+        if (event.isSelected)
+            event.component.deselectRows([event.key]);
+        else
+            event.component.selectRows([event.key]);
+    }
+
+    onBECellClick(event) {
+        if (event.rowType == 'header' && event.event.target.innerText == this.ls.l('SelectAll')) {
+            let component = event.component;
+            if (component.getSelectedRowKeys('all').length == component.getDataSource().items().length)
+                component.deselectAll();
+            else
+                component.selectAll();
         }
     }
 
