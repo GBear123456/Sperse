@@ -24,27 +24,26 @@
     <div [hidden]="openReportMode" class="reports">
         <ghost-list [hidden]="isDataLoaded"></ghost-list>
         <dx-data-grid class="main-component-view"
-                    [dataSource]="dataSource"
-                    [allowColumnReordering]="true"
-                    [columnAutoWidth]="true"
-                    [allowColumnResizing]="true"
-                    [loadPanel]="{ enabled: false }"
-                    [hoverStateEnabled]="true"
-                    [pager]="defaultGridPagerConfig"
-                    (onOptionChanged)="onGridOptionChanged($event)"
-                    (onCellClick)="onCellClick($event)"
-                    (onInitialized)="onDataGridInit()"
-                    (onContentReady)="setGridDataLoaded()"
-                    (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                      [dataSource]="dataSource"
+                      [allowColumnReordering]="true"
+                      [columnAutoWidth]="true"
+                      [allowColumnResizing]="true"
+                      [loadPanel]="{ enabled: false }"
+                      [hoverStateEnabled]="true"
+                      [pager]="defaultGridPagerConfig"
+                      (onOptionChanged)="onGridOptionChanged($event)"
+                      (onCellClick)="onCellClick($event)"
+                      (onInitialized)="onDataGridInit()"
+                      (onContentReady)="setGridDataLoaded()"
+                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
             <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
-            <dxi-column
-                alignment="center"
-                width="90px"
-                [showInColumnChooser]="false"
-                [allowExporting]="false"
-                cellTemplate="actionsCellTemplate"
-                headerCellTemplate="actionsCellTemplate">
+            <dxi-column alignment="center"
+                        width="90px"
+                        [showInColumnChooser]="false"
+                        [allowExporting]="false"
+                        cellTemplate="actionsCellTemplate"
+                        headerCellTemplate="actionsCellTemplate">
             </dxi-column>
             <dxi-column [dataField]="reportsFields.FileName" [caption]="l('Reports_FileName')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column [dataField]="reportsFields.Size" [calculateSortValue]="numerizeFileSizeSortValue" [caption]="l('Reports_Size')" [calculateCellValue]="calculateFileSizeValue" [allowSearch]="false" [allowFiltering]="false" cssClass="clipboard-holder"></dxi-column>
@@ -71,13 +70,16 @@
 
     <div *ngIf="openReportMode" class="report-viewer-wrapper">
         <app-toolbar [config]="viewerToolbarConfig"></app-toolbar>
-        <div class="reportView">
-            <app-image-viewer
-                [images]="[previewContent]"
-                [idContainer]="'imageViewer'"
-                [loadOnInit]="true">
+        <div class="reportView" *ngIf="currentReportInfo?.FileName.endsWith('pdf'); else nopreview">
+            <app-image-viewer [images]="[previewContent]"
+                              [idContainer]="'imageViewer'"
+                              [loadOnInit]="true">
             </app-image-viewer>
         </div>
+        <ng-template #nopreview>
+            <app-no-data [showLink]="false"
+                         [title]="l('NoPreviewFile')"></app-no-data>
+        </ng-template>
     </div>
 
     <ng-template #nodata>
