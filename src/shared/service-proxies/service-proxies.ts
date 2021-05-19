@@ -26953,10 +26953,13 @@ export class ProductServiceProxy {
     }
 
     /**
+     * @type (optional) 
      * @return Success
      */
-    getProducts(): Observable<ProductDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Product/GetProducts";
+    getProducts(type: ProductType | null | undefined): Observable<ProductDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Product/GetProducts?";
+        if (type !== undefined)
+            url_ += "type=" + encodeURIComponent("" + type) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
