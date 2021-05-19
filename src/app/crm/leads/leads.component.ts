@@ -735,6 +735,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
+                    onLoaded: (records) => {
+                        if (records instanceof Array)
+                            this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
+                    },
                     deserializeDates: false
                 }
             };
@@ -749,7 +753,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
                     onLoaded: (count: any) => {
-                        this.totalCount = count;
+                        if (!isNaN(count))
+                            this.dataSource['total'] = this.totalCount = count;
                     },
                     errorHandler: (e: any) => {
                         this.totalErrorMsg = this.l('AnHttpErrorOccured');
@@ -875,6 +880,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
+            filter(() => !this.showPipeline),
             debounceTime(300)
         ).subscribe(([odataRequestValues, ]) => {
             let url = this.getODataUrl(this.totalDataSourceURI,
@@ -2190,6 +2196,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.contactService.mergeContact(source, target, false, true, () => this.refresh(), true);
             });
         }
+    }
+
+    onTotalChange(totalCount: number) {
+        this.totalCount = totalCount;
     }
 
     openEntityChecklistDialog(data?) {

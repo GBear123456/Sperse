@@ -135,7 +135,7 @@
                                          [popup]="{ onShowing: onShowingPopup, height: '0', width: '0' }"
                                          [allowUpdating]="true">
                             </dxo-editing>
-                            <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                            <dxo-scrolling rowRenderingMode="virtual" mode="infinite"></dxo-scrolling>
                             <dxi-column cssClass="stars" [width]="40" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                             <dxi-column [dataField]="leadFields.Id"
                                         [caption]="l('Id')"
@@ -351,7 +351,8 @@
                             [moveDisabled]="manageDisabled"
                             (onEntityStageChanged)="onLeadStageChanged($event)"
                             (onStagesLoaded)="onStagesLoaded($event)"
-                            (onCardClick)="onCardClick($event)">
+                            (onCardClick)="onCardClick($event)"
+                            (onTotalChange)="onTotalChange($event)">
                         Loading...
                     </app-pipeline>
                 </div>

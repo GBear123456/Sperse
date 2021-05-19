@@ -571,6 +571,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 ]
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+        },
+        onLoaded: (records) => {
+            if (records instanceof Array)
+                this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
         }
     };
 
@@ -627,7 +631,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (count: any) => {
-                    this.totalCount = count;
+                    if (!isNaN(count))
+                        this.dataSource['total'] = this.totalCount = count;
                 },
                 errorHandler: (e: any) => {
                     this.totalErrorMsg = this.l('AnHttpErrorOccured');
@@ -1639,7 +1644,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         super.deactivate();
         this.subRouteParams.unsubscribe();
         this.filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
+        this.rootComponent.overflowHidden();        
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Partner, this.dataGrid.instance.getDataSource());
         this.showHostElement(() => {
             this.repaintToolbar();

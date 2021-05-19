@@ -199,13 +199,15 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                 deserializeDates: false,
                 onLoaded: (res) => {
                     this.finishLoading();
-                    this.totalCount = res && res.length;
-                    res.forEach((record) => {
-                        if (record.StartDate == record.EndDate)
-                            record.EndDate = undefined;
-                        record.fieldTimeZone = 'Etc/UTC';
-                    });
-                    this.changeDetectorRef.detectChanges();
+                    if (res instanceof Array) {
+                        this.totalCount = res && res.length;
+                        res.forEach((record) => {
+                            if (record.StartDate == record.EndDate)
+                                record.EndDate = undefined;
+                            record.fieldTimeZone = 'Etc/UTC';
+                        });
+                        this.changeDetectorRef.detectChanges();
+                    }
                 }
             })
         });

@@ -216,26 +216,28 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             },
             onLoaded: (contacts: SubscriptionTrackerDto[]) => {
-                const monthFormat = 'MMM YY';
-                contacts.forEach((contact: SubscriptionTrackerDto) => {
-                    contact['TransactionRevenues'] = {};
-                    contact['TransactionRefunds'] = {};
-                    contact['TransactionNetCollected'] = {};
-                    contact.Transactions.forEach((transaction: TransactionDto) => {
-                        const month: moment.Moment = moment(transaction.Date);
-                        const monthString: string = month.format(monthFormat);
-                        this.transactionMonthsObj[monthString] = month;
-                        if (transaction.Amount > 0) {
-                            contact['TransactionRevenues'][monthString] = (contact['TransactionRevenues'][monthString] || 0) + transaction.Amount;
-                        } else if (transaction.Amount < 0) {
-                            contact['TransactionRefunds'][monthString] = (contact['TransactionRefunds'][monthString] || 0) + transaction.Amount;
-                        }
-                        contact['TransactionNetCollected'][monthString] = (contact['TransactionNetCollected'][monthString] || 0) + transaction.Amount;
+                if (contacts instanceof Array) {
+                    const monthFormat = 'MMM YY';
+                    contacts.forEach((contact: SubscriptionTrackerDto) => {
+                        contact['TransactionRevenues'] = {};
+                        contact['TransactionRefunds'] = {};
+                        contact['TransactionNetCollected'] = {};
+                        contact.Transactions.forEach((transaction: TransactionDto) => {
+                            const month: moment.Moment = moment(transaction.Date);
+                            const monthString: string = month.format(monthFormat);
+                            this.transactionMonthsObj[monthString] = month;
+                            if (transaction.Amount > 0) {
+                                contact['TransactionRevenues'][monthString] = (contact['TransactionRevenues'][monthString] || 0) + transaction.Amount;
+                            } else if (transaction.Amount < 0) {
+                                contact['TransactionRefunds'][monthString] = (contact['TransactionRefunds'][monthString] || 0) + transaction.Amount;
+                            }
+                            contact['TransactionNetCollected'][monthString] = (contact['TransactionNetCollected'][monthString] || 0) + transaction.Amount;
+                        });
                     });
-                });
-                this.transactionMonths = Object.values(this.transactionMonthsObj)
-                    .sort((dateA: moment.Moment, dateB: moment.Moment) => dateA.isAfter(dateB) ? 1 : -1)
-                    .map((date: moment.Moment) => date.format(monthFormat));
+                    this.transactionMonths = Object.values(this.transactionMonthsObj)
+                        .sort((dateA: moment.Moment, dateB: moment.Moment) => dateA.isAfter(dateB) ? 1 : -1)
+                        .map((date: moment.Moment) => date.format(monthFormat));
+                }
             }
         }
     };

@@ -680,11 +680,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (records) => {
-                    let userIds = this.getUserIds(records);
-                    this.usersInstancesLoadingSubscription = this.appService.isCfoLinkOrVerifyEnabled && userIds.length ?
-                        this.crmService.getUsersWithInstances(userIds).subscribe(() => {
-                            this.changeDetectorRef.markForCheck();
-                        }) : of().subscribe();
+                    if (records instanceof Array) {
+                        let userIds = this.getUserIds(records);
+                        this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
+                        this.usersInstancesLoadingSubscription = this.appService.isCfoLinkOrVerifyEnabled && userIds.length ?
+                            this.crmService.getUsersWithInstances(userIds).subscribe(() => {
+                                this.changeDetectorRef.markForCheck();
+                            }) : of().subscribe();
+                    }
                 }
             })
         });
@@ -703,7 +706,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (count: any) => {
-                    this.totalCount = count;
+                    if (!isNaN(count))
+                        this.dataSource['total'] = this.totalCount = count;
                 },
                 errorHandler: (e: any) => {
                     this.totalErrorMsg = this.l('AnHttpErrorOccured');
