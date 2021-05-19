@@ -661,6 +661,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         filter(() => this.componentIsActivated)
     );
     totalCount: number;
+    totalErrorMsg: string;
     toolbarConfig: ToolbarGroupModel[];
     private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
     private activate$: Observable<boolean> = this._activate.asObservable();
@@ -742,13 +743,16 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 store: new ODataStore({
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
-                        this.totalCount = undefined;
+                        this.totalCount = this.totalErrorMsg = undefined;
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                         request.params.contactGroupId = this.selectedContactGroup;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
                     onLoaded: (count: any) => {
                         this.totalCount = count;
+                    },
+                    errorHandler: (e: any) => {
+                        this.totalErrorMsg = this.l('AnHttpErrorOccured');
                     }
                 })
             });

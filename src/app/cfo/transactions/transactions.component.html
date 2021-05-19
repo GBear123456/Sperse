@@ -103,6 +103,9 @@
                   [showToggleColumnSelectorButton]="!_cfoService.hasStaticInstance"
                   [showToggleLeftMenuButton]="false"
                   [showStateResetButton]="true"
+                  [showTotalCount]="true"
+                  [totalCount]="totalCount"
+                  [totalErrorMsg]="totalErrorMsg"
                   (onReload)="reload()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
@@ -110,7 +113,6 @@
                   (onToggleToolbar)="toggleToolbar()"
                   (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <span *ngIf="totalCount" class="total-count">({{ totalCount | number }})</span>
         <business-entities-chooser class="accounts-chooser" (onChanged)="applyTotalBankAccountFilter(true)"
             (onFilterButtonClick)="openBankAccountsSelectDialog()">
         </business-entities-chooser>

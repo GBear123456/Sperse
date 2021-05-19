@@ -8,6 +8,8 @@ import { LogService } from '@abp/log/log.service';
 @Injectable()
 export class AppHttpConfiguration extends AbpHttpConfiguration {
     avoidErrorHandling = false;
+    avoidErrorHandlingKeys: string[];
+
     constructor(
         messageService: MessageService,
         logService: LogService

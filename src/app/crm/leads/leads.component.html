@@ -14,7 +14,9 @@
                   (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="pipelineTypes$ | async"
+                        [showTotalCount]="true"
                         [totalCount]="totalCount"
+                        [totalErrorMsg]="totalErrorMsg"
                         [allowEdit]="true"
                         [value]="selectedPipelineId$ | async"
                         (onValueChanged)="onSelectedPipelineChanged($event)"

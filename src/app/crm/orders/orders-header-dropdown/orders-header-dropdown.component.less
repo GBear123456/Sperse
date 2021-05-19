@@ -3,6 +3,34 @@
     display: flex;
     align-items: center;
 
+    .total-count {
+        font-size: 24px;
+        font-weight: 600;
+        margin-right: 60px;
+        margin-left: 0;
+        padding-left: 5px;
+        display: inline-block;
+        &.error {
+            color: red;
+        }
+    }
+
+    .header-name {
+        font-size: 24px;
+        font-weight: 600;
+        color: #202b35;
+        white-space: nowrap;
+        display: inline-block;
+
+        @media (max-width: 1400px) {
+            max-width: 400px;
+        }
+    }
+
+    ::ng-deep dx-text-box {
+        position: absolute;
+    }
+
     ::ng-deep dx-drop-down-box {
         cursor: pointer;
         background: transparent!important;

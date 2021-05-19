@@ -583,6 +583,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
     public usersInstancesLoadingSubscription: Subscription;
     totalCount: number;
+    totalErrorMsg: string;
     toolbarConfig: ToolbarGroupModel[];
     private subscriptionStatusFilter = new FilterModel({
         component: SubscriptionsFilterComponent,
@@ -696,14 +697,17 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 ]),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.totalCount = undefined;
+                    this.totalCount = this.totalErrorMsg = undefined;
                     request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (count: any) => {
                     this.totalCount = count;
-                }
+                },
+                errorHandler: (e: any) => {
+                    this.totalErrorMsg = this.l('AnHttpErrorOccured');
+                }                
             })
         });
     }

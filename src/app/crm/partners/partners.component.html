@@ -8,13 +8,15 @@
                   [showToggleFullScreenButton]="true"
                   [showToggleColumnSelectorButton]="showDataGrid || showPivotGrid"
                   [showStateResetButton]="showDataGrid"
+                  [showTotalCount]="true"
+                  [totalCount]="totalCount"
+                  [totalErrorMsg]="totalErrorMsg"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="invalidate()"
                   (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <span *ngIf="totalCount !== undefined" class="total-count">({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>

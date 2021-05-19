@@ -144,8 +144,11 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     }
 
     protected handleErrorResponse(response, interceptObservable: Subject<HttpEvent<any>>): Observable<any> {
-        if (this.configuration['avoidErrorHandling']) {
-            this.configuration.blobToText(response.error).subscribe((error) => {
+        let keys = this.configuration['avoidErrorHandlingKeys'];
+        if (this.configuration['avoidErrorHandling'] || (response.url && 
+            keys && keys.some(key => response.url.toLowerCase().includes(key.toLowerCase()))
+        )) {
+            this.configuration.blobToText(response.error).subscribe(error => {
                 interceptObservable.error(JSON.parse(error).error);
                 interceptObservable.complete();
             });

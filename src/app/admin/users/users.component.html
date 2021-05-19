@@ -1,5 +1,5 @@
 <div [@routerTransition]>
-    <app-headline [names]="headerLabels"
+    <app-headline [names]="[l('Users')]"
                   icon="people"
                   [showToggleToolbarButton]="true"
                   [showReloadButton]="ui.showReload"
@@ -8,6 +8,9 @@
                   [showToggleColumnSelectorButton]="true"
                   [buttons]="headlineButtons"
                   [showStateResetButton]="true"
+                  [showTotalCount]="true"
+                  [totalCount]="totalCount"
+                  [totalErrorMsg]="totalErrorMsg"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
