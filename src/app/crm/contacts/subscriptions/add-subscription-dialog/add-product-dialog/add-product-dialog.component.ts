@@ -65,7 +65,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     readonly addNewItemId = -1;
     productTypes: string[] = Object.keys(ProductType);
-    defaultProductType = ProductType.General;
+    defaultProductType = ProductType.Subscription;
     productGroups: ProductGroupInfo[];
     services: ServiceProductDto[];
     productUnits = Object.keys(ProductMeasurementUnit).map(
