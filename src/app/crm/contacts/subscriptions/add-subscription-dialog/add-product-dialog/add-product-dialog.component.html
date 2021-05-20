@@ -58,7 +58,7 @@
                 [(value)]="product.type">
             </dx-select-box>
         </div>
-        <ng-container *ngIf="product.type == defaultProductType">
+        <ng-container *ngIf="product.type != defaultProductType">
             <div class="field">
                 <label>{{ls.l('Price')}}</label>
                 <dx-number-box name="price"
@@ -82,7 +82,7 @@
                 </dx-select-box>
             </div>
         </ng-container>
-        <ng-container *ngIf="product.type != defaultProductType">
+        <ng-container *ngIf="product.type == defaultProductType">
             <div class="services-header">
                 {{ls.l('Services')}}:
                 <div class="field">
