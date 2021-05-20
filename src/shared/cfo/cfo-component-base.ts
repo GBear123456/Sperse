@@ -6,12 +6,15 @@ import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { InstanceType } from '@shared/service-proxies/service-proxies';
+import { InstanceType, LayoutType } from '@shared/service-proxies/service-proxies';
 import { CFOService } from './cfo.service';
 
 export abstract class CFOComponentBase extends AppComponentBase implements OnDestroy {
     instanceId: number;
     instanceType: InstanceType;
+
+    isAdvicePeriod = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.AdvicePeriod;
+
     get isInstanceAdmin() {
         return this._cfoService.isInstanceAdmin;
     }

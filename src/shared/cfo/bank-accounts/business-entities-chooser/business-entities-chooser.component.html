@@ -34,7 +34,8 @@
                     itemTemplate="itemTemplate"
                     (onItemCollapsed)="showApplySelection || dropDown.instance.repaint()"
                     (onItemExpanded)="showApplySelection || dropDown.instance.repaint()"
-                    (onSelectionChanged)="selectedItemsChange()">
+                    (onSelectionChanged)="selectedItemsChange()"
+                    (onItemClick)="onItemClick($event)">
                     <div *dxTemplate="let item of 'itemTemplate'">
                         <div class="selection-list-item {{item.hasChildren ? 'highlighted' : ''}}">
                             <span [title]="item.name">{{item.name}}</span>

@@ -1,6 +1,7 @@
 :host {
     height: calc(100% - 85px);
     display: block;
+
     .businessEntities-container, .departments-container, .calendar-container, .reportTemplate-container {
         height: 100%;
         padding: 20px 30px 30px 30px;
@@ -8,30 +9,40 @@
         ::ng-deep dx-tree-list {
             .dx-treelist-headers {
                 td {
-                    padding: 0!important;
+                    padding: 0 !important;
                 }
+
                 .dx-treelist-select-all .dx-checkbox {
-                    padding-left: 21px!important;
+                    padding-left: 21px !important;
                 }
+
                 .dx-treelist-text-content {
+                    display: inline-block;
                     line-height: 20px;
                     padding-left: 20px;
                 }
             }
+
             td {
-                background: transparent!important;
-                border: none!important;
+                background: transparent !important;
+                border: none !important;
             }
+
+            .dx-treelist-text-content {
+                cursor: pointer;
+            }
+
             .dx-select-checkbox {
                 position: static;
                 display: inline-block;
-                margin-top: 0!important;
+                margin-top: 0 !important;
             }
         }
     }
 
     ::ng-deep dx-calendar[accessKey="year"] {
         .dx-calendar-body {
+            display: none;
             pointer-events: none;
             opacity: 0.5;
         }
@@ -53,6 +64,11 @@
                 font-size: 16px;
                 font-weight: 400;
                 color: black;
+
+                img {
+                    margin-right: 5px;
+                    width: 18px;
+                }
             }
         }
     }
@@ -66,10 +82,15 @@
 
     .final-container {
         padding-right: 35px;
+
         .container .row {
+            ::ng-deep dx-date-box input {
+                border: none;
+            }
 
             ::ng-deep .custom-radio-2-btn {
                 align-content: flex-end;
+
                 .dx-radiobutton {
                     overflow: hidden;
 
@@ -121,6 +142,7 @@
             &.date-range {
                 display: flex;
                 align-items: center;
+
                 .arrow {
                     margin: 0 13px;
                 }
@@ -130,6 +152,7 @@
                     font-weight: 600;
                     letter-spacing: 0.32px;
                     color: #212c36;
+
                     &:before {
                         content: url(../../../../assets/common/icons/date.svg);
                         margin-right: 10px;
@@ -137,6 +160,7 @@
                         position: relative;
                     }
                 }
+
                 .text-right {
                     display: flex;
                     align-items: center;
@@ -159,8 +183,10 @@
                     align-self: flex-start;
                     margin-top: 14px;
                 }
+
                 ul {
                     margin-top: 14px;
+
                     li {
                         list-style-type: none;
                     }
@@ -169,6 +195,7 @@
 
             i {
                 cursor: pointer;
+
                 &.disabled {
                     opacity: 0.5;
                     cursor: default;

@@ -204,7 +204,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 items: [
                     {
                         name: 'filters',
-                        visible: this.showDepartmentFilter,
+                        visible: this.showDepartmentFilter && !this.isAdvicePeriod && !this._cfoService.hasStaticInstance,
                         action: () => {
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
@@ -421,12 +421,15 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             /** If user click on actions icon */
             if (target.closest('.dx-link.dx-link-edit')) {
                 this.toggleActionsMenu(report, target);
-            } else {
+            } else if (report.FileName.endsWith('pdf')) {
                 this.currentReportInfo = report;
                 /** Save sorted visible rows to get next and prev properly */
                 this.visibleReports = $event.component.getVisibleRows().map(row => row.data);
                 /** If user click the whole row */
                 this.viewReport(NavigationState.Current);
+            } else {
+                this.currentReportInfo = report;
+                this.downloadReport();
             }
         }
     }

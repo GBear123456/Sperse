@@ -71,13 +71,16 @@
 
     <div *ngIf="openReportMode" class="report-viewer-wrapper">
         <app-toolbar [config]="viewerToolbarConfig"></app-toolbar>
-        <div class="reportView">
-            <app-image-viewer
-                [images]="[previewContent]"
-                [idContainer]="'imageViewer'"
-                [loadOnInit]="true">
+        <div class="reportView" *ngIf="currentReportInfo?.FileName.endsWith('pdf'); else nopreview">
+            <app-image-viewer [images]="[previewContent]"
+                              [idContainer]="'imageViewer'"
+                              [loadOnInit]="true">
             </app-image-viewer>
         </div>
+        <ng-template #nopreview>
+            <app-no-data [showLink]="false"
+                         [title]="l('NoPreviewFile')"></app-no-data>
+        </ng-template>
     </div>
 
     <ng-template #nodata>

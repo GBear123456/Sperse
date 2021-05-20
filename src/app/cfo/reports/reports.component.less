@@ -11,11 +11,13 @@
         .reports {
             z-index: 1;
             width: 100%;
+
             ::ng-deep dx-data-grid#gridContainer {
                 .dx-toolbar-before {
                     width: 100px !important;
                     padding: 15px !important;
                 }
+
                 .dx-toolbar-center {
                     margin: auto !important;
                     padding: 15px !important;
@@ -32,6 +34,7 @@
     &.fullscreen .reportView {
         width: 100%;
         border: solid 1px green;
+
         ::ng-deep app-image-viewer {
             #imageViewer {
                 height: 100%;
@@ -44,23 +47,30 @@
         height: 100%;
         width: 100%;
         overflow: hidden;
+
         .xmlContainer {
             padding-bottom: 10px;
         }
     }
 
     .report-viewer-wrapper {
-        height: 100%;
+        height: calc(100vh - 315px);
         width: 100%;
+
+        ::ng-deep app-no-data .title {
+            max-width: unset;
+        }
     }
 
     ::ng-deep app-image-viewer {
         #imageViewer {
             height: calc(~"100vh - 220px");
             margin-top: 0;
+
             .image-container {
                 bottom: 0;
             }
+
             .inline-icon, i.material-icons, .footer-info {
                 display: none;
             }
@@ -69,10 +79,11 @@
 
     ::ng-deep .dx-datagrid {
         .dx-header-filter {
-            display: none!important;
+            display: none !important;
         }
+
         td:hover .dx-header-filter {
-            display: inline-block!important;
+            display: inline-block !important;
         }
 
         .deptCell {
@@ -83,7 +94,7 @@
 
     ::ng-deep app-toolbar {
         .dx-item.dx-toolbar-item.dx-toolbar-label {
-            max-width: unset!important;
+            max-width: unset !important;
         }
     }
 }
