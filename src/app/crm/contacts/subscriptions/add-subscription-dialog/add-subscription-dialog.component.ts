@@ -25,7 +25,8 @@ import {
     ServiceProductDto,
     ProductServiceProxy,
     RecurringPaymentFrequency,
-    ProductDto
+    ProductDto,
+    ProductType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -126,7 +127,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         });
         this.orderDropdownComponent.initOrderDataSource();
 
-        this.productProxy.getProducts().subscribe((products: ProductDto[]) => {
+        this.productProxy.getProducts(ProductType.Subscription).subscribe((products: ProductDto[]) => {
             this.products = products;
             this.checkAddManageOption(this.products);
         });
