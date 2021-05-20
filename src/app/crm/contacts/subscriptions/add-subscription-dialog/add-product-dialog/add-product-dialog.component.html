@@ -15,7 +15,7 @@
                 [inputAttr]="{ id: 'code' }"
                 [(value)]="product.code">
                 <dx-validator>
-                    <dxi-validation-rule type="required" message="{{ls.l('CodeIsRequired')}}."></dxi-validation-rule>
+                    <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Code'))}}."></dxi-validation-rule>
                 </dx-validator>
             </dx-text-box>
         </div>
@@ -26,7 +26,7 @@
                 [inputAttr]="{ id: 'name' }"
                 [(value)]="product.name">
                 <dx-validator>
-                    <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
+                    <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
                 </dx-validator>
             </dx-text-box>
         </div>
@@ -58,7 +58,7 @@
                 [(value)]="product.type">
             </dx-select-box>
         </div>
-        <ng-container *ngIf="product.type == defaultProductType">
+        <ng-container *ngIf="product.type != defaultProductType">
             <div class="field">
                 <label>{{ls.l('Price')}}</label>
                 <dx-number-box name="price"
@@ -66,7 +66,7 @@
                     [format]="amountFormat$ | async"
                     [(value)]="product.price">
                     <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Price'))}}."></dxi-validation-rule>
                     </dx-validator>
                 </dx-number-box>
             </div>
@@ -76,10 +76,13 @@
                     width="300px"
                     placeholder="Select unit..."
                     [(value)]="product.unit">
+                    <dx-validator>
+                        <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Unit'))}}."></dxi-validation-rule>
+                    </dx-validator>
                 </dx-select-box>
             </div>
         </ng-container>
-        <ng-container *ngIf="product.type != defaultProductType">
+        <ng-container *ngIf="product.type == defaultProductType">
             <div class="services-header">
                 {{ls.l('Services')}}:
                 <div class="field">
@@ -99,7 +102,7 @@
                         [(value)]="service.memberServiceId"
                         (onValueChanged)="onServiceChanged($event, service)">
                         <dx-validator>
-                            <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
+                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
                         </dx-validator>
                     </dx-select-box>
                 </div>
@@ -114,7 +117,7 @@
                         placeholder="Select level..."
                         [(value)]="service.memberServiceLevelId">
                         <dx-validator>
-                            <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Level'))}}."></dxi-validation-rule>
                         </dx-validator>
                     </dx-select-box>
                 </div>
@@ -150,7 +153,7 @@
                         [format]="amountFormat$ | async"
                         [(value)]="option.signupFee">
                         <dx-validator>
-                            <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('SignupFee'))}}."></dxi-validation-rule>
                         </dx-validator>
                     </dx-number-box>
                 </div>
@@ -162,7 +165,7 @@
                         [placeholder]="ls.l('Select') + ' ' + ls.l('PaymentPeriod') + '...'"
                         [(value)]="option.frequency">
                         <dx-validator>
-                            <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
+                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('PaymentPeriod'))}}."></dxi-validation-rule>
                         </dx-validator>
                     </dx-select-box>
                 </div>
@@ -173,8 +176,7 @@
                         [format]="amountFormat$ | async"
                         [(value)]="option.fee">
                         <dx-validator>
-                            <dxi-validation-rule type="required" message="{{ls.l('ThisFieldIsRequired')}}."></dxi-validation-rule>
-                            <dxi-validation-rule type="custom" [validationCallback]="validateFee(option)" message="{{ls.l('FeeRequired')}}."></dxi-validation-rule>
+                            <dxi-validation-rule type="custom" [validationCallback]="validateFee(option)" message="{{ls.l('RequiredField', ls.l('Fee'))}}."></dxi-validation-rule>
                         </dx-validator>
                     </dx-number-box>
                 </div>
