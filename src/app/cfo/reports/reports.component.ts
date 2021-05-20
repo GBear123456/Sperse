@@ -59,6 +59,13 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     ];
     menuItems: LeftMenuItem[] = [
         {
+            caption: this.l('AllReports'),
+            data: {
+            },
+            iconSrc: './assets/common/icons/reports/monthly-reports.svg',
+            onClick: this.onMenuClick.bind(this)
+        },
+        {
             caption: this.l('MonthlyReports'),
             data: {
                 period: ReportPeriod.Monthly
@@ -127,8 +134,8 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     formatting = AppConsts.formatting;
     dataSourceURI = 'Reporting';
     noDepartmentItem = this.l('NoDepartment');
-    showDepartmentFilter = this.feature.isEnabled(AppFeatures.CFODepartmentsManagement)
-        && this._cfoService.accessAllDepartments;
+    hasDepartmentsFeature = this.feature.isEnabled(AppFeatures.CFODepartmentsManagement);
+    showDepartmentFilter = this.hasDepartmentsFeature && this._cfoService.accessAllDepartments;
 
     readonly RESERVED_TIME_SECONDS = 30;
     toolbarConfig: ToolbarGroupModel[];

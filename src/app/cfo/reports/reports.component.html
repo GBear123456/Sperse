@@ -24,41 +24,41 @@
     <div [hidden]="openReportMode" class="reports">
         <ghost-list [hidden]="isDataLoaded"></ghost-list>
         <dx-data-grid class="main-component-view"
-                    [dataSource]="dataSource"
-                    [allowColumnReordering]="true"
-                    [columnAutoWidth]="true"
-                    [allowColumnResizing]="true"
-                    [loadPanel]="{ enabled: false }"
-                    [hoverStateEnabled]="true"
-                    [pager]="defaultGridPagerConfig"
-                    (onOptionChanged)="onGridOptionChanged($event)"
-                    (onCellClick)="onCellClick($event)"
-                    (onInitialized)="onDataGridInit()"
-                    (onContentReady)="setGridDataLoaded()"
-                    (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                      [dataSource]="dataSource"
+                      [allowColumnReordering]="true"
+                      [columnAutoWidth]="true"
+                      [allowColumnResizing]="true"
+                      [loadPanel]="{ enabled: false }"
+                      [hoverStateEnabled]="true"
+                      [pager]="defaultGridPagerConfig"
+                      (onOptionChanged)="onGridOptionChanged($event)"
+                      (onCellClick)="onCellClick($event)"
+                      (onInitialized)="onDataGridInit()"
+                      (onContentReady)="setGridDataLoaded()"
+                      (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-header-filter [visible]="true" [allowSearch]="true"></dxo-header-filter>
             <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
-            <dxi-column
-                alignment="center"
-                width="90px"
-                [showInColumnChooser]="false"
-                [allowExporting]="false"
-                cellTemplate="actionsCellTemplate"
-                headerCellTemplate="actionsCellTemplate">
+            <dxi-column alignment="center"
+                        width="45px"
+                        [showInColumnChooser]="false"
+                        [allowExporting]="false"
+                        cellTemplate="actionsCellTemplate"
+                        headerCellTemplate="actionsCellTemplate">
             </dxi-column>
             <dxi-column [dataField]="reportsFields.FileName" [caption]="l('Reports_FileName')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column [dataField]="reportsFields.Type" [caption]="l('Reports_Type')" [allowSearch]="false"></dxi-column>
+            <dxi-column [dataField]="reportsFields.Departments" [visible]="hasDepartmentsFeature" [showInColumnChooser]="hasDepartmentsFeature" [caption]="l('Reports_Departments')" cellTemplate="deptCell" [allowSearch]="false" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
+            <dxi-column [dataField]="reportsFields.CreationTime" [caption]="l('Reports_Created')" cssClass="tabular" cellTemplate="dateCell" width="190px" [allowSearch]="false" sortOrder="desc"></dxi-column>
+            <dxi-column [dataField]="reportsFields.From" [caption]="l('Reports_PeriodFrom')" cssClass="tabular" cellTemplate="noTimeDateCell" width="190px" [allowSearch]="false"></dxi-column>
+            <dxi-column [dataField]="reportsFields.To" [caption]="l('Reports_PeriodTo')" cssClass="tabular" cellTemplate="noTimeDateCell" width="190px" [allowSearch]="false"></dxi-column>
             <dxi-column [dataField]="reportsFields.Size" [calculateSortValue]="numerizeFileSizeSortValue" [caption]="l('Reports_Size')" [calculateCellValue]="calculateFileSizeValue" [allowSearch]="false" [allowFiltering]="false" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column [dataField]="reportsFields.Departments" [caption]="l('Reports_Departments')" cellTemplate="deptCell" [allowSearch]="false" [allowSorting]="false" [allowFiltering]="false"></dxi-column>
-            <dxi-column [dataField]="reportsFields.CreationTime" [caption]="l('Reports_Created')" cssClass="tabular" cellTemplate="dateTimeCell" [allowSearch]="false" sortOrder="desc"></dxi-column>
-            <dxi-column [dataField]="reportsFields.From" [caption]="l('Reports_PeriodFrom')" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false"></dxi-column>
-            <dxi-column [dataField]="reportsFields.To" [caption]="l('Reports_PeriodTo')" cssClass="tabular" cellTemplate="dateCell" [allowSearch]="false"></dxi-column>
 
             <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
 
-            <div *dxTemplate="let cellData of 'dateTimeCell'" class="clipboard-holder">
-                {{ cellData.value | datetime: formatting.dateTimeMoment }}
-            </div>
             <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
+                {{ cellData.value | datetime: formatting.dateMoment }}
+            </div>
+            <div *dxTemplate="let cellData of 'noTimeDateCell'" class="clipboard-holder">
                 {{ cellData.value | datetime: formatting.dateMoment }}
             </div>
             <div *dxTemplate="let cellData of 'deptCell'" class="deptCell clipboard-holder" [title]="formatDepartments(cellData.value)">
