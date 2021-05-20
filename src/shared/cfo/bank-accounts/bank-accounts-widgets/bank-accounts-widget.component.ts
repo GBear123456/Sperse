@@ -757,9 +757,9 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
                 cell.data.lastSyncDate, 'MMM d, y hh:mm a', this.userTimezone) : this.l('Never'),
             lastGoodSyncDate = cell.data.lastGoodSyncDate ? this.datePipe.transform(
                 cell.data.lastGoodSyncDate, 'MMM d, y hh:mm a', this.userTimezone) : this.l('Never'),
-            title = 'Last sync: ' + lastSyncDate;
+            title = this.l('BankAccountsWidget_Last_sync') + ': ' + lastSyncDate;
         if (lastSyncDate != lastGoodSyncDate)
-            title += '\r\nLast good sync: ' + lastGoodSyncDate;
+            title += '\r\n' + this.l('BankAccountsWidget_Last_good_sync') + ': ' + lastGoodSyncDate;
         return title;
     }
 
