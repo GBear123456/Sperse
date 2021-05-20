@@ -59,7 +59,7 @@
                 {{ cellData.value | datetime: formatting.dateMoment }}
             </div>
             <div *dxTemplate="let cellData of 'noTimeDateCell'" class="clipboard-holder">
-                {{ cellData.value | datetime: formatting.dateMoment }}
+                {{ cellData.value | date : formatting.date }}
             </div>
             <div *dxTemplate="let cellData of 'deptCell'" class="deptCell clipboard-holder" [title]="formatDepartments(cellData.value)">
                 {{ formatDepartments(cellData.value) }}
