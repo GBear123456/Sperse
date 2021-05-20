@@ -29,7 +29,7 @@ import {
     ReportTemplate,
 
     ReportPeriod,
-    GenerateBusinessIncomeStatementReportInput
+    GenerateIncomeStatementByEntityReportInput
 } from '@root/shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { GenerateReportStep } from './generate-report-step.enum';
@@ -87,9 +87,9 @@ export class GenerateReportDialogComponent implements OnInit {
             showSingleDateCalendar: true,
             generateMethod: this.getBalanceSheetReportRequest.bind(this)
         },
-        BusinessIncomeStatement: {
+        IncomeStatementByEntity: {
             allowMultipleBE: true,
-            generateMethod: this.getBusinessIncomeStatementRequest.bind(this)
+            generateMethod: this.getIncomeStatementByEntityRequest.bind(this)
         }
     };
     currentConfig = this.templateConfig.default;
@@ -130,7 +130,7 @@ export class GenerateReportDialogComponent implements OnInit {
             value: item,
             type: 'pdf'
         };
-    }).concat({ name: this.ls.l('BalanceReport'), value: 'BalanceReport', type: 'pdf' }, { name: this.ls.l('BusinessIncomeStatement'), value: 'BusinessIncomeStatement', type: 'excel' })
+    }).concat({ name: this.ls.l('BalanceReport'), value: 'BalanceReport', type: 'pdf' }, { name: this.ls.l('IncomeStatementByEntity'), value: 'IncomeStatementByEntity', type: 'excel' })
         .concat(this.feature.isEnabled(AppFeatures.CFOBudgets)
             ? { name: this.ls.l('IncomeStatementAndBudget'), value: 'IncomeStatementAndBudget', type: 'pdf' } : []
         );
@@ -376,9 +376,10 @@ export class GenerateReportDialogComponent implements OnInit {
             }));
     }
 
-    getBusinessIncomeStatementRequest(currencyId: string) {
-        return this.reportsProxy.generateBusinessIncomeStatementReport(<any>this.data.instanceType, this.data.instanceId,
-            new GenerateBusinessIncomeStatementReportInput({
+    getIncomeStatementByEntityRequest(currencyId: string) {
+        return this.reportsProxy.generateIncomeStatementByEntityReport(<any>this.data.instanceType, this.data.instanceId,
+            new GenerateIncomeStatementByEntityReportInput({
+                reportTemplate: ReportTemplate.Business,
                 businessEntityIds: this.selectedBusinessEntityIds,
                 from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
                 to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),

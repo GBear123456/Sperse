@@ -29206,8 +29206,8 @@ export class ReportsServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    generateBusinessIncomeStatementReport(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: GenerateBusinessIncomeStatementReportInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CFO/Reports/GenerateBusinessIncomeStatementReport?";
+    generateIncomeStatementByEntityReport(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: GenerateIncomeStatementByEntityReportInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Reports/GenerateIncomeStatementByEntityReport?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
         if (instanceId !== undefined)
@@ -29226,11 +29226,11 @@ export class ReportsServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGenerateBusinessIncomeStatementReport(response_);
+            return this.processGenerateIncomeStatementByEntityReport(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGenerateBusinessIncomeStatementReport(<any>response_);
+                    return this.processGenerateIncomeStatementByEntityReport(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -29239,7 +29239,7 @@ export class ReportsServiceProxy {
         }));
     }
 
-    protected processGenerateBusinessIncomeStatementReport(response: HttpResponseBase): Observable<void> {
+    protected processGenerateIncomeStatementByEntityReport(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -75512,7 +75512,8 @@ export interface IGenerateBalanceSheetReportInput {
     notificationData: SendReportNotificationInfo | undefined;
 }
 
-export class GenerateBusinessIncomeStatementReportInput implements IGenerateBusinessIncomeStatementReportInput {
+export class GenerateIncomeStatementByEntityReportInput implements IGenerateIncomeStatementByEntityReportInput {
+    reportTemplate!: ReportTemplate;
     from!: moment.Moment;
     to!: moment.Moment;
     period!: ReportPeriod;
@@ -75520,7 +75521,7 @@ export class GenerateBusinessIncomeStatementReportInput implements IGenerateBusi
     businessEntityIds!: number[] | undefined;
     notificationData!: SendReportNotificationInfo | undefined;
 
-    constructor(data?: IGenerateBusinessIncomeStatementReportInput) {
+    constructor(data?: IGenerateIncomeStatementByEntityReportInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -75531,6 +75532,7 @@ export class GenerateBusinessIncomeStatementReportInput implements IGenerateBusi
 
     init(data?: any) {
         if (data) {
+            this.reportTemplate = data["reportTemplate"];
             this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
             this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
             this.period = data["period"];
@@ -75544,15 +75546,16 @@ export class GenerateBusinessIncomeStatementReportInput implements IGenerateBusi
         }
     }
 
-    static fromJS(data: any): GenerateBusinessIncomeStatementReportInput {
+    static fromJS(data: any): GenerateIncomeStatementByEntityReportInput {
         data = typeof data === 'object' ? data : {};
-        let result = new GenerateBusinessIncomeStatementReportInput();
+        let result = new GenerateIncomeStatementByEntityReportInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["reportTemplate"] = this.reportTemplate;
         data["from"] = this.from ? this.from.toISOString() : <any>undefined;
         data["to"] = this.to ? this.to.toISOString() : <any>undefined;
         data["period"] = this.period;
@@ -75567,7 +75570,8 @@ export class GenerateBusinessIncomeStatementReportInput implements IGenerateBusi
     }
 }
 
-export interface IGenerateBusinessIncomeStatementReportInput {
+export interface IGenerateIncomeStatementByEntityReportInput {
+    reportTemplate: ReportTemplate;
     from: moment.Moment;
     to: moment.Moment;
     period: ReportPeriod;
