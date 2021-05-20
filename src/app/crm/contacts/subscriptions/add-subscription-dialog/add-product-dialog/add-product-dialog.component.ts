@@ -150,7 +150,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     saveProduct() {
-        if (this.product.type != this.defaultProductType) {
+        if (this.product.type == this.defaultProductType) {
             let services = this.product.productServices,
                 options = this.product.productSubscriptionOptions;
             if (!services || !services.length)
