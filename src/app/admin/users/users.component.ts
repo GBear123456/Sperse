@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import { forkJoin } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -48,6 +48,7 @@ import {
 import { AppStoreService } from '@app/store/app-store.service';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
 @Component({
     templateUrl: './users.component.html',
@@ -113,7 +114,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     formatting = AppConsts.formatting;
     dataSource: DataSource;
     toolbarConfig: ToolbarGroupModel[];
-    headerLabels: string[] = [this.l('Users')];
+    totalErrorMsg: string;
     totalCount: number;
 
     constructor(
@@ -128,6 +129,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         private itemDetailsService: ItemDetailsService,
         public appService: AppService,
         public impersonationService: ImpersonationService,
+        private appHttpConfiguration: AppHttpConfiguration,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -157,7 +159,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     processUserCountRequest() {
         if (!this.totalCount) {
-            this.headerLabels = [this.l('Users')];
+            this.totalErrorMsg = this.totalCount = undefined;
+            this.appHttpConfiguration.avoidErrorHandlingKeys = ['Platform/User/GetUserCount'];
             this.userServiceProxy.getUserCount(
                 this.searchValue || undefined,
                 this.selectedPermissions || undefined,
@@ -165,10 +168,15 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 false,
                 this.group,
                 this.isActive
+            ).pipe(
+                finalize(() => {
+                    this.appHttpConfiguration.avoidErrorHandlingKeys = undefined;
+                })
             ).subscribe(totalCount => {
-                this.headerLabels = [this.l('Users') + ' (' + totalCount + ')'];
                 this.dataSource['_totalCount'] = this.totalCount = totalCount;
                 this.dataGrid.instance.repaint();
+            }, (e: any) => {
+                this.totalErrorMsg = this.l('AnHttpErrorOccured'); 
             });
         }
     }

@@ -209,6 +209,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public transactionsFilterQuery: any[];
 
     public countDataSource: DataSource;
+    public totalErrorMsg: string;
     public totalCount: number;
 
     public manageAllowed = this._cfoService.classifyTransactionsAllowed(false);
@@ -456,13 +457,18 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 url: this.getODataUrl(this.countDataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.totalCount = null;
+                    this.totalCount = this.totalErrorMsg = undefined;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (count: any) => {
-                    this.totalCount = count;
-                    this.changeDetectionRef.detectChanges();
+                    if (!isNaN(count)) {
+                        this.totalCount = count;
+                        this.changeDetectionRef.detectChanges();
+                    }
+                },
+                errorHandler: (e: any) => {
+                    this.totalErrorMsg = this.l('AnHttpErrorOccured');
                 }
             })
         });
@@ -1230,7 +1236,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     let categories = categorizationTree.filter(item => this.isCategory(item)),
                         selectedCount = selectedIds.length,
                         totalCount = categories.length;
-            
+
                     if (totalCount > 0 && selectedCount == totalCount)
                         filter.push(`not(${key} eq null)`);
                     else if (selectedCount > totalCount - selectedCount) {

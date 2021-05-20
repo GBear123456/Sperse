@@ -583,6 +583,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
     public usersInstancesLoadingSubscription: Subscription;
     totalCount: number;
+    totalErrorMsg: string;
     toolbarConfig: ToolbarGroupModel[];
     private subscriptionStatusFilter = new FilterModel({
         component: SubscriptionsFilterComponent,
@@ -679,11 +680,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (records) => {
-                    let userIds = this.getUserIds(records);
-                    this.usersInstancesLoadingSubscription = this.appService.isCfoLinkOrVerifyEnabled && userIds.length ?
-                        this.crmService.getUsersWithInstances(userIds).subscribe(() => {
-                            this.changeDetectorRef.markForCheck();
-                        }) : of().subscribe();
+                    if (records instanceof Array) {
+                        let userIds = this.getUserIds(records);
+                        this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
+                        this.usersInstancesLoadingSubscription = this.appService.isCfoLinkOrVerifyEnabled && userIds.length ?
+                            this.crmService.getUsersWithInstances(userIds).subscribe(() => {
+                                this.changeDetectorRef.markForCheck();
+                            }) : of().subscribe();
+                    }
                 }
             })
         });
@@ -696,14 +700,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 ]),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.totalCount = undefined;
+                    this.totalCount = this.totalErrorMsg = undefined;
                     request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (count: any) => {
-                    this.totalCount = count;
-                }
+                    if (!isNaN(count))
+                        this.dataSource['total'] = this.totalCount = count;
+                },
+                errorHandler: (e: any) => {
+                    this.totalErrorMsg = this.l('AnHttpErrorOccured');
+                }                
             })
         });
     }

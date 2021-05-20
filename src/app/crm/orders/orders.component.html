@@ -24,6 +24,7 @@
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <orders-header-dropdown
                         [totalCount]="totalCount"
+                        [totalErrorMsg]="totalErrorMsg"
                         [contactGroup]="selectedContactGroup$ | async"
                         [orderType]="selectedOrderType$ | async"
                         (onOrderTypeChanged)="onOrderTypeChanged($event)"

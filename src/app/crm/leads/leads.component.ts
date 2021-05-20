@@ -661,6 +661,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         filter(() => this.componentIsActivated)
     );
     totalCount: number;
+    totalErrorMsg: string;
     toolbarConfig: ToolbarGroupModel[];
     private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
     private activate$: Observable<boolean> = this._activate.asObservable();
@@ -734,6 +735,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
+                    onLoaded: (records) => {
+                        if (records instanceof Array)
+                            this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
+                    },
                     deserializeDates: false
                 }
             };
@@ -742,13 +747,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 store: new ODataStore({
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
-                        this.totalCount = undefined;
+                        this.totalCount = this.totalErrorMsg = undefined;
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                         request.params.contactGroupId = this.selectedContactGroup;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
                     onLoaded: (count: any) => {
-                        this.totalCount = count;
+                        if (!isNaN(count))
+                            this.dataSource['total'] = this.totalCount = count;
+                    },
+                    errorHandler: (e: any) => {
+                        this.totalErrorMsg = this.l('AnHttpErrorOccured');
                     }
                 })
             });
@@ -871,6 +880,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
+            filter(() => !this.showPipeline),
             debounceTime(300)
         ).subscribe(([odataRequestValues, ]) => {
             let url = this.getODataUrl(this.totalDataSourceURI,
@@ -2186,6 +2196,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.contactService.mergeContact(source, target, false, true, () => this.refresh(), true);
             });
         }
+    }
+
+    onTotalChange(totalCount: number) {
+        this.totalCount = totalCount;
     }
 
     openEntityChecklistDialog(data?) {

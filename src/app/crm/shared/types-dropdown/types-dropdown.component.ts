@@ -20,6 +20,8 @@ export class TypesDropdownComponent {
     @ViewChild(DxSelectBoxComponent, { static: false }) selectBox: DxSelectBoxComponent;
     @Input() items: TypeItem[];
     @Input() totalCount: number;
+    @Input() totalErrorMsg: string = '';
+    @Input() showTotalCount: Boolean;
     @Input() value;
     @Input() allowEdit = false;
     @Output() valueChange: EventEmitter<any> = new EventEmitter<any>();

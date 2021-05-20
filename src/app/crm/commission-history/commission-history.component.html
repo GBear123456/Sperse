@@ -14,6 +14,7 @@
                   (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="viewTypes"
+                        [showTotalCount]="true"
                         [totalCount]="totalRowCount > 0 ? totalRowCount : undefined"
                         [value]="selectedViewType"
                         (onValueChanged)="onViewTypeChanged($event)">

@@ -19,6 +19,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, concat, forkJoin, Observable, of } from 'rxjs';
 import {
+    catchError,
     distinctUntilChanged,
     filter,
     finalize,
@@ -89,6 +90,7 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
+import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 
 @Component({
@@ -137,6 +139,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     );
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
     private readonly ordersDataSourceURI = 'Order';
+    private readonly orderCountDataSourceURI = 'OrderCount';
     private readonly subscriptionsDataSourceURI = 'Subscription';
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
     readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
@@ -392,6 +395,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ];
     permissions = AppPermissions;
     currency: string;
+    totalErrorMsg: string;
     ordersTotalCount: number;
     subscriptionsTotalCount: number;
     ordersToolbarConfig: ToolbarGroupModel[];
@@ -566,11 +570,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         switchMap(this.waitUntilLayoutType(DataLayoutType.DataGrid)),
         switchMap(this.waitUntilOrderType(OrderType.Order)),
         map(([oDataRequestValues, ]: [ODataRequestValues, ]) => {
-            return this.getODataUrl('OrderCount', oDataRequestValues.filter, null,
+            return this.getODataUrl(this.orderCountDataSourceURI, oDataRequestValues.filter, null,
                 [...this.getSubscriptionsParams(), ...oDataRequestValues.params]);
         }),
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
         switchMap((totalUrl: string) => {
+            this.totalCount = this.totalErrorMsg = undefined;
+            this.appHttpConfiguration.avoidErrorHandlingKeys = [this.orderCountDataSourceURI];
             return this.http.get(
                 totalUrl,
                 {
@@ -578,7 +584,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         'Authorization': 'Bearer ' + abp.auth.getToken()
                     })
                 }
-            );
+            ).pipe(finalize(() => {
+                this.appHttpConfiguration.avoidErrorHandlingKeys = undefined;
+            }), catchError(() => {
+                this.totalErrorMsg = this.l('AnHttpErrorOccured');
+                return of({});
+            }));
         }),
         map((summaryData: { [stageId: string]: OrderStageSummary }) => {
             return Object.values(summaryData).reduce((summary: OrderStageSummary, stageSummary: OrderStageSummary) => {
@@ -599,7 +610,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         switchMap(this.waitUntilOrderType(OrderType.Subscription)),
         map(([oDataRequestValues, ]: [ODataRequestValues, ]) => {
             return this.getODataUrl(
-                'SubscriptionSlice',
+                this.subscriptionGroupDataSourceURI,
                 oDataRequestValues.filter,
                 null,
                 [
@@ -616,14 +627,24 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             );
         }),
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
-        switchMap((subscriptionSummaryUrl: string) => this.http.get(
-            subscriptionSummaryUrl,
-            {
-                headers: new HttpHeaders({
-                    'Authorization': 'Bearer ' + abp.auth.getToken()
+        switchMap((subscriptionSummaryUrl: string) => {
+            this.totalCount = this.totalErrorMsg = undefined;
+            this.appHttpConfiguration.avoidErrorHandlingKeys = [this.subscriptionGroupDataSourceURI];
+            return this.http.get(
+                subscriptionSummaryUrl,
+                {
+                    headers: new HttpHeaders({
+                        'Authorization': 'Bearer ' + abp.auth.getToken()
+                    })
+                }
+            ).pipe(finalize(() => {
+                    this.appHttpConfiguration.avoidErrorHandlingKeys = undefined;
+                }), catchError(() => {
+                    this.totalErrorMsg = this.l('AnHttpErrorOccured');
+                    return of({});
                 })
-            }
-        )),
+            )
+        }),
     );
     private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
     private activate$: Observable<boolean> = this._activate.asObservable();
@@ -755,6 +776,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         private filtersService: FiltersService,
         private pipelineService: PipelineService,
         private itemDetailsService: ItemDetailsService,
+        private appHttpConfiguration: AppHttpConfiguration,
         private store$: Store<CrmStore.State>,
         private cacheService: CacheService,
         private sessionService: AppSessionService,
