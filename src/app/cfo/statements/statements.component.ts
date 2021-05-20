@@ -228,7 +228,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
                     items: [
                         {
                             name: 'filters',
-                            visible: !this._cfoService.hasStaticInstance,
+                            visible: !this.isAdvicePeriod && !this._cfoService.hasStaticInstance,
                             action: () => {
                                 setTimeout(() => {
                                     this.dataGrid.instance.repaint();

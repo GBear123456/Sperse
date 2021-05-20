@@ -29203,6 +29203,64 @@ export class ReportsServiceProxy {
     /**
      * @instanceType (optional) 
      * @instanceId (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    generateBusinessIncomeStatementReport(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: GenerateBusinessIncomeStatementReportInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Reports/GenerateBusinessIncomeStatementReport?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGenerateBusinessIncomeStatementReport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGenerateBusinessIncomeStatementReport(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGenerateBusinessIncomeStatementReport(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
      * @id (optional) 
      * @return Success
      */
@@ -52069,6 +52127,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     newUserPassword!: string | undefined;
     changeNewUserPasswordOnNextLogin!: boolean | undefined;
     noWelcomeEmail!: boolean | undefined;
+    welcomeEmailTemplateRef!: string | undefined;
     propertyInfo!: PropertyInput | undefined;
     bypassValidation!: boolean | undefined;
 
@@ -52159,6 +52218,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.newUserPassword = data["newUserPassword"];
             this.changeNewUserPasswordOnNextLogin = data["changeNewUserPasswordOnNextLogin"];
             this.noWelcomeEmail = data["noWelcomeEmail"];
+            this.welcomeEmailTemplateRef = data["welcomeEmailTemplateRef"];
             this.propertyInfo = data["propertyInfo"] ? PropertyInput.fromJS(data["propertyInfo"]) : <any>undefined;
             this.bypassValidation = data["bypassValidation"];
         }
@@ -52249,6 +52309,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["newUserPassword"] = this.newUserPassword;
         data["changeNewUserPasswordOnNextLogin"] = this.changeNewUserPasswordOnNextLogin;
         data["noWelcomeEmail"] = this.noWelcomeEmail;
+        data["welcomeEmailTemplateRef"] = this.welcomeEmailTemplateRef;
         data["propertyInfo"] = this.propertyInfo ? this.propertyInfo.toJSON() : <any>undefined;
         data["bypassValidation"] = this.bypassValidation;
         return data; 
@@ -52304,6 +52365,7 @@ export interface ICreateOrUpdateContactInput {
     newUserPassword: string | undefined;
     changeNewUserPasswordOnNextLogin: boolean | undefined;
     noWelcomeEmail: boolean | undefined;
+    welcomeEmailTemplateRef: string | undefined;
     propertyInfo: PropertyInput | undefined;
     bypassValidation: boolean | undefined;
 }
@@ -60533,10 +60595,50 @@ export interface IGeneralSettingsEditDto {
     publicSiteUrl: string | undefined;
 }
 
+export class CustomWelcomeTemplate implements ICustomWelcomeTemplate {
+    groupId!: string | undefined;
+    templateId!: number | undefined;
+
+    constructor(data?: ICustomWelcomeTemplate) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.groupId = data["groupId"];
+            this.templateId = data["templateId"];
+        }
+    }
+
+    static fromJS(data: any): CustomWelcomeTemplate {
+        data = typeof data === 'object' ? data : {};
+        let result = new CustomWelcomeTemplate();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["groupId"] = this.groupId;
+        data["templateId"] = this.templateId;
+        return data; 
+    }
+}
+
+export interface ICustomWelcomeTemplate {
+    groupId: string | undefined;
+    templateId: number | undefined;
+}
+
 export class HostUserManagementSettingsEditDto implements IHostUserManagementSettingsEditDto {
     isEmailConfirmationRequiredForLogin!: boolean | undefined;
     smsVerificationEnabled!: boolean | undefined;
-    welcomeEmailTemplateId!: number | undefined;
+    customWelcomeEmailTemplates!: CustomWelcomeTemplate[] | undefined;
 
     constructor(data?: IHostUserManagementSettingsEditDto) {
         if (data) {
@@ -60551,7 +60653,11 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
         if (data) {
             this.isEmailConfirmationRequiredForLogin = data["isEmailConfirmationRequiredForLogin"];
             this.smsVerificationEnabled = data["smsVerificationEnabled"];
-            this.welcomeEmailTemplateId = data["welcomeEmailTemplateId"];
+            if (data["customWelcomeEmailTemplates"] && data["customWelcomeEmailTemplates"].constructor === Array) {
+                this.customWelcomeEmailTemplates = [];
+                for (let item of data["customWelcomeEmailTemplates"])
+                    this.customWelcomeEmailTemplates.push(CustomWelcomeTemplate.fromJS(item));
+            }
         }
     }
 
@@ -60566,7 +60672,11 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
         data = typeof data === 'object' ? data : {};
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
         data["smsVerificationEnabled"] = this.smsVerificationEnabled;
-        data["welcomeEmailTemplateId"] = this.welcomeEmailTemplateId;
+        if (this.customWelcomeEmailTemplates && this.customWelcomeEmailTemplates.constructor === Array) {
+            data["customWelcomeEmailTemplates"] = [];
+            for (let item of this.customWelcomeEmailTemplates)
+                data["customWelcomeEmailTemplates"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -60574,7 +60684,7 @@ export class HostUserManagementSettingsEditDto implements IHostUserManagementSet
 export interface IHostUserManagementSettingsEditDto {
     isEmailConfirmationRequiredForLogin: boolean | undefined;
     smsVerificationEnabled: boolean | undefined;
-    welcomeEmailTemplateId: number | undefined;
+    customWelcomeEmailTemplates: CustomWelcomeTemplate[] | undefined;
 }
 
 export class EmailSettingsEditDto implements IEmailSettingsEditDto {
@@ -62123,6 +62233,7 @@ export class ImportInput implements IImportInput {
     fileContent!: string;
     ignoreInvalidValues!: boolean | undefined;
     sendWelcomeEmail!: boolean | undefined;
+    welcomeEmailTemplateRef!: string | undefined;
 
     constructor(data?: IImportInput) {
         if (data) {
@@ -62166,6 +62277,7 @@ export class ImportInput implements IImportInput {
             this.fileContent = data["fileContent"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
+            this.welcomeEmailTemplateRef = data["welcomeEmailTemplateRef"];
         }
     }
 
@@ -62209,6 +62321,7 @@ export class ImportInput implements IImportInput {
         data["fileContent"] = this.fileContent;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
         data["sendWelcomeEmail"] = this.sendWelcomeEmail;
+        data["welcomeEmailTemplateRef"] = this.welcomeEmailTemplateRef;
         return data; 
     }
 }
@@ -62229,6 +62342,7 @@ export interface IImportInput {
     fileContent: string;
     ignoreInvalidValues: boolean | undefined;
     sendWelcomeEmail: boolean | undefined;
+    welcomeEmailTemplateRef: string | undefined;
 }
 
 export class GetImportStatusOutput implements IGetImportStatusOutput {
@@ -62334,6 +62448,7 @@ export class ImportContactInput implements IImportContactInput {
     overrideLists!: boolean | undefined;
     createUser!: boolean | undefined;
     sendWelcomeEmail!: boolean | undefined;
+    welcomeEmailTemplateRef!: string | undefined;
     contactId!: number | undefined;
     contactXref!: string | undefined;
     userPassword!: string | undefined;
@@ -62395,6 +62510,7 @@ export class ImportContactInput implements IImportContactInput {
             this.overrideLists = data["overrideLists"] !== undefined ? data["overrideLists"] : false;
             this.createUser = data["createUser"];
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
+            this.welcomeEmailTemplateRef = data["welcomeEmailTemplateRef"];
             this.contactId = data["contactId"];
             this.contactXref = data["contactXref"];
             this.userPassword = data["userPassword"];
@@ -62453,6 +62569,7 @@ export class ImportContactInput implements IImportContactInput {
         data["overrideLists"] = this.overrideLists;
         data["createUser"] = this.createUser;
         data["sendWelcomeEmail"] = this.sendWelcomeEmail;
+        data["welcomeEmailTemplateRef"] = this.welcomeEmailTemplateRef;
         data["contactId"] = this.contactId;
         data["contactXref"] = this.contactXref;
         data["userPassword"] = this.userPassword;
@@ -62504,6 +62621,7 @@ export interface IImportContactInput {
     overrideLists: boolean | undefined;
     createUser: boolean | undefined;
     sendWelcomeEmail: boolean | undefined;
+    welcomeEmailTemplateRef: string | undefined;
     contactId: number | undefined;
     contactXref: string | undefined;
     userPassword: string | undefined;
@@ -64651,6 +64769,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     newUserPassword!: string | undefined;
     changeNewUserPasswordOnNextLogin!: boolean | undefined;
     noWelcomeEmail!: boolean | undefined;
+    welcomeEmailTemplateRef!: string | undefined;
     propertyInfo!: PropertyInput | undefined;
     bypassValidation!: boolean | undefined;
 
@@ -64738,6 +64857,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.newUserPassword = data["newUserPassword"];
             this.changeNewUserPasswordOnNextLogin = data["changeNewUserPasswordOnNextLogin"];
             this.noWelcomeEmail = data["noWelcomeEmail"];
+            this.welcomeEmailTemplateRef = data["welcomeEmailTemplateRef"];
             this.propertyInfo = data["propertyInfo"] ? PropertyInput.fromJS(data["propertyInfo"]) : <any>undefined;
             this.bypassValidation = data["bypassValidation"];
         }
@@ -64825,6 +64945,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["newUserPassword"] = this.newUserPassword;
         data["changeNewUserPasswordOnNextLogin"] = this.changeNewUserPasswordOnNextLogin;
         data["noWelcomeEmail"] = this.noWelcomeEmail;
+        data["welcomeEmailTemplateRef"] = this.welcomeEmailTemplateRef;
         data["propertyInfo"] = this.propertyInfo ? this.propertyInfo.toJSON() : <any>undefined;
         data["bypassValidation"] = this.bypassValidation;
         return data; 
@@ -64877,6 +64998,7 @@ export interface ICreateOrUpdateLeadInput {
     newUserPassword: string | undefined;
     changeNewUserPasswordOnNextLogin: boolean | undefined;
     noWelcomeEmail: boolean | undefined;
+    welcomeEmailTemplateRef: string | undefined;
     propertyInfo: PropertyInput | undefined;
     bypassValidation: boolean | undefined;
 }
@@ -75390,6 +75512,70 @@ export interface IGenerateBalanceSheetReportInput {
     notificationData: SendReportNotificationInfo | undefined;
 }
 
+export class GenerateBusinessIncomeStatementReportInput implements IGenerateBusinessIncomeStatementReportInput {
+    from!: moment.Moment;
+    to!: moment.Moment;
+    period!: ReportPeriod;
+    currencyId!: string;
+    businessEntityIds!: number[] | undefined;
+    notificationData!: SendReportNotificationInfo | undefined;
+
+    constructor(data?: IGenerateBusinessIncomeStatementReportInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
+            this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
+            this.period = data["period"];
+            this.currencyId = data["currencyId"];
+            if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
+                this.businessEntityIds = [];
+                for (let item of data["businessEntityIds"])
+                    this.businessEntityIds.push(item);
+            }
+            this.notificationData = data["notificationData"] ? SendReportNotificationInfo.fromJS(data["notificationData"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GenerateBusinessIncomeStatementReportInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GenerateBusinessIncomeStatementReportInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["from"] = this.from ? this.from.toISOString() : <any>undefined;
+        data["to"] = this.to ? this.to.toISOString() : <any>undefined;
+        data["period"] = this.period;
+        data["currencyId"] = this.currencyId;
+        if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
+            data["businessEntityIds"] = [];
+            for (let item of this.businessEntityIds)
+                data["businessEntityIds"].push(item);
+        }
+        data["notificationData"] = this.notificationData ? this.notificationData.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGenerateBusinessIncomeStatementReportInput {
+    from: moment.Moment;
+    to: moment.Moment;
+    period: ReportPeriod;
+    currencyId: string;
+    businessEntityIds: number[] | undefined;
+    notificationData: SendReportNotificationInfo | undefined;
+}
+
 export class SendReportNotificationInput implements ISendReportNotificationInput {
     reportId!: string;
     recipientUserEmailAddress!: string;
@@ -78549,7 +78735,7 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
     isNewRegisteredUserActiveByDefault!: boolean | undefined;
     isEmailConfirmationRequiredForLogin!: boolean | undefined;
     useCaptchaOnRegistration!: boolean | undefined;
-    welcomeEmailTemplateId!: number | undefined;
+    customWelcomeEmailTemplates!: CustomWelcomeTemplate[] | undefined;
 
     constructor(data?: ITenantUserManagementSettingsEditDto) {
         if (data) {
@@ -78566,7 +78752,11 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
             this.isNewRegisteredUserActiveByDefault = data["isNewRegisteredUserActiveByDefault"];
             this.isEmailConfirmationRequiredForLogin = data["isEmailConfirmationRequiredForLogin"];
             this.useCaptchaOnRegistration = data["useCaptchaOnRegistration"];
-            this.welcomeEmailTemplateId = data["welcomeEmailTemplateId"];
+            if (data["customWelcomeEmailTemplates"] && data["customWelcomeEmailTemplates"].constructor === Array) {
+                this.customWelcomeEmailTemplates = [];
+                for (let item of data["customWelcomeEmailTemplates"])
+                    this.customWelcomeEmailTemplates.push(CustomWelcomeTemplate.fromJS(item));
+            }
         }
     }
 
@@ -78583,7 +78773,11 @@ export class TenantUserManagementSettingsEditDto implements ITenantUserManagemen
         data["isNewRegisteredUserActiveByDefault"] = this.isNewRegisteredUserActiveByDefault;
         data["isEmailConfirmationRequiredForLogin"] = this.isEmailConfirmationRequiredForLogin;
         data["useCaptchaOnRegistration"] = this.useCaptchaOnRegistration;
-        data["welcomeEmailTemplateId"] = this.welcomeEmailTemplateId;
+        if (this.customWelcomeEmailTemplates && this.customWelcomeEmailTemplates.constructor === Array) {
+            data["customWelcomeEmailTemplates"] = [];
+            for (let item of this.customWelcomeEmailTemplates)
+                data["customWelcomeEmailTemplates"].push(item.toJSON());
+        }
         return data; 
     }
 }
@@ -78593,7 +78787,7 @@ export interface ITenantUserManagementSettingsEditDto {
     isNewRegisteredUserActiveByDefault: boolean | undefined;
     isEmailConfirmationRequiredForLogin: boolean | undefined;
     useCaptchaOnRegistration: boolean | undefined;
-    welcomeEmailTemplateId: number | undefined;
+    customWelcomeEmailTemplates: CustomWelcomeTemplate[] | undefined;
 }
 
 export class LdapSettingsEditDto implements ILdapSettingsEditDto {
