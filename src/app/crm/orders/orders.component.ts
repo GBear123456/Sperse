@@ -90,7 +90,6 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
-import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 
 @Component({
@@ -557,7 +556,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
         switchMap((totalUrl: string) => {
             this.totalCount = this.totalErrorMsg = undefined;
-            this.appHttpConfiguration.avoidErrorHandlingKeys = [this.orderCountDataSourceURI];
             return this.http.get(
                 totalUrl,
                 {
@@ -565,9 +563,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         'Authorization': 'Bearer ' + abp.auth.getToken()
                     })
                 }
-            ).pipe(finalize(() => {
-                this.appHttpConfiguration.avoidErrorHandlingKeys = undefined;
-            }), catchError(() => {
+            ).pipe(catchError(() => {
                 this.totalErrorMsg = this.l('AnHttpErrorOccured');
                 return of({});
             }));
@@ -610,7 +606,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
         switchMap((subscriptionSummaryUrl: string) => {
             this.totalCount = this.totalErrorMsg = undefined;
-            this.appHttpConfiguration.avoidErrorHandlingKeys = [this.subscriptionGroupDataSourceURI];
             return this.http.get(
                 subscriptionSummaryUrl,
                 {
@@ -618,9 +613,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         'Authorization': 'Bearer ' + abp.auth.getToken()
                     })
                 }
-            ).pipe(finalize(() => {
-                    this.appHttpConfiguration.avoidErrorHandlingKeys = undefined;
-                }), catchError(() => {
+            ).pipe(
+                catchError(() => {
                     this.totalErrorMsg = this.l('AnHttpErrorOccured');
                     return of({});
                 })
@@ -757,7 +751,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         private filtersService: FiltersService,
         private pipelineService: PipelineService,
         private itemDetailsService: ItemDetailsService,
-        private appHttpConfiguration: AppHttpConfiguration,
         private store$: Store<CrmStore.State>,
         private cacheService: CacheService,
         private sessionService: AppSessionService,

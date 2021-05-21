@@ -48,7 +48,6 @@ import {
 import { AppStoreService } from '@app/store/app-store.service';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
-import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 
 @Component({
     templateUrl: './users.component.html',
@@ -128,7 +127,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         private itemDetailsService: ItemDetailsService,
         public appService: AppService,
         public impersonationService: ImpersonationService,
-        private appHttpConfiguration: AppHttpConfiguration,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -162,7 +160,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     processUserCountRequest() {
         if (!this.totalCount) {
             this.totalErrorMsg = this.totalCount = undefined;
-            this.appHttpConfiguration.avoidErrorHandlingKeys = ['Platform/User/GetUserCount'];
             this.userServiceProxy.getUserCount(
                 this.searchValue || undefined,
                 this.selectedPermissions || undefined,
@@ -170,10 +167,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 false,
                 this.group,
                 this.isActive
-            ).pipe(
-                finalize(() => {
-                    this.appHttpConfiguration.avoidErrorHandlingKeys = undefined;
-                })
             ).subscribe(totalCount => {
                 this.dataSource['total'] = this.totalCount = totalCount;
                 this.dataGrid.instance.repaint();

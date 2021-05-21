@@ -8,7 +8,11 @@ import { LogService } from '@abp/log/log.service';
 @Injectable()
 export class AppHttpConfiguration extends AbpHttpConfiguration {
     avoidErrorHandling = false;
-    avoidErrorHandlingKeys: string[];
+    private readonly avoidErrorHandlingKeys = [
+        'Platform/User/GetUserCount',
+        'odata/OrderCount', 
+        'odata/SubscriptionSlice'
+    ];
 
     constructor(
         messageService: MessageService,
