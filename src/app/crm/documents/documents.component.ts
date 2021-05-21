@@ -11,6 +11,7 @@ import RemoteFileProvider from 'devextreme/ui/file_manager/file_provider/remote'
 import { DxFileManagerComponent } from 'devextreme-angular/ui/file-manager';
 import { loadMessages } from 'devextreme/localization';
 import { finalize } from 'rxjs/operators';
+import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -23,6 +24,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppConsts } from '@shared/AppConsts';
+import { NotifyService } from '@abp/notify/notify.service';
 
 @Component({
     templateUrl: './documents.component.html',
@@ -46,6 +48,13 @@ export class DocumentsComponent {
     contextMenu = {
         items: [
             {
+                name: 'copyPublicLink',
+                icon: 'link',
+                closeMenuOnClick: true,
+                text: this.ls.l('CopyPublicLink'),
+                onClick: this.copyPublicLink.bind(this)
+            },
+            {
                 name: 'load',
                 icon: 'download',
                 closeMenuOnClick: true,
@@ -62,6 +71,8 @@ export class DocumentsComponent {
         private permission: PermissionCheckerService,
         private changeDetectorRef: ChangeDetectorRef,
         private lifeCycleSubject: LifecycleSubjectsService,
+        private clipboardService: ClipboardService,
+        private notifyService: NotifyService,
         public ui: AppUiCustomizationService,
         public ls: AppLocalizationService
     ) {
@@ -72,11 +83,24 @@ export class DocumentsComponent {
         });
     }
 
+    copyPublicLink(event) {
+        let dir = this.fileManager.instance.getCurrentDirectory();
+        this.fileManager.instance.getSelectedItems().forEach(item => {
+            this.loadingService.startLoading();
+            this.documentProxy.getUrl(~dir.key.indexOf('root') ? undefined : dir.key, item.name, true).pipe(
+                finalize(() => this.loadingService.finishLoading())
+            ).subscribe((data: GetFileUrlDto) => {
+                this.clipboardService.copyFromContent(data.url);
+                this.notifyService.info(this.ls.l('SavedToClipboard'));
+            });
+        });
+    }
+
     download(event) {
         let dir = this.fileManager.instance.getCurrentDirectory();
         this.fileManager.instance.getSelectedItems().forEach(item => {
             this.loadingService.startLoading();
-            this.documentProxy.getUrl(~dir.key.indexOf('root') ? undefined : dir.key, item.name).pipe(
+            this.documentProxy.getUrl(~dir.key.indexOf('root') ? undefined : dir.key, item.name, false).pipe(
                 finalize(() => this.loadingService.finishLoading())
             ).subscribe((data: GetFileUrlDto) => {
                 window.open(data.url, '_blank');
