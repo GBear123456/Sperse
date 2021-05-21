@@ -412,7 +412,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     });
 
-    private rootComponent: any;
     private exportCallback: Function;
     private isSlice = this.appService.getModule() === 'slice';
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
@@ -1977,7 +1976,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             let orgId = lead.OrganizationId;
             event.component && event.component.cancelEditData();
             this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, event.dataSource
-                || this.dataGrid.instance.getDataSource(), event.loadMethod);
+                || this.dataSource, event.loadMethod);
             setTimeout(() => {
                 this._router.navigate(
                     CrmService.getEntityDetailsLink(clientId, section, leadId, orgId),
@@ -2078,8 +2077,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initFilterConfig();
         this.initToolbarConfig();
         this.handleQueryParams();
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
         this.showHostElement(() => {
             this.repaintToolbar();
             this.pipelineComponent.detectChanges();
@@ -2091,7 +2088,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         super.deactivate();
         this._activate.next(false);
         this.filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
         this.pipelineComponent.deactivate();
         this.hideHostElement();
     }

@@ -160,7 +160,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private readonly totalDataSourceURI: string = 'Contact/$count';
     private readonly groupDataSourceURI: string = 'ContactSlice';
     private readonly dateField = 'ContactDate';
-    private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
     rowsViewHeight: number;
@@ -972,7 +971,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (clientId) {
             if (event.component)
                 event.component.cancelEditData();
-
             this.searchClear = false;
             setTimeout(() => {
                 this._router.navigate(
@@ -1637,8 +1635,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
         if (this.dependencyChanged)
             this.refresh();
 
@@ -1651,7 +1647,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         super.deactivate();
         this.subRouteParams.unsubscribe();
         this.filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
         if (this.dataGrid) {
             this.itemDetailsService.setItemsSource(
                 ItemTypeEnum.Customer,
