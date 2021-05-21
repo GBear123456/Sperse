@@ -17,7 +17,7 @@ import findIndex from 'lodash/findIndex';
 import { AppConsts } from '@shared/AppConsts';
 import { NavigationState } from '@shared/AppEnums';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
-import { DepartmentsServiceProxy, ReportsServiceProxy, ReportPeriod, GetReportUrlOutput } from '@shared/service-proxies/service-proxies';
+import { DepartmentsServiceProxy, ReportsServiceProxy, ReportPeriod, GetReportUrlOutput, ReportTemplate } from '@shared/service-proxies/service-proxies';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { RequestHelper } from '@root/shared/helpers/RequestHelper';
@@ -38,6 +38,7 @@ import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interf
 import { ReportFields } from '@app/cfo/reports/report-fields.enum';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ReportDto } from '@app/cfo/reports/report-dto.interface';
+import { ReportType } from './reportType.enum';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -142,6 +143,9 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     showToggleCompactViewButton: boolean = !this._cfoService.hasStaticInstance;
     readonly reportsFields: KeysEnum<ReportDto> = ReportFields;
 
+    typeHeaderFilter = [];
+    templateHeaderFilter = [];
+
     constructor(
         private injector: Injector,
         private dialog: MatDialog,
@@ -184,6 +188,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                 }
             })
         });
+        this.initHeaderFilterValues();
     }
 
     ngOnInit(): void {
@@ -285,6 +290,21 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         this.filtersService.apply(() => {
             this.initToolbarConfig();
             this.processFilterInternal();
+        });
+    }
+
+    initHeaderFilterValues() {
+        this.typeHeaderFilter = Object.keys(ReportType).map(item => {
+            return {
+                text: this.l('ReportTypes_' + item),
+                value: ["Type", "=", item]
+            }
+        });
+        this.templateHeaderFilter = Object.keys(ReportTemplate).map(item => {
+            return {
+                text: this.l('ReportTemplates_' + item),
+                value: ["Template", "=", item]
+            }
         });
     }
 
