@@ -7,7 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import { forkJoin } from 'rxjs';
-import { filter, takeUntil } from 'rxjs/operators';
+import { filter, takeUntil, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -109,11 +109,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         }
     ];
     noPhotoUrl = AppConsts.imageUrls.noPhoto;
-    private rootComponent: any;
     formatting = AppConsts.formatting;
     dataSource: DataSource;
     toolbarConfig: ToolbarGroupModel[];
-    headerLabels: string[] = [this.l('Users')];
+    totalErrorMsg: string;
     totalCount: number;
 
     constructor(
@@ -145,7 +144,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                     (loadOptions.sort || []).map((item) => {
                         return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
                     }).join(','), loadOptions.take || -1, loadOptions.skip
-                ).toPromise().then(response => response.items);
+                ).toPromise().then(response => {
+                    this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(response.items);
+                    return response.items;
+                });
             },
             totalCount: (loadOptions: any) => {
                 return this.totalCount || loadOptions.take;
@@ -157,7 +159,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
 
     processUserCountRequest() {
         if (!this.totalCount) {
-            this.headerLabels = [this.l('Users')];
+            this.totalErrorMsg = this.totalCount = undefined;
             this.userServiceProxy.getUserCount(
                 this.searchValue || undefined,
                 this.selectedPermissions || undefined,
@@ -166,9 +168,10 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
                 this.group,
                 this.isActive
             ).subscribe(totalCount => {
-                this.headerLabels = [this.l('Users') + ' (' + totalCount + ')'];
-                this.dataSource['_totalCount'] = this.totalCount = totalCount;
+                this.dataSource['total'] = this.totalCount = totalCount;
                 this.dataGrid.instance.repaint();
+            }, (e: any) => {
+                this.totalErrorMsg = this.l('AnHttpErrorOccured'); 
             });
         }
     }
@@ -371,7 +374,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.actionRecord = null;
         setTimeout(() => {
             this._router.navigate(['app/admin/user/' + userId + '/user-information'],
-                { queryParams: { referrer: 'app/admin/users'} });
+                { queryParams: { referrer: 'app/admin/users'} })
         });
     }
 
@@ -567,12 +570,6 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         }
     }
 
-    repaintToolbar() {
-        if (this.toolbar) {
-            this.toolbar.toolbarComponent.instance.repaint();
-        }
-    }
-
     ngOnDestroy() {
         this.deactivate();
     }
@@ -582,10 +579,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
         this.showHostElement(() => {
-            this.repaintToolbar();
+            this.toolbar.toolbarComponent.instance.repaint();
         });
         this.registerToEvents();
     }
@@ -593,8 +588,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     deactivate() {
         super.deactivate();
         this.filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
-        this.itemDetailsService.setItemsSource(ItemTypeEnum.User, this.dataGrid.instance.getDataSource());
+        this.itemDetailsService.setItemsSource(ItemTypeEnum.User, this.dataSource);
         this.hideHostElement();
     }
 
