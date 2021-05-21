@@ -14,7 +14,6 @@ import {
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AddOrEditSSLBindingModalComponent } from '../modals/add-or-edit-ssl-binding-modal.component';
@@ -51,7 +50,6 @@ export class SystemSettingsComponent implements OnInit {
         private changeDetection: ChangeDetectorRef,
         private notifyService: NotifyService,
         private permission: AppPermissionService,
-        public httpInterceptor: AppHttpInterceptor,
         private dialog: MatDialog,
         public ls: AppLocalizationService
     ) {
