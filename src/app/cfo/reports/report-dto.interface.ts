@@ -7,4 +7,5 @@ export interface ReportDto {
     From: string;
     To: string;
     Type: string;
+    Template: string;
 }

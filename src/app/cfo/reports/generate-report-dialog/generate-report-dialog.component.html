@@ -1,8 +1,34 @@
 <modal-dialog [title]="title"
               [buttons]="buttons">
     <dx-scroll-view showScrollbar="onHover">
+        <div *ngIf="currentStep == generateReportSteps.ReportTemplate" class="reportTemplate-container">
+            <dx-tree-list #templatesTreeList
+                          id="reportTemplateItems"
+                          [dataSource]="reportTemplateItems"
+                          itemsExpr="items"
+                          dataStructure="tree"
+                          [showColumnHeaders]="false"
+                          keyExpr="id">
+                <dxi-column dataField="text" caption="" cellTemplate="itemTemplate"></dxi-column>
+                <div *dxTemplate="let item of 'itemTemplate'">
+                    <div *ngIf="item.data.isReadOnly; else radio" class="report-template-header">
+                        <img *ngIf="item.data.fileType" [attr.src]="getImageSrc(item.data.fileType)" /><span>{{item.data.text}}</span>
+                    </div>
+                    <ng-template #radio>
+                        <dx-radio-group [items]="[item.data]"
+                                        [value]="item.data.id == selectedReportTemplate?.id ? item.data : null"
+                                        (onValueChanged)="onTemplateRadioButtonClick($event, item.data)">
+                            <div *dxTemplate="let radioItem of 'item'">
+                                <img *ngIf="radioItem.fileType" [attr.src]="getImageSrc(radioItem.fileType)" /><span>{{radioItem.text}}</span>
+                            </div>
+                        </dx-radio-group>
+                    </ng-template>
+                </div>
+            </dx-tree-list>
+        </div>
         <div *ngIf="currentStep == generateReportSteps.BusinessEntities" class="businessEntities-container">
-            <dx-tree-list keyExpr="id"
+            <dx-tree-list #beTreeList
+                          keyExpr="id"
                           parentIdExpr="parentId"
                           [autoExpandAll]="true"
                           [scrolling]="{ showScrollbar: 'never' }"
@@ -28,17 +54,6 @@
                      (onInitialized)="onInitialized($event)">
             </dx-list>
         </div>
-        <div *ngIf="currentStep == generateReportSteps.ReportTemplate" class="reportTemplate-container">
-            <dx-radio-group valueExpr="value"
-                            [(value)]="reportTemplate"
-                            [items]="reportTemplateItems"
-                            itemTemplate="itemTemplate"
-                            (onValueChanged)="onReportTemplateValueChanged($event)">
-                <div *dxTemplate="let data of 'itemTemplate'">
-                    <img [attr.src]="getImageSrc(data.type)"/><span>{{data.name}}</span> 
-                </div>
-            </dx-radio-group>
-        </div>
         <div *ngIf="currentStep == generateReportSteps.Calendar" class="calendar-container">
             <dx-calendar *ngIf="currentConfig.showSingleDateCalendar"
                          [(value)]="calendarData.from.value">
@@ -52,8 +67,8 @@
                          (onOptionChanged)="onCalendarOptionChanged($event)">
             </dx-calendar>
             <calendar *ngIf="!currentConfig.showYearCalendar && !currentConfig.showSingleDateCalendar"
-                [values]="calendarData" 
-                [options]="calendarData.options">
+                      [values]="calendarData"
+                      [options]="calendarData.options">
             </calendar>
         </div>
         <div *ngIf="currentStep == generateReportSteps.Final" class="final-container">
@@ -72,9 +87,9 @@
                     </div>
                 </div>
                 <div class="row">
-                    <div class="text-left">{{ ls.l('Reports_ReportTemplate') }}</div>
+                    <div class="text-left">{{ ls.l('Reports_Template') }}</div>
                     <div class="text-right">
-                        {{ ls.l(reportTemplate)}}
+                        {{ selectedReportTemplate.template ? ls.l('ReportTemplates_' + selectedReportTemplate.template) + ' ' : ''}}{{ ls.l('ReportTypes_' + selectedReportTemplate.type)}}
                         <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.ReportTemplate)" [class.disabled]="generatingStarted">&nbsp;</i>
                     </div>
                 </div>
@@ -89,24 +104,22 @@
                         <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
                     </div>
                     <div *ngIf="!currentConfig.showSingleDateCalendar && !currentConfig.showYearCalendar" class="text-right">
-                        <dx-date-box 
-                            width="140px" 
-                            height="30px"
-                            [max]="calendarData.to.value" 
-                            displayFormat="MM/dd/yyyy" 
-                            [(value)]="calendarData.from.value" 
-                            [acceptCustomValue]="false"
-                            (onValueChanged)="applyDateRange()">
+                        <dx-date-box width="140px"
+                                     height="30px"
+                                     [max]="calendarData.to.value"
+                                     displayFormat="MM/dd/yyyy"
+                                     [(value)]="calendarData.from.value"
+                                     [acceptCustomValue]="false"
+                                     (onValueChanged)="applyDateRange()">
                         </dx-date-box>
                         <img class="arrow" src="./assets/common/icons/date-arrow-right.svg">
-                        <dx-date-box 
-                            width="140px" 
-                            height="30px" 
-                            [min]="calendarData.from.value" 
-                            displayFormat="MM/dd/yyyy"
-                            [(value)]="calendarData.to.value" 
-                            [acceptCustomValue]="false"
-                            (onValueChanged)="applyDateRange()">
+                        <dx-date-box width="140px"
+                                     height="30px"
+                                     [min]="calendarData.from.value"
+                                     displayFormat="MM/dd/yyyy"
+                                     [(value)]="calendarData.to.value"
+                                     [acceptCustomValue]="false"
+                                     (onValueChanged)="applyDateRange()">
                         </dx-date-box>
                         <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
                     </div>
@@ -144,9 +157,8 @@
                                                          [pattern]="emailRegEx"
                                                          [message]="ls.l('Reports_EmailIsNotValid')">
                                     </dxi-validation-rule>
-                                    <dxi-validation-rule
-                                                        type="required" 
-                                                        [message]="ls.l('ThisFieldIsRequired')">
+                                    <dxi-validation-rule type="required"
+                                                         [message]="ls.l('ThisFieldIsRequired')">
                                     </dxi-validation-rule>
                                 </dx-validator>
                             </dx-text-box>
