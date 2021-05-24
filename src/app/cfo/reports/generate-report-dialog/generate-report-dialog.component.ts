@@ -171,6 +171,19 @@ export class GenerateReportDialogComponent implements OnInit {
     intiReportTemplateItems() {
         this.reportTemplateItems.push(
             {
+                id: ReportType.BalanceSheet,
+                text: this.ls.l('ReportTypes_' + ReportType.BalanceSheet),
+                type: ReportType.BalanceSheet,
+                fileType: 'pdf'
+            },
+            {
+                id: ReportType.Budget,
+                text: this.ls.l('ReportTypes_' + ReportType.Budget),
+                type: ReportType.Budget,
+                fileType: 'pdf',
+                hidden: !this.feature.isEnabled(AppFeatures.CFOBudgets)
+            },
+            {
                 id: ReportType.IncomeStatement,
                 text: this.ls.l('ReportTypes_' + ReportType.IncomeStatement),
                 type: ReportType.IncomeStatement,
@@ -185,23 +198,8 @@ export class GenerateReportDialogComponent implements OnInit {
                 fileType: 'excel',
                 isReadOnly: true,
                 items: this.getReportTypeTemplateItems(ReportType.IncomeStatementByEntity)
-            },
-            {
-                id: ReportType.BalanceSheet,
-                text: this.ls.l('ReportTypes_' + ReportType.BalanceSheet),
-                type: ReportType.BalanceSheet,
-                fileType: 'pdf'
             }
         );
-
-        if (this.feature.isEnabled(AppFeatures.CFOBudgets)) {
-            this.reportTemplateItems.push({
-                id: ReportType.Budget,
-                text: this.ls.l('ReportTypes_' + ReportType.Budget),
-                type: ReportType.Budget,
-                fileType: 'pdf'
-            });
-        }
 
         this.selectedReportTemplate = this.reportTemplateItems.find(v => !v.isReadOnly);
         this.currentConfig = this.templateConfig[this.selectedReportTemplate.type] ? this.templateConfig[this.selectedReportTemplate.type] : this.templateConfig.default;
@@ -448,6 +446,19 @@ export class GenerateReportDialogComponent implements OnInit {
                         sendReportInAttachments: this.sendReportInAttachments
                     }) : null
             }));
+    }
+
+    onReportTemplateRowPrepared(event) {
+        let data: GenerateReportItem = event.data;
+        if (event.level == 0) {
+            if (data.isReadOnly)
+                event.rowElement.classList.add('readonly-parent');
+            else
+                event.rowElement.classList.add('selectable-parent');
+        }
+        if (event.level == 1) {
+            event.rowElement.classList.add('selectable-child');
+        }
     }
 
     onBEContentReady(event) {
