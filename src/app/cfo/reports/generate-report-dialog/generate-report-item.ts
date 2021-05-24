@@ -7,6 +7,7 @@ export class GenerateReportItem {
     type: ReportType;
     template?: ReportTemplate;
     fileType?: 'pdf' | 'excel';
+    hidden?: boolean;
     isReadOnly?: boolean;
     items?: GenerateReportItem[];
 }

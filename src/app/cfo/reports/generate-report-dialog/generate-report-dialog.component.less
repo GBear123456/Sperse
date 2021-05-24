@@ -77,6 +77,26 @@
                 color: black;
             }
         }
+
+        ::ng-deep .dx-treelist {
+            .selectable-parent .dx-treelist-icon-container {
+                display: none;
+            }
+
+            .readonly-parent {
+                .dx-treelist-empty-space {
+                    width: 33px;
+
+                    span::before {
+                        margin-left: 2px;
+                    }
+                }
+            }
+
+            .selectable-child .dx-treelist-empty-space {
+                width: 15px;
+            }
+        }
     }
 
     .calendar-container {

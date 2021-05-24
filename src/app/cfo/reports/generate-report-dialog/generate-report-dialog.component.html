@@ -8,8 +8,12 @@
                           itemsExpr="items"
                           dataStructure="tree"
                           [showColumnHeaders]="false"
-                          keyExpr="id">
+                          keyExpr="id"
+                          [filterValue]="['hidden', '<>', true]"
+                          [expandNodesOnFiltering]="false"
+                          (onRowPrepared)="onReportTemplateRowPrepared($event)">
                 <dxi-column dataField="text" caption="" cellTemplate="itemTemplate"></dxi-column>
+                <dxi-column dataField="hidden" [visible]="false"></dxi-column>
                 <div *dxTemplate="let item of 'itemTemplate'">
                     <div *ngIf="item.data.isReadOnly; else radio" class="report-template-header">
                         <img *ngIf="item.data.fileType" [attr.src]="getImageSrc(item.data.fileType)" /><span>{{item.data.text}}</span>

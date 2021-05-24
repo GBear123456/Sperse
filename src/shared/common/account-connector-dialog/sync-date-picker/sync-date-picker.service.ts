@@ -23,9 +23,10 @@ export class SyncDatePickerService {
         this.invalidate();
     }
 
-    setMaxVisibleDate(date: moment) {
+    setMaxVisibleDate(date?: moment) {
         if (this._cfoService.initialized) {
-            date = DateHelper.getDateWithoutTime(date);
+            if (date)
+                date = DateHelper.getDateWithoutTime(date);
             this._instanceService.setMaxVisibleDate(this._cfoService.instanceType as InstanceType,
                 this._cfoService.instanceId, date).subscribe(() => this._maxSyncDate.next(date));
         }
@@ -37,11 +38,9 @@ export class SyncDatePickerService {
     }
 
     invalidate() {
-        let sub;
-        if (this._cfoService.initialized)
-            sub = this.getMaxVisibleDate();
-        else
-            sub = this._cfoService.instanceChangeProcess().pipe(switchMap(() => this.getMaxVisibleDate()));
-        sub.subscribe(date => this._maxSyncDate.next(date.isValid() ? date : DateHelper.getDateWithoutTime(moment())));
+        (this._cfoService.initialized ?
+            this.getMaxVisibleDate() :
+            this._cfoService.instanceChangeProcess().pipe(switchMap(() => this.getMaxVisibleDate()))
+        ).subscribe(date => this._maxSyncDate.next(date));
     }
 }
