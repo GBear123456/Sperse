@@ -85,14 +85,14 @@ export class DocumentsComponent {
 
     copyPublicLink(event) {
         let dir = this.fileManager.instance.getCurrentDirectory();
-        this.fileManager.instance.getSelectedItems().forEach(item => {
-            this.loadingService.startLoading();
-            this.documentProxy.getUrl(~dir.key.indexOf('root') ? undefined : dir.key, item.name, true).pipe(
-                finalize(() => this.loadingService.finishLoading())
-            ).subscribe((data: GetFileUrlDto) => {
-                this.clipboardService.copyFromContent(data.url);
-                this.notifyService.info(this.ls.l('SavedToClipboard'));
-            });
+        let selectedItems = this.fileManager.instance.getSelectedItems();
+        let lastSelectedItem = selectedItems[selectedItems.length - 1];
+        this.loadingService.startLoading();
+        this.documentProxy.getUrl(~dir.key.indexOf('root') ? undefined : dir.key, lastSelectedItem.name, true).pipe(
+            finalize(() => this.loadingService.finishLoading())
+        ).subscribe((data: GetFileUrlDto) => {
+            this.clipboardService.copyFromContent(data.url);
+            this.notifyService.info(this.ls.l('SavedToClipboard'));
         });
     }
 
