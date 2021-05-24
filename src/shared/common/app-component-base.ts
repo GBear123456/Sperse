@@ -245,14 +245,16 @@ export abstract class AppComponentBase implements OnDestroy {
     }
 
     activate() {
+        this.getRootComponent().overflowHidden(true);
         if (this.searchValue && this.searchClear) {
             this.searchValue = '';
             this.invalidate();
         } if (this.dataGrid && this.dataGrid.instance) {
-            let scroll = this.dataGrid.instance.getScrollable();
+            let grid = this.dataGrid.instance,
+                scroll = grid.getScrollable();
             if (scroll) {
-                setTimeout(() => {
-                    scroll.update();
+                scroll.update();
+                setTimeout(() => {                    
                     if (this._prevScrollPos)
                         scroll.scrollTo(this._prevScrollPos);
                 }, 200);
@@ -264,11 +266,13 @@ export abstract class AppComponentBase implements OnDestroy {
     deactivate() {
         this.deactivateSubject.next(true);
         if (this.dataGrid && this.dataGrid.instance) {
-            let scroll = this.dataGrid.instance.getScrollable();
+            let grid = this.dataGrid.instance,
+                scroll = grid.getScrollable();
             if (scroll)
                 this._prevScrollPos = scroll.scrollOffset();
-            this.dataGrid.instance.hideColumnChooser();
+            grid.hideColumnChooser();
         }
+        this.getRootComponent().overflowHidden();
     }
 
     ngOnDestroy() {

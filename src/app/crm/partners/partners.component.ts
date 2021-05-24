@@ -171,7 +171,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private readonly totalDataSourceURI: string = 'Contact/$count';
     private readonly groupDataSourceURI = 'ContactSlice';
     public readonly dateField = 'ContactDate';
-    private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
 
@@ -871,7 +870,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         if (partnerId) {
             if (event.component)
                 event.component.cancelEditData();
-
             this.searchClear = false;
             setTimeout(() => {
                 this._router.navigate(
@@ -1623,9 +1621,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
-
         if (this.dependencyChanged)
             this.invalidate();
 
@@ -1644,7 +1639,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         super.deactivate();
         this.subRouteParams.unsubscribe();
         this.filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();        
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Partner, this.dataGrid.instance.getDataSource());
         this.showHostElement(() => {
             this.repaintToolbar();
