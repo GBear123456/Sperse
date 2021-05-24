@@ -343,11 +343,14 @@
                         </dx-select-box>
                     </div>
                     <div *dxTemplate="let cell of 'syncDateTemplate'">
-                        <div *ngIf="cell.text"
+                        <div *ngIf="cell.text; else never"
                              class="sync-date clipboard-holder"
-                             title="Last good sync: {{cell.data.lastGoodSyncDate | datetime: 'MMM D, YYYY hh:mm a'}}">
+                             [title]="getLastSyncTitle(cell)">
                             {{cell.text | datetime: 'MMM D, YYYY'}}
                         </div>
+                        <ng-template #never>
+                            {{l('Never')}}
+                        </ng-template>
                     </div>
                     <div *dxTemplate="let cell of 'statusTemplate'">
                         <div *ngIf="showStatusText && cell.text"
@@ -391,13 +394,17 @@
                class="dx-link dx-link-edit options-button" (click)="openActionsMenu(cell)">&nbsp;</a>
         </div>
         <div *dxTemplate="let cell of 'syncDateTemplate'">
-            <ng-container *ngIf="(cell.text)">
-                <div class="sync-date clipboard-holder" title="Last good sync: {{cell.text | datetime: 'MMM D, YYYY hh:mm a'}}">
+            <ng-container *ngIf="cell.text; else never">
+                <div class="sync-date clipboard-holder" 
+                    [title]="getLastSyncTitle(cell)">
                     Last sync: {{cell.text | datetime: 'MMM D, YYYY'}}
                     <a [hidden]="!cell.data.autoSyncTime" class="time-icon" title="Auto-sync at {{cell.data.autoSyncTime}}"></a>
                     <i class="save-to-clipboard" aria-hidden="true" (click)="copyToClipbord($event, cell.text)"></i>
                 </div>
             </ng-container>
+            <ng-template #never>
+                {{l('Never')}}
+            </ng-template>
         </div>
     </dx-data-grid>
 </div>
