@@ -15,7 +15,7 @@
                 <dxi-column dataField="text" caption="" cellTemplate="itemTemplate"></dxi-column>
                 <dxi-column dataField="hidden" [visible]="false"></dxi-column>
                 <div *dxTemplate="let item of 'itemTemplate'">
-                    <div *ngIf="item.data.isReadOnly; else radio" class="report-template-header">
+                    <div *ngIf="item.data.isReadOnly; else radio" class="report-template-header" (click)="onReportTemplateRowClick(item)">
                         <img *ngIf="item.data.fileType" [attr.src]="getImageSrc(item.data.fileType)" /><span>{{item.data.text}}</span>
                     </div>
                     <ng-template #radio>
@@ -60,7 +60,7 @@
         </div>
         <div *ngIf="currentStep == generateReportSteps.Calendar" class="calendar-container">
             <dx-calendar *ngIf="currentConfig.showSingleDateCalendar"
-                         [(value)]="calendarData.from.value">
+                         [(value)]="calendarData.to.value">
             </dx-calendar>
             <dx-calendar *ngIf="currentConfig.showYearCalendar"
                          accessKey="year"
@@ -104,7 +104,7 @@
                         <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
                     </div>
                     <div *ngIf="currentConfig.showSingleDateCalendar" class="text-right">
-                        <span class="date">{{dateFrom | date : 'MM/dd/yyyy' : 'UTC' }}</span>
+                        <span class="date">{{dateTo | date : 'MM/dd/yyyy' : 'UTC' }}</span>
                         <i class="icon blue-edit-pencil" (click)="editStep(generateReportSteps.Calendar)" [class.disabled]="generatingStarted"></i>
                     </div>
                     <div *ngIf="!currentConfig.showSingleDateCalendar && !currentConfig.showYearCalendar" class="text-right">
