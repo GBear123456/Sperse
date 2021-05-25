@@ -102,15 +102,25 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     }
 
     setDataSource(data: OrderSubscriptionDto[]) {
-        _.mapObject(
-            _.groupBy(data, (item: OrderSubscriptionDto) => item.productName),
-            (subscriptions: OrderSubscriptionDto[]) => {
-                let chain = _.chain(subscriptions).sortBy('id').reverse().value();
-                if (!chain.some(item => {
-                    if (item.status == 'Current')
-                        return item['isLastSubscription'] = true;
-                })) chain[0]['isLastSubscription'] = true;
-            });
+        let currentServices = [];
+        data.forEach(item => {
+            if (item.status == 'Current') {
+                item['isLastSubscription'] = true;
+                currentServices = currentServices.concat(
+                    item.services.map(service => service.serviceCode)
+                );
+            }
+        });
+
+        data.forEach(item => {
+            let services = item.services.map(service => service.serviceCode);
+            if (item.status != 'Current' &&
+                _.difference(services, currentServices).length
+            ) {
+                item['isLastSubscription'] = true;
+                currentServices = currentServices.concat(services);
+            }
+        });
 
         this.dataSource = new DataSource(data);
         this.filterDataSource();
