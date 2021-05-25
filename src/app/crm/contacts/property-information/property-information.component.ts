@@ -9,7 +9,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
-import { Observable, Subscription, merge, race, forkJoin } from 'rxjs';
+import { Observable, Subscription, merge, race } from 'rxjs';
 import { filter, map, switchMap, pluck, finalize, skip, first } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 import * as moment from 'moment';
@@ -20,11 +20,8 @@ import {
     ContactInfoDto, CreateContactAddressInput, HeatingCoolingType,
     LeadInfoDto,
     PropertyDto,
-    PropertyDealInfo,
     PropertyServiceProxy,
     PropertyType,
-    LeadServiceProxy,
-    UpdateLeadDealInfoInput,
     YardPatioEnum,
     SellPeriod,
     InterestRate,
@@ -67,7 +64,6 @@ export class PropertyInformationComponent implements OnInit {
     property: PropertyDto;
     propertyAddresses: AddressDto[];
     leadInfoSubscription: Subscription;
-    propertyDeals: PropertyDealInfo[];
     leadTypesWithInstallment = [
         EntityTypeSys.PropertyRentAndSale,
         EntityTypeSys.PropertyRentAndSaleAirbnbSysId,
@@ -161,7 +157,6 @@ export class PropertyInformationComponent implements OnInit {
         private contactsService: ContactsService,
         private route: ActivatedRoute,
         private propertyServiceProxy: PropertyServiceProxy,
-        private LeadServiceProxy: LeadServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
         private loadingService: LoadingService,
         private invoicesService: InvoicesService,
@@ -189,11 +184,10 @@ export class PropertyInformationComponent implements OnInit {
         ).pipe(
             filter(Boolean),
             switchMap((propertyId: number) => {
-                return forkJoin(this.propertyServiceProxy.getPropertyDetails(propertyId), this.propertyServiceProxy.getDeals(propertyId));
+                return this.propertyServiceProxy.getPropertyDetails(propertyId);
             })
-        ).subscribe(([property, deals]) => {
+        ).subscribe((property) => {
             this.initialProperty = property;
-            this.propertyDeals = deals;
             this.savePropertyInfo(property);
             this.changeDetectorRef.detectChanges();
         });
@@ -373,17 +367,6 @@ export class PropertyInformationComponent implements OnInit {
             this.currencyFormat.currency = settings.currency;
             this.changeDetectorRef.detectChanges();
         });
-    }
-
-    dealInfoChanged(leadId, dealAmount, installmentAmount) {
-        this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.LeadServiceProxy.updateDealInfo(new UpdateLeadDealInfoInput({
-            leadId: leadId,
-            dealAmount: dealAmount,
-            installmentAmount: installmentAmount
-        })).pipe(
-            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-        ).subscribe(() => {});
     }
 
     ngOnDestroy() {
