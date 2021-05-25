@@ -421,7 +421,7 @@ export class GenerateReportDialogComponent implements OnInit {
         return this.reportsProxy.generateBalanceSheetReport(<any>this.data.instanceType, this.data.instanceId,
             new GenerateBalanceSheetReportInput({
                 businessEntityIds: this.selectedBusinessEntityIds,
-                date: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
+                date: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
                 currencyId: currencyId,
                 notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
                     ? new SendReportNotificationInfo({
@@ -458,6 +458,15 @@ export class GenerateReportDialogComponent implements OnInit {
         }
         if (event.level == 1) {
             event.rowElement.classList.add('selectable-child');
+        }
+    }
+
+    onReportTemplateRowClick(rowItem) {
+        if (rowItem.row.isExpanded) {
+            rowItem.component.collapseRow(rowItem.row.key);
+        }
+        else {
+            rowItem.component.expandRow(rowItem.row.key);
         }
     }
 
