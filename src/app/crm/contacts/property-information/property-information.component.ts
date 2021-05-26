@@ -74,6 +74,7 @@ export class PropertyInformationComponent implements OnInit {
     stylingMode = 'filled';
 
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
+    showContractDetails: boolean = false;
     currencyFormat = { style: "currency", currency: "USD", useGrouping: true };
 
     yesNoDropdowns: SelectBoxItem[] = [
@@ -191,6 +192,9 @@ export class PropertyInformationComponent implements OnInit {
             this.savePropertyInfo(property);
             this.changeDetectorRef.detectChanges();
         });
+        this.contactsService.leadInfo$.pipe(
+            filter(Boolean)
+        ).subscribe((info: LeadInfoDto) => this.showContractDetails = info.typeSysId == EntityTypeSys.PropertyAcquisition);
 
         this.invoiceSettingsLoad();
     }
