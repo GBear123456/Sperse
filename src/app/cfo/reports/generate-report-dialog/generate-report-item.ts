@@ -1,4 +1,4 @@
-import { ReportType } from "../reportType.enum";
+import { ReportType } from "../enums/reportType.enum";
 import { ReportTemplate } from "@shared/service-proxies/service-proxies";
 
 export class GenerateReportItem {

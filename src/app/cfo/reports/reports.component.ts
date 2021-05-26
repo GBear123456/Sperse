@@ -17,7 +17,7 @@ import findIndex from 'lodash/findIndex';
 import { AppConsts } from '@shared/AppConsts';
 import { NavigationState } from '@shared/AppEnums';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
-import { DepartmentsServiceProxy, ReportsServiceProxy, ReportPeriod, GetReportUrlOutput, ReportTemplate } from '@shared/service-proxies/service-proxies';
+import { DepartmentsServiceProxy, ReportsServiceProxy, GetReportUrlOutput, ReportTemplate } from '@shared/service-proxies/service-proxies';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { RequestHelper } from '@root/shared/helpers/RequestHelper';
@@ -38,7 +38,8 @@ import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interf
 import { ReportFields } from '@app/cfo/reports/report-fields.enum';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ReportDto } from '@app/cfo/reports/report-dto.interface';
-import { ReportType } from './reportType.enum';
+import { ReportType } from './enums/reportType.enum';
+import { ReportPeriod } from './enums/reportPeriod.enum';
 
 @Component({
     templateUrl: './reports.component.html',
@@ -62,6 +63,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
         {
             caption: this.l('AllReports'),
             data: {
+                period: undefined,
             },
             iconSrc: './assets/common/icons/reports/monthly-reports.svg',
             onClick: this.onMenuClick.bind(this)
@@ -88,14 +90,6 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
             },
             iconSrc: './assets/common/icons/reports/annual-reports.svg',
             caption: this.l('AnnualReports'),
-            onClick: this.onMenuClick.bind(this)
-        },
-        {
-            data: {
-                period: ReportPeriod.Instant
-            },
-            iconSrc: './assets/common/icons/reports/annual-reports.svg',
-            caption: this.l('InstantReports'),
             onClick: this.onMenuClick.bind(this)
         }
     ];
@@ -131,7 +125,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     filters: FilterModel[];
     departmentsFilterModel: FilterModel;
-    selectedPeriod = ReportPeriod.Monthly;
+    selectedPeriod = undefined;
     formatting = AppConsts.formatting;
     dataSourceURI = 'Reporting';
     noDepartmentItem = this.l('NoDepartment');
