@@ -7,10 +7,13 @@
                  (onValueChanged)="valueChanged($event)"
                  [elementAttr]="{ id: 'global-search-textbox' }">
     </dx-text-box>
-    <dx-tooltip [(visible)]="isTooltipVisible"
+    <dx-tooltip #dropdown
+                [(visible)]="isTooltipVisible"
                 accessKey="global-search-tooltip"
                 [closeOnOutsideClick]="true"
                 width="437px"
+                height="auto"
+                maxHeight="calc(100vh - 75px)"
                 target="#global-search-textbox"
                 (onContentReady)="tooltipReady($event)">
         <dxo-position my="left top" at="left bottom" of="#global-search-textbox"></dxo-position>
