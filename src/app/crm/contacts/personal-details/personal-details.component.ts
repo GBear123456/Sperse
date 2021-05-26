@@ -10,7 +10,7 @@ import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { AppTimezoneScope } from '@shared/AppEnums';
+import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -72,8 +72,8 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
                     { name: 'drivingLicenseState', type: 'select' },
                     { name: 'ssn', type: 'string', confidential: true },
                     { name: 'citizenship', type: 'select' },
-                    { name: 'isUSCitizen', type: 'bool' },
-                    { name: 'isActiveMilitaryDuty', type: 'bool' }
+                    { name: 'isUSCitizen', type: 'bool', isVisible: () => !this.isDefaultCountryCanada },
+                    { name: 'isActiveMilitaryDuty', type: 'bool', isVisible: () => !this.isDefaultCountryCanada }
                 ] : []
             )
         ], [
@@ -84,6 +84,9 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
             { name: 'experience', type: 'string', multiline: true }
         ]
     ];
+    get isDefaultCountryCanada() {
+        return AppConsts.defaultCountryCode == Country.Canada;
+    }
 
     selectList = {
         timeZone: [],
