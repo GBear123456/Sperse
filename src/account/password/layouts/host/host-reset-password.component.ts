@@ -1,9 +1,10 @@
 /** Core imports */
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 
 /** Third party imports */
 import isEqual from 'lodash/isEqual';
+import { first } from 'rxjs/operators';
 
 /** Application imports */
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
@@ -29,6 +30,8 @@ export class HostResetPasswordComponent implements OnInit {
     model: ResetPasswordModel = new ResetPasswordModel();
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     saving = false;
+    isExtLogin: boolean = false;
+    isPasswordChanged: boolean = false;
 
     constructor(
         private accountService: AccountServiceProxy,
@@ -38,7 +41,13 @@ export class HostResetPasswordComponent implements OnInit {
         private router: Router,
         private activatedRoute: ActivatedRoute,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        this.activatedRoute.queryParamMap.pipe(
+            first()
+        ).subscribe((paramsMap: ParamMap) => {
+            this.isExtLogin = paramsMap.get('extlogin') == 'true';
+        });
+    }
 
     ngOnInit(): void {
         let tenantId: number = abp.session.tenantId,
@@ -68,7 +77,7 @@ export class HostResetPasswordComponent implements OnInit {
 
             if (!result.isValid) {
                 abp.message.error(this.ls.l('InvalidPasswordResetCode_Detail'), this.ls.l('InvalidPasswordResetCode')).done(() => {
-                    this.router.navigate(['account/login']);
+                    this.router.navigate(['account/login'], {queryParams: {extlogin: this.isExtLogin}});
                 });
                 return;
             }
@@ -85,8 +94,11 @@ export class HostResetPasswordComponent implements OnInit {
             this.accountService.resetPassword(this.model)
                 .subscribe(
                     (result: ResetPasswordOutput) => {
+                        this.isPasswordChanged = true;
                         if (!result.canLogin) {
-                            this.router.navigate(['account/login']);
+                            this.router.navigate(['account/login'], 
+                                {queryParams: {extlogin: this.isExtLogin}}
+                            );
                             return;
                         }
 
@@ -96,7 +108,7 @@ export class HostResetPasswordComponent implements OnInit {
                         this.loginService.authenticateModel.password = this.model.password;
                         this.loginService.authenticate(() => {
                             this.saving = false;
-                        }, undefined, !this.model.resetCode);
+                        }, undefined, !this.model.resetCode, this.isExtLogin);
                     },
                     () => { this.saving = false; }
                 );
