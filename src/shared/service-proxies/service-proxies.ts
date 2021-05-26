@@ -75357,20 +75357,12 @@ export interface IGetReportUrlOutput {
     validityPeriodSeconds: number | undefined;
 }
 
-export enum ReportPeriod {
-    Monthly = "Monthly", 
-    Quarterly = "Quarterly", 
-    Annual = "Annual", 
-    Instant = "Instant", 
-}
-
 export class GenerateInput implements IGenerateInput {
     reportTemplate!: ReportTemplate | undefined;
     departments!: string[] | undefined;
     bankAccountIds!: number[] | undefined;
     from!: moment.Moment;
     to!: moment.Moment;
-    period!: ReportPeriod;
     currencyId!: string;
     businessEntityIds!: number[] | undefined;
     notificationData!: SendReportNotificationInfo | undefined;
@@ -75399,7 +75391,6 @@ export class GenerateInput implements IGenerateInput {
             }
             this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
             this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
-            this.period = data["period"];
             this.currencyId = data["currencyId"];
             if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
                 this.businessEntityIds = [];
@@ -75432,7 +75423,6 @@ export class GenerateInput implements IGenerateInput {
         }
         data["from"] = this.from ? this.from.toISOString() : <any>undefined;
         data["to"] = this.to ? this.to.toISOString() : <any>undefined;
-        data["period"] = this.period;
         data["currencyId"] = this.currencyId;
         if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
             data["businessEntityIds"] = [];
@@ -75450,7 +75440,6 @@ export interface IGenerateInput {
     bankAccountIds: number[] | undefined;
     from: moment.Moment;
     to: moment.Moment;
-    period: ReportPeriod;
     currencyId: string;
     businessEntityIds: number[] | undefined;
     notificationData: SendReportNotificationInfo | undefined;
@@ -75516,7 +75505,6 @@ export class GenerateIncomeStatementByEntityReportInput implements IGenerateInco
     reportTemplate!: ReportTemplate;
     from!: moment.Moment;
     to!: moment.Moment;
-    period!: ReportPeriod;
     currencyId!: string;
     businessEntityIds!: number[] | undefined;
     notificationData!: SendReportNotificationInfo | undefined;
@@ -75535,7 +75523,6 @@ export class GenerateIncomeStatementByEntityReportInput implements IGenerateInco
             this.reportTemplate = data["reportTemplate"];
             this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
             this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
-            this.period = data["period"];
             this.currencyId = data["currencyId"];
             if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
                 this.businessEntityIds = [];
@@ -75558,7 +75545,6 @@ export class GenerateIncomeStatementByEntityReportInput implements IGenerateInco
         data["reportTemplate"] = this.reportTemplate;
         data["from"] = this.from ? this.from.toISOString() : <any>undefined;
         data["to"] = this.to ? this.to.toISOString() : <any>undefined;
-        data["period"] = this.period;
         data["currencyId"] = this.currencyId;
         if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
             data["businessEntityIds"] = [];
@@ -75574,7 +75560,6 @@ export interface IGenerateIncomeStatementByEntityReportInput {
     reportTemplate: ReportTemplate;
     from: moment.Moment;
     to: moment.Moment;
-    period: ReportPeriod;
     currencyId: string;
     businessEntityIds: number[] | undefined;
     notificationData: SendReportNotificationInfo | undefined;

@@ -27,8 +27,6 @@ import {
     InstanceServiceProxy,
     InstanceType,
     ReportTemplate,
-
-    ReportPeriod,
     GenerateIncomeStatementByEntityReportInput
 } from '@root/shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -38,8 +36,9 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { AppConsts } from '@shared/AppConsts';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppFeatures } from '@shared/AppFeatures';
-import { ReportType } from '../reportType.enum';
+import { ReportType } from '../enums/reportType.enum';
 import { GenerateReportItem } from './generate-report-item';
+import { ReportPeriod } from '../enums/reportPeriod.enum';
 
 @Component({
     templateUrl: 'generate-report-dialog.component.html',
@@ -88,8 +87,7 @@ export class GenerateReportDialogComponent implements OnInit {
         BalanceSheet: {
             allowMultipleBE: true,
             showSingleDateCalendar: true,
-            generateMethod: this.getBalanceSheetReportRequest.bind(this),
-            reportPeriod: ReportPeriod.Instant
+            generateMethod: this.getBalanceSheetReportRequest.bind(this)
         },
         IncomeStatementByEntity: {
             allowMultipleBE: true,
@@ -229,7 +227,6 @@ export class GenerateReportDialogComponent implements OnInit {
             reportTemplate: this.selectedReportTemplate.template,
             from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
             to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
-            period: this.data.period,
             currencyId,
             departments: departments.map(item => item == this.noDepartmentItem ? null : item),
             businessEntityIds: businessEntityIds,
@@ -438,7 +435,6 @@ export class GenerateReportDialogComponent implements OnInit {
                 businessEntityIds: this.selectedBusinessEntityIds,
                 from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
                 to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
-                period: this.data.period,
                 currencyId: currencyId,
                 notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
                     ? new SendReportNotificationInfo({
