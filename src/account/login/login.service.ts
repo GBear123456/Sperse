@@ -206,7 +206,8 @@ export class LoginService {
                 queryParams: {
                     userId: authenticateResult.userId,
                     tenantId: tenantId,
-                    resetCode: authenticateResult.passwordResetCode
+                    resetCode: authenticateResult.passwordResetCode,
+                    extlogin: setCookiesOnly
                 }
             });
 
