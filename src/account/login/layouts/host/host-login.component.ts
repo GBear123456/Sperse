@@ -50,7 +50,8 @@ export class HostLoginComponent implements OnInit {
             first()
         ).subscribe((paramsMap: ParamMap) => {
             if (this.isExtLogin = paramsMap.get('extlogin') == 'true') {
-                this.isLoggedIn = !!this.appSession.user; 
+                if (this.isLoggedIn = !!this.appSession.user)
+                    this.loginService.completeSourceEvent();
             }            
         });
     }
@@ -93,7 +94,7 @@ export class HostLoginComponent implements OnInit {
                 this.loginInProgress = false;
             }, undefined, true, this.isExtLogin, () => {
                 if (this.isLoggedIn = this.isExtLogin)
-                    setTimeout(() => window.close(), 1000);
+                    this.loginService.completeSourceEvent();
             });
         }
     }
