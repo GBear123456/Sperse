@@ -1,6 +1,5 @@
 /** Core imports */
 import {
-    ChangeDetectionStrategy,
     Component,
     ComponentFactoryResolver,
     Directive,
@@ -32,7 +31,6 @@ export class AdLoginHostDirective {
 @Component({
     templateUrl: './login.component.html',
     styleUrls: [ './login.component.less' ],
-    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LoginComponent implements OnInit {
     @ViewChild(AdLoginHostDirective, { static: true }) adLoginHost: AdLoginHostDirective;
