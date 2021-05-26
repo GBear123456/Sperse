@@ -89,7 +89,6 @@
                                   [dataSource]="dataSource"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
-                                  [cacheEnabled]="false"
                                   [allowColumnResizing]="true"
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
@@ -120,7 +119,7 @@
                             [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                             [allowUpdating]="true">
                         </dxo-editing>
-                        <dxo-scrolling rowRenderingMode="virtual" mode="infinite"></dxo-scrolling>
+                        <dxo-scrolling mode="infinite"></dxo-scrolling>
                         <dxi-column cssClass="stars"
                                     [width]="40"
                                     [showInColumnChooser]="false"
