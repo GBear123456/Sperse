@@ -7,7 +7,7 @@ import {
     HostBinding,
     OnInit
 } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpParameterCodec } from '@angular/common/http';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 
 /** Third party imports */
@@ -33,6 +33,24 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { ContactGroup } from '@shared/AppEnums';
+
+class CustomHttpParameterCodec implements HttpParameterCodec {
+    encodeKey(key: string): string {
+        return key;
+    }
+
+    encodeValue(value: string): string {
+        return encodeURIComponent(value);
+    }
+
+    decodeKey(key: string): string {
+        return key;
+    }
+
+    decodeValue(value: string): string {
+        return decodeURIComponent(value);
+    }
+}
 
 @Component({
     selector: 'global-search',
@@ -102,7 +120,7 @@ export class GlobalSearchComponent implements OnInit {
     get itemsFound() {
         return !!(this.searchGroups && this.searchGroups.some((searchGroup: GlobalSearchGroup) => {
             return searchGroup.entities && searchGroup.entities.length;
-        }))
+        }));
     }
 
     private getClientsGroup(search: string): Observable<GlobalSearchGroup> {
@@ -124,7 +142,7 @@ export class GlobalSearchComponent implements OnInit {
             { contactGroupId: ContactGroup.Client }
         );
     }
-    
+
     private getPartnersGroup(search: string): Observable<GlobalSearchGroup> {
         return this.getGlobalSearchGroup(
             this.oDataService.getODataUrl('Contact', [
@@ -144,7 +162,7 @@ export class GlobalSearchComponent implements OnInit {
             { contactGroupId: ContactGroup.Partner }
         );
     }
-    
+
     private getLeadGroup(search: string, name: string, contactGroup: string): Observable<GlobalSearchGroup> {
         return this.getGlobalSearchGroup(
             this.oDataService.getODataUrl('Lead'),
@@ -164,7 +182,7 @@ export class GlobalSearchComponent implements OnInit {
             { contactGroup: contactGroup }
         );
     }
-    
+
     private getOrdersGroup(search: string): Observable<GlobalSearchGroup> {
         return this.getGlobalSearchGroup(
             this.oDataService.getODataUrl('Order'),
@@ -202,7 +220,7 @@ export class GlobalSearchComponent implements OnInit {
             ],
             null,
             { orderType: OrderType.Subscription }
-        )
+        );
     }
 
     private getGlobalSearchGroup(
@@ -234,7 +252,7 @@ export class GlobalSearchComponent implements OnInit {
                 };
             }),
             take(2)
-        )
+        );
     }
 
     private hideSpinner() {
@@ -242,18 +260,22 @@ export class GlobalSearchComponent implements OnInit {
     }
 
     getOptions(search: string, params?: Params): any {
+        let httpParams = new HttpParams({
+            encoder: new CustomHttpParameterCodec()
+        }).set('$top', '3').set('quickSearchString', search);
+
+        Object.keys(params).forEach(key => {
+            httpParams = httpParams.set(key, params[key]);
+        });
+
         return {
-            params: {
-                quickSearchString: encodeURIComponent(search),
-                $top: '3',
-                ...params
-            },
+            params: httpParams,
             headers: new HttpHeaders({
                 'Authorization': 'Bearer ' + abp.auth.getToken()
             })
         };
     }
-    
+
     onFocusIn() {
         if (this.itemsFound) {
             this.isTooltipVisible = true;
