@@ -112,7 +112,7 @@ export class LoginService {
         redirectUrl?: string, 
         autoDetectTenancy: boolean = true,
         setCookiesOnly: boolean = false,
-        onSuccessCallback = () => {}
+        onSuccessCallback = (result: AuthenticateResultModel) => {}
     ): void {
         finallyCallback = finallyCallback || (() => { });
         this.authService.stopTokenCheck();
@@ -127,7 +127,7 @@ export class LoginService {
             .authenticate(this.authenticateModel)
             .pipe(finalize(finallyCallback))
             .subscribe((result: AuthenticateResultModel) => {
-                onSuccessCallback();
+                onSuccessCallback(result);
                 this.processAuthenticateResult(result, redirectUrl, setCookiesOnly);
                 this.authService.startTokenCheck();
             }, () => {
