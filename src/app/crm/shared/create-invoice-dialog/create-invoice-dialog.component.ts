@@ -42,7 +42,7 @@ import {
     InvoiceStatus,
     CreateInvoiceLineInput,
     InvoiceInfo,
-    InvoiceLineUnit,
+    ProductMeasurementUnit,
     InvoiceSettings,
     GetNewInvoiceInfoOutput,
     ContactServiceProxy,
@@ -53,8 +53,10 @@ import {
     ContactInfoDetailsDto,
     PersonContactInfoDto,
     EntityAddressInfo,
-
-    ProductServiceProxy
+    ProductServiceProxy,
+    ProductPaymentOptionsInfo,
+    ProductShortInfo,
+    ProductDto
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -118,8 +120,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     selectedShippingAddress: InvoiceAddressInput;
     customer: string;
     contactId: number;
-    products = [];
-    descriptions = [];
+    products: (ProductPaymentOptionsInfo | ProductShortInfo)[] = [];
     lastProductPhrase: string;
     date = new Date();
     dueDate;
@@ -127,7 +128,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     description = '';
     notes = '';
-    lines = [{}];
+    lines = [{isCrmProduct: true}];
 
     subTotal = 0;
     total = 0;
@@ -184,10 +185,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     ];
 
-    invoiceUnits = Object.keys(InvoiceLineUnit);
+    invoiceUnits = Object.keys(ProductMeasurementUnit).map(item => {
+        return {
+            unitId: item,
+            unitName: this.ls.l(item)
+        };
+    });
     billingAddresses: InvoiceAddressInfo[] = [];
     shippingAddresses: InvoiceAddressInfo[] = [];
     filterBoolean = Boolean;
+    hideAddNew = false;
 
     constructor(
         private reuseService: RouteReuseStrategy,
@@ -258,7 +265,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.dueDate = invoice.InvoiceDueDate;
             }
             this.contactId = invoice.ContactId;
-            this.productsLookupRequest();
             this.orderDropdown.initOrderDataSource();
             this.invoiceProxy.getInvoiceInfo(invoice.InvoiceId)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
@@ -278,19 +284,23 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.customer = invoiceInfo.contactName;
                     this.selectedBillingAddress = invoiceInfo.billingAddress;
                     this.selectedShippingAddress = invoiceInfo.shippingAddress;
-                    this.lines = invoiceInfo.lines.map(res => {
+                    this.lines = invoiceInfo.lines.map((res: any) => {
                         return {
+                            isCrmProduct: !!res.productCode,
                             Quantity: res.quantity,
                             Rate: res.rate,
                             Description: res.description,
+                            units: res.productType == 'Subscription' ? [{
+                                unitId: res.unitId, 
+                                unitName: res.unitName
+                            }] : undefined,
                             ...res
                         };
                     });
                     this.changeDetectorRef.detectChanges();
                 });
-        } else {
+        } else
             this.resetNoteDefault();
-        }
 
         this.initNewInvoiceInfo();
         this.initContextMenuItems();
@@ -345,7 +355,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 } : {}),
                 isActive: true
             });
-            this.productsLookupRequest();
         }
     }
 
@@ -404,8 +413,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     quantity: row['quantity'],
                     rate: row['rate'],
                     total: row['total'],
-                    unitId: row['unitId'] as InvoiceLineUnit,
-                    productCode: '',
+                    unitId: row['unitId'] as ProductMeasurementUnit,
+                    productCode: row['productCode'],
                     description: row['description'],
                     sortOrder: index,
                     commissionableAmount: undefined
@@ -427,8 +436,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     quantity: row['quantity'],
                     rate: row['rate'],
                     total: row['total'],
-                    unitId: row['unitId'] as InvoiceLineUnit,
-                    productCode: '',
+                    unitId: row['unitId'] as ProductMeasurementUnit,
+                    productCode: row['productCode'],
                     description: row['description'],
                     sortOrder: index,
                     commissionableAmount: undefined
@@ -512,10 +521,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
         if (!this.validateField(this.ls.l('Date'), this.date))
             return this.dateComponent.instance.option('isValid', false);
 
-        this.lines = this.getFilteredLines(false);
-        if (!this.lines.length)
-            this.lines.push({});
-        this.changeDetectorRef.detectChanges();
         setTimeout(() => {
             if (!this.linesValidationGroup.instance.validate().isValid)
                 return this.notifyService.error(this.ls.l('InvoiceLinesShouldBeDefined'));
@@ -532,11 +537,23 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     checkFulfilledLine(line, fulfilled = true) {
-        return ['description', 'quantity', 'rate', 'unitId'][fulfilled ? 'every' : 'some'](field => line[field]);
+        return ['description', 'quantity', 'rate', 'unitId'][fulfilled ? 'every' : 'some'](field => line[field] != undefined);
     }
 
-    onFieldFocusIn(event) {
+    onFieldFocusIn(event, cellData) {        
         event.component.option('isValid', true);
+        if (cellData) {
+            let value = event.component.option('value');
+            if (cellData.data.isCrmProduct) {
+                if (!this.products || !this.products.length || !this.products[0]['code'])
+                    this.productsLookupRequest();
+            } else {
+                if (!this.products || !this.products.length || this.products[0]['code'])
+                    this.invoiceProductsLookupRequest();
+            }
+            if (value && !this.products.some(item => item.description == value))
+                this.products.push(<any>cellData.data);
+        }
     }
 
     initContactAddresses(contactId: number) {
@@ -589,20 +606,35 @@ export class CreateInvoiceDialogComponent implements OnInit {
         });
     }
 
-    productsLookupRequest(phrase = '', callback?) {
-        this.productProxy.getProductsByPhrase(this.contactId, phrase, 10).subscribe(res => {
+    invoiceProductsLookupRequest(phrase = '', callback?, code?: string) {
+        this.productProxy.getInvoiceProductsByPhrase(this.contactId, phrase, code, 10).subscribe(res => {
             if (!phrase || phrase == this.lastProductPhrase) {
-                this.descriptions = (this.products = res).map(item => item.description);
-                this.changeDetectorRef.markForCheck();
+                this.products = res;
                 callback && callback(res);
+                this.changeDetectorRef.detectChanges();
             }
         });
     }
 
-    productLookupItems($event, cellData) {
+    productsLookupRequest(phrase = '', callback?, code?: string) {
+        this.productProxy.getProductsByPhrase(this.contactId, phrase, code, 10).subscribe(res => {
+            if (!phrase || phrase == this.lastProductPhrase) {
+                this.products = res.map(item => {
+                    item.description = item.name;
+                    return item;
+                });
+                callback && callback(res);
+                this.updateDisabledProducts();
+                this.changeDetectorRef.detectChanges();
+            }
+        });
+    }
+
+    productLookupItems($event, cellData, fromInvoice = true) {
+        if (fromInvoice && cellData.data.productCode)
+            return ;
+
         this.lastProductPhrase = $event.event.target.value;
-        if (this.products.length)
-            this.products = [];
 
         $event.component.option('opened', true);
         $event.component.option('noDataText', this.ls.l('LookingForItems'));
@@ -612,8 +644,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
             $event.component.option('opened', true);
             $event.component.option('noDataText', this.ls.l('LookingForItems'));
 
-            this.productsLookupRequest(this.lastProductPhrase, res => {
-                cellData.data.description = this.lastProductPhrase;
+            (fromInvoice
+                ? this.invoiceProductsLookupRequest
+                : this.productsLookupRequest
+            ).bind(this)(this.lastProductPhrase, res => {
                 if (!res['length'])
                     $event.component.option('noDataText', this.ls.l('NoItemsFound'));
             });
@@ -629,7 +663,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.dueDate = undefined;
             this.description = '';
             this.notes = '';
-            this.lines = [{}];
+            this.lines = [{isCrmProduct: true}];
             this.changeDetectorRef.detectChanges();
         };
 
@@ -664,14 +698,47 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.changeDetectorRef.detectChanges();
     }
 
+    selectInvoiceProduct(event, cellData) {
+        let item = event.selectedItem;
+        if (item && item.hasOwnProperty('rate')) {
+            cellData.data.productId = undefined;
+            cellData.data.productCode = undefined;
+            cellData.data.units = undefined;
+            cellData.data.unitId = cellData.data.unitId || item.unitId;
+            cellData.data.rate = cellData.data.rate || item.rate;
+            cellData.data.quantity = cellData.data.quantity || 1;
+            this.changeDetectorRef.detectChanges();
+        }
+    }
+
     selectProduct(event, cellData) {
-        this.products.some(item => {
-            if (item.description == event.value) {
-                cellData.data.unitId = item.unitId;
-                cellData.data.rate = item.rate;
-                this.changeDetectorRef.detectChanges();
-                return true;
-            }
+        if (!cellData.data.isCrmProduct)
+            return this.selectInvoiceProduct(event, cellData);
+
+        let item = event.selectedItem;
+        if (item && item.hasOwnProperty('paymentOptions')
+            && cellData.data.productCode != item.code
+        ) {
+            cellData.data.productId = item.id;
+            cellData.data.productCode = item.code;
+            cellData.data.description =
+                cellData.data.description || item.name;
+            cellData.data.units = item.paymentOptions;
+            cellData.data.unitId = item.paymentOptions[0].unitId;
+            cellData.data.rate = item.paymentOptions[0].price;
+            cellData.data.quantity = 1;
+            this.updateDisabledProducts();
+            this.changeDetectorRef.detectChanges();
+        }
+    }
+
+    updateDisabledProducts() {
+        this.products.forEach((product: any) => {
+            product.disabled = false;
+            this.lines.some((item: any) => {
+                if (item.productCode && product.code == item.productCode)
+                    return product.disabled = true;
+            });
         });
     }
 
@@ -686,7 +753,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 this.orderId = undefined;
                 this.orderNumber = undefined;
             }
-            this.productsLookupRequest();
             this.orderDropdown.initOrderDataSource();
             this.initContactAddresses(this.contactId);
             this.changeDetectorRef.detectChanges();
@@ -750,6 +816,28 @@ export class CreateInvoiceDialogComponent implements OnInit {
         this.calculateLineTotal(cell.data);
     }
 
+    onUnitOpened(event, cellData) {
+        if (cellData.data.productCode &&
+            cellData.data.productType == 'Subscription' &&
+            !cellData.data.units[0].hasOwnProperty('price')
+        ) {
+            this.productsLookupRequest('', (products) => {
+                if (products && products[0])
+                    cellData.data.units = products[0].paymentOptions;
+            }, cellData.data.productCode);
+        }
+    }
+
+    onUnitChanged(event, cellData) {
+        if (cellData.data.units) {
+            let unit = cellData.data.units.find(
+                item => item.unitId == event.value
+            );
+            if (unit)
+                cellData.data.rate = unit.price;
+        }
+    }
+
     allowDigitsOnly(event, exceptions = []) {
         let key = event.event.key;
         if (exceptions.indexOf(key) < 0 && key.length == 1 && isNaN(key)) {
@@ -758,15 +846,33 @@ export class CreateInvoiceDialogComponent implements OnInit {
         }
     }
 
-    addNewLine() {
-        this.lines.push({});
+    addNewLine(component, isCrmProduct = false) {
+        if (this.lines.length != this.getFilteredLines().length)
+            this.lines[this.lines.length - 1].isCrmProduct = isCrmProduct;
+        else
+            this.lines.push({isCrmProduct: isCrmProduct});
+
+        if (isCrmProduct)
+            this.productsLookupRequest();
+        else
+            this.invoiceProductsLookupRequest();
+
+        component.instance.repaint();
         this.changeDetectorRef.detectChanges();
     }
 
-    deleteLine(data) {
+    deleteLine(data, component) {
         if (data.rowIndex || this.lines.length > 1) {
-            this.lines.splice(data.rowIndex, 1);
-            this.calculateBalance();
+            this.hideAddNew = true;
+            setTimeout(() => {
+                this.lines.splice(data.rowIndex, 1);
+                this.calculateBalance();
+                setTimeout(() => {
+                    this.hideAddNew = false;
+                    this.updateDisabledProducts();
+                    this.changeDetectorRef.detectChanges();
+                }, 300);
+            });
         }
     }
 
@@ -812,6 +918,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
             showMaskOnHover: false,
             showMaskOnFocus: true
         }).mask(event.component.field());
+    }
+
+    onCustomDescriptionCreating(event) {
+        if (!event.customItem)
+            event.customItem = {description: event.text};
     }
 
     showEditAddressDialog(event, field) {

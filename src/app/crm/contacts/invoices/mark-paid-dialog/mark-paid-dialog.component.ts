@@ -23,6 +23,7 @@ export class MarkAsPaidDialogComponent {
     date = DateHelper.addTimezoneOffset(new Date(), true);
     stage = this.data.invoice.OrderStage;
     amount = this.data.invoice.Amount;
+    recurring: boolean = false;
     description: string;
     currency = '$';
 
@@ -63,7 +64,8 @@ export class MarkAsPaidDialogComponent {
             gatewayName: undefined,
             authorizationCode: undefined,
             gatewayTransactionId: undefined,
-            bankCardInfo: undefined
+            bankCardInfo: undefined,
+            hasRecurringBilling: this.recurring
         })).pipe(finalize(() => {
             this.loadingService.finishLoading(this.elementRef.nativeElement);
         })).subscribe(() => {

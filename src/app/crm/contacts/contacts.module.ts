@@ -147,6 +147,7 @@ import { OrgUnitsTreeModule } from '@shared/common/organization-units-tree/organ
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { LeadRelatedContactsComponent } from './lead-related-contacts/lead-related-contacts.component';
 import { ResellerActivityComponent } from './reseller-activity/reseller-activity.component';
+import { AddProductDialogComponent } from './subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
 import { AddServiceProductDialogComponent } from './subscriptions/add-subscription-dialog/add-service-product-dialog/add-service-product-dialog.component';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 import { AffiliateHistoryDialogComponent } from './personal-details/personal-details-dialog/affiliate-history-dialog/affiliate-history-dialog.component';
@@ -211,6 +212,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         MarkAsPaidDialogComponent,
         CreateInvoiceDialogComponent,
         LeadRelatedContactsComponent,
+        AddProductDialogComponent,
         AddServiceProductDialogComponent,
         TemplateDocumentsDialogComponent,
         AffiliateHistoryDialogComponent,
@@ -302,6 +304,7 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         CancelSubscriptionDialogComponent,
         MergeContactDialogComponent,
         MarkAsPaidDialogComponent,
+        AddProductDialogComponent,
         AddServiceProductDialogComponent,
         TemplateDocumentsDialogComponent,
         AffiliateHistoryDialogComponent,

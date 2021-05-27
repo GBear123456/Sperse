@@ -48,8 +48,8 @@ export class PayPalComponent implements AfterViewInit {
     preparePaypalButton(): void {
         const self = this;
         let frequency = this.billingPeriod == BillingPeriod.Monthly
-            ? PaymentPeriodType._30
-            : PaymentPeriodType._365;
+            ? PaymentPeriodType.Monthly
+            : PaymentPeriodType.Annual;
         let model = new RequestPaymentDto();
         model.subscriptionInfo = new ModuleSubscriptionInfo();
         model.subscriptionInfo.editionId = this.editionId;

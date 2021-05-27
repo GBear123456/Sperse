@@ -246,6 +246,7 @@
 
                 .dx-invalid.dx-texteditor.dx-editor-outlined.dx-show-invalid-badge .dx-texteditor-input-container:after {
                     top: 12px;
+                    right: 0px;
                     margin-top: 0;
                 }
             }
@@ -403,6 +404,28 @@
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
+            }
+
+            ::ng-deep dx-select-box[name="product"] {
+                padding-left: 10px;
+                input {
+                    text-overflow: ellipsis;
+                    overflow: hidden;
+                }
+                .dx-selectbox-container, 
+                .dx-texteditor-container {
+                    overflow: visible;
+                }
+                .dx-icon.dx-icon-clear {
+                    z-index: 999;
+                    left: 20px;
+                    top: 20px;
+                }
+                &.dx-state-focused {
+                    .dx-placeholder {
+                        display: none!important;
+                    }
+                }
             }
 
             dx-text-box[name="description"],
@@ -611,11 +634,11 @@
         .row-actions {
             display: flex;
             height: 43px;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
 
             &.add-new {
-                width: 810px;
+                width: 860px;
                 left: -50px;                
                 margin-top: 9px;
                 position: relative;
@@ -625,6 +648,11 @@
             span {
                 height: 40px;
                 padding: 0 10px 0 50px;
+                &.add-custom-line,
+                &.separator {
+                    font-size: 18px;
+                    padding-left: 10px;    
+                }
                 &.add-new {
                     font-size: 14px;
                     font-weight: 500;
@@ -652,7 +680,7 @@
                     opacity: 0;
                     transition: 0.2s;
                     top: 0;
-                    right: -20px;
+                    right: -10px;
                 }
             }
 
