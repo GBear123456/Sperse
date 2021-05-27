@@ -46,4 +46,8 @@ export class OrdersHeaderDropdownComponent {
         public ls: AppLocalizationService,
         private permission: AppPermissionService
     ) {}
+
+    isTotalCountValid() {
+        return Number.isInteger(this.totalCount);
+    }
 }

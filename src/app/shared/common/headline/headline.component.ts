@@ -179,6 +179,10 @@ export class HeadLineComponent implements OnInit, OnDestroy {
         this.filtersService.toggle();
     }
 
+    isTotalCountValid() {
+        return Number.isInteger(this.totalCount);
+    }
+
     ngOnDestroy() {
         this.lifecycleService.destroy.next();
     }
