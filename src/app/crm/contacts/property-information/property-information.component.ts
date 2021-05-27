@@ -74,6 +74,7 @@ export class PropertyInformationComponent implements OnInit {
     stylingMode = 'filled';
 
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
+    leadId: number;
     showContractDetails: boolean = false;
     currencyFormat = { style: "currency", currency: "USD", useGrouping: true };
 
@@ -166,35 +167,25 @@ export class PropertyInformationComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        const leadPropertyId$: Observable<number> = this.contactsService.leadInfo$.pipe(
-            filter(Boolean),
-            map((leadInfo: LeadInfoDto) => leadInfo.propertyId)
+        const leadInfo$ = this.contactsService.leadInfo$.pipe(
+            filter(Boolean)
         );
         this.leadInfoSubscription = merge(
-            race(
-                /** Get property id from lead info */
-                leadPropertyId$,
-                /** Or from query params depends on fastest source */
-                this.route.queryParams.pipe(
-                    pluck('propertyId'),
-                    filter(Boolean)
-                )
-            ),
+            leadInfo$,
             /** Then listen only for lead info property id */
-            leadPropertyId$.pipe(skip(1))
+            leadInfo$.pipe(skip(1))
         ).pipe(
             filter(Boolean),
-            switchMap((propertyId: number) => {
-                return this.propertyServiceProxy.getPropertyDetails(propertyId);
+            switchMap((leadInfo: LeadInfoDto) => {
+                this.showContractDetails = leadInfo.typeSysId == EntityTypeSys.PropertyAcquisition;
+                this.leadId = leadInfo.id;
+                return this.propertyServiceProxy.getPropertyDetails(leadInfo.propertyId, leadInfo.id);
             })
         ).subscribe((property) => {
             this.initialProperty = property;
             this.savePropertyInfo(property);
             this.changeDetectorRef.detectChanges();
         });
-        this.contactsService.leadInfo$.pipe(
-            filter(Boolean)
-        ).subscribe((info: LeadInfoDto) => this.showContractDetails = info.typeSysId == EntityTypeSys.PropertyAcquisition);
 
         this.invoiceSettingsLoad();
     }
@@ -296,7 +287,7 @@ export class PropertyInformationComponent implements OnInit {
 
     valueChanged(successCallback?: () => void) {
         this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.propertyServiceProxy.updatePropertyDetails(this.property).pipe(
+        this.propertyServiceProxy.updatePropertyDetails(this.leadId, this.property).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
         ).subscribe(
             successCallback,
