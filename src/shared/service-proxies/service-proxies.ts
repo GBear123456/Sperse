@@ -28351,12 +28351,15 @@ export class PropertyServiceProxy {
 
     /**
      * @id (optional) 
+     * @leadId (optional) 
      * @return Success
      */
-    getPropertyDetails(id: number | null | undefined): Observable<PropertyDto> {
+    getPropertyDetails(id: number | null | undefined, leadId: number | null | undefined): Observable<PropertyDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Property/GetPropertyDetails?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        if (leadId !== undefined)
+            url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -28405,11 +28408,14 @@ export class PropertyServiceProxy {
     }
 
     /**
+     * @leadId (optional) 
      * @body (optional) 
      * @return Success
      */
-    updatePropertyDetails(body: PropertyDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdatePropertyDetails";
+    updatePropertyDetails(leadId: number | null | undefined, body: PropertyDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdatePropertyDetails?";
+        if (leadId !== undefined)
+            url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
