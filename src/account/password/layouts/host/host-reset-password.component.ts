@@ -108,7 +108,9 @@ export class HostResetPasswordComponent implements OnInit {
                         this.loginService.authenticateModel.password = this.model.password;
                         this.loginService.authenticate(() => {
                             this.saving = false;
-                        }, undefined, !this.model.resetCode, this.isExtLogin);
+                        }, undefined, !this.model.resetCode, this.isExtLogin, () => {
+                            this.loginService.completeSourceEvent();
+                        });
                     },
                     () => { this.saving = false; }
                 );

@@ -72,7 +72,7 @@ export class LoginService {
     externalLoginModal: ExternalAuthenticateModel;
     resetPasswordModel: SendPasswordResetCodeInput;
     resetPasswordResult: SendPasswordResetCodeOutput;
-    externalLoginProviders$: Observable<ExternalLoginProvider[]>;
+    externalLoginProviders$: Observable<ExternalLoginProvider[]>;    
 
     constructor(
         private tokenAuthService: TokenAuthServiceProxy,
@@ -99,6 +99,13 @@ export class LoginService {
         sessionStorage.removeItem('authenticateModel');
         sessionStorage.removeItem('authenticateResult');
         this.initExternalLoginProviders();
+    }
+
+    completeSourceEvent() {
+        if (window.opener)
+            setTimeout(() => {
+                window.opener.postMessage('complete', '*');
+            }, 1000);
     }
 
     authenticate(finallyCallback?: () => void, 

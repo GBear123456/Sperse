@@ -1,6 +1,6 @@
 /** Core imports */
 import { Component, ViewChild } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
 
 /** Third party imports */
 import { first } from 'rxjs/operators';
@@ -25,6 +25,7 @@ export class HostForgotPasswordComponent {
     isEmailSent: boolean = false;
 
     constructor (
+        private router: Router,
         private activatedRoute: ActivatedRoute,
         private loginService: LoginService,
         public ls: AppLocalizationService
@@ -45,7 +46,11 @@ export class HostForgotPasswordComponent {
                     this.saving = false;
                 }, true, !this.isExtLogin,
                 () => {
-                    this.isEmailSent = true;
+                    if (this.isEmailSent = this.isExtLogin)
+                        setTimeout(() => {
+                            this.router.navigate(['account/login'], 
+                                {queryParams: {extlogin: this.isExtLogin}});
+                        }, 1000);
                 }
             );
         }
