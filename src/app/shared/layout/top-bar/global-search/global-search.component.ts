@@ -244,7 +244,7 @@ export class GlobalSearchComponent implements OnInit {
     getOptions(search: string, params?: Params): any {
         return {
             params: {
-                quickSearchString: search,
+                quickSearchString: encodeURIComponent(search),
                 $top: '3',
                 ...params
             },
