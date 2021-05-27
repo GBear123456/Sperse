@@ -13,7 +13,7 @@
         <div *dxTemplate="let data of 'selectTemplate'">
             <div class="select-header">
                 <span>{{data.text}}</span>
-                <span *ngIf="showTotalCount" class="total-count {{totalErrorMsg ? 'error' : ''}}" [title]="totalErrorMsg || ''">({{ totalCount ? (totalCount | number) : '?'}})</span>
+                <span *ngIf="showTotalCount" class="total-count {{totalErrorMsg ? 'error' : ''}}" [title]="totalErrorMsg || ''">({{ isTotalCountValid() ? (totalCount | number) : '?'}})</span>
                 <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
             </div>
         </div>
