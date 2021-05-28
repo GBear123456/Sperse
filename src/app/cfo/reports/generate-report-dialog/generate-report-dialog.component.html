@@ -150,11 +150,16 @@
                 </div>
                 <ng-container>
                     <div class="row notificationEmail">
-                        <div class="text-left">{{ ls.l('Reports_SendEmailNotificationTo') }}</div>
+                        <div class="text-left">
+                            <dx-check-box [(value)]="sendEmailNotification"
+                                          [disabled]="generatingStarted"
+                                          [text]="ls.l('Reports_SendEmailNotificationTo')">
+                            </dx-check-box>
+                        </div>
                         <div class="text-right">
                             <dx-text-box name="email"
                                          [(value)]="notificationToEmail"
-                                         [disabled]="generatingStarted || dontSendEmailNotification"
+                                         [disabled]="generatingStarted || !sendEmailNotification"
                                          #notificationToEmailTextBox>
                                 <dx-validator>
                                     <dxi-validation-rule type="pattern"
@@ -169,19 +174,13 @@
                         </div>
                     </div>
                     <div class="row checkbox">
-                        <dx-check-box [(value)]="dontSendEmailNotification"
-                                      [disabled]="generatingStarted"
-                                      [text]="ls.l('Reports_IDontWantToSendEmailNotification')">
-                        </dx-check-box>
-                    </div>
-                    <div class="row checkbox">
                         <dx-check-box [(value)]="sendReportInAttachments"
-                                      [disabled]="dontSendEmailNotification || !emailIsValidAndNotEmpty || generatingStarted"
+                                      [disabled]="!sendEmailNotification || !emailIsValidAndNotEmpty || generatingStarted"
                                       [text]="ls.l('Reports_SendAsAttachment')">
                         </dx-check-box>
                     </div>
                 </ng-container>
-                <div class="row">
+                <div class="row run-report-button">
                     <div class="col-12 text-center">
                         <button (click)="generateReport()"
                                 [disabled]="submitButtonDisabled"
