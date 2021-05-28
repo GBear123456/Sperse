@@ -87,6 +87,9 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
     get isDefaultCountryCanada() {
         return AppConsts.defaultCountryCode == Country.Canada;
     }
+    get ssnMask() {
+        return AppConsts.defaultCountryCode == Country.Canada ? AppConsts.masks.sin : AppConsts.masks.ssn;
+    }
 
     selectList = {
         timeZone: [],
@@ -218,9 +221,19 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
     }
 
     getSsnMasked(value) {
-        return this.accessConfidentialData && value ?
-            [value.slice(0, 3), value.slice(3, 5), value.slice(-4)].join('-')
-            : value;
+        if (this.accessConfidentialData && value) {
+            let mask = this.ssnMask;
+            let blocks = mask.split('-');
+            let valueBlocks: string[] = [];
+            let index = 0;
+            for (let i = 0; i < blocks.length; i++) {
+                valueBlocks.push(value.slice(index, index + blocks[i].length));
+                index += blocks[i].length;
+            }
+            return valueBlocks.join('-');
+        }
+
+        return value;
     }
 
     getGenderList() {

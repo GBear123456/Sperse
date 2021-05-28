@@ -8,7 +8,8 @@
                 <div [ngSwitch]="field.type" class="item-value {{field.multiline ? 'multiline' : ''}}">
                     <inplace-edit *ngSwitchCase="'string'"
                         [isOptional]="true"
-                        [mask]="field.name == 'ssn' ? '000-00-0000': ''"
+                        [mask]="field.name == 'ssn' ? ssnMask : ''"
+                        [maskInvalidMessage]="field.name == 'ssn' ? ls.l('SSNFormatError') : ''"
                         [maxLength]="20"
                         [data]="getInputData(field.name)"
                         [multiline]="field.multiline"

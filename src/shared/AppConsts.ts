@@ -66,6 +66,7 @@ export class AppConsts {
     static readonly masks = {
         phone: '+1 (000)-000-0000',
         ssn: '000-00-0000',
+        sin: '000-000-000',
         taxNumber: '00-0000000',
         zipCode: '00000',
         zipCodeLong: '00000-0000',
