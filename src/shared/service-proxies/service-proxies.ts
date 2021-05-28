@@ -29611,7 +29611,7 @@ export class ReportsServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    generateBalanceSheetReport(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: GenerateInputBase | null | undefined): Observable<void> {
+    generateBalanceSheetReport(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: GenerateBalanceSheetReportInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CFO/Reports/GenerateBalanceSheetReport?";
         if (instanceType !== undefined)
             url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
@@ -29645,6 +29645,64 @@ export class ReportsServiceProxy {
     }
 
     protected processGenerateBalanceSheetReport(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @instanceType (optional) 
+     * @instanceId (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    generateIncomeStatementByEntityReport(instanceType: InstanceType | null | undefined, instanceId: number | null | undefined, body: GenerateIncomeStatementByEntityReportInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CFO/Reports/GenerateIncomeStatementByEntityReport?";
+        if (instanceType !== undefined)
+            url_ += "instanceType=" + encodeURIComponent("" + instanceType) + "&"; 
+        if (instanceId !== undefined)
+            url_ += "instanceId=" + encodeURIComponent("" + instanceId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGenerateIncomeStatementByEntityReport(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGenerateIncomeStatementByEntityReport(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGenerateIncomeStatementByEntityReport(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -76539,19 +76597,12 @@ export interface IGetReportUrlOutput {
     validityPeriodSeconds: number | undefined;
 }
 
-export enum ReportPeriod {
-    Monthly = "Monthly", 
-    Quarterly = "Quarterly", 
-    Annual = "Annual", 
-}
-
 export class GenerateInput implements IGenerateInput {
     reportTemplate!: ReportTemplate | undefined;
     departments!: string[] | undefined;
     bankAccountIds!: number[] | undefined;
     from!: moment.Moment;
     to!: moment.Moment;
-    period!: ReportPeriod;
     currencyId!: string;
     businessEntityIds!: number[] | undefined;
     notificationData!: SendReportNotificationInfo | undefined;
@@ -76580,7 +76631,6 @@ export class GenerateInput implements IGenerateInput {
             }
             this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
             this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
-            this.period = data["period"];
             this.currencyId = data["currencyId"];
             if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
                 this.businessEntityIds = [];
@@ -76613,7 +76663,6 @@ export class GenerateInput implements IGenerateInput {
         }
         data["from"] = this.from ? this.from.toISOString() : <any>undefined;
         data["to"] = this.to ? this.to.toISOString() : <any>undefined;
-        data["period"] = this.period;
         data["currencyId"] = this.currencyId;
         if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
             data["businessEntityIds"] = [];
@@ -76631,21 +76680,18 @@ export interface IGenerateInput {
     bankAccountIds: number[] | undefined;
     from: moment.Moment;
     to: moment.Moment;
-    period: ReportPeriod;
     currencyId: string;
     businessEntityIds: number[] | undefined;
     notificationData: SendReportNotificationInfo | undefined;
 }
 
-export class GenerateInputBase implements IGenerateInputBase {
-    from!: moment.Moment;
-    to!: moment.Moment;
-    period!: ReportPeriod;
+export class GenerateBalanceSheetReportInput implements IGenerateBalanceSheetReportInput {
+    date!: moment.Moment;
     currencyId!: string;
     businessEntityIds!: number[] | undefined;
     notificationData!: SendReportNotificationInfo | undefined;
 
-    constructor(data?: IGenerateInputBase) {
+    constructor(data?: IGenerateBalanceSheetReportInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -76656,9 +76702,7 @@ export class GenerateInputBase implements IGenerateInputBase {
 
     init(data?: any) {
         if (data) {
-            this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
-            this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
-            this.period = data["period"];
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
             this.currencyId = data["currencyId"];
             if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
                 this.businessEntityIds = [];
@@ -76669,18 +76713,16 @@ export class GenerateInputBase implements IGenerateInputBase {
         }
     }
 
-    static fromJS(data: any): GenerateInputBase {
+    static fromJS(data: any): GenerateBalanceSheetReportInput {
         data = typeof data === 'object' ? data : {};
-        let result = new GenerateInputBase();
+        let result = new GenerateBalanceSheetReportInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["from"] = this.from ? this.from.toISOString() : <any>undefined;
-        data["to"] = this.to ? this.to.toISOString() : <any>undefined;
-        data["period"] = this.period;
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["currencyId"] = this.currencyId;
         if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
             data["businessEntityIds"] = [];
@@ -76692,10 +76734,72 @@ export class GenerateInputBase implements IGenerateInputBase {
     }
 }
 
-export interface IGenerateInputBase {
+export interface IGenerateBalanceSheetReportInput {
+    date: moment.Moment;
+    currencyId: string;
+    businessEntityIds: number[] | undefined;
+    notificationData: SendReportNotificationInfo | undefined;
+}
+
+export class GenerateIncomeStatementByEntityReportInput implements IGenerateIncomeStatementByEntityReportInput {
+    reportTemplate!: ReportTemplate;
+    from!: moment.Moment;
+    to!: moment.Moment;
+    currencyId!: string;
+    businessEntityIds!: number[] | undefined;
+    notificationData!: SendReportNotificationInfo | undefined;
+
+    constructor(data?: IGenerateIncomeStatementByEntityReportInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.reportTemplate = data["reportTemplate"];
+            this.from = data["from"] ? moment(data["from"].toString()) : <any>undefined;
+            this.to = data["to"] ? moment(data["to"].toString()) : <any>undefined;
+            this.currencyId = data["currencyId"];
+            if (data["businessEntityIds"] && data["businessEntityIds"].constructor === Array) {
+                this.businessEntityIds = [];
+                for (let item of data["businessEntityIds"])
+                    this.businessEntityIds.push(item);
+            }
+            this.notificationData = data["notificationData"] ? SendReportNotificationInfo.fromJS(data["notificationData"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): GenerateIncomeStatementByEntityReportInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GenerateIncomeStatementByEntityReportInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["reportTemplate"] = this.reportTemplate;
+        data["from"] = this.from ? this.from.toISOString() : <any>undefined;
+        data["to"] = this.to ? this.to.toISOString() : <any>undefined;
+        data["currencyId"] = this.currencyId;
+        if (this.businessEntityIds && this.businessEntityIds.constructor === Array) {
+            data["businessEntityIds"] = [];
+            for (let item of this.businessEntityIds)
+                data["businessEntityIds"].push(item);
+        }
+        data["notificationData"] = this.notificationData ? this.notificationData.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IGenerateIncomeStatementByEntityReportInput {
+    reportTemplate: ReportTemplate;
     from: moment.Moment;
     to: moment.Moment;
-    period: ReportPeriod;
     currencyId: string;
     businessEntityIds: number[] | undefined;
     notificationData: SendReportNotificationInfo | undefined;

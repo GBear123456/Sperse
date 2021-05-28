@@ -358,10 +358,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
     });
 
+    private repaintTimeout;
     private categoriesShowedBefore = !AppConsts.isMobile;
     private _categoriesShowed = this.categoriesShowedBefore;
     private syncAccounts: any;
-    isAdvicePeriod = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.AdvicePeriod;
     private updateAfterActivation: boolean;
     categoriesRowsData: Category[] = [];
     public showDataGridToolbar = !AppConsts.isMobile;
@@ -439,9 +439,12 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     }
 
                     setTimeout(() => {
-                       if (this.isHeaderFilterVisible &&
-                           this.getElementRef().nativeElement === this.categoryChooserContainer.nativeElement.parentElement
-                       ) this.repaintDataGrid();
+                        if (this.isHeaderFilterVisible && this.repaintTimeout &&
+                            this.getElementRef().nativeElement === this.categoryChooserContainer.nativeElement.parentElement
+                        ) {
+                             this.repaintDataGrid();
+                        }
+                        this.repaintTimeout = true;
                     });
                 }
             })
@@ -836,7 +839,10 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     repaintDataGrid(delay = 0) {
-        setTimeout(() => this.dataGrid.instance.repaint(), delay);
+        clearTimeout(this.repaintTimeout);
+        this.repaintTimeout = setTimeout(() => {
+            this.dataGrid.instance.repaint();
+        }, delay);
     }
 
     onToolbarPreparing(e) {
@@ -865,7 +871,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
 
     onGridOptionChanged(event) {
         super.onGridOptionChanged(event);
-        if ((event.name == 'columnChooser') || event.name == 'columns' && (
+        if (event.name == 'columns' && (
             event.fullName.includes('visibleIndex') ||
             event.fullName.includes('sortOrder') ||
             event.fullName.includes('visible')
@@ -1327,7 +1333,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 event.cellElement.innerHTML = '';
                 event.cellElement.appendChild(filter.nativeElement);
             }
-        }), 100);
+        }), 300);
     }
 
     onCellPrepared($event) {
@@ -1568,17 +1574,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.bankAccountsService.applyFilter();
     }
 
-    calculateTransactionsAmountDisplayValue = (data) => this.amountCustomizer(data['Amount']);
-
-    calculateTransactionsDebitDisplayValue = (data) => this.amountCustomizer(data['Debit']);
-
-    calculateTransactionsCreditDisplayValue = (data) => this.amountCustomizer(data['Credit']);
-
-    calculateEndingBalanceDisplayValue = (data) => this.amountCustomizer(data['EndingBalance']);
-
     customizeGroupAmountCell = (cellInfo) => this.amountCustomizer(cellInfo.value);
-
-    calculateCashflowCategoryNameDisplayValue = (data) => data.CashflowCategoryName || this.l('Unclassified');
 
     calculateDateDisplayValue = (data) => this.datePipe.transform(data.Date, 'MM/dd/yyyy');
 

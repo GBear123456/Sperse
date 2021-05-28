@@ -6,4 +6,6 @@ export interface ReportDto {
     CreationTime: string;
     From: string;
     To: string;
+    Type: string;
+    Template: string;
 }
