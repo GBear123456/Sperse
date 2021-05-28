@@ -21,6 +21,19 @@
                 [upload]="manageAllowed"
                 [download]="false">
             </dxo-permissions>
+            <dxo-toolbar>
+                <dxi-item name="create"></dxi-item>
+                <dxi-item name="upload"></dxi-item>
+
+                <dxi-item name="refresh"></dxi-item>
+                <dxi-item name="switchView"></dxi-item>
+
+                <dxi-file-selection-item name="move"></dxi-file-selection-item>
+                <dxi-file-selection-item name="copy"></dxi-file-selection-item>
+                <dxi-file-selection-item name="rename"></dxi-file-selection-item>
+                <dxi-file-selection-item name="delete"></dxi-file-selection-item>
+                <dxi-file-selection-item widget="dxButton" location="before" [options]="downloadButtonOptions"></dxi-file-selection-item>
+            </dxo-toolbar>
         </dx-file-manager>
     </div>
 </div>

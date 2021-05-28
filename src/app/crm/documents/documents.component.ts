@@ -12,6 +12,7 @@ import { DxFileManagerComponent } from 'devextreme-angular/ui/file-manager';
 import { loadMessages } from 'devextreme/localization';
 import { finalize } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
+import { forkJoin } from 'rxjs';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -25,6 +26,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
+import { MessageService } from '@abp/message/message.service';
 
 @Component({
     templateUrl: './documents.component.html',
@@ -64,6 +66,13 @@ export class DocumentsComponent {
         ]
     };
 
+    downloadButtonOptions = {
+        name: this.ls.l('Download'),
+        text: this.ls.l('Download'),
+        icon: 'download',
+        onClick: this.download.bind(this)
+    };
+
     constructor(
         private appService: AppService,
         private loadingService: LoadingService,
@@ -72,6 +81,7 @@ export class DocumentsComponent {
         private changeDetectorRef: ChangeDetectorRef,
         private lifeCycleSubject: LifecycleSubjectsService,
         private clipboardService: ClipboardService,
+        private messageService: MessageService,
         private notifyService: NotifyService,
         public ui: AppUiCustomizationService,
         public ls: AppLocalizationService
@@ -85,29 +95,43 @@ export class DocumentsComponent {
 
     copyPublicLink(event) {
         let dir = this.fileManager.instance.getCurrentDirectory();
-        let selectedItems = this.fileManager.instance.getSelectedItems();
-        if (selectedItems.length > 0) {
-            let lastSelectedItem = selectedItems[selectedItems.length - 1];
-            this.loadingService.startLoading();
-            this.documentProxy.getUrl(~dir.key.indexOf('root') ? undefined : dir.key, lastSelectedItem.name, true).pipe(
-                finalize(() => this.loadingService.finishLoading())
-            ).subscribe((data: GetFileUrlDto) => {
-                this.clipboardService.copyFromContent(data.url);
-                this.notifyService.info(this.ls.l('SavedToClipboard'));
-            });
-        }
+        let selectedItems = this.fileManager.instance.getSelectedItems().filter(item => !item.isDirectory);
+        if (!selectedItems.length)
+            return this.messageService.warn(this.ls.l('FilesAreAllowedOnly', this.ls.l('Copy')));
+
+        let lastSelectedItem = selectedItems[selectedItems.length - 1];
+        this.loadingService.startLoading();
+        this.documentProxy.getUrl(~dir.key.indexOf('root') ? undefined : dir.key, lastSelectedItem.name, true).pipe(
+            finalize(() => this.loadingService.finishLoading())
+        ).subscribe((data: GetFileUrlDto) => {
+            this.clipboardService.copyFromContent(data.url);
+            this.notifyService.info(this.ls.l('SavedToClipboard'));
+        });
     }
 
-    download(event) {
-        let dir = this.fileManager.instance.getCurrentDirectory();
-        this.fileManager.instance.getSelectedItems().forEach(item => {
+    download() {
+        let dir = this.fileManager.instance.getCurrentDirectory(),
+            items = this.fileManager.instance.getSelectedItems().filter(item => !item.isDirectory);
+
+        if (!items.length)
+            return this.messageService.warn(this.ls.l('FilesAreAllowedOnly', this.ls.l('Download')));
+
+        let requests = items.map(item => this.documentProxy.getUrl(
+            ~dir.key.indexOf('root') ? undefined : dir.key, item.name, false)
+        );
+
+        if (requests.length) {
             this.loadingService.startLoading();
-            this.documentProxy.getUrl(~dir.key.indexOf('root') ? undefined : dir.key, item.name, false).pipe(
+            forkJoin.apply(forkJoin, requests).pipe(
                 finalize(() => this.loadingService.finishLoading())
-            ).subscribe((data: GetFileUrlDto) => {
-                window.open(data.url, '_blank');
+            ).subscribe((responce: GetFileUrlDto[]) => {
+                responce.forEach((data: GetFileUrlDto, index: number) => {
+                    setTimeout(() => {
+                        window.open(data.url, '_blank');
+                    }, index * 1000);
+                });
             });
-        });
+        }
     }
 
     getHeight() {
