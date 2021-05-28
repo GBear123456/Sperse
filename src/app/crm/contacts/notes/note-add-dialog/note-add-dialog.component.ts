@@ -226,7 +226,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 }) : []);
 
         return !!this.data.propertyId
-            ? this.propertyServiceProxy.getPropertyDetails(this.data.propertyId, this._contactInfo['leadId']).pipe(
+            ? this.propertyServiceProxy.getPropertyDetails(this.data.propertyId).pipe(
                 map((propertyDetails: PropertyDto) => {
                     propertyDetails['fullName'] = propertyDetails.name;
                     contacts = contacts.concat([propertyDetails]);

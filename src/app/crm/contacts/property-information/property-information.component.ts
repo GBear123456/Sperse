@@ -74,7 +74,6 @@ export class PropertyInformationComponent implements OnInit {
     stylingMode = 'filled';
 
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
-    leadId: number;
     showContractDetails: boolean = false;
     currencyFormat = { style: "currency", currency: "USD", useGrouping: true };
 
@@ -178,8 +177,7 @@ export class PropertyInformationComponent implements OnInit {
             filter(Boolean),
             switchMap((leadInfo: LeadInfoDto) => {
                 this.showContractDetails = leadInfo.typeSysId == EntityTypeSys.PropertyAcquisition;
-                this.leadId = leadInfo.id;
-                return this.propertyServiceProxy.getPropertyDetails(leadInfo.propertyId, leadInfo.id);
+                return this.propertyServiceProxy.getPropertyDetails(leadInfo.propertyId);
             })
         ).subscribe((property) => {
             this.initialProperty = property;
@@ -287,7 +285,7 @@ export class PropertyInformationComponent implements OnInit {
 
     valueChanged(successCallback?: () => void) {
         this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.propertyServiceProxy.updatePropertyDetails(this.leadId, this.property).pipe(
+        this.propertyServiceProxy.updatePropertyDetails(this.property).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
         ).subscribe(
             successCallback,

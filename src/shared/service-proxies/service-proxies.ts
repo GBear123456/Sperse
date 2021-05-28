@@ -8191,6 +8191,61 @@ export class ContactServiceProxy {
     }
 
     /**
+     * @affiliateCode (optional) 
+     * @return Success
+     */
+    getContactInfoByAffiliateCode(affiliateCode: string | null | undefined): Observable<GetContactInfoByAffiliateCodeOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactInfoByAffiliateCode?";
+        if (affiliateCode !== undefined)
+            url_ += "affiliateCode=" + encodeURIComponent("" + affiliateCode) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactInfoByAffiliateCode(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactInfoByAffiliateCode(<any>response_);
+                } catch (e) {
+                    return <Observable<GetContactInfoByAffiliateCodeOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetContactInfoByAffiliateCodeOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactInfoByAffiliateCode(response: HttpResponseBase): Observable<GetContactInfoByAffiliateCodeOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetContactInfoByAffiliateCodeOutput.fromJS(resultData200) : new GetContactInfoByAffiliateCodeOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetContactInfoByAffiliateCodeOutput>(<any>null);
+    }
+
+    /**
      * @contactId (optional) 
      * @return Success
      */
@@ -28351,15 +28406,12 @@ export class PropertyServiceProxy {
 
     /**
      * @id (optional) 
-     * @leadId (optional) 
      * @return Success
      */
-    getPropertyDetails(id: number | null | undefined, leadId: number | null | undefined): Observable<PropertyDto> {
+    getPropertyDetails(id: number | null | undefined): Observable<PropertyDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Property/GetPropertyDetails?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
-        if (leadId !== undefined)
-            url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -28408,14 +28460,11 @@ export class PropertyServiceProxy {
     }
 
     /**
-     * @leadId (optional) 
      * @body (optional) 
      * @return Success
      */
-    updatePropertyDetails(leadId: number | null | undefined, body: PropertyDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdatePropertyDetails?";
-        if (leadId !== undefined)
-            url_ += "leadId=" + encodeURIComponent("" + leadId) + "&"; 
+    updatePropertyDetails(body: PropertyDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdatePropertyDetails";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -51069,6 +51118,70 @@ export interface IContactInfoDto {
     affiliateContactId: number | undefined;
     affiliateContactName: string | undefined;
     subContactsCount: number | undefined;
+}
+
+export class GetContactInfoByAffiliateCodeOutput implements IGetContactInfoByAffiliateCodeOutput {
+    id!: number | undefined;
+    typeId!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    emailAddress!: string | undefined;
+    phoneNumber!: string | undefined;
+    phoneExtension!: string | undefined;
+    affiliateCode!: string | undefined;
+
+    constructor(data?: IGetContactInfoByAffiliateCodeOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.typeId = data["typeId"];
+            this.firstName = data["firstName"];
+            this.lastName = data["lastName"];
+            this.emailAddress = data["emailAddress"];
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.affiliateCode = data["affiliateCode"];
+        }
+    }
+
+    static fromJS(data: any): GetContactInfoByAffiliateCodeOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetContactInfoByAffiliateCodeOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["typeId"] = this.typeId;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["emailAddress"] = this.emailAddress;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["affiliateCode"] = this.affiliateCode;
+        return data; 
+    }
+}
+
+export interface IGetContactInfoByAffiliateCodeOutput {
+    id: number | undefined;
+    typeId: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    emailAddress: string | undefined;
+    phoneNumber: string | undefined;
+    phoneExtension: string | undefined;
+    affiliateCode: string | undefined;
 }
 
 export class ContactLastModificationInfoDto implements IContactLastModificationInfoDto {
