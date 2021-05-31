@@ -105,15 +105,16 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         return headers;
     }
 
-    handleError(error) {
-        if (error['url']) { //!! dxDataGrid error handling
-            error['url'] = '';
-            error.message = this.configuration.defaultError.message;
+    handleError(error: any) {
+        if (error.url || error.httpStatus == 0) { //!! dxDataGrid error handling
+            error.name = error.url ? error.name : '';
+            error.message = error.url ? this.configuration.defaultError.message : '';
+            error.url = '';
         } else {
             if (!error.error)
                 error.error = new Blob([JSON.stringify(error.errorDetails || error)]);
-            if (error['httpStatus'])
-                error.status = error['httpStatus'];
+            if (error.httpStatus)
+                error.status = error.httpStatus;
             return this.handleErrorResponse(error, new Subject());
         }
     }
@@ -150,7 +151,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
 
     protected handleErrorResponse(response, interceptObservable: Subject<HttpEvent<any>>): Observable<any> {
         let keys = this.configuration['avoidErrorHandlingKeys'];
-        if (this.configuration['avoidErrorHandling'] || (response.url && 
+        if (this.configuration['avoidErrorHandling'] || (response.url &&
             keys && keys.some(key => response.url.toLowerCase().includes(key.toLowerCase()))
         )) {
             this.configuration.blobToText(response.error).subscribe(error => {

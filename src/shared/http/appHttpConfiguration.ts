@@ -10,7 +10,7 @@ export class AppHttpConfiguration extends AbpHttpConfiguration {
     avoidErrorHandling = false;
     private readonly avoidErrorHandlingKeys = [
         'Platform/User/GetUserCount',
-        'odata/OrderCount', 
+        'odata/OrderCount',
         'odata/SubscriptionSlice'
     ];
 
