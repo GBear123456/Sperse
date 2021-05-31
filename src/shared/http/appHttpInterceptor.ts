@@ -22,6 +22,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         'CFO_Dashboard_GetCategorizationStatus',
         'CRM_ContactCommunication_GetMessages',
         'CRM_Country_GetCountryStates',
+        'CRM_DocumentTemplates_GetUrl',
         'odata_LeadSlice',
         'odata_SalesSlice',
         'odata_ContactSlice',
