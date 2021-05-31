@@ -97,7 +97,7 @@ export class DocumentsComponent {
         let dir = this.fileManager.instance.getCurrentDirectory();
         let selectedItems = this.fileManager.instance.getSelectedItems().filter(item => !item.isDirectory);
         if (!selectedItems.length)
-            return this.messageService.warn(this.ls.l('FilesAreAllowedOnly', this.ls.l('Copy')));
+            return this.messageService.warn(this.ls.l('FilesAreAllowedOnly', this.ls.l('GeneratingLink')));
 
         let lastSelectedItem = selectedItems[selectedItems.length - 1];
         this.loadingService.startLoading();
