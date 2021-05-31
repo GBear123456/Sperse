@@ -121,9 +121,9 @@ export class GenerateReportDialogComponent implements OnInit {
     ];
     isSeparateGrouping = false;
     notificationToEmail: string;
-    sendReportInAttachments = false;
     emailRegEx = AppConsts.regexPatterns.email;
-    dontSendEmailNotification = false;
+    sendEmailNotification = true;
+    sendReportInAttachments = false;
     generatingStarted = false;
 
     reportTemplateItems: GenerateReportItem[] = [];
@@ -231,12 +231,7 @@ export class GenerateReportDialogComponent implements OnInit {
             departments: departments.map(item => item == this.noDepartmentItem ? null : item),
             businessEntityIds: businessEntityIds,
             bankAccountIds: [],
-            notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
-                ? new SendReportNotificationInfo({
-                    recipientUserEmailAddress: this.notificationToEmail,
-                    sendReportInAttachments: this.sendReportInAttachments
-                })
-                : null
+            notificationData: this.getNotificationData()
         });
     }
 
@@ -406,11 +401,8 @@ export class GenerateReportDialogComponent implements OnInit {
                 businessEntityId: this.selectedBusinessEntityIds[0],
                 year: this.budgetReportDate.getUTCFullYear(),
                 currencyId: currencyId,
-                notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
-                    ? new SendReportNotificationInfo({
-                        recipientUserEmailAddress: this.notificationToEmail,
-                        sendReportInAttachments: this.sendReportInAttachments
-                    }) : null
+                notificationData: this.getNotificationData()
+
             }));
     }
 
@@ -420,11 +412,7 @@ export class GenerateReportDialogComponent implements OnInit {
                 businessEntityIds: this.selectedBusinessEntityIds,
                 date: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
                 currencyId: currencyId,
-                notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
-                    ? new SendReportNotificationInfo({
-                        recipientUserEmailAddress: this.notificationToEmail,
-                        sendReportInAttachments: this.sendReportInAttachments
-                    }) : null
+                notificationData: this.getNotificationData()
             }));
     }
 
@@ -436,12 +424,16 @@ export class GenerateReportDialogComponent implements OnInit {
                 from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
                 to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
                 currencyId: currencyId,
-                notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
-                    ? new SendReportNotificationInfo({
-                        recipientUserEmailAddress: this.notificationToEmail,
-                        sendReportInAttachments: this.sendReportInAttachments
-                    }) : null
+                notificationData: this.getNotificationData()
             }));
+    }
+
+    getNotificationData(): SendReportNotificationInfo {
+        return this.sendEmailNotification && this.emailIsValidAndNotEmpty
+            ? new SendReportNotificationInfo({
+                recipientUserEmailAddress: this.notificationToEmail,
+                sendReportInAttachments: this.sendReportInAttachments
+            }) : null;
     }
 
     onReportTemplateRowPrepared(event) {
@@ -500,7 +492,7 @@ export class GenerateReportDialogComponent implements OnInit {
     }
 
     get submitButtonDisabled() {
-        return this.generatingStarted || !this.dontSendEmailNotification && !this.emailIsValidAndNotEmpty;
+        return this.generatingStarted || this.sendEmailNotification && !this.emailIsValidAndNotEmpty;
     }
 
     onCalendarOptionChanged(event) {

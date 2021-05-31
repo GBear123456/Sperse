@@ -525,11 +525,11 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     downloadReport() {
         let id = this.currentReportInfo.Id;
         if (this.reportUrls[id])
-            window.open(this.reportUrls[id], '_self');
+            window.open(this.reportUrls[id], '_blank');
         else {
             this.getReportUrlInfoObservable(id).subscribe((urlInfo: GetReportUrlOutput) => {
                 this.reportUrls[id] = urlInfo.url;
-                window.open(urlInfo.url, '_self');
+                window.open(urlInfo.url, '_blank');
             });
         }
         this.hideActionsMenu();
