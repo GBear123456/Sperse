@@ -70,7 +70,7 @@
                         <dxi-column dataField="userName" [caption]="l('UserName')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="name" [caption]="l('FirstName')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="surname" [caption]="l('LastName')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="roles" [caption]="l('Roles')" cellTemplate="roleCell" [allowSorting]="false" [renderAsync]="true"></dxi-column>
+                        <dxi-column dataField="roles" width="200px" [caption]="l('Roles')" cellTemplate="roleCell" [allowSorting]="false" [renderAsync]="true" alignment="left"></dxi-column>
                         <dxi-column dataField="emailAddress" [caption]="l('EmailAddress')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="phoneNumber" [caption]="l('PhoneNumber')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="isEmailConfirmed" [caption]="l('EmailConfirmed')" cssClass="clipboard-holder"></dxi-column>
@@ -84,10 +84,8 @@
                         </div>
 
                         <div *dxTemplate="let cellData of 'roleCell'" class="clipboard-holder">
-                        <span class="role-container">
-                            <ng-container *ngFor="let item of cellData.value; let i = index">
-                                {{(i ? ',&nbsp;': '') + item.roleName}}
-                            </ng-container>
+                        <span class="role-container" *ngIf="getRolesTitle(cellData.value) as roles" [title]="roles">
+                            {{roles}}
                         </span>
                         </div>
 
