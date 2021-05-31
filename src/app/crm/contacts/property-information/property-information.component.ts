@@ -9,7 +9,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
-import { Observable, Subscription, merge, race } from 'rxjs';
+import { Observable, Subscription, merge, forkJoin, of } from 'rxjs';
 import { filter, map, switchMap, pluck, finalize, skip, first } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 import * as moment from 'moment';
@@ -29,7 +29,8 @@ import {
     PropertyResident,
     PetFeeType,
     InvoiceSettings,
-    PestsType
+    PestsType,
+    PropertySellerDto
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
@@ -62,6 +63,8 @@ export class PropertyInformationComponent implements OnInit {
     contactInfo$: Observable<ContactInfoDto> = this.contactsService.contactInfo$;
     initialProperty: PropertyDto;
     property: PropertyDto;
+    initialPropertySellerDto: PropertySellerDto;
+    propertySellerDto: PropertySellerDto;
     propertyAddresses: AddressDto[];
     leadInfoSubscription: Subscription;
     leadTypesWithInstallment = [
@@ -177,10 +180,14 @@ export class PropertyInformationComponent implements OnInit {
             filter(Boolean),
             switchMap((leadInfo: LeadInfoDto) => {
                 this.showContractDetails = leadInfo.typeSysId == EntityTypeSys.PropertyAcquisition;
-                return this.propertyServiceProxy.getPropertyDetails(leadInfo.propertyId);
+                let sellerDetails = this.showContractDetails ? this.propertyServiceProxy.getSellerPropertyDetails(leadInfo.propertyId) : of(new PropertySellerDto());
+                return forkJoin(this.propertyServiceProxy.getPropertyDetails(leadInfo.propertyId),
+                    sellerDetails);
             })
-        ).subscribe((property) => {
+        ).subscribe(([property, sellerDto]) => {
             this.initialProperty = property;
+            this.initialPropertySellerDto = sellerDto;
+            this.propertySellerDto = sellerDto;
             this.savePropertyInfo(property);
             this.changeDetectorRef.detectChanges();
         });
@@ -272,15 +279,15 @@ export class PropertyInformationComponent implements OnInit {
     }
 
     get sinceListedDays(): number {
-        return this.property && this.property.listedDate
-            ? moment().diff(moment(this.property.listedDate), 'days')
+        return this.propertySellerDto && this.propertySellerDto.listedDate
+            ? moment().diff(moment(this.propertySellerDto.listedDate), 'days')
             : undefined;
     }
     sinceListedDaysChanged(newValue: number) {
-        this.property.listedDate = newValue ?
+        this.propertySellerDto.listedDate = newValue ?
             moment().startOf('Day').subtract(newValue, "days") :
             undefined
-        this.valueChanged();
+        this.sellerValueChanged();
     }
 
     valueChanged(successCallback?: () => void) {
@@ -297,12 +304,32 @@ export class PropertyInformationComponent implements OnInit {
         );
     }
 
+    sellerValueChanged() {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+        this.propertyServiceProxy.updateSellerPropertyDetails(this.property.id, this.propertySellerDto).pipe(
+            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+        ).subscribe(
+            () => { },
+            () => {
+                this.propertySellerDto = cloneDeep(this.initialPropertySellerDto);
+                this.changeDetectorRef.detectChanges();
+            }
+        );
+    }
+
     getDateValue(date) {
         return date && date.toDate ? date.toDate() : date;
     }
-    dateValueChanged($event, propName: string) {
-        this.property[propName] = $event.value && DateHelper.removeTimezoneOffset($event.value, true, 'from');
-        this.valueChanged();
+    dateValueChanged($event, propName: string, isSellerProperty = false) {
+        let newValue = $event.value && DateHelper.removeTimezoneOffset($event.value, true, 'from');
+        if (isSellerProperty) {
+            this.propertySellerDto[propName] = newValue;
+            this.sellerValueChanged();
+        }
+        else {
+            this.property[propName] = newValue;
+            this.valueChanged();
+        }
     }
 
     getMultipleValues(propName, items: any[]): number[] {
