@@ -202,21 +202,26 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     save() {
-        if (this.validateData()) {
-            if (this.templateEditMode)
-                this.saveTemplateData();
-            else {
-                this.data.attachments = [];
-                if (this.attachments.every((item: Partial<EmailAttachment>) => {
-                    if (item.loader)
-                        this.notifyService.info(this.ls.l('AttachmentsUploadInProgress'));
-                    else
-                        this.data.attachments.push(item);
-                    return !item.loader;
-                }))
-                    this.onSave.emit(this.data);
+        if (this.ckEditor.mode == 'source')
+            this.ckEditor.execCommand('source');
+
+        setTimeout(() => {
+            if (this.validateData()) {
+                if (this.templateEditMode)
+                    this.saveTemplateData();
+                else {
+                    this.data.attachments = [];
+                    if (this.attachments.every((item: Partial<EmailAttachment>) => {
+                        if (item.loader)
+                            this.notifyService.info(this.ls.l('AttachmentsUploadInProgress'));
+                        else
+                            this.data.attachments.push(item);
+                        return !item.loader;
+                    }))
+                        this.onSave.emit(this.data);
+                }
             }
-        }
+        }, 100);
     }
 
     validateData() {
