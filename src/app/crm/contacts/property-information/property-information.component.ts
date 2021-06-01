@@ -47,6 +47,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppliancesEnum } from './enums/appliances.enum';
 import { UtilityTypesEnum } from './enums/utilityTypes.enum';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 interface SelectBoxItem {
     displayValue: string;
@@ -66,6 +67,7 @@ export class PropertyInformationComponent implements OnInit {
     initialPropertySellerDto: PropertySellerDto;
     propertySellerDto: PropertySellerDto;
     propertyAddresses: AddressDto[];
+    disableEdit = true;
     leadInfoSubscription: Subscription;
     leadTypesWithInstallment = [
         EntityTypeSys.PropertyRentAndSale,
@@ -165,6 +167,7 @@ export class PropertyInformationComponent implements OnInit {
         private loadingService: LoadingService,
         private invoicesService: InvoicesService,
         private elementRef: ElementRef,
+        private permission: AppPermissionService,
         public ls: AppLocalizationService
     ) {}
 
@@ -189,6 +192,7 @@ export class PropertyInformationComponent implements OnInit {
             this.initialPropertySellerDto = sellerDto;
             this.propertySellerDto = sellerDto;
             this.savePropertyInfo(property);
+            this.disableEdit = !this.permission.checkCGPermission(property.contactGroupId);
             this.changeDetectorRef.detectChanges();
         });
 
