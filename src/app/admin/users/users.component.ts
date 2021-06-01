@@ -636,4 +636,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
         e.component.option('visible', false);
         e.component.hide();
     }
+  
+    getRolesTitle(list) {
+        return list.map(item => item.roleName).join(', ');
+    }
 }

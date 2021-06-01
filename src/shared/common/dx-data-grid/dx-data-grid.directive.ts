@@ -54,6 +54,9 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.component.instance.option(
+            'columnResizingMode', 'widget');
+
         this.initStateStoring();
         this.subscriptions.push(
             this.component.onInitialized.subscribe(event => {
