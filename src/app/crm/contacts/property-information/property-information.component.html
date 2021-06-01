@@ -17,6 +17,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.ownersOnTitle"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -28,6 +29,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.mortgageHolder"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -40,6 +42,7 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="propertyResidents"
                                                                [(value)]="propertySellerDto.propertyResident"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
@@ -51,6 +54,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.houseOwningTime"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-number-box>
                                             </div>
                                         </div>
@@ -63,6 +67,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -76,6 +81,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -93,6 +99,7 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
+                                                               [disabled]="disableEdit"
                                                                [(value)]="propertySellerDto.isHomeListed"
                                                                (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
@@ -106,6 +113,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -118,6 +126,7 @@
                                                                step="0"
                                                                [value]="sinceListedDays"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sinceListedDaysChanged($event.value)">
                                                 </dx-number-box>
                                             </div>
@@ -133,6 +142,7 @@
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
                                                              [value]="getDateValue(propertySellerDto.listingExpires)"
                                                              [showClearButton]="true"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="dateValueChanged($event, 'listingExpires', true)">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
@@ -148,6 +158,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.realtorName"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -159,6 +170,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.realtorContactNumber"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -170,6 +182,7 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
+                                                               [disabled]="disableEdit"
                                                                [(value)]="propertySellerDto.offersFromListing"
                                                                (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
@@ -183,6 +196,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -200,6 +214,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.anythingRecentlyUpgraded"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -211,6 +226,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.needRepairs"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -222,6 +238,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.structural"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -233,6 +250,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.mechanical"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -244,6 +262,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.waterIssues"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -255,6 +274,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.roof"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -266,6 +286,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.plumbing"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -277,6 +298,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.electrical"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -288,6 +310,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.hvac"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -299,6 +322,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.repairsOrIssuesPool"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -310,6 +334,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.landscaping"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -321,6 +346,7 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="pestsTypes"
+                                                               [disabled]="disableEdit"
                                                                [(value)]="propertySellerDto.pests"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-select-box>
@@ -334,6 +360,7 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
+                                                               [disabled]="disableEdit"
                                                                [(value)]="propertySellerDto.pestsResolved"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-select-box>
@@ -347,6 +374,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.repairsOrIssuesOther"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -363,6 +391,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.whySell"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -374,6 +403,7 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="sellPeriods"
+                                                               [disabled]="disableEdit"
                                                                [(value)]="propertySellerDto.howQuicklyWantToSell"
                                                                (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
@@ -386,6 +416,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.didntSellActions"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -407,6 +438,7 @@
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
                                                              [value]="getDateValue(propertySellerDto.tenantLeaseTerm)"
                                                              [showClearButton]="true"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="dateValueChanged($event, 'tenantLeaseTerm', true)">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
@@ -423,6 +455,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -435,6 +468,7 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
+                                                               [disabled]="disableEdit"
                                                                [(value)]="propertySellerDto.tenantPetAddendum"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-select-box>
@@ -448,6 +482,7 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="petFeeTypes"
+                                                               [disabled]="disableEdit"
                                                                [(value)]="propertySellerDto.tenantPetFeeType"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-select-box>
@@ -459,6 +494,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -477,6 +513,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -489,6 +526,7 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
+                                                               [disabled]="disableEdit"
                                                                [(value)]="propertySellerDto.hasAdditionalMortgage"
                                                                (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
@@ -502,6 +540,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -514,6 +553,7 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
+                                                               [disabled]="disableEdit"
                                                                [(value)]="propertySellerDto.areMortgagePaymentsCurrent"
                                                                (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
@@ -526,6 +566,7 @@
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -539,6 +580,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -552,6 +594,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -565,6 +608,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -577,6 +621,7 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
+                                                               [disabled]="disableEdit"
                                                                [(value)]="propertySellerDto.includeTaxesAndInsurance"
                                                                (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
@@ -590,6 +635,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -603,6 +649,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -615,6 +662,7 @@
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -627,6 +675,7 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="interestRates"
+                                                               [disabled]="disableEdit"
                                                                [(value)]="propertySellerDto.interestRateMTG1Type"
                                                                (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
@@ -639,6 +688,7 @@
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -651,6 +701,7 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="interestRates"
+                                                               [disabled]="disableEdit"
                                                                [(value)]="propertySellerDto.interestRateMTG2Type"
                                                                (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
@@ -664,6 +715,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -676,6 +728,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.mortgageLender1"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -687,6 +740,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.mortgageLender2"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -701,6 +755,7 @@
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
                                                              [value]="getDateValue(propertySellerDto.mortgageTermRenewal1)"
                                                              [showClearButton]="true"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal1', true)">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
@@ -719,6 +774,7 @@
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
                                                              [value]="getDateValue(propertySellerDto.mortgageTermRenewal2)"
                                                              [showClearButton]="true"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal2', true)">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
@@ -738,6 +794,7 @@
                                                               [stylingMode]="stylingMode"
                                                               [(value)]="propertySellerDto.sellerFinancing"
                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                              [disabled]="disableEdit"
                                                               (onValueChanged)="sellerValueChanged()"></dx-text-area>
                                             </div>
                                         </div>
@@ -755,6 +812,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -767,6 +825,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.yearLastSold"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -779,6 +838,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -792,6 +852,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -805,6 +866,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -818,6 +880,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -833,6 +896,7 @@
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
                                                              [value]="getDateValue(propertySellerDto.walkthroughDate)"
                                                              [showClearButton]="true"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="dateValueChanged($event, 'walkthroughDate', true)">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
@@ -848,6 +912,7 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="exitStrategies"
+                                                               [disabled]="disableEdit"
                                                                [(value)]="propertySellerDto.exitStrategy"
                                                                (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
@@ -860,6 +925,7 @@
                                                              [stylingMode]="stylingMode"
                                                              [(value)]="propertySellerDto.exitStrategyNotes"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
@@ -889,6 +955,7 @@
                                                              [maxLength]="256"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [stylingMode]="stylingMode"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="validateProperty($event)">
                                                     <dx-validator>
                                                         <dxi-validation-rule
@@ -908,6 +975,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="propertyTypes"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.propertyType"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -921,6 +989,7 @@
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -933,6 +1002,7 @@
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -949,6 +1019,7 @@
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
                                                              displayFormat="year"
+                                                             [disabled]="disableEdit"
                                                              [value]="yearBuilt"
                                                              (onValueChanged)="yearBuiltChanged($event.value)">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
@@ -966,6 +1037,7 @@
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -979,6 +1051,7 @@
                                                                step="0"
                                                                [stylingMode]="stylingMode"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -992,6 +1065,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.laundryInSuite"
                                                     (onValueChanged)="valueChanged()"
                                                     showClearButton="true"
@@ -1008,6 +1082,7 @@
                                                     valueExpr="value"
                                                     [items]="parking"
                                                     [stylingMode]="stylingMode"
+                                                    [disabled]="disableEdit"
                                                     [value]="getMultipleValues('parking', parking)"
                                                     (onValueChanged)="tagValueChanged('parking', $event)"
                                                 ></dx-tag-box>
@@ -1022,6 +1097,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="basement"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.basement"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1041,6 +1117,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.isCentralHeating"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1055,6 +1132,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode" 
                                                     [items]="heatingType"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.heatingType"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1069,6 +1147,7 @@
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.ac"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1083,6 +1162,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -1096,6 +1176,7 @@
                                                     valueExpr="value"
                                                     showClearButton="true"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.isHeatIncludedInCondoFees"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1111,6 +1192,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="utilityTypes"
+                                                    [disabled]="disableEdit"
                                                     [value]="getMultipleValues('utilityTypesIncluded', utilityTypes)"
                                                     (onValueChanged)="tagValueChanged('utilityTypesIncluded', $event)"
                                                 ></dx-tag-box>
@@ -1130,6 +1212,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.floorCarpet"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1144,6 +1227,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.floorHardwood"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1158,6 +1242,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.floorLVP"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1172,6 +1257,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.floorTile"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1186,6 +1272,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.floorVinyl"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1231,6 +1318,7 @@
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.corner"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1245,6 +1333,7 @@
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.end"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1258,6 +1347,7 @@
                                                                step="0"
                                                                [stylingMode]="stylingMode"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -1270,6 +1360,7 @@
                                                                step="0"
                                                                [stylingMode]="stylingMode"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -1283,6 +1374,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.den"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1297,6 +1389,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.office"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1312,6 +1405,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="appliances"
+                                                    [disabled]="disableEdit"
                                                     [value]="getMultipleValues('appliances', appliances)"
                                                     (onValueChanged)="tagValueChanged('appliances', $event)"
                                                 ></dx-tag-box>
@@ -1325,6 +1419,7 @@
                                                              showClearButton="true"
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="valueChanged()">
                                                 </dx-text-box>
                                             </div>
@@ -1343,6 +1438,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.storageInSuite"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1356,6 +1452,7 @@
                                                                step="0"
                                                                [stylingMode]="stylingMode"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -1374,6 +1471,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.dogs"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1387,6 +1485,7 @@
                                                              showClearButton="true"
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="valueChanged()">
                                                 </dx-text-box>
                                             </div>
@@ -1399,6 +1498,7 @@
                                                              showClearButton="true"
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="valueChanged()">
                                                 </dx-text-box>
                                             </div>
@@ -1412,6 +1512,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.cats"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1433,6 +1534,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yardPatioValues"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.yard"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1447,6 +1549,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yardPatioValues"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.patio"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1461,6 +1564,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.yardBalcony"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1480,6 +1584,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.secure"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1494,6 +1599,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.onSiteManager"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1508,6 +1614,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.wheelchairAccessible"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1522,6 +1629,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.walkOut"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1536,6 +1644,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.elevator"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1550,6 +1659,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.ceilingFan"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1565,6 +1675,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="firePlace"
+                                                    [disabled]="disableEdit"
                                                     [value]="getMultipleValues('fireplace', firePlace)"
                                                     (onValueChanged)="tagValueChanged('fireplace', $event)"
                                                 ></dx-tag-box>
@@ -1579,6 +1690,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.firepit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1593,6 +1705,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.petPark"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1607,6 +1720,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.communitySpace"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1621,6 +1735,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.pool"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1635,6 +1750,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.exerciseRoom"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1649,6 +1765,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.partyRoom"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1663,6 +1780,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.guestSuite"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1677,6 +1795,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.other"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-text-box>
                                             </div>
@@ -1709,6 +1828,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.condoDocuments"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1723,6 +1843,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.petApplication"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1737,6 +1858,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.intercomSetup"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-text-box>
                                             </div>
@@ -1750,6 +1872,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.additionalKeys"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1759,6 +1882,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="oneFiveDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.numberOfSets"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1773,6 +1897,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.frontDoorFob"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -1786,6 +1911,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.garageRemote"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1795,6 +1921,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="oneFiveDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.garageRemoteNumberReceived"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1809,6 +1936,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.garageKey"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1818,6 +1946,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="oneFiveDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.garageKeyNumberReceived"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1832,6 +1961,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.garageCode"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-text-box>
                                             </div>
@@ -1845,6 +1975,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.parkadeFob"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1865,6 +1996,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.parkingStall"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -1878,6 +2010,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.visitorParkingPass"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -1891,6 +2024,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.mailbox"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -1904,6 +2038,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.mailboxKey"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1913,6 +2048,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="oneFiveDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.mailboxNumberReceived"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1927,6 +2063,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.storageLockerNumber"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -1940,6 +2077,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.storageLockerKey"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1955,6 +2093,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="weekDays"
+                                                    [disabled]="disableEdit"
                                                     [value]="getMultipleValues('garbageDay', weekDays)"
                                                     (onValueChanged)="tagValueChanged('garbageDay', $event)"
                                                 ></dx-tag-box>
@@ -1970,6 +2109,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="garbageCollection"
+                                                    [disabled]="disableEdit"
                                                     [value]="getMultipleValues('garbageCollection', garbageCollection)"
                                                     (onValueChanged)="tagValueChanged('garbageCollection', $event)"
                                                 ></dx-tag-box>
@@ -1984,6 +2124,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.garbageKey"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1993,6 +2134,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="oneFiveDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.garbageNumberReceived"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>

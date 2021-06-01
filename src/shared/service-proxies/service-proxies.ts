@@ -75204,6 +75204,7 @@ export enum FireplaceType {
 
 export class PropertyDto implements IPropertyDto {
     id!: number;
+    contactGroupId!: string | undefined;
     name!: string;
     address!: CreateContactAddressInput | undefined;
     propertyType!: PropertyType | undefined;
@@ -75294,6 +75295,7 @@ export class PropertyDto implements IPropertyDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.contactGroupId = data["contactGroupId"];
             this.name = data["name"];
             this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.propertyType = data["propertyType"];
@@ -75384,6 +75386,7 @@ export class PropertyDto implements IPropertyDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["contactGroupId"] = this.contactGroupId;
         data["name"] = this.name;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["propertyType"] = this.propertyType;
@@ -75467,6 +75470,7 @@ export class PropertyDto implements IPropertyDto {
 
 export interface IPropertyDto {
     id: number;
+    contactGroupId: string | undefined;
     name: string;
     address: CreateContactAddressInput | undefined;
     propertyType: PropertyType | undefined;
