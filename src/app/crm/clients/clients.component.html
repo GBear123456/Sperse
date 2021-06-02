@@ -95,7 +95,6 @@
                                   [columnChooser]="{
                                     height: rowsViewHeight
                                   }"
-                                  [pager]="defaultGridPagerConfig"
                                   [twoWayBindingEnabled]="false"
                                   [remoteOperations]="{
                                       filtering: false,
@@ -110,6 +109,7 @@
                                   (onOptionChanged)="onOptionChanged($event)"
                                   (onEditingStart)="toggleActionsMenu($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                        <dxo-pager [visible]="true"></dxo-pager>
                         <dxo-selection selectAllMode="page"
                                        showCheckBoxesMode="always"
                                        mode="multiple">

@@ -38,7 +38,6 @@
                                   [columnAutoWidth]="true"
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
-                                  [pager]="defaultGridPagerConfig"
                                   (onOptionChanged)="onGridOptionChanged($event)"
                                   (onInitialized)="onInitialized($event)"
                                   (onContentReady)="setGridDataLoaded()"
@@ -56,7 +55,7 @@
                                 [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                                 [allowUpdating]="true">
                         </dxo-editing>
-                        <dxo-scrolling rowRenderingMode="virtual" mode="infinite"></dxo-scrolling>
+                        <dxo-scrolling mode="infinite"></dxo-scrolling>
                         <dxi-column
                                 caption=" "
                                 dataField="profileThumbnailId"
@@ -98,7 +97,7 @@
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
-                        <dxo-paging [pageSize]="20"></dxo-paging>
+                        <dxo-pager [visible]="true"></dxo-pager>
                         <dxo-group-panel [visible]="false"></dxo-group-panel>
                     </dx-data-grid>
                 </div>

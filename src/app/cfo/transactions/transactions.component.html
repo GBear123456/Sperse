@@ -152,12 +152,10 @@
                         [columnAutoWidth]="true"
                         [allowColumnResizing]="true"
                         [hoverStateEnabled]="true"
-                        [cacheEnabled]="true"
                         [columnChooser]="{
                           height: rowsViewHeight
                         }"
                         [headerFilter]="{ allowSearch: true, visible: false }"
-                        [pager]="defaultGridPagerConfig"
                         [loadPanel]="{ enabled: false }"
                         [height]="gridHeight"
                         [elementAttr]="{ class: 'with-custom-loader' }"
@@ -172,8 +170,8 @@
                                        showCheckBoxesMode="always"
                                        mode="multiple">
                         </dxo-selection>
-                        <dxo-paging [pageSize]="20"></dxo-paging>
-                        <dxo-scrolling rowRenderingMode="virtual" mode="infinite"></dxo-scrolling>
+                        <dxo-pager [visible]="true"></dxo-pager>
+                        <dxo-scrolling mode="infinite"></dxo-scrolling>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-sorting mode="multiple"></dxo-sorting>
                         <dxo-filter-row [visible]="false" [showOperationChooser]="true"></dxo-filter-row>

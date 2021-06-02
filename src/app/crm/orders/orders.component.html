@@ -65,7 +65,6 @@
                                           [allowColumnResizing]="true"
                                           [hoverStateEnabled]="true"
                                           [loadPanel]="{ enabled: false }"
-                                          [pager]="defaultGridPagerConfig"
                                           [columnChooser]="{
                                             height: rowsViewHeight
                                           }"
@@ -83,6 +82,7 @@
                                           (onContentReady)="onContentReady($event)"
                                           (onSelectionChanged)="onSelectionChanged($event)"
                                           (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                                <dxo-pager [visible]="true"></dxo-pager>
                                 <dxo-selection selectAllMode="page"
                                                showCheckBoxesMode="always"
                                                mode="multiple">
@@ -92,7 +92,7 @@
                                             [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                                             [allowUpdating]="true">
                                 </dxo-editing>
-                                <dxo-scrolling rowRenderingMode="virtual" mode="infinite"></dxo-scrolling>
+                                <dxo-scrolling mode="infinite"></dxo-scrolling>
 
                                 <dxi-column [dataField]="orderFields.Id" [caption]="l('Id')" [visible]="false"></dxi-column>
                                 <dxi-column [dataField]="orderFields.PhotoPublicId" caption=" " cellTemplate="photoTemplate"
@@ -209,7 +209,6 @@
                               [columnChooser]="{
                                 height: rowsViewHeight
                               }"
-                              [pager]="defaultGridPagerConfig"
                               [hoverStateEnabled]="true"
                               [remoteOperations]="{
                                   filtering: false,
@@ -224,13 +223,14 @@
                               (onCellClick)="onCellClick($event, 'subscriptions')"
                               (onOptionChanged)="onGridOptionChanged($event)"
                               (onContentReady)="onContentReady($event)">
+                    <dxo-pager [visible]="true"></dxo-pager>
                     <dxo-sorting mode="multiple"></dxo-sorting>
                     <dxo-group-panel [visible]="true"></dxo-group-panel>
                     <dxo-selection selectAllMode="page"
                                    showCheckBoxesMode="always"
                                    mode="multiple">
                     </dxo-selection>
-                    <dxo-scrolling rowRenderingMode="virtual" mode="infinite"></dxo-scrolling>
+                    <dxo-scrolling mode="infinite"></dxo-scrolling>
 
                     <dxo-editing mode="popup"
                                 [texts]="{editRow: ''}"
