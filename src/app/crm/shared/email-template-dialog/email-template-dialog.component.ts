@@ -124,6 +124,12 @@ export class EmailTemplateDialogComponent implements OnInit {
         skin: 'moono-lisa' //kama,moono,moono-lisa
     };
 
+    saveButtonOptions = [
+        { text: this.ls.l('Save'), selected: false },
+        { text: this.ls.l('SaveAsNew'), selected: false },
+        { text: this.ls.l('SaveAndClose'), selected: false }
+    ];
+
     constructor(
         private phonePipe: PhoneFormatPipe,
         private domSanitizer: DomSanitizer,
@@ -191,10 +197,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                 action: this.save.bind(this),
                 contextMenu: {
                     hidden: this.data.hideContextMenu,
-                    items: [
-                        { text: this.ls.l('Save'), selected: false },
-                        { text: this.ls.l('SaveAsNew'), selected: false }
-                    ],
+                    items: this.saveButtonOptions,
                     defaultIndex: 0
                 }
             }
@@ -272,20 +275,35 @@ export class EmailTemplateDialogComponent implements OnInit {
 
             this.startLoading();
             let request$: Observable<any> = this.data.templateId
-            && this.buttons[1].contextMenu.items[0].selected
-            && !this.data.addMode
-                ? this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data))
-                : this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data));
+                && !this.data.addMode && !this.isSaveAsNew()
+                    ? this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data))
+                    : this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data));
 
             request$.pipe(finalize(() => this.finishLoading())).subscribe((id: number) => {
                 if (id)
                     this.data.templateId = id;
                 this.onSave.emit(this.data);
+                if (this.isSaveAndClose())
+                    this.close();
+                else
+                    this.refresh();
             });
         } else {
             this.templateComponent.instance.option('isValid', false);
         }
         this.forceValidationBypass = true;
+    }
+
+    isSaveAsNew() {
+        return this.saveButtonOptions.some(item => {
+            return item.selected && item.text == this.ls.l('SaveAsNew');
+        });
+    }
+
+    isSaveAndClose() {
+        return this.saveButtonOptions.some(item => {
+            return item.selected && item.text == this.ls.l('SaveAndClose');
+        });
     }
 
     getTemplateName() {
