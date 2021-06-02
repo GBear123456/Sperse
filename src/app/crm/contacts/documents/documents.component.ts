@@ -189,7 +189,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             {
                 text: this.l('Edit'),
                 class: 'edit',
-                action: this.editDocument.bind(this)
+                action: this.editDocument.bind(this),
+                disabled: !this.manageAllowed
             },
             {
                 text: this.l('Download'),
