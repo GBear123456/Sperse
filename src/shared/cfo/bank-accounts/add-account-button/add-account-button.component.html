@@ -5,4 +5,4 @@
     [ngClass]="{'disabled': !createAccountAvailable}" >
      + {{l('Add_account')}}
 </a>
-<i class="dx-icon-info" [title]="l('YouHaveReachedLimit')"></i>
+<i *ngIf="!createAccountAvailable" class="dx-icon-info" [title]="l('YouHaveReachedLimit')"></i>
