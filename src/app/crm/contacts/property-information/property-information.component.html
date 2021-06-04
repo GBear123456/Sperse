@@ -2149,4 +2149,369 @@
             </div>
         </dx-scroll-view>
     </mat-tab>
+    <mat-tab [label]="ls.l('InvestmentBreakdown')" *ngIf="showContractDetails">
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="container-fluid properties">
+                <div class="row">
+                    <div class="col-md-12 section">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-6">
+                                <div class="block">
+                                    <h3>{{ ls.l('PurchaseInformation') }}</h3>
+                                    <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('PurchasePrice') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.purchasePrice"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('EquityPaidToHomeowner') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.equityPaidToHomeowner"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('ReferralFee') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.referralFee"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="block">
+                                    <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Renovations') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.renovations"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Cleaning') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.cleaning"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Inspection') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.inspection"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('LegalFees') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.legalFees"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="block">
+                                    <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('ContractTermYears') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.contractTermYears"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('ExtraYear') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-check-box [(value)]="propertyInvestmentDto.extraYear"
+                                                              [disabled]="disableEdit"
+                                                              (onValueChanged)="investmentValueChanged()">
+                                                </dx-check-box>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="block">
+                                    <h3>{{ ls.l('MonthlyHoldingCosts') }}</h3>
+                                    <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('MonthlyMortgagePayments') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.monthlyMortgagePayments"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('MonthlyTaxes') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.monthlyTaxes"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('MonthlyInsurance') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.monthlyInsurance"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('MonthlyCondoFees') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.monthlyCondoFees"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="block">
+                                    <h3>{{ ls.l('Total') }}</h3>
+                                    <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('TermUtilizedMultipliedMonthlyHolding') }}</div>
+                                            <div class="dx-field-value">
+                                                {{0 | currency: 'USD'}}
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('TotalFees') }}</div>
+                                            <div class="dx-field-value">
+                                                {{getInvestmentTotalFees() | currency: 'USD'}}
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Total') }}</div>
+                                            <div class="dx-field-value">
+                                                {{getInvestmentTotalPurchase() | currency: 'USD'}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6">
+                                <div class="block" *ngIf="acquisitionLeadDealInfo">
+                                    <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('DealAmount') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="acquisitionLeadDealInfo.dealAmount"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="dealInfoChanged($event)">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="block">
+                                    <h3>{{ ls.l('SaleInformation') }}</h3>
+                                    <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('RTOPurchasePrice') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.rtoPurchasePrice"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Deposit') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.deposit"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('MonthlyPayment') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.monthlyPayment"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('AmountAboveHolding') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.amountAboveHolding"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('SaleTermYears') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.saleTermYears"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('TermAmountAboveHolding') }}</div>
+                                            <div class="dx-field-value">
+                                                {{getTermAmountAboveHolding() | currency: 'USD'}}
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('TermMortgagePaydown') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.termMortgagePaydown"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            {{getTermMortgagePaydownDetails()}}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="block">
+                                    <h3>{{ ls.l('Total') }}</h3>
+                                    <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('TotalProfit') }}</div>
+                                            <div class="dx-field-value">
+                                                {{getTotalProfit() | currency: 'USD'}}
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Total') }}</div>
+                                            <div class="dx-field-value">
+                                                {{getTotalSale() | currency: 'USD'}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </mat-tab>
 </mat-tab-group>

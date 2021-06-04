@@ -21,6 +21,8 @@ import {
     LeadInfoDto,
     PropertyDto,
     PropertyServiceProxy,
+    LeadServiceProxy,
+    UpdateLeadDealInfoInput,
     PropertyType,
     YardPatioEnum,
     SellPeriod,
@@ -30,7 +32,9 @@ import {
     PetFeeType,
     InvoiceSettings,
     PestsType,
-    PropertySellerDto
+    PropertySellerDto,
+    PropertyInvestmentDto,
+    PropertyDealInfo
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
@@ -66,7 +70,10 @@ export class PropertyInformationComponent implements OnInit {
     property: PropertyDto;
     initialPropertySellerDto: PropertySellerDto;
     propertySellerDto: PropertySellerDto;
+    initialPropertyInvestmentDto: PropertyInvestmentDto;
+    propertyInvestmentDto: PropertyInvestmentDto;
     propertyAddresses: AddressDto[];
+    acquisitionLeadDealInfo: PropertyDealInfo;
     disableEdit = true;
     leadInfoSubscription: Subscription;
     leadTypesWithInstallment = [
@@ -163,6 +170,7 @@ export class PropertyInformationComponent implements OnInit {
         private contactsService: ContactsService,
         private route: ActivatedRoute,
         private propertyServiceProxy: PropertyServiceProxy,
+        private leadServiceProxy: LeadServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
         private loadingService: LoadingService,
         private invoicesService: InvoicesService,
@@ -184,14 +192,17 @@ export class PropertyInformationComponent implements OnInit {
             switchMap((leadInfo: LeadInfoDto) => {
                 this.showContractDetails = leadInfo.typeSysId == EntityTypeSys.PropertyAcquisition;
                 let sellerDetails = this.showContractDetails ? this.propertyServiceProxy.getSellerPropertyDetails(leadInfo.propertyId) : of(new PropertySellerDto());
+                let investmentDetails = this.showContractDetails ? this.propertyServiceProxy.getPropertyInvestmentDetails(leadInfo.propertyId) : of(new PropertyInvestmentDto());
+                let deals = this.showContractDetails ? this.propertyServiceProxy.getDeals(leadInfo.propertyId) : of(<PropertyDealInfo[]>[]);
                 return forkJoin(this.propertyServiceProxy.getPropertyDetails(leadInfo.propertyId),
-                    sellerDetails);
+                    sellerDetails, investmentDetails, deals);
             })
-        ).subscribe(([property, sellerDto]) => {
+        ).subscribe(([property, sellerDto, investmentDto, deals]) => {
             this.initialProperty = property;
-            this.initialPropertySellerDto = sellerDto;
-            this.propertySellerDto = sellerDto;
+            this.initialPropertySellerDto = this.propertySellerDto = sellerDto;
+            this.initialPropertyInvestmentDto = this.propertyInvestmentDto = investmentDto;
             this.savePropertyInfo(property);
+            this.acquisitionLeadDealInfo = deals.find(v => v.leadTypeSysId == EntityTypeSys.PropertyAcquisition);
             this.disableEdit = !this.permission.checkCGPermission(property.contactGroupId);
             this.changeDetectorRef.detectChanges();
         });
@@ -294,6 +305,43 @@ export class PropertyInformationComponent implements OnInit {
         this.sellerValueChanged();
     }
 
+    getInvestmentTotalFees() {
+        return this.sumPropertyValues(this.propertyInvestmentDto.referralFee,
+            this.propertyInvestmentDto.renovations,
+            this.propertyInvestmentDto.cleaning,
+            this.propertyInvestmentDto.inspection,
+            this.propertyInvestmentDto.legalFees);
+    }
+
+    getInvestmentTotalPurchase() {
+        return this.sumPropertyValues(this.getInvestmentTotalFees(), this.propertyInvestmentDto.purchasePrice);
+    }
+
+    getTermAmountAboveHolding() {
+        return (this.propertyInvestmentDto.saleTermYears || 0) * 12 * (this.propertyInvestmentDto.amountAboveHolding || 0);
+    }
+
+    getTotalProfit() {
+        return this.getTermAmountAboveHolding() + (this.propertyInvestmentDto.termMortgagePaydown || 0);
+    }
+
+    getTotalSale() {
+        return this.getTotalProfit() + (this.propertyInvestmentDto.rtoPurchasePrice || 0);
+    }
+
+    getTermMortgagePaydownDetails() {
+        if (!this.propertyInvestmentDto.saleTermYears || !this.propertyInvestmentDto.monthlyMortgagePayments)
+            return "";
+        let months = this.propertyInvestmentDto.saleTermYears * 12;
+        let monthlyAmount = (this.propertyInvestmentDto.termMortgagePaydown || 0) / months;
+        let percent = monthlyAmount / this.propertyInvestmentDto.monthlyMortgagePayments * 100;
+        return `(based on ${+percent.toFixed(2)}% of mortgage payment amount $${+monthlyAmount.toFixed(2)}x${months})`;
+    }
+
+    sumPropertyValues(...values: number[]): number {
+        return values.reduce((prev, current) => prev + current || 0, 0);
+    }
+
     valueChanged(successCallback?: () => void) {
         this.loadingService.startLoading(this.elementRef.nativeElement);
         this.propertyServiceProxy.updatePropertyDetails(this.property).pipe(
@@ -319,6 +367,31 @@ export class PropertyInformationComponent implements OnInit {
                 this.changeDetectorRef.detectChanges();
             }
         );
+    }
+
+    investmentValueChanged() {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+        this.propertyServiceProxy.updatePropertyInvestmentDetails(this.property.id, this.propertyInvestmentDto).pipe(
+            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+        ).subscribe(
+            () => { },
+            () => {
+                this.propertyInvestmentDto = cloneDeep(this.initialPropertyInvestmentDto);
+                this.changeDetectorRef.detectChanges();
+            }
+        );
+    }
+
+    dealInfoChanged($event) {
+        console.log($event);
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+        this.leadServiceProxy.updateDealInfo(new UpdateLeadDealInfoInput({
+            leadId: this.acquisitionLeadDealInfo.leadId,
+            dealAmount: this.acquisitionLeadDealInfo.dealAmount,
+            installmentAmount: this.acquisitionLeadDealInfo.installmentAmount
+        })).pipe(
+            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+        ).subscribe(() => { });
     }
 
     getDateValue(date) {

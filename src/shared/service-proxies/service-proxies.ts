@@ -28512,6 +28512,61 @@ export class PropertyServiceProxy {
     }
 
     /**
+     * @id (optional) 
+     * @return Success
+     */
+    getPropertyInvestmentDetails(id: number | null | undefined): Observable<PropertyInvestmentDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/GetPropertyInvestmentDetails?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPropertyInvestmentDetails(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPropertyInvestmentDetails(<any>response_);
+                } catch (e) {
+                    return <Observable<PropertyInvestmentDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PropertyInvestmentDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPropertyInvestmentDetails(response: HttpResponseBase): Observable<PropertyInvestmentDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PropertyInvestmentDto.fromJS(resultData200) : new PropertyInvestmentDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PropertyInvestmentDto>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -28600,6 +28655,61 @@ export class PropertyServiceProxy {
     }
 
     protected processUpdateSellerPropertyDetails(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @body (optional) 
+     * @return Success
+     */
+    updatePropertyInvestmentDetails(id: number | null | undefined, body: PropertyInvestmentDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdatePropertyInvestmentDetails?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdatePropertyInvestmentDetails(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdatePropertyInvestmentDetails(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdatePropertyInvestmentDetails(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -75881,6 +75991,114 @@ export interface IPropertySellerDto {
     walkthroughDate: moment.Moment | undefined;
     exitStrategy: ExitStrategy | undefined;
     exitStrategyNotes: string | undefined;
+}
+
+export class PropertyInvestmentDto implements IPropertyInvestmentDto {
+    purchasePrice!: number | undefined;
+    equityPaidToHomeowner!: number | undefined;
+    referralFee!: number | undefined;
+    renovations!: number | undefined;
+    cleaning!: number | undefined;
+    inspection!: number | undefined;
+    legalFees!: number | undefined;
+    contractTermYears!: number | undefined;
+    extraYear!: boolean | undefined;
+    monthlyMortgagePayments!: number | undefined;
+    monthlyTaxes!: number | undefined;
+    monthlyInsurance!: number | undefined;
+    monthlyCondoFees!: number | undefined;
+    rtoPurchasePrice!: number | undefined;
+    deposit!: number | undefined;
+    monthlyPayment!: number | undefined;
+    amountAboveHolding!: number | undefined;
+    saleTermYears!: number | undefined;
+    termMortgagePaydown!: number | undefined;
+
+    constructor(data?: IPropertyInvestmentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.purchasePrice = data["purchasePrice"];
+            this.equityPaidToHomeowner = data["equityPaidToHomeowner"];
+            this.referralFee = data["referralFee"];
+            this.renovations = data["renovations"];
+            this.cleaning = data["cleaning"];
+            this.inspection = data["inspection"];
+            this.legalFees = data["legalFees"];
+            this.contractTermYears = data["contractTermYears"];
+            this.extraYear = data["extraYear"];
+            this.monthlyMortgagePayments = data["monthlyMortgagePayments"];
+            this.monthlyTaxes = data["monthlyTaxes"];
+            this.monthlyInsurance = data["monthlyInsurance"];
+            this.monthlyCondoFees = data["monthlyCondoFees"];
+            this.rtoPurchasePrice = data["rtoPurchasePrice"];
+            this.deposit = data["deposit"];
+            this.monthlyPayment = data["monthlyPayment"];
+            this.amountAboveHolding = data["amountAboveHolding"];
+            this.saleTermYears = data["saleTermYears"];
+            this.termMortgagePaydown = data["termMortgagePaydown"];
+        }
+    }
+
+    static fromJS(data: any): PropertyInvestmentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PropertyInvestmentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["purchasePrice"] = this.purchasePrice;
+        data["equityPaidToHomeowner"] = this.equityPaidToHomeowner;
+        data["referralFee"] = this.referralFee;
+        data["renovations"] = this.renovations;
+        data["cleaning"] = this.cleaning;
+        data["inspection"] = this.inspection;
+        data["legalFees"] = this.legalFees;
+        data["contractTermYears"] = this.contractTermYears;
+        data["extraYear"] = this.extraYear;
+        data["monthlyMortgagePayments"] = this.monthlyMortgagePayments;
+        data["monthlyTaxes"] = this.monthlyTaxes;
+        data["monthlyInsurance"] = this.monthlyInsurance;
+        data["monthlyCondoFees"] = this.monthlyCondoFees;
+        data["rtoPurchasePrice"] = this.rtoPurchasePrice;
+        data["deposit"] = this.deposit;
+        data["monthlyPayment"] = this.monthlyPayment;
+        data["amountAboveHolding"] = this.amountAboveHolding;
+        data["saleTermYears"] = this.saleTermYears;
+        data["termMortgagePaydown"] = this.termMortgagePaydown;
+        return data; 
+    }
+}
+
+export interface IPropertyInvestmentDto {
+    purchasePrice: number | undefined;
+    equityPaidToHomeowner: number | undefined;
+    referralFee: number | undefined;
+    renovations: number | undefined;
+    cleaning: number | undefined;
+    inspection: number | undefined;
+    legalFees: number | undefined;
+    contractTermYears: number | undefined;
+    extraYear: boolean | undefined;
+    monthlyMortgagePayments: number | undefined;
+    monthlyTaxes: number | undefined;
+    monthlyInsurance: number | undefined;
+    monthlyCondoFees: number | undefined;
+    rtoPurchasePrice: number | undefined;
+    deposit: number | undefined;
+    monthlyPayment: number | undefined;
+    amountAboveHolding: number | undefined;
+    saleTermYears: number | undefined;
+    termMortgagePaydown: number | undefined;
 }
 
 export class PropertyDealInfo implements IPropertyDealInfo {
