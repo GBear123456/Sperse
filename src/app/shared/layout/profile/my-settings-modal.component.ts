@@ -19,7 +19,7 @@ import { forkJoin } from 'rxjs';
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { GetCurrentUserProfileEditDto, CurrentUserProfileEditDto, SettingScopes, UserEmailSettings,
+import { GetCurrentUserProfileEditDto, CurrentUserProfileEditDto, SettingScopes, UserEmailSettings, EmailFromSettings, EmailSmtpSettings,
     ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -75,7 +75,7 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
 
     public tagsList = [];
     public tagsTooltipVisible = false;
-    public userEmailSettings = new UserEmailSettings();
+    public userEmailSettings: UserEmailSettings;
     public isGoogleAuthenticatorEnabled = false;
     public isPhoneNumberConfirmed: boolean;
     public isPhoneNumberEmpty = false;
@@ -101,7 +101,11 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
         private settingService: SettingService,
         private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        this.userEmailSettings = new UserEmailSettings();
+        this.userEmailSettings.from = new EmailFromSettings();
+        this.userEmailSettings.smtp = new EmailSmtpSettings();
+    }
 
     ngAfterViewChecked(): void {
         //Temporary fix for: https://github.com/valor-software/ngx-bootstrap/issues/1508
@@ -112,7 +116,16 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     ngOnInit() {
         this.modalDialog.startLoading();
         this.profileService.getEmailSettings().subscribe((settings: UserEmailSettings) => {
-            this.userEmailSettings.emailSignatureHtml = settings.emailSignatureHtml;
+            this.userEmailSettings.from.address = settings.from.address;
+            this.userEmailSettings.from.displayName = settings.from.displayName;
+            this.userEmailSettings.signatureHtml = settings.signatureHtml;
+            this.userEmailSettings.smtp.host = settings.smtp.host;
+            this.userEmailSettings.smtp.port = settings.smtp.port;
+            this.userEmailSettings.smtp.enableSsl = settings.smtp.enableSsl;
+            this.userEmailSettings.smtp.useDefaultCredentials = settings.smtp.useDefaultCredentials;
+            this.userEmailSettings.smtp.domain = settings.smtp.domain;
+            this.userEmailSettings.smtp.userName = settings.smtp.userName;
+            this.userEmailSettings.smtp.password = settings.smtp.password;
             this.changeDetectorRef.detectChanges();
         });
         this.profileService.getCurrentUserProfileForEdit()

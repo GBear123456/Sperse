@@ -74803,8 +74803,110 @@ export interface IUpdateMonthlyGoalInput {
     monthlyGoal: number | undefined;
 }
 
+export class EmailFromSettings implements IEmailFromSettings {
+    address!: string | undefined;
+    displayName!: string | undefined;
+
+    constructor(data?: IEmailFromSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.address = data["address"];
+            this.displayName = data["displayName"];
+        }
+    }
+
+    static fromJS(data: any): EmailFromSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailFromSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["address"] = this.address;
+        data["displayName"] = this.displayName;
+        return data; 
+    }
+}
+
+export interface IEmailFromSettings {
+    address: string | undefined;
+    displayName: string | undefined;
+}
+
+export class EmailSmtpSettings implements IEmailSmtpSettings {
+    host!: string | undefined;
+    port!: number | undefined;
+    enableSsl!: boolean | undefined;
+    useDefaultCredentials!: boolean | undefined;
+    domain!: string | undefined;
+    userName!: string | undefined;
+    password!: string | undefined;
+
+    constructor(data?: IEmailSmtpSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.host = data["host"];
+            this.port = data["port"];
+            this.enableSsl = data["enableSsl"];
+            this.useDefaultCredentials = data["useDefaultCredentials"];
+            this.domain = data["domain"];
+            this.userName = data["userName"];
+            this.password = data["password"];
+        }
+    }
+
+    static fromJS(data: any): EmailSmtpSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailSmtpSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["host"] = this.host;
+        data["port"] = this.port;
+        data["enableSsl"] = this.enableSsl;
+        data["useDefaultCredentials"] = this.useDefaultCredentials;
+        data["domain"] = this.domain;
+        data["userName"] = this.userName;
+        data["password"] = this.password;
+        return data; 
+    }
+}
+
+export interface IEmailSmtpSettings {
+    host: string | undefined;
+    port: number | undefined;
+    enableSsl: boolean | undefined;
+    useDefaultCredentials: boolean | undefined;
+    domain: string | undefined;
+    userName: string | undefined;
+    password: string | undefined;
+}
+
 export class UserEmailSettings implements IUserEmailSettings {
-    emailSignatureHtml!: string | undefined;
+    from!: EmailFromSettings | undefined;
+    signatureHtml!: string | undefined;
+    smtp!: EmailSmtpSettings | undefined;
 
     constructor(data?: IUserEmailSettings) {
         if (data) {
@@ -74817,7 +74919,9 @@ export class UserEmailSettings implements IUserEmailSettings {
 
     init(data?: any) {
         if (data) {
-            this.emailSignatureHtml = data["emailSignatureHtml"];
+            this.from = data["from"] ? EmailFromSettings.fromJS(data["from"]) : <any>undefined;
+            this.signatureHtml = data["signatureHtml"];
+            this.smtp = data["smtp"] ? EmailSmtpSettings.fromJS(data["smtp"]) : <any>undefined;
         }
     }
 
@@ -74830,13 +74934,17 @@ export class UserEmailSettings implements IUserEmailSettings {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["emailSignatureHtml"] = this.emailSignatureHtml;
+        data["from"] = this.from ? this.from.toJSON() : <any>undefined;
+        data["signatureHtml"] = this.signatureHtml;
+        data["smtp"] = this.smtp ? this.smtp.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IUserEmailSettings {
-    emailSignatureHtml: string | undefined;
+    from: EmailFromSettings | undefined;
+    signatureHtml: string | undefined;
+    smtp: EmailSmtpSettings | undefined;
 }
 
 export enum PropertyType {
