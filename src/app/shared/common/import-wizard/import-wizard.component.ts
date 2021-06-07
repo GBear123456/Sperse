@@ -840,10 +840,10 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
                 item => item.name.toLowerCase() == value.toLowerCase());
         else if (key == 'paymentPeriodType')
             return [
-                RecurringPaymentFrequency.Monthly, 
-                RecurringPaymentFrequency.Annual, 
-                RecurringPaymentFrequency.LifeTime
-            ].includes(capitalize(value));
+                RecurringPaymentFrequency.Monthly.toLowerCase(), 
+                RecurringPaymentFrequency.Annual.toLowerCase(), 
+                RecurringPaymentFrequency.LifeTime.toLowerCase()
+            ].includes(value.trim().toLowerCase());
         else
 
             return AppConsts.regexPatterns[key].test(value);
