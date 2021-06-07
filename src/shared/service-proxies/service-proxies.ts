@@ -62498,7 +62498,15 @@ export interface IImportPropertyInput {
     propertyAddress: ImportAddressInput | undefined;
 }
 
+export enum RecurringPaymentFrequency {
+    Monthly = "Monthly", 
+    Annual = "Annual", 
+    LifeTime = "LifeTime", 
+}
+
 export class ImportSubscriptionInput implements IImportSubscriptionInput {
+    productCode!: string | undefined;
+    paymentPeriodType!: RecurringPaymentFrequency | undefined;
     systemType!: string | undefined;
     code!: string | undefined;
     name!: string | undefined;
@@ -62517,6 +62525,8 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
 
     init(data?: any) {
         if (data) {
+            this.productCode = data["productCode"];
+            this.paymentPeriodType = data["paymentPeriodType"];
             this.systemType = data["systemType"];
             this.code = data["code"];
             this.name = data["name"];
@@ -62535,6 +62545,8 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["productCode"] = this.productCode;
+        data["paymentPeriodType"] = this.paymentPeriodType;
         data["systemType"] = this.systemType;
         data["code"] = this.code;
         data["name"] = this.name;
@@ -62546,6 +62558,8 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
 }
 
 export interface IImportSubscriptionInput {
+    productCode: string | undefined;
+    paymentPeriodType: RecurringPaymentFrequency | undefined;
     systemType: string | undefined;
     code: string | undefined;
     name: string | undefined;
@@ -70929,12 +70943,6 @@ export interface ISubscriptionInput {
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     amount: number | undefined;
-}
-
-export enum RecurringPaymentFrequency {
-    Monthly = "Monthly", 
-    Annual = "Annual", 
-    LifeTime = "LifeTime", 
 }
 
 export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInput {
