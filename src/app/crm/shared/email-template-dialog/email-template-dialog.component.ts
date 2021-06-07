@@ -23,6 +23,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import {
     EmailTemplateServiceProxy,
     GetTemplatesResponse,
@@ -50,7 +51,7 @@ import { AppPermissions } from '@shared/AppPermissions';
     selector: 'email-template-dialog',
     templateUrl: 'email-template-dialog.component.html',
     styleUrls: [ 'email-template-dialog.component.less' ],
-    providers: [ PhoneFormatPipe, EmailTemplateServiceProxy ],
+    providers: [ CacheHelper, PhoneFormatPipe, EmailTemplateServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailTemplateDialogComponent implements OnInit {
@@ -135,6 +136,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         private domSanitizer: DomSanitizer,
         private notifyService: NotifyService,
         private profileService: ProfileService,
+        private cacheHelper: CacheHelper,
         private contactProxy: ContactServiceProxy,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
@@ -198,8 +200,10 @@ export class EmailTemplateDialogComponent implements OnInit {
                 contextMenu: {
                     hidden: this.data.hideContextMenu,
                     items: this.saveButtonOptions,
+                    cacheKey: this.cacheHelper.getCacheKey(
+                        'save_option_active_index', 'EmailTemplateDialog'),
                     defaultIndex: 0
-                }
+                },
             }
         ];
     }

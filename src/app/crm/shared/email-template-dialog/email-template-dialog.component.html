@@ -1,7 +1,8 @@
 <modal-dialog [title]="data.title"
               [titleClearButton]="false"
               [buttons]="buttons"
-              [editTitle]="false">
+              [editTitle]="false"
+              (onContextItemChanged)="save()">
     <ng-container headerContent>
         <dx-select-box
             name="template"
