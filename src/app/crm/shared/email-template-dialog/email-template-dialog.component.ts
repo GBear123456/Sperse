@@ -634,20 +634,25 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.onTemplateCreate.emit(data);
     }
 
-    deleteTemplate(e, templateId: number) {
-        this.startLoading();
-        this.emailTemplateProxy.delete(templateId)
-            .pipe(finalize(() => this.finishLoading()))
-            .subscribe(() => {
-                this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
-                this.refresh();
-                if (this.data.templateId === templateId) {
-                    this.data.templateId = null;
-                }
-                this.onTemplateDelete.emit(templateId);
-            });
-        e.stopPropagation();
-        e.preventDefault();
+    deleteTemplate(event, template, component) {
+        component.instance.option('opened', false);
+        abp.message.confirm(this.ls.l('DeleteItemConfirmation', template.name), (isConfimed) => {
+            if (isConfimed) {
+                this.startLoading();
+                this.emailTemplateProxy.delete(template.id)
+                    .pipe(finalize(() => this.finishLoading()))
+                    .subscribe(() => {
+                        this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
+                        this.refresh();
+                        if (this.data.templateId === template.id) {
+                            this.data.templateId = null;
+                        }
+                        this.onTemplateDelete.emit(template.id);
+                    });
+            }
+        });
+        event.stopPropagation();
+        event.preventDefault();
     }
 
     openDocuments() {
