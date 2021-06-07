@@ -22,7 +22,8 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmImportDialog } from './confirm-import-dialog/confirm-import-dialog.component';
 import { AppConsts } from '@shared/AppConsts';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
-import { ImportServiceProxy, ImportFieldInfoDto, CountryDto } from '@shared/service-proxies/service-proxies';
+import { RecurringPaymentFrequency, ImportServiceProxy, 
+    ImportFieldInfoDto, CountryDto } from '@shared/service-proxies/service-proxies';
 import { StringHelper } from '@root/shared/helpers/StringHelper';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
@@ -90,7 +91,8 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         'stateId',
         'rating',
         'gender',
-        'stage'
+        'stage',
+        'paymentPeriodType'
     ];
     private excludeCCValidation = ['UK'];
     private similarFieldsIndex: any = {};
@@ -836,7 +838,14 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
         else if (key == 'stage')
             return this.validateFieldsValues.stages.some(
                 item => item.name.toLowerCase() == value.toLowerCase());
+        else if (key == 'paymentPeriodType')
+            return [
+                RecurringPaymentFrequency.Monthly, 
+                RecurringPaymentFrequency.Annual, 
+                RecurringPaymentFrequency.LifeTime
+            ].includes(capitalize(value));
         else
+
             return AppConsts.regexPatterns[key].test(value);
     }
 
