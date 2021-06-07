@@ -348,6 +348,12 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     partnerTypes = [];
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
+
+    readonly importSubscriptionFields = {
+        productCode: '',
+        paymentPeriodType: ''
+    }
+
     readonly mappingObjectNames = {
         personalInfo: ImportPersonalInput.fromJS({interests: []}),
         fullName: ImportFullName.fromJS({}),
@@ -359,11 +365,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         workFullAddress: ImportAddressInput.fromJS({}),
         customFields: CustomFieldsInput.fromJS({}),
         requestCustomInfo: CustomFieldsInput.fromJS({}),
-        subscription1: ImportSubscriptionInput.fromJS({}),
-        subscription2: ImportSubscriptionInput.fromJS({}),
-        subscription3: ImportSubscriptionInput.fromJS({}),
-        subscription4: ImportSubscriptionInput.fromJS({}),
-        subscription5: ImportSubscriptionInput.fromJS({}),
+        subscription1: this.importSubscriptionFields,
+        subscription2: this.importSubscriptionFields,
+        subscription3: this.importSubscriptionFields,
+        subscription4: this.importSubscriptionFields,
+        subscription5: this.importSubscriptionFields,
         propertyInfo: ImportPropertyInput.fromJS({}),
         propertyAddress: ImportAddressInput.fromJS({}),
         classificationInfo: ImportClassificationInput.fromJS({lists: [], tags: []})
