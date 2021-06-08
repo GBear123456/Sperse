@@ -511,7 +511,6 @@ export class ContactsService {
         dialogComponent.onSave.subscribe((data) => {
             if (data && saveCallback)
                 saveCallback(data)
-            dialogComponent.close();
         });
 
         if (templateType == EmailTemplateType.Invoice) {

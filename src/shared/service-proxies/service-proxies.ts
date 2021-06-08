@@ -15229,9 +15229,10 @@ export class DocumentTemplatesServiceProxy {
 
     /**
      * @folderId (optional) 
+     * @infiniteValidityPeriod (optional) 
      * @return Success
      */
-    getUrl(folderId: number | null | undefined, fileName: string): Observable<GetFileUrlDto> {
+    getUrl(folderId: number | null | undefined, fileName: string, infiniteValidityPeriod: boolean | null | undefined): Observable<GetFileUrlDto> {
         let url_ = this.baseUrl + "/api/services/CRM/DocumentTemplates/GetUrl?";
         if (folderId !== undefined)
             url_ += "folderId=" + encodeURIComponent("" + folderId) + "&"; 
@@ -15239,6 +15240,8 @@ export class DocumentTemplatesServiceProxy {
             throw new Error("The parameter 'fileName' must be defined and cannot be null.");
         else
             url_ += "fileName=" + encodeURIComponent("" + fileName) + "&"; 
+        if (infiniteValidityPeriod !== undefined)
+            url_ += "infiniteValidityPeriod=" + encodeURIComponent("" + infiniteValidityPeriod) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
