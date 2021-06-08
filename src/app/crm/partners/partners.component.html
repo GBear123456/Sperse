@@ -8,13 +8,15 @@
                   [showToggleFullScreenButton]="true"
                   [showToggleColumnSelectorButton]="showDataGrid || showPivotGrid"
                   [showStateResetButton]="showDataGrid"
+                  [showTotalCount]="true"
+                  [totalCount]="totalCount"
+                  [totalErrorMsg]="totalErrorMsg"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="invalidate()"
                   (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <span *ngIf="totalCount !== undefined" class="total-count">({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
@@ -81,7 +83,7 @@
             <div class="portlet-body">
                 <div id="ClientsTable">
                     <ghost-list [hidden]="isDataLoaded"></ghost-list>
-                    <dx-data-grid class="main-component-view"
+                    <dx-data-grid class="main-component-view limitedPagerTotal"
                                   accesskey="narrowHeaderPanel"
                                   [rowDragging]="{
                                       cursorOffset: {x: 30},
@@ -100,13 +102,13 @@
                                   }"
                                   [remoteOperations]="{ filtering: false, grouping: false, groupPaging: true, paging: true, sorting: true, summary: true }"
                                   [loadPanel]="{ enabled: false }"
-                                  [pager]="defaultGridPagerConfig"
                                   (onOptionChanged)="onGridOptionChanged($event)"
                                   (onContentReady)="onContentReady($event)"
                                   (onCellClick)="onCellClick($event)"
                                   (onEditingStart)="toggleActionsMenu($event)"
                                   (onSelectionChanged)="onSelectionChanged($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                        <dxo-pager [visible]="true"></dxo-pager>
                         <dxo-selection selectAllMode="page"
                                        showCheckBoxesMode="always"
                                        mode="multiple">
@@ -116,7 +118,7 @@
                             [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                             [allowUpdating]="true">
                         </dxo-editing>
-                        <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                        <dxo-scrolling mode="infinite"></dxo-scrolling>
                         <dxi-column cssClass="stars" [width]="40"
                                     [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                         <dxi-column [dataField]="partnerFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
@@ -185,7 +187,6 @@
                             </bank-code-letters>
                         </div>
                         <dxo-sorting mode="multiple"></dxo-sorting>
-                        <dxo-paging [pageSize]="20"></dxo-paging>
                         <dxo-group-panel [visible]="true"></dxo-group-panel>
                         <dxo-summary>
                             <dxi-group-item [column]="partnerFields.Id"

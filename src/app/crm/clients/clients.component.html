@@ -8,13 +8,15 @@
                   [showReloadButton]="ui.showReload"
                   [showToggleColumnSelectorButton]="showDataGrid || showPivotGrid"
                   [showStateResetButton]="showDataGrid"
+                  [showTotalCount]="true"
+                  [totalCount]="totalCount"
+                  [totalErrorMsg]="totalErrorMsg"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="refresh()"
                   (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
-        <span *ngIf="totalCount !== undefined" class="total-count">({{ totalCount | number }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
@@ -87,14 +89,12 @@
                                   [dataSource]="dataSource"
                                   [allowColumnReordering]="true"
                                   [columnAutoWidth]="true"
-                                  [cacheEnabled]="false"
                                   [allowColumnResizing]="true"
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
                                   [columnChooser]="{
                                     height: rowsViewHeight
                                   }"
-                                  [pager]="defaultGridPagerConfig"
                                   [twoWayBindingEnabled]="false"
                                   [remoteOperations]="{
                                       filtering: false,
@@ -109,6 +109,7 @@
                                   (onOptionChanged)="onOptionChanged($event)"
                                   (onEditingStart)="toggleActionsMenu($event)"
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                        <dxo-pager [visible]="true"></dxo-pager>
                         <dxo-selection selectAllMode="page"
                                        showCheckBoxesMode="always"
                                        mode="multiple">
@@ -118,7 +119,7 @@
                             [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                             [allowUpdating]="true">
                         </dxo-editing>
-                        <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                        <dxo-scrolling mode="infinite"></dxo-scrolling>
                         <dxi-column cssClass="stars"
                                     [width]="40"
                                     [showInColumnChooser]="false"

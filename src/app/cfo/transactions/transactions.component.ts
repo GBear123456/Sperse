@@ -2,8 +2,8 @@
 import {
     Component,
     OnInit,
-    AfterViewInit,
     OnDestroy,
+    AfterViewInit,
     Injector,
     ViewChild,
     ElementRef,
@@ -188,7 +188,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     private readonly totalDataSourceURI = 'TransactionTotal';
     private readonly reportSourceURI = 'TransactionReport';
     private filters: FilterModel[];
-    private rootComponent: any;
     private cashFlowCategoryFilter = [];
     private filterQuery: Object;
     private dateFilter: FilterModel = new FilterModel({
@@ -209,6 +208,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     public transactionsFilterQuery: any[];
 
     public countDataSource: DataSource;
+    public totalErrorMsg: string;
     public totalCount: number;
 
     public manageAllowed = this._cfoService.classifyTransactionsAllowed(false);
@@ -408,8 +408,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 url: this.getODataUrl(this.dataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.moveDropdownsToHost();
-                    this.isDataLoaded = false;
+                    this.moveDropdownsToHost();                    
                     this.changeDetectionRef.detectChanges();
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     const orderBy = request.params.$orderby;
@@ -456,13 +455,18 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 url: this.getODataUrl(this.countDataSourceURI),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.totalCount = null;
+                    this.totalCount = this.totalErrorMsg = undefined;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (count: any) => {
-                    this.totalCount = count;
-                    this.changeDetectionRef.detectChanges();
+                    if (!isNaN(count)) {
+                        this.totalCount = count;
+                        this.changeDetectionRef.detectChanges();
+                    }
+                },
+                errorHandler: (e: any) => {
+                    this.totalErrorMsg = this.l('AnHttpErrorOccured');
                 }
             })
         });
@@ -601,9 +605,8 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         });
     }
 
-    ngAfterViewInit(): void {
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
+    ngAfterViewInit() {
+        super.activate();
     }
 
     reload() {
@@ -1112,6 +1115,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
     }
 
     processFilterInternal() {
+        this.isDataLoaded = false;
         let filterQuery$: Observable<string> = this.processODataFilter(
             this.dataGrid.instance,
             this.dataSourceURI,
@@ -1230,7 +1234,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     let categories = categorizationTree.filter(item => this.isCategory(item)),
                         selectedCount = selectedIds.length,
                         totalCount = categories.length;
-            
+
                     if (totalCount > 0 && selectedCount == totalCount)
                         filter.push(`not(${key} eq null)`);
                     else if (selectedCount > totalCount - selectedCount) {
@@ -1368,7 +1372,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.setGridDataLoaded();
         this.onSelectionChanged(event, true);
         this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
-        event.component.updateDimensions();
     }
 
     categorizeTransactions($event) {
@@ -1688,12 +1691,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             hostElement.appendChild(this.accountFilterContainer.nativeElement);
     }
 
-    ngOnDestroy() {
-        this.filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
-        super.ngOnDestroy();
-    }
-
     activate() {
         super.activate();
         this.initFiltering();
@@ -1713,7 +1710,6 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         }
 
         this.synchProgressComponent.activate();
-        this.rootComponent.overflowHidden(true);
         this.dataGrid.instance.repaint();
     }
 
@@ -1723,6 +1719,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         this.moveDropdownsToHost();
         this.filtersService.unsubscribe();
         this.synchProgressComponent.deactivate();
-        this.rootComponent.overflowHidden(false);
+    }
+
+    ngOnDestroy() {
+        this.deactivate();
     }
 }
