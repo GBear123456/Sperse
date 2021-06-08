@@ -75994,25 +75994,29 @@ export interface IPropertySellerDto {
 }
 
 export class PropertyInvestmentDto implements IPropertyInvestmentDto {
-    purchasePrice!: number | undefined;
     equityPaidToHomeowner!: number | undefined;
     referralFee!: number | undefined;
     renovations!: number | undefined;
     cleaning!: number | undefined;
     inspection!: number | undefined;
     legalFees!: number | undefined;
-    contractTermYears!: number | undefined;
+    otherPreparationFees!: number | undefined;
+    contractTermFrom!: moment.Moment | undefined;
+    contractTermTo!: moment.Moment | undefined;
     extraYear!: boolean | undefined;
     monthlyMortgagePayments!: number | undefined;
     monthlyTaxes!: number | undefined;
     monthlyInsurance!: number | undefined;
     monthlyCondoFees!: number | undefined;
+    otherMonthlyFees!: number | undefined;
+    termUtilizedMonths!: number | undefined;
     rtoPurchasePrice!: number | undefined;
     deposit!: number | undefined;
     monthlyPayment!: number | undefined;
     amountAboveHolding!: number | undefined;
-    saleTermYears!: number | undefined;
-    termMortgagePaydown!: number | undefined;
+    saleTermFrom!: moment.Moment | undefined;
+    saleTermTo!: moment.Moment | undefined;
+    termMortgagePercent!: number | undefined;
 
     constructor(data?: IPropertyInvestmentDto) {
         if (data) {
@@ -76025,25 +76029,29 @@ export class PropertyInvestmentDto implements IPropertyInvestmentDto {
 
     init(data?: any) {
         if (data) {
-            this.purchasePrice = data["purchasePrice"];
             this.equityPaidToHomeowner = data["equityPaidToHomeowner"];
             this.referralFee = data["referralFee"];
             this.renovations = data["renovations"];
             this.cleaning = data["cleaning"];
             this.inspection = data["inspection"];
             this.legalFees = data["legalFees"];
-            this.contractTermYears = data["contractTermYears"];
+            this.otherPreparationFees = data["otherPreparationFees"];
+            this.contractTermFrom = data["contractTermFrom"] ? moment(data["contractTermFrom"].toString()) : <any>undefined;
+            this.contractTermTo = data["contractTermTo"] ? moment(data["contractTermTo"].toString()) : <any>undefined;
             this.extraYear = data["extraYear"];
             this.monthlyMortgagePayments = data["monthlyMortgagePayments"];
             this.monthlyTaxes = data["monthlyTaxes"];
             this.monthlyInsurance = data["monthlyInsurance"];
             this.monthlyCondoFees = data["monthlyCondoFees"];
+            this.otherMonthlyFees = data["otherMonthlyFees"];
+            this.termUtilizedMonths = data["termUtilizedMonths"];
             this.rtoPurchasePrice = data["rtoPurchasePrice"];
             this.deposit = data["deposit"];
             this.monthlyPayment = data["monthlyPayment"];
             this.amountAboveHolding = data["amountAboveHolding"];
-            this.saleTermYears = data["saleTermYears"];
-            this.termMortgagePaydown = data["termMortgagePaydown"];
+            this.saleTermFrom = data["saleTermFrom"] ? moment(data["saleTermFrom"].toString()) : <any>undefined;
+            this.saleTermTo = data["saleTermTo"] ? moment(data["saleTermTo"].toString()) : <any>undefined;
+            this.termMortgagePercent = data["termMortgagePercent"];
         }
     }
 
@@ -76056,49 +76064,57 @@ export class PropertyInvestmentDto implements IPropertyInvestmentDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["purchasePrice"] = this.purchasePrice;
         data["equityPaidToHomeowner"] = this.equityPaidToHomeowner;
         data["referralFee"] = this.referralFee;
         data["renovations"] = this.renovations;
         data["cleaning"] = this.cleaning;
         data["inspection"] = this.inspection;
         data["legalFees"] = this.legalFees;
-        data["contractTermYears"] = this.contractTermYears;
+        data["otherPreparationFees"] = this.otherPreparationFees;
+        data["contractTermFrom"] = this.contractTermFrom ? this.contractTermFrom.toISOString() : <any>undefined;
+        data["contractTermTo"] = this.contractTermTo ? this.contractTermTo.toISOString() : <any>undefined;
         data["extraYear"] = this.extraYear;
         data["monthlyMortgagePayments"] = this.monthlyMortgagePayments;
         data["monthlyTaxes"] = this.monthlyTaxes;
         data["monthlyInsurance"] = this.monthlyInsurance;
         data["monthlyCondoFees"] = this.monthlyCondoFees;
+        data["otherMonthlyFees"] = this.otherMonthlyFees;
+        data["termUtilizedMonths"] = this.termUtilizedMonths;
         data["rtoPurchasePrice"] = this.rtoPurchasePrice;
         data["deposit"] = this.deposit;
         data["monthlyPayment"] = this.monthlyPayment;
         data["amountAboveHolding"] = this.amountAboveHolding;
-        data["saleTermYears"] = this.saleTermYears;
-        data["termMortgagePaydown"] = this.termMortgagePaydown;
+        data["saleTermFrom"] = this.saleTermFrom ? this.saleTermFrom.toISOString() : <any>undefined;
+        data["saleTermTo"] = this.saleTermTo ? this.saleTermTo.toISOString() : <any>undefined;
+        data["termMortgagePercent"] = this.termMortgagePercent;
         return data; 
     }
 }
 
 export interface IPropertyInvestmentDto {
-    purchasePrice: number | undefined;
     equityPaidToHomeowner: number | undefined;
     referralFee: number | undefined;
     renovations: number | undefined;
     cleaning: number | undefined;
     inspection: number | undefined;
     legalFees: number | undefined;
-    contractTermYears: number | undefined;
+    otherPreparationFees: number | undefined;
+    contractTermFrom: moment.Moment | undefined;
+    contractTermTo: moment.Moment | undefined;
     extraYear: boolean | undefined;
     monthlyMortgagePayments: number | undefined;
     monthlyTaxes: number | undefined;
     monthlyInsurance: number | undefined;
     monthlyCondoFees: number | undefined;
+    otherMonthlyFees: number | undefined;
+    termUtilizedMonths: number | undefined;
     rtoPurchasePrice: number | undefined;
     deposit: number | undefined;
     monthlyPayment: number | undefined;
     amountAboveHolding: number | undefined;
-    saleTermYears: number | undefined;
-    termMortgagePaydown: number | undefined;
+    saleTermFrom: moment.Moment | undefined;
+    saleTermTo: moment.Moment | undefined;
+    termMortgagePercent: number | undefined;
 }
 
 export class PropertyDealInfo implements IPropertyDealInfo {

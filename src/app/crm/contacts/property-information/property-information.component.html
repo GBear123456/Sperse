@@ -143,7 +143,7 @@
                                                              [value]="getDateValue(propertySellerDto.listingExpires)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'listingExpires', true)">
+                                                             (onValueChanged)="dateValueChanged($event, 'listingExpires', 'sellerProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -439,7 +439,7 @@
                                                              [value]="getDateValue(propertySellerDto.tenantLeaseTerm)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'tenantLeaseTerm', true)">
+                                                             (onValueChanged)="dateValueChanged($event, 'tenantLeaseTerm', 'sellerProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -756,7 +756,7 @@
                                                              [value]="getDateValue(propertySellerDto.mortgageTermRenewal1)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal1', true)">
+                                                             (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal1', 'sellerProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -775,7 +775,7 @@
                                                              [value]="getDateValue(propertySellerDto.mortgageTermRenewal2)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal2', true)">
+                                                             (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal2', 'sellerProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -897,7 +897,7 @@
                                                              [value]="getDateValue(propertySellerDto.walkthroughDate)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'walkthroughDate', true)">
+                                                             (onValueChanged)="dateValueChanged($event, 'walkthroughDate', 'sellerProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -2156,20 +2156,20 @@
                     <div class="col-md-12 section">
                         <div class="row">
                             <div class="col-md-12 col-lg-6">
-                                <div class="block">
-                                    <h3>{{ ls.l('PurchaseInformation') }}</h3>
+                                <div class="block full-height">
+                                    <h2 class="text-center">{{ ls.l('PurchaseInformation') }}</h2>
                                     <div class="fields">
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('PurchasePrice') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertyInvestmentDto.purchasePrice"
+                                                <dx-number-box [(value)]="acquisitionLeadDealInfo.dealAmount"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="investmentValueChanged()">
+                                                               (onValueChanged)="dealInfoChanged($event)">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -2201,10 +2201,7 @@
                                                 </dx-number-box>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="block">
-                                    <div class="fields">
+                                        <h3>{{ ls.l('PreparationCosts') }}</h3>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('Renovations') }}</div>
                                             <div class="dx-field-value">
@@ -2261,21 +2258,59 @@
                                                 </dx-number-box>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="block">
-                                    <div class="fields">
                                         <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('ContractTermYears') }}</div>
+                                            <div class="dx-field-label">{{ ls.l('Other') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertyInvestmentDto.contractTermYears"
+                                                <dx-number-box [(value)]="propertyInvestmentDto.otherPreparationFees"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
-                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
                                                                (onValueChanged)="investmentValueChanged()">
                                                 </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field combo-dropdown">
+                                            <div class="dx-field-label">{{ ls.l('ContractTerm') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-date-box type="date"
+                                                             [acceptCustomValue]="false"
+                                                             [openOnFieldClick]="true"
+                                                             [stylingMode]="stylingMode"
+                                                             [placeholder]="ls.l('From')"
+                                                             dropDownButtonTemplate="dropDownButtonTemplate"
+                                                             [value]="getDateValue(propertyInvestmentDto.contractTermFrom)"
+                                                             [showClearButton]="true"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'contractTermFrom', 'investmentProp')">
+                                                    <div *dxTemplate="let data of 'dropDownButtonTemplate'">
+                                                        <img src="./assets/common/icons/calendar-date.svg">
+                                                    </div>
+                                                </dx-date-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                <dx-date-box type="date"
+                                                             [acceptCustomValue]="false"
+                                                             [openOnFieldClick]="true"
+                                                             [stylingMode]="stylingMode"
+                                                             [placeholder]="ls.l('To')"
+                                                             dropDownButtonTemplate="dropDownButtonTemplate"
+                                                             [value]="getDateValue(propertyInvestmentDto.contractTermTo)"
+                                                             [showClearButton]="true"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'contractTermTo', 'investmentProp')">
+                                                    <div *dxTemplate="let data of 'dropDownButtonTemplate'">
+                                                        <img src="./assets/common/icons/calendar-date.svg">
+                                                    </div>
+                                                </dx-date-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label"></div>
+                                            <div class="dx-field-value">
+                                                {{getMonthYearString(getContractTermMonths())}}
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -2287,11 +2322,7 @@
                                                 </dx-check-box>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="block">
-                                    <h3>{{ ls.l('MonthlyHoldingCosts') }}</h3>
-                                    <div class="fields">
+                                        <h3>{{ ls.l('MonthlyHoldingCosts') }}</h3>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('MonthlyMortgagePayments') }}</div>
                                             <div class="dx-field-value">
@@ -2348,17 +2379,37 @@
                                                 </dx-number-box>
                                             </div>
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="block">
-                                    <h3>{{ ls.l('Total') }}</h3>
-                                    <div class="fields">
                                         <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('TermUtilizedMultipliedMonthlyHolding') }}</div>
+                                            <div class="dx-field-label">{{ ls.l('Other') }}</div>
                                             <div class="dx-field-value">
-                                                {{0 | currency: 'USD'}}
+                                                <dx-number-box [(value)]="propertyInvestmentDto.otherMonthlyFees"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
                                             </div>
                                         </div>
+                                        <div class="dx-field combo-dropdown">
+                                            <div class="dx-field-label">{{ ls.l('TermUtilizedMultipliedMonthlyHolding') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.termUtilizedMonths"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [placeholder]="ls.l('Months')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                {{getTotalUtilizedHoldingCosts() | currency: 'USD'}}
+                                            </div>
+                                        </div>
+                                        <h3>{{ ls.l('Total') }}</h3>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('TotalFees') }}</div>
                                             <div class="dx-field-value">
@@ -2375,26 +2426,8 @@
                                 </div>
                             </div>
                             <div class="col-md-12 col-lg-6">
-                                <div class="block" *ngIf="acquisitionLeadDealInfo">
-                                    <div class="fields">
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('DealAmount') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-number-box [(value)]="acquisitionLeadDealInfo.dealAmount"
-                                                               [stylingMode]="stylingMode"
-                                                               showClearButton="true"
-                                                               step="0"
-                                                               [format]="currencyFormat"
-                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               [disabled]="disableEdit"
-                                                               (onValueChanged)="dealInfoChanged($event)">
-                                                </dx-number-box>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="block">
-                                    <h3>{{ ls.l('SaleInformation') }}</h3>
+                                <div class="block full-height">
+                                    <h2 class="text-center">{{ ls.l('SaleInformation') }}</h2>
                                     <div class="fields">
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('RTOPurchasePrice') }}</div>
@@ -2452,17 +2485,45 @@
                                                 </dx-number-box>
                                             </div>
                                         </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('SaleTermYears') }}</div>
+                                        <div class="dx-field combo-dropdown">
+                                            <div class="dx-field-label">{{ ls.l('SaleTerm') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertyInvestmentDto.saleTermYears"
-                                                               [stylingMode]="stylingMode"
-                                                               showClearButton="true"
-                                                               step="0"
-                                                               [placeholder]="ls.l('EditValuePlaceholder')"
-                                                               [disabled]="disableEdit"
-                                                               (onValueChanged)="investmentValueChanged()">
-                                                </dx-number-box>
+                                                <dx-date-box type="date"
+                                                             [acceptCustomValue]="false"
+                                                             [openOnFieldClick]="true"
+                                                             [stylingMode]="stylingMode"
+                                                             [placeholder]="ls.l('From')"
+                                                             dropDownButtonTemplate="dropDownButtonTemplate"
+                                                             [value]="getDateValue(propertyInvestmentDto.saleTermFrom)"
+                                                             [showClearButton]="true"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'saleTermFrom', 'investmentProp')">
+                                                    <div *dxTemplate="let data of 'dropDownButtonTemplate'">
+                                                        <img src="./assets/common/icons/calendar-date.svg">
+                                                    </div>
+                                                </dx-date-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                <dx-date-box type="date"
+                                                             [acceptCustomValue]="false"
+                                                             [openOnFieldClick]="true"
+                                                             [stylingMode]="stylingMode"
+                                                             [placeholder]="ls.l('To')"
+                                                             dropDownButtonTemplate="dropDownButtonTemplate"
+                                                             [value]="getDateValue(propertyInvestmentDto.saleTermTo)"
+                                                             [showClearButton]="true"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'saleTermTo', 'investmentProp')">
+                                                    <div *dxTemplate="let data of 'dropDownButtonTemplate'">
+                                                        <img src="./assets/common/icons/calendar-date.svg">
+                                                    </div>
+                                                </dx-date-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label"></div>
+                                            <div class="dx-field-value">
+                                                {{getMonthYearString(getSaleTermMonths())}}
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -2471,28 +2532,27 @@
                                                 {{getTermAmountAboveHolding() | currency: 'USD'}}
                                             </div>
                                         </div>
-                                        <div class="dx-field">
+                                        <div class="dx-field combo-dropdown">
                                             <div class="dx-field-label">{{ ls.l('TermMortgagePaydown') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertyInvestmentDto.termMortgagePaydown"
+                                                <dx-number-box [(value)]="propertyInvestmentDto.termMortgagePercent"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
-                                                               [format]="currencyFormat"
-                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               format="#0.#%"
+                                                               [placeholder]="ls.l('Percent')"
                                                                [disabled]="disableEdit"
                                                                (onValueChanged)="investmentValueChanged()">
                                                 </dx-number-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                {{getTermMortgagePaydown() | currency: 'USD'}}
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             {{getTermMortgagePaydownDetails()}}
                                         </div>
-                                    </div>
-                                </div>
-                                <div class="block">
-                                    <h3>{{ ls.l('Total') }}</h3>
-                                    <div class="fields">
+                                        <h3>{{ ls.l('Total') }}</h3>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('TotalProfit') }}</div>
                                             <div class="dx-field-value">
@@ -2507,6 +2567,16 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <h2 class="text-center">
+                                    {{ls.l('TotalProfit')}}
+                                </h2>
+                                <h2 class="text-center">
+                                    {{getGrandTotalProfit() | currency: 'USD'}}
+                                </h2>
                             </div>
                         </div>
                     </div>

@@ -61,7 +61,7 @@ interface SelectBoxItem {
 @Component({
     selector: 'property-information',
     templateUrl: 'property-information.component.html',
-    styleUrls: [ 'property-information.component.less' ],
+    styleUrls: ['property-information.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PropertyInformationComponent implements OnInit {
@@ -177,7 +177,7 @@ export class PropertyInformationComponent implements OnInit {
         private elementRef: ElementRef,
         private permission: AppPermissionService,
         public ls: AppLocalizationService
-    ) {}
+    ) { }
 
     ngOnInit() {
         const leadInfo$ = this.contactsService.leadInfo$.pipe(
@@ -305,24 +305,47 @@ export class PropertyInformationComponent implements OnInit {
         this.sellerValueChanged();
     }
 
+    getContractTermMonths(): number {
+        return this.getMonthsDifference(this.propertyInvestmentDto.contractTermFrom, this.propertyInvestmentDto.contractTermTo);
+    }
+
+    getTotalUtilizedHoldingCosts() {
+        return (this.propertyInvestmentDto.termUtilizedMonths || 0) *
+            this.sumPropertyValues(this.propertyInvestmentDto.monthlyMortgagePayments,
+                this.propertyInvestmentDto.monthlyTaxes,
+                this.propertyInvestmentDto.monthlyInsurance,
+                this.propertyInvestmentDto.monthlyCondoFees,
+                this.propertyInvestmentDto.otherMonthlyFees);
+    }
+
     getInvestmentTotalFees() {
         return this.sumPropertyValues(this.propertyInvestmentDto.referralFee,
+            this.getTotalUtilizedHoldingCosts(),
             this.propertyInvestmentDto.renovations,
             this.propertyInvestmentDto.cleaning,
             this.propertyInvestmentDto.inspection,
-            this.propertyInvestmentDto.legalFees);
+            this.propertyInvestmentDto.legalFees,
+            this.propertyInvestmentDto.otherPreparationFees);
     }
 
     getInvestmentTotalPurchase() {
-        return this.sumPropertyValues(this.getInvestmentTotalFees(), this.propertyInvestmentDto.purchasePrice);
+        return this.getInvestmentTotalFees() + (this.acquisitionLeadDealInfo && this.acquisitionLeadDealInfo.dealAmount || 0);
+    }
+
+    getSaleTermMonths() {
+        return this.getMonthsDifference(this.propertyInvestmentDto.saleTermFrom, this.propertyInvestmentDto.saleTermTo);
     }
 
     getTermAmountAboveHolding() {
-        return (this.propertyInvestmentDto.saleTermYears || 0) * 12 * (this.propertyInvestmentDto.amountAboveHolding || 0);
+        return this.getSaleTermMonths() * (this.propertyInvestmentDto.amountAboveHolding || 0);
+    }
+
+    getTermMortgagePaydown() {
+        return (this.propertyInvestmentDto.monthlyMortgagePayments || 0) * (this.propertyInvestmentDto.termMortgagePercent || 0) * this.getContractTermMonths();
     }
 
     getTotalProfit() {
-        return this.getTermAmountAboveHolding() + (this.propertyInvestmentDto.termMortgagePaydown || 0);
+        return this.getTermAmountAboveHolding() + (this.getTermMortgagePaydown() || 0);
     }
 
     getTotalSale() {
@@ -330,16 +353,39 @@ export class PropertyInformationComponent implements OnInit {
     }
 
     getTermMortgagePaydownDetails() {
-        if (!this.propertyInvestmentDto.saleTermYears || !this.propertyInvestmentDto.monthlyMortgagePayments)
+        let months = this.getContractTermMonths();
+        if (!this.propertyInvestmentDto.termMortgagePercent || !months)
             return "";
-        let months = this.propertyInvestmentDto.saleTermYears * 12;
-        let monthlyAmount = (this.propertyInvestmentDto.termMortgagePaydown || 0) / months;
-        let percent = monthlyAmount / this.propertyInvestmentDto.monthlyMortgagePayments * 100;
-        return `(based on ${+percent.toFixed(2)}% of mortgage payment amount $${+monthlyAmount.toFixed(2)}x${months})`;
+        let mortgagePercentAmount = this.propertyInvestmentDto.monthlyMortgagePayments * this.propertyInvestmentDto.termMortgagePercent;
+        return `(based on ${(+this.propertyInvestmentDto.termMortgagePercent * 100).toFixed(2)}% of mortgage payment amount $${+mortgagePercentAmount.toFixed(2)}x${months})`;
+    }
+
+    getGrandTotalProfit(): number {
+        return this.getTotalSale() - this.getInvestmentTotalPurchase();
     }
 
     sumPropertyValues(...values: number[]): number {
         return values.reduce((prev, current) => prev + current || 0, 0);
+    }
+
+    getMonthsDifference(dateFrom, dateTo) : number {
+        if (!dateFrom || !dateTo)
+            return 0;
+
+        const daysInMonth = 365.2425 / 12;
+        var days = moment(dateTo).diff(moment(dateFrom), 'days');
+        return Math.round(days / daysInMonth);
+    }
+
+    getMonthYearString(months: number): string {
+        let years = Math.floor(months / 12);
+        let month = months - years * 12;
+        let result = '';
+        if (years)
+            result += `${years} ${this.ls.l('year(s)')}`;
+        if (month)
+            result += ` ${month} ${this.ls.l('month(s)')}`;
+        return result;
     }
 
     valueChanged(successCallback?: () => void) {
@@ -397,15 +443,21 @@ export class PropertyInformationComponent implements OnInit {
     getDateValue(date) {
         return date && date.toDate ? date.toDate() : date;
     }
-    dateValueChanged($event, propName: string, isSellerProperty = false) {
+    dateValueChanged($event, propName: string, objectType: 'property' | 'sellerProp' | 'investmentProp') {
         let newValue = $event.value && DateHelper.removeTimezoneOffset($event.value, true, 'from');
-        if (isSellerProperty) {
-            this.propertySellerDto[propName] = newValue;
-            this.sellerValueChanged();
-        }
-        else {
-            this.property[propName] = newValue;
-            this.valueChanged();
+        switch (objectType) {
+            case 'property':
+                this.property[propName] = newValue;
+                this.valueChanged();
+                break;
+            case 'sellerProp':
+                this.propertySellerDto[propName] = newValue;
+                this.sellerValueChanged();
+                break;
+            case 'investmentProp':
+                this.propertyInvestmentDto[propName] = newValue;
+                this.investmentValueChanged();
+                break;
         }
     }
 
