@@ -2471,6 +2471,8 @@
                                                 </dx-number-box>
                                             </div>
                                         </div>
+                                        <div class="dx-field"></div>
+                                        <div class="dx-field"></div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AmountAboveHolding') }}</div>
                                             <div class="dx-field-value">
@@ -2532,6 +2534,8 @@
                                                 {{getTermAmountAboveHolding() | currency: 'USD'}}
                                             </div>
                                         </div>
+                                        <div class="dx-field"></div>
+                                        <div class="dx-field"></div>
                                         <div class="dx-field combo-dropdown">
                                             <div class="dx-field-label">{{ ls.l('TermMortgagePaydown') }}</div>
                                             <div class="dx-field-value">
@@ -2552,6 +2556,7 @@
                                         <div class="dx-field">
                                             {{getTermMortgagePaydownDetails()}}
                                         </div>
+                                        <div style="height: 323px"></div>
                                         <h3>{{ ls.l('Total') }}</h3>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('TotalProfit') }}</div>
@@ -2570,13 +2575,9 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-12">
-                                <h2 class="text-center">
-                                    {{ls.l('TotalProfit')}}
-                                </h2>
-                                <h2 class="text-center">
-                                    {{getGrandTotalProfit() | currency: 'USD'}}
-                                </h2>
+                            <div class="col-md-12 text-center total-profit">
+                                <span>{{ls.l('TotalProfit')}}: {{getGrandTotalProfit() | currency: 'USD'}}</span>
+                                <button class="button-layout button-primary" (click)="generatePdf()">{{ls.l('GeneratePdf')}}</button>
                             </div>
                         </div>
                     </div>

@@ -11,6 +11,7 @@ import { ActivatedRoute } from '@angular/router';
 /** Third party imports */
 import { Observable, Subscription, merge, forkJoin, of } from 'rxjs';
 import { filter, map, switchMap, pluck, finalize, skip, first } from 'rxjs/operators';
+import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import cloneDeep from 'lodash/cloneDeep';
 import * as moment from 'moment';
 
@@ -176,6 +177,7 @@ export class PropertyInformationComponent implements OnInit {
         private invoicesService: InvoicesService,
         private elementRef: ElementRef,
         private permission: AppPermissionService,
+        private notify: NotifyService,
         public ls: AppLocalizationService
     ) { }
 
@@ -368,7 +370,7 @@ export class PropertyInformationComponent implements OnInit {
         return values.reduce((prev, current) => prev + current || 0, 0);
     }
 
-    getMonthsDifference(dateFrom, dateTo) : number {
+    getMonthsDifference(dateFrom, dateTo): number {
         if (!dateFrom || !dateTo)
             return 0;
 
@@ -515,6 +517,18 @@ export class PropertyInformationComponent implements OnInit {
             this.invoiceSettings = settings;
             this.currencyFormat.currency = settings.currency;
             this.changeDetectorRef.detectChanges();
+        });
+    }
+
+    generatePdf() {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+        this.propertyServiceProxy.generatePdf(this.property.id).pipe(
+            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+        ).subscribe(() => {
+            this.notify.info(this.ls.l('SuccessfullyGenerated'));
+        },
+        () => {
+            this.notify.error(this.ls.l('GenerationFailed'));
         });
     }
 
