@@ -19,6 +19,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppConsts } from '@root/shared/AppConsts';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './host-settings.component.html',
@@ -70,6 +71,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         private appSessionService: AppSessionService,
         private changeDetection: ChangeDetectorRef,
         private contactService: ContactsService,
+        private appService: AppService,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -122,6 +124,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     }
 
     ngOnInit(): void {
+        this.appService.isClientSearchDisabled = true;
         const self = this;
         self.init();
     }

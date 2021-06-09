@@ -116,4 +116,8 @@ export class AppComponent implements OnInit {
     initModuleAttribute() {
         document.body.setAttribute('module', this.appService.getModule());
     }
+
+    onClientSearch(phrase: string) {
+        this.appService.clientSearchPhrase.next(phrase);
+    }
 }

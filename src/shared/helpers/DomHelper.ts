@@ -1,4 +1,15 @@
 export class DomHelper {
+    static isDomElementVisible(element: any): boolean {
+        while(element.tagName.toLowerCase() != 'body') {
+            if (element.style.display == 'none')
+              return false;
+
+            element = element.parentNode;
+            if (!element)
+                return false;
+        }
+        return true;
+    }
 
     static waitUntilElementIsReady(selector: string, callback: any, checkPeriod?: number): void {
         if (!$) {
@@ -37,5 +48,4 @@ export class DomHelper {
             }
         }, checkPeriod);
     }
-
 }

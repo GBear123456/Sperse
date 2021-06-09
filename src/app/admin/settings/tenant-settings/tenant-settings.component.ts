@@ -47,6 +47,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -131,6 +132,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private tenantOfferProviderSettingsService: TenantOfferProviderSettingsServiceProxy,
         private faviconsService: FaviconService,
         private contactService: ContactsService,
+        private appService: AppService,
         public changeDetection: ChangeDetectorRef,
         public dialog: MatDialog
     ) {
@@ -140,6 +142,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     ngOnInit(): void {
+        this.appService.isClientSearchDisabled = true;
         this.testEmailAddress = this.appSessionService.user.emailAddress;
         this.getSettings();
         this.initUploaders();

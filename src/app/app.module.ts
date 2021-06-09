@@ -28,6 +28,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { AppStoreService } from '@app/store/app-store.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
+import { SearchTooltipModule } from '@shared/common/dialogs/search-tooltip/search-tooltip.module';
 
 export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
     accountUrl = abp.setting.values['Integrations:Zendesk:AccountUrl'];
@@ -51,7 +52,8 @@ export class ZendeskConfig extends ngxZendeskWebwidgetConfig {
         AppRoutingModule,
         FiltersModule.forRoot(),
         ClipboardModule,
-        AppStoreModule
+        AppStoreModule,
+        SearchTooltipModule
     ],
     providers: [
         AppService,

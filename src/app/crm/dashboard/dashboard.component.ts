@@ -262,8 +262,9 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         this.refreshTotalsBySource();
         this.initFilterConfig();
         this.ui.overflowHidden(true);
+        this.appService.isClientSearchDisabled = true;
         this.appService.toolbarIsHidden.next(true);
-        this.changeDetectorRef.detectChanges();
+        this.changeDetectorRef.markForCheck();
     }
 
     subscribeToRefreshParam() {
@@ -297,7 +298,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     deactivate() {
-        this.ui.overflowHidden();
+        this.ui.overflowHidden();        
         this.appService.toolbarIsHidden.next(false);
         this.lifeCycleSubject.deactivate.next();
         this.dialog.closeAll();

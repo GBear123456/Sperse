@@ -17,6 +17,7 @@ import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-p
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { LeftMenuComponent } from '../../shared/common/left-menu/left-menu.component';
+import { AppService } from '@app/app.service';
 
 @Component({
     selector: 'dashboard',
@@ -42,6 +43,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
 
     constructor(
         injector: Injector,
+        private appService: AppService,
         private dashboardService: DashboardService,
         public bankAccountsService: BankAccountsService,
         public dialog: MatDialog,
@@ -94,6 +96,7 @@ export class DashboardComponent extends CFOComponentBase implements OnInit, OnDe
             this.categorizationStatusComponent.activate();
             this.accountsComponent.activate();
         }
+        this.appService.isClientSearchDisabled = true;
         this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);
     }

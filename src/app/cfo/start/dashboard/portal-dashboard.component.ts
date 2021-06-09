@@ -16,6 +16,7 @@ import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-p
 import { DashboardService } from '@shared/cfo/dashboard-widgets/dashboard.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { TopSpendingCategoriesComponent } from '@shared/cfo/dashboard-widgets/top-spending-categories/top-spending-categories.component';
+import { AppService } from '@app/app.service';
 
 @Component({
     selector: 'portal-dashboard',
@@ -39,6 +40,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
 
     constructor(
         injector: Injector,
+        private appService: AppService,
         private dashboardService: DashboardService,
         public bankAccountsService: BankAccountsService,
         public dialog: MatDialog,
@@ -99,6 +101,7 @@ export class PortalDashboardComponent extends CFOComponentBase implements OnInit
         this.synchProgressComponent.activate();
         if (this.accountsComponent)
             this.accountsComponent.activate();
+        this.appService.isClientSearchDisabled = true;
         this.rootComponent.overflowHidden(true);
     }
 
