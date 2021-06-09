@@ -52,6 +52,7 @@ import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { SynchProgressService } from '../helpers/synch-progress.service';
 import { BankAccountProgress, SyncProgressDto } from '@shared/service-proxies/service-proxies';
 import { AutoSyncDialogComponent } from '@shared/cfo/bank-accounts/synch-progress/auto-sync-dialog/auto-sync-dialog.component';
+import { AddAccountButtonComponent } from '@shared/cfo/bank-accounts/add-account-button/add-account-button.component';
 
 @Component({
     selector: 'bank-accounts-widget',
@@ -60,9 +61,11 @@ import { AutoSyncDialogComponent } from '@shared/cfo/bank-accounts/synch-progres
     providers: [ DatePipe, BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy ]
 })
 export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit, OnChanges, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) mainDataGrid: DxDataGridComponent;
+    @ViewChild(AddAccountButtonComponent, { static: false }) addButtonComponent: AddAccountButtonComponent;
     @ViewChild('actionRequiredTooltip', { static: false }) actionRequiredTooltip: DxTooltipComponent;
+    @ViewChild(DxDataGridComponent, { static: false }) mainDataGrid: DxDataGridComponent;
     @ViewChild('header', { read: ElementRef, static: true }) header: ElementRef;
+
     @Input() showSyncDate = false;
     @Input() saveChangesInCache = true;
     @Input() showAdvancedColumns = true;
@@ -580,6 +583,7 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             .delete(this.instanceType, this.instanceId, syncAccountId)
             .subscribe(() => {
                 this.onDataChange.emit();
+                this.addButtonComponent.checkCreateIsAllowed();
                 this.notify.info(this.l('SuccessfullyDeleted'));
             });
     }

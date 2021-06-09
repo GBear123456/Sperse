@@ -22,10 +22,15 @@ export class AddAccountButtonComponent extends CFOComponentBase {
         private dialog: MatDialog
     ) {
         super(injector);
-        this._syncAccountServiceProxy.createIsAllowed(InstanceType[this.instanceType], this.instanceId)
-            .subscribe((result) => {
-                this.createAccountAvailable = result;
-            });
+        this.checkCreateIsAllowed();
+    }
+
+    checkCreateIsAllowed() {
+        this._syncAccountServiceProxy.createIsAllowed(
+            InstanceType[this.instanceType], this.instanceId
+        ).subscribe((result) => {
+            this.createAccountAvailable = result;
+        });
     }
 
     openAddAccountDialog() {
@@ -45,6 +50,7 @@ export class AddAccountButtonComponent extends CFOComponentBase {
             this.onClosed.emit();
         })
         accountConnectorDialog.componentInstance.onComplete.subscribe(() => {
+            this.checkCreateIsAllowed();
             this.onComplete.emit();
         });
     }
