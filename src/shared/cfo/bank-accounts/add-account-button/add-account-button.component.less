@@ -1,5 +1,11 @@
 :host {
     color: #00AEEF;
+
+    .dx-icon-info {
+        font-size: 18px;
+        cursor: pointer;
+        vertical-align: text-bottom;    
+    }
 }
 .add-link {
     color: #00AEEF;
@@ -13,6 +19,11 @@
 
     &:hover {
         color: lighten(#00AEEF, 20%);
+    }
+
+    &.disabled {
+        pointer-events: none;
+        opacity: 0.5;
     }
 }
 

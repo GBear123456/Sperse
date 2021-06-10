@@ -41,6 +41,16 @@
             font-weight: 700 !important;
             text-transform: uppercase;
         }
+
+        &.full-height {
+            height: 100%;
+        }
+    }
+
+    h2, .total-profit {
+        margin-top: 15px;
+        font-size: 25px !important;
+        font-weight: 600 !important;
     }
 
     .properties .fields {
@@ -111,6 +121,10 @@
                 color: #424c56;
                 //width: 200px;
             }
+        }
+
+        ::ng-deep dx-check-box {
+            float: initial;
         }
 
         ::ng-deep {
