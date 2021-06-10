@@ -28573,7 +28573,7 @@ export class PropertyServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updatePropertyDetails(body: PropertyDto | null | undefined): Observable<void> {
+    updatePropertyDetails(body: PropertyBaseDto | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Property/UpdatePropertyDetails";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -75376,6 +75376,7 @@ export enum FireplaceType {
 }
 
 export class PropertyDto implements IPropertyDto {
+    photo!: string | undefined;
     id!: number;
     contactGroupId!: string | undefined;
     name!: string;
@@ -75467,6 +75468,7 @@ export class PropertyDto implements IPropertyDto {
 
     init(data?: any) {
         if (data) {
+            this.photo = data["photo"];
             this.id = data["id"];
             this.contactGroupId = data["contactGroupId"];
             this.name = data["name"];
@@ -75558,6 +75560,7 @@ export class PropertyDto implements IPropertyDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["photo"] = this.photo;
         data["id"] = this.id;
         data["contactGroupId"] = this.contactGroupId;
         data["name"] = this.name;
@@ -75642,6 +75645,7 @@ export class PropertyDto implements IPropertyDto {
 }
 
 export interface IPropertyDto {
+    photo: string | undefined;
     id: number;
     contactGroupId: string | undefined;
     name: string;
@@ -76181,6 +76185,354 @@ export interface IPropertyInvestmentDto {
     saleTermFrom: moment.Moment | undefined;
     saleTermTo: moment.Moment | undefined;
     termMortgagePercent: number | undefined;
+}
+
+export class PropertyBaseDto implements IPropertyBaseDto {
+    id!: number;
+    contactGroupId!: string | undefined;
+    name!: string;
+    address!: CreateContactAddressInput | undefined;
+    propertyType!: PropertyType | undefined;
+    area!: number | undefined;
+    lotSize!: number | undefined;
+    yearBuilt!: number | undefined;
+    floor!: number | undefined;
+    numberOfLevels!: number | undefined;
+    corner!: boolean | undefined;
+    end!: boolean | undefined;
+    bedCount!: number | undefined;
+    bathCount!: number | undefined;
+    den!: boolean | undefined;
+    office!: boolean | undefined;
+    appliances!: Appliances | undefined;
+    otherAppliances!: string | undefined;
+    laundryInSuite!: boolean | undefined;
+    isCentralHeating!: boolean | undefined;
+    heatingType!: HeatingCoolingType | undefined;
+    ac!: boolean | undefined;
+    monthlyHeatingCost!: number | undefined;
+    isHeatIncludedInCondoFees!: boolean | undefined;
+    utilityTypesIncluded!: UtilityType | undefined;
+    floorVinyl!: boolean | undefined;
+    floorHardwood!: boolean | undefined;
+    floorTile!: boolean | undefined;
+    floorCarpet!: boolean | undefined;
+    floorLVP!: boolean | undefined;
+    storageInSuite!: boolean | undefined;
+    storageLocker!: number | undefined;
+    storageLockerNumber!: number | undefined;
+    storageLockerKey!: boolean | undefined;
+    yard!: YardPatioEnum | undefined;
+    patio!: YardPatioEnum | undefined;
+    yardBalcony!: boolean | undefined;
+    parking!: ParkingType | undefined;
+    basement!: BasementStatus | undefined;
+    dogs!: boolean | undefined;
+    cats!: boolean | undefined;
+    petsSizeLimit!: string | undefined;
+    petsBreedRestriction!: string | undefined;
+    condoDocuments!: boolean | undefined;
+    petApplication!: boolean | undefined;
+    intercomSetup!: string | undefined;
+    additionalKeys!: boolean | undefined;
+    numberOfSets!: number | undefined;
+    frontDoorFob!: number | undefined;
+    garageRemote!: boolean | undefined;
+    garageRemoteNumberReceived!: number | undefined;
+    garageKey!: boolean | undefined;
+    garageKeyNumberReceived!: number | undefined;
+    garageCode!: string | undefined;
+    parkadeFob!: boolean | undefined;
+    parkingStall!: number | undefined;
+    visitorParkingPass!: number | undefined;
+    mailbox!: number | undefined;
+    mailboxKey!: boolean | undefined;
+    mailboxNumberReceived!: number | undefined;
+    garbageDay!: PlatformDayOfWeek | undefined;
+    garbageCollection!: GarbageCollection | undefined;
+    garbageKey!: boolean | undefined;
+    garbageNumberReceived!: number | undefined;
+    firepit!: boolean | undefined;
+    secure!: boolean | undefined;
+    onSiteManager!: boolean | undefined;
+    wheelchairAccessible!: boolean | undefined;
+    walkOut!: boolean | undefined;
+    elevator!: boolean | undefined;
+    ceilingFan!: boolean | undefined;
+    fireplace!: FireplaceType | undefined;
+    petPark!: boolean | undefined;
+    communitySpace!: boolean | undefined;
+    pool!: boolean | undefined;
+    exerciseRoom!: boolean | undefined;
+    partyRoom!: boolean | undefined;
+    guestSuite!: boolean | undefined;
+    other!: string | undefined;
+
+    constructor(data?: IPropertyBaseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.contactGroupId = data["contactGroupId"];
+            this.name = data["name"];
+            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
+            this.propertyType = data["propertyType"];
+            this.area = data["area"];
+            this.lotSize = data["lotSize"];
+            this.yearBuilt = data["yearBuilt"];
+            this.floor = data["floor"];
+            this.numberOfLevels = data["numberOfLevels"];
+            this.corner = data["corner"];
+            this.end = data["end"];
+            this.bedCount = data["bedCount"];
+            this.bathCount = data["bathCount"];
+            this.den = data["den"];
+            this.office = data["office"];
+            this.appliances = data["appliances"];
+            this.otherAppliances = data["otherAppliances"];
+            this.laundryInSuite = data["laundryInSuite"];
+            this.isCentralHeating = data["isCentralHeating"];
+            this.heatingType = data["heatingType"];
+            this.ac = data["ac"];
+            this.monthlyHeatingCost = data["monthlyHeatingCost"];
+            this.isHeatIncludedInCondoFees = data["isHeatIncludedInCondoFees"];
+            this.utilityTypesIncluded = data["utilityTypesIncluded"];
+            this.floorVinyl = data["floorVinyl"];
+            this.floorHardwood = data["floorHardwood"];
+            this.floorTile = data["floorTile"];
+            this.floorCarpet = data["floorCarpet"];
+            this.floorLVP = data["floorLVP"];
+            this.storageInSuite = data["storageInSuite"];
+            this.storageLocker = data["storageLocker"];
+            this.storageLockerNumber = data["storageLockerNumber"];
+            this.storageLockerKey = data["storageLockerKey"];
+            this.yard = data["yard"];
+            this.patio = data["patio"];
+            this.yardBalcony = data["yardBalcony"];
+            this.parking = data["parking"];
+            this.basement = data["basement"];
+            this.dogs = data["dogs"];
+            this.cats = data["cats"];
+            this.petsSizeLimit = data["petsSizeLimit"];
+            this.petsBreedRestriction = data["petsBreedRestriction"];
+            this.condoDocuments = data["condoDocuments"];
+            this.petApplication = data["petApplication"];
+            this.intercomSetup = data["intercomSetup"];
+            this.additionalKeys = data["additionalKeys"];
+            this.numberOfSets = data["numberOfSets"];
+            this.frontDoorFob = data["frontDoorFob"];
+            this.garageRemote = data["garageRemote"];
+            this.garageRemoteNumberReceived = data["garageRemoteNumberReceived"];
+            this.garageKey = data["garageKey"];
+            this.garageKeyNumberReceived = data["garageKeyNumberReceived"];
+            this.garageCode = data["garageCode"];
+            this.parkadeFob = data["parkadeFob"];
+            this.parkingStall = data["parkingStall"];
+            this.visitorParkingPass = data["visitorParkingPass"];
+            this.mailbox = data["mailbox"];
+            this.mailboxKey = data["mailboxKey"];
+            this.mailboxNumberReceived = data["mailboxNumberReceived"];
+            this.garbageDay = data["garbageDay"];
+            this.garbageCollection = data["garbageCollection"];
+            this.garbageKey = data["garbageKey"];
+            this.garbageNumberReceived = data["garbageNumberReceived"];
+            this.firepit = data["firepit"];
+            this.secure = data["secure"];
+            this.onSiteManager = data["onSiteManager"];
+            this.wheelchairAccessible = data["wheelchairAccessible"];
+            this.walkOut = data["walkOut"];
+            this.elevator = data["elevator"];
+            this.ceilingFan = data["ceilingFan"];
+            this.fireplace = data["fireplace"];
+            this.petPark = data["petPark"];
+            this.communitySpace = data["communitySpace"];
+            this.pool = data["pool"];
+            this.exerciseRoom = data["exerciseRoom"];
+            this.partyRoom = data["partyRoom"];
+            this.guestSuite = data["guestSuite"];
+            this.other = data["other"];
+        }
+    }
+
+    static fromJS(data: any): PropertyBaseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PropertyBaseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["contactGroupId"] = this.contactGroupId;
+        data["name"] = this.name;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["propertyType"] = this.propertyType;
+        data["area"] = this.area;
+        data["lotSize"] = this.lotSize;
+        data["yearBuilt"] = this.yearBuilt;
+        data["floor"] = this.floor;
+        data["numberOfLevels"] = this.numberOfLevels;
+        data["corner"] = this.corner;
+        data["end"] = this.end;
+        data["bedCount"] = this.bedCount;
+        data["bathCount"] = this.bathCount;
+        data["den"] = this.den;
+        data["office"] = this.office;
+        data["appliances"] = this.appliances;
+        data["otherAppliances"] = this.otherAppliances;
+        data["laundryInSuite"] = this.laundryInSuite;
+        data["isCentralHeating"] = this.isCentralHeating;
+        data["heatingType"] = this.heatingType;
+        data["ac"] = this.ac;
+        data["monthlyHeatingCost"] = this.monthlyHeatingCost;
+        data["isHeatIncludedInCondoFees"] = this.isHeatIncludedInCondoFees;
+        data["utilityTypesIncluded"] = this.utilityTypesIncluded;
+        data["floorVinyl"] = this.floorVinyl;
+        data["floorHardwood"] = this.floorHardwood;
+        data["floorTile"] = this.floorTile;
+        data["floorCarpet"] = this.floorCarpet;
+        data["floorLVP"] = this.floorLVP;
+        data["storageInSuite"] = this.storageInSuite;
+        data["storageLocker"] = this.storageLocker;
+        data["storageLockerNumber"] = this.storageLockerNumber;
+        data["storageLockerKey"] = this.storageLockerKey;
+        data["yard"] = this.yard;
+        data["patio"] = this.patio;
+        data["yardBalcony"] = this.yardBalcony;
+        data["parking"] = this.parking;
+        data["basement"] = this.basement;
+        data["dogs"] = this.dogs;
+        data["cats"] = this.cats;
+        data["petsSizeLimit"] = this.petsSizeLimit;
+        data["petsBreedRestriction"] = this.petsBreedRestriction;
+        data["condoDocuments"] = this.condoDocuments;
+        data["petApplication"] = this.petApplication;
+        data["intercomSetup"] = this.intercomSetup;
+        data["additionalKeys"] = this.additionalKeys;
+        data["numberOfSets"] = this.numberOfSets;
+        data["frontDoorFob"] = this.frontDoorFob;
+        data["garageRemote"] = this.garageRemote;
+        data["garageRemoteNumberReceived"] = this.garageRemoteNumberReceived;
+        data["garageKey"] = this.garageKey;
+        data["garageKeyNumberReceived"] = this.garageKeyNumberReceived;
+        data["garageCode"] = this.garageCode;
+        data["parkadeFob"] = this.parkadeFob;
+        data["parkingStall"] = this.parkingStall;
+        data["visitorParkingPass"] = this.visitorParkingPass;
+        data["mailbox"] = this.mailbox;
+        data["mailboxKey"] = this.mailboxKey;
+        data["mailboxNumberReceived"] = this.mailboxNumberReceived;
+        data["garbageDay"] = this.garbageDay;
+        data["garbageCollection"] = this.garbageCollection;
+        data["garbageKey"] = this.garbageKey;
+        data["garbageNumberReceived"] = this.garbageNumberReceived;
+        data["firepit"] = this.firepit;
+        data["secure"] = this.secure;
+        data["onSiteManager"] = this.onSiteManager;
+        data["wheelchairAccessible"] = this.wheelchairAccessible;
+        data["walkOut"] = this.walkOut;
+        data["elevator"] = this.elevator;
+        data["ceilingFan"] = this.ceilingFan;
+        data["fireplace"] = this.fireplace;
+        data["petPark"] = this.petPark;
+        data["communitySpace"] = this.communitySpace;
+        data["pool"] = this.pool;
+        data["exerciseRoom"] = this.exerciseRoom;
+        data["partyRoom"] = this.partyRoom;
+        data["guestSuite"] = this.guestSuite;
+        data["other"] = this.other;
+        return data; 
+    }
+}
+
+export interface IPropertyBaseDto {
+    id: number;
+    contactGroupId: string | undefined;
+    name: string;
+    address: CreateContactAddressInput | undefined;
+    propertyType: PropertyType | undefined;
+    area: number | undefined;
+    lotSize: number | undefined;
+    yearBuilt: number | undefined;
+    floor: number | undefined;
+    numberOfLevels: number | undefined;
+    corner: boolean | undefined;
+    end: boolean | undefined;
+    bedCount: number | undefined;
+    bathCount: number | undefined;
+    den: boolean | undefined;
+    office: boolean | undefined;
+    appliances: Appliances | undefined;
+    otherAppliances: string | undefined;
+    laundryInSuite: boolean | undefined;
+    isCentralHeating: boolean | undefined;
+    heatingType: HeatingCoolingType | undefined;
+    ac: boolean | undefined;
+    monthlyHeatingCost: number | undefined;
+    isHeatIncludedInCondoFees: boolean | undefined;
+    utilityTypesIncluded: UtilityType | undefined;
+    floorVinyl: boolean | undefined;
+    floorHardwood: boolean | undefined;
+    floorTile: boolean | undefined;
+    floorCarpet: boolean | undefined;
+    floorLVP: boolean | undefined;
+    storageInSuite: boolean | undefined;
+    storageLocker: number | undefined;
+    storageLockerNumber: number | undefined;
+    storageLockerKey: boolean | undefined;
+    yard: YardPatioEnum | undefined;
+    patio: YardPatioEnum | undefined;
+    yardBalcony: boolean | undefined;
+    parking: ParkingType | undefined;
+    basement: BasementStatus | undefined;
+    dogs: boolean | undefined;
+    cats: boolean | undefined;
+    petsSizeLimit: string | undefined;
+    petsBreedRestriction: string | undefined;
+    condoDocuments: boolean | undefined;
+    petApplication: boolean | undefined;
+    intercomSetup: string | undefined;
+    additionalKeys: boolean | undefined;
+    numberOfSets: number | undefined;
+    frontDoorFob: number | undefined;
+    garageRemote: boolean | undefined;
+    garageRemoteNumberReceived: number | undefined;
+    garageKey: boolean | undefined;
+    garageKeyNumberReceived: number | undefined;
+    garageCode: string | undefined;
+    parkadeFob: boolean | undefined;
+    parkingStall: number | undefined;
+    visitorParkingPass: number | undefined;
+    mailbox: number | undefined;
+    mailboxKey: boolean | undefined;
+    mailboxNumberReceived: number | undefined;
+    garbageDay: PlatformDayOfWeek | undefined;
+    garbageCollection: GarbageCollection | undefined;
+    garbageKey: boolean | undefined;
+    garbageNumberReceived: number | undefined;
+    firepit: boolean | undefined;
+    secure: boolean | undefined;
+    onSiteManager: boolean | undefined;
+    wheelchairAccessible: boolean | undefined;
+    walkOut: boolean | undefined;
+    elevator: boolean | undefined;
+    ceilingFan: boolean | undefined;
+    fireplace: FireplaceType | undefined;
+    petPark: boolean | undefined;
+    communitySpace: boolean | undefined;
+    pool: boolean | undefined;
+    exerciseRoom: boolean | undefined;
+    partyRoom: boolean | undefined;
+    guestSuite: boolean | undefined;
+    other: string | undefined;
 }
 
 export class PropertyDealInfo implements IPropertyDealInfo {
