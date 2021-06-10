@@ -9,6 +9,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription, merge, forkJoin, of } from 'rxjs';
 import { filter, map, switchMap, pluck, finalize, skip, first } from 'rxjs/operators';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
@@ -35,7 +36,9 @@ import {
     PestsType,
     PropertySellerDto,
     PropertyInvestmentDto,
-    PropertyDealInfo
+    PropertyDealInfo,
+    CreateContactPhotoInput,
+    ContactPhotoServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
@@ -53,6 +56,10 @@ import { AppliancesEnum } from './enums/appliances.enum';
 import { UtilityTypesEnum } from './enums/utilityTypes.enum';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
+import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
+import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 interface SelectBoxItem {
     displayValue: string;
@@ -168,9 +175,11 @@ export class PropertyInformationComponent implements OnInit {
     }));
 
     constructor(
+        private dialog: MatDialog,
         private contactsService: ContactsService,
         private route: ActivatedRoute,
         private propertyServiceProxy: PropertyServiceProxy,
+        private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private leadServiceProxy: LeadServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
         private loadingService: LoadingService,
@@ -518,6 +527,50 @@ export class PropertyInformationComponent implements OnInit {
             this.currencyFormat.currency = settings.currency;
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+    getPhoto(): string {
+        return 'url(' + ( this.property.photo ?
+            'data:image/png;base64,' + this.property.photo :
+            'assets/common/images/no-photo-Organization.png') +
+        ')';
+    }
+
+    showUploadPhotoDialog(event) {
+        this.dialog.closeAll();
+        let data: UploadPhotoData = {
+            source: this.property.photo,
+            title: this.ls.l('ChangePropertyPhoto')
+        };
+        this.dialog.open(UploadPhotoDialogComponent, {
+            data: data,
+            hasBackdrop: true
+        }).afterClosed()
+            .pipe(filter(Boolean))
+            .subscribe((result: UploadPhotoResult) => {
+                if (result.clearPhoto) {
+                    this.contactPhotoServiceProxy.clearContactPhoto(
+                        this.property.id
+                    ).subscribe(() => {
+                        this.property.photo = null;
+                        this.changeDetectorRef.detectChanges();
+                    });
+                } else {
+                    let base64OrigImage = StringHelper.getBase64(result.origImage),
+                        base64ThumbImage = StringHelper.getBase64(result.thumbImage);
+                    this.contactPhotoServiceProxy.createContactPhoto(
+                        CreateContactPhotoInput.fromJS({
+                            contactId: this.property.id,
+                            original: base64OrigImage,
+                            thumbnail: base64ThumbImage,
+                            source: result.source
+                        })).subscribe((result: string) => {
+                            this.property.photo = base64OrigImage;
+                            this.changeDetectorRef.detectChanges();
+                        });
+                }
+        });
+        event.stopPropagation();
     }
 
     generatePdf() {
