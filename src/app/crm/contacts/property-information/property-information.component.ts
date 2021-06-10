@@ -316,17 +316,20 @@ export class PropertyInformationComponent implements OnInit {
         this.sellerValueChanged();
     }
 
-    getContractTermMonths(): number {
-        return this.getMonthsDifference(this.propertyInvestmentDto.contractTermFrom, this.propertyInvestmentDto.contractTermTo);
+    getPurchaseTermMonths(): number {
+        return this.getMonthsDifference(this.propertyInvestmentDto.purchaseTermFrom, this.propertyInvestmentDto.purchaseTermTo);
+    }
+
+    getMonthlyHoldingCost() {
+        return this.sumPropertyValues(this.propertyInvestmentDto.monthlyMortgagePayments,
+            this.propertyInvestmentDto.monthlyTaxes,
+            this.propertyInvestmentDto.monthlyInsurance,
+            this.propertyInvestmentDto.monthlyCondoFees,
+            this.propertyInvestmentDto.otherMonthlyFees);
     }
 
     getTotalUtilizedHoldingCosts() {
-        return (this.propertyInvestmentDto.termUtilizedMonths || 0) *
-            this.sumPropertyValues(this.propertyInvestmentDto.monthlyMortgagePayments,
-                this.propertyInvestmentDto.monthlyTaxes,
-                this.propertyInvestmentDto.monthlyInsurance,
-                this.propertyInvestmentDto.monthlyCondoFees,
-                this.propertyInvestmentDto.otherMonthlyFees);
+        return (this.propertyInvestmentDto.termUtilizedMonths || 0) * this.getMonthlyHoldingCost();
     }
 
     getInvestmentTotalFees() {
@@ -343,16 +346,20 @@ export class PropertyInformationComponent implements OnInit {
         return this.getInvestmentTotalFees() + (this.acquisitionLeadDealInfo && this.acquisitionLeadDealInfo.dealAmount || 0);
     }
 
-    getSaleTermMonths() {
-        return this.getMonthsDifference(this.propertyInvestmentDto.saleTermFrom, this.propertyInvestmentDto.saleTermTo);
+    getRTOTermMonths() {
+        return this.getMonthsDifference(this.propertyInvestmentDto.rtoTermFrom, this.propertyInvestmentDto.rtoTermTo);
+    }
+
+    getAmountAboveHolding() {
+        return (this.propertyInvestmentDto.rtoMonthlyPayment || 0) - this.getMonthlyHoldingCost();
     }
 
     getTermAmountAboveHolding() {
-        return this.getSaleTermMonths() * (this.propertyInvestmentDto.amountAboveHolding || 0);
+        return this.getRTOTermMonths() * this.getAmountAboveHolding();
     }
 
     getTermMortgagePaydown() {
-        return (this.propertyInvestmentDto.monthlyMortgagePayments || 0) * (this.propertyInvestmentDto.termMortgagePercent || 0) * this.getContractTermMonths();
+        return (this.propertyInvestmentDto.monthlyMortgagePayments || 0) * (this.propertyInvestmentDto.rtoMortgagePaydownRate || 0) * this.getPurchaseTermMonths();
     }
 
     getTotalProfit() {
@@ -364,11 +371,11 @@ export class PropertyInformationComponent implements OnInit {
     }
 
     getTermMortgagePaydownDetails() {
-        let months = this.getContractTermMonths();
-        if (!this.propertyInvestmentDto.termMortgagePercent || !months)
+        let months = this.getPurchaseTermMonths();
+        if (!this.propertyInvestmentDto.rtoMortgagePaydownRate || !months)
             return "";
-        let mortgagePercentAmount = this.propertyInvestmentDto.monthlyMortgagePayments * this.propertyInvestmentDto.termMortgagePercent;
-        return `(based on ${(+this.propertyInvestmentDto.termMortgagePercent * 100).toFixed(2)}% of mortgage payment amount $${+mortgagePercentAmount.toFixed(2)}x${months})`;
+        let mortgagePercentAmount = this.propertyInvestmentDto.monthlyMortgagePayments * this.propertyInvestmentDto.rtoMortgagePaydownRate;
+        return `(based on ${(+this.propertyInvestmentDto.rtoMortgagePaydownRate * 100).toFixed(2)}% of mortgage payment amount $${+mortgagePercentAmount.toFixed(2)}x${months})`;
     }
 
     getGrandTotalProfit(): number {
@@ -415,7 +422,7 @@ export class PropertyInformationComponent implements OnInit {
 
     sellerValueChanged() {
         this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.propertyServiceProxy.updateSellerPropertyDetails(this.property.id, this.propertySellerDto).pipe(
+        this.propertyServiceProxy.updateSellerPropertyDetails(this.propertySellerDto).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
         ).subscribe(
             () => { },
@@ -428,7 +435,7 @@ export class PropertyInformationComponent implements OnInit {
 
     investmentValueChanged() {
         this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.propertyServiceProxy.updatePropertyInvestmentDetails(this.property.id, this.propertyInvestmentDto).pipe(
+        this.propertyServiceProxy.updatePropertyInvestmentDetails(this.propertyInvestmentDto).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
         ).subscribe(
             () => { },

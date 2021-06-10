@@ -28619,14 +28619,11 @@ export class PropertyServiceProxy {
     }
 
     /**
-     * @id (optional) 
      * @body (optional) 
      * @return Success
      */
-    updateSellerPropertyDetails(id: number | null | undefined, body: PropertySellerDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdateSellerPropertyDetails?";
-        if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+    updateSellerPropertyDetails(body: PropertySellerDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdateSellerPropertyDetails";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -28674,14 +28671,11 @@ export class PropertyServiceProxy {
     }
 
     /**
-     * @id (optional) 
      * @body (optional) 
      * @return Success
      */
-    updatePropertyInvestmentDetails(id: number | null | undefined, body: PropertyInvestmentDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdatePropertyInvestmentDetails?";
-        if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+    updatePropertyInvestmentDetails(body: PropertyInvestmentDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdatePropertyInvestmentDetails";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -75753,6 +75747,7 @@ export enum ExitStrategy {
 }
 
 export class PropertySellerDto implements IPropertySellerDto {
+    id!: number | undefined;
     ownersOnTitle!: string | undefined;
     mortgageHolder!: string | undefined;
     propertyResident!: PropertyResident | undefined;
@@ -75831,6 +75826,7 @@ export class PropertySellerDto implements IPropertySellerDto {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.ownersOnTitle = data["ownersOnTitle"];
             this.mortgageHolder = data["mortgageHolder"];
             this.propertyResident = data["propertyResident"];
@@ -75909,6 +75905,7 @@ export class PropertySellerDto implements IPropertySellerDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["ownersOnTitle"] = this.ownersOnTitle;
         data["mortgageHolder"] = this.mortgageHolder;
         data["propertyResident"] = this.propertyResident;
@@ -75980,6 +75977,7 @@ export class PropertySellerDto implements IPropertySellerDto {
 }
 
 export interface IPropertySellerDto {
+    id: number | undefined;
     ownersOnTitle: string | undefined;
     mortgageHolder: string | undefined;
     propertyResident: PropertyResident | undefined;
@@ -76049,6 +76047,7 @@ export interface IPropertySellerDto {
 }
 
 export class PropertyInvestmentDto implements IPropertyInvestmentDto {
+    id!: number | undefined;
     equityPaidToHomeowner!: number | undefined;
     referralFee!: number | undefined;
     renovations!: number | undefined;
@@ -76056,9 +76055,9 @@ export class PropertyInvestmentDto implements IPropertyInvestmentDto {
     inspection!: number | undefined;
     legalFees!: number | undefined;
     otherPreparationFees!: number | undefined;
-    contractTermFrom!: moment.Moment | undefined;
-    contractTermTo!: moment.Moment | undefined;
-    extraYear!: boolean | undefined;
+    purchaseTermFrom!: moment.Moment | undefined;
+    purchaseTermTo!: moment.Moment | undefined;
+    purchaseTermExtraYear!: boolean | undefined;
     monthlyMortgagePayments!: number | undefined;
     monthlyTaxes!: number | undefined;
     monthlyInsurance!: number | undefined;
@@ -76066,12 +76065,11 @@ export class PropertyInvestmentDto implements IPropertyInvestmentDto {
     otherMonthlyFees!: number | undefined;
     termUtilizedMonths!: number | undefined;
     rtoPurchasePrice!: number | undefined;
-    deposit!: number | undefined;
-    monthlyPayment!: number | undefined;
-    amountAboveHolding!: number | undefined;
-    saleTermFrom!: moment.Moment | undefined;
-    saleTermTo!: moment.Moment | undefined;
-    termMortgagePercent!: number | undefined;
+    rtoDeposit!: number | undefined;
+    rtoMonthlyPayment!: number | undefined;
+    rtoTermFrom!: moment.Moment | undefined;
+    rtoTermTo!: moment.Moment | undefined;
+    rtoMortgagePaydownRate!: number | undefined;
 
     constructor(data?: IPropertyInvestmentDto) {
         if (data) {
@@ -76084,6 +76082,7 @@ export class PropertyInvestmentDto implements IPropertyInvestmentDto {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.equityPaidToHomeowner = data["equityPaidToHomeowner"];
             this.referralFee = data["referralFee"];
             this.renovations = data["renovations"];
@@ -76091,9 +76090,9 @@ export class PropertyInvestmentDto implements IPropertyInvestmentDto {
             this.inspection = data["inspection"];
             this.legalFees = data["legalFees"];
             this.otherPreparationFees = data["otherPreparationFees"];
-            this.contractTermFrom = data["contractTermFrom"] ? moment(data["contractTermFrom"].toString()) : <any>undefined;
-            this.contractTermTo = data["contractTermTo"] ? moment(data["contractTermTo"].toString()) : <any>undefined;
-            this.extraYear = data["extraYear"];
+            this.purchaseTermFrom = data["purchaseTermFrom"] ? moment(data["purchaseTermFrom"].toString()) : <any>undefined;
+            this.purchaseTermTo = data["purchaseTermTo"] ? moment(data["purchaseTermTo"].toString()) : <any>undefined;
+            this.purchaseTermExtraYear = data["purchaseTermExtraYear"];
             this.monthlyMortgagePayments = data["monthlyMortgagePayments"];
             this.monthlyTaxes = data["monthlyTaxes"];
             this.monthlyInsurance = data["monthlyInsurance"];
@@ -76101,12 +76100,11 @@ export class PropertyInvestmentDto implements IPropertyInvestmentDto {
             this.otherMonthlyFees = data["otherMonthlyFees"];
             this.termUtilizedMonths = data["termUtilizedMonths"];
             this.rtoPurchasePrice = data["rtoPurchasePrice"];
-            this.deposit = data["deposit"];
-            this.monthlyPayment = data["monthlyPayment"];
-            this.amountAboveHolding = data["amountAboveHolding"];
-            this.saleTermFrom = data["saleTermFrom"] ? moment(data["saleTermFrom"].toString()) : <any>undefined;
-            this.saleTermTo = data["saleTermTo"] ? moment(data["saleTermTo"].toString()) : <any>undefined;
-            this.termMortgagePercent = data["termMortgagePercent"];
+            this.rtoDeposit = data["rtoDeposit"];
+            this.rtoMonthlyPayment = data["rtoMonthlyPayment"];
+            this.rtoTermFrom = data["rtoTermFrom"] ? moment(data["rtoTermFrom"].toString()) : <any>undefined;
+            this.rtoTermTo = data["rtoTermTo"] ? moment(data["rtoTermTo"].toString()) : <any>undefined;
+            this.rtoMortgagePaydownRate = data["rtoMortgagePaydownRate"];
         }
     }
 
@@ -76119,6 +76117,7 @@ export class PropertyInvestmentDto implements IPropertyInvestmentDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["equityPaidToHomeowner"] = this.equityPaidToHomeowner;
         data["referralFee"] = this.referralFee;
         data["renovations"] = this.renovations;
@@ -76126,9 +76125,9 @@ export class PropertyInvestmentDto implements IPropertyInvestmentDto {
         data["inspection"] = this.inspection;
         data["legalFees"] = this.legalFees;
         data["otherPreparationFees"] = this.otherPreparationFees;
-        data["contractTermFrom"] = this.contractTermFrom ? this.contractTermFrom.toISOString() : <any>undefined;
-        data["contractTermTo"] = this.contractTermTo ? this.contractTermTo.toISOString() : <any>undefined;
-        data["extraYear"] = this.extraYear;
+        data["purchaseTermFrom"] = this.purchaseTermFrom ? this.purchaseTermFrom.toISOString() : <any>undefined;
+        data["purchaseTermTo"] = this.purchaseTermTo ? this.purchaseTermTo.toISOString() : <any>undefined;
+        data["purchaseTermExtraYear"] = this.purchaseTermExtraYear;
         data["monthlyMortgagePayments"] = this.monthlyMortgagePayments;
         data["monthlyTaxes"] = this.monthlyTaxes;
         data["monthlyInsurance"] = this.monthlyInsurance;
@@ -76136,17 +76135,17 @@ export class PropertyInvestmentDto implements IPropertyInvestmentDto {
         data["otherMonthlyFees"] = this.otherMonthlyFees;
         data["termUtilizedMonths"] = this.termUtilizedMonths;
         data["rtoPurchasePrice"] = this.rtoPurchasePrice;
-        data["deposit"] = this.deposit;
-        data["monthlyPayment"] = this.monthlyPayment;
-        data["amountAboveHolding"] = this.amountAboveHolding;
-        data["saleTermFrom"] = this.saleTermFrom ? this.saleTermFrom.toISOString() : <any>undefined;
-        data["saleTermTo"] = this.saleTermTo ? this.saleTermTo.toISOString() : <any>undefined;
-        data["termMortgagePercent"] = this.termMortgagePercent;
+        data["rtoDeposit"] = this.rtoDeposit;
+        data["rtoMonthlyPayment"] = this.rtoMonthlyPayment;
+        data["rtoTermFrom"] = this.rtoTermFrom ? this.rtoTermFrom.toISOString() : <any>undefined;
+        data["rtoTermTo"] = this.rtoTermTo ? this.rtoTermTo.toISOString() : <any>undefined;
+        data["rtoMortgagePaydownRate"] = this.rtoMortgagePaydownRate;
         return data; 
     }
 }
 
 export interface IPropertyInvestmentDto {
+    id: number | undefined;
     equityPaidToHomeowner: number | undefined;
     referralFee: number | undefined;
     renovations: number | undefined;
@@ -76154,9 +76153,9 @@ export interface IPropertyInvestmentDto {
     inspection: number | undefined;
     legalFees: number | undefined;
     otherPreparationFees: number | undefined;
-    contractTermFrom: moment.Moment | undefined;
-    contractTermTo: moment.Moment | undefined;
-    extraYear: boolean | undefined;
+    purchaseTermFrom: moment.Moment | undefined;
+    purchaseTermTo: moment.Moment | undefined;
+    purchaseTermExtraYear: boolean | undefined;
     monthlyMortgagePayments: number | undefined;
     monthlyTaxes: number | undefined;
     monthlyInsurance: number | undefined;
@@ -76164,12 +76163,11 @@ export interface IPropertyInvestmentDto {
     otherMonthlyFees: number | undefined;
     termUtilizedMonths: number | undefined;
     rtoPurchasePrice: number | undefined;
-    deposit: number | undefined;
-    monthlyPayment: number | undefined;
-    amountAboveHolding: number | undefined;
-    saleTermFrom: moment.Moment | undefined;
-    saleTermTo: moment.Moment | undefined;
-    termMortgagePercent: number | undefined;
+    rtoDeposit: number | undefined;
+    rtoMonthlyPayment: number | undefined;
+    rtoTermFrom: moment.Moment | undefined;
+    rtoTermTo: moment.Moment | undefined;
+    rtoMortgagePaydownRate: number | undefined;
 }
 
 export class PropertyBaseDto implements IPropertyBaseDto {
