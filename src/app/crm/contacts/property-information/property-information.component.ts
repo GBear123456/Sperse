@@ -582,10 +582,11 @@ export class PropertyInformationComponent implements OnInit {
 
     generatePdf() {
         this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.propertyServiceProxy.generatePdf(this.property.id).pipe(
+        this.propertyServiceProxy.generateInvestmentPdf(this.property.id).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-        ).subscribe(() => {
+        ).subscribe((urlInfo) => {
             this.notify.info(this.ls.l('SuccessfullyGenerated'));
+            window.open(urlInfo.url, '_blank');
         },
         () => {
             this.notify.error(this.ls.l('GenerationFailed'));

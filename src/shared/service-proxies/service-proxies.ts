@@ -28785,8 +28785,8 @@ export class PropertyServiceProxy {
      * @propertyId (optional) 
      * @return Success
      */
-    generatePdf(propertyId: number | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Property/GeneratePdf?";
+    generateInvestmentPdf(propertyId: number | null | undefined): Observable<GetUrlOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/GenerateInvestmentPdf?";
         if (propertyId !== undefined)
             url_ += "propertyId=" + encodeURIComponent("" + propertyId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -28796,24 +28796,25 @@ export class PropertyServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGeneratePdf(response_);
+            return this.processGenerateInvestmentPdf(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGeneratePdf(<any>response_);
+                    return this.processGenerateInvestmentPdf(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<GetUrlOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<GetUrlOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGeneratePdf(response: HttpResponseBase): Observable<void> {
+    protected processGenerateInvestmentPdf(response: HttpResponseBase): Observable<GetUrlOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -28822,14 +28823,17 @@ export class PropertyServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetUrlOutput.fromJS(resultData200) : new GetUrlOutput();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<GetUrlOutput>(<any>null);
     }
 }
 
@@ -76047,7 +76051,7 @@ export interface IPropertySellerDto {
 }
 
 export class PropertyInvestmentDto implements IPropertyInvestmentDto {
-    id!: number | undefined;
+    id!: number;
     equityPaidToHomeowner!: number | undefined;
     referralFee!: number | undefined;
     renovations!: number | undefined;
@@ -76145,7 +76149,7 @@ export class PropertyInvestmentDto implements IPropertyInvestmentDto {
 }
 
 export interface IPropertyInvestmentDto {
-    id: number | undefined;
+    id: number;
     equityPaidToHomeowner: number | undefined;
     referralFee: number | undefined;
     renovations: number | undefined;
