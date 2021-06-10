@@ -62508,6 +62508,7 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
     code!: string | undefined;
     name!: string | undefined;
     level!: string | undefined;
+    startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     amount!: number | undefined;
 
@@ -62528,6 +62529,7 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
             this.code = data["code"];
             this.name = data["name"];
             this.level = data["level"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.amount = data["amount"];
         }
@@ -62548,6 +62550,7 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
         data["code"] = this.code;
         data["name"] = this.name;
         data["level"] = this.level;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["amount"] = this.amount;
         return data; 
@@ -62561,6 +62564,7 @@ export interface IImportSubscriptionInput {
     code: string | undefined;
     name: string | undefined;
     level: string | undefined;
+    startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     amount: number | undefined;
 }

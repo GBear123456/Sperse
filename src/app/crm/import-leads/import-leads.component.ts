@@ -156,6 +156,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly SUBSCRIPTION3_AMOUNT = 'subscription3_amount';
     private readonly SUBSCRIPTION4_AMOUNT = 'subscription4_amount';
     private readonly SUBSCRIPTION5_AMOUNT = 'subscription5_amount';
+    private readonly SUBSCRIPTION1_START_DATE = 'subscription1_startDate';
+    private readonly SUBSCRIPTION2_START_DATE = 'subscription2_startDate';
+    private readonly SUBSCRIPTION3_START_DATE = 'subscription3_startDate';
+    private readonly SUBSCRIPTION4_START_DATE = 'subscription4_startDate';
+    private readonly SUBSCRIPTION5_START_DATE = 'subscription5_startDate';
     private readonly SUBSCRIPTION1_END_DATE = 'subscription1_endDate';
     private readonly SUBSCRIPTION2_END_DATE = 'subscription2_endDate';
     private readonly SUBSCRIPTION3_END_DATE = 'subscription3_endDate';
@@ -247,6 +252,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.PERSONAL_DOB,
         this.BUSINESS_DATE_FOUNDED,
         this.BUSINESS_EMPLOYMENT_START_DATE,
+        this.SUBSCRIPTION1_START_DATE,
+        this.SUBSCRIPTION2_START_DATE,
+        this.SUBSCRIPTION3_START_DATE,
+        this.SUBSCRIPTION4_START_DATE,
+        this.SUBSCRIPTION5_START_DATE,
         this.SUBSCRIPTION1_END_DATE,
         this.SUBSCRIPTION2_END_DATE,
         this.SUBSCRIPTION3_END_DATE,
