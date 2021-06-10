@@ -97,7 +97,7 @@ export class AppConsts {
         emailWithName: new RegExp(`^((("[^"]+")|([a-zA-Z\\s]+))\\s*<(?=.+>$)|(?!.+>$))${AppConsts.emailRegexString}>?$`),
         phone: /^[0-9]{10}$/,
         url: /^(http[s]?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
-        fullName: /^[\w|\s|'|,|\.|\-]+$/,
+        fullName: /^[\w|\s|'|,|\.|\-]+(\(.+\))?$/,
         affiliateCode: /^(?!.*?\.\.)[a-zA-Z0-9\._-]*$/,
         affiliateRate: /^[0-9]{1,2}(\.[0-9]{1,2})*$/,
         ein: /^\d{2}\-?\d{7}$/,
