@@ -1520,8 +1520,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-12 col-lg-6 col-xl-4">
                                 <div class="block">
                                     <h3>{{ ls.l('OutdoorSpace') }}</h3>
                                     <div class="fields">
@@ -1570,6 +1568,17 @@
                                                 ></dx-select-box>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6 col-xl-4">
+                                <div class="block">
+                                    <h3>{{ ls.l('Photo') }}</h3>
+                                    <div class="fields">
+                                        <div class="photo-area"
+                                             [ngStyle]="{ 'background-image': getPhoto() }"
+                                             (click)="showUploadPhotoDialog($event)">
+                                        </div>                                        
                                     </div>
                                 </div>
                                 <div class="block">
