@@ -13,6 +13,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription, merge, forkJoin, of } from 'rxjs';
 import { filter, map, switchMap, pluck, finalize, skip, first } from 'rxjs/operators';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { ProfileService } from '@shared/common/profile-service/profile.service';
 import cloneDeep from 'lodash/cloneDeep';
 import * as moment from 'moment';
 
@@ -178,6 +179,7 @@ export class PropertyInformationComponent implements OnInit {
         private dialog: MatDialog,
         private contactsService: ContactsService,
         private route: ActivatedRoute,
+        private profileService: ProfileService,
         private propertyServiceProxy: PropertyServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private leadServiceProxy: LeadServiceProxy,
@@ -531,15 +533,18 @@ export class PropertyInformationComponent implements OnInit {
 
     getPhoto(): string {
         return 'url(' + ( this.property.photo ?
-            'data:image/png;base64,' + this.property.photo :
+            this.profileService.getPhoto(this.property.photo) :
             'assets/common/images/no-photo-Organization.png') +
         ')';
     }
 
     showUploadPhotoDialog(event) {
+        if (this.disableEdit)
+            return ;
+
         this.dialog.closeAll();
         let data: UploadPhotoData = {
-            source: this.property.photo,
+            source: this.property.photo ? this.profileService.getPhoto(this.property.photo) : '',
             title: this.ls.l('ChangePropertyPhoto')
         };
         this.dialog.open(UploadPhotoDialogComponent, {

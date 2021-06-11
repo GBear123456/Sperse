@@ -1575,9 +1575,10 @@
                                 <div class="block">
                                     <h3>{{ ls.l('Photo') }}</h3>
                                     <div class="fields">
-                                        <div class="photo-area"
-                                             [ngStyle]="{ 'background-image': getPhoto() }"
-                                             (click)="showUploadPhotoDialog($event)">
+                                        <div class="photo-area" 
+                                            [ngClass]="{disabled: disableEdit}"
+                                            [ngStyle]="{ 'background-image': getPhoto() }"
+                                            (click)="showUploadPhotoDialog($event)">
                                         </div>                                        
                                     </div>
                                 </div>
