@@ -2290,10 +2290,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('From')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(propertyInvestmentDto.contractTermFrom)"
+                                                             [value]="getDateValue(propertyInvestmentDto.purchaseTermFrom)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'contractTermFrom', 'investmentProp')">
+                                                             (onValueChanged)="dateValueChanged($event, 'purchaseTermFrom', 'investmentProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -2306,10 +2306,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('To')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(propertyInvestmentDto.contractTermTo)"
+                                                             [value]="getDateValue(propertyInvestmentDto.purchaseTermTo)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'contractTermTo', 'investmentProp')">
+                                                             (onValueChanged)="dateValueChanged($event, 'purchaseTermTo', 'investmentProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -2319,13 +2319,13 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label"></div>
                                             <div class="dx-field-value">
-                                                {{getMonthYearString(getContractTermMonths())}}
+                                                {{getMonthYearString(getPurchaseTermMonths())}}
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('ExtraYear') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-check-box [(value)]="propertyInvestmentDto.extraYear"
+                                                <dx-check-box [(value)]="propertyInvestmentDto.purchaseTermExtraYear"
                                                               [disabled]="disableEdit"
                                                               (onValueChanged)="investmentValueChanged()">
                                                 </dx-check-box>
@@ -2455,7 +2455,7 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('Deposit') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertyInvestmentDto.deposit"
+                                                <dx-number-box [(value)]="propertyInvestmentDto.rtoDeposit"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
@@ -2469,7 +2469,7 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('MonthlyPayment') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertyInvestmentDto.monthlyPayment"
+                                                <dx-number-box [(value)]="propertyInvestmentDto.rtoMonthlyPayment"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
@@ -2485,15 +2485,7 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AmountAboveHolding') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertyInvestmentDto.amountAboveHolding"
-                                                               [stylingMode]="stylingMode"
-                                                               showClearButton="true"
-                                                               step="0"
-                                                               [format]="currencyFormat"
-                                                               [placeholder]="ls.l('EditValuePlaceholder')"
-                                                               [disabled]="disableEdit"
-                                                               (onValueChanged)="investmentValueChanged()">
-                                                </dx-number-box>
+                                                {{getAmountAboveHolding() | currency: 'USD'}}
                                             </div>
                                         </div>
                                         <div class="dx-field combo-dropdown">
@@ -2505,10 +2497,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('From')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(propertyInvestmentDto.saleTermFrom)"
+                                                             [value]="getDateValue(propertyInvestmentDto.rtoTermFrom)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'saleTermFrom', 'investmentProp')">
+                                                             (onValueChanged)="dateValueChanged($event, 'rtoTermFrom', 'investmentProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -2521,10 +2513,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('To')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(propertyInvestmentDto.saleTermTo)"
+                                                             [value]="getDateValue(propertyInvestmentDto.rtoTermTo)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'saleTermTo', 'investmentProp')">
+                                                             (onValueChanged)="dateValueChanged($event, 'rtoTermTo', 'investmentProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -2534,7 +2526,7 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label"></div>
                                             <div class="dx-field-value">
-                                                {{getMonthYearString(getSaleTermMonths())}}
+                                                {{getMonthYearString(getRTOTermMonths())}}
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -2548,7 +2540,7 @@
                                         <div class="dx-field combo-dropdown">
                                             <div class="dx-field-label">{{ ls.l('TermMortgagePaydown') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertyInvestmentDto.termMortgagePercent"
+                                                <dx-number-box [(value)]="propertyInvestmentDto.rtoMortgagePaydownRate"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
