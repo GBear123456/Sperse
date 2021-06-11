@@ -183,7 +183,7 @@ export class PropertyInformationComponent implements OnInit {
         private propertyServiceProxy: PropertyServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private leadServiceProxy: LeadServiceProxy,
-        private changeDetectorRef: ChangeDetectorRef,
+        public changeDetectorRef: ChangeDetectorRef,
         private loadingService: LoadingService,
         private invoicesService: InvoicesService,
         private elementRef: ElementRef,

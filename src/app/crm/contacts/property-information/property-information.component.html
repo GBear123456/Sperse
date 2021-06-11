@@ -1643,6 +1643,17 @@
                                     </div>
                                 </div>
                                 <div class="block">
+                                    <h3>{{ ls.l('Links') }}</h3>
+                                    <div class="fields">
+                                        <socials
+                                            [isEditAllowed]="!disableEdit"
+                                            [enableLinkDilog]="false"
+                                            [contactInfoData]="{contactId: property.id, links: property.links || []}"
+                                            (onChanged)="changeDetectorRef.detectChanges()">
+                                        </socials>
+                                    </div>
+                                </div>
+                                <div class="block">
                                     <h3>{{ ls.l('AdditionalDetails') }}</h3>
                                     <div class="fields">
                                         <div class="dx-field">

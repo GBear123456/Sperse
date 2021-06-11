@@ -38,6 +38,22 @@
         }
     }
 
+    ::ng-deep socials {
+        dx-button, ::ng-deep dx-text-box {
+            &, ::ng-deep input {
+                border: none;
+                background: transparent!important;
+            }
+            &.dx-state-focused .dx-placeholder {
+                top: -30px!important;
+            }
+        }
+        .inplace-edit-edit-mode {
+            background: #3333330d;
+            border-radius: 5px;
+        }
+    }
+
     .block {
         border-radius: 5px;
         padding: 20px 20px 15px;

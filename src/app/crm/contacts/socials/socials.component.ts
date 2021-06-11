@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -40,11 +40,15 @@ export class SocialsComponent {
     }
 
     @Input() contactInfoData: ContactInfoDetailsDto;
+    @Input() enableLinkDilog: boolean = true;
+    @Input() isEditAllowed = false;
 
-    isEditAllowed = false;
+    @Output() onChanged: EventEmitter<any> = new EventEmitter(); 
+
     private _contactInfo: ContactInfoDto;
 
     LINK_TYPES = {};
+    urlRegEx = AppConsts.regexPatterns.url;
 
     constructor(
         private store$: Store<RootStore.State>,
@@ -64,15 +68,17 @@ export class SocialsComponent {
     }
 
     linkTypesLoad() {
-        this.store$.dispatch(new ContactLinkTypesStoreActions.LoadRequestAction());
-        this.store$.pipe(
-            select(ContactLinkTypesStoreSelectors.getContactLinkTypes),
-            filter(types => !!types)
-        ).subscribe(types => {
-            types.forEach((entity: ContactLinkTypeDto) => {
-                this.LINK_TYPES[entity.id] = entity.name.replace(/ /g, '');
+        if (this.enableLinkDilog) {
+            this.store$.dispatch(new ContactLinkTypesStoreActions.LoadRequestAction());
+            this.store$.pipe(
+                select(ContactLinkTypesStoreSelectors.getContactLinkTypes),
+                filter(types => !!types)
+            ).subscribe(types => {
+                types.forEach((entity: ContactLinkTypeDto) => {
+                    this.LINK_TYPES[entity.id] = entity.name.replace(/ /g, '');
+                });
             });
-        });
+        }
     }
 
     getDialogPosition(event) {
@@ -92,16 +98,30 @@ export class SocialsComponent {
     }
 
     showEditDialog(data, event) {
-        if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
-            this.showSocialDialog(data, event);
-        else
-            this.contactsService.addCompanyDialog(event, this.contactInfo,
-                Math.round(event.target.offsetWidth / 2)
-            ).subscribe(result => {
-                if (result) {
-                    this.showSocialDialog(data, event);
-                }
-            });
+        if (this.enableLinkDilog) {
+            if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
+                this.showSocialDialog(data, event);
+            else
+                this.contactsService.addCompanyDialog(event, this.contactInfo,
+                    Math.round(event.target.offsetWidth / 2)
+                ).subscribe(result => {
+                    if (result) {
+                        this.showSocialDialog(data, event);
+                    }
+                });
+        } else if (this.contactInfoData.links.every(link => link.id)) {
+            this.contactInfoData.links.push(new ContactLinkDto({
+                linkTypeId: AppConsts.otherLinkTypeId,
+                url: '',
+                isSocialNetwork: false,
+                isActive: true,
+                comment: '',
+                contactId: this.contactInfoData.contactId,
+                id: undefined,
+                isConfirmed: undefined,
+                confirmationDate: undefined
+            }));
+        }
     }
 
     showSocialDialog(data, event) {
@@ -143,8 +163,8 @@ export class SocialsComponent {
             dialogData['linkTypeId'] = dialogData.usageTypeId;
 
         this.contactLinkService
-            [(data ? 'update' : 'create') + 'ContactLink'](
-            (data ? UpdateContactLinkInput : CreateContactLinkInput).fromJS(dialogData)
+            [(data && data.id ? 'update' : 'create') + 'ContactLink'](
+            (data  && data.id ? UpdateContactLinkInput : CreateContactLinkInput).fromJS(dialogData)
         ).subscribe(result => {
             if (!result && data) {
                 data.url = dialogData.url;
@@ -155,8 +175,12 @@ export class SocialsComponent {
                 data.isActive = dialogData.isActive;
             } else if (result.id) {
                 dialogData.id = result.id;
-                this.contactInfoData.links
-                    .push(ContactLinkDto.fromJS(dialogData));
+                if (this.enableLinkDilog) {
+                    this.contactInfoData.links
+                        .push(ContactLinkDto.fromJS(dialogData));
+                } else 
+                    Object.assign(data, dialogData);
+                this.onChanged.emit();
             }
         });
     }
@@ -176,10 +200,11 @@ export class SocialsComponent {
                     }
                     return true;
                 });
+                this.onChanged.emit();
         });
     }
 
     normalizeLink(link) {
-        return ((/http[s]{0,1}:\/\//g).test(link) ? link : 'http://' + link);
+        return link ? ((/http[s]{0,1}:\/\//g).test(link) ? link : 'http://' + link) : link;
     }
 }
