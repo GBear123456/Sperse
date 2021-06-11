@@ -32,9 +32,10 @@
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
+
         &.disabled {
             cursor: default;
-            opacity: 0.8;            
+            opacity: 0.8;
         }
     }
 
@@ -77,10 +78,23 @@
         }
     }
 
+    .inline-header {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
     h2, .total-profit {
-        margin-top: 15px;
         font-size: 25px !important;
         font-weight: 600 !important;
+    }
+
+    .total-profit {
+        margin-top: 20px;
+
+        button {
+            top: -5px;
+            margin-left: 13px;
+        }
     }
 
     .properties .fields {

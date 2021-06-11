@@ -2411,7 +2411,7 @@
                                                 </dx-number-box>
                                             </div>
                                         </div>
-                                        <h3>{{ ls.l('PreparationCosts') }}</h3>
+                                        <h3 class="inline-header">{{ ls.l('PreparationCosts') }}: </h3> {{ getPreparationCosts() | currency: currencyFormat.currency }}
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('Renovations') }}</div>
                                             <div class="dx-field-value">
@@ -2532,7 +2532,7 @@
                                                 </dx-check-box>
                                             </div>
                                         </div>
-                                        <h3>{{ ls.l('MonthlyHoldingCosts') }}</h3>
+                                        <h3 class="inline-header">{{ ls.l('MonthlyHoldingCosts') }}:</h3> {{ getMonthlyHoldingCost() | currency: currencyFormat.currency }}
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('MonthlyMortgagePayments') }}</div>
                                             <div class="dx-field-value">
@@ -2616,20 +2616,20 @@
                                                 </dx-number-box>
                                             </div>
                                             <div class="dx-field-value">
-                                                {{getTotalUtilizedHoldingCosts() | currency: 'USD'}}
+                                                {{getTotalUtilizedHoldingCosts() | currency: currencyFormat.currency}}
                                             </div>
                                         </div>
                                         <h3>{{ ls.l('Total') }}</h3>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('TotalFees') }}</div>
                                             <div class="dx-field-value">
-                                                {{getInvestmentTotalFees() | currency: 'USD'}}
+                                                {{getInvestmentTotalFees() | currency: currencyFormat.currency}}
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('Total') }}</div>
                                             <div class="dx-field-value">
-                                                {{getInvestmentTotalPurchase() | currency: 'USD'}}
+                                                {{getInvestmentTotalPurchase() | currency: currencyFormat.currency}}
                                             </div>
                                         </div>
                                     </div>
@@ -2686,7 +2686,7 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AmountAboveHolding') }}</div>
                                             <div class="dx-field-value">
-                                                {{getAmountAboveHolding() | currency: 'USD'}}
+                                                {{getAmountAboveHolding() | currency: currencyFormat.currency}}
                                             </div>
                                         </div>
                                         <div class="dx-field combo-dropdown">
@@ -2733,7 +2733,7 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('TermAmountAboveHolding') }}</div>
                                             <div class="dx-field-value">
-                                                {{getTermAmountAboveHolding() | currency: 'USD'}}
+                                                {{getTermAmountAboveHolding() | currency: currencyFormat.currency}}
                                             </div>
                                         </div>
                                         <div class="dx-field"></div>
@@ -2752,7 +2752,7 @@
                                                 </dx-number-box>
                                             </div>
                                             <div class="dx-field-value">
-                                                {{getTermMortgagePaydown() | currency: 'USD'}}
+                                                {{getTermMortgagePaydown() | currency: currencyFormat.currency}}
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -2763,13 +2763,13 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('TotalProfit') }}</div>
                                             <div class="dx-field-value">
-                                                {{getTotalProfit() | currency: 'USD'}}
+                                                {{getTotalProfit() | currency: currencyFormat.currency}}
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('Total') }}</div>
                                             <div class="dx-field-value">
-                                                {{getTotalSale() | currency: 'USD'}}
+                                                {{getTotalSale() | currency: currencyFormat.currency}}
                                             </div>
                                         </div>
                                     </div>
@@ -2778,8 +2778,8 @@
                         </div>
                         <div class="row">
                             <div class="col-md-12 text-center total-profit">
-                                <span>{{ls.l('TotalProfit')}}: {{getGrandTotalProfit() | currency: 'USD'}}</span>
-                                <button class="button-layout button-primary" (click)="generatePdf()">{{ls.l('GeneratePdf')}}</button>
+                                <span>{{ls.l('TotalProfit')}}: {{getGrandTotalProfit() | currency: currencyFormat.currency}}</span>
+                                <button *ngIf="!disableEdit" class="button-layout button-primary" (click)="generatePdf()">{{ls.l('GeneratePdf')}}</button>
                             </div>
                         </div>
                     </div>
