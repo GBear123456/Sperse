@@ -583,7 +583,6 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             .delete(this.instanceType, this.instanceId, syncAccountId)
             .subscribe(() => {
                 this.onDataChange.emit();
-                this.addButtonComponent.checkCreateIsAllowed();
                 this.notify.info(this.l('SuccessfullyDeleted'));
             });
     }
