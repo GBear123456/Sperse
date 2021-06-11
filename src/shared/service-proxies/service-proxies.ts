@@ -75285,6 +75285,46 @@ export interface IUserEmailSettings {
     emailSignatureHtml: string | undefined;
 }
 
+export class PropertyLinkDto implements IPropertyLinkDto {
+    id!: number | undefined;
+    url!: string | undefined;
+
+    constructor(data?: IPropertyLinkDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.url = data["url"];
+        }
+    }
+
+    static fromJS(data: any): PropertyLinkDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PropertyLinkDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["url"] = this.url;
+        return data; 
+    }
+}
+
+export interface IPropertyLinkDto {
+    id: number | undefined;
+    url: string | undefined;
+}
+
 export enum PropertyType {
     Condo = "Condo", 
     Duplex = "Duplex", 
@@ -75360,6 +75400,7 @@ export enum FireplaceType {
 
 export class PropertyDto implements IPropertyDto {
     photo!: string | undefined;
+    links!: PropertyLinkDto[] | undefined;
     id!: number;
     contactGroupId!: string | undefined;
     name!: string;
@@ -75465,6 +75506,11 @@ export class PropertyDto implements IPropertyDto {
     init(data?: any) {
         if (data) {
             this.photo = data["photo"];
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(PropertyLinkDto.fromJS(item));
+            }
             this.id = data["id"];
             this.contactGroupId = data["contactGroupId"];
             this.name = data["name"];
@@ -75570,6 +75616,11 @@ export class PropertyDto implements IPropertyDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["photo"] = this.photo;
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
         data["id"] = this.id;
         data["contactGroupId"] = this.contactGroupId;
         data["name"] = this.name;
@@ -75668,6 +75719,7 @@ export class PropertyDto implements IPropertyDto {
 
 export interface IPropertyDto {
     photo: string | undefined;
+    links: PropertyLinkDto[] | undefined;
     id: number;
     contactGroupId: string | undefined;
     name: string;
