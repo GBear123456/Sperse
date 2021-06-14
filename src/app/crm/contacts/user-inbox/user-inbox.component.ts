@@ -478,7 +478,7 @@ export class UserInboxComponent implements OnDestroy {
         (this.isActiveEmilType ? this.contactsService.sendEmail({
                 contactId: this.contactId,
                 parentId: parentId,
-                from: this.activeMessage.from,
+                isFromUserEmailAddress: false,
                 to: [this.activeMessage.to],
                 replyTo: undefined,
                 cc: undefined,

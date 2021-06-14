@@ -55003,6 +55003,54 @@ export interface IMessageListDtoPagedResultDto {
     items: MessageListDto[] | undefined;
 }
 
+export class EmailFromInfo implements IEmailFromInfo {
+    address!: string | undefined;
+    displayName!: string | undefined;
+    ccAddress!: string | undefined;
+    userId!: number | undefined;
+
+    constructor(data?: IEmailFromInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.address = data["address"];
+            this.displayName = data["displayName"];
+            this.ccAddress = data["ccAddress"];
+            this.userId = data["userId"];
+        }
+    }
+
+    static fromJS(data: any): EmailFromInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailFromInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["address"] = this.address;
+        data["displayName"] = this.displayName;
+        data["ccAddress"] = this.ccAddress;
+        data["userId"] = this.userId;
+        return data; 
+    }
+}
+
+export interface IEmailFromInfo {
+    address: string | undefined;
+    displayName: string | undefined;
+    ccAddress: string | undefined;
+    userId: number | undefined;
+}
+
 export class Attachment implements IAttachment {
     id!: string | undefined;
     size!: number | undefined;
@@ -55052,6 +55100,7 @@ export interface IAttachment {
 }
 
 export class GetEmailDataOutput implements IGetEmailDataOutput {
+    from!: EmailFromInfo[] | undefined;
     subject!: string | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
@@ -55070,6 +55119,11 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
 
     init(data?: any) {
         if (data) {
+            if (data["from"] && data["from"].constructor === Array) {
+                this.from = [];
+                for (let item of data["from"])
+                    this.from.push(EmailFromInfo.fromJS(item));
+            }
             this.subject = data["subject"];
             if (data["cc"] && data["cc"].constructor === Array) {
                 this.cc = [];
@@ -55106,6 +55160,11 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        if (this.from && this.from.constructor === Array) {
+            data["from"] = [];
+            for (let item of this.from)
+                data["from"].push(item.toJSON());
+        }
         data["subject"] = this.subject;
         if (this.cc && this.cc.constructor === Array) {
             data["cc"] = [];
@@ -55135,6 +55194,7 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
 }
 
 export interface IGetEmailDataOutput {
+    from: EmailFromInfo[] | undefined;
     subject: string | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
@@ -55186,7 +55246,7 @@ export interface IFileInfo {
 export class SendEmailInput implements ISendEmailInput {
     contactId!: number;
     parentId!: number | undefined;
-    from!: string | undefined;
+    isFromUserEmailAddress!: boolean | undefined;
     to!: string[];
     replyTo!: string[] | undefined;
     cc!: string[] | undefined;
@@ -55211,7 +55271,7 @@ export class SendEmailInput implements ISendEmailInput {
         if (data) {
             this.contactId = data["contactId"];
             this.parentId = data["parentId"];
-            this.from = data["from"];
+            this.isFromUserEmailAddress = data["isFromUserEmailAddress"];
             if (data["to"] && data["to"].constructor === Array) {
                 this.to = [];
                 for (let item of data["to"])
@@ -55253,7 +55313,7 @@ export class SendEmailInput implements ISendEmailInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["parentId"] = this.parentId;
-        data["from"] = this.from;
+        data["isFromUserEmailAddress"] = this.isFromUserEmailAddress;
         if (this.to && this.to.constructor === Array) {
             data["to"] = [];
             for (let item of this.to)
@@ -55288,7 +55348,7 @@ export class SendEmailInput implements ISendEmailInput {
 export interface ISendEmailInput {
     contactId: number;
     parentId: number | undefined;
-    from: string | undefined;
+    isFromUserEmailAddress: boolean | undefined;
     to: string[];
     replyTo: string[] | undefined;
     cc: string[] | undefined;
@@ -75264,8 +75324,110 @@ export interface IUpdateMonthlyGoalInput {
     monthlyGoal: number | undefined;
 }
 
+export class EmailFromSettings implements IEmailFromSettings {
+    address!: string | undefined;
+    displayName!: string | undefined;
+
+    constructor(data?: IEmailFromSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.address = data["address"];
+            this.displayName = data["displayName"];
+        }
+    }
+
+    static fromJS(data: any): EmailFromSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailFromSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["address"] = this.address;
+        data["displayName"] = this.displayName;
+        return data; 
+    }
+}
+
+export interface IEmailFromSettings {
+    address: string | undefined;
+    displayName: string | undefined;
+}
+
+export class EmailSmtpSettings implements IEmailSmtpSettings {
+    host!: string | undefined;
+    port!: number | undefined;
+    enableSsl!: boolean | undefined;
+    useDefaultCredentials!: boolean | undefined;
+    domain!: string | undefined;
+    userName!: string | undefined;
+    password!: string | undefined;
+
+    constructor(data?: IEmailSmtpSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.host = data["host"];
+            this.port = data["port"];
+            this.enableSsl = data["enableSsl"];
+            this.useDefaultCredentials = data["useDefaultCredentials"];
+            this.domain = data["domain"];
+            this.userName = data["userName"];
+            this.password = data["password"];
+        }
+    }
+
+    static fromJS(data: any): EmailSmtpSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailSmtpSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["host"] = this.host;
+        data["port"] = this.port;
+        data["enableSsl"] = this.enableSsl;
+        data["useDefaultCredentials"] = this.useDefaultCredentials;
+        data["domain"] = this.domain;
+        data["userName"] = this.userName;
+        data["password"] = this.password;
+        return data; 
+    }
+}
+
+export interface IEmailSmtpSettings {
+    host: string | undefined;
+    port: number | undefined;
+    enableSsl: boolean | undefined;
+    useDefaultCredentials: boolean | undefined;
+    domain: string | undefined;
+    userName: string | undefined;
+    password: string | undefined;
+}
+
 export class UserEmailSettings implements IUserEmailSettings {
-    emailSignatureHtml!: string | undefined;
+    from!: EmailFromSettings | undefined;
+    signatureHtml!: string | undefined;
+    smtp!: EmailSmtpSettings | undefined;
 
     constructor(data?: IUserEmailSettings) {
         if (data) {
@@ -75278,7 +75440,9 @@ export class UserEmailSettings implements IUserEmailSettings {
 
     init(data?: any) {
         if (data) {
-            this.emailSignatureHtml = data["emailSignatureHtml"];
+            this.from = data["from"] ? EmailFromSettings.fromJS(data["from"]) : <any>undefined;
+            this.signatureHtml = data["signatureHtml"];
+            this.smtp = data["smtp"] ? EmailSmtpSettings.fromJS(data["smtp"]) : <any>undefined;
         }
     }
 
@@ -75291,13 +75455,17 @@ export class UserEmailSettings implements IUserEmailSettings {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["emailSignatureHtml"] = this.emailSignatureHtml;
+        data["from"] = this.from ? this.from.toJSON() : <any>undefined;
+        data["signatureHtml"] = this.signatureHtml;
+        data["smtp"] = this.smtp ? this.smtp.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IUserEmailSettings {
-    emailSignatureHtml: string | undefined;
+    from: EmailFromSettings | undefined;
+    signatureHtml: string | undefined;
+    smtp: EmailSmtpSettings | undefined;
 }
 
 export class PropertyLinkDto implements IPropertyLinkDto {
