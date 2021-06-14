@@ -418,7 +418,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.Pipeline
     );
     private gridCompactView: BehaviorSubject<Boolean> = new BehaviorSubject(true);
-    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable().pipe(tap((layoutType) => {
+        this.appService.isClientSearchDisabled = layoutType == DataLayoutType.Pipeline;
+    }));
     showCompactView$: Observable<Boolean> = combineLatest(
         this.dataLayoutType$,
         this.pipelineService.compactView$,

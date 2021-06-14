@@ -47,6 +47,8 @@ export class AppService extends AppServiceBase {
     public hideSubscriptionCallback: Function;
     private showContactInfoPanel: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public showContactInfoPanel$: Observable<boolean> = this.showContactInfoPanel.asObservable();
+    public clientSearchPhrase: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    public clientSearchToggle: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public contactInfo: any;
 
     private toolbarSubject: Subject<undefined>;
@@ -63,7 +65,8 @@ export class AppService extends AppServiceBase {
     private tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
     private subscriptionBarsClosed = {};
     private subscriptionBarVisible: Boolean;
-    isCfoLinkOrVerifyEnabled: boolean;
+    public isCfoLinkOrVerifyEnabled: boolean;
+    public isClientSearchDisabled = true;
 
     constructor(
         injector: Injector,

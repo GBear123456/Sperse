@@ -22,6 +22,7 @@ import { MomentFormatPipe } from '@shared/utils/moment-format.pipe';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './host-dashboard.component.html',
@@ -56,6 +57,7 @@ export class HostDashboardComponent implements OnInit {
     recentTenantsData$: Observable<RecentTenant[]>;
     refreshing = false;
     constructor(
+        private appService: AppService,
         private hostDashboardService: HostDashboardServiceProxy,
         private momentFormatPipe: MomentFormatPipe,
         private currencyPipe: CurrencyPipe,
@@ -77,6 +79,7 @@ export class HostDashboardComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.appService.isClientSearchDisabled = true;
         this.hostDashboardData$ = combineLatest(
             this.refresh$,
             this.selectedIncomeStatisticsDateInterval$,
