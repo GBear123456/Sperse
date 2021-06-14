@@ -1,11 +1,12 @@
 /** Core imports */
 import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
 import { IAjaxResponse } from '@abp/abpHttpInterceptor';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
+import { finalize, tap, first, map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
@@ -119,9 +120,13 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         }
     ];
     EmailTemplateType = EmailTemplateType;
+    tabIndex: Observable<number> = this.route.queryParams.pipe(first(), map((params: Params) => {
+        return (params['tab'] == 'smtp' ? 6 : 0);
+    }));
 
     constructor(
         injector: Injector,
+        private route: ActivatedRoute,
         private tenantSettingsService: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         private tenantSettingsCreditReportService: TenantSettingsCreditReportServiceProxy,

@@ -4,7 +4,7 @@
     </app-headline>
 
     <div class="wrapper">
-        <mat-tab-group *ngIf="hostSettings">
+        <mat-tab-group *ngIf="hostSettings" [selectedIndex]="tabIndex | async">
             <mat-tab label="{{l('General')}}" *ngIf="showTimezoneSelection">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">

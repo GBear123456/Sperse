@@ -1,9 +1,10 @@
 /** Core imports */
 import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
-import { forkJoin } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
+import { Observable, forkJoin } from 'rxjs';
+import { finalize, tap, first, map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
@@ -61,9 +62,15 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         }
     ];
     EmailTemplateType = EmailTemplateType;
+    tabIndex: Observable<number> = this.route.queryParams.pipe(first(), 
+        map((params: Params) => {
+            return (params['tab'] == 'smtp' ? 4 : 0);
+        })
+    );
 
     constructor(
         injector: Injector,
+        private route: ActivatedRoute,
         private hostSettingService: HostSettingsServiceProxy,
         private commonLookupService: CommonLookupServiceProxy,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
