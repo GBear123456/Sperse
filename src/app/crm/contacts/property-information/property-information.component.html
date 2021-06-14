@@ -2526,7 +2526,8 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('ExtraYear') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-check-box [(value)]="propertyInvestmentDto.purchaseTermExtraYear"
+                                                <dx-check-box width="20px"
+                                                              [(value)]="propertyInvestmentDto.purchaseTermExtraYear"
                                                               [disabled]="disableEdit"
                                                               (onValueChanged)="investmentValueChanged()">
                                                 </dx-check-box>
