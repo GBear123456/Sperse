@@ -13,20 +13,22 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
-    ComboboxItemDto, CommonLookupServiceProxy, SettingScopes, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput, PayPalSettings,
-    BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings, YTelSettingsEditDto, EmailTemplateType
+    ComboboxItemDto, CommonLookupServiceProxy, SettingScopes, HostSettingsEditDto, HostSettingsServiceProxy,
+    PayPalSettings, BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings,
+    YTelSettingsEditDto, EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppConsts } from '@root/shared/AppConsts';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 
 @Component({
     templateUrl: './host-settings.component.html',
     animations: [appModuleAnimation()],
     styleUrls: ['../../../shared/common/styles/checkbox-radio.less', './host-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantPaymentSettingsServiceProxy]
+    providers: [TenantPaymentSettingsServiceProxy, EmailSmtpSettingsService]
 })
 export class HostSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
 
@@ -77,6 +79,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         private appSessionService: AppSessionService,
         private changeDetection: ChangeDetectorRef,
         private contactService: ContactsService,
+        private emailSmtpSettingsService: EmailSmtpSettingsService,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -138,12 +141,8 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     }
 
     sendTestEmail(): void {
-        const self = this;
-        const input = new SendTestEmailInput();
-        input.emailAddress = self.testEmailAddress;
-        self.hostSettingService.sendTestEmail(input).subscribe(() => {
-            self.notify.info(self.l('TestEmailSentSuccessfully'));
-        });
+        let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.hostSettings.email);
+        this.emailSmtpSettingsService.sendTestEmail(input);
     }
 
     saveAll(): void {

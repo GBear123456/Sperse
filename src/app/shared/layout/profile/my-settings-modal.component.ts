@@ -20,7 +20,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope } from '@shared/AppEnums';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { GetCurrentUserProfileEditDto, CurrentUserProfileEditDto, SettingScopes, UserEmailSettings, EmailFromSettings, EmailSmtpSettings,
-    ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
+    SendTestEmailInput, ProfileServiceProxy, UpdateGoogleAuthenticatorKeyOutput } from '@shared/service-proxies/service-proxies';
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
@@ -28,6 +28,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from '@abp/notify/notify.service';
 import { SettingService } from '@abp/settings/setting.service';
 import { MessageService } from '@abp/message/message.service';
+import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { finalize } from '@node_modules/rxjs/internal/operators';
 
@@ -38,7 +39,7 @@ import { finalize } from '@node_modules/rxjs/internal/operators';
         '../../../../shared/metronic/m-nav.less',
         './my-settings-modal.component.less'
     ],
-    providers: [ DialogService ],
+    providers: [ DialogService, EmailSmtpSettingsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MySettingsModalComponent implements AfterViewChecked, OnInit {
@@ -85,6 +86,7 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     public canChangeUserName: boolean;
     public defaultTimezoneScope: SettingScopes = AppTimezoneScope.User;
     private _initialTimezone: string = undefined;
+    private testEmailAddress: string = undefined;
     buttons: IDialogButton[] = [
         {
             title: this.ls.l('SaveAndClose'),
@@ -99,6 +101,7 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
         private notifyService: NotifyService,
         private messageService: MessageService,
         private settingService: SettingService,
+        private emailSmtpSettingsService: EmailSmtpSettingsService,
         private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {
@@ -140,6 +143,8 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
                 this.isPhoneNumberEmpty = result.phoneNumber === '';
                 this.changeDetectorRef.detectChanges();
             });
+
+        this.testEmailAddress = this.appSessionService.user.emailAddress;
     }
 
     updateQrCodeSetupImageUrl(): void {
@@ -188,5 +193,13 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
                 });
             }
         });
+    }
+
+    sendTestEmail(): void {
+        let input = new SendTestEmailInput();
+        input.emailAddress = this.testEmailAddress;
+        input.from = this.userEmailSettings.from;
+        input.smtp = this.userEmailSettings.smtp;
+        this.emailSmtpSettingsService.sendTestEmail(input);
     }
 }
