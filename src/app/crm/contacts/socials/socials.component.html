@@ -4,18 +4,18 @@
             <li *ngFor="let social of contactInfoData?.links; let i = index">
                 <a [href]="social.url" target="_blank">
                     <!-- i class="fa fa-{{LINK_TYPES[social.linkTypeId] || 'share-square-o'}}" aria-hidden="true"></i -->
-                    <img *ngIf="LINK_TYPES[social.linkTypeId] as iconName"
-                         src="./assets/common/icons/social/{{ iconName }}.svg"
+                    <img src="./assets/common/icons/social/{{ LINK_TYPES[social.linkTypeId] }}.svg"
                          onError="this.src='./assets/common/icons/social/OtherLink.svg';">
                 </a>
                 <inplace-edit [id]="social.id"
                               [value]="social.url"
                               [link]="normalizeLink(social.url)"
-                              [validationRules]="[ { type: 'required', message: ls.l('LinkIsRequired') } ]"
+                              [validationRules]="[ { type: 'required', message: ls.l('LinkIsRequired') }, {type: 'pattern', pattern: urlRegEx, message: ls.l('LinkIsNotValid')} ]"
                               [isDeleteEnabled]="true"
+                              [isEditModeEnabled]="!social.id"
                               [isEditDialogEnabled]="true"
                               [lEntityName]="ls.l('Link')"
-                              [editPlaceholder]="ls.l('Link')"
+                              [editPlaceholder]="ls.l('EnterValue')"
                               [lDeleteConfirmTitle]="ls.l('DeleteContactHeader', ls.l('Link'))"
                               [lDeleteConfirmMessage]="ls.l('DeleteContactMessage', ls.l('Link').toLowerCase())"
                               (valueChanged)="updateLink(social, $event)"

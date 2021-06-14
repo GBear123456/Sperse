@@ -75300,6 +75300,46 @@ export interface IUserEmailSettings {
     emailSignatureHtml: string | undefined;
 }
 
+export class PropertyLinkDto implements IPropertyLinkDto {
+    id!: number | undefined;
+    url!: string | undefined;
+
+    constructor(data?: IPropertyLinkDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.url = data["url"];
+        }
+    }
+
+    static fromJS(data: any): PropertyLinkDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PropertyLinkDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["url"] = this.url;
+        return data; 
+    }
+}
+
+export interface IPropertyLinkDto {
+    id: number | undefined;
+    url: string | undefined;
+}
+
 export enum PropertyType {
     Condo = "Condo", 
     Duplex = "Duplex", 
@@ -75375,6 +75415,7 @@ export enum FireplaceType {
 
 export class PropertyDto implements IPropertyDto {
     photo!: string | undefined;
+    links!: PropertyLinkDto[] | undefined;
     id!: number;
     contactGroupId!: string | undefined;
     name!: string;
@@ -75418,7 +75459,12 @@ export class PropertyDto implements IPropertyDto {
     cats!: boolean | undefined;
     petsSizeLimit!: string | undefined;
     petsBreedRestriction!: string | undefined;
+    turnoverCompanyName!: string | undefined;
+    turnoverContactName!: string | undefined;
+    turnoverEmail!: string | undefined;
+    turnoverPhone!: string | undefined;
     condoDocuments!: boolean | undefined;
+    moveInRequest!: string | undefined;
     petApplication!: boolean | undefined;
     intercomSetup!: string | undefined;
     additionalKeys!: boolean | undefined;
@@ -75439,6 +75485,14 @@ export class PropertyDto implements IPropertyDto {
     garbageCollection!: GarbageCollection | undefined;
     garbageKey!: boolean | undefined;
     garbageNumberReceived!: number | undefined;
+    electricityProvider!: string | undefined;
+    electricityAccountNo!: string | undefined;
+    naturalGasProvider!: string | undefined;
+    naturalGasAccountNo!: string | undefined;
+    waterProvider!: string | undefined;
+    waterAccountNo!: string | undefined;
+    wasteProvider!: string | undefined;
+    wasteAccountNo!: string | undefined;
     firepit!: boolean | undefined;
     secure!: boolean | undefined;
     onSiteManager!: boolean | undefined;
@@ -75467,6 +75521,11 @@ export class PropertyDto implements IPropertyDto {
     init(data?: any) {
         if (data) {
             this.photo = data["photo"];
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(PropertyLinkDto.fromJS(item));
+            }
             this.id = data["id"];
             this.contactGroupId = data["contactGroupId"];
             this.name = data["name"];
@@ -75510,7 +75569,12 @@ export class PropertyDto implements IPropertyDto {
             this.cats = data["cats"];
             this.petsSizeLimit = data["petsSizeLimit"];
             this.petsBreedRestriction = data["petsBreedRestriction"];
+            this.turnoverCompanyName = data["turnoverCompanyName"];
+            this.turnoverContactName = data["turnoverContactName"];
+            this.turnoverEmail = data["turnoverEmail"];
+            this.turnoverPhone = data["turnoverPhone"];
             this.condoDocuments = data["condoDocuments"];
+            this.moveInRequest = data["moveInRequest"];
             this.petApplication = data["petApplication"];
             this.intercomSetup = data["intercomSetup"];
             this.additionalKeys = data["additionalKeys"];
@@ -75531,6 +75595,14 @@ export class PropertyDto implements IPropertyDto {
             this.garbageCollection = data["garbageCollection"];
             this.garbageKey = data["garbageKey"];
             this.garbageNumberReceived = data["garbageNumberReceived"];
+            this.electricityProvider = data["electricityProvider"];
+            this.electricityAccountNo = data["electricityAccountNo"];
+            this.naturalGasProvider = data["naturalGasProvider"];
+            this.naturalGasAccountNo = data["naturalGasAccountNo"];
+            this.waterProvider = data["waterProvider"];
+            this.waterAccountNo = data["waterAccountNo"];
+            this.wasteProvider = data["wasteProvider"];
+            this.wasteAccountNo = data["wasteAccountNo"];
             this.firepit = data["firepit"];
             this.secure = data["secure"];
             this.onSiteManager = data["onSiteManager"];
@@ -75559,6 +75631,11 @@ export class PropertyDto implements IPropertyDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["photo"] = this.photo;
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
         data["id"] = this.id;
         data["contactGroupId"] = this.contactGroupId;
         data["name"] = this.name;
@@ -75602,7 +75679,12 @@ export class PropertyDto implements IPropertyDto {
         data["cats"] = this.cats;
         data["petsSizeLimit"] = this.petsSizeLimit;
         data["petsBreedRestriction"] = this.petsBreedRestriction;
+        data["turnoverCompanyName"] = this.turnoverCompanyName;
+        data["turnoverContactName"] = this.turnoverContactName;
+        data["turnoverEmail"] = this.turnoverEmail;
+        data["turnoverPhone"] = this.turnoverPhone;
         data["condoDocuments"] = this.condoDocuments;
+        data["moveInRequest"] = this.moveInRequest;
         data["petApplication"] = this.petApplication;
         data["intercomSetup"] = this.intercomSetup;
         data["additionalKeys"] = this.additionalKeys;
@@ -75623,6 +75705,14 @@ export class PropertyDto implements IPropertyDto {
         data["garbageCollection"] = this.garbageCollection;
         data["garbageKey"] = this.garbageKey;
         data["garbageNumberReceived"] = this.garbageNumberReceived;
+        data["electricityProvider"] = this.electricityProvider;
+        data["electricityAccountNo"] = this.electricityAccountNo;
+        data["naturalGasProvider"] = this.naturalGasProvider;
+        data["naturalGasAccountNo"] = this.naturalGasAccountNo;
+        data["waterProvider"] = this.waterProvider;
+        data["waterAccountNo"] = this.waterAccountNo;
+        data["wasteProvider"] = this.wasteProvider;
+        data["wasteAccountNo"] = this.wasteAccountNo;
         data["firepit"] = this.firepit;
         data["secure"] = this.secure;
         data["onSiteManager"] = this.onSiteManager;
@@ -75644,6 +75734,7 @@ export class PropertyDto implements IPropertyDto {
 
 export interface IPropertyDto {
     photo: string | undefined;
+    links: PropertyLinkDto[] | undefined;
     id: number;
     contactGroupId: string | undefined;
     name: string;
@@ -75687,7 +75778,12 @@ export interface IPropertyDto {
     cats: boolean | undefined;
     petsSizeLimit: string | undefined;
     petsBreedRestriction: string | undefined;
+    turnoverCompanyName: string | undefined;
+    turnoverContactName: string | undefined;
+    turnoverEmail: string | undefined;
+    turnoverPhone: string | undefined;
     condoDocuments: boolean | undefined;
+    moveInRequest: string | undefined;
     petApplication: boolean | undefined;
     intercomSetup: string | undefined;
     additionalKeys: boolean | undefined;
@@ -75708,6 +75804,14 @@ export interface IPropertyDto {
     garbageCollection: GarbageCollection | undefined;
     garbageKey: boolean | undefined;
     garbageNumberReceived: number | undefined;
+    electricityProvider: string | undefined;
+    electricityAccountNo: string | undefined;
+    naturalGasProvider: string | undefined;
+    naturalGasAccountNo: string | undefined;
+    waterProvider: string | undefined;
+    waterAccountNo: string | undefined;
+    wasteProvider: string | undefined;
+    wasteAccountNo: string | undefined;
     firepit: boolean | undefined;
     secure: boolean | undefined;
     onSiteManager: boolean | undefined;
@@ -75799,6 +75903,7 @@ export class PropertySellerDto implements IPropertySellerDto {
     howQuicklyWantToSell!: SellPeriod | undefined;
     didntSellActions!: string | undefined;
     tenantLeaseTerm!: moment.Moment | undefined;
+    tenantMonthlyRent!: number | undefined;
     tenantDepositReceived!: number | undefined;
     tenantPetAddendum!: boolean | undefined;
     tenantPetFeeType!: PetFeeType | undefined;
@@ -75810,7 +75915,8 @@ export class PropertySellerDto implements IPropertySellerDto {
     monthsBehindOnMortgage!: number | undefined;
     amountBehindOnMortgages!: number | undefined;
     backTaxes!: number | undefined;
-    monthlyMortgagePayment!: number | undefined;
+    monthlyPrincipleMortgagePayment!: number | undefined;
+    monthlyInterestMortgagePayment!: number | undefined;
     includeTaxesAndInsurance!: boolean | undefined;
     annualPropertyTaxes!: number | undefined;
     annualPropertyInsurance!: number | undefined;
@@ -75833,6 +75939,8 @@ export class PropertySellerDto implements IPropertySellerDto {
     walkthroughDate!: moment.Moment | undefined;
     exitStrategy!: ExitStrategy | undefined;
     exitStrategyNotes!: string | undefined;
+    depositToPayToSeller!: number | undefined;
+    depositToPayToSellerDate!: moment.Moment | undefined;
 
     constructor(data?: IPropertySellerDto) {
         if (data) {
@@ -75878,6 +75986,7 @@ export class PropertySellerDto implements IPropertySellerDto {
             this.howQuicklyWantToSell = data["howQuicklyWantToSell"];
             this.didntSellActions = data["didntSellActions"];
             this.tenantLeaseTerm = data["tenantLeaseTerm"] ? moment(data["tenantLeaseTerm"].toString()) : <any>undefined;
+            this.tenantMonthlyRent = data["tenantMonthlyRent"];
             this.tenantDepositReceived = data["tenantDepositReceived"];
             this.tenantPetAddendum = data["tenantPetAddendum"];
             this.tenantPetFeeType = data["tenantPetFeeType"];
@@ -75889,7 +75998,8 @@ export class PropertySellerDto implements IPropertySellerDto {
             this.monthsBehindOnMortgage = data["monthsBehindOnMortgage"];
             this.amountBehindOnMortgages = data["amountBehindOnMortgages"];
             this.backTaxes = data["backTaxes"];
-            this.monthlyMortgagePayment = data["monthlyMortgagePayment"];
+            this.monthlyPrincipleMortgagePayment = data["monthlyPrincipleMortgagePayment"];
+            this.monthlyInterestMortgagePayment = data["monthlyInterestMortgagePayment"];
             this.includeTaxesAndInsurance = data["includeTaxesAndInsurance"];
             this.annualPropertyTaxes = data["annualPropertyTaxes"];
             this.annualPropertyInsurance = data["annualPropertyInsurance"];
@@ -75912,6 +76022,8 @@ export class PropertySellerDto implements IPropertySellerDto {
             this.walkthroughDate = data["walkthroughDate"] ? moment(data["walkthroughDate"].toString()) : <any>undefined;
             this.exitStrategy = data["exitStrategy"];
             this.exitStrategyNotes = data["exitStrategyNotes"];
+            this.depositToPayToSeller = data["depositToPayToSeller"];
+            this.depositToPayToSellerDate = data["depositToPayToSellerDate"] ? moment(data["depositToPayToSellerDate"].toString()) : <any>undefined;
         }
     }
 
@@ -75957,6 +76069,7 @@ export class PropertySellerDto implements IPropertySellerDto {
         data["howQuicklyWantToSell"] = this.howQuicklyWantToSell;
         data["didntSellActions"] = this.didntSellActions;
         data["tenantLeaseTerm"] = this.tenantLeaseTerm ? this.tenantLeaseTerm.toISOString() : <any>undefined;
+        data["tenantMonthlyRent"] = this.tenantMonthlyRent;
         data["tenantDepositReceived"] = this.tenantDepositReceived;
         data["tenantPetAddendum"] = this.tenantPetAddendum;
         data["tenantPetFeeType"] = this.tenantPetFeeType;
@@ -75968,7 +76081,8 @@ export class PropertySellerDto implements IPropertySellerDto {
         data["monthsBehindOnMortgage"] = this.monthsBehindOnMortgage;
         data["amountBehindOnMortgages"] = this.amountBehindOnMortgages;
         data["backTaxes"] = this.backTaxes;
-        data["monthlyMortgagePayment"] = this.monthlyMortgagePayment;
+        data["monthlyPrincipleMortgagePayment"] = this.monthlyPrincipleMortgagePayment;
+        data["monthlyInterestMortgagePayment"] = this.monthlyInterestMortgagePayment;
         data["includeTaxesAndInsurance"] = this.includeTaxesAndInsurance;
         data["annualPropertyTaxes"] = this.annualPropertyTaxes;
         data["annualPropertyInsurance"] = this.annualPropertyInsurance;
@@ -75991,6 +76105,8 @@ export class PropertySellerDto implements IPropertySellerDto {
         data["walkthroughDate"] = this.walkthroughDate ? this.walkthroughDate.toISOString() : <any>undefined;
         data["exitStrategy"] = this.exitStrategy;
         data["exitStrategyNotes"] = this.exitStrategyNotes;
+        data["depositToPayToSeller"] = this.depositToPayToSeller;
+        data["depositToPayToSellerDate"] = this.depositToPayToSellerDate ? this.depositToPayToSellerDate.toISOString() : <any>undefined;
         return data; 
     }
 }
@@ -76029,6 +76145,7 @@ export interface IPropertySellerDto {
     howQuicklyWantToSell: SellPeriod | undefined;
     didntSellActions: string | undefined;
     tenantLeaseTerm: moment.Moment | undefined;
+    tenantMonthlyRent: number | undefined;
     tenantDepositReceived: number | undefined;
     tenantPetAddendum: boolean | undefined;
     tenantPetFeeType: PetFeeType | undefined;
@@ -76040,7 +76157,8 @@ export interface IPropertySellerDto {
     monthsBehindOnMortgage: number | undefined;
     amountBehindOnMortgages: number | undefined;
     backTaxes: number | undefined;
-    monthlyMortgagePayment: number | undefined;
+    monthlyPrincipleMortgagePayment: number | undefined;
+    monthlyInterestMortgagePayment: number | undefined;
     includeTaxesAndInsurance: boolean | undefined;
     annualPropertyTaxes: number | undefined;
     annualPropertyInsurance: number | undefined;
@@ -76063,6 +76181,8 @@ export interface IPropertySellerDto {
     walkthroughDate: moment.Moment | undefined;
     exitStrategy: ExitStrategy | undefined;
     exitStrategyNotes: string | undefined;
+    depositToPayToSeller: number | undefined;
+    depositToPayToSellerDate: moment.Moment | undefined;
 }
 
 export class PropertyInvestmentDto implements IPropertyInvestmentDto {
@@ -76233,7 +76353,12 @@ export class PropertyBaseDto implements IPropertyBaseDto {
     cats!: boolean | undefined;
     petsSizeLimit!: string | undefined;
     petsBreedRestriction!: string | undefined;
+    turnoverCompanyName!: string | undefined;
+    turnoverContactName!: string | undefined;
+    turnoverEmail!: string | undefined;
+    turnoverPhone!: string | undefined;
     condoDocuments!: boolean | undefined;
+    moveInRequest!: string | undefined;
     petApplication!: boolean | undefined;
     intercomSetup!: string | undefined;
     additionalKeys!: boolean | undefined;
@@ -76254,6 +76379,14 @@ export class PropertyBaseDto implements IPropertyBaseDto {
     garbageCollection!: GarbageCollection | undefined;
     garbageKey!: boolean | undefined;
     garbageNumberReceived!: number | undefined;
+    electricityProvider!: string | undefined;
+    electricityAccountNo!: string | undefined;
+    naturalGasProvider!: string | undefined;
+    naturalGasAccountNo!: string | undefined;
+    waterProvider!: string | undefined;
+    waterAccountNo!: string | undefined;
+    wasteProvider!: string | undefined;
+    wasteAccountNo!: string | undefined;
     firepit!: boolean | undefined;
     secure!: boolean | undefined;
     onSiteManager!: boolean | undefined;
@@ -76324,7 +76457,12 @@ export class PropertyBaseDto implements IPropertyBaseDto {
             this.cats = data["cats"];
             this.petsSizeLimit = data["petsSizeLimit"];
             this.petsBreedRestriction = data["petsBreedRestriction"];
+            this.turnoverCompanyName = data["turnoverCompanyName"];
+            this.turnoverContactName = data["turnoverContactName"];
+            this.turnoverEmail = data["turnoverEmail"];
+            this.turnoverPhone = data["turnoverPhone"];
             this.condoDocuments = data["condoDocuments"];
+            this.moveInRequest = data["moveInRequest"];
             this.petApplication = data["petApplication"];
             this.intercomSetup = data["intercomSetup"];
             this.additionalKeys = data["additionalKeys"];
@@ -76345,6 +76483,14 @@ export class PropertyBaseDto implements IPropertyBaseDto {
             this.garbageCollection = data["garbageCollection"];
             this.garbageKey = data["garbageKey"];
             this.garbageNumberReceived = data["garbageNumberReceived"];
+            this.electricityProvider = data["electricityProvider"];
+            this.electricityAccountNo = data["electricityAccountNo"];
+            this.naturalGasProvider = data["naturalGasProvider"];
+            this.naturalGasAccountNo = data["naturalGasAccountNo"];
+            this.waterProvider = data["waterProvider"];
+            this.waterAccountNo = data["waterAccountNo"];
+            this.wasteProvider = data["wasteProvider"];
+            this.wasteAccountNo = data["wasteAccountNo"];
             this.firepit = data["firepit"];
             this.secure = data["secure"];
             this.onSiteManager = data["onSiteManager"];
@@ -76415,7 +76561,12 @@ export class PropertyBaseDto implements IPropertyBaseDto {
         data["cats"] = this.cats;
         data["petsSizeLimit"] = this.petsSizeLimit;
         data["petsBreedRestriction"] = this.petsBreedRestriction;
+        data["turnoverCompanyName"] = this.turnoverCompanyName;
+        data["turnoverContactName"] = this.turnoverContactName;
+        data["turnoverEmail"] = this.turnoverEmail;
+        data["turnoverPhone"] = this.turnoverPhone;
         data["condoDocuments"] = this.condoDocuments;
+        data["moveInRequest"] = this.moveInRequest;
         data["petApplication"] = this.petApplication;
         data["intercomSetup"] = this.intercomSetup;
         data["additionalKeys"] = this.additionalKeys;
@@ -76436,6 +76587,14 @@ export class PropertyBaseDto implements IPropertyBaseDto {
         data["garbageCollection"] = this.garbageCollection;
         data["garbageKey"] = this.garbageKey;
         data["garbageNumberReceived"] = this.garbageNumberReceived;
+        data["electricityProvider"] = this.electricityProvider;
+        data["electricityAccountNo"] = this.electricityAccountNo;
+        data["naturalGasProvider"] = this.naturalGasProvider;
+        data["naturalGasAccountNo"] = this.naturalGasAccountNo;
+        data["waterProvider"] = this.waterProvider;
+        data["waterAccountNo"] = this.waterAccountNo;
+        data["wasteProvider"] = this.wasteProvider;
+        data["wasteAccountNo"] = this.wasteAccountNo;
         data["firepit"] = this.firepit;
         data["secure"] = this.secure;
         data["onSiteManager"] = this.onSiteManager;
@@ -76499,7 +76658,12 @@ export interface IPropertyBaseDto {
     cats: boolean | undefined;
     petsSizeLimit: string | undefined;
     petsBreedRestriction: string | undefined;
+    turnoverCompanyName: string | undefined;
+    turnoverContactName: string | undefined;
+    turnoverEmail: string | undefined;
+    turnoverPhone: string | undefined;
     condoDocuments: boolean | undefined;
+    moveInRequest: string | undefined;
     petApplication: boolean | undefined;
     intercomSetup: string | undefined;
     additionalKeys: boolean | undefined;
@@ -76520,6 +76684,14 @@ export interface IPropertyBaseDto {
     garbageCollection: GarbageCollection | undefined;
     garbageKey: boolean | undefined;
     garbageNumberReceived: number | undefined;
+    electricityProvider: string | undefined;
+    electricityAccountNo: string | undefined;
+    naturalGasProvider: string | undefined;
+    naturalGasAccountNo: string | undefined;
+    waterProvider: string | undefined;
+    waterAccountNo: string | undefined;
+    wasteProvider: string | undefined;
+    wasteAccountNo: string | undefined;
     firepit: boolean | undefined;
     secure: boolean | undefined;
     onSiteManager: boolean | undefined;

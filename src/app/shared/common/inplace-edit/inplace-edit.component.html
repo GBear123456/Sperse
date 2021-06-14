@@ -3,7 +3,7 @@
      class="inplace-edit-view-mode {{multiline ? 'multiline': ''}}"
      (click)="setEditModeEnabled(true, $event)">
     <span class="link" [ngClass]="{ 'placeholder': !value }" [attr.title]="link">
-        <a (click)="link && $event.stopPropagation()" [attr.href]="link" [attr.title]="displayValue || value || editPlaceholder" target="_blank" #editText>
+        <a (click)="onLinkClick($event, link)" [attr.href]="link" [attr.title]="displayValue || value || editPlaceholder" target="_blank" #editText>
             <ng-container *ngIf="format?.style == 'currency'; else plaine">{{displayValue || (value | currency: format.currency) || editPlaceholder}}</ng-container>
             <ng-template #plaine>{{displayValue || value || editPlaceholder}}</ng-template>
         </a>

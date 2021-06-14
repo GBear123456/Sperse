@@ -7,6 +7,7 @@ import {
     OnInit
 } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
+import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -71,7 +72,8 @@ interface SelectBoxItem {
     selector: 'property-information',
     templateUrl: 'property-information.component.html',
     styleUrls: ['property-information.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [CurrencyPipe]
 })
 export class PropertyInformationComponent implements OnInit {
     contactInfo$: Observable<ContactInfoDto> = this.contactsService.contactInfo$;
@@ -183,12 +185,13 @@ export class PropertyInformationComponent implements OnInit {
         private propertyServiceProxy: PropertyServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
         private leadServiceProxy: LeadServiceProxy,
-        private changeDetectorRef: ChangeDetectorRef,
+        public changeDetectorRef: ChangeDetectorRef,
         private loadingService: LoadingService,
         private invoicesService: InvoicesService,
         private elementRef: ElementRef,
         private permission: AppPermissionService,
         private notify: NotifyService,
+        private currencyPipe: CurrencyPipe,
         public ls: AppLocalizationService
     ) { }
 
@@ -318,6 +321,14 @@ export class PropertyInformationComponent implements OnInit {
         this.sellerValueChanged();
     }
 
+    getPreparationCosts() {
+        return this.sumPropertyValues(this.propertyInvestmentDto.renovations,
+            this.propertyInvestmentDto.cleaning,
+            this.propertyInvestmentDto.inspection,
+            this.propertyInvestmentDto.legalFees,
+            this.propertyInvestmentDto.otherPreparationFees);
+    }
+
     getPurchaseTermMonths(): number {
         return this.getMonthsDifference(this.propertyInvestmentDto.purchaseTermFrom, this.propertyInvestmentDto.purchaseTermTo);
     }
@@ -335,13 +346,10 @@ export class PropertyInformationComponent implements OnInit {
     }
 
     getInvestmentTotalFees() {
-        return this.sumPropertyValues(this.propertyInvestmentDto.referralFee,
-            this.getTotalUtilizedHoldingCosts(),
-            this.propertyInvestmentDto.renovations,
-            this.propertyInvestmentDto.cleaning,
-            this.propertyInvestmentDto.inspection,
-            this.propertyInvestmentDto.legalFees,
-            this.propertyInvestmentDto.otherPreparationFees);
+        return this.sumPropertyValues(this.propertyInvestmentDto.equityPaidToHomeowner,
+            this.propertyInvestmentDto.referralFee,
+            this.getPreparationCosts(),
+            this.getTotalUtilizedHoldingCosts());
     }
 
     getInvestmentTotalPurchase() {
@@ -377,7 +385,7 @@ export class PropertyInformationComponent implements OnInit {
         if (!this.propertyInvestmentDto.rtoMortgagePaydownRate || !months)
             return "";
         let mortgagePercentAmount = this.propertyInvestmentDto.monthlyMortgagePayments * this.propertyInvestmentDto.rtoMortgagePaydownRate;
-        return `(based on ${(+this.propertyInvestmentDto.rtoMortgagePaydownRate * 100).toFixed(2)}% of mortgage payment amount $${+mortgagePercentAmount.toFixed(2)}x${months})`;
+        return `(based on ${(+this.propertyInvestmentDto.rtoMortgagePaydownRate * 100).toFixed(2)}% of mortgage payment amount ${this.currencyPipe.transform(+mortgagePercentAmount.toFixed(2), this.currencyFormat.currency)}x${months})`;
     }
 
     getGrandTotalProfit(): number {

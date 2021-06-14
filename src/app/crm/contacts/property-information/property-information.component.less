@@ -32,9 +32,26 @@
         background-size: contain;
         background-repeat: no-repeat;
         background-position: center;
+
         &.disabled {
             cursor: default;
-            opacity: 0.8;            
+            opacity: 0.8;
+        }
+    }
+
+    ::ng-deep socials {
+        dx-button, ::ng-deep dx-text-box {
+            &, ::ng-deep input {
+                border: none;
+                background: transparent!important;
+            }
+            &.dx-state-focused .dx-placeholder {
+                top: -30px!important;
+            }
+        }
+        .inplace-edit-edit-mode {
+            background: #3333330d;
+            border-radius: 5px;
         }
     }
 
@@ -61,10 +78,23 @@
         }
     }
 
+    .inline-header {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
     h2, .total-profit {
-        margin-top: 15px;
         font-size: 25px !important;
         font-weight: 600 !important;
+    }
+
+    .total-profit {
+        margin-top: 20px;
+
+        button {
+            top: -5px;
+            margin-left: 13px;
+        }
     }
 
     .properties .fields {
