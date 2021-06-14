@@ -17,7 +17,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     SettingScopes,
-    SendTestEmailInput,
     TenantSettingsEditDto,
     TenantSettingsServiceProxy,
     TenantCustomizationServiceProxy,
@@ -47,6 +46,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -56,7 +56,8 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
     providers: [
         TenantSettingsCreditReportServiceProxy,
         TenantPaymentSettingsServiceProxy,
-        TenantOfferProviderSettingsServiceProxy
+        TenantOfferProviderSettingsServiceProxy,
+        EmailSmtpSettingsService
     ]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
@@ -131,6 +132,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private tenantOfferProviderSettingsService: TenantOfferProviderSettingsServiceProxy,
         private faviconsService: FaviconService,
         private contactService: ContactsService,
+        private emailSmtpSettingsService: EmailSmtpSettingsService,
         public changeDetection: ChangeDetectorRef,
         public dialog: MatDialog
     ) {
@@ -390,11 +392,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     sendTestEmail(): void {
-        const input = new SendTestEmailInput();
-        input.emailAddress = this.testEmailAddress;
-        this.tenantSettingsService.sendTestEmail(input).subscribe(() => {
-            this.notify.info(this.l('TestEmailSentSuccessfully'));
-        });
+        let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.settings.email);
+        this.emailSmtpSettingsService.sendTestEmail(input);
     }
 
     getSendGridWebhookUrl(): string {
