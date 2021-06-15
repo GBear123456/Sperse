@@ -28463,8 +28463,8 @@ export class PropertyServiceProxy {
      * @id (optional) 
      * @return Success
      */
-    getSellerPropertyDetails(id: number | null | undefined): Observable<PropertySellerDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/Property/GetSellerPropertyDetails?";
+    getPropertyAcquisitionDetails(id: number | null | undefined): Observable<PropertyAcquisitionDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/GetPropertyAcquisitionDetails?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -28479,20 +28479,20 @@ export class PropertyServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSellerPropertyDetails(response_);
+            return this.processGetPropertyAcquisitionDetails(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetSellerPropertyDetails(<any>response_);
+                    return this.processGetPropertyAcquisitionDetails(<any>response_);
                 } catch (e) {
-                    return <Observable<PropertySellerDto>><any>_observableThrow(e);
+                    return <Observable<PropertyAcquisitionDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<PropertySellerDto>><any>_observableThrow(response_);
+                return <Observable<PropertyAcquisitionDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetSellerPropertyDetails(response: HttpResponseBase): Observable<PropertySellerDto> {
+    protected processGetPropertyAcquisitionDetails(response: HttpResponseBase): Observable<PropertyAcquisitionDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -28503,7 +28503,7 @@ export class PropertyServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PropertySellerDto.fromJS(resultData200) : new PropertySellerDto();
+            result200 = resultData200 ? PropertyAcquisitionDto.fromJS(resultData200) : new PropertyAcquisitionDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -28511,7 +28511,7 @@ export class PropertyServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<PropertySellerDto>(<any>null);
+        return _observableOf<PropertyAcquisitionDto>(<any>null);
     }
 
     /**
@@ -28625,8 +28625,8 @@ export class PropertyServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updateSellerPropertyDetails(body: PropertySellerDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdateSellerPropertyDetails";
+    updatePropertyAcquisitionDetails(body: PropertyAcquisitionDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdatePropertyAcquisitionDetails";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -28641,11 +28641,11 @@ export class PropertyServiceProxy {
         };
 
         return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateSellerPropertyDetails(response_);
+            return this.processUpdatePropertyAcquisitionDetails(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUpdateSellerPropertyDetails(<any>response_);
+                    return this.processUpdatePropertyAcquisitionDetails(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -28654,7 +28654,7 @@ export class PropertyServiceProxy {
         }));
     }
 
-    protected processUpdateSellerPropertyDetails(response: HttpResponseBase): Observable<void> {
+    protected processUpdatePropertyAcquisitionDetails(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -76037,8 +76037,8 @@ export enum ExitStrategy {
     STR = "STR", 
 }
 
-export class PropertySellerDto implements IPropertySellerDto {
-    id!: number | undefined;
+export class PropertyAcquisitionDto implements IPropertyAcquisitionDto {
+    id!: number;
     ownersOnTitle!: string | undefined;
     mortgageHolder!: string | undefined;
     propertyResident!: PropertyResident | undefined;
@@ -76110,7 +76110,7 @@ export class PropertySellerDto implements IPropertySellerDto {
     depositToPayToSeller!: number | undefined;
     depositToPayToSellerDate!: moment.Moment | undefined;
 
-    constructor(data?: IPropertySellerDto) {
+    constructor(data?: IPropertyAcquisitionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -76195,9 +76195,9 @@ export class PropertySellerDto implements IPropertySellerDto {
         }
     }
 
-    static fromJS(data: any): PropertySellerDto {
+    static fromJS(data: any): PropertyAcquisitionDto {
         data = typeof data === 'object' ? data : {};
-        let result = new PropertySellerDto();
+        let result = new PropertyAcquisitionDto();
         result.init(data);
         return result;
     }
@@ -76279,8 +76279,8 @@ export class PropertySellerDto implements IPropertySellerDto {
     }
 }
 
-export interface IPropertySellerDto {
-    id: number | undefined;
+export interface IPropertyAcquisitionDto {
+    id: number;
     ownersOnTitle: string | undefined;
     mortgageHolder: string | undefined;
     propertyResident: PropertyResident | undefined;
