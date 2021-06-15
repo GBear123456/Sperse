@@ -36,7 +36,7 @@ import {
     PetFeeType,
     InvoiceSettings,
     PestsType,
-    PropertySellerDto,
+    PropertyAcquisitionDto,
     PropertyInvestmentDto,
     PropertyDealInfo,
     CreateContactPhotoInput,
@@ -79,8 +79,8 @@ export class PropertyInformationComponent implements OnInit {
     contactInfo$: Observable<ContactInfoDto> = this.contactsService.contactInfo$;
     initialProperty: PropertyDto;
     property: PropertyDto;
-    initialPropertySellerDto: PropertySellerDto;
-    propertySellerDto: PropertySellerDto;
+    initialPropertyAcquisitionDto: PropertyAcquisitionDto;
+    propertyAcquisitionDto: PropertyAcquisitionDto;
     initialPropertyInvestmentDto: PropertyInvestmentDto;
     propertyInvestmentDto: PropertyInvestmentDto;
     propertyAddresses: AddressDto[];
@@ -207,15 +207,15 @@ export class PropertyInformationComponent implements OnInit {
             filter(Boolean),
             switchMap((leadInfo: LeadInfoDto) => {
                 this.showContractDetails = leadInfo.typeSysId == EntityTypeSys.PropertyAcquisition;
-                let sellerDetails = this.showContractDetails ? this.propertyServiceProxy.getSellerPropertyDetails(leadInfo.propertyId) : of(new PropertySellerDto());
+                let acquisitionDetails = this.showContractDetails ? this.propertyServiceProxy.getPropertyAcquisitionDetails(leadInfo.propertyId) : of(new PropertyAcquisitionDto());
                 let investmentDetails = this.showContractDetails ? this.propertyServiceProxy.getPropertyInvestmentDetails(leadInfo.propertyId) : of(new PropertyInvestmentDto());
                 let deals = this.showContractDetails ? this.propertyServiceProxy.getDeals(leadInfo.propertyId) : of(<PropertyDealInfo[]>[]);
                 return forkJoin(this.propertyServiceProxy.getPropertyDetails(leadInfo.propertyId),
-                    sellerDetails, investmentDetails, deals);
+                    acquisitionDetails, investmentDetails, deals);
             })
-        ).subscribe(([property, sellerDto, investmentDto, deals]) => {
+        ).subscribe(([property, acquisitionDto, investmentDto, deals]) => {
             this.initialProperty = property;
-            this.initialPropertySellerDto = this.propertySellerDto = sellerDto;
+            this.initialPropertyAcquisitionDto = this.propertyAcquisitionDto = acquisitionDto;
             this.initialPropertyInvestmentDto = this.propertyInvestmentDto = investmentDto;
             this.savePropertyInfo(property);
             this.acquisitionLeadDealInfo = deals.find(v => v.leadTypeSysId == EntityTypeSys.PropertyAcquisition);
@@ -310,15 +310,15 @@ export class PropertyInformationComponent implements OnInit {
     }
 
     get sinceListedDays(): number {
-        return this.propertySellerDto && this.propertySellerDto.listedDate
-            ? moment().diff(moment(this.propertySellerDto.listedDate), 'days')
+        return this.propertyAcquisitionDto && this.propertyAcquisitionDto.listedDate
+            ? moment().diff(moment(this.propertyAcquisitionDto.listedDate), 'days')
             : undefined;
     }
     sinceListedDaysChanged(newValue: number) {
-        this.propertySellerDto.listedDate = newValue ?
+        this.propertyAcquisitionDto.listedDate = newValue ?
             moment().startOf('Day').subtract(newValue, "days") :
             undefined
-        this.sellerValueChanged();
+        this.acquisitionValueChanged();
     }
 
     getPreparationCosts() {
@@ -430,14 +430,14 @@ export class PropertyInformationComponent implements OnInit {
         );
     }
 
-    sellerValueChanged() {
+    acquisitionValueChanged() {
         this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.propertyServiceProxy.updateSellerPropertyDetails(this.propertySellerDto).pipe(
+        this.propertyServiceProxy.updatePropertyAcquisitionDetails(this.propertyAcquisitionDto).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
         ).subscribe(
             () => { },
             () => {
-                this.propertySellerDto = cloneDeep(this.initialPropertySellerDto);
+                this.propertyAcquisitionDto = cloneDeep(this.initialPropertyAcquisitionDto);
                 this.changeDetectorRef.detectChanges();
             }
         );
@@ -471,16 +471,16 @@ export class PropertyInformationComponent implements OnInit {
     getDateValue(date) {
         return date && date.toDate ? date.toDate() : date;
     }
-    dateValueChanged($event, propName: string, objectType: 'property' | 'sellerProp' | 'investmentProp') {
+    dateValueChanged($event, propName: string, objectType: 'property' | 'acquisitionProp' | 'investmentProp') {
         let newValue = $event.value && DateHelper.removeTimezoneOffset($event.value, true, 'from');
         switch (objectType) {
             case 'property':
                 this.property[propName] = newValue;
                 this.valueChanged();
                 break;
-            case 'sellerProp':
-                this.propertySellerDto[propName] = newValue;
-                this.sellerValueChanged();
+            case 'acquisitionProp':
+                this.propertyAcquisitionDto[propName] = newValue;
+                this.acquisitionValueChanged();
                 break;
             case 'investmentProp':
                 this.propertyInvestmentDto[propName] = newValue;
