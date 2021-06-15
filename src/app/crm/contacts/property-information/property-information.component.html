@@ -1931,10 +1931,14 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="100"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.turnoverEmail"
+                                                             [value]="property.turnoverEmail"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             (onValueChanged)="checkSetFieldChanged($event, 'turnoverEmail')">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{ls.l('InvalidEmailAddress')}}."></dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -1943,10 +1947,15 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="15"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.turnoverPhone"
+                                                             [value]="property.turnoverPhone"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             (onValueChanged)="checkSetFieldChanged($event, 'turnoverPhone')">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule type="stringLength" max="24"></dxi-validation-rule>
+                                                        <dxi-validation-rule type="pattern" [pattern]="phoneRegEx" message="{{ls.l('PhoneValidationError')}}."></dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">

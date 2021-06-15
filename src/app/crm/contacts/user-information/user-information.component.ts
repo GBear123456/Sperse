@@ -104,7 +104,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
     selectedOrgUnits: number[] = [];
     dependencyChanged = false;
     masks = AppConsts.masks;
-    phonePattern = /^[\d\+\-\(\)\s]{10,24}$/;
+    phonePattern = AppConsts.regexPatterns.phone;
     emailRegEx = AppConsts.regexPatterns.email;
     validationRules = {
         'name': [{ type: 'required' }, { type: 'stringLength', max: 32 }],
