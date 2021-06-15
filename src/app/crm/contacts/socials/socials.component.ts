@@ -40,7 +40,7 @@ export class SocialsComponent {
     }
 
     @Input() contactInfoData: ContactInfoDetailsDto;
-    @Input() enableLinkDilog: boolean = true;
+    @Input() enableLinkDialog: boolean = true;
     @Input() isEditAllowed = false;
 
     @Output() onChanged: EventEmitter<any> = new EventEmitter(); 
@@ -68,7 +68,7 @@ export class SocialsComponent {
     }
 
     linkTypesLoad() {
-        if (this.enableLinkDilog) {
+        if (this.enableLinkDialog) {
             this.store$.dispatch(new ContactLinkTypesStoreActions.LoadRequestAction());
             this.store$.pipe(
                 select(ContactLinkTypesStoreSelectors.getContactLinkTypes),
@@ -98,7 +98,7 @@ export class SocialsComponent {
     }
 
     showEditDialog(data, event) {
-        if (this.enableLinkDilog) {
+        if (this.enableLinkDialog) {
             if (!this.isCompany || this.contactInfoData && this.contactInfoData.contactId)
                 this.showSocialDialog(data, event);
             else
@@ -109,7 +109,7 @@ export class SocialsComponent {
                         this.showSocialDialog(data, event);
                     }
                 });
-        } else if (this.contactInfoData.links.every(link => link.id)) {
+        } else if (!data && this.contactInfoData.links.every(link => link.id)) {
             this.contactInfoData.links.push(new ContactLinkDto({
                 linkTypeId: AppConsts.otherLinkTypeId,
                 url: '',
@@ -175,18 +175,21 @@ export class SocialsComponent {
                 data.isActive = dialogData.isActive;
             } else if (result.id) {
                 dialogData.id = result.id;
-                if (this.enableLinkDilog) {
+                if (this.enableLinkDialog) {
                     this.contactInfoData.links
                         .push(ContactLinkDto.fromJS(dialogData));
                 } else 
-                    Object.assign(data, dialogData);
-                this.onChanged.emit();
+                    Object.assign(data, dialogData);               
             }
+            this.onChanged.emit();
         });
     }
 
     updateLink(link, newValue) {
-        this.updateDataField(link, _.extend(_.clone(link), {url: newValue}));
+        this.updateDataField(link, _.extend(_.clone(link), {
+            contactId: this.contactInfoData.contactId,
+            url: newValue
+        }));
     }
 
     deleteLink(id) {

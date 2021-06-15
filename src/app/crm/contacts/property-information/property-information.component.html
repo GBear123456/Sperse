@@ -1647,7 +1647,7 @@
                                     <div class="fields">
                                         <socials
                                             [isEditAllowed]="!disableEdit"
-                                            [enableLinkDilog]="false"
+                                            [enableLinkDialog]="false"
                                             [contactInfoData]="{contactId: property.id, links: property.links || []}"
                                             (onChanged)="changeDetectorRef.detectChanges()">
                                         </socials>
@@ -2526,7 +2526,8 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('ExtraYear') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-check-box [(value)]="propertyInvestmentDto.purchaseTermExtraYear"
+                                                <dx-check-box width="20px"
+                                                              [(value)]="propertyInvestmentDto.purchaseTermExtraYear"
                                                               [disabled]="disableEdit"
                                                               (onValueChanged)="investmentValueChanged()">
                                                 </dx-check-box>
