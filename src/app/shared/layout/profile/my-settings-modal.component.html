@@ -58,78 +58,79 @@
                         </div>
                     </tab>
                     <tab heading="{{ls.l('Email')}}" customClass="m-tabs__item">
-                        <h4>{{ls.l('SMTP')}}:</h4>
-                        <div class="form-group">
-                            <label for="FromAddress">{{ls.l("FromAddress")}}</label>
-                            <input id="FromAddress" type="email" name="FromAddress" class="form-control"
-                                    [ngClass]="{'edited':userEmailSettings.from.address}"
-                                    [(ngModel)]="userEmailSettings.from.address" maxlength="256">
-                        </div>
-                        <div class="form-group">
-                            <label for="FromDisplayName">{{ls.l("FromDisplayName")}}</label>
-                            <input id="FromDisplayName" type="text" name="FromDisplayName" class="form-control"
-                                    [ngClass]="{'edited':userEmailSettings.from.displayName}"
-                                    [(ngModel)]="userEmailSettings.from.displayName" maxlength="128">
-                        </div>
-                        <div class="form-group">
-                            <label for="SmtpHost">{{ls.l("SmtpHost")}}</label>
-                            <input id="SmtpHost" type="text" name="SmtpHost" class="form-control" [ngClass]="{'edited':userEmailSettings.smtp.host}"
-                                    [(ngModel)]="userEmailSettings.smtp.host"
-                                    maxlength="64">
-                        </div>
-                        <div class="form-group">
-                            <label for="SmtpPort">{{ls.l("SmtpPort")}}</label>
-                            <input id="SmtpPort" type="number" name="SmtpPort" class="form-control"
-                                    [ngClass]="{'edited':userEmailSettings.smtp.port}" [(ngModel)]="userEmailSettings.smtp.port"
-                                    maxlength="5">
-                        </div>
-    
-                        <div class="checkbox-list">
+                        <dx-check-box class="is-user-smtp-enabled" [text]="ls.l('AllowToSendFromYourEmailAddress')" [(value)]="userEmailSettings.isUserSmtpEnabled"></dx-check-box>
+                        <div [hidden]="!userEmailSettings.isUserSmtpEnabled">
+                            <br/>
                             <div class="form-group">
-                                <dx-check-box id="Settings_SmtpEnableSsl"
-                                                [text]="ls.l('UseSsl')"
-                                                [(value)]="userEmailSettings.smtp.enableSsl">
-                                </dx-check-box>
+                                <label for="FromAddress">{{ls.l("FromAddress")}}</label>
+                                <input id="FromAddress" type="email" name="FromAddress" class="form-control"
+                                        [ngClass]="{'edited':userEmailSettings.from.emailAddress}"
+                                        [(ngModel)]="userEmailSettings.from.emailAddress" maxlength="256">
                             </div>
                             <div class="form-group">
-                                <dx-check-box id="Settings_SmtpUseDefaultCredentials"
-                                                [text]="ls.l('UseDefaultCredentials')"
-                                                [(value)]="userEmailSettings.smtp.useDefaultCredentials">
-                                </dx-check-box>
+                                <label for="FromDisplayName">{{ls.l("FromDisplayName")}}</label>
+                                <input id="FromDisplayName" type="text" name="FromDisplayName" class="form-control"
+                                        [ngClass]="{'edited':userEmailSettings.from.displayName}"
+                                        [(ngModel)]="userEmailSettings.from.displayName" maxlength="128">
                             </div>
-                        </div>
-    
-                        <div class="form-group" [hidden]="userEmailSettings.smtp.useDefaultCredentials">
-                            <label for="SmtpDomainName">{{ls.l("DomainName")}}</label>
-                            <input id="SmtpDomainName" type="text" name="SmtpDomainName" class="form-control"
-                                    [ngClass]="{'edited':userEmailSettings.smtp.domain}"
-                                    [(ngModel)]="userEmailSettings.smtp.domain" maxlength="128">
-                        </div>
-                        <div class="form-group" [hidden]="userEmailSettings.smtp.useDefaultCredentials">
-                            <label for="SmtpUserName">{{ls.l("UserName")}}</label>
-                            <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control"
-                                    [ngClass]="{'edited':userEmailSettings.smtp.userName}"
-                                    [(ngModel)]="userEmailSettings.smtp.userName" maxlength="128">
-                        </div>
-                        <div class="form-group" [hidden]="userEmailSettings.smtp.useDefaultCredentials">
-                            <label for="SmtpPassword">{{ls.l("Password")}}</label>
-                            <input type="text" class="hidden-field">
-                            <input type="password" class="hidden-field">
-                            <input id="SmtpPassword" type="password" name="SmtpPassword" class="form-control"
-                                    [ngClass]="{'edited':userEmailSettings.smtp.password}" [(ngModel)]="userEmailSettings.smtp.password"
-                                    maxlength="128" autocomplete="off">
-                        </div>
-                        <h5>{{ls.l("TestEmailSettingsHeader")}}</h5>
-                        <div class="row">
-                            <div class="form-group col-md-6">
-                                <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
+                            <div class="form-group">
+                                <label for="SmtpHost">{{ls.l("SmtpHost")}}</label>
+                                <input id="SmtpHost" type="text" name="SmtpHost" class="form-control" [ngClass]="{'edited':userEmailSettings.smtp.host}"
+                                        [(ngModel)]="userEmailSettings.smtp.host"
+                                        maxlength="64">
                             </div>
-                            <div class="form-group col-md-2">
-                                <button class="btn btn-primary" type="button" (click)="sendTestEmail()">{{ls.l("SendTestEmail")}}</button>
+                            <div class="form-group">
+                                <label for="SmtpPort">{{ls.l("SmtpPort")}}</label>
+                                <input id="SmtpPort" type="number" name="SmtpPort" class="form-control"
+                                        [ngClass]="{'edited':userEmailSettings.smtp.port}" [(ngModel)]="userEmailSettings.smtp.port"
+                                        maxlength="5">
+                            </div>
+        
+                            <div class="checkbox-list">
+                                <div class="form-group">
+                                    <dx-check-box id="Settings_SmtpEnableSsl"
+                                                    [text]="ls.l('UseSsl')"
+                                                    [(value)]="userEmailSettings.smtp.enableSsl">
+                                    </dx-check-box>
+                                </div>
+                                <div class="form-group">
+                                    <dx-check-box id="Settings_SmtpUseDefaultCredentials"
+                                                    [text]="ls.l('UseDefaultCredentials')"
+                                                    [(value)]="userEmailSettings.smtp.useDefaultCredentials">
+                                    </dx-check-box>
+                                </div>
+                            </div>
+        
+                            <div class="form-group" [hidden]="userEmailSettings.smtp.useDefaultCredentials">
+                                <label for="SmtpDomainName">{{ls.l("DomainName")}}</label>
+                                <input id="SmtpDomainName" type="text" name="SmtpDomainName" class="form-control"
+                                        [ngClass]="{'edited':userEmailSettings.smtp.domain}"
+                                        [(ngModel)]="userEmailSettings.smtp.domain" maxlength="128">
+                            </div>
+                            <div class="form-group" [hidden]="userEmailSettings.smtp.useDefaultCredentials">
+                                <label for="SmtpUserName">{{ls.l("UserName")}}</label>
+                                <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control"
+                                        [ngClass]="{'edited':userEmailSettings.smtp.userName}"
+                                        [(ngModel)]="userEmailSettings.smtp.userName" maxlength="128">
+                            </div>
+                            <div class="form-group" [hidden]="userEmailSettings.smtp.useDefaultCredentials">
+                                <label for="SmtpPassword">{{ls.l("Password")}}</label>
+                                <input id="SmtpPassword" type="password" name="SmtpPassword" class="form-control"
+                                        [ngClass]="{'edited':userEmailSettings.smtp.password}" [(ngModel)]="userEmailSettings.smtp.password"
+                                        maxlength="128" autocomplete="off">
+                            </div>
+                            <h5>{{ls.l("TestEmailSettingsHeader")}}</h5>
+                            <div class="row">
+                                <div class="form-group col-md-6">
+                                    <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
+                                </div>
+                                <div class="form-group col-md-2">
+                                    <button class="btn btn-primary" type="button" (click)="sendTestEmail()">{{ls.l("SendTestEmail")}}</button>
+                                </div>
                             </div>
                         </div>
                         <br/>
-                        <h4>{{ls.l('eSignature')}}:</h4>
+                        <h5>{{ls.l('Signature')}}:</h5>
                         <div class="form-group ck-container">
                             <label for="signature">{{ls.l('EmailSignature')}}</label>
                             <ckeditor [config]="ckConfig" [(data)]="userEmailSettings.signatureHtml"></ckeditor>

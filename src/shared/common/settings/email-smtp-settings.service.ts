@@ -29,7 +29,7 @@ export class EmailSmtpSettingsService {
         let input = new SendTestEmailInput();
         input.emailAddress = emailAddress;
         input.from = new EmailFromSettings();
-        input.from.address = emailSettings.defaultFromAddress;
+        input.from.emailAddress = emailSettings.defaultFromAddress;
         input.from.displayName = emailSettings.defaultFromDisplayName;
         input.smtp = new EmailSmtpSettings();
         input.smtp.host = emailSettings.smtpHost;

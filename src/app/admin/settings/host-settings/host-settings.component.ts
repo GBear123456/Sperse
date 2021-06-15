@@ -28,7 +28,7 @@ import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-set
     animations: [appModuleAnimation()],
     styleUrls: ['../../../shared/common/styles/checkbox-radio.less', './host-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantPaymentSettingsServiceProxy, EmailSmtpSettingsService]
+    providers: [TenantPaymentSettingsServiceProxy]
 })
 export class HostSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
 

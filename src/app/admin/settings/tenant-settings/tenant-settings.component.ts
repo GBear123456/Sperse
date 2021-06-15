@@ -57,8 +57,7 @@ import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-set
     providers: [
         TenantSettingsCreditReportServiceProxy,
         TenantPaymentSettingsServiceProxy,
-        TenantOfferProviderSettingsServiceProxy,
-        EmailSmtpSettingsService
+        TenantOfferProviderSettingsServiceProxy
     ]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
