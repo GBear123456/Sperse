@@ -1562,7 +1562,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.isSmsAndEmailSendingAllowed,
+                        disabled: !this.selectedClientKeys.length || this.selectedClientKeys.length > 1 || !this.isSmsAndEmailSendingAllowed,
                         options: {
                             items: [
                                 {
