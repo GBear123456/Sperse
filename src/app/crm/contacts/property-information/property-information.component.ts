@@ -10,6 +10,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CurrencyPipe } from '@angular/common';
 
 /** Third party imports */
+import { AppConsts } from '@shared/AppConsts';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription, merge, forkJoin, of } from 'rxjs';
 import { filter, map, switchMap, pluck, finalize, skip, first } from 'rxjs/operators';
@@ -96,9 +97,11 @@ export class PropertyInformationComponent implements OnInit {
     ];
     stylingMode = 'filled';
 
+    phoneRegEx = AppConsts.regexPatterns.phone;
+    emailRegEx = AppConsts.regexPatterns.email;
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
-    showContractDetails: boolean = false;
-    currencyFormat = { style: "currency", currency: "USD", useGrouping: true };
+    showContractDetails = false;
+    currencyFormat = { style: 'currency', currency: 'USD', useGrouping: true };
 
     yesNoDropdowns: SelectBoxItem[] = [
         { displayValue: 'Yes', value: true },
@@ -316,8 +319,8 @@ export class PropertyInformationComponent implements OnInit {
     }
     sinceListedDaysChanged(newValue: number) {
         this.propertyAcquisitionDto.listedDate = newValue ?
-            moment().startOf('Day').subtract(newValue, "days") :
-            undefined
+            moment().startOf('Day').subtract(newValue, 'days') :
+            undefined;
         this.acquisitionValueChanged();
     }
 
@@ -383,7 +386,7 @@ export class PropertyInformationComponent implements OnInit {
     getTermMortgagePaydownDetails() {
         let months = this.getPurchaseTermMonths();
         if (!this.propertyInvestmentDto.rtoMortgagePaydownRate || !months)
-            return "";
+            return '';
         let mortgagePercentAmount = this.propertyInvestmentDto.monthlyMortgagePayments * this.propertyInvestmentDto.rtoMortgagePaydownRate;
         return `(based on ${(+this.propertyInvestmentDto.rtoMortgagePaydownRate * 100).toFixed(2)}% of mortgage payment amount ${this.currencyPipe.transform(+mortgagePercentAmount.toFixed(2), this.currencyFormat.currency)}x${months})`;
     }
@@ -401,7 +404,7 @@ export class PropertyInformationComponent implements OnInit {
             return 0;
 
         const daysInMonth = 365.2425 / 12;
-        var days = moment(dateTo).diff(moment(dateFrom), 'days');
+        let days = moment(dateTo).diff(moment(dateFrom), 'days');
         return Math.round(days / daysInMonth);
     }
 
@@ -414,6 +417,13 @@ export class PropertyInformationComponent implements OnInit {
         if (month)
             result += ` ${month} ${this.ls.l('month(s)')}`;
         return result;
+    }
+
+    checkSetFieldChanged(event, field) {
+        if (event.component.option('isValid')) {
+            this.property[field] = event.value;
+            this.valueChanged();
+        }
     }
 
     valueChanged(successCallback?: () => void) {
@@ -511,14 +521,12 @@ export class PropertyInformationComponent implements OnInit {
         let triggerChange = true;
         if (!newValues || !newValues.length) {
             this.property[propName] = null;
-        }
-        else {
+        } else {
             if (newValues.indexOf(0) >= 0) {
                 if (prevValues && prevValues.length == 1 && prevValues[0] == 0) {
                     newValues = newValues.filter(v => v != 0);
                     triggerChange = false;
-                }
-                else {
+                } else {
                     newValues = [0];
                     triggerChange = prevValues.indexOf(0) < 0;
                 }
