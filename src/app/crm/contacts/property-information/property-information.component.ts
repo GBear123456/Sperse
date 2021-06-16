@@ -430,9 +430,10 @@ export class PropertyInformationComponent implements OnInit {
         this.loadingService.startLoading(this.elementRef.nativeElement);
         this.propertyServiceProxy.updatePropertyDetails(this.property).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-        ).subscribe(
-            successCallback,
-            () => {
+        ).subscribe(() => {
+                this.initialProperty = cloneDeep(this.property);
+                successCallback && successCallback();
+            }, () => {
                 this.property = cloneDeep(this.initialProperty);
                 this.savePropertyInfo(this.property);
                 this.changeDetectorRef.detectChanges();
@@ -445,7 +446,9 @@ export class PropertyInformationComponent implements OnInit {
         this.propertyServiceProxy.updatePropertyAcquisitionDetails(this.propertyAcquisitionDto).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
         ).subscribe(
-            () => { },
+            () => {
+                this.initialPropertyAcquisitionDto = cloneDeep(this.propertyAcquisitionDto);
+            },
             () => {
                 this.propertyAcquisitionDto = cloneDeep(this.initialPropertyAcquisitionDto);
                 this.changeDetectorRef.detectChanges();
@@ -458,7 +461,9 @@ export class PropertyInformationComponent implements OnInit {
         this.propertyServiceProxy.updatePropertyInvestmentDetails(this.propertyInvestmentDto).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
         ).subscribe(
-            () => { },
+            () => {
+                this.initialPropertyInvestmentDto = cloneDeep(this.propertyInvestmentDto);
+            },
             () => {
                 this.propertyInvestmentDto = cloneDeep(this.initialPropertyInvestmentDto);
                 this.changeDetectorRef.detectChanges();

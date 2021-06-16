@@ -115,7 +115,7 @@ export class SocialsComponent {
                 url: '',
                 isSocialNetwork: false,
                 isActive: true,
-                comment: '',
+                comment: undefined,
                 contactId: this.contactInfoData.contactId,
                 id: undefined,
                 isConfirmed: undefined,
