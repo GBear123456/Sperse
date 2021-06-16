@@ -1,11 +1,14 @@
 <dx-drop-down-box
     width="330px"
-    height="30px"
+    height="40px"
     valueExpr="id"
     displayExpr="name"
     [(value)]="selectedDocumentTypeId"
     [showClearButton]="true"
     [dataSource]="list"
+    [activeStateEnabled]="false"
+    [focusStateEnabled]="false"
+    [hoverStateEnabled]="false"
     [placeholder]="ls.l('ChooseDocumentType')"
     (onInitialized)="onDropDownInitialized($event)"
     (onValueChanged)=onValueChanged($event)>
