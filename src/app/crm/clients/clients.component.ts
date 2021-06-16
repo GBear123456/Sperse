@@ -1264,7 +1264,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: this.selectedClientKeys.length > 1 || !this.permission.checkCGPermission(ContactGroup.Client, 'ViewCommunicationHistory.SendSMSAndEmail'),
+                        disabled: !this.selectedClientKeys.length || this.selectedClientKeys.length > 1 || 
+                            !this.permission.checkCGPermission(ContactGroup.Client, 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [
                                 {
