@@ -54,8 +54,6 @@ export class SaltEdgeComponent implements OnInit {
             if (event.data === 'cancel') {
                 if (this.setupAccountWindow)
                     this.setupAccountWindow.close();
-
-                this.onClose.emit();
                 return;
             }
             const response = JSON.parse(event.data);
