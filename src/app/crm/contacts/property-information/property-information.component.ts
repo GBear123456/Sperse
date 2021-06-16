@@ -430,9 +430,9 @@ export class PropertyInformationComponent implements OnInit {
         this.loadingService.startLoading(this.elementRef.nativeElement);
         this.propertyServiceProxy.updatePropertyDetails(this.property).pipe(
             finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-        ).subscribe(res => {
+        ).subscribe(() => {
                 this.initialProperty = cloneDeep(this.property);
-                successCallback && successCallback(res);
+                successCallback && successCallback();
             }, () => {
                 this.property = cloneDeep(this.initialProperty);
                 this.savePropertyInfo(this.property);
