@@ -24,6 +24,37 @@
         }
     }
 
+    .photo-area {
+        width: auto;
+        height: 160px;
+        cursor: pointer;
+        background-color: #F4F4F4;
+        background-size: contain;
+        background-repeat: no-repeat;
+        background-position: center;
+
+        &.disabled {
+            cursor: default;
+            opacity: 0.8;
+        }
+    }
+
+    ::ng-deep socials {
+        dx-button, ::ng-deep dx-text-box {
+            &, ::ng-deep input {
+                border: none;
+                background: transparent!important;
+            }
+            &.dx-state-focused .dx-placeholder {
+                top: -30px!important;
+            }
+        }
+        .inplace-edit-edit-mode {
+            background: #3333330d;
+            border-radius: 5px;
+        }
+    }
+
     .block {
         border-radius: 5px;
         padding: 20px 20px 15px;
@@ -40,6 +71,29 @@
             margin-bottom: 10px;
             font-weight: 700 !important;
             text-transform: uppercase;
+        }
+
+        &.full-height {
+            height: 100%;
+        }
+    }
+
+    .inline-header {
+        display: inline-block;
+        margin-right: 5px;
+    }
+
+    h2, .total-profit {
+        font-size: 25px !important;
+        font-weight: 600 !important;
+    }
+
+    .total-profit {
+        margin-top: 20px;
+
+        button {
+            top: -5px;
+            margin-left: 13px;
         }
     }
 
@@ -111,6 +165,10 @@
                 color: #424c56;
                 //width: 200px;
             }
+        }
+
+        ::ng-deep dx-check-box {
+            float: initial;
         }
 
         ::ng-deep {

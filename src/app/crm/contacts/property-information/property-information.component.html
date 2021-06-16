@@ -15,10 +15,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.ownersOnTitle"
+                                                             [(value)]="propertyAcquisitionDto.ownersOnTitle"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -27,10 +27,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.mortgageHolder"
+                                                             [(value)]="propertyAcquisitionDto.mortgageHolder"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -41,9 +41,9 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="propertyResidents"
-                                                               [(value)]="propertySellerDto.propertyResident"
+                                                               [(value)]="propertyAcquisitionDto.propertyResident"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
+                                                               (onValueChanged)="acquisitionValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -51,38 +51,40 @@
                                             <div class="dx-field-value">
                                                 <dx-number-box showClearButton="true"
                                                              step="0"
+                                                             format="#"
+                                                             mode="number"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.houseOwningTime"
+                                                             [(value)]="propertyAcquisitionDto.houseOwningTime"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-number-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AnnualHOACondoFees') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.annualHOACondoFees"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.annualHOACondoFees"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('DepositPutAmount') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.depositPutAmount"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.depositPutAmount"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -100,21 +102,21 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
                                                                [disabled]="disableEdit"
-                                                               [(value)]="propertySellerDto.isHomeListed"
-                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
+                                                               [(value)]="propertyAcquisitionDto.isHomeListed"
+                                                               (onValueChanged)="acquisitionValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('PriceListed') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.priceListed"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.priceListed"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -124,6 +126,8 @@
                                                 <dx-number-box [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
+                                                               format="#"
+                                                               mode="number"
                                                                [value]="sinceListedDays"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
                                                                [disabled]="disableEdit"
@@ -140,10 +144,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(propertySellerDto.listingExpires)"
+                                                             [value]="getDateValue(propertyAcquisitionDto.listingExpires)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'listingExpires', true)">
+                                                             (onValueChanged)="dateValueChanged($event, 'listingExpires', 'acquisitionProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -156,10 +160,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.realtorName"
+                                                             [(value)]="propertyAcquisitionDto.realtorName"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -168,10 +172,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="64"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.realtorContactNumber"
+                                                             [(value)]="propertyAcquisitionDto.realtorContactNumber"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -183,21 +187,21 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
                                                                [disabled]="disableEdit"
-                                                               [(value)]="propertySellerDto.offersFromListing"
-                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
+                                                               [(value)]="propertyAcquisitionDto.offersFromListing"
+                                                               (onValueChanged)="acquisitionValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('OffersFromListingAmount') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.offersFromListingAmount"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.offersFromListingAmount"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -212,10 +216,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.anythingRecentlyUpgraded"
+                                                             [(value)]="propertyAcquisitionDto.anythingRecentlyUpgraded"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -224,10 +228,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.needRepairs"
+                                                             [(value)]="propertyAcquisitionDto.needRepairs"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -236,10 +240,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.structural"
+                                                             [(value)]="propertyAcquisitionDto.structural"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -248,10 +252,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.mechanical"
+                                                             [(value)]="propertyAcquisitionDto.mechanical"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -260,10 +264,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.waterIssues"
+                                                             [(value)]="propertyAcquisitionDto.waterIssues"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -272,10 +276,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.roof"
+                                                             [(value)]="propertyAcquisitionDto.roof"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -284,10 +288,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.plumbing"
+                                                             [(value)]="propertyAcquisitionDto.plumbing"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -296,10 +300,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.electrical"
+                                                             [(value)]="propertyAcquisitionDto.electrical"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -308,10 +312,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.hvac"
+                                                             [(value)]="propertyAcquisitionDto.hvac"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -320,10 +324,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.repairsOrIssuesPool"
+                                                             [(value)]="propertyAcquisitionDto.repairsOrIssuesPool"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -332,10 +336,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.landscaping"
+                                                             [(value)]="propertyAcquisitionDto.landscaping"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -347,8 +351,8 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="pestsTypes"
                                                                [disabled]="disableEdit"
-                                                               [(value)]="propertySellerDto.pests"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               [(value)]="propertyAcquisitionDto.pests"
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-select-box>
                                             </div>
                                         </div>
@@ -361,8 +365,8 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
                                                                [disabled]="disableEdit"
-                                                               [(value)]="propertySellerDto.pestsResolved"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               [(value)]="propertyAcquisitionDto.pestsResolved"
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-select-box>
                                             </div>
                                         </div>
@@ -372,10 +376,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.repairsOrIssuesOther"
+                                                             [(value)]="propertyAcquisitionDto.repairsOrIssuesOther"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                     </div>
@@ -389,10 +393,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.whySell"
+                                                             [(value)]="propertyAcquisitionDto.whySell"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -404,8 +408,8 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="sellPeriods"
                                                                [disabled]="disableEdit"
-                                                               [(value)]="propertySellerDto.howQuicklyWantToSell"
-                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
+                                                               [(value)]="propertyAcquisitionDto.howQuicklyWantToSell"
+                                                               (onValueChanged)="acquisitionValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -414,10 +418,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.didntSellActions"
+                                                             [(value)]="propertyAcquisitionDto.didntSellActions"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                     </div>
@@ -436,10 +440,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(propertySellerDto.tenantLeaseTerm)"
+                                                             [value]="getDateValue(propertyAcquisitionDto.tenantLeaseTerm)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'tenantLeaseTerm', true)">
+                                                             (onValueChanged)="dateValueChanged($event, 'tenantLeaseTerm', 'acquisitionProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -447,16 +451,30 @@
                                             </div>
                                         </div>
                                         <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('TenantDepositReceived') }}</div>
+                                            <div class="dx-field-label">{{ ls.l('TenantMonthlyRent') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.tenantDepositReceived"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.tenantMonthlyRent"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('TenantDepositReceived') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.tenantDepositReceived"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -469,8 +487,8 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
                                                                [disabled]="disableEdit"
-                                                               [(value)]="propertySellerDto.tenantPetAddendum"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               [(value)]="propertyAcquisitionDto.tenantPetAddendum"
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-select-box>
                                             </div>
                                         </div>
@@ -483,19 +501,19 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="petFeeTypes"
                                                                [disabled]="disableEdit"
-                                                               [(value)]="propertySellerDto.tenantPetFeeType"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               [(value)]="propertyAcquisitionDto.tenantPetFeeType"
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-select-box>
                                             </div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.tenantPetFee"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.tenantPetFee"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -507,14 +525,14 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('CurrentOwningAmount') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.currentOwningAmount"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.currentOwningAmount"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -527,21 +545,21 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
                                                                [disabled]="disableEdit"
-                                                               [(value)]="propertySellerDto.hasAdditionalMortgage"
-                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
+                                                               [(value)]="propertyAcquisitionDto.hasAdditionalMortgage"
+                                                               (onValueChanged)="acquisitionValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('OtherLienAmount') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.otherLienAmount"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.otherLienAmount"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -554,62 +572,80 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
                                                                [disabled]="disableEdit"
-                                                               [(value)]="propertySellerDto.areMortgagePaymentsCurrent"
-                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
+                                                               [(value)]="propertyAcquisitionDto.areMortgagePaymentsCurrent"
+                                                               (onValueChanged)="acquisitionValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('MonthsBehindOnMortgage') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.monthsBehindOnMortgage"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.monthsBehindOnMortgage"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
+                                                               format="#"
+                                                               mode="number"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AmountBehindOnMortgages') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.amountBehindOnMortgages"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.amountBehindOnMortgages"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('BackTaxes') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.backTaxes"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.backTaxes"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
-                                        <div class="dx-field">
+                                        <div class="dx-field combo-dropdown">
                                             <div class="dx-field-label">{{ ls.l('MonthlyMortgagePayment') }}</div>
+                                            <div class="dx-field-value">{{ ls.l('Principle') }}</div>
+                                            <div class="dx-field-value">{{ ls.l('Interest') }}</div>
+                                        </div>
+                                        <div class="dx-field combo-dropdown">
+                                            <div class="dx-field-label"></div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.monthlyMortgagePayment"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.monthlyPrincipleMortgagePayment"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.monthlyInterestMortgagePayment"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -622,48 +658,48 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
                                                                [disabled]="disableEdit"
-                                                               [(value)]="propertySellerDto.includeTaxesAndInsurance"
-                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
+                                                               [(value)]="propertyAcquisitionDto.includeTaxesAndInsurance"
+                                                               (onValueChanged)="acquisitionValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AnnualPropertyTaxes') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.annualPropertyTaxes"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.annualPropertyTaxes"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AnnualPropertyInsurance') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.annualPropertyInsurance"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.annualPropertyInsurance"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('InterestRateMTG1') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.interestRateMTG1"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.interestRateMTG1"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -676,20 +712,20 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="interestRates"
                                                                [disabled]="disableEdit"
-                                                               [(value)]="propertySellerDto.interestRateMTG1Type"
-                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
+                                                               [(value)]="propertyAcquisitionDto.interestRateMTG1Type"
+                                                               (onValueChanged)="acquisitionValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('InterestRateMTG2') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.interestRateMTG2"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.interestRateMTG2"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -702,21 +738,21 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="interestRates"
                                                                [disabled]="disableEdit"
-                                                               [(value)]="propertySellerDto.interestRateMTG2Type"
-                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
+                                                               [(value)]="propertyAcquisitionDto.interestRateMTG2Type"
+                                                               (onValueChanged)="acquisitionValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('PrepaymentPenalty') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.prepaymentPenalty"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.prepaymentPenalty"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -726,10 +762,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.mortgageLender1"
+                                                             [(value)]="propertyAcquisitionDto.mortgageLender1"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -738,10 +774,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.mortgageLender2"
+                                                             [(value)]="propertyAcquisitionDto.mortgageLender2"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -753,10 +789,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(propertySellerDto.mortgageTermRenewal1)"
+                                                             [value]="getDateValue(propertyAcquisitionDto.mortgageTermRenewal1)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal1', true)">
+                                                             (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal1', 'acquisitionProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -772,10 +808,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(propertySellerDto.mortgageTermRenewal2)"
+                                                             [value]="getDateValue(propertyAcquisitionDto.mortgageTermRenewal2)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal2', true)">
+                                                             (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal2', 'acquisitionProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -792,10 +828,10 @@
                                                 <dx-text-area [height]="90"
                                                               [maxLength]="512"
                                                               [stylingMode]="stylingMode"
-                                                              [(value)]="propertySellerDto.sellerFinancing"
+                                                              [(value)]="propertyAcquisitionDto.sellerFinancing"
                                                               [placeholder]="ls.l('EditValuePlaceholder')"
                                                               [disabled]="disableEdit"
-                                                              (onValueChanged)="sellerValueChanged()"></dx-text-area>
+                                                              (onValueChanged)="acquisitionValueChanged()"></dx-text-area>
                                             </div>
                                         </div>
                                     </div>
@@ -806,14 +842,14 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('LastSoldPrice') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.lastSoldPrice"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.lastSoldPrice"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -823,65 +859,65 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="16"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.yearLastSold"
+                                                             [(value)]="propertyAcquisitionDto.yearLastSold"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('CityAssessedValue') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.cityAssessedValue"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.cityAssessedValue"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AsIsValue') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.asIsValue"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.asIsValue"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('ApproxRepairCost') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.approxRepairCost"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.approxRepairCost"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AfterRepairValue') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertySellerDto.afterRepairValue"
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.afterRepairValue"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
                                                                [disabled]="disableEdit"
-                                                               (onValueChanged)="sellerValueChanged()">
+                                                               (onValueChanged)="acquisitionValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -894,10 +930,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(propertySellerDto.walkthroughDate)"
+                                                             [value]="getDateValue(propertyAcquisitionDto.walkthroughDate)"
                                                              [showClearButton]="true"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="dateValueChanged($event, 'walkthroughDate', true)">
+                                                             (onValueChanged)="dateValueChanged($event, 'walkthroughDate', 'acquisitionProp')">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -913,8 +949,8 @@
                                                                [stylingMode]="stylingMode"
                                                                [items]="exitStrategies"
                                                                [disabled]="disableEdit"
-                                                               [(value)]="propertySellerDto.exitStrategy"
-                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
+                                                               [(value)]="propertyAcquisitionDto.exitStrategy"
+                                                               (onValueChanged)="acquisitionValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -923,10 +959,40 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="512"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="propertySellerDto.exitStrategyNotes"
+                                                             [(value)]="propertyAcquisitionDto.exitStrategyNotes"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [disabled]="disableEdit"
-                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
+                                                             (onValueChanged)="acquisitionValueChanged()"></dx-text-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field combo-dropdown">
+                                            <div class="dx-field-label">{{ ls.l('DepositToPayToSeller') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyAcquisitionDto.depositToPayToSeller"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="acquisitionValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                <dx-date-box type="date"
+                                                             [acceptCustomValue]="false"
+                                                             [openOnFieldClick]="true"
+                                                             [stylingMode]="stylingMode"
+                                                             [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             dropDownButtonTemplate="dropDownButtonTemplate"
+                                                             [value]="getDateValue(propertyAcquisitionDto.depositToPayToSellerDate)"
+                                                             [showClearButton]="true"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'depositToPayToSellerDate', 'acquisitionProp')">
+                                                    <div *dxTemplate="let data of 'dropDownButtonTemplate'">
+                                                        <img src="./assets/common/icons/calendar-date.svg">
+                                                    </div>
+                                                </dx-date-box>
                                             </div>
                                         </div>
                                     </div>
@@ -1036,6 +1102,8 @@
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
+                                                               format="#"
+                                                               mode="number"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
                                                                [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
@@ -1049,6 +1117,8 @@
                                                 <dx-number-box [(value)]="property.numberOfLevels"
                                                                showClearButton="true"
                                                                step="0"
+                                                               format="#"
+                                                               mode="number"
                                                                [stylingMode]="stylingMode"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
                                                                [disabled]="disableEdit"
@@ -1345,6 +1415,8 @@
                                                 <dx-number-box [(value)]="property.bedCount"
                                                                showClearButton="true"
                                                                step="0"
+                                                               format="#"
+                                                               mode="number"
                                                                [stylingMode]="stylingMode"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
                                                                [disabled]="disableEdit"
@@ -1358,6 +1430,8 @@
                                                 <dx-number-box [(value)]="property.bathCount"
                                                                showClearButton="true"
                                                                step="0"
+                                                               format="#"
+                                                               mode="number"
                                                                [stylingMode]="stylingMode"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
                                                                [disabled]="disableEdit"
@@ -1450,6 +1524,8 @@
                                                 <dx-number-box [(value)]="property.storageLocker"
                                                                showClearButton="true"
                                                                step="0"
+                                                               format="#"
+                                                               mode="number"
                                                                [stylingMode]="stylingMode"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
                                                                [disabled]="disableEdit"
@@ -1520,8 +1596,6 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="col-md-12 col-lg-6 col-xl-4">
                                 <div class="block">
                                     <h3>{{ ls.l('OutdoorSpace') }}</h3>
                                     <div class="fields">
@@ -1570,6 +1644,29 @@
                                                 ></dx-select-box>
                                             </div>
                                         </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6 col-xl-4">
+                                <div class="block">
+                                    <h3>{{ ls.l('Photo') }}</h3>
+                                    <div class="fields">
+                                        <div class="photo-area" 
+                                            [ngClass]="{disabled: disableEdit}"
+                                            [ngStyle]="{ 'background-image': getPhoto() }"
+                                            (click)="showUploadPhotoDialog($event)">
+                                        </div>                                        
+                                    </div>
+                                </div>
+                                <div class="block">
+                                    <h3>{{ ls.l('Links') }}</h3>
+                                    <div class="fields">
+                                        <socials
+                                            [isEditAllowed]="!disableEdit"
+                                            [enableLinkDialog]="false"
+                                            [contactInfoData]="{contactId: property.id, links: property.links || []}"
+                                            (onChanged)="changeDetectorRef.detectChanges()">
+                                        </socials>
                                     </div>
                                 </div>
                                 <div class="block">
@@ -1818,173 +1915,329 @@
                         <div class="row">
                             <div class="col-md-12 col-lg-6">
                                 <div class="block">
+                                    <h3>{{ ls.l('CondoManagementInfo') }}</h3>
                                     <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('TurnoverCompanyName') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="128"
+                                                             [stylingMode]="stylingMode"
+                                                             [(value)]="property.turnoverCompanyName"
+                                                             [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('TurnoverContactName') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="128"
+                                                             [stylingMode]="stylingMode"
+                                                             [(value)]="property.turnoverContactName"
+                                                             [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Email') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="100"
+                                                             [stylingMode]="stylingMode"
+                                                             [value]="property.turnoverEmail"
+                                                             [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="checkSetFieldChanged($event, 'turnoverEmail')">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule type="pattern" [pattern]="emailRegEx" message="{{ls.l('InvalidEmailAddress')}}."></dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-text-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Phone') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="15"
+                                                             [stylingMode]="stylingMode"
+                                                             [value]="property.turnoverPhone"
+                                                             [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="checkSetFieldChanged($event, 'turnoverPhone')">
+                                                    <dx-validator>
+                                                        <dxi-validation-rule type="stringLength" max="24"></dxi-validation-rule>
+                                                        <dxi-validation-rule type="pattern" [pattern]="phoneRegEx" message="{{ls.l('PhoneValidationError')}}."></dxi-validation-rule>
+                                                    </dx-validator>
+                                                </dx-text-box>
+                                            </div>
+                                        </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('CondoDocuments') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="receivedNA"
-                                                    [disabled]="disableEdit"
-                                                    [(value)]="property.condoDocuments"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                <dx-select-box showClearButton="true"
+                                                               displayExpr="displayValue"
+                                                               valueExpr="value"
+                                                               [stylingMode]="stylingMode"
+                                                               [items]="receivedNA"
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="property.condoDocuments"
+                                                               (onValueChanged)="valueChanged()"></dx-select-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('MoveInRequest') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="128"
+                                                             [stylingMode]="stylingMode"
+                                                             [(value)]="property.moveInRequest"
+                                                             [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="valueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('PetApplication') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="receivedNA"
-                                                    [disabled]="disableEdit"
-                                                    [(value)]="property.petApplication"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                <dx-select-box showClearButton="true"
+                                                               displayExpr="displayValue"
+                                                               valueExpr="value"
+                                                               [stylingMode]="stylingMode"
+                                                               [items]="receivedNA"
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="property.petApplication"
+                                                               (onValueChanged)="valueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('IntercomSetup') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-text-box
-                                                    showClearButton="true"
-                                                    [maxLength]="256"
-                                                    [stylingMode]="stylingMode"
-                                                    [(value)]="property.intercomSetup"
-                                                    [placeholder]="ls.l('EditValuePlaceholder')"
-                                                    [disabled]="disableEdit"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-text-box>
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="256"
+                                                             [stylingMode]="stylingMode"
+                                                             [(value)]="property.intercomSetup"
+                                                             [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="valueChanged()"></dx-text-box>
                                             </div>
                                         </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('VisitorParkingPass') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box showClearButton="true"
+                                                               step="0"
+                                                               format="#"
+                                                               mode="number"
+                                                               [stylingMode]="stylingMode"
+                                                               [(value)]="property.visitorParkingPass"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="valueChanged()"></dx-number-box>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="block">
+                                    <h3>{{ ls.l('UnitDetails') }}</h3>
+                                    <div class="fields">
                                         <div class="dx-field combo-dropdown">
                                             <div class="dx-field-label">{{ ls.l('AdditionalKeys') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="receivedNA"
-                                                    [disabled]="disableEdit"
-                                                    [(value)]="property.additionalKeys"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                <dx-select-box showClearButton="true"
+                                                               displayExpr="displayValue"
+                                                               valueExpr="value"
+                                                               [stylingMode]="stylingMode"
+                                                               [items]="receivedNA"
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="property.additionalKeys"
+                                                               (onValueChanged)="valueChanged()"></dx-select-box>
                                             </div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="oneFiveDropdowns"
-                                                    [disabled]="disableEdit"
-                                                    [(value)]="property.numberOfSets"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                <dx-select-box showClearButton="true"
+                                                               [stylingMode]="stylingMode"
+                                                               [items]="oneFiveDropdowns"
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="property.numberOfSets"
+                                                               (onValueChanged)="valueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('FrontDoorFob') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box
-                                                    showClearButton="true"
-                                                    step="0"
-                                                    [stylingMode]="stylingMode"
-                                                    [(value)]="property.frontDoorFob"
-                                                    [placeholder]="ls.l('EditValuePlaceholder')"
-                                                    [disabled]="disableEdit"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-number-box>
+                                                <dx-number-box showClearButton="true"
+                                                               step="0"
+                                                               format="#"
+                                                               mode="number"
+                                                               [stylingMode]="stylingMode"
+                                                               [(value)]="property.frontDoorFob"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="valueChanged()"></dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field combo-dropdown">
                                             <div class="dx-field-label">{{ ls.l('GarageRemote') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="receivedNA"
-                                                    [disabled]="disableEdit"
-                                                    [(value)]="property.garageRemote"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                <dx-select-box showClearButton="true"
+                                                               displayExpr="displayValue"
+                                                               valueExpr="value"
+                                                               [stylingMode]="stylingMode"
+                                                               [items]="receivedNA"
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="property.garageRemote"
+                                                               (onValueChanged)="valueChanged()"></dx-select-box>
                                             </div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="oneFiveDropdowns"
-                                                    [disabled]="disableEdit"
-                                                    [(value)]="property.garageRemoteNumberReceived"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                <dx-select-box showClearButton="true"
+                                                               [stylingMode]="stylingMode"
+                                                               [items]="oneFiveDropdowns"
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="property.garageRemoteNumberReceived"
+                                                               (onValueChanged)="valueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field combo-dropdown">
                                             <div class="dx-field-label">{{ ls.l('GarageKey') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="receivedNA"
-                                                    [disabled]="disableEdit"
-                                                    [(value)]="property.garageKey"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                <dx-select-box showClearButton="true"
+                                                               displayExpr="displayValue"
+                                                               valueExpr="value"
+                                                               [stylingMode]="stylingMode"
+                                                               [items]="receivedNA"
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="property.garageKey"
+                                                               (onValueChanged)="valueChanged()"></dx-select-box>
                                             </div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="oneFiveDropdowns"
-                                                    [disabled]="disableEdit"
-                                                    [(value)]="property.garageKeyNumberReceived"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                <dx-select-box showClearButton="true"
+                                                               [stylingMode]="stylingMode"
+                                                               [items]="oneFiveDropdowns"
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="property.garageKeyNumberReceived"
+                                                               (onValueChanged)="valueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('GarageCode') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-text-box
-                                                    showClearButton="true"
-                                                    [maxLength]="20"
-                                                    [stylingMode]="stylingMode"
-                                                    [(value)]="property.garageCode"
-                                                    [placeholder]="ls.l('EditValuePlaceholder')"
-                                                    [disabled]="disableEdit"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-text-box>
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="20"
+                                                             [stylingMode]="stylingMode"
+                                                             [(value)]="property.garageCode"
+                                                             [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="valueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('ParkadeFob') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-select-box
-                                                    showClearButton="true"
-                                                    displayExpr="displayValue"
-                                                    valueExpr="value"
-                                                    [stylingMode]="stylingMode"
-                                                    [items]="receivedNA"
-                                                    [disabled]="disableEdit"
-                                                    [(value)]="property.parkadeFob"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-select-box>
+                                                <dx-select-box showClearButton="true"
+                                                               displayExpr="displayValue"
+                                                               valueExpr="value"
+                                                               [stylingMode]="stylingMode"
+                                                               [items]="receivedNA"
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="property.parkadeFob"
+                                                               (onValueChanged)="valueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                             <div class="col-md-12 col-lg-6">
+                                <div class="block">
+                                    <h3>{{ ls.l('UtilityProviders') }}</h3>
+                                    <div class="fields">
+                                        <div class="dx-field combo-dropdown">
+                                            <div class="dx-field-label">{{ ls.l('Electricity') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="128"
+                                                             [stylingMode]="stylingMode"
+                                                             [(value)]="property.electricityProvider"
+                                                             [placeholder]="ls.l('Provider')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="128"
+                                                             [stylingMode]="stylingMode"
+                                                             [(value)]="property.electricityAccountNo"
+                                                             [placeholder]="ls.l('Account #')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field combo-dropdown">
+                                            <div class="dx-field-label">{{ ls.l('NaturalGas') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="128"
+                                                             [stylingMode]="stylingMode"
+                                                             [(value)]="property.naturalGasProvider"
+                                                             [placeholder]="ls.l('Provider')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="128"
+                                                             [stylingMode]="stylingMode"
+                                                             [(value)]="property.naturalGasAccountNo"
+                                                             [placeholder]="ls.l('Account #')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field combo-dropdown">
+                                            <div class="dx-field-label">{{ ls.l('Water') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="128"
+                                                             [stylingMode]="stylingMode"
+                                                             [(value)]="property.waterProvider"
+                                                             [placeholder]="ls.l('Provider')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="128"
+                                                             [stylingMode]="stylingMode"
+                                                             [(value)]="property.waterAccountNo"
+                                                             [placeholder]="ls.l('Account #')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field combo-dropdown">
+                                            <div class="dx-field-label">{{ ls.l('Waste') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="128"
+                                                             [stylingMode]="stylingMode"
+                                                             [(value)]="property.wasteProvider"
+                                                             [placeholder]="ls.l('Provider')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                <dx-text-box showClearButton="true"
+                                                             [maxLength]="128"
+                                                             [stylingMode]="stylingMode"
+                                                             [(value)]="property.wasteAccountNo"
+                                                             [placeholder]="ls.l('Account #')"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="block">
                                     <div class="fields">
                                         <div class="dx-field">
@@ -1993,22 +2246,10 @@
                                                 <dx-number-box
                                                     showClearButton="true"
                                                     step="0"
+                                                    format="#"
+                                                    mode="number"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.parkingStall"
-                                                    [placeholder]="ls.l('EditValuePlaceholder')"
-                                                    [disabled]="disableEdit"
-                                                    (onValueChanged)="valueChanged()"
-                                                ></dx-number-box>
-                                            </div>
-                                        </div>
-                                        <div class="dx-field">
-                                            <div class="dx-field-label">{{ ls.l('VisitorParkingPass') }}</div>
-                                            <div class="dx-field-value">
-                                                <dx-number-box
-                                                    showClearButton="true"
-                                                    step="0"
-                                                    [stylingMode]="stylingMode"
-                                                    [(value)]="property.visitorParkingPass"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
                                                     [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
@@ -2021,6 +2262,8 @@
                                                 <dx-number-box
                                                     showClearButton="true"
                                                     step="0"
+                                                    format="#"
+                                                    mode="number"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.mailbox"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
@@ -2060,6 +2303,8 @@
                                                 <dx-number-box
                                                     showClearButton="true"
                                                     step="0"
+                                                    format="#"
+                                                    mode="number"
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.storageLockerNumber"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
@@ -2142,6 +2387,437 @@
                                         </div>
                                     </div>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </dx-scroll-view>
+    </mat-tab>
+    <mat-tab [label]="ls.l('InvestmentBreakdown')" *ngIf="showContractDetails">
+        <dx-scroll-view showScrollbar="onHover">
+            <div class="container-fluid properties">
+                <div class="row">
+                    <div class="col-md-12 section">
+                        <div class="row">
+                            <div class="col-md-12 col-lg-6">
+                                <div class="block full-height">
+                                    <h2 class="text-center">{{ ls.l('PurchaseInformation') }}</h2>
+                                    <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('PurchasePrice') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="acquisitionLeadDealInfo.dealAmount"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="dealInfoChanged($event)">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('EquityPaidToHomeowner') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.equityPaidToHomeowner"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('ReferralFee') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.referralFee"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <h3 class="inline-header">{{ ls.l('PreparationCosts') }}: </h3> {{ getPreparationCosts() | currency: currencyFormat.currency }}
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Renovations') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.renovations"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Cleaning') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.cleaning"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Inspection') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.inspection"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('LegalFees') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.legalFees"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Other') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.otherPreparationFees"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field combo-dropdown">
+                                            <div class="dx-field-label">{{ ls.l('ContractTerm') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-date-box type="date"
+                                                             [acceptCustomValue]="false"
+                                                             [openOnFieldClick]="true"
+                                                             [stylingMode]="stylingMode"
+                                                             [placeholder]="ls.l('From')"
+                                                             dropDownButtonTemplate="dropDownButtonTemplate"
+                                                             [value]="getDateValue(propertyInvestmentDto.purchaseTermFrom)"
+                                                             [showClearButton]="true"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'purchaseTermFrom', 'investmentProp')">
+                                                    <div *dxTemplate="let data of 'dropDownButtonTemplate'">
+                                                        <img src="./assets/common/icons/calendar-date.svg">
+                                                    </div>
+                                                </dx-date-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                <dx-date-box type="date"
+                                                             [acceptCustomValue]="false"
+                                                             [openOnFieldClick]="true"
+                                                             [stylingMode]="stylingMode"
+                                                             [placeholder]="ls.l('To')"
+                                                             dropDownButtonTemplate="dropDownButtonTemplate"
+                                                             [value]="getDateValue(propertyInvestmentDto.purchaseTermTo)"
+                                                             [showClearButton]="true"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'purchaseTermTo', 'investmentProp')">
+                                                    <div *dxTemplate="let data of 'dropDownButtonTemplate'">
+                                                        <img src="./assets/common/icons/calendar-date.svg">
+                                                    </div>
+                                                </dx-date-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label"></div>
+                                            <div class="dx-field-value">
+                                                {{getMonthYearString(getPurchaseTermMonths())}}
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('ExtraYear') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-check-box width="20px"
+                                                              [(value)]="propertyInvestmentDto.purchaseTermExtraYear"
+                                                              [disabled]="disableEdit"
+                                                              (onValueChanged)="investmentValueChanged()">
+                                                </dx-check-box>
+                                            </div>
+                                        </div>
+                                        <h3 class="inline-header">{{ ls.l('MonthlyHoldingCosts') }}:</h3> {{ getMonthlyHoldingCost() | currency: currencyFormat.currency }}
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('MonthlyMortgagePayments') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.monthlyMortgagePayments"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('MonthlyTaxes') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.monthlyTaxes"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('MonthlyInsurance') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.monthlyInsurance"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('MonthlyCondoFees') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.monthlyCondoFees"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Other') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.otherMonthlyFees"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field combo-dropdown">
+                                            <div class="dx-field-label">{{ ls.l('TermUtilizedMultipliedMonthlyHolding') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.termUtilizedMonths"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               format="#"
+                                                               mode="number"
+                                                               [placeholder]="ls.l('Months')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                {{getTotalUtilizedHoldingCosts() | currency: currencyFormat.currency}}
+                                            </div>
+                                        </div>
+                                        <h3>{{ ls.l('Total') }}</h3>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('TotalFees') }}</div>
+                                            <div class="dx-field-value">
+                                                {{getInvestmentTotalFees() | currency: currencyFormat.currency}}
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Total') }}</div>
+                                            <div class="dx-field-value">
+                                                {{getInvestmentTotalPurchase() | currency: currencyFormat.currency}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 col-lg-6">
+                                <div class="block full-height">
+                                    <h2 class="text-center">{{ ls.l('SaleInformation') }}</h2>
+                                    <div class="fields">
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('RTOPurchasePrice') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.rtoPurchasePrice"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Deposit') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.rtoDeposit"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('MonthlyPayment') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.rtoMonthlyPayment"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               [format]="currencyFormat"
+                                                               [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field"></div>
+                                        <div class="dx-field"></div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('AmountAboveHolding') }}</div>
+                                            <div class="dx-field-value">
+                                                {{getAmountAboveHolding() | currency: currencyFormat.currency}}
+                                            </div>
+                                        </div>
+                                        <div class="dx-field combo-dropdown">
+                                            <div class="dx-field-label">{{ ls.l('SaleTerm') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-date-box type="date"
+                                                             [acceptCustomValue]="false"
+                                                             [openOnFieldClick]="true"
+                                                             [stylingMode]="stylingMode"
+                                                             [placeholder]="ls.l('From')"
+                                                             dropDownButtonTemplate="dropDownButtonTemplate"
+                                                             [value]="getDateValue(propertyInvestmentDto.rtoTermFrom)"
+                                                             [showClearButton]="true"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'rtoTermFrom', 'investmentProp')">
+                                                    <div *dxTemplate="let data of 'dropDownButtonTemplate'">
+                                                        <img src="./assets/common/icons/calendar-date.svg">
+                                                    </div>
+                                                </dx-date-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                <dx-date-box type="date"
+                                                             [acceptCustomValue]="false"
+                                                             [openOnFieldClick]="true"
+                                                             [stylingMode]="stylingMode"
+                                                             [placeholder]="ls.l('To')"
+                                                             dropDownButtonTemplate="dropDownButtonTemplate"
+                                                             [value]="getDateValue(propertyInvestmentDto.rtoTermTo)"
+                                                             [showClearButton]="true"
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'rtoTermTo', 'investmentProp')">
+                                                    <div *dxTemplate="let data of 'dropDownButtonTemplate'">
+                                                        <img src="./assets/common/icons/calendar-date.svg">
+                                                    </div>
+                                                </dx-date-box>
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label"></div>
+                                            <div class="dx-field-value">
+                                                {{getMonthYearString(getRTOTermMonths())}}
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('TermAmountAboveHolding') }}</div>
+                                            <div class="dx-field-value">
+                                                {{getTermAmountAboveHolding() | currency: currencyFormat.currency}}
+                                            </div>
+                                        </div>
+                                        <div class="dx-field"></div>
+                                        <div class="dx-field"></div>
+                                        <div class="dx-field combo-dropdown">
+                                            <div class="dx-field-label">{{ ls.l('TermMortgagePaydown') }}</div>
+                                            <div class="dx-field-value">
+                                                <dx-number-box [(value)]="propertyInvestmentDto.rtoMortgagePaydownRate"
+                                                               [stylingMode]="stylingMode"
+                                                               showClearButton="true"
+                                                               step="0"
+                                                               format="#0.#%"
+                                                               [placeholder]="ls.l('Percent')"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="investmentValueChanged()">
+                                                </dx-number-box>
+                                            </div>
+                                            <div class="dx-field-value">
+                                                {{getTermMortgagePaydown() | currency: currencyFormat.currency}}
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            {{getTermMortgagePaydownDetails()}}
+                                        </div>
+                                        <div style="height: 323px"></div>
+                                        <h3>{{ ls.l('Total') }}</h3>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('TotalProfit') }}</div>
+                                            <div class="dx-field-value">
+                                                {{getTotalProfit() | currency: currencyFormat.currency}}
+                                            </div>
+                                        </div>
+                                        <div class="dx-field">
+                                            <div class="dx-field-label">{{ ls.l('Total') }}</div>
+                                            <div class="dx-field-value">
+                                                {{getTotalSale() | currency: currencyFormat.currency}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12 text-center total-profit">
+                                <span>{{ls.l('TotalProfit')}}: {{getGrandTotalProfit() | currency: currencyFormat.currency}}</span>
+                                <button *ngIf="!disableEdit" class="button-layout button-primary" (click)="generatePdf()">{{ls.l('GeneratePdf')}}</button>
                             </div>
                         </div>
                     </div>

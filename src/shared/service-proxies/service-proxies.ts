@@ -28463,8 +28463,8 @@ export class PropertyServiceProxy {
      * @id (optional) 
      * @return Success
      */
-    getSellerPropertyDetails(id: number | null | undefined): Observable<PropertySellerDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/Property/GetSellerPropertyDetails?";
+    getPropertyAcquisitionDetails(id: number | null | undefined): Observable<PropertyAcquisitionDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/GetPropertyAcquisitionDetails?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -28479,20 +28479,20 @@ export class PropertyServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSellerPropertyDetails(response_);
+            return this.processGetPropertyAcquisitionDetails(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetSellerPropertyDetails(<any>response_);
+                    return this.processGetPropertyAcquisitionDetails(<any>response_);
                 } catch (e) {
-                    return <Observable<PropertySellerDto>><any>_observableThrow(e);
+                    return <Observable<PropertyAcquisitionDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<PropertySellerDto>><any>_observableThrow(response_);
+                return <Observable<PropertyAcquisitionDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetSellerPropertyDetails(response: HttpResponseBase): Observable<PropertySellerDto> {
+    protected processGetPropertyAcquisitionDetails(response: HttpResponseBase): Observable<PropertyAcquisitionDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -28503,7 +28503,7 @@ export class PropertyServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? PropertySellerDto.fromJS(resultData200) : new PropertySellerDto();
+            result200 = resultData200 ? PropertyAcquisitionDto.fromJS(resultData200) : new PropertyAcquisitionDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -28511,14 +28511,69 @@ export class PropertyServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<PropertySellerDto>(<any>null);
+        return _observableOf<PropertyAcquisitionDto>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    getPropertyInvestmentDetails(id: number | null | undefined): Observable<PropertyInvestmentDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/GetPropertyInvestmentDetails?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPropertyInvestmentDetails(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPropertyInvestmentDetails(<any>response_);
+                } catch (e) {
+                    return <Observable<PropertyInvestmentDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PropertyInvestmentDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPropertyInvestmentDetails(response: HttpResponseBase): Observable<PropertyInvestmentDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PropertyInvestmentDto.fromJS(resultData200) : new PropertyInvestmentDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PropertyInvestmentDto>(<any>null);
     }
 
     /**
      * @body (optional) 
      * @return Success
      */
-    updatePropertyDetails(body: PropertyDto | null | undefined): Observable<void> {
+    updatePropertyDetails(body: PropertyBaseDto | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Property/UpdatePropertyDetails";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -28567,14 +28622,11 @@ export class PropertyServiceProxy {
     }
 
     /**
-     * @id (optional) 
      * @body (optional) 
      * @return Success
      */
-    updateSellerPropertyDetails(id: number | null | undefined, body: PropertySellerDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdateSellerPropertyDetails?";
-        if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+    updatePropertyAcquisitionDetails(body: PropertyAcquisitionDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdatePropertyAcquisitionDetails";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -28589,11 +28641,11 @@ export class PropertyServiceProxy {
         };
 
         return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateSellerPropertyDetails(response_);
+            return this.processUpdatePropertyAcquisitionDetails(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUpdateSellerPropertyDetails(<any>response_);
+                    return this.processUpdatePropertyAcquisitionDetails(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -28602,7 +28654,59 @@ export class PropertyServiceProxy {
         }));
     }
 
-    protected processUpdateSellerPropertyDetails(response: HttpResponseBase): Observable<void> {
+    protected processUpdatePropertyAcquisitionDetails(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updatePropertyInvestmentDetails(body: PropertyInvestmentDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/UpdatePropertyInvestmentDetails";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdatePropertyInvestmentDetails(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdatePropertyInvestmentDetails(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdatePropertyInvestmentDetails(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -28678,6 +28782,61 @@ export class PropertyServiceProxy {
             }));
         }
         return _observableOf<PropertyDealInfo[]>(<any>null);
+    }
+
+    /**
+     * @propertyId (optional) 
+     * @return Success
+     */
+    generateInvestmentPdf(propertyId: number | null | undefined): Observable<GetUrlOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Property/GenerateInvestmentPdf?";
+        if (propertyId !== undefined)
+            url_ += "propertyId=" + encodeURIComponent("" + propertyId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGenerateInvestmentPdf(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGenerateInvestmentPdf(<any>response_);
+                } catch (e) {
+                    return <Observable<GetUrlOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetUrlOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGenerateInvestmentPdf(response: HttpResponseBase): Observable<GetUrlOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetUrlOutput.fromJS(resultData200) : new GetUrlOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetUrlOutput>(<any>null);
     }
 }
 
@@ -75129,6 +75288,46 @@ export interface IUserEmailSettings {
     emailSignatureHtml: string | undefined;
 }
 
+export class PropertyLinkDto implements IPropertyLinkDto {
+    id!: number | undefined;
+    url!: string | undefined;
+
+    constructor(data?: IPropertyLinkDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.url = data["url"];
+        }
+    }
+
+    static fromJS(data: any): PropertyLinkDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PropertyLinkDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["url"] = this.url;
+        return data; 
+    }
+}
+
+export interface IPropertyLinkDto {
+    id: number | undefined;
+    url: string | undefined;
+}
+
 export enum PropertyType {
     Condo = "Condo", 
     Duplex = "Duplex", 
@@ -75203,6 +75402,8 @@ export enum FireplaceType {
 }
 
 export class PropertyDto implements IPropertyDto {
+    photo!: string | undefined;
+    links!: PropertyLinkDto[] | undefined;
     id!: number;
     contactGroupId!: string | undefined;
     name!: string;
@@ -75246,7 +75447,12 @@ export class PropertyDto implements IPropertyDto {
     cats!: boolean | undefined;
     petsSizeLimit!: string | undefined;
     petsBreedRestriction!: string | undefined;
+    turnoverCompanyName!: string | undefined;
+    turnoverContactName!: string | undefined;
+    turnoverEmail!: string | undefined;
+    turnoverPhone!: string | undefined;
     condoDocuments!: boolean | undefined;
+    moveInRequest!: string | undefined;
     petApplication!: boolean | undefined;
     intercomSetup!: string | undefined;
     additionalKeys!: boolean | undefined;
@@ -75267,6 +75473,14 @@ export class PropertyDto implements IPropertyDto {
     garbageCollection!: GarbageCollection | undefined;
     garbageKey!: boolean | undefined;
     garbageNumberReceived!: number | undefined;
+    electricityProvider!: string | undefined;
+    electricityAccountNo!: string | undefined;
+    naturalGasProvider!: string | undefined;
+    naturalGasAccountNo!: string | undefined;
+    waterProvider!: string | undefined;
+    waterAccountNo!: string | undefined;
+    wasteProvider!: string | undefined;
+    wasteAccountNo!: string | undefined;
     firepit!: boolean | undefined;
     secure!: boolean | undefined;
     onSiteManager!: boolean | undefined;
@@ -75294,6 +75508,12 @@ export class PropertyDto implements IPropertyDto {
 
     init(data?: any) {
         if (data) {
+            this.photo = data["photo"];
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(PropertyLinkDto.fromJS(item));
+            }
             this.id = data["id"];
             this.contactGroupId = data["contactGroupId"];
             this.name = data["name"];
@@ -75337,7 +75557,12 @@ export class PropertyDto implements IPropertyDto {
             this.cats = data["cats"];
             this.petsSizeLimit = data["petsSizeLimit"];
             this.petsBreedRestriction = data["petsBreedRestriction"];
+            this.turnoverCompanyName = data["turnoverCompanyName"];
+            this.turnoverContactName = data["turnoverContactName"];
+            this.turnoverEmail = data["turnoverEmail"];
+            this.turnoverPhone = data["turnoverPhone"];
             this.condoDocuments = data["condoDocuments"];
+            this.moveInRequest = data["moveInRequest"];
             this.petApplication = data["petApplication"];
             this.intercomSetup = data["intercomSetup"];
             this.additionalKeys = data["additionalKeys"];
@@ -75358,6 +75583,14 @@ export class PropertyDto implements IPropertyDto {
             this.garbageCollection = data["garbageCollection"];
             this.garbageKey = data["garbageKey"];
             this.garbageNumberReceived = data["garbageNumberReceived"];
+            this.electricityProvider = data["electricityProvider"];
+            this.electricityAccountNo = data["electricityAccountNo"];
+            this.naturalGasProvider = data["naturalGasProvider"];
+            this.naturalGasAccountNo = data["naturalGasAccountNo"];
+            this.waterProvider = data["waterProvider"];
+            this.waterAccountNo = data["waterAccountNo"];
+            this.wasteProvider = data["wasteProvider"];
+            this.wasteAccountNo = data["wasteAccountNo"];
             this.firepit = data["firepit"];
             this.secure = data["secure"];
             this.onSiteManager = data["onSiteManager"];
@@ -75385,6 +75618,12 @@ export class PropertyDto implements IPropertyDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["photo"] = this.photo;
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
         data["id"] = this.id;
         data["contactGroupId"] = this.contactGroupId;
         data["name"] = this.name;
@@ -75428,7 +75667,12 @@ export class PropertyDto implements IPropertyDto {
         data["cats"] = this.cats;
         data["petsSizeLimit"] = this.petsSizeLimit;
         data["petsBreedRestriction"] = this.petsBreedRestriction;
+        data["turnoverCompanyName"] = this.turnoverCompanyName;
+        data["turnoverContactName"] = this.turnoverContactName;
+        data["turnoverEmail"] = this.turnoverEmail;
+        data["turnoverPhone"] = this.turnoverPhone;
         data["condoDocuments"] = this.condoDocuments;
+        data["moveInRequest"] = this.moveInRequest;
         data["petApplication"] = this.petApplication;
         data["intercomSetup"] = this.intercomSetup;
         data["additionalKeys"] = this.additionalKeys;
@@ -75449,6 +75693,14 @@ export class PropertyDto implements IPropertyDto {
         data["garbageCollection"] = this.garbageCollection;
         data["garbageKey"] = this.garbageKey;
         data["garbageNumberReceived"] = this.garbageNumberReceived;
+        data["electricityProvider"] = this.electricityProvider;
+        data["electricityAccountNo"] = this.electricityAccountNo;
+        data["naturalGasProvider"] = this.naturalGasProvider;
+        data["naturalGasAccountNo"] = this.naturalGasAccountNo;
+        data["waterProvider"] = this.waterProvider;
+        data["waterAccountNo"] = this.waterAccountNo;
+        data["wasteProvider"] = this.wasteProvider;
+        data["wasteAccountNo"] = this.wasteAccountNo;
         data["firepit"] = this.firepit;
         data["secure"] = this.secure;
         data["onSiteManager"] = this.onSiteManager;
@@ -75469,6 +75721,8 @@ export class PropertyDto implements IPropertyDto {
 }
 
 export interface IPropertyDto {
+    photo: string | undefined;
+    links: PropertyLinkDto[] | undefined;
     id: number;
     contactGroupId: string | undefined;
     name: string;
@@ -75512,7 +75766,12 @@ export interface IPropertyDto {
     cats: boolean | undefined;
     petsSizeLimit: string | undefined;
     petsBreedRestriction: string | undefined;
+    turnoverCompanyName: string | undefined;
+    turnoverContactName: string | undefined;
+    turnoverEmail: string | undefined;
+    turnoverPhone: string | undefined;
     condoDocuments: boolean | undefined;
+    moveInRequest: string | undefined;
     petApplication: boolean | undefined;
     intercomSetup: string | undefined;
     additionalKeys: boolean | undefined;
@@ -75533,6 +75792,14 @@ export interface IPropertyDto {
     garbageCollection: GarbageCollection | undefined;
     garbageKey: boolean | undefined;
     garbageNumberReceived: number | undefined;
+    electricityProvider: string | undefined;
+    electricityAccountNo: string | undefined;
+    naturalGasProvider: string | undefined;
+    naturalGasAccountNo: string | undefined;
+    waterProvider: string | undefined;
+    waterAccountNo: string | undefined;
+    wasteProvider: string | undefined;
+    wasteAccountNo: string | undefined;
     firepit: boolean | undefined;
     secure: boolean | undefined;
     onSiteManager: boolean | undefined;
@@ -75590,7 +75857,8 @@ export enum ExitStrategy {
     STR = "STR", 
 }
 
-export class PropertySellerDto implements IPropertySellerDto {
+export class PropertyAcquisitionDto implements IPropertyAcquisitionDto {
+    id!: number;
     ownersOnTitle!: string | undefined;
     mortgageHolder!: string | undefined;
     propertyResident!: PropertyResident | undefined;
@@ -75623,6 +75891,7 @@ export class PropertySellerDto implements IPropertySellerDto {
     howQuicklyWantToSell!: SellPeriod | undefined;
     didntSellActions!: string | undefined;
     tenantLeaseTerm!: moment.Moment | undefined;
+    tenantMonthlyRent!: number | undefined;
     tenantDepositReceived!: number | undefined;
     tenantPetAddendum!: boolean | undefined;
     tenantPetFeeType!: PetFeeType | undefined;
@@ -75634,7 +75903,8 @@ export class PropertySellerDto implements IPropertySellerDto {
     monthsBehindOnMortgage!: number | undefined;
     amountBehindOnMortgages!: number | undefined;
     backTaxes!: number | undefined;
-    monthlyMortgagePayment!: number | undefined;
+    monthlyPrincipleMortgagePayment!: number | undefined;
+    monthlyInterestMortgagePayment!: number | undefined;
     includeTaxesAndInsurance!: boolean | undefined;
     annualPropertyTaxes!: number | undefined;
     annualPropertyInsurance!: number | undefined;
@@ -75657,8 +75927,10 @@ export class PropertySellerDto implements IPropertySellerDto {
     walkthroughDate!: moment.Moment | undefined;
     exitStrategy!: ExitStrategy | undefined;
     exitStrategyNotes!: string | undefined;
+    depositToPayToSeller!: number | undefined;
+    depositToPayToSellerDate!: moment.Moment | undefined;
 
-    constructor(data?: IPropertySellerDto) {
+    constructor(data?: IPropertyAcquisitionDto) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -75669,6 +75941,7 @@ export class PropertySellerDto implements IPropertySellerDto {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.ownersOnTitle = data["ownersOnTitle"];
             this.mortgageHolder = data["mortgageHolder"];
             this.propertyResident = data["propertyResident"];
@@ -75701,6 +75974,7 @@ export class PropertySellerDto implements IPropertySellerDto {
             this.howQuicklyWantToSell = data["howQuicklyWantToSell"];
             this.didntSellActions = data["didntSellActions"];
             this.tenantLeaseTerm = data["tenantLeaseTerm"] ? moment(data["tenantLeaseTerm"].toString()) : <any>undefined;
+            this.tenantMonthlyRent = data["tenantMonthlyRent"];
             this.tenantDepositReceived = data["tenantDepositReceived"];
             this.tenantPetAddendum = data["tenantPetAddendum"];
             this.tenantPetFeeType = data["tenantPetFeeType"];
@@ -75712,7 +75986,8 @@ export class PropertySellerDto implements IPropertySellerDto {
             this.monthsBehindOnMortgage = data["monthsBehindOnMortgage"];
             this.amountBehindOnMortgages = data["amountBehindOnMortgages"];
             this.backTaxes = data["backTaxes"];
-            this.monthlyMortgagePayment = data["monthlyMortgagePayment"];
+            this.monthlyPrincipleMortgagePayment = data["monthlyPrincipleMortgagePayment"];
+            this.monthlyInterestMortgagePayment = data["monthlyInterestMortgagePayment"];
             this.includeTaxesAndInsurance = data["includeTaxesAndInsurance"];
             this.annualPropertyTaxes = data["annualPropertyTaxes"];
             this.annualPropertyInsurance = data["annualPropertyInsurance"];
@@ -75735,18 +76010,21 @@ export class PropertySellerDto implements IPropertySellerDto {
             this.walkthroughDate = data["walkthroughDate"] ? moment(data["walkthroughDate"].toString()) : <any>undefined;
             this.exitStrategy = data["exitStrategy"];
             this.exitStrategyNotes = data["exitStrategyNotes"];
+            this.depositToPayToSeller = data["depositToPayToSeller"];
+            this.depositToPayToSellerDate = data["depositToPayToSellerDate"] ? moment(data["depositToPayToSellerDate"].toString()) : <any>undefined;
         }
     }
 
-    static fromJS(data: any): PropertySellerDto {
+    static fromJS(data: any): PropertyAcquisitionDto {
         data = typeof data === 'object' ? data : {};
-        let result = new PropertySellerDto();
+        let result = new PropertyAcquisitionDto();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["ownersOnTitle"] = this.ownersOnTitle;
         data["mortgageHolder"] = this.mortgageHolder;
         data["propertyResident"] = this.propertyResident;
@@ -75779,6 +76057,7 @@ export class PropertySellerDto implements IPropertySellerDto {
         data["howQuicklyWantToSell"] = this.howQuicklyWantToSell;
         data["didntSellActions"] = this.didntSellActions;
         data["tenantLeaseTerm"] = this.tenantLeaseTerm ? this.tenantLeaseTerm.toISOString() : <any>undefined;
+        data["tenantMonthlyRent"] = this.tenantMonthlyRent;
         data["tenantDepositReceived"] = this.tenantDepositReceived;
         data["tenantPetAddendum"] = this.tenantPetAddendum;
         data["tenantPetFeeType"] = this.tenantPetFeeType;
@@ -75790,7 +76069,8 @@ export class PropertySellerDto implements IPropertySellerDto {
         data["monthsBehindOnMortgage"] = this.monthsBehindOnMortgage;
         data["amountBehindOnMortgages"] = this.amountBehindOnMortgages;
         data["backTaxes"] = this.backTaxes;
-        data["monthlyMortgagePayment"] = this.monthlyMortgagePayment;
+        data["monthlyPrincipleMortgagePayment"] = this.monthlyPrincipleMortgagePayment;
+        data["monthlyInterestMortgagePayment"] = this.monthlyInterestMortgagePayment;
         data["includeTaxesAndInsurance"] = this.includeTaxesAndInsurance;
         data["annualPropertyTaxes"] = this.annualPropertyTaxes;
         data["annualPropertyInsurance"] = this.annualPropertyInsurance;
@@ -75813,11 +76093,14 @@ export class PropertySellerDto implements IPropertySellerDto {
         data["walkthroughDate"] = this.walkthroughDate ? this.walkthroughDate.toISOString() : <any>undefined;
         data["exitStrategy"] = this.exitStrategy;
         data["exitStrategyNotes"] = this.exitStrategyNotes;
+        data["depositToPayToSeller"] = this.depositToPayToSeller;
+        data["depositToPayToSellerDate"] = this.depositToPayToSellerDate ? this.depositToPayToSellerDate.toISOString() : <any>undefined;
         return data; 
     }
 }
 
-export interface IPropertySellerDto {
+export interface IPropertyAcquisitionDto {
+    id: number;
     ownersOnTitle: string | undefined;
     mortgageHolder: string | undefined;
     propertyResident: PropertyResident | undefined;
@@ -75850,6 +76133,7 @@ export interface IPropertySellerDto {
     howQuicklyWantToSell: SellPeriod | undefined;
     didntSellActions: string | undefined;
     tenantLeaseTerm: moment.Moment | undefined;
+    tenantMonthlyRent: number | undefined;
     tenantDepositReceived: number | undefined;
     tenantPetAddendum: boolean | undefined;
     tenantPetFeeType: PetFeeType | undefined;
@@ -75861,7 +76145,8 @@ export interface IPropertySellerDto {
     monthsBehindOnMortgage: number | undefined;
     amountBehindOnMortgages: number | undefined;
     backTaxes: number | undefined;
-    monthlyMortgagePayment: number | undefined;
+    monthlyPrincipleMortgagePayment: number | undefined;
+    monthlyInterestMortgagePayment: number | undefined;
     includeTaxesAndInsurance: boolean | undefined;
     annualPropertyTaxes: number | undefined;
     annualPropertyInsurance: number | undefined;
@@ -75884,6 +76169,532 @@ export interface IPropertySellerDto {
     walkthroughDate: moment.Moment | undefined;
     exitStrategy: ExitStrategy | undefined;
     exitStrategyNotes: string | undefined;
+    depositToPayToSeller: number | undefined;
+    depositToPayToSellerDate: moment.Moment | undefined;
+}
+
+export class PropertyInvestmentDto implements IPropertyInvestmentDto {
+    id!: number;
+    equityPaidToHomeowner!: number | undefined;
+    referralFee!: number | undefined;
+    renovations!: number | undefined;
+    cleaning!: number | undefined;
+    inspection!: number | undefined;
+    legalFees!: number | undefined;
+    otherPreparationFees!: number | undefined;
+    purchaseTermFrom!: moment.Moment | undefined;
+    purchaseTermTo!: moment.Moment | undefined;
+    purchaseTermExtraYear!: boolean | undefined;
+    monthlyMortgagePayments!: number | undefined;
+    monthlyTaxes!: number | undefined;
+    monthlyInsurance!: number | undefined;
+    monthlyCondoFees!: number | undefined;
+    otherMonthlyFees!: number | undefined;
+    termUtilizedMonths!: number | undefined;
+    rtoPurchasePrice!: number | undefined;
+    rtoDeposit!: number | undefined;
+    rtoMonthlyPayment!: number | undefined;
+    rtoTermFrom!: moment.Moment | undefined;
+    rtoTermTo!: moment.Moment | undefined;
+    rtoMortgagePaydownRate!: number | undefined;
+
+    constructor(data?: IPropertyInvestmentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.equityPaidToHomeowner = data["equityPaidToHomeowner"];
+            this.referralFee = data["referralFee"];
+            this.renovations = data["renovations"];
+            this.cleaning = data["cleaning"];
+            this.inspection = data["inspection"];
+            this.legalFees = data["legalFees"];
+            this.otherPreparationFees = data["otherPreparationFees"];
+            this.purchaseTermFrom = data["purchaseTermFrom"] ? moment(data["purchaseTermFrom"].toString()) : <any>undefined;
+            this.purchaseTermTo = data["purchaseTermTo"] ? moment(data["purchaseTermTo"].toString()) : <any>undefined;
+            this.purchaseTermExtraYear = data["purchaseTermExtraYear"];
+            this.monthlyMortgagePayments = data["monthlyMortgagePayments"];
+            this.monthlyTaxes = data["monthlyTaxes"];
+            this.monthlyInsurance = data["monthlyInsurance"];
+            this.monthlyCondoFees = data["monthlyCondoFees"];
+            this.otherMonthlyFees = data["otherMonthlyFees"];
+            this.termUtilizedMonths = data["termUtilizedMonths"];
+            this.rtoPurchasePrice = data["rtoPurchasePrice"];
+            this.rtoDeposit = data["rtoDeposit"];
+            this.rtoMonthlyPayment = data["rtoMonthlyPayment"];
+            this.rtoTermFrom = data["rtoTermFrom"] ? moment(data["rtoTermFrom"].toString()) : <any>undefined;
+            this.rtoTermTo = data["rtoTermTo"] ? moment(data["rtoTermTo"].toString()) : <any>undefined;
+            this.rtoMortgagePaydownRate = data["rtoMortgagePaydownRate"];
+        }
+    }
+
+    static fromJS(data: any): PropertyInvestmentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PropertyInvestmentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["equityPaidToHomeowner"] = this.equityPaidToHomeowner;
+        data["referralFee"] = this.referralFee;
+        data["renovations"] = this.renovations;
+        data["cleaning"] = this.cleaning;
+        data["inspection"] = this.inspection;
+        data["legalFees"] = this.legalFees;
+        data["otherPreparationFees"] = this.otherPreparationFees;
+        data["purchaseTermFrom"] = this.purchaseTermFrom ? this.purchaseTermFrom.toISOString() : <any>undefined;
+        data["purchaseTermTo"] = this.purchaseTermTo ? this.purchaseTermTo.toISOString() : <any>undefined;
+        data["purchaseTermExtraYear"] = this.purchaseTermExtraYear;
+        data["monthlyMortgagePayments"] = this.monthlyMortgagePayments;
+        data["monthlyTaxes"] = this.monthlyTaxes;
+        data["monthlyInsurance"] = this.monthlyInsurance;
+        data["monthlyCondoFees"] = this.monthlyCondoFees;
+        data["otherMonthlyFees"] = this.otherMonthlyFees;
+        data["termUtilizedMonths"] = this.termUtilizedMonths;
+        data["rtoPurchasePrice"] = this.rtoPurchasePrice;
+        data["rtoDeposit"] = this.rtoDeposit;
+        data["rtoMonthlyPayment"] = this.rtoMonthlyPayment;
+        data["rtoTermFrom"] = this.rtoTermFrom ? this.rtoTermFrom.toISOString() : <any>undefined;
+        data["rtoTermTo"] = this.rtoTermTo ? this.rtoTermTo.toISOString() : <any>undefined;
+        data["rtoMortgagePaydownRate"] = this.rtoMortgagePaydownRate;
+        return data; 
+    }
+}
+
+export interface IPropertyInvestmentDto {
+    id: number;
+    equityPaidToHomeowner: number | undefined;
+    referralFee: number | undefined;
+    renovations: number | undefined;
+    cleaning: number | undefined;
+    inspection: number | undefined;
+    legalFees: number | undefined;
+    otherPreparationFees: number | undefined;
+    purchaseTermFrom: moment.Moment | undefined;
+    purchaseTermTo: moment.Moment | undefined;
+    purchaseTermExtraYear: boolean | undefined;
+    monthlyMortgagePayments: number | undefined;
+    monthlyTaxes: number | undefined;
+    monthlyInsurance: number | undefined;
+    monthlyCondoFees: number | undefined;
+    otherMonthlyFees: number | undefined;
+    termUtilizedMonths: number | undefined;
+    rtoPurchasePrice: number | undefined;
+    rtoDeposit: number | undefined;
+    rtoMonthlyPayment: number | undefined;
+    rtoTermFrom: moment.Moment | undefined;
+    rtoTermTo: moment.Moment | undefined;
+    rtoMortgagePaydownRate: number | undefined;
+}
+
+export class PropertyBaseDto implements IPropertyBaseDto {
+    id!: number;
+    contactGroupId!: string | undefined;
+    name!: string;
+    address!: CreateContactAddressInput | undefined;
+    propertyType!: PropertyType | undefined;
+    area!: number | undefined;
+    lotSize!: number | undefined;
+    yearBuilt!: number | undefined;
+    floor!: number | undefined;
+    numberOfLevels!: number | undefined;
+    corner!: boolean | undefined;
+    end!: boolean | undefined;
+    bedCount!: number | undefined;
+    bathCount!: number | undefined;
+    den!: boolean | undefined;
+    office!: boolean | undefined;
+    appliances!: Appliances | undefined;
+    otherAppliances!: string | undefined;
+    laundryInSuite!: boolean | undefined;
+    isCentralHeating!: boolean | undefined;
+    heatingType!: HeatingCoolingType | undefined;
+    ac!: boolean | undefined;
+    monthlyHeatingCost!: number | undefined;
+    isHeatIncludedInCondoFees!: boolean | undefined;
+    utilityTypesIncluded!: UtilityType | undefined;
+    floorVinyl!: boolean | undefined;
+    floorHardwood!: boolean | undefined;
+    floorTile!: boolean | undefined;
+    floorCarpet!: boolean | undefined;
+    floorLVP!: boolean | undefined;
+    storageInSuite!: boolean | undefined;
+    storageLocker!: number | undefined;
+    storageLockerNumber!: number | undefined;
+    storageLockerKey!: boolean | undefined;
+    yard!: YardPatioEnum | undefined;
+    patio!: YardPatioEnum | undefined;
+    yardBalcony!: boolean | undefined;
+    parking!: ParkingType | undefined;
+    basement!: BasementStatus | undefined;
+    dogs!: boolean | undefined;
+    cats!: boolean | undefined;
+    petsSizeLimit!: string | undefined;
+    petsBreedRestriction!: string | undefined;
+    turnoverCompanyName!: string | undefined;
+    turnoverContactName!: string | undefined;
+    turnoverEmail!: string | undefined;
+    turnoverPhone!: string | undefined;
+    condoDocuments!: boolean | undefined;
+    moveInRequest!: string | undefined;
+    petApplication!: boolean | undefined;
+    intercomSetup!: string | undefined;
+    additionalKeys!: boolean | undefined;
+    numberOfSets!: number | undefined;
+    frontDoorFob!: number | undefined;
+    garageRemote!: boolean | undefined;
+    garageRemoteNumberReceived!: number | undefined;
+    garageKey!: boolean | undefined;
+    garageKeyNumberReceived!: number | undefined;
+    garageCode!: string | undefined;
+    parkadeFob!: boolean | undefined;
+    parkingStall!: number | undefined;
+    visitorParkingPass!: number | undefined;
+    mailbox!: number | undefined;
+    mailboxKey!: boolean | undefined;
+    mailboxNumberReceived!: number | undefined;
+    garbageDay!: PlatformDayOfWeek | undefined;
+    garbageCollection!: GarbageCollection | undefined;
+    garbageKey!: boolean | undefined;
+    garbageNumberReceived!: number | undefined;
+    electricityProvider!: string | undefined;
+    electricityAccountNo!: string | undefined;
+    naturalGasProvider!: string | undefined;
+    naturalGasAccountNo!: string | undefined;
+    waterProvider!: string | undefined;
+    waterAccountNo!: string | undefined;
+    wasteProvider!: string | undefined;
+    wasteAccountNo!: string | undefined;
+    firepit!: boolean | undefined;
+    secure!: boolean | undefined;
+    onSiteManager!: boolean | undefined;
+    wheelchairAccessible!: boolean | undefined;
+    walkOut!: boolean | undefined;
+    elevator!: boolean | undefined;
+    ceilingFan!: boolean | undefined;
+    fireplace!: FireplaceType | undefined;
+    petPark!: boolean | undefined;
+    communitySpace!: boolean | undefined;
+    pool!: boolean | undefined;
+    exerciseRoom!: boolean | undefined;
+    partyRoom!: boolean | undefined;
+    guestSuite!: boolean | undefined;
+    other!: string | undefined;
+
+    constructor(data?: IPropertyBaseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.contactGroupId = data["contactGroupId"];
+            this.name = data["name"];
+            this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
+            this.propertyType = data["propertyType"];
+            this.area = data["area"];
+            this.lotSize = data["lotSize"];
+            this.yearBuilt = data["yearBuilt"];
+            this.floor = data["floor"];
+            this.numberOfLevels = data["numberOfLevels"];
+            this.corner = data["corner"];
+            this.end = data["end"];
+            this.bedCount = data["bedCount"];
+            this.bathCount = data["bathCount"];
+            this.den = data["den"];
+            this.office = data["office"];
+            this.appliances = data["appliances"];
+            this.otherAppliances = data["otherAppliances"];
+            this.laundryInSuite = data["laundryInSuite"];
+            this.isCentralHeating = data["isCentralHeating"];
+            this.heatingType = data["heatingType"];
+            this.ac = data["ac"];
+            this.monthlyHeatingCost = data["monthlyHeatingCost"];
+            this.isHeatIncludedInCondoFees = data["isHeatIncludedInCondoFees"];
+            this.utilityTypesIncluded = data["utilityTypesIncluded"];
+            this.floorVinyl = data["floorVinyl"];
+            this.floorHardwood = data["floorHardwood"];
+            this.floorTile = data["floorTile"];
+            this.floorCarpet = data["floorCarpet"];
+            this.floorLVP = data["floorLVP"];
+            this.storageInSuite = data["storageInSuite"];
+            this.storageLocker = data["storageLocker"];
+            this.storageLockerNumber = data["storageLockerNumber"];
+            this.storageLockerKey = data["storageLockerKey"];
+            this.yard = data["yard"];
+            this.patio = data["patio"];
+            this.yardBalcony = data["yardBalcony"];
+            this.parking = data["parking"];
+            this.basement = data["basement"];
+            this.dogs = data["dogs"];
+            this.cats = data["cats"];
+            this.petsSizeLimit = data["petsSizeLimit"];
+            this.petsBreedRestriction = data["petsBreedRestriction"];
+            this.turnoverCompanyName = data["turnoverCompanyName"];
+            this.turnoverContactName = data["turnoverContactName"];
+            this.turnoverEmail = data["turnoverEmail"];
+            this.turnoverPhone = data["turnoverPhone"];
+            this.condoDocuments = data["condoDocuments"];
+            this.moveInRequest = data["moveInRequest"];
+            this.petApplication = data["petApplication"];
+            this.intercomSetup = data["intercomSetup"];
+            this.additionalKeys = data["additionalKeys"];
+            this.numberOfSets = data["numberOfSets"];
+            this.frontDoorFob = data["frontDoorFob"];
+            this.garageRemote = data["garageRemote"];
+            this.garageRemoteNumberReceived = data["garageRemoteNumberReceived"];
+            this.garageKey = data["garageKey"];
+            this.garageKeyNumberReceived = data["garageKeyNumberReceived"];
+            this.garageCode = data["garageCode"];
+            this.parkadeFob = data["parkadeFob"];
+            this.parkingStall = data["parkingStall"];
+            this.visitorParkingPass = data["visitorParkingPass"];
+            this.mailbox = data["mailbox"];
+            this.mailboxKey = data["mailboxKey"];
+            this.mailboxNumberReceived = data["mailboxNumberReceived"];
+            this.garbageDay = data["garbageDay"];
+            this.garbageCollection = data["garbageCollection"];
+            this.garbageKey = data["garbageKey"];
+            this.garbageNumberReceived = data["garbageNumberReceived"];
+            this.electricityProvider = data["electricityProvider"];
+            this.electricityAccountNo = data["electricityAccountNo"];
+            this.naturalGasProvider = data["naturalGasProvider"];
+            this.naturalGasAccountNo = data["naturalGasAccountNo"];
+            this.waterProvider = data["waterProvider"];
+            this.waterAccountNo = data["waterAccountNo"];
+            this.wasteProvider = data["wasteProvider"];
+            this.wasteAccountNo = data["wasteAccountNo"];
+            this.firepit = data["firepit"];
+            this.secure = data["secure"];
+            this.onSiteManager = data["onSiteManager"];
+            this.wheelchairAccessible = data["wheelchairAccessible"];
+            this.walkOut = data["walkOut"];
+            this.elevator = data["elevator"];
+            this.ceilingFan = data["ceilingFan"];
+            this.fireplace = data["fireplace"];
+            this.petPark = data["petPark"];
+            this.communitySpace = data["communitySpace"];
+            this.pool = data["pool"];
+            this.exerciseRoom = data["exerciseRoom"];
+            this.partyRoom = data["partyRoom"];
+            this.guestSuite = data["guestSuite"];
+            this.other = data["other"];
+        }
+    }
+
+    static fromJS(data: any): PropertyBaseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PropertyBaseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["contactGroupId"] = this.contactGroupId;
+        data["name"] = this.name;
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["propertyType"] = this.propertyType;
+        data["area"] = this.area;
+        data["lotSize"] = this.lotSize;
+        data["yearBuilt"] = this.yearBuilt;
+        data["floor"] = this.floor;
+        data["numberOfLevels"] = this.numberOfLevels;
+        data["corner"] = this.corner;
+        data["end"] = this.end;
+        data["bedCount"] = this.bedCount;
+        data["bathCount"] = this.bathCount;
+        data["den"] = this.den;
+        data["office"] = this.office;
+        data["appliances"] = this.appliances;
+        data["otherAppliances"] = this.otherAppliances;
+        data["laundryInSuite"] = this.laundryInSuite;
+        data["isCentralHeating"] = this.isCentralHeating;
+        data["heatingType"] = this.heatingType;
+        data["ac"] = this.ac;
+        data["monthlyHeatingCost"] = this.monthlyHeatingCost;
+        data["isHeatIncludedInCondoFees"] = this.isHeatIncludedInCondoFees;
+        data["utilityTypesIncluded"] = this.utilityTypesIncluded;
+        data["floorVinyl"] = this.floorVinyl;
+        data["floorHardwood"] = this.floorHardwood;
+        data["floorTile"] = this.floorTile;
+        data["floorCarpet"] = this.floorCarpet;
+        data["floorLVP"] = this.floorLVP;
+        data["storageInSuite"] = this.storageInSuite;
+        data["storageLocker"] = this.storageLocker;
+        data["storageLockerNumber"] = this.storageLockerNumber;
+        data["storageLockerKey"] = this.storageLockerKey;
+        data["yard"] = this.yard;
+        data["patio"] = this.patio;
+        data["yardBalcony"] = this.yardBalcony;
+        data["parking"] = this.parking;
+        data["basement"] = this.basement;
+        data["dogs"] = this.dogs;
+        data["cats"] = this.cats;
+        data["petsSizeLimit"] = this.petsSizeLimit;
+        data["petsBreedRestriction"] = this.petsBreedRestriction;
+        data["turnoverCompanyName"] = this.turnoverCompanyName;
+        data["turnoverContactName"] = this.turnoverContactName;
+        data["turnoverEmail"] = this.turnoverEmail;
+        data["turnoverPhone"] = this.turnoverPhone;
+        data["condoDocuments"] = this.condoDocuments;
+        data["moveInRequest"] = this.moveInRequest;
+        data["petApplication"] = this.petApplication;
+        data["intercomSetup"] = this.intercomSetup;
+        data["additionalKeys"] = this.additionalKeys;
+        data["numberOfSets"] = this.numberOfSets;
+        data["frontDoorFob"] = this.frontDoorFob;
+        data["garageRemote"] = this.garageRemote;
+        data["garageRemoteNumberReceived"] = this.garageRemoteNumberReceived;
+        data["garageKey"] = this.garageKey;
+        data["garageKeyNumberReceived"] = this.garageKeyNumberReceived;
+        data["garageCode"] = this.garageCode;
+        data["parkadeFob"] = this.parkadeFob;
+        data["parkingStall"] = this.parkingStall;
+        data["visitorParkingPass"] = this.visitorParkingPass;
+        data["mailbox"] = this.mailbox;
+        data["mailboxKey"] = this.mailboxKey;
+        data["mailboxNumberReceived"] = this.mailboxNumberReceived;
+        data["garbageDay"] = this.garbageDay;
+        data["garbageCollection"] = this.garbageCollection;
+        data["garbageKey"] = this.garbageKey;
+        data["garbageNumberReceived"] = this.garbageNumberReceived;
+        data["electricityProvider"] = this.electricityProvider;
+        data["electricityAccountNo"] = this.electricityAccountNo;
+        data["naturalGasProvider"] = this.naturalGasProvider;
+        data["naturalGasAccountNo"] = this.naturalGasAccountNo;
+        data["waterProvider"] = this.waterProvider;
+        data["waterAccountNo"] = this.waterAccountNo;
+        data["wasteProvider"] = this.wasteProvider;
+        data["wasteAccountNo"] = this.wasteAccountNo;
+        data["firepit"] = this.firepit;
+        data["secure"] = this.secure;
+        data["onSiteManager"] = this.onSiteManager;
+        data["wheelchairAccessible"] = this.wheelchairAccessible;
+        data["walkOut"] = this.walkOut;
+        data["elevator"] = this.elevator;
+        data["ceilingFan"] = this.ceilingFan;
+        data["fireplace"] = this.fireplace;
+        data["petPark"] = this.petPark;
+        data["communitySpace"] = this.communitySpace;
+        data["pool"] = this.pool;
+        data["exerciseRoom"] = this.exerciseRoom;
+        data["partyRoom"] = this.partyRoom;
+        data["guestSuite"] = this.guestSuite;
+        data["other"] = this.other;
+        return data; 
+    }
+}
+
+export interface IPropertyBaseDto {
+    id: number;
+    contactGroupId: string | undefined;
+    name: string;
+    address: CreateContactAddressInput | undefined;
+    propertyType: PropertyType | undefined;
+    area: number | undefined;
+    lotSize: number | undefined;
+    yearBuilt: number | undefined;
+    floor: number | undefined;
+    numberOfLevels: number | undefined;
+    corner: boolean | undefined;
+    end: boolean | undefined;
+    bedCount: number | undefined;
+    bathCount: number | undefined;
+    den: boolean | undefined;
+    office: boolean | undefined;
+    appliances: Appliances | undefined;
+    otherAppliances: string | undefined;
+    laundryInSuite: boolean | undefined;
+    isCentralHeating: boolean | undefined;
+    heatingType: HeatingCoolingType | undefined;
+    ac: boolean | undefined;
+    monthlyHeatingCost: number | undefined;
+    isHeatIncludedInCondoFees: boolean | undefined;
+    utilityTypesIncluded: UtilityType | undefined;
+    floorVinyl: boolean | undefined;
+    floorHardwood: boolean | undefined;
+    floorTile: boolean | undefined;
+    floorCarpet: boolean | undefined;
+    floorLVP: boolean | undefined;
+    storageInSuite: boolean | undefined;
+    storageLocker: number | undefined;
+    storageLockerNumber: number | undefined;
+    storageLockerKey: boolean | undefined;
+    yard: YardPatioEnum | undefined;
+    patio: YardPatioEnum | undefined;
+    yardBalcony: boolean | undefined;
+    parking: ParkingType | undefined;
+    basement: BasementStatus | undefined;
+    dogs: boolean | undefined;
+    cats: boolean | undefined;
+    petsSizeLimit: string | undefined;
+    petsBreedRestriction: string | undefined;
+    turnoverCompanyName: string | undefined;
+    turnoverContactName: string | undefined;
+    turnoverEmail: string | undefined;
+    turnoverPhone: string | undefined;
+    condoDocuments: boolean | undefined;
+    moveInRequest: string | undefined;
+    petApplication: boolean | undefined;
+    intercomSetup: string | undefined;
+    additionalKeys: boolean | undefined;
+    numberOfSets: number | undefined;
+    frontDoorFob: number | undefined;
+    garageRemote: boolean | undefined;
+    garageRemoteNumberReceived: number | undefined;
+    garageKey: boolean | undefined;
+    garageKeyNumberReceived: number | undefined;
+    garageCode: string | undefined;
+    parkadeFob: boolean | undefined;
+    parkingStall: number | undefined;
+    visitorParkingPass: number | undefined;
+    mailbox: number | undefined;
+    mailboxKey: boolean | undefined;
+    mailboxNumberReceived: number | undefined;
+    garbageDay: PlatformDayOfWeek | undefined;
+    garbageCollection: GarbageCollection | undefined;
+    garbageKey: boolean | undefined;
+    garbageNumberReceived: number | undefined;
+    electricityProvider: string | undefined;
+    electricityAccountNo: string | undefined;
+    naturalGasProvider: string | undefined;
+    naturalGasAccountNo: string | undefined;
+    waterProvider: string | undefined;
+    waterAccountNo: string | undefined;
+    wasteProvider: string | undefined;
+    wasteAccountNo: string | undefined;
+    firepit: boolean | undefined;
+    secure: boolean | undefined;
+    onSiteManager: boolean | undefined;
+    wheelchairAccessible: boolean | undefined;
+    walkOut: boolean | undefined;
+    elevator: boolean | undefined;
+    ceilingFan: boolean | undefined;
+    fireplace: FireplaceType | undefined;
+    petPark: boolean | undefined;
+    communitySpace: boolean | undefined;
+    pool: boolean | undefined;
+    exerciseRoom: boolean | undefined;
+    partyRoom: boolean | undefined;
+    guestSuite: boolean | undefined;
+    other: string | undefined;
 }
 
 export class PropertyDealInfo implements IPropertyDealInfo {

@@ -202,6 +202,13 @@ export class InplaceEditComponent extends AppComponentBase {
         setTimeout(() => event.component.repaint());
     }
 
+    onLinkClick(event, link) {
+        if (link) 
+            event.stopPropagation();
+        else 
+            event.preventDefault();
+    }
+
     copyItem(event) {
         this.clipboardService.copyFromContent(this.value);
         this.notifyService.info(this.l('SavedToClipboard'));
