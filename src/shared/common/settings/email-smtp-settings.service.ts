@@ -16,12 +16,8 @@ export class EmailSmtpSettingsService {
     }
 
     sendTestEmail(input: SendTestEmailInput): void {
-        this.emailSmtpSettingsService.sendTestEmail(input).subscribe((isSentSuccessfully) => {
-            if (isSentSuccessfully) {
-                this.notify.info(this.ls.l('TestEmailSentSuccessfully'));
-            } else {
-                this.notify.error(this.ls.l('SendingTestEmailFailed'));
-            }
+        this.emailSmtpSettingsService.sendTestEmail(input).subscribe(() => {
+            this.notify.info(this.ls.l('TestEmailSentSuccessfully'));
         });
     }
 
