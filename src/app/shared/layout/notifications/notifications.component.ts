@@ -93,11 +93,7 @@ export class NotificationsComponent implements OnInit {
             this.userNotificationHelper.show(userNotification);
             this.loadNotifications();
         });
-
-        abp.event.on('app.notifications.refresh', () => {
-            this.loadNotifications();
-        });
-
+                                          
         abp.event.on('app.notifications.read', (userNotificationId: number) => {
             /** If we show only unread - then reload list */
             if (this.readStateFilter === UserNotificationState._0) {
@@ -114,7 +110,13 @@ export class NotificationsComponent implements OnInit {
     }
 
     setAllNotificationsAsRead(e): void {
-        this.userNotificationHelper.setAllAsRead();
+        this.userNotificationHelper.setAllAsRead(() => {
+            this.dataGrid.instance.getVisibleRows().forEach(row => {
+                row.data.state = abp.notifications.getUserNotificationStateAsString(Number(UserNotificationState._1));
+                row.data.isUnread = false;
+            });
+            this.dataGrid.instance.repaint();
+        });
         e.preventDefault();
         e.stopPropagation();
     }

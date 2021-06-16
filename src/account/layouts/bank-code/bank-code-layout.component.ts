@@ -1,9 +1,14 @@
 /** Core imports */
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
+
+/** Third party imports */
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
+import * as moment from 'moment';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import * as moment from 'moment';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({
@@ -19,8 +24,14 @@ export class BankCodeLayoutComponent implements OnInit {
     tenantName = AppConsts.defaultTenantName;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     originUrl = location.origin;
+    isExtPage$: Observable<boolean> = this.activatedRoute.queryParamMap.pipe(
+        map((paramsMap: ParamMap) => {
+            return paramsMap.get('extlogin') == 'true';
+        })
+    );
 
     constructor(
+        private activatedRoute: ActivatedRoute,
         private appSession: AppSessionService
     ) {}
 

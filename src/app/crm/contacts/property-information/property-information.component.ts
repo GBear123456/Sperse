@@ -9,7 +9,7 @@ import {
 import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
-import { Observable, Subscription, merge, race, forkJoin } from 'rxjs';
+import { Observable, Subscription, merge, forkJoin, of } from 'rxjs';
 import { filter, map, switchMap, pluck, finalize, skip, first } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 import * as moment from 'moment';
@@ -20,11 +20,8 @@ import {
     ContactInfoDto, CreateContactAddressInput, HeatingCoolingType,
     LeadInfoDto,
     PropertyDto,
-    PropertyDealInfo,
     PropertyServiceProxy,
     PropertyType,
-    LeadServiceProxy,
-    UpdateLeadDealInfoInput,
     YardPatioEnum,
     SellPeriod,
     InterestRate,
@@ -32,7 +29,8 @@ import {
     PropertyResident,
     PetFeeType,
     InvoiceSettings,
-    PestsType
+    PestsType,
+    PropertySellerDto
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
@@ -49,6 +47,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppliancesEnum } from './enums/appliances.enum';
 import { UtilityTypesEnum } from './enums/utilityTypes.enum';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 interface SelectBoxItem {
     displayValue: string;
@@ -65,9 +64,11 @@ export class PropertyInformationComponent implements OnInit {
     contactInfo$: Observable<ContactInfoDto> = this.contactsService.contactInfo$;
     initialProperty: PropertyDto;
     property: PropertyDto;
+    initialPropertySellerDto: PropertySellerDto;
+    propertySellerDto: PropertySellerDto;
     propertyAddresses: AddressDto[];
+    disableEdit = true;
     leadInfoSubscription: Subscription;
-    propertyDeals: PropertyDealInfo[];
     leadTypesWithInstallment = [
         EntityTypeSys.PropertyRentAndSale,
         EntityTypeSys.PropertyRentAndSaleAirbnbSysId,
@@ -78,6 +79,7 @@ export class PropertyInformationComponent implements OnInit {
     stylingMode = 'filled';
 
     invoiceSettings: InvoiceSettings = new InvoiceSettings();
+    showContractDetails: boolean = false;
     currencyFormat = { style: "currency", currency: "USD", useGrouping: true };
 
     yesNoDropdowns: SelectBoxItem[] = [
@@ -161,40 +163,36 @@ export class PropertyInformationComponent implements OnInit {
         private contactsService: ContactsService,
         private route: ActivatedRoute,
         private propertyServiceProxy: PropertyServiceProxy,
-        private LeadServiceProxy: LeadServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
         private loadingService: LoadingService,
         private invoicesService: InvoicesService,
         private elementRef: ElementRef,
+        private permission: AppPermissionService,
         public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
-        const leadPropertyId$: Observable<number> = this.contactsService.leadInfo$.pipe(
-            filter(Boolean),
-            map((leadInfo: LeadInfoDto) => leadInfo.propertyId)
+        const leadInfo$ = this.contactsService.leadInfo$.pipe(
+            filter(Boolean)
         );
         this.leadInfoSubscription = merge(
-            race(
-                /** Get property id from lead info */
-                leadPropertyId$,
-                /** Or from query params depends on fastest source */
-                this.route.queryParams.pipe(
-                    pluck('propertyId'),
-                    filter(Boolean)
-                )
-            ),
+            leadInfo$,
             /** Then listen only for lead info property id */
-            leadPropertyId$.pipe(skip(1))
+            leadInfo$.pipe(skip(1))
         ).pipe(
             filter(Boolean),
-            switchMap((propertyId: number) => {
-                return forkJoin(this.propertyServiceProxy.getPropertyDetails(propertyId), this.propertyServiceProxy.getDeals(propertyId));
+            switchMap((leadInfo: LeadInfoDto) => {
+                this.showContractDetails = leadInfo.typeSysId == EntityTypeSys.PropertyAcquisition;
+                let sellerDetails = this.showContractDetails ? this.propertyServiceProxy.getSellerPropertyDetails(leadInfo.propertyId) : of(new PropertySellerDto());
+                return forkJoin(this.propertyServiceProxy.getPropertyDetails(leadInfo.propertyId),
+                    sellerDetails);
             })
-        ).subscribe(([property, deals]) => {
+        ).subscribe(([property, sellerDto]) => {
             this.initialProperty = property;
-            this.propertyDeals = deals;
+            this.initialPropertySellerDto = sellerDto;
+            this.propertySellerDto = sellerDto;
             this.savePropertyInfo(property);
+            this.disableEdit = !this.permission.checkCGPermission(property.contactGroupId);
             this.changeDetectorRef.detectChanges();
         });
 
@@ -285,15 +283,15 @@ export class PropertyInformationComponent implements OnInit {
     }
 
     get sinceListedDays(): number {
-        return this.property && this.property.listedDate
-            ? moment().diff(moment(this.property.listedDate), 'days')
+        return this.propertySellerDto && this.propertySellerDto.listedDate
+            ? moment().diff(moment(this.propertySellerDto.listedDate), 'days')
             : undefined;
     }
     sinceListedDaysChanged(newValue: number) {
-        this.property.listedDate = newValue ?
+        this.propertySellerDto.listedDate = newValue ?
             moment().startOf('Day').subtract(newValue, "days") :
             undefined
-        this.valueChanged();
+        this.sellerValueChanged();
     }
 
     valueChanged(successCallback?: () => void) {
@@ -310,12 +308,32 @@ export class PropertyInformationComponent implements OnInit {
         );
     }
 
+    sellerValueChanged() {
+        this.loadingService.startLoading(this.elementRef.nativeElement);
+        this.propertyServiceProxy.updateSellerPropertyDetails(this.property.id, this.propertySellerDto).pipe(
+            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+        ).subscribe(
+            () => { },
+            () => {
+                this.propertySellerDto = cloneDeep(this.initialPropertySellerDto);
+                this.changeDetectorRef.detectChanges();
+            }
+        );
+    }
+
     getDateValue(date) {
         return date && date.toDate ? date.toDate() : date;
     }
-    dateValueChanged($event, propName: string) {
-        this.property[propName] = $event.value && DateHelper.removeTimezoneOffset($event.value, true, 'from');
-        this.valueChanged();
+    dateValueChanged($event, propName: string, isSellerProperty = false) {
+        let newValue = $event.value && DateHelper.removeTimezoneOffset($event.value, true, 'from');
+        if (isSellerProperty) {
+            this.propertySellerDto[propName] = newValue;
+            this.sellerValueChanged();
+        }
+        else {
+            this.property[propName] = newValue;
+            this.valueChanged();
+        }
     }
 
     getMultipleValues(propName, items: any[]): number[] {
@@ -373,17 +391,6 @@ export class PropertyInformationComponent implements OnInit {
             this.currencyFormat.currency = settings.currency;
             this.changeDetectorRef.detectChanges();
         });
-    }
-
-    dealInfoChanged(leadId, dealAmount, installmentAmount) {
-        this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.LeadServiceProxy.updateDealInfo(new UpdateLeadDealInfoInput({
-            leadId: leadId,
-            dealAmount: dealAmount,
-            installmentAmount: installmentAmount
-        })).pipe(
-            finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-        ).subscribe(() => {});
     }
 
     ngOnDestroy() {

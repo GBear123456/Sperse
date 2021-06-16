@@ -236,29 +236,28 @@ export class CrmService {
     }
 
     getUsersWithInstances(usersIds: number[]): Observable<number[]> {
-        return this.instanceServiceProxy.getUsersWithInstance(usersIds).pipe(map((usersIdsWithInstance: number[]) => {
-            this.usersIdsWithInstance = {};
-            usersIds.forEach((userId) => {
-                this.usersIdsWithInstance[userId] = usersIdsWithInstance.indexOf(userId) >= 0;
-            });
-            return usersIdsWithInstance;
-        }));
+        if (usersIds instanceof Array)
+            return this.instanceServiceProxy.getUsersWithInstance(usersIds).pipe(map((usersIdsWithInstance: number[]) => {
+                usersIds.forEach((userId) => {
+                    this.usersIdsWithInstance[userId] = usersIdsWithInstance.indexOf(userId) >= 0;
+                });
+                return usersIdsWithInstance;
+            }));
+        else
+            return of([]);
     }
 
     isCfoAvailable(userId: number): Observable<boolean> {
-        return !userId || this.usersIdsWithInstance[userId] === false
-               ? of(false)
-               : (
-                   /** Get from cache */
-                   this.usersIdsWithInstance[userId]
-                       ? of(true)
-                       /** Load and get from server and fill the cache */
-                       : this.instanceServiceProxy.getUsersWithInstance([userId]).pipe(
-                           map((usersIds: number[]) => {
-                               return this.usersIdsWithInstance[userId] = !!usersIds.length;
-                           })
-                       )
-               );
+        if (userId)
+            return this.usersIdsWithInstance.hasOwnProperty(userId) ?
+                of(this.usersIdsWithInstance[userId]) :
+                this.instanceServiceProxy.getUsersWithInstance([userId]).pipe(
+                    map((usersIds: number[]) => {
+                        return this.usersIdsWithInstance[userId] = !!usersIds.length;
+                    })
+                );
+        else
+            return of(false);
     }
 
     isModuleAvailable(userId: number, modulePermission: AppPermissions): Observable<boolean> {

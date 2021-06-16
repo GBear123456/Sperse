@@ -1,8 +1,11 @@
 /** Core imports */
 import { Component, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, ParamMap } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { first } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import * as moment from 'moment';
 
 /** Application imports */
@@ -30,16 +33,28 @@ export class HostLoginComponent implements OnInit {
     conditions = ConditionsType;
     loginInProgress = false;
     showPassword = false;
+    isLoggedIn: boolean = false;
+    isExtLogin: boolean = false; 
 
     constructor(
         private sessionService: AbpSessionService,
         private sessionAppService: SessionServiceProxy,
         private setting: SettingService,
+        private activatedRoute: ActivatedRoute,
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public loginService: LoginService,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        this.activatedRoute.queryParamMap.pipe(
+            first()
+        ).subscribe((paramsMap: ParamMap) => {
+            if (this.isExtLogin = paramsMap.get('extlogin') == 'true') {
+                if (this.isLoggedIn = !!this.appSession.user)
+                    this.loginService.completeSourceEvent();
+            }            
+        });
+    }
 
     ngOnInit(): void {
         let tenant = this.appSession.tenant;
@@ -58,13 +73,31 @@ export class HostLoginComponent implements OnInit {
     }
 
     openConditionsDialog(type: ConditionsType) {
-        this.dialog.open(ConditionsModalComponent, { panelClass: ['slider', 'footer-slider'], data: { type: type }});
+        if (this.isExtLogin)
+            window.open(this.getApiLink(type), '_blank');
+        else
+            this.dialog.open(ConditionsModalComponent, 
+                { panelClass: ['slider', 'footer-slider'], data: { type: type }}
+            );
+    }
+
+    getApiLink(type: ConditionsType) {
+        return AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/Get' + 
+            (type == ConditionsType.Policies ? 'PrivacyPolicy' : 'TermsOfService') + 
+            'Document?tenantId=' + this.appSession.tenant.id;
     }
 
     login(): void {
         if (this.loginForm.valid) {
             this.loginInProgress = true;
-            this.loginService.authenticate(() => { this.loginInProgress = false; });
+            this.loginService.authenticate(() => { 
+                this.loginInProgress = false;
+            }, undefined, true, this.isExtLogin, (result) => {
+                if (this.isLoggedIn = this.isExtLogin) {
+                    if (!result.shouldResetPassword)
+                        this.loginService.completeSourceEvent();                
+                }
+            });
         }
     }
 

@@ -23,11 +23,11 @@ import {
     DepartmentsServiceProxy,
     ReportsServiceProxy,
     GenerateInput,
+    GenerateBalanceSheetReportInput,
     InstanceServiceProxy,
     InstanceType,
-    ReportTemplate,
-    GenerateInputBase,
-    ReportPeriod
+    ReportTemplate,
+    GenerateIncomeStatementByEntityReportInput
 } from '@root/shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { GenerateReportStep } from './generate-report-step.enum';
@@ -36,6 +36,9 @@ import { CFOService } from '@shared/cfo/cfo.service';
 import { AppConsts } from '@shared/AppConsts';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { AppFeatures } from '@shared/AppFeatures';
+import { ReportType } from '../enums/reportType.enum';
+import { GenerateReportItem } from './generate-report-item';
+import { ReportPeriod } from '../enums/reportPeriod.enum';
 
 @Component({
     templateUrl: 'generate-report-dialog.component.html',
@@ -43,10 +46,11 @@ import { AppFeatures } from '@shared/AppFeatures';
         '../report-dialog.less',
         'generate-report-dialog.component.less'
     ],
-    providers: [ DepartmentsServiceProxy, ReportsServiceProxy, BudgetServiceProxy ]
+    providers: [DepartmentsServiceProxy, ReportsServiceProxy, BudgetServiceProxy]
 })
 export class GenerateReportDialogComponent implements OnInit {
-    @ViewChild(DxTreeListComponent, { static: false }) treeList: DxTreeListComponent;
+    @ViewChild('beTreeList', { static: false }) beTreeList: DxTreeListComponent;
+    @ViewChild('templatesTreeList', { static: false }) templatesTreeList: DxTreeListComponent;
     @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
     @ViewChild('notificationToEmailTextBox', { static: false }) notificationToEmailTextBox: DxTextBoxComponent;
 
@@ -71,17 +75,23 @@ export class GenerateReportDialogComponent implements OnInit {
             showDepartments: true,
             showYearCalendar: false,
             allowMultipleBE: true,
+            showSingleDateCalendar: false,
             generateMethod: this.getDefaultReportRequest.bind(this),
             reportPeriod: null
         },
-        IncomeStatementAndBudget: {
+        Budget: {
             showYearCalendar: true,
             generateMethod: this.getBudgetReportRequest.bind(this),
             reportPeriod: ReportPeriod.Annual
         },
-        BalanceReport: {
+        BalanceSheet: {
             allowMultipleBE: true,
+            showSingleDateCalendar: true,
             generateMethod: this.getBalanceSheetReportRequest.bind(this)
+        },
+        IncomeStatementByEntity: {
+            allowMultipleBE: true,
+            generateMethod: this.getIncomeStatementByEntityRequest.bind(this)
         }
     };
     currentConfig = this.templateConfig.default;
@@ -111,19 +121,13 @@ export class GenerateReportDialogComponent implements OnInit {
     ];
     isSeparateGrouping = false;
     notificationToEmail: string;
-    sendReportInAttachments = false;
     emailRegEx = AppConsts.regexPatterns.email;
-    dontSendEmailNotification = false;
+    sendEmailNotification = true;
+    sendReportInAttachments = false;
     generatingStarted = false;
-    reportTemplate: ReportTemplate = ReportTemplate.Personal;
-    reportTemplateItems: any[] = Object.keys(ReportTemplate).map(item => {
-        return {
-            name: this.ls.l(item),
-            value: item
-        };
-    }).concat(this.feature.isEnabled(AppFeatures.CFOBudgets)
-        ? { name: this.ls.l('IncomeStatementAndBudget'), value: 'IncomeStatementAndBudget'} : []
-    ).concat({ name: this.ls.l('BalanceReport'), value: 'BalanceReport' });
+
+    reportTemplateItems: GenerateReportItem[] = [];
+    selectedReportTemplate: GenerateReportItem;
     firstReportTemplateVisit = true;
 
     private readonly BACK_BTN_INDEX = 0;
@@ -149,6 +153,7 @@ export class GenerateReportDialogComponent implements OnInit {
                 this.cfoService.instanceId).subscribe(res => {
                     this.departmentsEntities = [this.noDepartmentItem].concat(res);
                 });
+        this.intiReportTemplateItems();
     }
 
     ngOnInit() {
@@ -161,6 +166,55 @@ export class GenerateReportDialogComponent implements OnInit {
         this.bankAccountsService.load();
     }
 
+    intiReportTemplateItems() {
+        this.reportTemplateItems.push(
+            {
+                id: ReportType.BalanceSheet,
+                text: this.ls.l('ReportTypes_' + ReportType.BalanceSheet),
+                type: ReportType.BalanceSheet,
+                fileType: 'pdf'
+            },
+            {
+                id: ReportType.Budget,
+                text: this.ls.l('ReportTypes_' + ReportType.Budget),
+                type: ReportType.Budget,
+                fileType: 'pdf',
+                hidden: !this.feature.isEnabled(AppFeatures.CFOBudgets)
+            },
+            {
+                id: ReportType.IncomeStatement,
+                text: this.ls.l('ReportTypes_' + ReportType.IncomeStatement),
+                type: ReportType.IncomeStatement,
+                fileType: 'pdf',
+                isReadOnly: true,
+                items: this.getReportTypeTemplateItems(ReportType.IncomeStatement)
+            },
+            {
+                id: ReportType.IncomeStatementByEntity,
+                text: this.ls.l('ReportTypes_' + ReportType.IncomeStatementByEntity),
+                type: ReportType.IncomeStatementByEntity,
+                fileType: 'excel',
+                isReadOnly: true,
+                items: this.getReportTypeTemplateItems(ReportType.IncomeStatementByEntity)
+            }
+        );
+
+        this.selectedReportTemplate = this.reportTemplateItems.find(v => !v.isReadOnly);
+        this.currentConfig = this.templateConfig[this.selectedReportTemplate.type] ? this.templateConfig[this.selectedReportTemplate.type] : this.templateConfig.default;
+    }
+
+    private getReportTypeTemplateItems(type: ReportType): GenerateReportItem[] {
+        return Object.keys(ReportTemplate).map(item => {
+            return {
+                id: type + item,
+                text: this.ls.l('ReportTemplates_' + item),
+                type: type,
+                template: ReportTemplate[item],
+                isSelectable: true
+            };
+        })
+    }
+
     /**
      * Return GenerateInput
      * @param {string} currencyId
@@ -170,24 +224,18 @@ export class GenerateReportDialogComponent implements OnInit {
      */
     private getGenerateInput(currencyId: string, businessEntityIds: number[], departments: string[]): GenerateInput {
         return new GenerateInput({
-            reportTemplate: this.reportTemplate,
+            reportTemplate: this.selectedReportTemplate.template,
             from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
             to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
-            period: this.data.period,
             currencyId,
             departments: departments.map(item => item == this.noDepartmentItem ? null : item),
             businessEntityIds: businessEntityIds,
             bankAccountIds: [],
-            notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
-                ? new SendReportNotificationInfo({
-                    recipientUserEmailAddress: this.notificationToEmail,
-                    sendReportInAttachments: this.sendReportInAttachments
-                })
-                : null
+            notificationData: this.getNotificationData()
         });
     }
 
-    private applyDateRange() {
+    applyDateRange() {
         let dateFrom = this.calendarData.from.value && DateHelper.removeTimezoneOffset(new Date(this.calendarData.from.value));
         let dateTo = this.calendarData.to.value ? DateHelper.removeTimezoneOffset(new Date(this.calendarData.to.value)) : dateFrom;
         if ((this.dateTo ? this.dateTo.diff(dateTo, 'days') : dateTo) ||
@@ -210,7 +258,7 @@ export class GenerateReportDialogComponent implements OnInit {
         this.currentStep++;
         if (this.currentStep == GenerateReportStep.Calendar) {
             this.applyBusinessEntity();
-            if (this.firstReportTemplateVisit && this.reportTemplate == ReportTemplate.Suspense) {
+            if (this.firstReportTemplateVisit && this.selectedReportTemplate.type == ReportType.IncomeStatement && this.selectedReportTemplate.template == ReportTemplate.Suspense) {
                 this.setSuspenseReportDates();
                 this.firstReportTemplateVisit = false;
             }
@@ -232,13 +280,17 @@ export class GenerateReportDialogComponent implements OnInit {
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.Departments) {
             this.title = this.ls.l('SelectDepartments');
+            this.buttons[this.NEXT_BTN_INDEX].disabled = false;
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.ReportTemplate) {
             this.title = this.ls.l('SelectReportTemplate');
+            this.buttons[this.NEXT_BTN_INDEX].disabled = false;
             this.buttons[this.BACK_BTN_INDEX].disabled = true;
         } else if (this.currentStep == GenerateReportStep.Calendar) {
-            this.title = this.currentConfig.showYearCalendar ? this.ls.l('Select') + ' ' + this.ls.l('Year') : this.ls.l('SelectDateRange');
+            this.title = this.currentConfig.showYearCalendar ? this.ls.l('Select') + ' ' + this.ls.l('Year') :
+                this.ls.l(this.currentConfig.showSingleDateCalendar ? 'SelectDate' : 'SelectDateRange');
             this.buttons[this.BACK_BTN_INDEX].disabled = false;
+            this.buttons[this.NEXT_BTN_INDEX].disabled = false;
         } else if (this.currentStep == GenerateReportStep.Final) {
             this.title = this.ls.l('ReportGenerationOptions');
             this.buttons = null;
@@ -260,7 +312,7 @@ export class GenerateReportDialogComponent implements OnInit {
     }
 
     private applyBusinessEntity() {
-        this.selectedBusinessEntityIds = this.treeList.instance.getVisibleRows()
+        this.selectedBusinessEntityIds = this.beTreeList.instance.getVisibleRows()
             .filter((item) => item.isSelected)
             .map(item => item.key);
     }
@@ -278,9 +330,16 @@ export class GenerateReportDialogComponent implements OnInit {
         this.processStep();
     }
 
+    onTemplateRadioButtonClick(event, item: GenerateReportItem) {
+        if (event.value) {
+            this.selectedReportTemplate = item;
+            this.currentConfig = this.templateConfig[item.type] ? this.templateConfig[item.type] : this.templateConfig.default;
+        }
+    }
+
     generateReport() {
         if (this.submitButtonDisabled)
-            return ;
+            return;
 
         this.generatingStarted = true;
         this.store$.pipe(
@@ -342,32 +401,61 @@ export class GenerateReportDialogComponent implements OnInit {
                 businessEntityId: this.selectedBusinessEntityIds[0],
                 year: this.budgetReportDate.getUTCFullYear(),
                 currencyId: currencyId,
-                notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
-                    ? new SendReportNotificationInfo({
-                        recipientUserEmailAddress: this.notificationToEmail,
-                        sendReportInAttachments: this.sendReportInAttachments
-                    }) : null
-        }));
+                notificationData: this.getNotificationData()
+
+            }));
     }
 
     getBalanceSheetReportRequest(currencyId: string) {
         return this.reportsProxy.generateBalanceSheetReport(<any>this.data.instanceType, this.data.instanceId,
-            new GenerateInputBase({
+            new GenerateBalanceSheetReportInput({
                 businessEntityIds: this.selectedBusinessEntityIds,
-                from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
-                to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
-                period: this.data.period,
+                date: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
                 currencyId: currencyId,
-                notificationData: !this.dontSendEmailNotification && this.emailIsValidAndNotEmpty
-                    ? new SendReportNotificationInfo({
-                        recipientUserEmailAddress: this.notificationToEmail,
-                        sendReportInAttachments: this.sendReportInAttachments
-                    }) : null
+                notificationData: this.getNotificationData()
             }));
     }
 
-    onReportTemplateValueChanged(event) {
-        this.currentConfig = this.templateConfig[event.value] ? this.templateConfig[event.value] : this.templateConfig.default;
+    getIncomeStatementByEntityRequest(currencyId: string) {
+        return this.reportsProxy.generateIncomeStatementByEntityReport(<any>this.data.instanceType, this.data.instanceId,
+            new GenerateIncomeStatementByEntityReportInput({
+                reportTemplate: this.selectedReportTemplate.template,
+                businessEntityIds: this.selectedBusinessEntityIds,
+                from: this.dateFrom && DateHelper.getDateWithoutTime(this.dateFrom),
+                to: this.dateTo && DateHelper.getDateWithoutTime(this.dateTo),
+                currencyId: currencyId,
+                notificationData: this.getNotificationData()
+            }));
+    }
+
+    getNotificationData(): SendReportNotificationInfo {
+        return this.sendEmailNotification && this.emailIsValidAndNotEmpty
+            ? new SendReportNotificationInfo({
+                recipientUserEmailAddress: this.notificationToEmail,
+                sendReportInAttachments: this.sendReportInAttachments
+            }) : null;
+    }
+
+    onReportTemplateRowPrepared(event) {
+        let data: GenerateReportItem = event.data;
+        if (event.level == 0) {
+            if (data.isReadOnly)
+                event.rowElement.classList.add('readonly-parent');
+            else
+                event.rowElement.classList.add('selectable-parent');
+        }
+        if (event.level == 1) {
+            event.rowElement.classList.add('selectable-child');
+        }
+    }
+
+    onReportTemplateRowClick(rowItem) {
+        if (rowItem.row.isExpanded) {
+            rowItem.component.collapseRow(rowItem.row.key);
+        }
+        else {
+            rowItem.component.expandRow(rowItem.row.key);
+        }
     }
 
     onBEContentReady(event) {
@@ -386,8 +474,25 @@ export class GenerateReportDialogComponent implements OnInit {
         }
     }
 
+    onBERowClick(event) {
+        if (event.isSelected)
+            event.component.deselectRows([event.key]);
+        else
+            event.component.selectRows([event.key]);
+    }
+
+    onBECellClick(event) {
+        if (event.rowType == 'header' && event.event.target.innerText == this.ls.l('SelectAll')) {
+            let component = event.component;
+            if (component.getSelectedRowKeys('all').length == component.getDataSource().items().length)
+                component.deselectAll();
+            else
+                component.selectAll();
+        }
+    }
+
     get submitButtonDisabled() {
-        return this.generatingStarted || !this.dontSendEmailNotification && !this.emailIsValidAndNotEmpty;
+        return this.generatingStarted || this.sendEmailNotification && !this.emailIsValidAndNotEmpty;
     }
 
     onCalendarOptionChanged(event) {
@@ -399,5 +504,12 @@ export class GenerateReportDialogComponent implements OnInit {
         setTimeout(() => {
             event.component.repaint();
         }, 300);
+    }
+
+    getImageSrc(type: string): string {
+        switch (type) {
+            case 'pdf': return './assets/common/icons/pdf.svg';
+            case 'excel': return './assets/common/icons/xls.svg';
+        }
     }
 }

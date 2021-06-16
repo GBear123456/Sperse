@@ -3,11 +3,11 @@
     <main class="main-content">
         <div class="account-forms">
             <div class="row">
-                <div class="col-lg-5 col-md-12 col-xs-12 text-center form-wrapper">
+                <div [ngClass]="{'col-lg-5': !(isExtPage$ | async)}" class="col-md-12 col-xs-12 text-center form-wrapper">
                     <router-outlet></router-outlet>
                 </div>
 
-                <div class="col-lg-7 col-md-12 col-xs-12 text-center crack-code">
+                <div *ngIf="!(isExtPage$ | async)" class="col-lg-7 col-md-12 col-xs-12 text-center crack-code">
                     <div class="division"></div>
                     <h1 class="slogan">
                         <span>Discover your</span>

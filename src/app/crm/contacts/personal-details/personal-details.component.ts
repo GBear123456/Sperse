@@ -10,7 +10,7 @@ import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { AppTimezoneScope } from '@shared/AppEnums';
+import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -72,8 +72,8 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
                     { name: 'drivingLicenseState', type: 'select' },
                     { name: 'ssn', type: 'string', confidential: true },
                     { name: 'citizenship', type: 'select' },
-                    { name: 'isUSCitizen', type: 'bool' },
-                    { name: 'isActiveMilitaryDuty', type: 'bool' }
+                    { name: 'isUSCitizen', type: 'bool', isVisible: () => !this.isDefaultCountryCanada },
+                    { name: 'isActiveMilitaryDuty', type: 'bool', isVisible: () => !this.isDefaultCountryCanada }
                 ] : []
             )
         ], [
@@ -84,6 +84,12 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
             { name: 'experience', type: 'string', multiline: true }
         ]
     ];
+    get isDefaultCountryCanada() {
+        return AppConsts.defaultCountryCode == Country.Canada;
+    }
+    get ssnMask() {
+        return AppConsts.defaultCountryCode == Country.Canada ? AppConsts.masks.sin : AppConsts.masks.ssn;
+    }
 
     selectList = {
         timeZone: [],
@@ -215,9 +221,19 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
     }
 
     getSsnMasked(value) {
-        return this.accessConfidentialData && value ?
-            [value.slice(0, 3), value.slice(3, 5), value.slice(-4)].join('-')
-            : value;
+        if (this.accessConfidentialData && value) {
+            let mask = this.ssnMask;
+            let blocks = mask.split('-');
+            let valueBlocks: string[] = [];
+            let index = 0;
+            for (let i = 0; i < blocks.length; i++) {
+                valueBlocks.push(value.slice(index, index + blocks[i].length));
+                index += blocks[i].length;
+            }
+            return valueBlocks.join('-');
+        }
+
+        return value;
     }
 
     getGenderList() {

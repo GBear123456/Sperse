@@ -141,8 +141,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
                 this.transformRequest(request);
             },
             onLoaded: (count: any) => {
-                this.totalCount = count;
-                this.changeDetectorRef.detectChanges();
+                if (!isNaN(count)) {
+                    this.totalCount = count;
+                    this.changeDetectorRef.detectChanges();
+                }
             }
         })
     });

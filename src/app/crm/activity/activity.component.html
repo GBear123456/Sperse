@@ -7,11 +7,12 @@
                   [showReloadButton]="ui.showReload"
                   [showToggleCompactViewButton]="dataLayoutType === layoutTypes.Pipeline"
                   [showToggleFullScreenButton]="true"
+                  [showTotalCount]="true"
+                  [totalCount]="totalCount"
                   (onToggleToolbar)="toggleToolbar()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="toggleFullScreen()"
                   (onReload)="refresh()">
-        <span *ngIf="totalCount" class="total-count">({{ totalCount }})</span>
         <import-progress-bar></import-progress-bar>
     </app-headline>
     <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>

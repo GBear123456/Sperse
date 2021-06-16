@@ -39,7 +39,7 @@ export class ODataService {
                     Authorization: 'Bearer ' + abp.auth.getToken(),
                     ...(options.headers || {})
                 };
-            let key = (options.url.match(/odata\/([\w|\/|\$]+)[\?|$]?/) || []).pop() + 
+            let key = (options.url.match(/odata\/([\w|\/|\$]+)[\?|$]?/) || []).pop() +
                 ((options.headers && options.headers.context) || '');
             return (this.dxRequestPool[key] = dxAjax.sendRequest(options));
         });
@@ -58,8 +58,9 @@ export class ODataService {
     }
 
     cancelDataSource(dataSource, requestKey) {
-        if (dataSource.isLoading() && !isNaN(dataSource['operationId'])) {
-            dataSource.cancel(dataSource['operationId']);
+        let operationId = dataSource['operationId'];
+        if (dataSource.isLoading() && !isNaN(operationId)) {
+            dataSource.cancel(operationId);
             if (this.dxRequestPool[requestKey])
                 this.dxRequestPool[requestKey].abort();
         }

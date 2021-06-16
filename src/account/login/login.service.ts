@@ -72,7 +72,7 @@ export class LoginService {
     externalLoginModal: ExternalAuthenticateModel;
     resetPasswordModel: SendPasswordResetCodeInput;
     resetPasswordResult: SendPasswordResetCodeOutput;
-    externalLoginProviders$: Observable<ExternalLoginProvider[]>;
+    externalLoginProviders$: Observable<ExternalLoginProvider[]>;    
 
     constructor(
         private tokenAuthService: TokenAuthServiceProxy,
@@ -101,7 +101,19 @@ export class LoginService {
         this.initExternalLoginProviders();
     }
 
-    authenticate(finallyCallback?: () => void, redirectUrl?: string, autoDetectTenancy: boolean = true): void {
+    completeSourceEvent() {
+        if (window.opener)
+            setTimeout(() => {
+                window.opener.postMessage('complete', '*');
+            }, 1000);
+    }
+
+    authenticate(finallyCallback?: () => void, 
+        redirectUrl?: string, 
+        autoDetectTenancy: boolean = true,
+        setCookiesOnly: boolean = false,
+        onSuccessCallback = (result: AuthenticateResultModel) => {}
+    ): void {
         finallyCallback = finallyCallback || (() => { });
         this.authService.stopTokenCheck();
 
@@ -115,20 +127,27 @@ export class LoginService {
             .authenticate(this.authenticateModel)
             .pipe(finalize(finallyCallback))
             .subscribe((result: AuthenticateResultModel) => {
-                this.processAuthenticateResult(result, redirectUrl);
+                onSuccessCallback(result);
+                this.processAuthenticateResult(result, redirectUrl, setCookiesOnly);
                 this.authService.startTokenCheck();
             }, () => {
                 abp.multiTenancy.setTenantIdCookie();
             });
     }
 
-    sendPasswordResetCode(finallyCallback = () => {}, autoDetectTenancy: boolean = true): void {
+    sendPasswordResetCode(
+        finallyCallback = () => {}, 
+        autoDetectTenancy: boolean = true,
+        redirectToLogin: boolean = true,
+        onSuccessCallback = () => {} 
+    ): void {
         abp.auth.clearToken();
         this.resetPasswordModel.autoDetectTenancy = autoDetectTenancy;
         this.accountService
             .sendPasswordResetCode(this.resetPasswordModel)
             .pipe(finalize(finallyCallback))
             .subscribe((result: SendPasswordResetCodeOutput) => {
+                onSuccessCallback();
                 if (this.resetPasswordModel.autoDetectTenancy) {
                     this.resetPasswordResult = result;
                 } else {
@@ -136,8 +155,10 @@ export class LoginService {
                 }
 
                 if (result.detectedTenancies.length > 1) {
-                    this.router.navigate(['account/select-tenant']);
-                } else {
+                    this.router.navigate(['account/select-tenant'], 
+                        {queryParams: {extlogin: !redirectToLogin}}
+                    );
+                } else if (redirectToLogin) {
                     this.messageService.success(
                         abp.localization.localize('PasswordResetMailSentMessage', 'Platform'),
                         abp.localization.localize('MailSent', 'Platform')
@@ -181,7 +202,7 @@ export class LoginService {
         this.initExternalLoginProviders();
     }
 
-    processAuthenticateResult(authenticateResult, redirectUrl?: string) {
+    processAuthenticateResult(authenticateResult, redirectUrl?: string, setCookiesOnly = false) {
         this.authenticateResult = authenticateResult;
 
         if (authenticateResult.shouldResetPassword) {
@@ -192,7 +213,8 @@ export class LoginService {
                 queryParams: {
                     userId: authenticateResult.userId,
                     tenantId: tenantId,
-                    resetCode: authenticateResult.passwordResetCode
+                    resetCode: authenticateResult.passwordResetCode,
+                    extlogin: setCookiesOnly
                 }
             });
 
@@ -211,14 +233,24 @@ export class LoginService {
                 redirectUrl = authenticateResult.returnUrl;
             }
 
-            this.login(
-                authenticateResult.accessToken,
-                authenticateResult.encryptedAccessToken,
-                authenticateResult.expireInSeconds,
-                this.authenticateModel.rememberClient,
-                authenticateResult.twoFactorRememberClientToken,
-                redirectUrl
-            );
+            if (setCookiesOnly)
+                this.authService.setLoginCookies(
+                    authenticateResult.accessToken, 
+                    authenticateResult.encryptedAccessToken, 
+                    authenticateResult.expireInSeconds, 
+                    this.authenticateModel.rememberClient, 
+                    authenticateResult.twoFactorRememberClientToken, 
+                    redirectUrl
+                );
+            else
+                this.login(
+                    authenticateResult.accessToken,
+                    authenticateResult.encryptedAccessToken,
+                    authenticateResult.expireInSeconds,
+                    this.authenticateModel.rememberClient,
+                    authenticateResult.twoFactorRememberClientToken,
+                    redirectUrl
+                );
 
         } else if (authenticateResult.userNotFound && abp.features.isEnabled(AppFeatures.PFMApplications)) {
             // show confirmation msg about creating user

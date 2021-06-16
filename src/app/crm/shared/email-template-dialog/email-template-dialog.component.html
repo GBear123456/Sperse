@@ -1,9 +1,10 @@
 <modal-dialog [title]="data.title"
               [titleClearButton]="false"
               [buttons]="buttons"
-              [editTitle]="false">
+              [editTitle]="false"
+              (onContextItemChanged)="save()">
     <ng-container headerContent>
-        <dx-select-box
+        <dx-select-box #templateSelector
             name="template"
             width="380px"
             height="40px"
@@ -24,7 +25,7 @@
             </dx-validator>
             <div *dxTemplate="let item of 'itemTemplate'" class="email-templates-select-box">
                 {{ item.name }}
-                <i *ngIf="!isManageUnallowed" class="delete fa fa-times" [title]="ls.l('DeleteTemplate')" (click)="deleteTemplate($event, item.id)"></i>
+                <i *ngIf="!isManageUnallowed" class="delete fa fa-times" [title]="ls.l('DeleteTemplate')" (click)="deleteTemplate($event, item, templateSelector)"></i>
             </div>
         </dx-select-box>
         <div class="buttons" *ngIf="!isManageUnallowed && data.contact && onTemplateCreate.observers.length">

@@ -195,7 +195,6 @@ export class InplaceEditComponent extends AppComponentBase {
     onFocusIn(event) {
         if (this.mask) {
             event.component.option('mask', this.mask);
-            event.component.option('isValid', true);
         }
     }
 

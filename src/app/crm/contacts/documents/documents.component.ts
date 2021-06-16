@@ -171,15 +171,15 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     ngAfterViewInit() {
-        this.documents$.pipe(takeUntil(this.destroy$), first()).subscribe((documents: DocumentInfo[]) => {
-            if (!documents || !documents.length)
-                setTimeout(() => this.openDocumentAddDialog());
-        });
         this.clientService.contactInfo$.pipe(
             takeUntil(this.destroy$),
             filter(Boolean)
         ).subscribe((contactInfo: ContactInfoDto) => {
             this.manageAllowed = contactInfo && this.permission.checkCGPermission(contactInfo.groupId);
+            this.documents$.pipe(takeUntil(this.destroy$), first()).subscribe((documents: DocumentInfo[]) => {
+                if (this.manageAllowed && (!documents || !documents.length))
+                    setTimeout(() => this.openDocumentAddDialog());
+            });
             this.initActionMenuItems();
         });
     }
@@ -189,7 +189,8 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             {
                 text: this.l('Edit'),
                 class: 'edit',
-                action: this.editDocument.bind(this)
+                action: this.editDocument.bind(this),
+                disabled: !this.manageAllowed
             },
             {
                 text: this.l('Download'),
@@ -683,6 +684,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     closeDocument() {
         this.openDocumentMode = false;
+        this.clientService.toolbarUpdate();
     }
 
     @HostListener('document:keydown', ['$event'])
@@ -724,10 +726,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     ngOnDestroy() {
         this.clientService.unsubscribe(this.ident);
-        this.clientService.toolbarUpdate();
-        if (this.openDocumentMode) {
-            this.closeDocument();
-        }
+        this.closeDocument();
         super.ngOnDestroy();
     }
 }

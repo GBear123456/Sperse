@@ -1,4 +1,11 @@
+/** Core imports */
 import { Component, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router, ParamMap } from '@angular/router';
+
+/** Third party imports */
+import { first } from 'rxjs/operators';
+
+/** Application imports */
 import { SendPasswordResetCodeInput } from '@shared/service-proxies/service-proxies';
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { LoginService } from 'account/login/login.service';
@@ -14,16 +21,38 @@ export class HostForgotPasswordComponent {
     model: SendPasswordResetCodeInput = new SendPasswordResetCodeInput();
     saving = false;
     emailRegex = AppConsts.regexPatterns.email;
+    isExtLogin: boolean = false;
+    isEmailSent: boolean = false;
+
     constructor (
+        private router: Router,
+        private activatedRoute: ActivatedRoute,
         private loginService: LoginService,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        this.activatedRoute.queryParamMap.pipe(
+            first()
+        ).subscribe((paramsMap: ParamMap) => {
+            this.isExtLogin = paramsMap.get('extlogin') == 'true';
+        });
+    }
 
     save(): void {
         if (this.form.valid) {
             this.saving = true;
             this.loginService.resetPasswordModel = this.model;
-            this.loginService.sendPasswordResetCode(() => this.saving = false, true);
+            this.loginService.sendPasswordResetCode(
+                () => {
+                    this.saving = false;
+                }, true, !this.isExtLogin,
+                () => {
+                    if (this.isEmailSent = this.isExtLogin)
+                        setTimeout(() => {
+                            this.router.navigate(['account/login'], 
+                                {queryParams: {extlogin: this.isExtLogin}});
+                        }, 1000);
+                }
+            );
         }
     }
 }

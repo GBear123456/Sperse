@@ -51,8 +51,8 @@ export class SystemSettingsComponent implements OnInit {
         private changeDetection: ChangeDetectorRef,
         private notifyService: NotifyService,
         private permission: AppPermissionService,
-        public httpInterceptor: AppHttpInterceptor,
         private dialog: MatDialog,
+        public httpInterceptor: AppHttpInterceptor,
         public ls: AppLocalizationService
     ) {
         this.dictionaryProxy.getOrganizationUnits(

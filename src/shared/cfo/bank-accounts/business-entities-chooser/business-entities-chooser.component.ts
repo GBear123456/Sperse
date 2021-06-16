@@ -100,6 +100,13 @@ export class BusinessEntitiesChooserComponent implements OnDestroy {
         }
     }
 
+    onItemClick(event) {
+        if (event.itemData.selected)
+            event.component.unselectItem(event.itemData.id);
+        else
+            event.component.selectItem(event.itemData.id);
+    }
+
     onPopupClosed() {
         let businessEntitiesIds = this.getSelectedIds();
 

@@ -54,12 +54,17 @@ export class ItemDetailsService {
             if (dataSource) {
                 let items = dataSource['entities'] || this.getItemsByDataSourceItems(dataSource.items()),
                     itemIndex = this.getDistinctItemIndex(items, itemId, itemDirection, itemKeyField, itemDistinctField),
-                    itemData = items[itemIndex];
-                const isFirstOnPage = itemIndex === 0;
-                const itemsCountOnTheLastPage = this.getItemsCountOnLastPage(dataSource['total'] || dataSource.totalCount(), dataSource.pageSize(), dataSource.pageIndex());
-                const isLastOnPage = itemIndex + 1 === items.length || dataSource.isLastPage() && itemIndex + 1 === itemsCountOnTheLastPage;
-                const isFirstOnList = isFirstOnPage && dataSource.pageIndex() === 0;
-                const isLastOnList = dataSource.isLastPage() && itemIndex + 1 === itemsCountOnTheLastPage;
+                    itemData = items[itemIndex],
+                    isFirstOnPage = itemIndex === 0,
+                    totalCount = dataSource.totalCount() > 0 ? dataSource.totalCount() : items.length,
+                    itemsCountOnTheLastPage = this.getItemsCountOnLastPage(
+                        dataSource['total'] || totalCount,
+                        dataSource.pageSize(), dataSource.pageIndex()
+                    ),
+                    isLastOnPage = itemIndex + 1 === items.length || dataSource.isLastPage() && itemIndex + 1 === itemsCountOnTheLastPage,
+                    isFirstOnList = isFirstOnPage && dataSource.pageIndex() === 0,
+                    isLastOnList = dataSource.isLastPage() && itemIndex + 1 === itemsCountOnTheLastPage;
+
                 fullInfo$ = of({
                     itemData: itemData,
                     isFirstOnPage: isFirstOnPage,

@@ -41,7 +41,10 @@ export class HeadLineComponent implements OnInit, OnDestroy {
     @Input() names: string[];
     @Input() icon: string;
     @Input() iconSrc: string;
-    @Input() text: string;
+    @Input() text: string;       
+    @Input() totalCount: number;
+    @Input() totalErrorMsg: string = '';
+    @Input() showTotalCount: Boolean;
     @Input() showCompactView = true;
     @Input() buttons: HeadlineButton[];
     @Input() showReloadButton = false;
@@ -174,6 +177,10 @@ export class HeadLineComponent implements OnInit, OnDestroy {
         this.filtersService.fixed =
             !this.filtersService.enabled;
         this.filtersService.toggle();
+    }
+
+    isTotalCountValid() {
+        return Number.isInteger(this.totalCount);
     }
 
     ngOnDestroy() {

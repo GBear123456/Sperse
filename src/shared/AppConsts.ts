@@ -66,6 +66,7 @@ export class AppConsts {
     static readonly masks = {
         phone: '+1 (000)-000-0000',
         ssn: '000-00-0000',
+        sin: '000-000-000',
         taxNumber: '00-0000000',
         zipCode: '00000',
         zipCodeLong: '00000-0000',
@@ -96,7 +97,7 @@ export class AppConsts {
         emailWithName: new RegExp(`^((("[^"]+")|([a-zA-Z\\s]+))\\s*<(?=.+>$)|(?!.+>$))${AppConsts.emailRegexString}>?$`),
         phone: /^[0-9]{10}$/,
         url: /^(http[s]?:\/\/)?[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)+(:[0-9]+)?(\/.*)?$/,
-        fullName: /^[\w|\s|'|,|\.|\-]+$/,
+        fullName: /^[\w|\s|'|,|\.|\-]+(\(.+\))?$/,
         affiliateCode: /^(?!.*?\.\.)[a-zA-Z0-9\._-]*$/,
         affiliateRate: /^[0-9]{1,2}(\.[0-9]{1,2})*$/,
         ein: /^\d{2}\-?\d{7}$/,

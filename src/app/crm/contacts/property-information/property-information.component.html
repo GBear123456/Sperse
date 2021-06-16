@@ -1,5 +1,5 @@
 <mat-tab-group *ngIf="property">
-    <mat-tab [label]="ls.l('ContractDetails')">
+    <mat-tab [label]="ls.l('ContractDetails')" *ngIf="showContractDetails">
         <dx-scroll-view showScrollbar="onHover">
             <div class="container-fluid properties">
                 <div class="row">
@@ -15,9 +15,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.ownersOnTitle"
+                                                             [(value)]="propertySellerDto.ownersOnTitle"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -26,9 +27,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.mortgageHolder"
+                                                             [(value)]="propertySellerDto.mortgageHolder"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -39,8 +41,9 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="propertyResidents"
-                                                               [(value)]="property.propertyResident"
-                                                               (onValueChanged)="valueChanged()"></dx-select-box>
+                                                               [(value)]="propertySellerDto.propertyResident"
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -49,34 +52,37 @@
                                                 <dx-number-box showClearButton="true"
                                                              step="0"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.houseOwningTime"
+                                                             [(value)]="propertySellerDto.houseOwningTime"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-number-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AnnualHOACondoFees') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.annualHOACondoFees"
+                                                <dx-number-box [(value)]="propertySellerDto.annualHOACondoFees"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('DepositPutAmount') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.depositPutAmount"
+                                                <dx-number-box [(value)]="propertySellerDto.depositPutAmount"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -93,20 +99,22 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
-                                                               [(value)]="property.isHomeListed"
-                                                               (onValueChanged)="valueChanged()"></dx-select-box>
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="propertySellerDto.isHomeListed"
+                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('PriceListed') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.priceListed"
+                                                <dx-number-box [(value)]="propertySellerDto.priceListed"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -118,6 +126,7 @@
                                                                step="0"
                                                                [value]="sinceListedDays"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="sinceListedDaysChanged($event.value)">
                                                 </dx-number-box>
                                             </div>
@@ -131,9 +140,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(property.listingExpires)"
+                                                             [value]="getDateValue(propertySellerDto.listingExpires)"
                                                              [showClearButton]="true"
-                                                             (onValueChanged)="dateValueChanged($event, 'listingExpires')">
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'listingExpires', true)">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -146,9 +156,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.realtorName"
+                                                             [(value)]="propertySellerDto.realtorName"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -157,9 +168,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="64"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.realtorContactNumber"
+                                                             [(value)]="propertySellerDto.realtorContactNumber"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -170,20 +182,22 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
-                                                               [(value)]="property.offersFromListing"
-                                                               (onValueChanged)="valueChanged()"></dx-select-box>
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="propertySellerDto.offersFromListing"
+                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('OffersFromListingAmount') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.offersFromListingAmount"
+                                                <dx-number-box [(value)]="propertySellerDto.offersFromListingAmount"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -198,9 +212,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.anythingRecentlyUpgraded"
+                                                             [(value)]="propertySellerDto.anythingRecentlyUpgraded"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -209,9 +224,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.needRepairs"
+                                                             [(value)]="propertySellerDto.needRepairs"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -220,9 +236,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.structural"
+                                                             [(value)]="propertySellerDto.structural"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -231,9 +248,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.mechanical"
+                                                             [(value)]="propertySellerDto.mechanical"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -242,9 +260,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.waterIssues"
+                                                             [(value)]="propertySellerDto.waterIssues"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -253,9 +272,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.roof"
+                                                             [(value)]="propertySellerDto.roof"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -264,9 +284,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.plumbing"
+                                                             [(value)]="propertySellerDto.plumbing"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -275,9 +296,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.electrical"
+                                                             [(value)]="propertySellerDto.electrical"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -286,9 +308,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.hvac"
+                                                             [(value)]="propertySellerDto.hvac"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -297,9 +320,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.repairsOrIssuesPool"
+                                                             [(value)]="propertySellerDto.repairsOrIssuesPool"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -308,9 +332,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.landscaping"
+                                                             [(value)]="propertySellerDto.landscaping"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -321,8 +346,9 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="pestsTypes"
-                                                               [(value)]="property.pests"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="propertySellerDto.pests"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-select-box>
                                             </div>
                                         </div>
@@ -334,8 +360,9 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
-                                                               [(value)]="property.pestsResolved"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="propertySellerDto.pestsResolved"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-select-box>
                                             </div>
                                         </div>
@@ -345,9 +372,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.repairsOrIssuesOther"
+                                                             [(value)]="propertySellerDto.repairsOrIssuesOther"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                     </div>
@@ -361,9 +389,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.whySell"
+                                                             [(value)]="propertySellerDto.whySell"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -374,8 +403,9 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="sellPeriods"
-                                                               [(value)]="property.howQuicklyWantToSell"
-                                                               (onValueChanged)="valueChanged()"></dx-select-box>
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="propertySellerDto.howQuicklyWantToSell"
+                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -384,9 +414,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.didntSellActions"
+                                                             [(value)]="propertySellerDto.didntSellActions"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                     </div>
@@ -405,9 +436,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(property.tenantLeaseTerm)"
+                                                             [value]="getDateValue(propertySellerDto.tenantLeaseTerm)"
                                                              [showClearButton]="true"
-                                                             (onValueChanged)="dateValueChanged($event, 'tenantLeaseTerm')">
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'tenantLeaseTerm', true)">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -417,13 +449,14 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('TenantDepositReceived') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.tenantDepositReceived"
+                                                <dx-number-box [(value)]="propertySellerDto.tenantDepositReceived"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -435,8 +468,9 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
-                                                               [(value)]="property.tenantPetAddendum"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="propertySellerDto.tenantPetAddendum"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-select-box>
                                             </div>
                                         </div>
@@ -448,18 +482,20 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="petFeeTypes"
-                                                               [(value)]="property.tenantPetFeeType"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="propertySellerDto.tenantPetFeeType"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-select-box>
                                             </div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.tenantPetFee"
+                                                <dx-number-box [(value)]="propertySellerDto.tenantPetFee"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -471,13 +507,14 @@
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('CurrentOwningAmount') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.currentOwningAmount"
+                                                <dx-number-box [(value)]="propertySellerDto.currentOwningAmount"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -489,20 +526,22 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
-                                                               [(value)]="property.hasAdditionalMortgage"
-                                                               (onValueChanged)="valueChanged()"></dx-select-box>
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="propertySellerDto.hasAdditionalMortgage"
+                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('OtherLienAmount') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.otherLienAmount"
+                                                <dx-number-box [(value)]="propertySellerDto.otherLienAmount"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -514,58 +553,63 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
-                                                               [(value)]="property.areMortgagePaymentsCurrent"
-                                                               (onValueChanged)="valueChanged()"></dx-select-box>
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="propertySellerDto.areMortgagePaymentsCurrent"
+                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('MonthsBehindOnMortgage') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.monthsBehindOnMortgage"
+                                                <dx-number-box [(value)]="propertySellerDto.monthsBehindOnMortgage"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AmountBehindOnMortgages') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.amountBehindOnMortgages"
+                                                <dx-number-box [(value)]="propertySellerDto.amountBehindOnMortgages"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('BackTaxes') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.backTaxes"
+                                                <dx-number-box [(value)]="propertySellerDto.backTaxes"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('MonthlyMortgagePayment') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.monthlyMortgagePayment"
+                                                <dx-number-box [(value)]="propertySellerDto.monthlyMortgagePayment"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -577,45 +621,49 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="yesNoDropdowns"
-                                                               [(value)]="property.includeTaxesAndInsurance"
-                                                               (onValueChanged)="valueChanged()"></dx-select-box>
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="propertySellerDto.includeTaxesAndInsurance"
+                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AnnualPropertyTaxes') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.annualPropertyTaxes"
+                                                <dx-number-box [(value)]="propertySellerDto.annualPropertyTaxes"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AnnualPropertyInsurance') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.annualPropertyInsurance"
+                                                <dx-number-box [(value)]="propertySellerDto.annualPropertyInsurance"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('InterestRateMTG1') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.interestRateMTG1"
+                                                <dx-number-box [(value)]="propertySellerDto.interestRateMTG1"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -627,19 +675,21 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="interestRates"
-                                                               [(value)]="property.interestRateMTG1Type"
-                                                               (onValueChanged)="valueChanged()"></dx-select-box>
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="propertySellerDto.interestRateMTG1Type"
+                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('InterestRateMTG2') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.interestRateMTG2"
+                                                <dx-number-box [(value)]="propertySellerDto.interestRateMTG2"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -651,20 +701,22 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="interestRates"
-                                                               [(value)]="property.interestRateMTG2Type"
-                                                               (onValueChanged)="valueChanged()"></dx-select-box>
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="propertySellerDto.interestRateMTG2Type"
+                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('PrepaymentPenalty') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.prepaymentPenalty"
+                                                <dx-number-box [(value)]="propertySellerDto.prepaymentPenalty"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -674,9 +726,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.mortgageLender1"
+                                                             [(value)]="propertySellerDto.mortgageLender1"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -685,9 +738,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="128"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.mortgageLender2"
+                                                             [(value)]="propertySellerDto.mortgageLender2"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -699,9 +753,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(property.mortgageTermRenewal1)"
+                                                             [value]="getDateValue(propertySellerDto.mortgageTermRenewal1)"
                                                              [showClearButton]="true"
-                                                             (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal1')">
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal1', true)">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -717,9 +772,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(property.mortgageTermRenewal2)"
+                                                             [value]="getDateValue(propertySellerDto.mortgageTermRenewal2)"
                                                              [showClearButton]="true"
-                                                             (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal2')">
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'mortgageTermRenewal2', true)">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -736,26 +792,28 @@
                                                 <dx-text-area [height]="90"
                                                               [maxLength]="512"
                                                               [stylingMode]="stylingMode"
-                                                              [(value)]="property.sellerFinancing"
+                                                              [(value)]="propertySellerDto.sellerFinancing"
                                                               [placeholder]="ls.l('EditValuePlaceholder')"
-                                                              (onValueChanged)="valueChanged()"></dx-text-area>
+                                                              [disabled]="disableEdit"
+                                                              (onValueChanged)="sellerValueChanged()"></dx-text-area>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="block">
                                     <h3>{{ ls.l('InternalOfficeInfo') }}</h3>
-                                    <div class="fields">                                                                                                          
+                                    <div class="fields">
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('LastSoldPrice') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.lastSoldPrice"
+                                                <dx-number-box [(value)]="propertySellerDto.lastSoldPrice"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -765,60 +823,65 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="16"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.yearLastSold"
+                                                             [(value)]="propertySellerDto.yearLastSold"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('CityAssessedValue') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.cityAssessedValue"
+                                                <dx-number-box [(value)]="propertySellerDto.cityAssessedValue"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AsIsValue') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.asIsValue"
+                                                <dx-number-box [(value)]="propertySellerDto.asIsValue"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('ApproxRepairCost') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.approxRepairCost"
+                                                <dx-number-box [(value)]="propertySellerDto.approxRepairCost"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
                                             <div class="dx-field-label">{{ ls.l('AfterRepairValue') }}</div>
                                             <div class="dx-field-value">
-                                                <dx-number-box [(value)]="property.afterRepairValue"
+                                                <dx-number-box [(value)]="propertySellerDto.afterRepairValue"
                                                                [stylingMode]="stylingMode"
                                                                showClearButton="true"
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                               (onValueChanged)="valueChanged()">
+                                                               [disabled]="disableEdit"
+                                                               (onValueChanged)="sellerValueChanged()">
                                                 </dx-number-box>
                                             </div>
                                         </div>
@@ -831,9 +894,10 @@
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
-                                                             [value]="getDateValue(property.walkthroughDate)"
+                                                             [value]="getDateValue(propertySellerDto.walkthroughDate)"
                                                              [showClearButton]="true"
-                                                             (onValueChanged)="dateValueChanged($event, 'walkthroughDate')">
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="dateValueChanged($event, 'walkthroughDate', true)">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
                                                         <img src="./assets/common/icons/calendar-date.svg">
                                                     </div>
@@ -848,8 +912,9 @@
                                                                valueExpr="value"
                                                                [stylingMode]="stylingMode"
                                                                [items]="exitStrategies"
-                                                               [(value)]="property.exitStrategy"
-                                                               (onValueChanged)="valueChanged()"></dx-select-box>
+                                                               [disabled]="disableEdit"
+                                                               [(value)]="propertySellerDto.exitStrategy"
+                                                               (onValueChanged)="sellerValueChanged()"></dx-select-box>
                                             </div>
                                         </div>
                                         <div class="dx-field">
@@ -858,9 +923,10 @@
                                                 <dx-text-box showClearButton="true"
                                                              [maxLength]="512"
                                                              [stylingMode]="stylingMode"
-                                                             [(value)]="property.exitStrategyNotes"
+                                                             [(value)]="propertySellerDto.exitStrategyNotes"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
-                                                             (onValueChanged)="valueChanged()"></dx-text-box>
+                                                             [disabled]="disableEdit"
+                                                             (onValueChanged)="sellerValueChanged()"></dx-text-box>
                                             </div>
                                         </div>
                                     </div>
@@ -889,6 +955,7 @@
                                                              [maxLength]="256"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              [stylingMode]="stylingMode"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="validateProperty($event)">
                                                     <dx-validator>
                                                         <dxi-validation-rule
@@ -908,6 +975,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="propertyTypes"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.propertyType"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -921,6 +989,7 @@
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -933,6 +1002,7 @@
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -949,6 +1019,7 @@
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
                                                              dropDownButtonTemplate="dropDownButtonTemplate"
                                                              displayFormat="year"
+                                                             [disabled]="disableEdit"
                                                              [value]="yearBuilt"
                                                              (onValueChanged)="yearBuiltChanged($event.value)">
                                                     <div *dxTemplate="let data of 'dropDownButtonTemplate'">
@@ -966,6 +1037,7 @@
                                                                showClearButton="true"
                                                                step="0"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -979,6 +1051,7 @@
                                                                step="0"
                                                                [stylingMode]="stylingMode"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -992,6 +1065,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.laundryInSuite"
                                                     (onValueChanged)="valueChanged()"
                                                     showClearButton="true"
@@ -1008,6 +1082,7 @@
                                                     valueExpr="value"
                                                     [items]="parking"
                                                     [stylingMode]="stylingMode"
+                                                    [disabled]="disableEdit"
                                                     [value]="getMultipleValues('parking', parking)"
                                                     (onValueChanged)="tagValueChanged('parking', $event)"
                                                 ></dx-tag-box>
@@ -1022,6 +1097,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="basement"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.basement"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1041,6 +1117,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.isCentralHeating"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1055,6 +1132,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode" 
                                                     [items]="heatingType"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.heatingType"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1069,6 +1147,7 @@
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.ac"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1083,6 +1162,7 @@
                                                                step="0"
                                                                [format]="currencyFormat"
                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -1096,6 +1176,7 @@
                                                     valueExpr="value"
                                                     showClearButton="true"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.isHeatIncludedInCondoFees"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1111,6 +1192,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="utilityTypes"
+                                                    [disabled]="disableEdit"
                                                     [value]="getMultipleValues('utilityTypesIncluded', utilityTypes)"
                                                     (onValueChanged)="tagValueChanged('utilityTypesIncluded', $event)"
                                                 ></dx-tag-box>
@@ -1130,6 +1212,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.floorCarpet"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1144,6 +1227,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.floorHardwood"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1158,6 +1242,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.floorLVP"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1172,6 +1257,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.floorTile"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1186,6 +1272,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.floorVinyl"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1220,46 +1307,6 @@
                                     </div>
                                 </div>
                                 <div class="block">
-                                    <h3 class="property-deal-title">{{ ls.l('DealAmount') }}</h3>
-                                    <div class="fields">
-                                        <div class="dx-field property-deal">
-                                            <div class="dx-field-label"></div>
-                                            <div class="dx-field-value">
-                                                <div>{{ ls.l('PurchasePrice') }}</div>
-                                            </div>
-                                            <div class="dx-field-value">
-                                                <div>{{ ls.l('MonthlyRent') }}</div>
-                                            </div>                                            
-                                        </div>
-                                    </div>
-                                    <div class="fields">
-                                        <div class="dx-field property-deal" *ngFor="let propertyDeal of propertyDeals;">
-                                            <div class="dx-field-label">{{propertyDeal.leadTypeName}}</div>
-                                            <div class="dx-field-value">
-                                                <dx-number-box [(value)]="propertyDeal.dealAmount"
-                                                                [stylingMode]="stylingMode"
-                                                                showClearButton="true"
-                                                                step="0"
-                                                                [format]="currencyFormat"
-                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                                (onValueChanged)="dealInfoChanged(propertyDeal.leadId, $event.value, propertyDeal.installmentAmount)">
-                                                </dx-number-box>
-                                            </div>
-                                            <div class="dx-field-value">
-                                                <dx-number-box *ngIf="leadTypesWithInstallment.indexOf(propertyDeal.leadTypeSysId) > -1"
-                                                                [(value)]="propertyDeal.installmentAmount"
-                                                                [stylingMode]="stylingMode"
-                                                                showClearButton="true"
-                                                                step="0"
-                                                                [format]="currencyFormat"
-                                                                [placeholder]="ls.l('EditAmountPlaceholder')"
-                                                                (onValueChanged)="dealInfoChanged(propertyDeal.leadId, propertyDeal.dealAmount, $event.value)">
-                                                </dx-number-box>
-                                            </div>                                            
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="block">
                                     <h3>{{ ls.l('Unit') }}</h3>
                                     <div class="fields">
                                         <div class="dx-field">
@@ -1271,6 +1318,7 @@
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.corner"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1285,6 +1333,7 @@
                                                     displayExpr="displayValue"
                                                     valueExpr="value"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.end"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1298,6 +1347,7 @@
                                                                step="0"
                                                                [stylingMode]="stylingMode"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -1310,6 +1360,7 @@
                                                                step="0"
                                                                [stylingMode]="stylingMode"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -1323,6 +1374,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.den"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1337,6 +1389,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.office"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1352,6 +1405,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="appliances"
+                                                    [disabled]="disableEdit"
                                                     [value]="getMultipleValues('appliances', appliances)"
                                                     (onValueChanged)="tagValueChanged('appliances', $event)"
                                                 ></dx-tag-box>
@@ -1365,6 +1419,7 @@
                                                              showClearButton="true"
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="valueChanged()">
                                                 </dx-text-box>
                                             </div>
@@ -1383,6 +1438,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.storageInSuite"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1396,6 +1452,7 @@
                                                                step="0"
                                                                [stylingMode]="stylingMode"
                                                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                                               [disabled]="disableEdit"
                                                                (onValueChanged)="valueChanged()">
                                                 </dx-number-box>
                                             </div>
@@ -1414,6 +1471,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.dogs"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1427,6 +1485,7 @@
                                                              showClearButton="true"
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="valueChanged()">
                                                 </dx-text-box>
                                             </div>
@@ -1439,6 +1498,7 @@
                                                              showClearButton="true"
                                                              [stylingMode]="stylingMode"
                                                              [placeholder]="ls.l('EditValuePlaceholder')"
+                                                             [disabled]="disableEdit"
                                                              (onValueChanged)="valueChanged()">
                                                 </dx-text-box>
                                             </div>
@@ -1452,6 +1512,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.cats"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1473,6 +1534,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yardPatioValues"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.yard"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1487,6 +1549,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yardPatioValues"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.patio"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1501,6 +1564,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.yardBalcony"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1520,6 +1584,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.secure"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1534,6 +1599,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.onSiteManager"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1548,6 +1614,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.wheelchairAccessible"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1562,6 +1629,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.walkOut"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1576,6 +1644,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.elevator"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1590,6 +1659,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.ceilingFan"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1605,6 +1675,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="firePlace"
+                                                    [disabled]="disableEdit"
                                                     [value]="getMultipleValues('fireplace', firePlace)"
                                                     (onValueChanged)="tagValueChanged('fireplace', $event)"
                                                 ></dx-tag-box>
@@ -1619,6 +1690,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.firepit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1633,6 +1705,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.petPark"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1647,6 +1720,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.communitySpace"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1661,6 +1735,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.pool"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1675,6 +1750,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.exerciseRoom"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1689,6 +1765,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.partyRoom"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1703,6 +1780,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="yesNoDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.guestSuite"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1717,6 +1795,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.other"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-text-box>
                                             </div>
@@ -1749,6 +1828,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.condoDocuments"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1763,6 +1843,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.petApplication"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1777,6 +1858,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.intercomSetup"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-text-box>
                                             </div>
@@ -1790,6 +1872,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.additionalKeys"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1799,6 +1882,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="oneFiveDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.numberOfSets"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1813,6 +1897,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.frontDoorFob"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -1826,6 +1911,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.garageRemote"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1835,6 +1921,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="oneFiveDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.garageRemoteNumberReceived"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1849,6 +1936,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.garageKey"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1858,6 +1946,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="oneFiveDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.garageKeyNumberReceived"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1872,6 +1961,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.garageCode"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-text-box>
                                             </div>
@@ -1885,6 +1975,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.parkadeFob"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1905,6 +1996,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.parkingStall"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -1918,6 +2010,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.visitorParkingPass"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -1931,6 +2024,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.mailbox"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -1944,6 +2038,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.mailboxKey"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1953,6 +2048,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="oneFiveDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.mailboxNumberReceived"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1967,6 +2063,7 @@
                                                     [stylingMode]="stylingMode"
                                                     [(value)]="property.storageLockerNumber"
                                                     [placeholder]="ls.l('EditValuePlaceholder')"
+                                                    [disabled]="disableEdit"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-number-box>
                                             </div>
@@ -1980,6 +2077,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.storageLockerKey"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -1995,6 +2093,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="weekDays"
+                                                    [disabled]="disableEdit"
                                                     [value]="getMultipleValues('garbageDay', weekDays)"
                                                     (onValueChanged)="tagValueChanged('garbageDay', $event)"
                                                 ></dx-tag-box>
@@ -2010,6 +2109,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="garbageCollection"
+                                                    [disabled]="disableEdit"
                                                     [value]="getMultipleValues('garbageCollection', garbageCollection)"
                                                     (onValueChanged)="tagValueChanged('garbageCollection', $event)"
                                                 ></dx-tag-box>
@@ -2024,6 +2124,7 @@
                                                     valueExpr="value"
                                                     [stylingMode]="stylingMode"
                                                     [items]="receivedNA"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.garbageKey"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
@@ -2033,6 +2134,7 @@
                                                     showClearButton="true"
                                                     [stylingMode]="stylingMode"
                                                     [items]="oneFiveDropdowns"
+                                                    [disabled]="disableEdit"
                                                     [(value)]="property.garbageNumberReceived"
                                                     (onValueChanged)="valueChanged()"
                                                 ></dx-select-box>
