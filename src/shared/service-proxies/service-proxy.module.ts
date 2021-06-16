@@ -44,6 +44,7 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.MemberSettingsServiceProxy,
         ApiServiceProxies.CommissionServiceProxy,
         ApiServiceProxies.TenantHostServiceProxy,
+        ApiServiceProxies.EmailSmtpSettingsServiceProxy,
         { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true }
     ]
 })

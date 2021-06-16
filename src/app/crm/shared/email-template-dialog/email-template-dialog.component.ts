@@ -33,7 +33,7 @@ import {
     GetTemplateReponse,
     ContactServiceProxy,
     GetEmailDataOutput,
-
+    EmailFromInfo,
     EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
@@ -64,6 +64,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     ckEditor: any;
     templateLoaded: boolean;
+    from: string;
     showCC = false;
     showBCC = false;
     tagLastValue: string;
@@ -82,6 +83,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @Output() onTemplateDelete: EventEmitter<number> = new EventEmitter<number>();
 
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
+    isSettingsAllowed = this.permission.isGranted(AppPermissions.AdministrationTenantSettings);
 
     buttons: IDialogButton[];
     _refresh: Subject<null> = new Subject<null>();
@@ -140,7 +142,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         private contactProxy: ContactServiceProxy,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
-        sessionService: AppSessionService,
+        private sessionService: AppSessionService,
         private permission: AppPermissionService,
         private features: FeatureCheckerService,
         private communicationProxy: ContactCommunicationServiceProxy,
@@ -150,7 +152,6 @@ export class EmailTemplateDialogComponent implements OnInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
     ) {
-        data.from = sessionService.user.emailAddress;
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
 
@@ -160,9 +161,13 @@ export class EmailTemplateDialogComponent implements OnInit {
             if (!this.data.tags && this.data.contact)
                 this.communicationProxy.getEmailData(
                     undefined, this.data.contact.id
-                ).subscribe((res: GetEmailDataOutput) => {
+                ).subscribe((res: GetEmailDataOutput) => {                    
                     this.data.tags = res.tags;
+                    this.data.from = res.from;
+                    this.initFromField();
                 });
+            else
+                this.initFromField();
             this.templateLoaded = true;
         }
     }
@@ -181,6 +186,23 @@ export class EmailTemplateDialogComponent implements OnInit {
 
         this.initDialogButtons();
         this.changeDetectorRef.detectChanges();
+    }
+
+    initFromField() {
+        if (this.data.from instanceof Array) {
+            let from = this.data.from.find(item => item.userId);
+            if (this.from = from && from.address)
+                this.data.isFromUserEmailAddress = true;
+            else {
+                this.from = this.data.from[0].address;
+                this.data.isFromUserEmailAddress = false;
+            }
+            if (from.ccAddress) {
+                this.data.cc = [from.ccAddress];
+                this.showCC = true;
+            }
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     initDialogButtons() {
@@ -407,6 +429,20 @@ export class EmailTemplateDialogComponent implements OnInit {
     invalidate() {
         this.updateDataLength();
         this.changeDetectorRef.markForCheck();
+    }
+
+    onFromChanged(event) {
+        let from = this.data.from.find(
+            item => item.address == event.value
+        );
+        if (from) {
+            this.data.isFromUserEmailAddress = Boolean(from.userId);
+            if (from.ccAddress) {
+                this.data.cc = [from.ccAddress]; 
+                this.showCC = true;
+            }
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     onCustomItemCreating(event, callback?) {

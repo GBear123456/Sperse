@@ -1,9 +1,10 @@
 /** Core imports */
 import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
-import { forkJoin } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
+import { Observable, forkJoin } from 'rxjs';
+import { finalize, tap, first, map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
@@ -12,14 +13,16 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
-    ComboboxItemDto, CommonLookupServiceProxy, SettingScopes, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput, PayPalSettings,
-    BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings, YTelSettingsEditDto, EmailTemplateType
+    ComboboxItemDto, CommonLookupServiceProxy, SettingScopes, HostSettingsEditDto, HostSettingsServiceProxy,
+    PayPalSettings, BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings,
+    YTelSettingsEditDto, EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppConsts } from '@root/shared/AppConsts';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppService } from '@app/app.service';
+import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 
 @Component({
     templateUrl: './host-settings.component.html',
@@ -62,9 +65,15 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         }
     ];
     EmailTemplateType = EmailTemplateType;
+    tabIndex: Observable<number> = this.route.queryParams.pipe(first(), 
+        map((params: Params) => {
+            return (params['tab'] == 'smtp' ? 4 : 0);
+        })
+    );
 
     constructor(
         injector: Injector,
+        private route: ActivatedRoute,
         private hostSettingService: HostSettingsServiceProxy,
         private commonLookupService: CommonLookupServiceProxy,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
@@ -72,6 +81,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         private changeDetection: ChangeDetectorRef,
         private contactService: ContactsService,
         private appService: AppService,
+        private emailSmtpSettingsService: EmailSmtpSettingsService,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -134,12 +144,8 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     }
 
     sendTestEmail(): void {
-        const self = this;
-        const input = new SendTestEmailInput();
-        input.emailAddress = self.testEmailAddress;
-        self.hostSettingService.sendTestEmail(input).subscribe(() => {
-            self.notify.info(self.l('TestEmailSentSuccessfully'));
-        });
+        let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.hostSettings.email);
+        this.emailSmtpSettingsService.sendTestEmail(input);
     }
 
     saveAll(): void {

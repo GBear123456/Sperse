@@ -9,36 +9,29 @@ import { Observable, of } from 'rxjs';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     EmailSettingsEditDto,
-    HostSettingsServiceProxy,
-    SendTestEmailInput, TenantSettingsServiceProxy
+    TenantSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { AppService } from '@app/app.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 
 @Component({
     selector: 'email',
     templateUrl: 'email.component.html',
     styleUrls: [ '../shared/styles/common.less', 'email.component.less' ],
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    providers: [ EmailSmtpSettingsService ]
 })
 export class EmailComponent implements ITenantSettingsStepComponent {
     @Input() settings: EmailSettingsEditDto;
     testEmailAddress: string;
     constructor(
-        private appService :AppService,
-        private hostSettingsServiceProxy: HostSettingsServiceProxy,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
-        private notifyService: NotifyService,
+        private emailSmtpSettingsService: EmailSmtpSettingsService,
         public ls: AppLocalizationService
     ) {}
 
     sendTestEmail(): void {
-        (this.appService.isHostTenant ? this.hostSettingsServiceProxy : this.tenantSettingsServiceProxy)
-            .sendTestEmail(new SendTestEmailInput({
-                emailAddress: this.testEmailAddress
-            })).subscribe(() => {
-                this.notifyService.info(this.ls.l('TestEmailSentSuccessfully'));
-            });
+        let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.settings);
+        this.emailSmtpSettingsService.sendTestEmail(input);
     }
 
     save(): Observable<void> {

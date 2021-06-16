@@ -1,11 +1,12 @@
 /** Core imports */
 import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
 import { IAjaxResponse } from '@abp/abpHttpInterceptor';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
+import { finalize, tap, first, map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
@@ -17,7 +18,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     SettingScopes,
-    SendTestEmailInput,
     TenantSettingsEditDto,
     TenantSettingsServiceProxy,
     TenantCustomizationServiceProxy,
@@ -48,6 +48,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppService } from '@app/app.service';
+import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -120,9 +121,13 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         }
     ];
     EmailTemplateType = EmailTemplateType;
+    tabIndex: Observable<number> = this.route.queryParams.pipe(first(), map((params: Params) => {
+        return (params['tab'] == 'smtp' ? 6 : 0);
+    }));
 
     constructor(
         injector: Injector,
+        private route: ActivatedRoute,
         private tenantSettingsService: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         private tenantSettingsCreditReportService: TenantSettingsCreditReportServiceProxy,
@@ -133,6 +138,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private faviconsService: FaviconService,
         private contactService: ContactsService,
         private appService: AppService,
+        private emailSmtpSettingsService: EmailSmtpSettingsService,
         public changeDetection: ChangeDetectorRef,
         public dialog: MatDialog
     ) {
@@ -393,11 +399,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     sendTestEmail(): void {
-        const input = new SendTestEmailInput();
-        input.emailAddress = this.testEmailAddress;
-        this.tenantSettingsService.sendTestEmail(input).subscribe(() => {
-            this.notify.info(this.l('TestEmailSentSuccessfully'));
-        });
+        let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.settings.email);
+        this.emailSmtpSettingsService.sendTestEmail(input);
     }
 
     getSendGridWebhookUrl(): string {

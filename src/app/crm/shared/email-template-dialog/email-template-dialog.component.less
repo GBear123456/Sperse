@@ -62,7 +62,7 @@
             width: 80px;
             text-transform: uppercase;
         }
-        .dx-selectbox {
+        .dx-selectbox[name="template"] {
             margin: 23px 0;
             &, input {
                 background: transparent;
@@ -201,6 +201,15 @@
             max-width: calc(40vw - 100px);
         }
 
+        a.config-link {
+            margin-right: 10px;
+            &.disabled {
+                color: #8a969b;
+                pointer-events: none;
+                cursor: default;
+            }
+        }
+
         ::ng-deep .field-area {
             width: 100%;
             display: block;
@@ -218,9 +227,11 @@
             }
 
             &.from {
-                ::ng-deep dx-text-box input {
-                    border-bottom: 0px;
-                    padding-bottom: 5px;
+                dx-select-box, dx-text-box {
+                    input {
+                        border-bottom: 0px;
+                        padding-bottom: 5px;
+                    }
                 }
             }
 
@@ -346,7 +357,7 @@
                 }
             }
 
-            dx-text-box, dx-tag-box {
+            dx-text-box, dx-tag-box, dx-select-box {
                 display: inline-block;
 
                 &.dx-invalid {

@@ -3,7 +3,7 @@
                   [buttons]="headlineButtons">
     </app-headline>
     <div class="wrapper">
-        <mat-tab-group *ngIf="settings">
+        <mat-tab-group *ngIf="settings" [selectedIndex]="tabIndex | async">
             <mat-tab [label]="l('General')" *ngIf="showTimezoneSelection">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group" *ngIf="showTimezoneSelection">
