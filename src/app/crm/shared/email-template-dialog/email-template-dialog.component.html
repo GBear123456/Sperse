@@ -39,14 +39,14 @@
                 <div class="row">
                     <div class="field-area from">
                         <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>            
-                        <dx-select-box *ngIf="data.from || templateEditMode; else configure"
+                        <dx-select-box *ngIf="data?.from?.length || templateEditMode; else configure"
                             name="from"
                             width="calc(50% - 52px)"
                             height="40px"
                             placeholder=""
                             [value]="from"
                             valueExpr="address"
-                            displayExpr="displayName"
+                            displayExpr="address"
                             [dataSource]="data.from"
                             [disabled]="templateEditMode"
                             (onValueChanged)="onFromChanged($event)">
@@ -58,7 +58,10 @@
                             </dx-validator>
                         </dx-select-box>
                         <ng-template #configure>
-                            <a class="config-link" routerLink="app/admin/hostSettings" [queryParams]="{tab: 'smtp'}" [ngClass]="{disabled: isSettingsAllowed}">{{ls.l('MailerSettingsAreNotConfigured', '')}}&nbsp;</a>
+                            <a class="config-link" 
+                                [routerLink]="'app/admin/' + (appService.isHostTenant ? 'host': 'tenant') + 'Settings'" 
+                                [queryParams]="{tab: 'smtp'}" 
+                                [ngClass]="{disabled: !isSettingsAllowed}">{{ls.l('MailerSettingsAreNotConfigured', '')}}&nbsp;</a>
                         </ng-template>
                         <label class="caption disabled">{{ls.l('ReplyTo')}}:</label>
                         <dx-tag-box #ReplyToElement

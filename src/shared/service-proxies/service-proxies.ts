@@ -15943,7 +15943,7 @@ export class EmailSmtpSettingsServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    sendTestEmail(body: SendTestEmailInput | null | undefined): Observable<boolean> {
+    sendTestEmail(body: SendTestEmailInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/EmailSmtpSettings/SendTestEmail";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -15955,7 +15955,6 @@ export class EmailSmtpSettingsServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
-                "Accept": "application/json"
             })
         };
 
@@ -15966,14 +15965,14 @@ export class EmailSmtpSettingsServiceProxy {
                 try {
                     return this.processSendTestEmail(<any>response_);
                 } catch (e) {
-                    return <Observable<boolean>><any>_observableThrow(e);
+                    return <Observable<void>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<boolean>><any>_observableThrow(response_);
+                return <Observable<void>><any>_observableThrow(response_);
         }));
     }
 
-    protected processSendTestEmail(response: HttpResponseBase): Observable<boolean> {
+    protected processSendTestEmail(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -15982,17 +15981,14 @@ export class EmailSmtpSettingsServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
+            return _observableOf<void>(<any>null);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<boolean>(<any>null);
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -60376,10 +60372,8 @@ export interface IEmailSmtpSettings {
 
 export class SendTestEmailInput implements ISendTestEmailInput {
     emailAddress!: string;
-    isUserSmtpEnabled!: boolean | undefined;
     from!: EmailFromSettings | undefined;
     smtp!: EmailSmtpSettings | undefined;
-    signatureHtml!: string | undefined;
 
     constructor(data?: ISendTestEmailInput) {
         if (data) {
@@ -60393,10 +60387,8 @@ export class SendTestEmailInput implements ISendTestEmailInput {
     init(data?: any) {
         if (data) {
             this.emailAddress = data["emailAddress"];
-            this.isUserSmtpEnabled = data["isUserSmtpEnabled"];
             this.from = data["from"] ? EmailFromSettings.fromJS(data["from"]) : <any>undefined;
             this.smtp = data["smtp"] ? EmailSmtpSettings.fromJS(data["smtp"]) : <any>undefined;
-            this.signatureHtml = data["signatureHtml"];
         }
     }
 
@@ -60410,20 +60402,16 @@ export class SendTestEmailInput implements ISendTestEmailInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["emailAddress"] = this.emailAddress;
-        data["isUserSmtpEnabled"] = this.isUserSmtpEnabled;
         data["from"] = this.from ? this.from.toJSON() : <any>undefined;
         data["smtp"] = this.smtp ? this.smtp.toJSON() : <any>undefined;
-        data["signatureHtml"] = this.signatureHtml;
         return data; 
     }
 }
 
 export interface ISendTestEmailInput {
     emailAddress: string;
-    isUserSmtpEnabled: boolean | undefined;
     from: EmailFromSettings | undefined;
     smtp: EmailSmtpSettings | undefined;
-    signatureHtml: string | undefined;
 }
 
 export enum EmailTemplateType {
@@ -75406,9 +75394,9 @@ export interface IUpdateMonthlyGoalInput {
 
 export class UserEmailSettings implements IUserEmailSettings {
     isUserSmtpEnabled!: boolean | undefined;
+    signatureHtml!: string | undefined;
     from!: EmailFromSettings | undefined;
     smtp!: EmailSmtpSettings | undefined;
-    signatureHtml!: string | undefined;
 
     constructor(data?: IUserEmailSettings) {
         if (data) {
@@ -75422,9 +75410,9 @@ export class UserEmailSettings implements IUserEmailSettings {
     init(data?: any) {
         if (data) {
             this.isUserSmtpEnabled = data["isUserSmtpEnabled"];
+            this.signatureHtml = data["signatureHtml"];
             this.from = data["from"] ? EmailFromSettings.fromJS(data["from"]) : <any>undefined;
             this.smtp = data["smtp"] ? EmailSmtpSettings.fromJS(data["smtp"]) : <any>undefined;
-            this.signatureHtml = data["signatureHtml"];
         }
     }
 
@@ -75438,18 +75426,18 @@ export class UserEmailSettings implements IUserEmailSettings {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isUserSmtpEnabled"] = this.isUserSmtpEnabled;
+        data["signatureHtml"] = this.signatureHtml;
         data["from"] = this.from ? this.from.toJSON() : <any>undefined;
         data["smtp"] = this.smtp ? this.smtp.toJSON() : <any>undefined;
-        data["signatureHtml"] = this.signatureHtml;
         return data; 
     }
 }
 
 export interface IUserEmailSettings {
     isUserSmtpEnabled: boolean | undefined;
+    signatureHtml: string | undefined;
     from: EmailFromSettings | undefined;
     smtp: EmailSmtpSettings | undefined;
-    signatureHtml: string | undefined;
 }
 
 export class PropertyLinkDto implements IPropertyLinkDto {

@@ -15,6 +15,7 @@ import { NgxFileDropEntry } from 'ngx-file-drop';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
+import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -83,7 +84,11 @@ export class EmailTemplateDialogComponent implements OnInit {
     @Output() onTemplateDelete: EventEmitter<number> = new EventEmitter<number>();
 
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
-    isSettingsAllowed = this.permission.isGranted(AppPermissions.AdministrationTenantSettings);
+    isSettingsAllowed = this.permission.isGranted(AppPermissions.AdministrationTenantHosts) 
+        || (this.appService.isHostTenant ? 
+            this.permission.isGranted(AppPermissions.AdministrationHostSettings) :
+            this.permission.isGranted(AppPermissions.AdministrationTenantSettings)
+    );
 
     buttons: IDialogButton[];
     _refresh: Subject<null> = new Subject<null>();
@@ -148,6 +153,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         private communicationProxy: ContactCommunicationServiceProxy,
         private documentsService: DocumentsService,
         public changeDetectorRef: ChangeDetectorRef,
+        public appService: AppService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
@@ -189,7 +195,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     initFromField() {
-        if (this.data.from instanceof Array) {
+        if (this.data.from instanceof Array && this.data.from.length) {
             let from = this.data.from.find(item => item.userId);
             if (this.from = from && from.address)
                 this.data.isFromUserEmailAddress = true;
