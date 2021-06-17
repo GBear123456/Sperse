@@ -374,7 +374,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
 
     readonly importSubscriptionFields = {
         productCode: '',
-        paymentPeriodType: ''
+        paymentPeriodType: '',
+        startDate: moment(),
+        endDate: moment()
     }
 
     readonly mappingObjectNames = {
