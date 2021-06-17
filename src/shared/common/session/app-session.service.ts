@@ -118,7 +118,7 @@ export class AppSessionService {
                 this._user = result.user;
                 this._tenant = result.tenant;
 
-                if (AppConsts.isMobile && this.tenant.customLayoutType == LayoutType.BankCode)
+                if (AppConsts.isMobile && this.tenant && this.tenant.customLayoutType == LayoutType.BankCode)
                     AppConsts.appMemberPortalUrl = undefined;
                 else if (this.featureService.isEnabled(AppFeatures.AdminCustomizations))
                     this.tenantHostProxy.getMemberPortalUrl().subscribe(res => {
