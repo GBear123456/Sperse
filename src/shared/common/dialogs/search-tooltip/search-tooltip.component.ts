@@ -73,13 +73,15 @@ export class SearchTooltipComponent {
     }
 
     windowClick(event) {
-        let tooltip = this.tooltip.instance.element(),
-            target = event.target;
-        while(target.tagName.toLowerCase() != 'body') {
-            target = target.parentNode;
-            if (tooltip == target)
-                return ;
+        let target = event.target;
+        if (target) {
+            let tooltip = this.tooltip.instance.element();
+            while(target.tagName.toLowerCase() != 'body') {
+                target = target.parentNode;
+                if (tooltip == target)
+                    return ;
+            }
+            this.hide();
         }
-        this.hide();
     }
 }
