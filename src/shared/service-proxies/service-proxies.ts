@@ -8194,8 +8194,8 @@ export class ContactServiceProxy {
      * @affiliateCode (optional) 
      * @return Success
      */
-    getContactInfoByAffiliateCode(affiliateCode: string | null | undefined): Observable<GetContactInfoByAffiliateCodeOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactInfoByAffiliateCode?";
+    getAffiliateInfo(affiliateCode: string | null | undefined): Observable<GetAffiliateInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetAffiliateInfo?";
         if (affiliateCode !== undefined)
             url_ += "affiliateCode=" + encodeURIComponent("" + affiliateCode) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -8210,20 +8210,20 @@ export class ContactServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetContactInfoByAffiliateCode(response_);
+            return this.processGetAffiliateInfo(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetContactInfoByAffiliateCode(<any>response_);
+                    return this.processGetAffiliateInfo(<any>response_);
                 } catch (e) {
-                    return <Observable<GetContactInfoByAffiliateCodeOutput>><any>_observableThrow(e);
+                    return <Observable<GetAffiliateInfoOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetContactInfoByAffiliateCodeOutput>><any>_observableThrow(response_);
+                return <Observable<GetAffiliateInfoOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetContactInfoByAffiliateCode(response: HttpResponseBase): Observable<GetContactInfoByAffiliateCodeOutput> {
+    protected processGetAffiliateInfo(response: HttpResponseBase): Observable<GetAffiliateInfoOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -8234,7 +8234,7 @@ export class ContactServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetContactInfoByAffiliateCodeOutput.fromJS(resultData200) : new GetContactInfoByAffiliateCodeOutput();
+            result200 = resultData200 ? GetAffiliateInfoOutput.fromJS(resultData200) : new GetAffiliateInfoOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -8242,7 +8242,7 @@ export class ContactServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetContactInfoByAffiliateCodeOutput>(<any>null);
+        return _observableOf<GetAffiliateInfoOutput>(<any>null);
     }
 
     /**
@@ -51349,8 +51349,9 @@ export interface IContactInfoDto {
     subContactsCount: number | undefined;
 }
 
-export class GetContactInfoByAffiliateCodeOutput implements IGetContactInfoByAffiliateCodeOutput {
+export class GetAffiliateInfoOutput implements IGetAffiliateInfoOutput {
     id!: number | undefined;
+    groupId!: string | undefined;
     typeId!: string | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
@@ -51358,8 +51359,11 @@ export class GetContactInfoByAffiliateCodeOutput implements IGetContactInfoByAff
     phoneNumber!: string | undefined;
     affiliateCode!: string | undefined;
     userId!: number | undefined;
+    photoUrl!: string | undefined;
+    organizationUnitName!: string | undefined;
+    organizationUnitLogoUrl!: string | undefined;
 
-    constructor(data?: IGetContactInfoByAffiliateCodeOutput) {
+    constructor(data?: IGetAffiliateInfoOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -51371,6 +51375,7 @@ export class GetContactInfoByAffiliateCodeOutput implements IGetContactInfoByAff
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.groupId = data["groupId"];
             this.typeId = data["typeId"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
@@ -51378,12 +51383,15 @@ export class GetContactInfoByAffiliateCodeOutput implements IGetContactInfoByAff
             this.phoneNumber = data["phoneNumber"];
             this.affiliateCode = data["affiliateCode"];
             this.userId = data["userId"];
+            this.photoUrl = data["photoUrl"];
+            this.organizationUnitName = data["organizationUnitName"];
+            this.organizationUnitLogoUrl = data["organizationUnitLogoUrl"];
         }
     }
 
-    static fromJS(data: any): GetContactInfoByAffiliateCodeOutput {
+    static fromJS(data: any): GetAffiliateInfoOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new GetContactInfoByAffiliateCodeOutput();
+        let result = new GetAffiliateInfoOutput();
         result.init(data);
         return result;
     }
@@ -51391,6 +51399,7 @@ export class GetContactInfoByAffiliateCodeOutput implements IGetContactInfoByAff
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["groupId"] = this.groupId;
         data["typeId"] = this.typeId;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
@@ -51398,12 +51407,16 @@ export class GetContactInfoByAffiliateCodeOutput implements IGetContactInfoByAff
         data["phoneNumber"] = this.phoneNumber;
         data["affiliateCode"] = this.affiliateCode;
         data["userId"] = this.userId;
+        data["photoUrl"] = this.photoUrl;
+        data["organizationUnitName"] = this.organizationUnitName;
+        data["organizationUnitLogoUrl"] = this.organizationUnitLogoUrl;
         return data; 
     }
 }
 
-export interface IGetContactInfoByAffiliateCodeOutput {
+export interface IGetAffiliateInfoOutput {
     id: number | undefined;
+    groupId: string | undefined;
     typeId: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
@@ -51411,6 +51424,9 @@ export interface IGetContactInfoByAffiliateCodeOutput {
     phoneNumber: string | undefined;
     affiliateCode: string | undefined;
     userId: number | undefined;
+    photoUrl: string | undefined;
+    organizationUnitName: string | undefined;
+    organizationUnitLogoUrl: string | undefined;
 }
 
 export class ContactLastModificationInfoDto implements IContactLastModificationInfoDto {
@@ -54963,11 +54979,15 @@ export interface IMessageListDtoPagedResultDto {
     items: MessageListDto[] | undefined;
 }
 
+export enum EmailSettingsSource {
+    Tenant = "Tenant", 
+    User = "User", 
+}
+
 export class EmailFromInfo implements IEmailFromInfo {
-    address!: string | undefined;
-    displayName!: string | undefined;
-    ccAddress!: string | undefined;
-    userId!: number | undefined;
+    emailSettingsSource!: EmailSettingsSource | undefined;
+    emailAddress!: string | undefined;
+    ccEmailAddress!: string | undefined;
 
     constructor(data?: IEmailFromInfo) {
         if (data) {
@@ -54980,10 +55000,9 @@ export class EmailFromInfo implements IEmailFromInfo {
 
     init(data?: any) {
         if (data) {
-            this.address = data["address"];
-            this.displayName = data["displayName"];
-            this.ccAddress = data["ccAddress"];
-            this.userId = data["userId"];
+            this.emailSettingsSource = data["emailSettingsSource"];
+            this.emailAddress = data["emailAddress"];
+            this.ccEmailAddress = data["ccEmailAddress"];
         }
     }
 
@@ -54996,19 +55015,17 @@ export class EmailFromInfo implements IEmailFromInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["address"] = this.address;
-        data["displayName"] = this.displayName;
-        data["ccAddress"] = this.ccAddress;
-        data["userId"] = this.userId;
+        data["emailSettingsSource"] = this.emailSettingsSource;
+        data["emailAddress"] = this.emailAddress;
+        data["ccEmailAddress"] = this.ccEmailAddress;
         return data; 
     }
 }
 
 export interface IEmailFromInfo {
-    address: string | undefined;
-    displayName: string | undefined;
-    ccAddress: string | undefined;
-    userId: number | undefined;
+    emailSettingsSource: EmailSettingsSource | undefined;
+    emailAddress: string | undefined;
+    ccEmailAddress: string | undefined;
 }
 
 export class Attachment implements IAttachment {
@@ -55206,7 +55223,7 @@ export interface IFileInfo {
 export class SendEmailInput implements ISendEmailInput {
     contactId!: number;
     parentId!: number | undefined;
-    isFromUserEmailAddress!: boolean | undefined;
+    emailSettingsSource!: EmailSettingsSource;
     to!: string[];
     replyTo!: string[] | undefined;
     cc!: string[] | undefined;
@@ -55231,7 +55248,7 @@ export class SendEmailInput implements ISendEmailInput {
         if (data) {
             this.contactId = data["contactId"];
             this.parentId = data["parentId"];
-            this.isFromUserEmailAddress = data["isFromUserEmailAddress"];
+            this.emailSettingsSource = data["emailSettingsSource"];
             if (data["to"] && data["to"].constructor === Array) {
                 this.to = [];
                 for (let item of data["to"])
@@ -55273,7 +55290,7 @@ export class SendEmailInput implements ISendEmailInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["parentId"] = this.parentId;
-        data["isFromUserEmailAddress"] = this.isFromUserEmailAddress;
+        data["emailSettingsSource"] = this.emailSettingsSource;
         if (this.to && this.to.constructor === Array) {
             data["to"] = [];
             for (let item of this.to)
@@ -55308,7 +55325,7 @@ export class SendEmailInput implements ISendEmailInput {
 export interface ISendEmailInput {
     contactId: number;
     parentId: number | undefined;
-    isFromUserEmailAddress: boolean | undefined;
+    emailSettingsSource: EmailSettingsSource;
     to: string[];
     replyTo: string[] | undefined;
     cc: string[] | undefined;

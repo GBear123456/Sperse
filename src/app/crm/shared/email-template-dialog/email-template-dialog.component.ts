@@ -34,7 +34,7 @@ import {
     GetTemplateReponse,
     ContactServiceProxy,
     GetEmailDataOutput,
-    EmailFromInfo,
+    EmailSettingsSource,
     EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
@@ -65,7 +65,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     ckEditor: any;
     templateLoaded: boolean;
-    from: string;
+    emailSettingsSource: EmailSettingsSource;
     showCC = false;
     showBCC = false;
     tagLastValue: string;
@@ -167,7 +167,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             if (!this.data.tags && this.data.contact)
                 this.communicationProxy.getEmailData(
                     undefined, this.data.contact.id
-                ).subscribe((res: GetEmailDataOutput) => {                    
+                ).subscribe((res: GetEmailDataOutput) => {
                     this.data.tags = res.tags;
                     this.data.from = res.from;
                     this.initFromField();
@@ -196,15 +196,16 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     initFromField() {
         if (this.data.from instanceof Array && this.data.from.length) {
-            let from = this.data.from.find(item => item.userId);
-            if (this.from = from && from.address)
-                this.data.isFromUserEmailAddress = true;
-            else {
-                this.from = this.data.from[0].address;
-                this.data.isFromUserEmailAddress = false;
+            let from = this.data.from.find(item => item.emailSettingsSource == EmailSettingsSource.User);
+            if (from) {
+                this.emailSettingsSource = from.emailSettingsSource;
+            } else {
+                from = this.data.from[0];
+                this.emailSettingsSource = from.emailSettingsSource;
             }
-            if (from.ccAddress) {
-                this.data.cc = [from.ccAddress];
+            this.data.emailSettingsSource = this.emailSettingsSource;
+            if (from && from.ccEmailAddress) {
+                this.data.cc = [from.ccEmailAddress];
                 this.showCC = true;
             }
             this.changeDetectorRef.detectChanges();
@@ -439,12 +440,12 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onFromChanged(event) {
         let from = this.data.from.find(
-            item => item.address == event.value
+            item => item.emailSettingsSource == event.value
         );
         if (from) {
-            this.data.isFromUserEmailAddress = Boolean(from.userId);
-            if (from.ccAddress) {
-                this.data.cc = [from.ccAddress]; 
+            this.data.emailSettingsSource = from.emailSettingsSource;
+            if (from.ccEmailAddress) {
+                this.data.cc = [from.ccEmailAddress];
                 this.showCC = true;
             }
             this.changeDetectorRef.detectChanges();

@@ -44,9 +44,9 @@
                             width="calc(50% - 52px)"
                             height="40px"
                             placeholder=""
-                            [value]="from"
-                            valueExpr="address"
-                            displayExpr="address"
+                            [value]="emailSettingsSource"
+                            valueExpr="emailSettingsSource"
+                            displayExpr="emailAddress"
                             [dataSource]="data.from"
                             [disabled]="templateEditMode"
                             (onValueChanged)="onFromChanged($event)">
