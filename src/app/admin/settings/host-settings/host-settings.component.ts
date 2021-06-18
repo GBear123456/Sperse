@@ -1,10 +1,11 @@
 /** Core imports */
-import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, Injector, OnInit, AfterViewInit, ViewChild, ElementRef,
+    OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
 import { Observable, forkJoin } from 'rxjs';
-import { finalize, tap, first, map } from 'rxjs/operators';
+import { finalize, tap, first, map, delay } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
@@ -22,6 +23,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { AppConsts } from '@root/shared/AppConsts';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
+import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
     templateUrl: './host-settings.component.html',
@@ -30,7 +32,8 @@ import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-set
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantPaymentSettingsServiceProxy]
 })
-export class HostSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class HostSettingsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild('tabGroup', { static: false }) tabGroup: ElementRef;
 
     loading = false;
     hostSettings: HostSettingsEditDto;
@@ -64,11 +67,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         }
     ];
     EmailTemplateType = EmailTemplateType;
-    tabIndex: Observable<number> = this.route.queryParams.pipe(first(), 
-        map((params: Params) => {
-            return (params['tab'] == 'smtp' ? 4 : 0);
-        })
-    );
+    tabIndex: Observable<number>;
 
     constructor(
         injector: Injector,
@@ -134,6 +133,20 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     ngOnInit(): void {
         const self = this;
         self.init();
+    }
+
+    ngAfterViewInit() {
+        this.tabIndex = this.route.queryParams.pipe(
+            first(), delay(100), 
+            map((params: Params) => {
+                return (params['tab'] == 'smtp' ? 
+                    DomHelper.getElementIndexByInnerText(
+                        this.tabGroup.nativeElement.getElementsByClassName('mat-tab-label'), 
+                        this.l('EmailSmtp')
+                    ) : 0
+                );
+            })
+        );        
     }
 
     ngOnDestroy() {

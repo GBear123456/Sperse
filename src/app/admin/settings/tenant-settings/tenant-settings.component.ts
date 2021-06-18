@@ -6,7 +6,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { IAjaxResponse } from '@abp/abpHttpInterceptor';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of } from 'rxjs';
-import { finalize, tap, first, map } from 'rxjs/operators';
+import { finalize, tap, first, map, delay } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
@@ -48,6 +48,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
+import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -61,6 +62,7 @@ import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-set
     ]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @ViewChild('tabGroup', { static: false }) tabGroup: ElementRef;
     @ViewChild('privacyInput', { static: false }) privacyInput: ElementRef;
     @ViewChild('tosInput', { static: false }) tosInput: ElementRef;
     @ViewChild('logoInput', { static: false }) logoInput: ElementRef;
@@ -120,9 +122,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         }
     ];
     EmailTemplateType = EmailTemplateType;
-    tabIndex: Observable<number> = this.route.queryParams.pipe(first(), map((params: Params) => {
-        return (params['tab'] == 'smtp' ? 6 : 0);
-    }));
+    tabIndex: Observable<number>;
 
     constructor(
         injector: Injector,
@@ -149,6 +149,20 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this.testEmailAddress = this.appSessionService.user.emailAddress;
         this.getSettings();
         this.initUploaders();
+    }
+
+    ngAfterViewInit() {
+        this.tabIndex = this.route.queryParams.pipe(
+            first(), delay(100), 
+            map((params: Params) => {
+                return (params['tab'] == 'smtp' ? 
+                    DomHelper.getElementIndexByInnerText(
+                        this.tabGroup.nativeElement.getElementsByClassName('mat-tab-label'), 
+                        this.l('EmailSmtp')
+                    ) : 0
+                );
+            })
+        );        
     }
 
     ngOnDestroy() {
