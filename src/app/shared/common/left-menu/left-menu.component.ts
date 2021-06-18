@@ -30,7 +30,7 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LeftMenuComponent implements AfterViewInit, OnDestroy, OnInit {
-    @HostBinding('class.collapsed') @Input() collapsed = false;
+    @HostBinding('class.collapsed') @Input() collapsed = AppConsts.isMobile;
     @HostBinding('class.mobile') mobile: boolean = AppConsts.isMobile;
     @HostBinding('style.visibility') visibility = 'hidden';
     @HostBinding('class.fullscreen') public isFullscreenMode;

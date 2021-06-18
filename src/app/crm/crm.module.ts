@@ -46,6 +46,7 @@ import { FileUploadModule } from 'ng2-file-upload';
 import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { PipelineModule } from '@app/shared/pipeline/pipeline.module';
@@ -203,7 +204,7 @@ import { ProductsComponent } from './products/products.component';
         DataSourceService,
         LeftMenuService,
         CalendarService,
-        { provide: 'leftMenuCollapsed', useValue: false },
+        { provide: 'leftMenuCollapsed', useValue: AppConsts.isMobile },
         { provide: 'showGlobalSearch', useValue: true }
     ],
     entryComponents: [
