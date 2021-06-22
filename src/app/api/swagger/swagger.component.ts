@@ -9,6 +9,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './swagger.component.html',
@@ -20,6 +21,7 @@ export class SwaggerComponent extends AppComponentBase implements AfterViewInit,
 
     constructor(
         injector: Injector,
+        private appService: AppService,
         private sanitizer: DomSanitizer,
         private leftMenuService: LeftMenuService
     ) {
@@ -31,6 +33,7 @@ export class SwaggerComponent extends AppComponentBase implements AfterViewInit,
     }
 
     ngOnInit() {
+        this.appService.isClientSearchDisabled = true;
         window.addEventListener('message', this.onSwaggerLoaded);
         if (AppConsts.remoteServiceBaseUrl == AppConsts.appBaseUrl) {
             this.link = this.sanitizer
