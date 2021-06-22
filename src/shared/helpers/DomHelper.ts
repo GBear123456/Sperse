@@ -1,4 +1,12 @@
 export class DomHelper {
+    static getElementIndexByInnerText(collection: any[], innerText: string): number {
+        if (collection && collection.length)
+            for (let i = 0; i < collection.length; i++)
+                if (collection[i].innerText == innerText)
+                    return i;
+        return 0;
+    }
+
     static isDomElementVisible(element: any): boolean {
         while(element.tagName.toLowerCase() != 'body') {
             if (element.style.display == 'none')

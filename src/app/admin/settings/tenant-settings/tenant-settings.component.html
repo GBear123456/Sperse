@@ -2,7 +2,7 @@
     <app-headline [names]="[ l('Settings') ]"
                   [buttons]="headlineButtons">
     </app-headline>
-    <div class="wrapper">
+    <div class="wrapper" #tabGroup>
         <mat-tab-group *ngIf="settings" [selectedIndex]="tabIndex | async">
             <mat-tab [label]="l('General')" *ngIf="showTimezoneSelection">
                 <dx-scroll-view showScrollbar="onHover">

@@ -476,34 +476,15 @@ export class UserInboxComponent implements OnDestroy {
 
         let parentId = this.activeMessage.parentId || this.activeMessage.id;
 
-        (this.isActiveEmilType ? this.contactsService.sendEmail({
-                contactId: this.contactId,
-                parentId: parentId,
-                emailSettingsSource: undefined,
-                to: [this.activeMessage.to],
-                replyTo: undefined,
-                cc: undefined,
-                bcc: undefined,
-                subject: 'Re: ' + this.activeMessage.subject,
-                body: this.instantMessageText,
-                attachments: this.instantMessageAttachments.map(item => {
-                    return new FileInfo({
-                        id: item.id,
-                        name: item.name
-                    });
-                })
-            }) : this.contactsService.sendSMS({
+        this.contactsService.sendSMS({
                 contactId: this.contactId,
                 parentId: parentId,
                 message: this.instantMessageText,
                 phoneNumber: this.activeMessage.isInbound ? this.activeMessage.from : this.activeMessage.to
-            })
-        ).subscribe(res => {
+        }).subscribe(res => {
             if (!isNaN(res)) {
                 this.invalidate();
-                this.notifyService.success(this.ls.l(
-                    this.isActiveEmilType ? 'MailSent' : 'MessageSuccessfullySent'
-                ));
+                this.notifyService.success(this.ls.l('MessageSuccessfullySent'));
             }
         });
         this.instantMessageAttachments = [];
@@ -608,8 +589,7 @@ export class UserInboxComponent implements OnDestroy {
         let messageStatus;
         if (messageDto.isInbound) {
             messageStatus = this.ls.l('Inbox');
-        }
-        else {
+        } else {
             messageStatus = messageDto.status;
             if (messageDto.recepients && messageDto.recepients.length) {
                 let recipientsCount = messageDto.deliveryType == CommunicationMessageDeliveryType.SMS ? 1 : messageDto.to.split(',').length;
