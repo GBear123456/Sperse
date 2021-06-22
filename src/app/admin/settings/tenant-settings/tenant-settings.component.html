@@ -9,17 +9,16 @@
                     <div class="form-group" *ngIf="showTimezoneSelection">
                         <label for="Timezone">{{l("Timezone")}}</label>
                         <timezone-combo id="Timezone"
-                            [(selectedTimeZone)]="settings.general.timezone"
-                            [defaultTimezoneScope]="defaultTimezoneScope">
+                                        [(selectedTimeZone)]="settings.general.timezone"
+                                        [defaultTimezoneScope]="defaultTimezoneScope">
                         </timezone-combo>
                     </div>
                     <div class="form-group">
                         <label for="DefaultCountry">{{l("DefaultCountry")}}</label>
-                        <dx-select-box
-                            valueExpr="key"
-                            displayExpr="text"
-                            [(value)]="settings.general.defaultCountryCode"
-                            [dataSource]="supportedCountries">
+                        <dx-select-box valueExpr="key"
+                                       displayExpr="text"
+                                       [(value)]="settings.general.defaultCountryCode"
+                                       [dataSource]="supportedCountries">
                         </dx-select-box>
                     </div>
                     <div class="form-group">
@@ -311,7 +310,7 @@
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">
                         <label for="MemberPortalUrl">{{l("MemberPortalUrl")}}</label>
-                        <input #memberPortalUrl="ngModel" (change)="changeDetection.detectChanges()" id="MemberPortalUrl" type="url" name="MemberPortalUrl" class="form-control" [(ngModel)]="memberPortalSettings.url" maxlength="128"  [pattern]="urlRegexPattern">
+                        <input #memberPortalUrl="ngModel" (change)="changeDetection.detectChanges()" id="MemberPortalUrl" type="url" name="MemberPortalUrl" class="form-control" [(ngModel)]="memberPortalSettings.url" maxlength="128" [pattern]="urlRegexPattern">
                     </div>
                     <div>
                         <span class="help-block text-danger" *ngIf="!memberPortalUrl.valid && !memberPortalUrl.pristine">{{l("Invalid_MemberPortalUrl")}}</span>
@@ -470,6 +469,20 @@
                         <div class="form-group">
                             <label for="achWorksSOAPKey">{{l("SOAPKey")}}</label>
                             <input id="achWorksSOAPKey" type="text" name="achWorksSOAPKey" class="form-control" [(ngModel)]="achWorksSettings.soapKey" maxlength="128">
+                        </div>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('Stripe')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="StripeSecretKey">{{l("Secret key")}}</label>
+                            <input id="StripeSecretKey" type="text" name="StripeSecretKey" class="form-control" [(ngModel)]="stripePaymentSettings.apiKey">
+                        </div>
+                        <div class="form-group">
+                            <label for="StripeWebhookSecret">{{l("Webhook secret")}}</label>
+                            <input id="StripeWebhookSecret" type="text" name="StripeWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.webhookSingingSecret">
                         </div>
                     </div>
                 </dx-scroll-view>
@@ -637,7 +650,7 @@
                     </div>
                     <p>
                         <span [innerHtml]="l('SendGridWebhookHint', 'https://app.sendgrid.com/settings/mail_settings')"></span>
-                        <br /><b>{{getSendGridWebhookUrl()}}</b><br/><br />
+                        <br /><b>{{getSendGridWebhookUrl()}}</b><br /><br />
                     </p>
                     <ng-container *ngIf="isPerformancePartner">
                         <div class="form-group">

@@ -8194,8 +8194,8 @@ export class ContactServiceProxy {
      * @affiliateCode (optional) 
      * @return Success
      */
-    getContactInfoByAffiliateCode(affiliateCode: string | null | undefined): Observable<GetContactInfoByAffiliateCodeOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactInfoByAffiliateCode?";
+    getAffiliateInfo(affiliateCode: string | null | undefined): Observable<GetAffiliateInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetAffiliateInfo?";
         if (affiliateCode !== undefined)
             url_ += "affiliateCode=" + encodeURIComponent("" + affiliateCode) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -8210,20 +8210,20 @@ export class ContactServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetContactInfoByAffiliateCode(response_);
+            return this.processGetAffiliateInfo(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetContactInfoByAffiliateCode(<any>response_);
+                    return this.processGetAffiliateInfo(<any>response_);
                 } catch (e) {
-                    return <Observable<GetContactInfoByAffiliateCodeOutput>><any>_observableThrow(e);
+                    return <Observable<GetAffiliateInfoOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<GetContactInfoByAffiliateCodeOutput>><any>_observableThrow(response_);
+                return <Observable<GetAffiliateInfoOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetContactInfoByAffiliateCode(response: HttpResponseBase): Observable<GetContactInfoByAffiliateCodeOutput> {
+    protected processGetAffiliateInfo(response: HttpResponseBase): Observable<GetAffiliateInfoOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -8234,7 +8234,7 @@ export class ContactServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? GetContactInfoByAffiliateCodeOutput.fromJS(resultData200) : new GetContactInfoByAffiliateCodeOutput();
+            result200 = resultData200 ? GetAffiliateInfoOutput.fromJS(resultData200) : new GetAffiliateInfoOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -8242,7 +8242,7 @@ export class ContactServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<GetContactInfoByAffiliateCodeOutput>(<any>null);
+        return _observableOf<GetAffiliateInfoOutput>(<any>null);
     }
 
     /**
@@ -34208,6 +34208,110 @@ export class TenantPaymentSettingsServiceProxy {
     /**
      * @return Success
      */
+    getStripeSettings(): Observable<StripeSettings> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetStripeSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStripeSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStripeSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<StripeSettings>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<StripeSettings>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetStripeSettings(response: HttpResponseBase): Observable<StripeSettings> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? StripeSettings.fromJS(resultData200) : new StripeSettings();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<StripeSettings>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateStripeSettings(body: StripeSettings | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/UpdateStripeSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateStripeSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateStripeSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateStripeSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     getInvoiceSettings(): Observable<InvoiceSettings> {
         let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetInvoiceSettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -51389,8 +51493,9 @@ export interface IContactInfoDto {
     subContactsCount: number | undefined;
 }
 
-export class GetContactInfoByAffiliateCodeOutput implements IGetContactInfoByAffiliateCodeOutput {
+export class GetAffiliateInfoOutput implements IGetAffiliateInfoOutput {
     id!: number | undefined;
+    groupId!: string | undefined;
     typeId!: string | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
@@ -51398,8 +51503,11 @@ export class GetContactInfoByAffiliateCodeOutput implements IGetContactInfoByAff
     phoneNumber!: string | undefined;
     affiliateCode!: string | undefined;
     userId!: number | undefined;
+    photoUrl!: string | undefined;
+    organizationUnitName!: string | undefined;
+    organizationUnitLogoUrl!: string | undefined;
 
-    constructor(data?: IGetContactInfoByAffiliateCodeOutput) {
+    constructor(data?: IGetAffiliateInfoOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -51411,6 +51519,7 @@ export class GetContactInfoByAffiliateCodeOutput implements IGetContactInfoByAff
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.groupId = data["groupId"];
             this.typeId = data["typeId"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
@@ -51418,12 +51527,15 @@ export class GetContactInfoByAffiliateCodeOutput implements IGetContactInfoByAff
             this.phoneNumber = data["phoneNumber"];
             this.affiliateCode = data["affiliateCode"];
             this.userId = data["userId"];
+            this.photoUrl = data["photoUrl"];
+            this.organizationUnitName = data["organizationUnitName"];
+            this.organizationUnitLogoUrl = data["organizationUnitLogoUrl"];
         }
     }
 
-    static fromJS(data: any): GetContactInfoByAffiliateCodeOutput {
+    static fromJS(data: any): GetAffiliateInfoOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new GetContactInfoByAffiliateCodeOutput();
+        let result = new GetAffiliateInfoOutput();
         result.init(data);
         return result;
     }
@@ -51431,6 +51543,7 @@ export class GetContactInfoByAffiliateCodeOutput implements IGetContactInfoByAff
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["groupId"] = this.groupId;
         data["typeId"] = this.typeId;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
@@ -51438,12 +51551,16 @@ export class GetContactInfoByAffiliateCodeOutput implements IGetContactInfoByAff
         data["phoneNumber"] = this.phoneNumber;
         data["affiliateCode"] = this.affiliateCode;
         data["userId"] = this.userId;
+        data["photoUrl"] = this.photoUrl;
+        data["organizationUnitName"] = this.organizationUnitName;
+        data["organizationUnitLogoUrl"] = this.organizationUnitLogoUrl;
         return data; 
     }
 }
 
-export interface IGetContactInfoByAffiliateCodeOutput {
+export interface IGetAffiliateInfoOutput {
     id: number | undefined;
+    groupId: string | undefined;
     typeId: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
@@ -51451,6 +51568,9 @@ export interface IGetContactInfoByAffiliateCodeOutput {
     phoneNumber: string | undefined;
     affiliateCode: string | undefined;
     userId: number | undefined;
+    photoUrl: string | undefined;
+    organizationUnitName: string | undefined;
+    organizationUnitLogoUrl: string | undefined;
 }
 
 export class ContactLastModificationInfoDto implements IContactLastModificationInfoDto {
@@ -80918,6 +81038,46 @@ export interface IBankTransferSettings {
     bankRoutingNumber: string | undefined;
     swiftCodeForUSDollar: string | undefined;
     swiftCode: string | undefined;
+}
+
+export class StripeSettings implements IStripeSettings {
+    apiKey!: string | undefined;
+    webhookSingingSecret!: string | undefined;
+
+    constructor(data?: IStripeSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.apiKey = data["apiKey"];
+            this.webhookSingingSecret = data["webhookSingingSecret"];
+        }
+    }
+
+    static fromJS(data: any): StripeSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new StripeSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["apiKey"] = this.apiKey;
+        data["webhookSingingSecret"] = this.webhookSingingSecret;
+        return data; 
+    }
+}
+
+export interface IStripeSettings {
+    apiKey: string | undefined;
+    webhookSingingSecret: string | undefined;
 }
 
 export enum Currency {

@@ -40,7 +40,8 @@ import {
     YTelSettingsEditDto,
     LayoutType,
     RapidSettingsDto,
-    EmailTemplateType
+    EmailTemplateType,
+    StripeSettings
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -78,6 +79,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
     payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
+    stripePaymentSettings: StripeSettings = new StripeSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
     isTenantHosts: boolean = this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
@@ -158,6 +160,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
             this.tenantPaymentSettingsService.getPayPalSettings(),
             this.tenantPaymentSettingsService.getACHWorksSettings(),
+            this.tenantPaymentSettingsService.getStripeSettings(),
             this.tenantPaymentSettingsService.getRecurlyPaymentSettings(),
             this.isCreditReportFeatureEnabled ? this.tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
@@ -185,6 +188,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                     this.baseCommercePaymentSettings,
                     this.payPalPaymentSettings,
                     this.achWorksSettings,
+                    this.stripePaymentSettings,
                     this.recurlySettings,
                     this.idcsSettings,
                     this.epcvipSettings,
@@ -352,6 +356,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
+            this.tenantPaymentSettingsService.updateStripeSettings(this.stripePaymentSettings),
             this.tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings),
             this.tenantSettingsService.updateSendGridSettings(this.sendGridSettings),
             this.tenantSettingsService.updateYTelSettings(this.yTelSettings)
