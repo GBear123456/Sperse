@@ -16,7 +16,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     ComboboxItemDto, CommonLookupServiceProxy, SettingScopes, HostSettingsEditDto, HostSettingsServiceProxy,
     PayPalSettings, BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings,
-    YTelSettingsEditDto, EmailTemplateType
+    StripeSettings, YTelSettingsEditDto, EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
@@ -45,6 +45,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
     baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
     payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
+    stripePaymentSettings: StripeSettings = new StripeSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
     yTelSettings: YTelSettingsEditDto = new YTelSettingsEditDto();
     supportedCountries = Object.keys(Country).map(item => {
@@ -94,11 +95,12 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
             this.tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
             this.tenantPaymentSettingsService.getPayPalSettings(),
             this.tenantPaymentSettingsService.getACHWorksSettings(),
+            this.tenantPaymentSettingsService.getStripeSettings(),
             this.tenantPaymentSettingsService.getRecurlyPaymentSettings(),
             this.hostSettingService.getYTelSettings()
         ).pipe(
             finalize(() => { this.changeDetection.detectChanges(); })
-        ).subscribe(([allSettings, baseCommerceSettings, payPalSettings, achWorksSettings, recurlySettings, yTelSettings]) => {
+        ).subscribe(([allSettings, baseCommerceSettings, payPalSettings, achWorksSettings, stripeSettings, recurlySettings, yTelSettings]) => {
             this.hostSettings = allSettings;
             this.initialDefaultCountry = allSettings.general.defaultCountryCode;
             this.initialTimeZone = allSettings.general.timezone;
@@ -106,6 +108,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
             this.baseCommercePaymentSettings = baseCommerceSettings;
             this.payPalPaymentSettings = payPalSettings;
             this.achWorksSettings = achWorksSettings;
+            this.stripePaymentSettings = stripeSettings;
             this.recurlySettings = recurlySettings;
             this.yTelSettings = yTelSettings;
         });
@@ -169,6 +172,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
             this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
+            this.tenantPaymentSettingsService.updateStripeSettings(this.stripePaymentSettings),
             this.tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings),
             this.hostSettingService.updateYTelSettings(this.yTelSettings)
         ).subscribe(() => {
