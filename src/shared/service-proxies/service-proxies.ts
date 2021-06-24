@@ -62657,11 +62657,20 @@ export interface IImportPropertyInput {
     propertyAddress: ImportAddressInput | undefined;
 }
 
+export enum RecurringPaymentFrequency {
+    Monthly = "Monthly", 
+    Annual = "Annual", 
+    LifeTime = "LifeTime", 
+}
+
 export class ImportSubscriptionInput implements IImportSubscriptionInput {
+    productCode!: string | undefined;
+    paymentPeriodType!: RecurringPaymentFrequency | undefined;
     systemType!: string | undefined;
     code!: string | undefined;
     name!: string | undefined;
     level!: string | undefined;
+    startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     amount!: number | undefined;
 
@@ -62676,10 +62685,13 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
 
     init(data?: any) {
         if (data) {
+            this.productCode = data["productCode"];
+            this.paymentPeriodType = data["paymentPeriodType"];
             this.systemType = data["systemType"];
             this.code = data["code"];
             this.name = data["name"];
             this.level = data["level"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.amount = data["amount"];
         }
@@ -62694,10 +62706,13 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["productCode"] = this.productCode;
+        data["paymentPeriodType"] = this.paymentPeriodType;
         data["systemType"] = this.systemType;
         data["code"] = this.code;
         data["name"] = this.name;
         data["level"] = this.level;
+        data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["amount"] = this.amount;
         return data; 
@@ -62705,10 +62720,13 @@ export class ImportSubscriptionInput implements IImportSubscriptionInput {
 }
 
 export interface IImportSubscriptionInput {
+    productCode: string | undefined;
+    paymentPeriodType: RecurringPaymentFrequency | undefined;
     systemType: string | undefined;
     code: string | undefined;
     name: string | undefined;
     level: string | undefined;
+    startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     amount: number | undefined;
 }
@@ -71088,12 +71106,6 @@ export interface ISubscriptionInput {
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     amount: number | undefined;
-}
-
-export enum RecurringPaymentFrequency {
-    Monthly = "Monthly", 
-    Annual = "Annual", 
-    LifeTime = "LifeTime", 
 }
 
 export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInput {
