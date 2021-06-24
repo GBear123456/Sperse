@@ -78,7 +78,7 @@ export class SearchTooltipComponent {
             let tooltip = this.tooltip.instance.element();
             while(target.tagName.toLowerCase() != 'body') {
                 target = target.parentNode;
-                if (tooltip == target)
+                if (!target || tooltip == target)
                     return ;
             }
             this.hide();
