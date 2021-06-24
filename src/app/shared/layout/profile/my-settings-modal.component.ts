@@ -126,13 +126,11 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
                         displayName: this.appSessionService.user.name + ' ' + this.appSessionService.user.surname,
                     });
                 }
-                if (!this.userEmailSettings.smtp ||
-                    (!this.userEmailSettings.smtp.useDefaultCredentials && (!this.userEmailSettings.smtp.userName || this.userEmailSettings.smtp.userName.length == 0))) {
+                if (!this.userEmailSettings.smtp || !this.userEmailSettings.smtp.userName || this.userEmailSettings.smtp.userName.length == 0) {
                     this.userEmailSettings.smtp = new EmailSmtpSettings({
                         host: undefined,
                         port: undefined,
                         enableSsl: true,
-                        useDefaultCredentials: false,
                         domain: undefined,
                         userName: this.appSessionService.user.emailAddress,
                         password: undefined

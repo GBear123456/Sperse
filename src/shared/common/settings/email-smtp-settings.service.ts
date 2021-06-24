@@ -31,7 +31,6 @@ export class EmailSmtpSettingsService {
         input.smtp.host = emailSettings.smtpHost;
         input.smtp.port = emailSettings.smtpPort;
         input.smtp.enableSsl = emailSettings.smtpEnableSsl;
-        input.smtp.useDefaultCredentials = emailSettings.smtpUseDefaultCredentials;
         input.smtp.domain = emailSettings.smtpDomain;
         input.smtp.userName = emailSettings.smtpUserName;
         input.smtp.password = emailSettings.smtpPassword;

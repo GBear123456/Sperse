@@ -60224,7 +60224,6 @@ export class EmailSmtpSettings implements IEmailSmtpSettings {
     host!: string | undefined;
     port!: number | undefined;
     enableSsl!: boolean | undefined;
-    useDefaultCredentials!: boolean | undefined;
     domain!: string | undefined;
     userName!: string | undefined;
     password!: string | undefined;
@@ -60243,7 +60242,6 @@ export class EmailSmtpSettings implements IEmailSmtpSettings {
             this.host = data["host"];
             this.port = data["port"];
             this.enableSsl = data["enableSsl"];
-            this.useDefaultCredentials = data["useDefaultCredentials"];
             this.domain = data["domain"];
             this.userName = data["userName"];
             this.password = data["password"];
@@ -60262,7 +60260,6 @@ export class EmailSmtpSettings implements IEmailSmtpSettings {
         data["host"] = this.host;
         data["port"] = this.port;
         data["enableSsl"] = this.enableSsl;
-        data["useDefaultCredentials"] = this.useDefaultCredentials;
         data["domain"] = this.domain;
         data["userName"] = this.userName;
         data["password"] = this.password;
@@ -60274,7 +60271,6 @@ export interface IEmailSmtpSettings {
     host: string | undefined;
     port: number | undefined;
     enableSsl: boolean | undefined;
-    useDefaultCredentials: boolean | undefined;
     domain: string | undefined;
     userName: string | undefined;
     password: string | undefined;
@@ -61568,7 +61564,6 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
     smtpHost!: string | undefined;
     smtpPort!: number | undefined;
     smtpEnableSsl!: boolean | undefined;
-    smtpUseDefaultCredentials!: boolean | undefined;
     smtpDomain!: string | undefined;
     smtpUserName!: string | undefined;
     smtpPassword!: string | undefined;
@@ -61589,7 +61584,6 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
             this.smtpHost = data["smtpHost"];
             this.smtpPort = data["smtpPort"];
             this.smtpEnableSsl = data["smtpEnableSsl"];
-            this.smtpUseDefaultCredentials = data["smtpUseDefaultCredentials"];
             this.smtpDomain = data["smtpDomain"];
             this.smtpUserName = data["smtpUserName"];
             this.smtpPassword = data["smtpPassword"];
@@ -61610,7 +61604,6 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
         data["smtpHost"] = this.smtpHost;
         data["smtpPort"] = this.smtpPort;
         data["smtpEnableSsl"] = this.smtpEnableSsl;
-        data["smtpUseDefaultCredentials"] = this.smtpUseDefaultCredentials;
         data["smtpDomain"] = this.smtpDomain;
         data["smtpUserName"] = this.smtpUserName;
         data["smtpPassword"] = this.smtpPassword;
@@ -61624,7 +61617,6 @@ export interface IEmailSettingsEditDto {
     smtpHost: string | undefined;
     smtpPort: number | undefined;
     smtpEnableSsl: boolean | undefined;
-    smtpUseDefaultCredentials: boolean | undefined;
     smtpDomain: string | undefined;
     smtpUserName: string | undefined;
     smtpPassword: string | undefined;
