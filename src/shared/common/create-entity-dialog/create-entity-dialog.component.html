@@ -444,7 +444,7 @@
                                                 (onSelectionChanged)="link.type = $event.addedItems[0].id"
                                                 [itemTemplate]="'linkItemTemplate'">
                                                 <div *dxTemplate="let data of 'linkItemTemplate'">
-                                                <span><img src="./assets/common/icons/social/{{data.uri}}.svg"
+                                                <span><img src="./assets/common/icons/social/{{data.uri || 'OtherLink'}}.svg"
                                                            onError="this.src='./assets/common/icons/social/OtherLink.svg';"
                                                            width="25px" height="25px">&nbsp;&nbsp;&nbsp;{{data.name}}</span>
                                                 </div>
