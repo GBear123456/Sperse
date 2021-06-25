@@ -33,7 +33,7 @@ import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zi
 import {
     ImportItemInput, ImportInput, ImportPersonalInput, ImportBusinessInput, ImportFullName, ImportAddressInput,
     ImportSubscriptionInput, CustomFieldsInput, ImportServiceProxy, ImportTypeInput, PartnerServiceProxy,
-    GetImportStatusOutput, LayoutType, ImportClassificationInput, TimeOfDay, ImportPropertyInput
+    GetImportStatusOutput, LayoutType, ImportClassificationInput, TimeOfDay, ImportPropertyInput, RecurringPaymentFrequency
 } from '@shared/service-proxies/service-proxies';
 import { ImportLeadsService } from './import-leads.service';
 import { ImportStatus, ContactGroup } from '@shared/AppEnums';
@@ -156,11 +156,21 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     private readonly SUBSCRIPTION3_AMOUNT = 'subscription3_amount';
     private readonly SUBSCRIPTION4_AMOUNT = 'subscription4_amount';
     private readonly SUBSCRIPTION5_AMOUNT = 'subscription5_amount';
+    private readonly SUBSCRIPTION1_START_DATE = 'subscription1_startDate';
+    private readonly SUBSCRIPTION2_START_DATE = 'subscription2_startDate';
+    private readonly SUBSCRIPTION3_START_DATE = 'subscription3_startDate';
+    private readonly SUBSCRIPTION4_START_DATE = 'subscription4_startDate';
+    private readonly SUBSCRIPTION5_START_DATE = 'subscription5_startDate';
     private readonly SUBSCRIPTION1_END_DATE = 'subscription1_endDate';
     private readonly SUBSCRIPTION2_END_DATE = 'subscription2_endDate';
     private readonly SUBSCRIPTION3_END_DATE = 'subscription3_endDate';
     private readonly SUBSCRIPTION4_END_DATE = 'subscription4_endDate';
     private readonly SUBSCRIPTION5_END_DATE = 'subscription5_endDate';
+    private readonly SUBSCRIPTION1_PAYMENT_PERIOD_TYPE = 'subscription1_paymentPeriodType';
+    private readonly SUBSCRIPTION2_PAYMENT_PERIOD_TYPE = 'subscription2_paymentPeriodType';
+    private readonly SUBSCRIPTION3_PAYMENT_PERIOD_TYPE = 'subscription3_paymentPeriodType';
+    private readonly SUBSCRIPTION4_PAYMENT_PERIOD_TYPE = 'subscription4_paymentPeriodType';
+    private readonly SUBSCRIPTION5_PAYMENT_PERIOD_TYPE = 'subscription5_paymentPeriodType';
     private readonly CLASSIFICATION_INFO_LISTS = 'classificationInfo_lists';
     private readonly CLASSIFICATION_INFO_TAGS = 'classificationInfo_tags';
     private readonly PROPERTYINFO_ADDRESS = 'propertyInfo_propertyAddress';
@@ -242,6 +252,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.PERSONAL_DOB,
         this.BUSINESS_DATE_FOUNDED,
         this.BUSINESS_EMPLOYMENT_START_DATE,
+        this.SUBSCRIPTION1_START_DATE,
+        this.SUBSCRIPTION2_START_DATE,
+        this.SUBSCRIPTION3_START_DATE,
+        this.SUBSCRIPTION4_START_DATE,
+        this.SUBSCRIPTION5_START_DATE,
         this.SUBSCRIPTION1_END_DATE,
         this.SUBSCRIPTION2_END_DATE,
         this.SUBSCRIPTION3_END_DATE,
@@ -319,6 +334,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         this.PERSONAL_CREDITSCORERATING
     ];
 
+    private readonly FIELDS_PAYMENT_PERIOD_TYPE = [
+        this.SUBSCRIPTION1_PAYMENT_PERIOD_TYPE,
+        this.SUBSCRIPTION2_PAYMENT_PERIOD_TYPE,
+        this.SUBSCRIPTION3_PAYMENT_PERIOD_TYPE,
+        this.SUBSCRIPTION4_PAYMENT_PERIOD_TYPE,
+        this.SUBSCRIPTION5_PAYMENT_PERIOD_TYPE
+    ];
+
     importStatuses: any = ImportStatus;
     importStatus: ImportStatus;
     hideLeftMenu = false;
@@ -348,6 +371,14 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     partnerTypes = [];
     private pipelinePurposeId: string = AppConsts.PipelinePurposeIds.lead;
 
+
+    readonly importSubscriptionFields = {
+        productCode: '',
+        paymentPeriodType: '',
+        startDate: moment(),
+        endDate: moment()
+    }
+
     readonly mappingObjectNames = {
         personalInfo: ImportPersonalInput.fromJS({interests: []}),
         fullName: ImportFullName.fromJS({}),
@@ -359,11 +390,11 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         workFullAddress: ImportAddressInput.fromJS({}),
         customFields: CustomFieldsInput.fromJS({}),
         requestCustomInfo: CustomFieldsInput.fromJS({}),
-        subscription1: ImportSubscriptionInput.fromJS({}),
-        subscription2: ImportSubscriptionInput.fromJS({}),
-        subscription3: ImportSubscriptionInput.fromJS({}),
-        subscription4: ImportSubscriptionInput.fromJS({}),
-        subscription5: ImportSubscriptionInput.fromJS({}),
+        subscription1: this.importSubscriptionFields,
+        subscription2: this.importSubscriptionFields,
+        subscription3: this.importSubscriptionFields,
+        subscription4: this.importSubscriptionFields,
+        subscription5: this.importSubscriptionFields,
         propertyInfo: ImportPropertyInput.fromJS({}),
         propertyAddress: ImportAddressInput.fromJS({}),
         classificationInfo: ImportClassificationInput.fromJS({lists: [], tags: []})
@@ -547,6 +578,17 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             this.setFieldIfDefined(parsed, field.mappedField, dataSource);
         }
         return true;
+    }
+
+    private normalizePaymentPeriodType(field, value, dataSource) {
+        if (![
+            RecurringPaymentFrequency.Monthly.toLowerCase(), 
+            RecurringPaymentFrequency.Annual.toLowerCase(), 
+            RecurringPaymentFrequency.LifeTime.toLowerCase()
+        ].includes(value.trim().toLowerCase())) {
+            dataSource[field.mappedField] = undefined;
+            return true;
+        }                
     }
 
     private normalizePhoneNumber(field, phoneNumber, dataSource) {
@@ -892,7 +934,10 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
             return this.normalizeGenderValue(field, sourceValue, reviewDataSource);
         } else if (this.PERSONAL_PREFERREDTOD == field.mappedField) {
             return this.normalizeTODValue(field, sourceValue, reviewDataSource);
+        } else if (this.FIELDS_PAYMENT_PERIOD_TYPE.includes(field.mappedField)) {
+            return this.normalizePaymentPeriodType(field, sourceValue, reviewDataSource);
         }
+
         return false;
     }
 
