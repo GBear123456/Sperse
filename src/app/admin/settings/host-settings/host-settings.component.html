@@ -254,27 +254,21 @@
                                           [(value)]="hostSettings.email.smtpEnableSsl">
                             </dx-check-box>
                         </div>
-                        <div class="form-group">
-                            <dx-check-box id="Settings_SmtpUseDefaultCredentials"
-                                          [text]="l('UseDefaultCredentials')"
-                                          [(value)]="hostSettings.email.smtpUseDefaultCredentials">
-                            </dx-check-box>
-                        </div>
                     </div>
 
-                    <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
+                    <div class="form-group">
                         <label for="SmtpDomainName">{{l("DomainName")}}</label>
                         <input id="SmtpDomainName" type="text" name="SmtpDomainName" class="form-control"
                                [ngClass]="{'edited':hostSettings.email.smtpDomain}"
                                [(ngModel)]="hostSettings.email.smtpDomain" maxlength="128">
                     </div>
-                    <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
+                    <div class="form-group">
                         <label for="SmtpUserName">{{l("UserName")}}</label>
                         <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control"
                                [ngClass]="{'edited':hostSettings.email.smtpUserName}"
                                [(ngModel)]="hostSettings.email.smtpUserName" maxlength="128">
                     </div>
-                    <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
+                    <div class="form-group">
                         <label for="SmtpPassword">{{l("Password")}}</label>
                         <input type="text" class="hidden-field">
                         <input type="password" class="hidden-field">

@@ -93,27 +93,21 @@
                                                     [(value)]="userEmailSettings.smtp.enableSsl">
                                     </dx-check-box>
                                 </div>
-                                <div class="form-group">
-                                    <dx-check-box id="Settings_SmtpUseDefaultCredentials"
-                                                    [text]="ls.l('UseDefaultCredentials')"
-                                                    [(value)]="userEmailSettings.smtp.useDefaultCredentials">
-                                    </dx-check-box>
-                                </div>
                             </div>
         
-                            <div class="form-group" [hidden]="userEmailSettings.smtp.useDefaultCredentials">
+                            <div class="form-group">
                                 <label for="SmtpDomainName">{{ls.l("DomainName")}}</label>
                                 <input id="SmtpDomainName" type="text" name="SmtpDomainName" class="form-control"
                                         [ngClass]="{'edited':userEmailSettings.smtp.domain}"
                                         [(ngModel)]="userEmailSettings.smtp.domain" maxlength="128">
                             </div>
-                            <div class="form-group" [hidden]="userEmailSettings.smtp.useDefaultCredentials">
+                            <div class="form-group">
                                 <label for="SmtpUserName">{{ls.l("UserName")}}</label>
                                 <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control"
                                         [ngClass]="{'edited':userEmailSettings.smtp.userName}"
                                         [(ngModel)]="userEmailSettings.smtp.userName" maxlength="128">
                             </div>
-                            <div class="form-group" [hidden]="userEmailSettings.smtp.useDefaultCredentials">
+                            <div class="form-group">
                                 <label for="SmtpPassword">{{ls.l("Password")}}</label>
                                 <input id="SmtpPassword" type="password" name="SmtpPassword" class="form-control"
                                         [ngClass]="{'edited':userEmailSettings.smtp.password}" [(ngModel)]="userEmailSettings.smtp.password"
