@@ -127,7 +127,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
                 navigation.alterRoutes,
                 navigation.host
             );
-            item.visible = !navigation.invisible && this.showMenuItem(item);
+            item.visible = this.showMenuItem(item);
             navList.push(item);
         });
         return navList;

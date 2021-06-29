@@ -73,10 +73,7 @@ export class AdminConfig implements ConfigInterface {
         {
             text: 'Products',
             permission: AppPermissions.Editions,
-            route: '/app/admin/products',
-            invisible: this.isHostTenant
+            route: '/app/admin/products'
         }
     ];
-
-    constructor(private isHostTenant: boolean) { }
 }
