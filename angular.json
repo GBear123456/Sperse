@@ -19,10 +19,15 @@
             "showCircularDependencies": true,
             "assets": [
               "src/assets",
-              "src/manifest.json",
               "src/favicon.ico",
+              "src/manifest.json",
               "src/favicon-16x16.png",
               "src/favicon-32x32.png",
+              "src/favicon-32x32.png",
+              "src/apple-touch-icon.png",
+              "src/android-chrome-192x192.png",
+              "src/android-chrome-384x384.png",
+              "src/safari-pinned-tab.svg",
               {
                 "glob": "web.config",
                 "input": "",
