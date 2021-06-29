@@ -62,7 +62,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('UserManagement')}}" *ngIf="hostSettings.userManagement">
+            <mat-tab label="{{l('UserRegistration')}}" *ngIf="hostSettings.userManagement">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">
                         <dx-check-box id="Settings_IsEmailConfirmationRequiredForLogin"
@@ -289,6 +289,48 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
+            <mat-tab label="{{l('YTel')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <br />
+                            <label for="YTelIsEnabled" class="m-checkbox">
+                                <input id="YTelIsEnabled" type="checkbox" name="YTelIsEnabled" [(ngModel)]="yTelSettings.isEnabled">
+                                {{l("YTelIsEnabled")}}
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelUserName">{{l("YTelUserName")}}</label>
+                            <input id="YTelUserName" type="text" name="YTelUserName" class="form-control" [(ngModel)]="yTelSettings.userName" maxlength="128">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelPassword">{{l("YTelPassword")}}</label>
+                            <input id="YTelPassword" type="text" name="YTelPassword" class="form-control" [(ngModel)]="yTelSettings.password" maxlength="128">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelFrom">{{l("YTelFrom")}}</label>
+                            <dx-text-box type="tel" id="YTelFrom" name="YTelFrom" class="form-control" [(ngModel)]="yTelSettings.from" maxlength="128" [mask]="masks.phone" useMaskedValue="true" maskInvalidMessage=""></dx-text-box>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelInboundSMSKey">{{l("YTelInboundSMSKey")}}</label>
+                            <input id="YTelInboundSMSKey" type="text" name="YTelInboundSMSKey" class="form-control" [(ngModel)]="yTelSettings.inboundSmsKey" maxlength="128">
+                        </div>
+                    </div>
+                    <p>
+                        <span [innerHtml]="l('YTelInboundSMSHint', 'https://app.ytel.com/#/numbers')"></span>
+                        <br /><b>{{getYtelInboundSMSUrl()}}</b><br /><br />
+                    </p>
+                </dx-scroll-view>
+            </mat-tab>
             <mat-tab label="{{l('Bugsnag')}}">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
@@ -299,33 +341,6 @@
                         <div class="form-group">
                             <label for="BugsnagUIAPIKey">{{l("UI Api Key")}}</label>
                             <input id="BugsnagUIAPIKey" type="text" name="BugsnagUIAPIKey" class="form-control" [(ngModel)]="hostSettings.bugsnag.uiApiKey" maxlength="128">
-                        </div>
-                    </div>
-                </dx-scroll-view>
-            </mat-tab>
-            <mat-tab label="{{l('Base Commerce Link')}}">
-                <dx-scroll-view showScrollbar="onHover">
-                    <div>
-                        <div class="form-group">
-                            <label for="BCUserName">{{l("User Name")}}</label>
-                            <input id="BCUserName" type="text" name="BCUserName" class="form-control" [(ngModel)]="baseCommercePaymentSettings.userName" maxlength="128">
-                        </div>
-                        <div class="form-group">
-                            <label for="BCPassword">{{l("Password")}}</label>
-                            <input id="BCPassword" type="password" name="BCPassword" class="form-control" [(ngModel)]="baseCommercePaymentSettings.password" maxlength="128">
-                        </div>
-                        <div class="form-group">
-                            <label for="BCKey">{{l("Key")}}</label>
-                            <input id="BCKey" type="text" name="BCKey" class="form-control" [(ngModel)]="baseCommercePaymentSettings.key" maxlength="128">
-                        </div>
-                        <h5>{{l("Environment")}}</h5>
-                        <div class="checkbox-list">
-                            <div class="form-group">
-                                <dx-check-box id="BCIsSandBox"
-                                              [text]="l('SandBox')"
-                                              [(value)]="baseCommercePaymentSettings.sandBox">
-                                </dx-check-box>
-                            </div>
                         </div>
                     </div>
                 </dx-scroll-view>
@@ -370,7 +385,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('Recurly Link')}}">
+            <mat-tab label="{{l('RecurlyLink')}}">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -390,48 +405,6 @@
                             <input id="RecurlyPageSize" type="text" name="RecurlyPageSize" class="form-control" [(ngModel)]="recurlySettings.pageSize" maxlength="128">
                         </div>
                     </div>
-                </dx-scroll-view>
-            </mat-tab>
-            <mat-tab label="{{l('YTel')}}">
-                <dx-scroll-view showScrollbar="onHover">
-                    <div>
-                        <div class="form-group">
-                            <br />
-                            <label for="YTelIsEnabled" class="m-checkbox">
-                                <input id="YTelIsEnabled" type="checkbox" name="YTelIsEnabled" [(ngModel)]="yTelSettings.isEnabled">
-                                {{l("YTelIsEnabled")}}
-                                <span></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="form-group">
-                            <label for="YTelUserName">{{l("YTelUserName")}}</label>
-                            <input id="YTelUserName" type="text" name="YTelUserName" class="form-control" [(ngModel)]="yTelSettings.userName" maxlength="128">
-                        </div>
-                    </div>
-                    <div>
-                        <div class="form-group">
-                            <label for="YTelPassword">{{l("YTelPassword")}}</label>
-                            <input id="YTelPassword" type="text" name="YTelPassword" class="form-control" [(ngModel)]="yTelSettings.password" maxlength="128">
-                        </div>
-                    </div>
-                    <div>
-                        <div class="form-group">
-                            <label for="YTelFrom">{{l("YTelFrom")}}</label>
-                            <dx-text-box type="tel" id="YTelFrom" name="YTelFrom" class="form-control" [(ngModel)]="yTelSettings.from" maxlength="128" [mask]="masks.phone" useMaskedValue="true" maskInvalidMessage=""></dx-text-box>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="form-group">
-                            <label for="YTelInboundSMSKey">{{l("YTelInboundSMSKey")}}</label>
-                            <input id="YTelInboundSMSKey" type="text" name="YTelInboundSMSKey" class="form-control" [(ngModel)]="yTelSettings.inboundSmsKey" maxlength="128">
-                        </div>
-                    </div>
-                    <p>
-                        <span [innerHtml]="l('YTelInboundSMSHint', 'https://app.ytel.com/#/numbers')"></span>
-                        <br /><b>{{getYtelInboundSMSUrl()}}</b><br /><br />
-                    </p>
                 </dx-scroll-view>
             </mat-tab>
         </mat-tab-group>

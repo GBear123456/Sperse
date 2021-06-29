@@ -23,12 +23,8 @@ import {
     TenantCustomizationServiceProxy,
     MemberPortalSettingsDto,
     IdcsSettings,
-    BaseCommercePaymentSettings,
-    PayPalSettings,
     TenantSettingsCreditReportServiceProxy,
     TenantPaymentSettingsServiceProxy,
-    ACHWorksSettings,
-    RecurlyPaymentSettings,
     EPCVIPOfferProviderSettings,
     TenantOfferProviderSettingsServiceProxy,
     TenantCustomizationInfoDto,
@@ -78,10 +74,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     settings: TenantSettingsEditDto = undefined;
     memberPortalSettings: MemberPortalSettingsDto = new MemberPortalSettingsDto();
     idcsSettings: IdcsSettings = new IdcsSettings();
-    baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
-    payPalPaymentSettings: PayPalSettings = new PayPalSettings();
-    achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
-    recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
     isTenantHosts: boolean = this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
@@ -175,10 +167,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         let requests: Observable<any>[] = [
             this.tenantSettingsService.getAllSettings(),
             this.isAdminCustomizations ? this.tenantSettingsService.getMemberPortalSettings() : of<MemberPortalSettingsDto>(<any>null),
-            this.tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
-            this.tenantPaymentSettingsService.getPayPalSettings(),
-            this.tenantPaymentSettingsService.getACHWorksSettings(),
-            this.tenantPaymentSettingsService.getRecurlyPaymentSettings(),
             this.isCreditReportFeatureEnabled ? this.tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
@@ -202,10 +190,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 [
                     this.settings,
                     this.memberPortalSettings,
-                    this.baseCommercePaymentSettings,
-                    this.payPalPaymentSettings,
-                    this.achWorksSettings,
-                    this.recurlySettings,
                     this.idcsSettings,
                     this.epcvipSettings,
                     this.epcvipEmailSettings,
@@ -369,10 +353,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.tenantSettingsService.updateAllSettings(this.settings).pipe(tap(() => {
                 this.appSessionService.checkSetDefaultCountry(this.settings.general.defaultCountryCode);
             })),
-            this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
-            this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
-            this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
-            this.tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings),
             this.tenantSettingsService.updateSendGridSettings(this.sendGridSettings),
             this.tenantSettingsService.updateYTelSettings(this.yTelSettings)
         ];

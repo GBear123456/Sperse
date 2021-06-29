@@ -15,7 +15,7 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     ComboboxItemDto, CommonLookupServiceProxy, SettingScopes, HostSettingsEditDto, HostSettingsServiceProxy,
-    PayPalSettings, BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings,
+    PayPalSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings,
     YTelSettingsEditDto, EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -41,7 +41,6 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
     testEmailAddress: string = undefined;
     showTimezoneSelection = abp.clock.provider.supportsMultipleTimezone;
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Application;
-    baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
     payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
@@ -89,19 +88,17 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
     loadHostSettings(): void {
         forkJoin(
             this.hostSettingService.getAllSettings(),
-            this.tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
             this.tenantPaymentSettingsService.getPayPalSettings(),
             this.tenantPaymentSettingsService.getACHWorksSettings(),
             this.tenantPaymentSettingsService.getRecurlyPaymentSettings(),
             this.hostSettingService.getYTelSettings()
         ).pipe(
             finalize(() => { this.changeDetection.detectChanges(); })
-        ).subscribe(([allSettings, baseCommerceSettings, payPalSettings, achWorksSettings, recurlySettings, yTelSettings]) => {
+        ).subscribe(([allSettings, payPalSettings, achWorksSettings, recurlySettings, yTelSettings]) => {
             this.hostSettings = allSettings;
             this.initialDefaultCountry = allSettings.general.defaultCountryCode;
             this.initialTimeZone = allSettings.general.timezone;
             this.usingDefaultTimeZone = allSettings.general.timezoneForComparison === this.setting.get('Abp.Timing.TimeZone');
-            this.baseCommercePaymentSettings = baseCommerceSettings;
             this.payPalPaymentSettings = payPalSettings;
             this.achWorksSettings = achWorksSettings;
             this.recurlySettings = recurlySettings;
@@ -163,7 +160,6 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
             this.hostSettingService.updateAllSettings(this.hostSettings).pipe(tap(() => {
                 this.appSessionService.checkSetDefaultCountry(this.hostSettings.general.defaultCountryCode);
             })),
-            this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
             this.tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings),
