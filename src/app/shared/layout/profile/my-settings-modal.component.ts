@@ -204,10 +204,13 @@ export class MySettingsModalComponent implements AfterViewChecked, OnInit {
     }
 
     sendTestEmail(): void {
+        this.modalDialog.startLoading();
         let input = new SendTestEmailInput();
         input.emailAddress = this.testEmailAddress;
         input.from = this.userEmailSettings.from;
         input.smtp = this.userEmailSettings.smtp;
-        this.emailSmtpSettingsService.sendTestEmail(input);
+        this.emailSmtpSettingsService.sendTestEmail(input, 
+            this.modalDialog.finishLoading.bind(this.modalDialog)
+        );
     }
 }

@@ -1,7 +1,14 @@
+/** Core imports */
 import { Injectable, Injector  } from '@angular/core';
+
+/** Third party imports */
+import { finalize } from 'rxjs/operators';
+
+/** Application imports */
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { EmailSmtpSettingsServiceProxy, SendTestEmailInput, EmailFromSettings, EmailSmtpSettings, EmailSettingsEditDto } from '@shared/service-proxies/service-proxies';
+import { EmailSmtpSettingsServiceProxy, SendTestEmailInput, EmailFromSettings, 
+    EmailSmtpSettings, EmailSettingsEditDto } from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class EmailSmtpSettingsService {
@@ -15,8 +22,10 @@ export class EmailSmtpSettingsService {
         this.ls = injector.get(AppLocalizationService);
     }
 
-    sendTestEmail(input: SendTestEmailInput): void {
-        this.emailSmtpSettingsService.sendTestEmail(input).subscribe(() => {
+    sendTestEmail(input: SendTestEmailInput, finalizeCallback?: () => {}): void {
+        this.emailSmtpSettingsService.sendTestEmail(input).pipe(
+            finalize(() => finalizeCallback && finalizeCallback())
+        ).subscribe(() => {
             this.notify.info(this.ls.l('TestEmailSentSuccessfully'));
         });
     }

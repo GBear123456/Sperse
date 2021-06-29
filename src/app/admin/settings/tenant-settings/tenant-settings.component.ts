@@ -374,7 +374,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         if (this.isRapidTenantLayout)
             requests.push(this.tenantSettingsService.updateRapidSettings(this.rapidSettings));
 
-        forkJoin(requests).subscribe(() => {
+        this.startLoading();
+        forkJoin(requests).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
             if (this.initialDefaultCountry !== this.settings.general.defaultCountryCode) {
                 this.message.info(this.l('DefaultCountrySettingChangedRefreshPageNotification')).done(() => {
@@ -390,8 +393,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     sendTestEmail(): void {
+        this.startLoading();
         let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.settings.email);
-        this.emailSmtpSettingsService.sendTestEmail(input);
+        this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this));
     }
 
     getSendGridWebhookUrl(): string {
