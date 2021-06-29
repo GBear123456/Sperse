@@ -11,4 +11,5 @@ export interface ConfigNavigation {
     route?: string;
     alterRoutes?: string[];
     host?: string;
+    invisible?: boolean;
 }

@@ -173,7 +173,7 @@ export class AppService extends AppServiceBase {
                 }
             ],
             {
-                admin: new AdminConfig(),
+                admin: new AdminConfig(!abp.session.tenantId),
                 api: new ApiConfig(),
                 crm: new CrmConfig(),
                 cfo: new CfoConfig(),
