@@ -20,11 +20,11 @@ export class FaviconService {
         favicons.forEach((item: FaviconDto) => {
             let href = faviconBaseUrl + item.name;
             if (document.head.querySelector('link[href="' + href + '"]'))
-                oldFaviconsLinks = oldFaviconsLinks.map((link) => {
+                oldFaviconsLinks = oldFaviconsLinks.map(link => {
                     if (link.href == href)
                         return undefined;
                     return link;
-                });
+                }).filter(Boolean);
             else {
                 let link = this.document.createElement('link');
                 link.rel = item.relationship;
@@ -37,13 +37,13 @@ export class FaviconService {
             }
         });
 
-        oldFaviconsLinks.forEach((link) => { link && link.remove(); });
+        oldFaviconsLinks.forEach(link => link && link.remove());
         oldManifest && oldManifest.remove();
     }
 
     resetFavicons() {
         const newFavicons = this.document.head.querySelectorAll('link[rel*="icon"]');
-        Array.prototype.forEach.call(newFavicons, link => link.remove());
+        Array.prototype.forEach.call(newFavicons, link => link && link.remove());
         this.updateFavicons(FaviconService.DEFAULT_FAVICONS, AppConsts.appBaseHref);
     }
 }
