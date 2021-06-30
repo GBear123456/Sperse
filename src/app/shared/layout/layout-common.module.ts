@@ -9,6 +9,7 @@ import { CKEditorModule } from 'ckeditor4-angular';
 import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
 import { FileUploadModule as PrimeNgFileUploadModule, ProgressBarModule, PaginatorModule } from 'primeng/primeng';
 import { TableModule } from 'primeng/table';
+import { MatTabsModule } from '@angular/material/tabs';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';
 import { DxListModule } from 'devextreme-angular/ui/list';
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
@@ -80,6 +81,7 @@ let COMPONENTS = [
         ModalDialogModule,
         DxTooltipModule,
         DxListModule,
+        MatTabsModule,
         CountryPhoneNumberModule
     ],
     declarations: COMPONENTS,

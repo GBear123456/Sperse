@@ -47,6 +47,7 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     @Input() buttons: IDialogButton[] = [];
     @Input() options: IDialogOption[];
     @Input() titleLabel: string;
+    @Input() checkCloseAllowed: () => Promise<boolean>;
     @Output() onTitleKeyUp: EventEmitter<any> = new EventEmitter<any>();
     @Output() titleChange: EventEmitter<string> = new EventEmitter<string>();
     @Output() onContextItemChanged: EventEmitter<any> = new EventEmitter<any>();
@@ -126,6 +127,16 @@ export class ModalDialogComponent implements OnInit, AfterViewInit {
     }
 
     close(slide: boolean = false, closeData = null) {
+        if (this.checkCloseAllowed)
+            this.checkCloseAllowed().then((closeAllowed: boolean) => {
+                if (closeAllowed)
+                    this.closeInternal(slide, closeData);
+            })
+        else
+            this.closeInternal(slide, closeData);
+    }
+
+    closeInternal(slide: boolean = false, closeData = null) {
         if (slide) {
             this.dialogRef.updatePosition({
                 right: '-100vw'

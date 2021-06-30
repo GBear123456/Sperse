@@ -48,8 +48,22 @@
                             valueExpr="emailSettingsSource"
                             displayExpr="emailAddress"
                             [dataSource]="data.from"
+                            itemTemplate="itemTemplate"
+                            fieldTemplate="fieldTemplate"
                             [disabled]="templateEditMode"
                             (onValueChanged)="onFromChanged($event)">
+                            <div *dxTemplate="let item of 'itemTemplate'" class="from-item-select-box" [title]="item.emailAddress">
+                                {{ item.emailAddress }}
+                            </div>
+                            <div *dxTemplate="let item of 'fieldTemplate'" class="from-field-select-box">
+                                <dx-text-box
+                                    width="320px"
+                                    height="40px"
+                                    [readOnly]="true"
+                                    [value]="item.emailAddress"
+                                    [hint]="item.emailAddress">
+                                </dx-text-box>
+                            </div>
                             <dx-validator>
                                 <dxi-validation-rule
                                     type="required" 

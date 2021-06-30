@@ -157,11 +157,13 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
     }
 
     sendTestEmail(): void {
+        this.startLoading();
         let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.hostSettings.email);
-        this.emailSmtpSettingsService.sendTestEmail(input);
+        this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this));
     }
 
     saveAll(): void {
+        this.startLoading();
         forkJoin(
             this.hostSettingService.updateAllSettings(this.hostSettings).pipe(tap(() => {
                 this.appSessionService.checkSetDefaultCountry(this.hostSettings.general.defaultCountryCode);
@@ -171,6 +173,8 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
             this.tenantPaymentSettingsService.updateStripeSettings(this.stripePaymentSettings),
             this.tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings),
             this.hostSettingService.updateYTelSettings(this.yTelSettings)
+        ).pipe(
+            finalize(() => this.finishLoading())
         ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
             if (this.initialDefaultCountry !== this.hostSettings.general.defaultCountryCode) {

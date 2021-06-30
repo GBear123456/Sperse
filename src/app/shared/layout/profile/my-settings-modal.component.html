@@ -1,13 +1,14 @@
 <modal-dialog [title]="ls.l('MySettings')"
               [buttons]="buttons"
               [editTitle]="false"
+              [checkCloseAllowed]="checkCloseAllowed"
               [titleClearButton]="false"
               [placeholder]="ls.l('MySettings')">
     <dx-scroll-view showScrollbar="onHover" width="740px">
         <div class="tab-content">
             <div class="modal-body" *ngIf="user">
-                <tabset class="tab-container tabbable-line">
-                    <tab heading="{{ls.l('Profile')}}" customClass="m-tabs__item">
+                <mat-tab-group (selectedTabChange)="onTabChanged($event)">
+                    <mat-tab [label]="ls.l('Profile')">
                         <div class="form-group inline">
                             <label for="Name">{{ls.l("FirstName")}} *</label>
                             <input id="Name" #nameInput="ngModel" class="form-control" type="text" name="Name" [(ngModel)]="user.name" required maxlength="32">
@@ -56,8 +57,8 @@
                                             [defaultTimezoneScope]="defaultTimezoneScope">
                             </timezone-combo>
                         </div>
-                    </tab>
-                    <tab heading="{{ls.l('Email')}}" customClass="m-tabs__item">
+                    </mat-tab>
+                    <mat-tab [label]="ls.l('Email')">
                         <dx-check-box class="is-user-smtp-enabled" [text]="ls.l('AllowToSendFromYourEmailAddress')" [(value)]="userEmailSettings.isUserSmtpEnabled"></dx-check-box>
                         <div [hidden]="!userEmailSettings.isUserSmtpEnabled">
                             <br/>
@@ -127,7 +128,6 @@
                         <h5>{{ls.l('Signature')}}:</h5>
                         <div class="form-group ck-container">
                             <label for="signature">{{ls.l('EmailSignature')}}</label>
-                            <ckeditor [config]="ckConfig" [(data)]="userEmailSettings.signatureHtml"></ckeditor>
                             <dx-tooltip [width]="250"
                                  position="bottom"
                                  [(visible)]="tagsTooltipVisible"
@@ -148,8 +148,8 @@
                             </dx-tooltip>
                             <a #tagsButton [class]="'tags-button'" *ngIf="tagsList?.length" (click)="tagsTooltipVisible = true">Tags</a>
                         </div>
-                    </tab>
-                    <tab heading="{{ls.l('TwoFactorLogin')}}" customClass="m-tabs__item">
+                    </mat-tab>
+                    <mat-tab [label]="ls.l('TwoFactorLogin')">
                         <div>
                             <h4>
                                 Google Authenticator
@@ -169,9 +169,10 @@
                                 <button type="button" class="button-layout button-primary" (click)="updateQrCodeSetupImageUrl()">{{ls.l("Enable")}}</button>
                             </div>
                         </div>
-                    </tab>
-                </tabset>
-            </div>
+                    </mat-tab>
+                </mat-tab-group>
+                <ckeditor [hidden]="currentTab != ls.l('Email')" [config]="ckConfig" [(data)]="userEmailSettings.signatureHtml"></ckeditor>
+            </div>                            
         </div>
     </dx-scroll-view>
     <smsVerificationModal #smsVerificationModal (modalSave)="changePhoneNumberToVerified()"></smsVerificationModal>
