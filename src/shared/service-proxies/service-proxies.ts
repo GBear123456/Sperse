@@ -64754,7 +64754,6 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
     authorizationCode!: string | undefined;
     bankCardInfo!: BankCardInput | undefined;
     hasRecurringBilling!: boolean | undefined;
-    updateThirdParty!: boolean | undefined;
 
     constructor(data?: IAddBankCardPaymentInput) {
         if (data) {
@@ -64778,7 +64777,6 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
             this.authorizationCode = data["authorizationCode"];
             this.bankCardInfo = data["bankCardInfo"] ? BankCardInput.fromJS(data["bankCardInfo"]) : <any>undefined;
             this.hasRecurringBilling = data["hasRecurringBilling"];
-            this.updateThirdParty = data["updateThirdParty"];
         }
     }
 
@@ -64802,7 +64800,6 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
         data["authorizationCode"] = this.authorizationCode;
         data["bankCardInfo"] = this.bankCardInfo ? this.bankCardInfo.toJSON() : <any>undefined;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
-        data["updateThirdParty"] = this.updateThirdParty;
         return data; 
     }
 }
@@ -64819,7 +64816,6 @@ export interface IAddBankCardPaymentInput {
     authorizationCode: string | undefined;
     bankCardInfo: BankCardInput | undefined;
     hasRecurringBilling: boolean | undefined;
-    updateThirdParty: boolean | undefined;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
@@ -71137,7 +71133,6 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     productId!: number | undefined;
     productCode!: string | undefined;
     paymentPeriodType!: RecurringPaymentFrequency | undefined;
-    updateThirdParty!: boolean | undefined;
     hasRecurringBilling!: boolean | undefined;
 
     constructor(data?: IUpdateOrderSubscriptionInput) {
@@ -71163,7 +71158,6 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             this.productId = data["productId"];
             this.productCode = data["productCode"];
             this.paymentPeriodType = data["paymentPeriodType"];
-            this.updateThirdParty = data["updateThirdParty"];
             this.hasRecurringBilling = data["hasRecurringBilling"];
         }
     }
@@ -71189,7 +71183,6 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
         data["productId"] = this.productId;
         data["productCode"] = this.productCode;
         data["paymentPeriodType"] = this.paymentPeriodType;
-        data["updateThirdParty"] = this.updateThirdParty;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         return data; 
     }
@@ -71204,7 +71197,6 @@ export interface IUpdateOrderSubscriptionInput {
     productId: number | undefined;
     productCode: string | undefined;
     paymentPeriodType: RecurringPaymentFrequency | undefined;
-    updateThirdParty: boolean | undefined;
     hasRecurringBilling: boolean | undefined;
 }
 

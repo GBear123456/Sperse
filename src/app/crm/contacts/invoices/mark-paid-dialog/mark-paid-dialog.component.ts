@@ -65,8 +65,7 @@ export class MarkAsPaidDialogComponent {
             authorizationCode: undefined,
             gatewayTransactionId: undefined,
             bankCardInfo: undefined,
-            hasRecurringBilling: this.recurring,
-            updateThirdParty: true
+            hasRecurringBilling: this.recurring
         })).pipe(finalize(() => {
             this.loadingService.finishLoading(this.elementRef.nativeElement);
         })).subscribe(() => {
