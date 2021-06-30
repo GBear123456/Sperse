@@ -83,7 +83,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         ],
         productId: undefined,
         paymentPeriodType: undefined,
-        updateThirdParty: false,
+        updateThirdParty: true,
         hasRecurringBilling: false
     });
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
@@ -159,7 +159,6 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     saveSubscription() {
         if (this.validationGroup.instance.validate().isValid) {
             const subscriptionInput = new UpdateOrderSubscriptionInput(this.subscription);
-            subscriptionInput.updateThirdParty = false;
             if (this.selectedTabIndex) {
                 subscriptionInput.productId = undefined;
                 subscriptionInput.paymentPeriodType = undefined;
@@ -169,8 +168,6 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                         sub.startDate = DateHelper.removeTimezoneOffset(new Date(sub.startDate), true, 'from');
                     if (sub.endDate)
                         sub.endDate = DateHelper.removeTimezoneOffset(new Date(sub.endDate), true, 'to');
-                    if (this.isBankCodeLayout && sub.code === BankCodeServiceType.BANKVault)
-                        subscriptionInput.updateThirdParty = true;
                     return sub;
                 });
             } else
