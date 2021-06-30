@@ -88,7 +88,10 @@
     }
 
     function getAppConfig() {
-        ajax('./assets/appconfig.json').then(function(result) {
+        ajax('./assets/appconfig.json', {
+            "Content-Type": "application/json",
+            "Accept": "application/json, text/javascript, */*"
+        }).then(function(result) {
             window.appconfig = result;
             remoteServiceUrl = result.enforceRemoteServiceBaseUrl
                 ? result.remoteServiceBaseUrl: location.origin;
