@@ -88,7 +88,10 @@
     }
 
     function getAppConfig() {
-        ajax('./assets/appconfig.json').then(function(result) {
+        ajax('./assets/appconfig.json', {
+            "Content-Type": "application/json",
+            "Accept": "application/json, text/javascript, */*"
+        }).then(function(result) {
             window.appconfig = result;
             remoteServiceUrl = result.enforceRemoteServiceBaseUrl
                 ? result.remoteServiceBaseUrl: location.origin;
@@ -151,10 +154,14 @@
     }
 
     function updateFavicons(favicons, faviconBaseUrl) {
-        var head = document.head;
-        head.querySelectorAll('link[type="image/x-icon"]')[0].remove(); // remove static favicon
+        var head = document.head,
+            staticIcons = head.querySelectorAll('link[type="image/x-icon"]');
+        if (staticIcons && staticIcons.length)
+            staticIcons.forEach(function(icon) {
+                icon && icon.remove();
+            }); // remove static favicon
 
-        favicons.forEach((item) => {
+        favicons.forEach(function(item) {
             var link = document.createElement('link');
             link.rel = item.relationship;
             link.type = item.type;
@@ -368,7 +375,7 @@
                         if (response.error)
                             abp.message.error(response.error.details, response.error.message);
                     }
-                }).done((response) => {
+                }).done(function(response) {
                     abp.ui.clearBusy();
                     loginInProgress = false;
                     if (response.result) {
