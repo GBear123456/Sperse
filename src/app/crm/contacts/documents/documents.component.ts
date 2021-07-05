@@ -24,7 +24,6 @@ import { CacheService } from 'ng2-cache-service';
 import * as xmlJs from 'xml-js';
 import values from 'lodash/values';
 import JSONFormatter from 'json-formatter-js';
-import '@node_modules/ng2-image-viewer/imageviewer.js';
 import * as jszip from 'jszip';
 import * as Rar from 'rarjs/rar.js';
 import { Papa } from 'ngx-papaparse';
@@ -78,7 +77,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     };
     public formatting = AppConsts.formatting;
     public dataSource: DocumentInfo[];
-    public previewContent: string;
+    public previewContent: string = '';
     public actionMenuItems: ActionMenuItem[];
     public actionRecordData: any;
     public openDocumentMode = false;

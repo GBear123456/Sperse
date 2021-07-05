@@ -23,7 +23,6 @@
               "src/manifest.json",
               "src/favicon-16x16.png",
               "src/favicon-32x32.png",
-              "src/favicon-32x32.png",
               "src/apple-touch-icon.png",
               "src/android-chrome-192x192.png",
               "src/android-chrome-384x384.png",
@@ -47,6 +46,11 @@
                 "glob": "**.*",
                 "input": "node_modules/timeago/locales",
                 "output": "./assets/localization/jquery-timeago"
+              },
+              {
+                "glob": "/locale.properties",
+                "input": "node_modules/ngx-extended-pdf-viewer/assets/locale",
+                "output": "./assets/locale"
               }
             ],
             "styles": [
