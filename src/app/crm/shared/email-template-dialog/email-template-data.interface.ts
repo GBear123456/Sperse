@@ -2,6 +2,7 @@ import { EmailAttachment } from '@app/crm/shared/email-template-dialog/email-att
 import { EmailTemplateType, ContactInfoDto, EmailFromInfo, EmailSettingsSource } from '@shared/service-proxies/service-proxies';
 
 export interface EmailTemplateData {
+    contactId: number;
     contact: ContactInfoDto;
     title: string;
     saveTitle: string;

@@ -164,15 +164,18 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (this.data.templateId)
             this.loadTemplateById(this.data.templateId);
         else {
-            if (!this.data.tags && this.data.contact)
+            if (!this.data.tags && (this.data.contactId || this.data.contact)) {
+                this.startLoading();
                 this.communicationProxy.getEmailData(
-                    undefined, this.data.contact.id
+                    undefined, this.data.contactId || this.data.contact.id
+                ).pipe(
+                    finalize(() => this.finishLoading())
                 ).subscribe((res: GetEmailDataOutput) => {
                     this.data.tags = res.tags;
                     this.data.from = res.from;
                     this.initFromField();
                 });
-            else
+            } else
                 this.initFromField();
             this.templateLoaded = true;
         }
