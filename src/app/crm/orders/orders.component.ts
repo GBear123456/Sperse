@@ -1418,6 +1418,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 width: 40
             });
         }
+
+        setTimeout(() => {
+            this.appService.isClientSearchDisabled = 
+                this.dataLayoutType.value == DataLayoutType.Pipeline;
+        });
     }
 
     invalidate() {
