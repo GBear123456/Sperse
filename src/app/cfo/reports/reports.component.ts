@@ -9,7 +9,6 @@ import ODataStore from 'devextreme/data/odata/store';
 import { Observable, of } from 'rxjs';
 import { CacheService } from 'ng2-cache-service';
 import { ImageViewerComponent } from 'ng2-image-viewer';
-import 'ng2-image-viewer/imageviewer.js';
 import { flatMap, finalize, map } from 'rxjs/operators';
 import findIndex from 'lodash/findIndex';
 
@@ -120,7 +119,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
     actionRecordData: any;
     currentReportInfo: ReportDto;
     openReportMode = false;
-    previewContent: string;
+    previewContent: string = '';
     reportUrls = {};
 
     filters: FilterModel[];
