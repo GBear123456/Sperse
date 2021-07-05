@@ -1155,6 +1155,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
         if (!this.rowsViewHeight)
             this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
+
+        setTimeout(() => {
+            this.appService.isClientSearchDisabled = 
+                this.dataLayoutType.value == DataLayoutType.Pipeline;
+        });
     }
 
     refresh(invalidateDashboard: boolean = true) {
@@ -2072,6 +2077,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.handleQueryParams();
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
+
         this.showHostElement(() => {
             this.repaintToolbar();
             this.pipelineComponent.detectChanges();
