@@ -115,7 +115,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                 name: 'Comments',
                 icon: 'f-chat',
                 items: [
-                    { name: 'comments', hideLabel: true, readonly: true }
+                    { name: 'comments', hideLabel: true, readonly: true, wide: true }
                 ]
             }
         ],
@@ -289,6 +289,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
     getPropValue(field, format = true) {
         let leadInfo = this.data && this.data.leadInfo;
         let value = leadInfo && leadInfo[field];
+
         if (!value && isNaN(value))
             return null;
 
