@@ -67,7 +67,7 @@
                             <dx-validator>
                                 <dxi-validation-rule
                                     type="required" 
-                                    [message]="ls.l('MailerSettingsAreNotConfigured', ls.l('From'))">
+                                    [message]="ls.l('MailerSettingsAreNotConfigured', ls.l('SMTP'))">
                                 </dxi-validation-rule>
                             </dx-validator>
                         </dx-select-box>
@@ -75,7 +75,7 @@
                             <a class="config-link" (click)="close()" 
                                 [routerLink]="'app/admin/' + (appService.isHostTenant ? 'host': 'tenant') + 'Settings'" 
                                 [queryParams]="{tab: 'smtp'}" 
-                                [ngClass]="{disabled: !isSettingsAllowed}">{{ls.l('MailerSettingsAreNotConfigured', '')}}&nbsp;</a>
+                                [ngClass]="{disabled: !isSettingsAllowed}">{{ls.l('MailerSettingsAreNotConfigured', ls.l('SMTP'))}}&nbsp;</a>
                         </ng-template>
                         <label class="caption disabled">{{ls.l('ReplyTo')}}:</label>
                         <dx-tag-box #ReplyToElement
