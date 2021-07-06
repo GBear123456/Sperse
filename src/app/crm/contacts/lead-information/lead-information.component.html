@@ -34,7 +34,7 @@
                                             (click)="showApplicationAllowed && item.action ? item.action() : undefined">
                                             <a *ngIf="item?.name == 'clientIp'; else default" target="_blank" class="client-ip-link" [href]="urlHelper.getLookupIpUrl(value)">{{value}}</a>
                                             <ng-template #default>
-                                                <span [title]="value" [ngClass]="{'wide': item.wide}">
+                                                <span [title]="value" [ngClass]="{'wide': item.wide}" [ngStyle]="{'white-space': item.name == 'comments' ? 'initial' : 'nowrap'}">
                                                     <ng-container *ngIf="item?.type?.style == 'currency'; else plaine">{{value | currency: item?.type?.currency}}</ng-container>
                                                     <ng-template #plaine>{{value}}</ng-template>
                                                 </span>
