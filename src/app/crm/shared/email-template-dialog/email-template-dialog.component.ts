@@ -172,7 +172,8 @@ export class EmailTemplateDialogComponent implements OnInit {
                     finalize(() => this.finishLoading())
                 ).subscribe((res: GetEmailDataOutput) => {
                     this.data.tags = res.tags;
-                    this.data.from = res.from;
+                    if (res.from && res.from.length)
+                        this.data.from = res.from;
                     this.initFromField();
                 });
             } else
@@ -278,7 +279,9 @@ export class EmailTemplateDialogComponent implements OnInit {
 
             if (!this.data.from)
                 return this.notifyService.error(
-                    this.ls.l('RequiredField', this.ls.l('From')));
+                    this.ls.l('MailerSettingsAreNotConfigured', this.ls.l('SMTP')), 
+                    this.ls.l('RequiredField', this.ls.l('From'))
+                );
 
             if (!this.data.to || !this.data.to.length)
                 return this.notifyService.error(
