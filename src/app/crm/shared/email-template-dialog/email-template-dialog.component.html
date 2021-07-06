@@ -67,12 +67,12 @@
                             <dx-validator>
                                 <dxi-validation-rule
                                     type="required" 
-                                    [message]="ls.l('ThisFieldIsRequired')">
+                                    [message]="ls.l('MailerSettingsAreNotConfigured', ls.l('From'))">
                                 </dxi-validation-rule>
                             </dx-validator>
                         </dx-select-box>
                         <ng-template #configure>
-                            <a class="config-link" 
+                            <a class="config-link" (click)="close()" 
                                 [routerLink]="'app/admin/' + (appService.isHostTenant ? 'host': 'tenant') + 'Settings'" 
                                 [queryParams]="{tab: 'smtp'}" 
                                 [ngClass]="{disabled: !isSettingsAllowed}">{{ls.l('MailerSettingsAreNotConfigured', '')}}&nbsp;</a>
