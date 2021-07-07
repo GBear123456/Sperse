@@ -28,7 +28,8 @@ import {
     pluck,
     skip,
     switchMap,
-    takeUntil
+    takeUntil,
+    tap
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
@@ -135,7 +136,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.showOrdersPipeline ? DataLayoutType.Pipeline : DataLayoutType.DataGrid
     );
-    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable().pipe(tap((layoutType) => {
+        this.appService.isClientSearchDisabled = layoutType != DataLayoutType.DataGrid;
+    }));
     private readonly ordersDataSourceURI = 'Order';
     private readonly subscriptionsDataSourceURI = 'Subscription';
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;

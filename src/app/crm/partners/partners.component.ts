@@ -150,7 +150,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
     );
     public readonly partnerContactGroup = ContactGroup.Partner;
-    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable().pipe(tap((layoutType) => {
+        this.appService.isClientSearchDisabled = layoutType != DataLayoutType.DataGrid;
+    }));
     hideDataGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
         return dataLayoutType !== DataLayoutType.DataGrid;
     }));
