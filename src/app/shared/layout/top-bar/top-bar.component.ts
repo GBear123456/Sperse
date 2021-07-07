@@ -152,7 +152,7 @@ export class TopBarComponent implements OnInit, OnDestroy {
         /** Avoid redirect to the same route */
         if (route && location.pathname !== event.itemData.route) {
             if (route.startsWith('/')) {
-                if (event.itemData.route == '/code-breaker' && AppConsts.appMemberPortalUrl) {
+                if (['/code-breaker', '/personal-finance'].includes(event.itemData.route) && AppConsts.appMemberPortalUrl) {
                     if (this.authService.checkCurrentTopDomainByUri())
                         this.authService.setTokenBeforeRedirect();
                     else {
