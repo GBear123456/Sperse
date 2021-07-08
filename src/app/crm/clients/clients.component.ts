@@ -363,8 +363,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         && (
                             this.impersonationIsGranted ||
                             this.permission.checkCGPermission(client.GroupId, 'UserInformation.AutoLogin')
-                        )
-                        && !this.authService.checkCurrentTopDomainByUri(),
+                        ),
                     action: () => this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl)
                 },
                 {
