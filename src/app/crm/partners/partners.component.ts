@@ -229,8 +229,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         && (
                             this.impersonationIsGranted ||
                             this.permission.checkCGPermission(ContactGroup.Partner, 'UserInformation.AutoLogin')
-                        )
-                        && !this.authService.checkCurrentTopDomainByUri(),
+                        ),
                     action: () => {
                         const partner: PartnerDto = this.actionEvent.data || this.actionEvent;
                         this.impersonationService.impersonate(partner.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl);
