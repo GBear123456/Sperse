@@ -15929,6 +15929,70 @@ export class EmailingServiceProxy {
 }
 
 @Injectable()
+export class EmailSmtpSettingsServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    sendTestEmail(body: SendTestEmailInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/EmailSmtpSettings/SendTestEmail";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendTestEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendTestEmail(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendTestEmail(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class EmailTemplateServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -17693,8 +17757,8 @@ export class HostSettingsServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    sendTestEmail(body: SendTestEmailInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/SendTestEmail";
+    updateEmailSettings(body: EmailSettingsEditDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/UpdateEmailSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -17708,12 +17772,12 @@ export class HostSettingsServiceProxy {
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSendTestEmail(response_);
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateEmailSettings(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processSendTestEmail(<any>response_);
+                    return this.processUpdateEmailSettings(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -17722,7 +17786,7 @@ export class HostSettingsServiceProxy {
         }));
     }
 
-    protected processSendTestEmail(response: HttpResponseBase): Observable<void> {
+    protected processUpdateEmailSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -35469,58 +35533,6 @@ export class TenantSettingsServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updateEmailSettings(body: EmailSettingsEditDto | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateEmailSettings";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateEmailSettings(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processUpdateEmailSettings(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processUpdateEmailSettings(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
     updateUserManagementSettings(body: TenantUserManagementSettingsEditDto | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateUserManagementSettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -35885,8 +35897,8 @@ export class TenantSettingsServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    sendTestEmail(body: SendTestEmailInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/SendTestEmail";
+    updateEmailSettings(body: EmailSettingsEditDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateEmailSettings";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -35900,12 +35912,12 @@ export class TenantSettingsServiceProxy {
             })
         };
 
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processSendTestEmail(response_);
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateEmailSettings(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processSendTestEmail(<any>response_);
+                    return this.processUpdateEmailSettings(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -35914,7 +35926,7 @@ export class TenantSettingsServiceProxy {
         }));
     }
 
-    protected processSendTestEmail(response: HttpResponseBase): Observable<void> {
+    protected processUpdateEmailSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -55019,6 +55031,55 @@ export interface IMessageListDtoPagedResultDto {
     items: MessageListDto[] | undefined;
 }
 
+export enum EmailSettingsSource {
+    Tenant = "Tenant", 
+    User = "User", 
+}
+
+export class EmailFromInfo implements IEmailFromInfo {
+    emailSettingsSource!: EmailSettingsSource | undefined;
+    emailAddress!: string | undefined;
+    ccEmailAddress!: string | undefined;
+
+    constructor(data?: IEmailFromInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.emailSettingsSource = data["emailSettingsSource"];
+            this.emailAddress = data["emailAddress"];
+            this.ccEmailAddress = data["ccEmailAddress"];
+        }
+    }
+
+    static fromJS(data: any): EmailFromInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailFromInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailSettingsSource"] = this.emailSettingsSource;
+        data["emailAddress"] = this.emailAddress;
+        data["ccEmailAddress"] = this.ccEmailAddress;
+        return data; 
+    }
+}
+
+export interface IEmailFromInfo {
+    emailSettingsSource: EmailSettingsSource | undefined;
+    emailAddress: string | undefined;
+    ccEmailAddress: string | undefined;
+}
+
 export class Attachment implements IAttachment {
     id!: string | undefined;
     size!: number | undefined;
@@ -55068,6 +55129,7 @@ export interface IAttachment {
 }
 
 export class GetEmailDataOutput implements IGetEmailDataOutput {
+    from!: EmailFromInfo[] | undefined;
     subject!: string | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
@@ -55086,6 +55148,11 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
 
     init(data?: any) {
         if (data) {
+            if (data["from"] && data["from"].constructor === Array) {
+                this.from = [];
+                for (let item of data["from"])
+                    this.from.push(EmailFromInfo.fromJS(item));
+            }
             this.subject = data["subject"];
             if (data["cc"] && data["cc"].constructor === Array) {
                 this.cc = [];
@@ -55122,6 +55189,11 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        if (this.from && this.from.constructor === Array) {
+            data["from"] = [];
+            for (let item of this.from)
+                data["from"].push(item.toJSON());
+        }
         data["subject"] = this.subject;
         if (this.cc && this.cc.constructor === Array) {
             data["cc"] = [];
@@ -55151,6 +55223,7 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
 }
 
 export interface IGetEmailDataOutput {
+    from: EmailFromInfo[] | undefined;
     subject: string | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
@@ -55202,7 +55275,7 @@ export interface IFileInfo {
 export class SendEmailInput implements ISendEmailInput {
     contactId!: number;
     parentId!: number | undefined;
-    from!: string | undefined;
+    emailSettingsSource!: EmailSettingsSource;
     to!: string[];
     replyTo!: string[] | undefined;
     cc!: string[] | undefined;
@@ -55227,7 +55300,7 @@ export class SendEmailInput implements ISendEmailInput {
         if (data) {
             this.contactId = data["contactId"];
             this.parentId = data["parentId"];
-            this.from = data["from"];
+            this.emailSettingsSource = data["emailSettingsSource"];
             if (data["to"] && data["to"].constructor === Array) {
                 this.to = [];
                 for (let item of data["to"])
@@ -55269,7 +55342,7 @@ export class SendEmailInput implements ISendEmailInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["parentId"] = this.parentId;
-        data["from"] = this.from;
+        data["emailSettingsSource"] = this.emailSettingsSource;
         if (this.to && this.to.constructor === Array) {
             data["to"] = [];
             for (let item of this.to)
@@ -55304,7 +55377,7 @@ export class SendEmailInput implements ISendEmailInput {
 export interface ISendEmailInput {
     contactId: number;
     parentId: number | undefined;
-    from: string | undefined;
+    emailSettingsSource: EmailSettingsSource;
     to: string[];
     replyTo: string[] | undefined;
     cc: string[] | undefined;
@@ -60266,6 +60339,146 @@ export interface ICreateOrUpdateEditionDto {
     featureValues: NameValueDto[];
 }
 
+export class EmailFromSettings implements IEmailFromSettings {
+    emailAddress!: string | undefined;
+    displayName!: string | undefined;
+
+    constructor(data?: IEmailFromSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.emailAddress = data["emailAddress"];
+            this.displayName = data["displayName"];
+        }
+    }
+
+    static fromJS(data: any): EmailFromSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailFromSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailAddress"] = this.emailAddress;
+        data["displayName"] = this.displayName;
+        return data; 
+    }
+}
+
+export interface IEmailFromSettings {
+    emailAddress: string | undefined;
+    displayName: string | undefined;
+}
+
+export class EmailSmtpSettings implements IEmailSmtpSettings {
+    host!: string | undefined;
+    port!: number | undefined;
+    enableSsl!: boolean | undefined;
+    domain!: string | undefined;
+    userName!: string | undefined;
+    password!: string | undefined;
+
+    constructor(data?: IEmailSmtpSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.host = data["host"];
+            this.port = data["port"];
+            this.enableSsl = data["enableSsl"];
+            this.domain = data["domain"];
+            this.userName = data["userName"];
+            this.password = data["password"];
+        }
+    }
+
+    static fromJS(data: any): EmailSmtpSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new EmailSmtpSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["host"] = this.host;
+        data["port"] = this.port;
+        data["enableSsl"] = this.enableSsl;
+        data["domain"] = this.domain;
+        data["userName"] = this.userName;
+        data["password"] = this.password;
+        return data; 
+    }
+}
+
+export interface IEmailSmtpSettings {
+    host: string | undefined;
+    port: number | undefined;
+    enableSsl: boolean | undefined;
+    domain: string | undefined;
+    userName: string | undefined;
+    password: string | undefined;
+}
+
+export class SendTestEmailInput implements ISendTestEmailInput {
+    emailAddress!: string;
+    from!: EmailFromSettings | undefined;
+    smtp!: EmailSmtpSettings | undefined;
+
+    constructor(data?: ISendTestEmailInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.emailAddress = data["emailAddress"];
+            this.from = data["from"] ? EmailFromSettings.fromJS(data["from"]) : <any>undefined;
+            this.smtp = data["smtp"] ? EmailSmtpSettings.fromJS(data["smtp"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): SendTestEmailInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendTestEmailInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailAddress"] = this.emailAddress;
+        data["from"] = this.from ? this.from.toJSON() : <any>undefined;
+        data["smtp"] = this.smtp ? this.smtp.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface ISendTestEmailInput {
+    emailAddress: string;
+    from: EmailFromSettings | undefined;
+    smtp: EmailSmtpSettings | undefined;
+}
+
 export enum EmailTemplateType {
     Invoice = "Invoice", 
     Contact = "Contact", 
@@ -61510,7 +61723,6 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
     smtpHost!: string | undefined;
     smtpPort!: number | undefined;
     smtpEnableSsl!: boolean | undefined;
-    smtpUseDefaultCredentials!: boolean | undefined;
     smtpDomain!: string | undefined;
     smtpUserName!: string | undefined;
     smtpPassword!: string | undefined;
@@ -61531,7 +61743,6 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
             this.smtpHost = data["smtpHost"];
             this.smtpPort = data["smtpPort"];
             this.smtpEnableSsl = data["smtpEnableSsl"];
-            this.smtpUseDefaultCredentials = data["smtpUseDefaultCredentials"];
             this.smtpDomain = data["smtpDomain"];
             this.smtpUserName = data["smtpUserName"];
             this.smtpPassword = data["smtpPassword"];
@@ -61552,7 +61763,6 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
         data["smtpHost"] = this.smtpHost;
         data["smtpPort"] = this.smtpPort;
         data["smtpEnableSsl"] = this.smtpEnableSsl;
-        data["smtpUseDefaultCredentials"] = this.smtpUseDefaultCredentials;
         data["smtpDomain"] = this.smtpDomain;
         data["smtpUserName"] = this.smtpUserName;
         data["smtpPassword"] = this.smtpPassword;
@@ -61566,7 +61776,6 @@ export interface IEmailSettingsEditDto {
     smtpHost: string | undefined;
     smtpPort: number | undefined;
     smtpEnableSsl: boolean | undefined;
-    smtpUseDefaultCredentials: boolean | undefined;
     smtpDomain: string | undefined;
     smtpUserName: string | undefined;
     smtpPassword: string | undefined;
@@ -61979,42 +62188,6 @@ export interface IYTelSettingsEditDto {
     password: string | undefined;
     from: string | undefined;
     inboundSmsKey: string | undefined;
-}
-
-export class SendTestEmailInput implements ISendTestEmailInput {
-    emailAddress!: string;
-
-    constructor(data?: ISendTestEmailInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.emailAddress = data["emailAddress"];
-        }
-    }
-
-    static fromJS(data: any): SendTestEmailInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new SendTestEmailInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["emailAddress"] = this.emailAddress;
-        return data; 
-    }
-}
-
-export interface ISendTestEmailInput {
-    emailAddress: string;
 }
 
 export class ImportFullName implements IImportFullName {
@@ -75277,7 +75450,10 @@ export interface IUpdateMonthlyGoalInput {
 }
 
 export class UserEmailSettings implements IUserEmailSettings {
-    emailSignatureHtml!: string | undefined;
+    isUserSmtpEnabled!: boolean | undefined;
+    signatureHtml!: string | undefined;
+    from!: EmailFromSettings | undefined;
+    smtp!: EmailSmtpSettings | undefined;
 
     constructor(data?: IUserEmailSettings) {
         if (data) {
@@ -75290,7 +75466,10 @@ export class UserEmailSettings implements IUserEmailSettings {
 
     init(data?: any) {
         if (data) {
-            this.emailSignatureHtml = data["emailSignatureHtml"];
+            this.isUserSmtpEnabled = data["isUserSmtpEnabled"];
+            this.signatureHtml = data["signatureHtml"];
+            this.from = data["from"] ? EmailFromSettings.fromJS(data["from"]) : <any>undefined;
+            this.smtp = data["smtp"] ? EmailSmtpSettings.fromJS(data["smtp"]) : <any>undefined;
         }
     }
 
@@ -75303,13 +75482,19 @@ export class UserEmailSettings implements IUserEmailSettings {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["emailSignatureHtml"] = this.emailSignatureHtml;
+        data["isUserSmtpEnabled"] = this.isUserSmtpEnabled;
+        data["signatureHtml"] = this.signatureHtml;
+        data["from"] = this.from ? this.from.toJSON() : <any>undefined;
+        data["smtp"] = this.smtp ? this.smtp.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IUserEmailSettings {
-    emailSignatureHtml: string | undefined;
+    isUserSmtpEnabled: boolean | undefined;
+    signatureHtml: string | undefined;
+    from: EmailFromSettings | undefined;
+    smtp: EmailSmtpSettings | undefined;
 }
 
 export class PropertyLinkDto implements IPropertyLinkDto {

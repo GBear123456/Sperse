@@ -19,7 +19,8 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CommunicationMessageDeliveryType, ContactCommunicationServiceProxy, AttachmentDto,
-    CommunicationMessageSendingStatus, MessageDto, ContactInfoDto, FileInfo, MessageListDto } from '@shared/service-proxies/service-proxies';
+    CommunicationMessageSendingStatus, MessageDto, ContactInfoDto, FileInfo, MessageListDto,
+    EmailSettingsSource } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 
@@ -475,34 +476,15 @@ export class UserInboxComponent implements OnDestroy {
 
         let parentId = this.activeMessage.parentId || this.activeMessage.id;
 
-        (this.isActiveEmilType ? this.contactsService.sendEmail({
-                contactId: this.contactId,
-                parentId: parentId,
-                from: this.activeMessage.from,
-                to: [this.activeMessage.to],
-                replyTo: undefined,
-                cc: undefined,
-                bcc: undefined,
-                subject: 'Re: ' + this.activeMessage.subject,
-                body: this.instantMessageText,
-                attachments: this.instantMessageAttachments.map(item => {
-                    return new FileInfo({
-                        id: item.id,
-                        name: item.name
-                    });
-                })
-            }) : this.contactsService.sendSMS({
+        this.contactsService.sendSMS({
                 contactId: this.contactId,
                 parentId: parentId,
                 message: this.instantMessageText,
                 phoneNumber: this.activeMessage.isInbound ? this.activeMessage.from : this.activeMessage.to
-            })
-        ).subscribe(res => {
+        }).subscribe(res => {
             if (!isNaN(res)) {
                 this.invalidate();
-                this.notifyService.success(this.ls.l(
-                    this.isActiveEmilType ? 'MailSent' : 'MessageSuccessfullySent'
-                ));
+                this.notifyService.success(this.ls.l('MessageSuccessfullySent'));
             }
         });
         this.instantMessageAttachments = [];
@@ -607,8 +589,7 @@ export class UserInboxComponent implements OnDestroy {
         let messageStatus;
         if (messageDto.isInbound) {
             messageStatus = this.ls.l('Inbox');
-        }
-        else {
+        } else {
             messageStatus = messageDto.status;
             if (messageDto.recepients && messageDto.recepients.length) {
                 let recipientsCount = messageDto.deliveryType == CommunicationMessageDeliveryType.SMS ? 1 : messageDto.to.split(',').length;

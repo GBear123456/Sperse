@@ -38,25 +38,45 @@
             <dx-validation-group>
                 <div class="row">
                     <div class="field-area from">
-                        <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>
-                        <dx-text-box
+                        <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>            
+                        <dx-select-box *ngIf="data?.from?.length || templateEditMode; else configure"
                             name="from"
                             width="calc(50% - 52px)"
                             height="40px"
                             placeholder=""
-                            [(value)]="data.from"
-                            [disabled]="templateEditMode">
+                            [value]="emailSettingsSource"
+                            valueExpr="emailSettingsSource"
+                            displayExpr="emailAddress"
+                            [dataSource]="data.from"
+                            itemTemplate="itemTemplate"
+                            fieldTemplate="fieldTemplate"
+                            [disabled]="templateEditMode"
+                            (onValueChanged)="onFromChanged($event)">
+                            <div *dxTemplate="let item of 'itemTemplate'" class="from-item-select-box" [title]="item.emailAddress">
+                                {{ item.emailAddress }}
+                            </div>
+                            <div *dxTemplate="let item of 'fieldTemplate'" class="from-field-select-box">
+                                <dx-text-box
+                                    width="320px"
+                                    height="40px"
+                                    [readOnly]="true"
+                                    [value]="item.emailAddress"
+                                    [hint]="item.emailAddress">
+                                </dx-text-box>
+                            </div>
                             <dx-validator>
-                                <dxi-validation-rule type="pattern"
-                                                     [pattern]="emailRegEx"
-                                                     [message]="ls.l('InvalidEmailAddress')">
-                                </dxi-validation-rule>
                                 <dxi-validation-rule
-                                                    type="required" 
-                                                    [message]="ls.l('ThisFieldIsRequired')">
+                                    type="required" 
+                                    [message]="ls.l('MailerSettingsAreNotConfigured', ls.l('SMTP'))">
                                 </dxi-validation-rule>
                             </dx-validator>
-                        </dx-text-box>
+                        </dx-select-box>
+                        <ng-template #configure>
+                            <a class="config-link" (click)="close()" 
+                                [routerLink]="'app/admin/' + (appService.isHostTenant ? 'host': 'tenant') + 'Settings'" 
+                                [queryParams]="{tab: 'smtp'}" 
+                                [ngClass]="{disabled: !isSettingsAllowed}">{{ls.l('MailerSettingsAreNotConfigured', ls.l('SMTP'))}}&nbsp;</a>
+                        </ng-template>
                         <label class="caption disabled">{{ls.l('ReplyTo')}}:</label>
                         <dx-tag-box #ReplyToElement
                             name="replyTo"

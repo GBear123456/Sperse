@@ -1,9 +1,11 @@
 /** Core imports */
-import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, Injector, OnInit, AfterViewInit, ViewChild, ElementRef,
+    OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
-import { forkJoin } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
+import { Observable, forkJoin } from 'rxjs';
+import { finalize, tap, first, map, delay } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
@@ -12,13 +14,16 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
-    ComboboxItemDto, CommonLookupServiceProxy, SettingScopes, HostSettingsEditDto, HostSettingsServiceProxy, SendTestEmailInput, PayPalSettings,
-    BaseCommercePaymentSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings, YTelSettingsEditDto, EmailTemplateType
+    ComboboxItemDto, CommonLookupServiceProxy, SettingScopes, HostSettingsEditDto, HostSettingsServiceProxy,
+    PayPalSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings,
+    YTelSettingsEditDto, EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppConsts } from '@root/shared/AppConsts';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
+import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
     templateUrl: './host-settings.component.html',
@@ -27,7 +32,8 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantPaymentSettingsServiceProxy]
 })
-export class HostSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class HostSettingsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
+    @ViewChild('tabGroup', { static: false }) tabGroup: ElementRef;
 
     loading = false;
     hostSettings: HostSettingsEditDto;
@@ -35,7 +41,6 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     testEmailAddress: string = undefined;
     showTimezoneSelection = abp.clock.provider.supportsMultipleTimezone;
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Application;
-    baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
     payPalPaymentSettings: PayPalSettings = new PayPalSettings();
     achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
     recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
@@ -61,15 +66,18 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         }
     ];
     EmailTemplateType = EmailTemplateType;
+    tabIndex: Observable<number>;
 
     constructor(
         injector: Injector,
+        private route: ActivatedRoute,
         private hostSettingService: HostSettingsServiceProxy,
         private commonLookupService: CommonLookupServiceProxy,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private appSessionService: AppSessionService,
         private changeDetection: ChangeDetectorRef,
         private contactService: ContactsService,
+        private emailSmtpSettingsService: EmailSmtpSettingsService,
         public dialog: MatDialog
     ) {
         super(injector);
@@ -80,19 +88,17 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
     loadHostSettings(): void {
         forkJoin(
             this.hostSettingService.getAllSettings(),
-            this.tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
             this.tenantPaymentSettingsService.getPayPalSettings(),
             this.tenantPaymentSettingsService.getACHWorksSettings(),
             this.tenantPaymentSettingsService.getRecurlyPaymentSettings(),
             this.hostSettingService.getYTelSettings()
         ).pipe(
             finalize(() => { this.changeDetection.detectChanges(); })
-        ).subscribe(([allSettings, baseCommerceSettings, payPalSettings, achWorksSettings, recurlySettings, yTelSettings]) => {
+        ).subscribe(([allSettings, payPalSettings, achWorksSettings, recurlySettings, yTelSettings]) => {
             this.hostSettings = allSettings;
             this.initialDefaultCountry = allSettings.general.defaultCountryCode;
             this.initialTimeZone = allSettings.general.timezone;
             this.usingDefaultTimeZone = allSettings.general.timezoneForComparison === this.setting.get('Abp.Timing.TimeZone');
-            this.baseCommercePaymentSettings = baseCommerceSettings;
             this.payPalPaymentSettings = payPalSettings;
             this.achWorksSettings = achWorksSettings;
             this.recurlySettings = recurlySettings;
@@ -126,29 +132,42 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, O
         self.init();
     }
 
+    ngAfterViewInit() {
+        this.tabIndex = this.route.queryParams.pipe(
+            first(), delay(100), 
+            map((params: Params) => {
+                return (params['tab'] == 'smtp' ? 
+                    DomHelper.getElementIndexByInnerText(
+                        this.tabGroup.nativeElement.getElementsByClassName('mat-tab-label'), 
+                        this.l('EmailSmtp')
+                    ) : 0
+                );
+            })
+        );        
+    }
+
     ngOnDestroy() {
         this.rootComponent.overflowHidden(false);
     }
 
     sendTestEmail(): void {
-        const self = this;
-        const input = new SendTestEmailInput();
-        input.emailAddress = self.testEmailAddress;
-        self.hostSettingService.sendTestEmail(input).subscribe(() => {
-            self.notify.info(self.l('TestEmailSentSuccessfully'));
-        });
+        this.startLoading();
+        let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.hostSettings.email);
+        this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this));
     }
 
     saveAll(): void {
+        this.startLoading();
         forkJoin(
             this.hostSettingService.updateAllSettings(this.hostSettings).pipe(tap(() => {
                 this.appSessionService.checkSetDefaultCountry(this.hostSettings.general.defaultCountryCode);
             })),
-            this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
             this.tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings),
             this.hostSettingService.updateYTelSettings(this.yTelSettings)
+        ).pipe(
+            finalize(() => this.finishLoading())
         ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
             if (this.initialDefaultCountry !== this.hostSettings.general.defaultCountryCode) {

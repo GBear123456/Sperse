@@ -1,14 +1,16 @@
 import { EmailAttachment } from '@app/crm/shared/email-template-dialog/email-attachment';
-import { EmailTemplateType, ContactInfoDto } from '@shared/service-proxies/service-proxies';
+import { EmailTemplateType, ContactInfoDto, EmailFromInfo, EmailSettingsSource } from '@shared/service-proxies/service-proxies';
 
 export interface EmailTemplateData {
+    contactId: number;
     contact: ContactInfoDto;
     title: string;
     saveTitle: string;
     saveDisabled: boolean;
     suggestionEmails: string[];
+    emailSettingsSource: EmailSettingsSource;
     attachments: Partial<EmailAttachment>[];
-    from: string;
+    from: EmailFromInfo[];
     to: string[];
     body: string;
     subject: string;

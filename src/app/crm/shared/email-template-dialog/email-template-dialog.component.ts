@@ -15,6 +15,7 @@ import { NgxFileDropEntry } from 'ngx-file-drop';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
+import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -33,7 +34,7 @@ import {
     GetTemplateReponse,
     ContactServiceProxy,
     GetEmailDataOutput,
-
+    EmailSettingsSource,
     EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
@@ -64,6 +65,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     ckEditor: any;
     templateLoaded: boolean;
+    emailSettingsSource: EmailSettingsSource;
     showCC = false;
     showBCC = false;
     tagLastValue: string;
@@ -82,6 +84,11 @@ export class EmailTemplateDialogComponent implements OnInit {
     @Output() onTemplateDelete: EventEmitter<number> = new EventEmitter<number>();
 
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
+    isSettingsAllowed = this.permission.isGranted(AppPermissions.AdministrationTenantHosts) 
+        || (this.appService.isHostTenant ? 
+            this.permission.isGranted(AppPermissions.AdministrationHostSettings) :
+            this.permission.isGranted(AppPermissions.AdministrationTenantSettings)
+    );
 
     buttons: IDialogButton[];
     _refresh: Subject<null> = new Subject<null>();
@@ -140,29 +147,37 @@ export class EmailTemplateDialogComponent implements OnInit {
         private contactProxy: ContactServiceProxy,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
-        sessionService: AppSessionService,
+        private sessionService: AppSessionService,
         private permission: AppPermissionService,
         private features: FeatureCheckerService,
         private communicationProxy: ContactCommunicationServiceProxy,
         private documentsService: DocumentsService,
         public changeDetectorRef: ChangeDetectorRef,
+        public appService: AppService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
     ) {
-        data.from = sessionService.user.emailAddress;
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
 
         if (this.data.templateId)
             this.loadTemplateById(this.data.templateId);
         else {
-            if (!this.data.tags && this.data.contact)
+            if (!this.data.tags && (this.data.contactId || this.data.contact)) {
+                this.startLoading();
                 this.communicationProxy.getEmailData(
-                    undefined, this.data.contact.id
+                    undefined, this.data.contactId || this.data.contact.id
+                ).pipe(
+                    finalize(() => this.finishLoading())
                 ).subscribe((res: GetEmailDataOutput) => {
                     this.data.tags = res.tags;
+                    if (res.from && res.from.length)
+                        this.data.from = res.from;
+                    this.initFromField();
                 });
+            } else
+                this.initFromField();
             this.templateLoaded = true;
         }
     }
@@ -181,6 +196,24 @@ export class EmailTemplateDialogComponent implements OnInit {
 
         this.initDialogButtons();
         this.changeDetectorRef.detectChanges();
+    }
+
+    initFromField() {
+        if (this.data.from instanceof Array && this.data.from.length) {
+            let from = this.data.from.find(item => item.emailSettingsSource == EmailSettingsSource.User);
+            if (from) {
+                this.emailSettingsSource = from.emailSettingsSource;
+            } else {
+                from = this.data.from[0];
+                this.emailSettingsSource = from.emailSettingsSource;
+            }
+            this.data.emailSettingsSource = this.emailSettingsSource;
+            if (from && from.ccEmailAddress) {
+                this.data.cc = [from.ccEmailAddress];
+                this.showCC = true;
+            }
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     initDialogButtons() {
@@ -246,7 +279,9 @@ export class EmailTemplateDialogComponent implements OnInit {
 
             if (!this.data.from)
                 return this.notifyService.error(
-                    this.ls.l('RequiredField', this.ls.l('From')));
+                    this.ls.l('MailerSettingsAreNotConfigured', this.ls.l('SMTP')), 
+                    this.ls.l('RequiredField', this.ls.l('From'))
+                );
 
             if (!this.data.to || !this.data.to.length)
                 return this.notifyService.error(
@@ -407,6 +442,20 @@ export class EmailTemplateDialogComponent implements OnInit {
     invalidate() {
         this.updateDataLength();
         this.changeDetectorRef.markForCheck();
+    }
+
+    onFromChanged(event) {
+        let from = this.data.from.find(
+            item => item.emailSettingsSource == event.value
+        );
+        if (from) {
+            this.data.emailSettingsSource = from.emailSettingsSource;
+            if (from.ccEmailAddress) {
+                this.data.cc = [from.ccEmailAddress];
+                this.showCC = true;
+            }
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     onCustomItemCreating(event, callback?) {
