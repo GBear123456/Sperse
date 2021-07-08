@@ -318,7 +318,10 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     sendInvoice() {
         this.startLoading(true);
-        this.invoiceProxy.getEmailData(undefined, this.actionRecordData.InvoiceId).pipe(
+        this.invoiceProxy.getEmailData(
+            this.settings.defaultTemplateId, 
+            this.actionRecordData.InvoiceId
+        ).pipe(
             finalize(() => this.finishLoading(true)),
             switchMap(data => {
                 data['contactId'] = this.contactId;
