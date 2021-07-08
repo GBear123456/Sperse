@@ -160,8 +160,10 @@ export class EmailTemplateDialogComponent implements OnInit {
     ) {
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
+    }
 
-        if (this.data.templateId)
+    ngOnInit() {
+        if (this.templateEditMode && this.data.templateId)
             this.loadTemplateById(this.data.templateId);
         else {
             if (!this.data.tags && (this.data.contactId || this.data.contact)) {
@@ -180,9 +182,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.initFromField();
             this.templateLoaded = true;
         }
-    }
 
-    ngOnInit() {
         delete this.data.attachments;
         this.dialogRef.afterClosed().subscribe(() => {
             if (this.attachments.length && !this.data.attachments)
@@ -416,20 +416,22 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     loadTemplateById(templateId) {
-        this.startLoading();
-        this.emailTemplateProxy.getTemplate(templateId).pipe(
-            finalize(() => this.finishLoading())
-        ).subscribe((res: GetTemplateReponse) => {
-            this.data.bcc = res.bcc;
-            this.data.body = res.body;
-            this.data.cc = res.cc;
-            this.data.subject = res.subject;
-            this.showCC = Boolean(res.cc && res.cc.length);
-            this.showBCC = Boolean(res.bcc && res.bcc.length);
-            this.onTemplateChange.emit(templateId);
-            this.invalidate();
-            this.templateLoaded = true;
-        });
+        if (this.templateEditMode) {
+            this.startLoading();
+            this.emailTemplateProxy.getTemplate(templateId).pipe(
+                finalize(() => this.finishLoading())
+            ).subscribe((res: GetTemplateReponse) => {
+                this.data.bcc = res.bcc;
+                this.data.body = res.body;
+                this.data.cc = res.cc;
+                this.data.subject = res.subject;
+                this.showCC = Boolean(res.cc && res.cc.length);
+                this.showBCC = Boolean(res.bcc && res.bcc.length);
+                this.onTemplateChange.emit(templateId);
+                this.invalidate();
+                this.templateLoaded = true;
+            });
+        }
     }
 
     validateEmailList(element) {
