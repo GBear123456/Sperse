@@ -419,7 +419,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     );
     private gridCompactView: BehaviorSubject<Boolean> = new BehaviorSubject(true);
     dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable().pipe(tap((layoutType) => {
-        this.appService.isClientSearchDisabled = layoutType == DataLayoutType.Pipeline;
+        this.appService.isClientSearchDisabled = layoutType != DataLayoutType.DataGrid;
     }));
     showCompactView$: Observable<Boolean> = combineLatest(
         this.dataLayoutType$,
