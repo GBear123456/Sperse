@@ -235,8 +235,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         && (
                             this.impersonationIsGranted ||
                             this.permission.checkCGPermission(this.selectedContactGroup, 'UserInformation.AutoLogin')
-                        )
-                        && !this.authService.checkCurrentTopDomainByUri(),
+                        ),
                     action: (data?) => {
                         const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
                         this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl);

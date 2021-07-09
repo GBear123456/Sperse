@@ -274,7 +274,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                     text: this.l('LoginToPortal'),
                                     visible: (this.canImpersonate || this.autoLoginAllowed) 
                                         && !!AppConsts.appMemberPortalUrl
-                                        && !this.authService.checkCurrentTopDomainByUri(),
+                                        && !this.isBankCodeLayout,
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
