@@ -411,4 +411,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         let key = this.yTelSettings.inboundSmsKey || '{inbound_sms_key}';
         return AppConsts.remoteServiceBaseUrl + `/api/YTel/ProcessInboundSms?tenantId=${this.appSessionService.tenantId}&key=${key}`;
     }
+
+    getStripeWebhookUrl(): string {
+        return AppConsts.remoteServiceBaseUrl + `/api/stripe/processWebhook?tenantId=${this.appSessionService.tenantId}`;
+    }
 }

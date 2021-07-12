@@ -382,10 +382,16 @@
                             <label for="StripeSecretKey">{{l("Secret key")}}</label>
                             <input id="StripeSecretKey" type="text" name="StripeSecretKey" class="form-control" [(ngModel)]="stripePaymentSettings.apiKey">
                         </div>
+                        <p>
+                            <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
+                        </p>
                         <div class="form-group">
-                            <label for="StripeWebhookSecret">{{l("Webhook secret")}}</label>
+                            <label for="StripeWebhookSecret">{{l("Signing secret")}}</label>
                             <input id="StripeWebhookSecret" type="text" name="StripeWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.webhookSingingSecret">
                         </div>
+                        <p>
+                            <span class="small" [innerHtml]="l('StripeWebhookSecretHint', getStripeWebhookUrl())"></span>
+                        </p>
                     </div>
                 </dx-scroll-view>
             </mat-tab>
