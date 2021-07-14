@@ -57,6 +57,10 @@ export class AddOrEditSSLBindingModalComponent {
             disabled: true
         }
     ];
+    orgUnits: any[] = [{
+        id: -1,
+        displayName: this.ls.l('AllOrganizationUnits')
+    }];
 
     envHost = {
         production: {
@@ -86,6 +90,9 @@ export class AddOrEditSSLBindingModalComponent {
         private dialogRef: MatDialogRef<AddOrEditSSLBindingModalComponent>,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
+        if (data.orgUnits && data.orgUnits.length)
+            this.orgUnits = this.orgUnits.concat(data.orgUnits);
+
         this.editing = Boolean(data.item && data.item.id);
         if (this.editing) {
             this.model = new UpdateSslBindingInput({
@@ -97,6 +104,7 @@ export class AddOrEditSSLBindingModalComponent {
             this.titleText = this.ls.l('EditSSLBinding');
         } else {
             this.model = new AddSslBindingInput();
+            this.model.organizationUnitId = -1;
             this.model.tenantHostType = data.hostTypes[0].id;
         }
         this.getTenantSslCertificates(data.item);
@@ -115,7 +123,7 @@ export class AddOrEditSSLBindingModalComponent {
             .subscribe(result => {
                 this.sslCertificates = result;
                 this.sslCertificates.unshift(new TenantSslCertificateInfo({
-                    id: null,
+                    id: -1,
                     hostNames: this.ls.l('LetsEncrypt_FreeSSLCertificate'),
                     expiration: undefined,
                     thumbprint: undefined
@@ -124,8 +132,9 @@ export class AddOrEditSSLBindingModalComponent {
                 if (data) {
                     this.model.tenantHostType = <any>data.hostType;
                     this.model.domainName = data.hostName;
-                    this.model.sslCertificateId = data.sslCertificateId;
-                }
+                    this.model.sslCertificateId = data.sslCertificateId || -1;
+                } else
+                    this.model.sslCertificateId = -1;
 
                 this.changeDetection.markForCheck();
             });
@@ -133,25 +142,38 @@ export class AddOrEditSSLBindingModalComponent {
 
     save(): void {
         this.saving = true;
+        if (this.model.sslCertificateId == -1)
+            this.model.sslCertificateId;
+
         this.startLoading();
         if (this.editing) {
-            this.tenantHostService.updateSslBinding(new UpdateSslBindingInput(this.model))
-                .pipe(finalize(() => { 
-                    this.finishLoading();
-                    this.saving = false; 
-                    this.changeDetection.detectChanges(); 
-                })).subscribe(result => {
-                    this.closeSuccess();
+            this.tenantHostService.updateSslBinding(new UpdateSslBindingInput({
+                ...this.model,
+                organizationUnitId: this.model.organizationUnitId == -1
+                    ? null : this.model.organizationUnitId,
+                sslCertificateId: this.model.sslCertificateId == -1
+                    ? null : this.model.sslCertificateId
+            })).pipe(finalize(() => {
+                this.finishLoading();
+                this.saving = false;
+                this.changeDetection.detectChanges();
+            })).subscribe(result => {
+                this.closeSuccess();
             });
         } else {
             if (!this.domainComponent.instance.option('isValid'))
                 return this.notify.error(this.ls.l('HostName_NotMapped'));
 
-            this.tenantHostService.addSslBinding(new AddSslBindingInput(this.model))
-            .pipe(finalize(() => { 
+            this.tenantHostService.addSslBinding(new AddSslBindingInput({
+                ...this.model,
+                organizationUnitId: this.model.organizationUnitId == -1
+                    ? null : this.model.organizationUnitId,
+                sslCertificateId: this.model.sslCertificateId == -1
+                    ? null : this.model.sslCertificateId
+            })).pipe(finalize(() => {
                 this.finishLoading();
                 this.saving = false;
-                this.changeDetection.detectChanges(); 
+                this.changeDetection.detectChanges();
             })).subscribe(result => {
                 this.closeSuccess();
             });

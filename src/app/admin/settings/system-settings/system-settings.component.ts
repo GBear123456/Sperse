@@ -146,6 +146,6 @@ export class SystemSettingsComponent implements OnInit {
               if (this.orgUnits[i].id == id)
                   return this.orgUnits[i].displayName;
         }
-        return this.ls.l('Default');
+        return this.ls.l('AllOrganizationUnits');
     }
 }
