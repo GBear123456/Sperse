@@ -220,6 +220,11 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
+            <mat-tab [label]="l('Domain')" *ngIf="isAdminCustomizations && isTenantHosts">
+                <dx-scroll-view showScrollbar="onHover">
+                    <system-settings></system-settings>
+                </dx-scroll-view>
+            </mat-tab>
             <mat-tab label="{{l('EmailSmtp')}}" *ngIf="hostSettings.email">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">
