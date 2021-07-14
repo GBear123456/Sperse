@@ -24,6 +24,7 @@ import {
     CheckHostNameDnsMappingInput, TenantHostType
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { environment } from '@root/environments/environment';
@@ -38,6 +39,7 @@ import { environment } from '@root/environments/environment';
 export class AddOrEditSSLBindingModalComponent {
     @ViewChild('createOrEditModal', { static: false }) modal: ModalDirective;
     @ViewChild('DomainName', { static: false }) domainComponent: DxTextBoxComponent;
+    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
 
     public readonly HostType_PlatformApp = TenantHostType.PlatformApp;
 
@@ -100,6 +102,14 @@ export class AddOrEditSSLBindingModalComponent {
         this.getTenantSslCertificates(data.item);
     }
 
+    startLoading() {
+        this.modalDialog && this.modalDialog.startLoading();
+    }
+
+    finishLoading() {
+        this.modalDialog && this.modalDialog.finishLoading();
+    }
+
     getTenantSslCertificates(data) {
         this.tenantSslCertificateService.getTenantSslCertificates()
             .subscribe(result => {
@@ -123,11 +133,14 @@ export class AddOrEditSSLBindingModalComponent {
 
     save(): void {
         this.saving = true;
-
+        this.startLoading();
         if (this.editing) {
             this.tenantHostService.updateSslBinding(new UpdateSslBindingInput(this.model))
-                .pipe(finalize(() => { this.saving = false; }))
-                .subscribe(result => {
+                .pipe(finalize(() => { 
+                    this.finishLoading();
+                    this.saving = false; 
+                    this.changeDetection.detectChanges(); 
+                })).subscribe(result => {
                     this.closeSuccess();
             });
         } else {
@@ -135,11 +148,15 @@ export class AddOrEditSSLBindingModalComponent {
                 return this.notify.error(this.ls.l('HostName_NotMapped'));
 
             this.tenantHostService.addSslBinding(new AddSslBindingInput(this.model))
-            .pipe(finalize(() => { this.saving = false; }))
-            .subscribe(result => {
+            .pipe(finalize(() => { 
+                this.finishLoading();
+                this.saving = false;
+                this.changeDetection.detectChanges(); 
+            })).subscribe(result => {
                 this.closeSuccess();
             });
         }
+        this.changeDetection.detectChanges();
     }
 
     close(success = false): void {
