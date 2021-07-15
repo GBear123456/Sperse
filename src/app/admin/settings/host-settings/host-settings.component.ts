@@ -18,6 +18,7 @@ import {
     PayPalSettings, TenantPaymentSettingsServiceProxy, ACHWorksSettings, RecurlyPaymentSettings,
     YTelSettingsEditDto, EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
+import { AppFeatures } from '@shared/AppFeatures';
 import { AppPermissions } from '@shared/AppPermissions';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppConsts } from '@root/shared/AppConsts';
@@ -67,6 +68,9 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
     ];
     EmailTemplateType = EmailTemplateType;
     tabIndex: Observable<number>;
+
+    isTenantHosts: boolean = this.isGranted(AppPermissions.AdministrationTenantHosts);
+    isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
 
     constructor(
         injector: Injector,
