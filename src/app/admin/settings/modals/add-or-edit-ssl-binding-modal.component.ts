@@ -97,7 +97,7 @@ export class AddOrEditSSLBindingModalComponent {
         if (this.editing) {
             this.model = new UpdateSslBindingInput({
                 id: data.item.id,
-                organizationUnitId: data.item.organizationUnitId,
+                organizationUnitId: data.item.organizationUnitId || -1,
                 sslCertificateId: data.item.sslCertificateId,
                 isActive: data.item.isActive
             }); // ...data.item added a lot of no needed items
