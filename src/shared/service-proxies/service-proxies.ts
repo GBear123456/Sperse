@@ -74340,7 +74340,9 @@ export interface IProductServiceInfo {
 export class ProductSubscriptionOptionInfo implements IProductSubscriptionOptionInfo {
     frequency!: RecurringPaymentFrequency | undefined;
     signupFee!: number | undefined;
+    commissionableSignupFeeAmount!: number | undefined;
     fee!: number | undefined;
+    commissionableFeeAmount!: number | undefined;
     trialDayCount!: number | undefined;
     gracePeriodDayCount!: number | undefined;
 
@@ -74357,7 +74359,9 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
         if (data) {
             this.frequency = data["frequency"];
             this.signupFee = data["signupFee"];
+            this.commissionableSignupFeeAmount = data["commissionableSignupFeeAmount"];
             this.fee = data["fee"];
+            this.commissionableFeeAmount = data["commissionableFeeAmount"];
             this.trialDayCount = data["trialDayCount"];
             this.gracePeriodDayCount = data["gracePeriodDayCount"];
         }
@@ -74374,7 +74378,9 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
         data = typeof data === 'object' ? data : {};
         data["frequency"] = this.frequency;
         data["signupFee"] = this.signupFee;
+        data["commissionableSignupFeeAmount"] = this.commissionableSignupFeeAmount;
         data["fee"] = this.fee;
+        data["commissionableFeeAmount"] = this.commissionableFeeAmount;
         data["trialDayCount"] = this.trialDayCount;
         data["gracePeriodDayCount"] = this.gracePeriodDayCount;
         return data; 
@@ -74384,7 +74390,9 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
 export interface IProductSubscriptionOptionInfo {
     frequency: RecurringPaymentFrequency | undefined;
     signupFee: number | undefined;
+    commissionableSignupFeeAmount: number | undefined;
     fee: number | undefined;
+    commissionableFeeAmount: number | undefined;
     trialDayCount: number | undefined;
     gracePeriodDayCount: number | undefined;
 }
@@ -74396,6 +74404,8 @@ export class ProductInfo implements IProductInfo {
     groupId!: number | undefined;
     type!: ProductType | undefined;
     price!: number | undefined;
+    commissionableAmount!: number | undefined;
+    maxCommissionRate!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
@@ -74417,6 +74427,8 @@ export class ProductInfo implements IProductInfo {
             this.groupId = data["groupId"];
             this.type = data["type"];
             this.price = data["price"];
+            this.commissionableAmount = data["commissionableAmount"];
+            this.maxCommissionRate = data["maxCommissionRate"];
             this.unit = data["unit"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
@@ -74446,6 +74458,8 @@ export class ProductInfo implements IProductInfo {
         data["groupId"] = this.groupId;
         data["type"] = this.type;
         data["price"] = this.price;
+        data["commissionableAmount"] = this.commissionableAmount;
+        data["maxCommissionRate"] = this.maxCommissionRate;
         data["unit"] = this.unit;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
@@ -74468,6 +74482,8 @@ export interface IProductInfo {
     groupId: number | undefined;
     type: ProductType | undefined;
     price: number | undefined;
+    commissionableAmount: number | undefined;
+    maxCommissionRate: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
@@ -74689,6 +74705,8 @@ export class CreateProductInput implements ICreateProductInput {
     groupName!: string | undefined;
     type!: ProductType;
     price!: number | undefined;
+    commissionableAmount!: number | undefined;
+    maxCommissionRate!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
@@ -74711,6 +74729,8 @@ export class CreateProductInput implements ICreateProductInput {
             this.groupName = data["groupName"];
             this.type = data["type"];
             this.price = data["price"];
+            this.commissionableAmount = data["commissionableAmount"];
+            this.maxCommissionRate = data["maxCommissionRate"];
             this.unit = data["unit"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
@@ -74741,6 +74761,8 @@ export class CreateProductInput implements ICreateProductInput {
         data["groupName"] = this.groupName;
         data["type"] = this.type;
         data["price"] = this.price;
+        data["commissionableAmount"] = this.commissionableAmount;
+        data["maxCommissionRate"] = this.maxCommissionRate;
         data["unit"] = this.unit;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
@@ -74764,6 +74786,8 @@ export interface ICreateProductInput {
     groupName: string | undefined;
     type: ProductType;
     price: number | undefined;
+    commissionableAmount: number | undefined;
+    maxCommissionRate: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
@@ -74814,6 +74838,8 @@ export class UpdateProductInput implements IUpdateProductInput {
     groupName!: string | undefined;
     type!: ProductType;
     price!: number | undefined;
+    commissionableAmount!: number | undefined;
+    maxCommissionRate!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
@@ -74837,6 +74863,8 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.groupName = data["groupName"];
             this.type = data["type"];
             this.price = data["price"];
+            this.commissionableAmount = data["commissionableAmount"];
+            this.maxCommissionRate = data["maxCommissionRate"];
             this.unit = data["unit"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
@@ -74868,6 +74896,8 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["groupName"] = this.groupName;
         data["type"] = this.type;
         data["price"] = this.price;
+        data["commissionableAmount"] = this.commissionableAmount;
+        data["maxCommissionRate"] = this.maxCommissionRate;
         data["unit"] = this.unit;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
@@ -74892,6 +74922,8 @@ export interface IUpdateProductInput {
     groupName: string | undefined;
     type: ProductType;
     price: number | undefined;
+    commissionableAmount: number | undefined;
+    maxCommissionRate: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
