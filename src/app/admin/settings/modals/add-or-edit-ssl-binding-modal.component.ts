@@ -142,9 +142,6 @@ export class AddOrEditSSLBindingModalComponent {
 
     save(): void {
         this.saving = true;
-        if (this.model.sslCertificateId == -1)
-            this.model.sslCertificateId;
-
         this.startLoading();
         if (this.editing) {
             this.tenantHostService.updateSslBinding(new UpdateSslBindingInput({
