@@ -7,6 +7,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Observable, forkJoin } from 'rxjs';
 import { finalize, tap, first, map, delay } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
+import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
@@ -82,6 +83,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         private appSessionService: AppSessionService,
         private changeDetection: ChangeDetectorRef,
+        private clipboardService: ClipboardService,
         private contactService: ContactsService,
         private appService: AppService,
         private emailSmtpSettingsService: EmailSmtpSettingsService,
@@ -204,5 +206,10 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
 
     getStripeWebhookUrl(): string {
         return AppConsts.remoteServiceBaseUrl + `/api/stripe/processWebhook`;
+    }
+
+    copyToClipboard(event) {
+        this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
+        this.notify.info(this.l('SavedToClipboard'));
     }
 }

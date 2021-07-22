@@ -1,6 +1,7 @@
 /** Core imports */
 import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
 import { ActivatedRoute, Params } from '@angular/router';
+import { ClipboardService } from 'ngx-clipboard';
 
 /** Third party imports */
 import { IAjaxResponse } from '@abp/abpHttpInterceptor';
@@ -131,6 +132,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private tokenService: TokenService,
         private tenantOfferProviderSettingsService: TenantOfferProviderSettingsServiceProxy,
         private faviconsService: FaviconService,
+        private clipboardService: ClipboardService,
         private contactService: ContactsService,
         private appService: AppService,
         private emailSmtpSettingsService: EmailSmtpSettingsService,
@@ -419,5 +421,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
     getStripeWebhookUrl(): string {
         return AppConsts.remoteServiceBaseUrl + `/api/stripe/processWebhook?tenantId=${this.appSessionService.tenantId}`;
+    }
+
+    copyToClipboard(event) {
+        this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
+        this.notify.info(this.l('SavedToClipboard'));
     }
 }
