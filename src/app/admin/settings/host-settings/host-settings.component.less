@@ -58,4 +58,18 @@
         border-left: none;
         border-radius: 0;
     }
+
+    .copy-url {
+        position: relative;
+
+        .copy {
+            visibility: hidden;
+            position: absolute;
+            top: 0px;
+        }
+
+        &:hover .copy {
+            visibility: visible;
+        }
+    }
 }

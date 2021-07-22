@@ -488,7 +488,9 @@
                             <input id="StripeWebhookSecret" type="text" name="StripeWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.webhookSingingSecret">
                         </div>
                         <p>
-                            <span class="small" [innerHtml]="l('StripeWebhookSecretHint', getStripeWebhookUrl())"></span>
+                            <span class="small" [innerHtml]="l('StripeWebhookSecretHint1')"></span><br />
+                            <span class="small">URL - <span class="copy-url"><b>{{getStripeWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
+                            <span class="small" [innerHtml]="l('StripeWebhookSecretHint2')"></span>
                         </p>
                     </div>
                 </dx-scroll-view>
@@ -707,8 +709,8 @@
                         </div>
                     </div>
                     <p>
-                        <span [innerHtml]="l('YTelInboundSMSHint', 'https://app.ytel.com/#/numbers')"></span>
-                        <br /><b>{{getYtelInboundSMSUrl()}}</b><br /><br />
+                        <span [innerHtml]="l('YTelInboundSMSHint', 'https://app.ytel.com/#/numbers')"></span><br />
+                        <span class="copy-url"><b>{{getYtelInboundSMSUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span><br /><br />
                     </p>
                 </dx-scroll-view>
             </mat-tab>
