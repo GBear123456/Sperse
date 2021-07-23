@@ -304,7 +304,12 @@ export class UserInboxComponent implements OnDestroy {
 
     expandGroup(item) {
         item.expanded = !item.expanded;
+        this.markAsOpened(item);
         this.initActiveMessage(item);
+    }
+
+    markAsOpened(item) {
+        item.isNew = false;
     }
 
     initActiveMessage(record) {
@@ -316,7 +321,7 @@ export class UserInboxComponent implements OnDestroy {
                 forkJoin(
                     this.communicationService.getMessage(record.id, this.contactId),
                     record.hasChildren ? this.communicationService.getMessages(this.contactId, record.id,
-                        undefined, undefined, undefined, undefined, undefined, undefined, undefined) : of({items: null})
+                        undefined, undefined, undefined, undefined, 'Id ASC', undefined, undefined) : of({items: null})
                 ).pipe(
                     finalize(() => this.loadingService.finishLoading(this.contentView.nativeElement))
                 ).subscribe(([message, children]) => {
