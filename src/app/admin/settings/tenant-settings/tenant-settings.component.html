@@ -9,17 +9,16 @@
                     <div class="form-group" *ngIf="showTimezoneSelection">
                         <label for="Timezone">{{l("Timezone")}}</label>
                         <timezone-combo id="Timezone"
-                            [(selectedTimeZone)]="settings.general.timezone"
-                            [defaultTimezoneScope]="defaultTimezoneScope">
+                                        [(selectedTimeZone)]="settings.general.timezone"
+                                        [defaultTimezoneScope]="defaultTimezoneScope">
                         </timezone-combo>
                     </div>
                     <div class="form-group">
                         <label for="DefaultCountry">{{l("DefaultCountry")}}</label>
-                        <dx-select-box
-                            valueExpr="key"
-                            displayExpr="text"
-                            [(value)]="settings.general.defaultCountryCode"
-                            [dataSource]="supportedCountries">
+                        <dx-select-box valueExpr="key"
+                                       displayExpr="text"
+                                       [(value)]="settings.general.defaultCountryCode"
+                                       [dataSource]="supportedCountries">
                         </dx-select-box>
                     </div>
                     <div class="form-group">
@@ -311,7 +310,7 @@
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">
                         <label for="MemberPortalUrl">{{l("MemberPortalUrl")}}</label>
-                        <input #memberPortalUrl="ngModel" (change)="changeDetection.detectChanges()" id="MemberPortalUrl" type="url" name="MemberPortalUrl" class="form-control" [(ngModel)]="memberPortalSettings.url" maxlength="128"  [pattern]="urlRegexPattern">
+                        <input #memberPortalUrl="ngModel" (change)="changeDetection.detectChanges()" id="MemberPortalUrl" type="url" name="MemberPortalUrl" class="form-control" [(ngModel)]="memberPortalSettings.url" maxlength="128" [pattern]="urlRegexPattern">
                     </div>
                     <div>
                         <span class="help-block text-danger" *ngIf="!memberPortalUrl.valid && !memberPortalUrl.pristine">{{l("Invalid_MemberPortalUrl")}}</span>
@@ -450,9 +449,31 @@
                         </div>
                     </div>
                     <p>
-                        <span [innerHtml]="l('YTelInboundSMSHint', 'https://app.ytel.com/#/numbers')"></span>
-                        <br /><b>{{getYtelInboundSMSUrl()}}</b><br /><br />
+                        <span [innerHtml]="l('YTelInboundSMSHint', 'https://app.ytel.com/#/numbers')"></span><br />
+                        <span class="copy-url"><b>{{getYtelInboundSMSUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span><br /><br />
                     </p>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('Stripe')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="StripeSecretKey">{{l("Secret key")}}</label>
+                            <input id="StripeSecretKey" type="text" name="StripeSecretKey" class="form-control" [(ngModel)]="stripePaymentSettings.apiKey">
+                        </div>
+                        <p>
+                            <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
+                        </p>
+                        <div class="form-group">
+                            <label for="StripeWebhookSecret">{{l("Signing secret")}}</label>
+                            <input id="StripeWebhookSecret" type="text" name="StripeWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.webhookSingingSecret">
+                        </div>
+                        <p>
+                            <span class="small" [innerHtml]="l('StripeWebhookSecretHint1')"></span><br />
+                            <span class="small">URL - <span class="copy-url"><b>{{getStripeWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
+                            <span class="small" [innerHtml]="l('StripeWebhookSecretHint2')"></span>
+                        </p>
+                    </div>
                 </dx-scroll-view>
             </mat-tab>
             <mat-tab [label]="l('IDCS Link')" *ngIf="isCreditReportFeatureEnabled">

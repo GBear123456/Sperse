@@ -162,7 +162,8 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     removePaymentMethod() {}
 
     getCardTypeFromNumber(cardNumber: string): string {
-        return CreditCard.cardFromNumber(cardNumber).type;
+        let cardInfo = CreditCard.cardFromNumber(cardNumber);
+        return cardInfo && cardInfo.type || 'credit-card';
     }
 
     paymentsScrollHeight() {
