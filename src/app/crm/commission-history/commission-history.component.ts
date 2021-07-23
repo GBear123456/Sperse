@@ -507,6 +507,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     onCellClick(event) {
+        if (!event.column)
+            return;
+
         if (event.column.dataField === this.commissionFields.BuyerName
             || event.column.dataField === this.commissionFields.ResellerName
             || event.column.dataField === this.ledgerFields.ContactName
@@ -955,6 +958,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
 
     processFilterInternal() {
         if (this.dataGrid && this.dataGrid.instance) {
+            this.selectedRecords = [];
+            this.dataGrid.instance.clearSelection();
+
             this.processODataFilter(
                 this.dataGrid.instance,
                 this.dataSourceURI,
