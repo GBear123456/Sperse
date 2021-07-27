@@ -11,9 +11,9 @@
         <div class="field">
             <label for="code">{{ls.l('Code')}}</label>
             <dx-text-box name="code"
-                width="300px"
-                [inputAttr]="{ id: 'code' }"
-                [(value)]="product.code">
+                         width="300px"
+                         [inputAttr]="{ id: 'code' }"
+                         [(value)]="product.code">
                 <dx-validator>
                     <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Code'))}}."></dxi-validation-rule>
                 </dx-validator>
@@ -22,9 +22,9 @@
         <div class="field">
             <label for="name">{{ls.l('Name')}}</label>
             <dx-text-box name="name"
-                width="300px"
-                [inputAttr]="{ id: 'name' }"
-                [(value)]="product.name">
+                         width="300px"
+                         [inputAttr]="{ id: 'name' }"
+                         [(value)]="product.name">
                 <dx-validator>
                     <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
                 </dx-validator>
@@ -33,38 +33,38 @@
         <div class="field">
             <label for="name">{{ls.l('Description')}}</label>
             <dx-text-box name="description"
-                width="300px"
-                [inputAttr]="{ id: 'description' }"
-                [(value)]="product.description">
+                         width="300px"
+                         [inputAttr]="{ id: 'description' }"
+                         [(value)]="product.description">
             </dx-text-box>
         </div>
         <div class="field">
             <label for="deactivationTime">{{ls.l('Group')}}</label>
             <dx-select-box [dataSource]="productGroups"
-                [acceptCustomValue]="true"
-                width="300px"
-                displayExpr="name"
-                valueExpr="id"
-                placeholder="Select group..."                
-                [(value)]="product.groupId"
-                (onCustomItemCreating)="onCustomGroupCreating($event)">
+                           [acceptCustomValue]="true"
+                           width="300px"
+                           displayExpr="name"
+                           valueExpr="id"
+                           placeholder="Select group..."
+                           [(value)]="product.groupId"
+                           (onCustomItemCreating)="onCustomGroupCreating($event)">
             </dx-select-box>
         </div>
         <div class="field">
             <label for="activationTime">{{ls.l('Type')}}</label>
             <dx-select-box [dataSource]="productTypes"
-                width="300px"
-                placeholder="Select type..."
-                [(value)]="product.type">
+                           width="300px"
+                           placeholder="Select type..."
+                           [(value)]="product.type">
             </dx-select-box>
         </div>
         <ng-container *ngIf="product.type != defaultProductType">
             <div class="field">
                 <label>{{ls.l('Price')}}</label>
                 <dx-number-box name="price"
-                    width="300px"
-                    [format]="amountFormat$ | async"
-                    [(value)]="product.price">
+                               width="300px"
+                               [format]="amountFormat$ | async"
+                               [(value)]="product.price">
                     <dx-validator>
                         <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Price'))}}."></dxi-validation-rule>
                     </dx-validator>
@@ -73,15 +73,31 @@
             <div class="field">
                 <label for="activationTime">{{ls.l('Unit')}}</label>
                 <dx-select-box [dataSource]="productUnits"
-                    width="300px"
-                    placeholder="Select unit..."
-                    [(value)]="product.unit">
+                               width="300px"
+                               placeholder="Select unit..."
+                               [(value)]="product.unit">
                     <dx-validator>
                         <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Unit'))}}."></dxi-validation-rule>
                     </dx-validator>
                 </dx-select-box>
             </div>
+            <div *ngIf="isCommissionsEnabled" class="field">
+                <label>{{ls.l('CommissionableAmount')}}</label>
+                <dx-number-box name="commissionableAmount"
+                               width="300px"
+                               [format]="amountNullableFormat$ | async"
+                               [(value)]="product.commissionableAmount">
+                </dx-number-box>
+            </div>
         </ng-container>
+        <div *ngIf="isCommissionsEnabled" class="field">
+            <label>{{ls.l('MaxCommissionRate')}}</label>
+            <dx-number-box name="maxCommissionRate"
+                           width="300px"
+                           format="#.##%"
+                           [(value)]="product.maxCommissionRate">
+            </dx-number-box>
+        </div>
         <ng-container *ngIf="product.type == defaultProductType">
             <div class="services-header">
                 {{ls.l('Services')}}:
@@ -92,15 +108,15 @@
             <div class="services" *ngFor="let service of product.productServices; let i = index">
                 <i class="fa fa-close" (click)="removeServiceFields(i)"></i>
                 <div class="field">
-                    <label for="name">{{ls.l('Name')}}</label>
+                    <label class="wide" for="name">{{ls.l('Name')}}</label>
                     <dx-select-box name="name"
-                        width="250px"
-                        valueExpr="id"
-                        displayExpr="name"
-                        [dataSource]="services"
-                        placeholder="Select service..."
-                        [(value)]="service.memberServiceId"
-                        (onValueChanged)="onServiceChanged($event, service)">
+                                   width="270px"
+                                   valueExpr="id"
+                                   displayExpr="name"
+                                   [dataSource]="services"
+                                   placeholder="Select service..."
+                                   [(value)]="service.memberServiceId"
+                                   (onValueChanged)="onServiceChanged($event, service)">
                         <dx-validator>
                             <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
                         </dx-validator>
@@ -109,13 +125,13 @@
                 <div class="field" *ngIf="getServiceLevels(service.memberServiceId) as levels">
                     <label *ngIf="levels.length" for="level">{{ls.l('Level')}}</label>
                     <dx-select-box *ngIf="levels.length"
-                        name="level"
-                        width="250px"
-                        valueExpr="id"
-                        displayExpr="name"
-                        [dataSource]="levels"
-                        placeholder="Select level..."
-                        [(value)]="service.memberServiceLevelId">
+                                   name="level"
+                                   width="270px"
+                                   valueExpr="id"
+                                   displayExpr="name"
+                                   [dataSource]="levels"
+                                   placeholder="Select level..."
+                                   [(value)]="service.memberServiceLevelId">
                         <dx-validator>
                             <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Level'))}}."></dxi-validation-rule>
                         </dx-validator>
@@ -133,14 +149,14 @@
                 <div class="field">
                     <label class="wide" for="level">{{ls.l('TrialDayCount')}}</label>
                     <dx-number-box name="count"
-                        width="200px"
-                        [min]="0"
-                        mode="number"
-                        format="###0"
-                        valueChangeEvent="keyup"
-                        [placeholder]="ls.l('ByDefault', 0)"
-                        [(value)]="option.trialDayCount"
-                        (onValueChanged)="option.signupFee = $event.value ? option.signupFee : 0">
+                                   width="270px"
+                                   [min]="0"
+                                   mode="number"
+                                   format="###0"
+                                   valueChangeEvent="keyup"
+                                   [placeholder]="ls.l('ByDefault', 0)"
+                                   [(value)]="option.trialDayCount"
+                                   (onValueChanged)="option.signupFee = $event.value ? option.signupFee : 0">
                         <dx-validator>
                             <dxi-validation-rule type="custom" [validationCallback]="validateTrialDayCount(option)" message="{{ls.l('TrialDayCountRequired')}}."></dxi-validation-rule>
                         </dx-validator>
@@ -149,21 +165,29 @@
                 <div class="field" *ngIf="option.trialDayCount">
                     <label class="wide">{{ls.l('SignupFee')}}</label>
                     <dx-number-box name="price"
-                        width="200px"
-                        [format]="amountFormat$ | async"
-                        [(value)]="option.signupFee">
+                                   width="270px"
+                                   [format]="amountFormat$ | async"
+                                   [(value)]="option.signupFee">
                         <dx-validator>
                             <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('SignupFee'))}}."></dxi-validation-rule>
                         </dx-validator>
                     </dx-number-box>
                 </div>
+                <div *ngIf="isCommissionsEnabled && option.trialDayCount" class="field">
+                    <label class="wide">{{ls.l('CommissionableAmount')}}</label>
+                    <dx-number-box name="commissionableSignupFeeAmount"
+                                   width="270px"
+                                   [format]="amountNullableFormat$ | async"
+                                   [(value)]="option.commissionableSignupFeeAmount">
+                    </dx-number-box>
+                </div>
                 <div class="field">
                     <label class="wide" for="name">{{ls.l('PaymentPeriod')}}</label>
                     <dx-select-box name="name"
-                        width="200px"
-                        [dataSource]="getFrequencies(option)"
-                        [placeholder]="ls.l('Select') + ' ' + ls.l('PaymentPeriod') + '...'"
-                        [(value)]="option.frequency">
+                                   width="270px"
+                                   [dataSource]="getFrequencies(option)"
+                                   [placeholder]="ls.l('Select') + ' ' + ls.l('PaymentPeriod') + '...'"
+                                   [(value)]="option.frequency">
                         <dx-validator>
                             <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('PaymentPeriod'))}}."></dxi-validation-rule>
                         </dx-validator>
@@ -172,25 +196,33 @@
                 <div class="field">
                     <label class="wide">{{ls.l('Fee')}}</label>
                     <dx-number-box name="price"
-                        width="200px"
-                        [format]="amountFormat$ | async"
-                        [(value)]="option.fee">
+                                   width="270px"
+                                   [format]="amountFormat$ | async"
+                                   [(value)]="option.fee">
                         <dx-validator>
                             <dxi-validation-rule type="custom" [validationCallback]="validateFee(option)" message="{{ls.l('RequiredField', ls.l('Fee'))}}."></dxi-validation-rule>
                         </dx-validator>
                     </dx-number-box>
                 </div>
+                <div *ngIf="isCommissionsEnabled" class="field">
+                    <label class="wide">{{ls.l('CommissionableAmount')}}</label>
+                    <dx-number-box name="commissionableFeeAmount"
+                                   width="270px"
+                                   [format]="amountNullableFormat$ | async"
+                                   [(value)]="option.commissionableFeeAmount">
+                    </dx-number-box>
+                </div>
                 <div class="field">
                     <label class="wide gracePeriodDayCount" for="gracePeriodDayCount">{{ls.l('GracePeriodDayCount')}}</label>
                     <dx-number-box name="gracePeriodDayCount"
-                        [placeholder]="ls.l('ByDefault', gracePeriodDefaultValue ? gracePeriodDefaultValue : 0)"
-                        width="200px"
-                        [min]="0"
-                        format="###0"
-                        mode="number"
-                        [(value)]="option.gracePeriodDayCount">
+                                   [placeholder]="ls.l('ByDefault', gracePeriodDefaultValue ? gracePeriodDefaultValue : 0)"
+                                   width="270px"
+                                   [min]="0"
+                                   format="###0"
+                                   mode="number"
+                                   [(value)]="option.gracePeriodDayCount">
                     </dx-number-box>
-                </div>            
+                </div>
             </div>
         </ng-container>
     </dx-validation-group>
