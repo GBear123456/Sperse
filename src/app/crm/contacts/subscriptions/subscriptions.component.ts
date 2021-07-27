@@ -111,8 +111,8 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                 );
             }
         });
-
-        data.forEach(item => {
+        let sortedData = _.sortBy(data, (x: OrderSubscriptionDto) => x.id).reverse();
+        sortedData.forEach(item => {
             let services = item.services.map(service => service.serviceCode);
             if (item.status != 'Current' &&
                 _.difference(services, currentServices).length
