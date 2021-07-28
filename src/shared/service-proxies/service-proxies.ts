@@ -51270,6 +51270,7 @@ export class ContactInfoDto implements IContactInfoDto {
     primaryOrganizationContactId!: number | undefined;
     affiliateCode!: string | undefined;
     affiliateRate!: number | undefined;
+    affiliateRateTier2!: number | undefined;
     parentId!: number | undefined;
     parentName!: string | undefined;
     contactDate!: moment.Moment | undefined;
@@ -51316,6 +51317,7 @@ export class ContactInfoDto implements IContactInfoDto {
             this.primaryOrganizationContactId = data["primaryOrganizationContactId"];
             this.affiliateCode = data["affiliateCode"];
             this.affiliateRate = data["affiliateRate"];
+            this.affiliateRateTier2 = data["affiliateRateTier2"];
             this.parentId = data["parentId"];
             this.parentName = data["parentName"];
             this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
@@ -51362,6 +51364,7 @@ export class ContactInfoDto implements IContactInfoDto {
         data["primaryOrganizationContactId"] = this.primaryOrganizationContactId;
         data["affiliateCode"] = this.affiliateCode;
         data["affiliateRate"] = this.affiliateRate;
+        data["affiliateRateTier2"] = this.affiliateRateTier2;
         data["parentId"] = this.parentId;
         data["parentName"] = this.parentName;
         data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
@@ -51393,6 +51396,7 @@ export interface IContactInfoDto {
     primaryOrganizationContactId: number | undefined;
     affiliateCode: string | undefined;
     affiliateRate: number | undefined;
+    affiliateRateTier2: number | undefined;
     parentId: number | undefined;
     parentName: string | undefined;
     contactDate: moment.Moment | undefined;
@@ -54147,10 +54151,16 @@ export interface IUpdateContactAffiliateCodeInput {
     affiliateCode: string | undefined;
 }
 
+export enum CommissionTier {
+    Tier1 = "Tier1", 
+    Tier2 = "Tier2", 
+}
+
 export class UpdateContactAffiliateRateInput implements IUpdateContactAffiliateRateInput {
     contactId!: number;
     affiliateRate!: number | undefined;
     updatePendingCommissions!: boolean | undefined;
+    commissionTier!: CommissionTier | undefined;
 
     constructor(data?: IUpdateContactAffiliateRateInput) {
         if (data) {
@@ -54166,6 +54176,7 @@ export class UpdateContactAffiliateRateInput implements IUpdateContactAffiliateR
             this.contactId = data["contactId"];
             this.affiliateRate = data["affiliateRate"];
             this.updatePendingCommissions = data["updatePendingCommissions"];
+            this.commissionTier = data["commissionTier"];
         }
     }
 
@@ -54181,6 +54192,7 @@ export class UpdateContactAffiliateRateInput implements IUpdateContactAffiliateR
         data["contactId"] = this.contactId;
         data["affiliateRate"] = this.affiliateRate;
         data["updatePendingCommissions"] = this.updatePendingCommissions;
+        data["commissionTier"] = this.commissionTier;
         return data; 
     }
 }
@@ -54189,6 +54201,7 @@ export interface IUpdateContactAffiliateRateInput {
     contactId: number;
     affiliateRate: number | undefined;
     updatePendingCommissions: boolean | undefined;
+    commissionTier: CommissionTier | undefined;
 }
 
 export class UpdateContactXrefInput implements IUpdateContactXrefInput {
@@ -74406,6 +74419,7 @@ export class ProductInfo implements IProductInfo {
     price!: number | undefined;
     commissionableAmount!: number | undefined;
     maxCommissionRate!: number | undefined;
+    maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
@@ -74429,6 +74443,7 @@ export class ProductInfo implements IProductInfo {
             this.price = data["price"];
             this.commissionableAmount = data["commissionableAmount"];
             this.maxCommissionRate = data["maxCommissionRate"];
+            this.maxCommissionRateTier2 = data["maxCommissionRateTier2"];
             this.unit = data["unit"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
@@ -74460,6 +74475,7 @@ export class ProductInfo implements IProductInfo {
         data["price"] = this.price;
         data["commissionableAmount"] = this.commissionableAmount;
         data["maxCommissionRate"] = this.maxCommissionRate;
+        data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
@@ -74484,6 +74500,7 @@ export interface IProductInfo {
     price: number | undefined;
     commissionableAmount: number | undefined;
     maxCommissionRate: number | undefined;
+    maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
@@ -74707,6 +74724,7 @@ export class CreateProductInput implements ICreateProductInput {
     price!: number | undefined;
     commissionableAmount!: number | undefined;
     maxCommissionRate!: number | undefined;
+    maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
@@ -74731,6 +74749,7 @@ export class CreateProductInput implements ICreateProductInput {
             this.price = data["price"];
             this.commissionableAmount = data["commissionableAmount"];
             this.maxCommissionRate = data["maxCommissionRate"];
+            this.maxCommissionRateTier2 = data["maxCommissionRateTier2"];
             this.unit = data["unit"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
@@ -74763,6 +74782,7 @@ export class CreateProductInput implements ICreateProductInput {
         data["price"] = this.price;
         data["commissionableAmount"] = this.commissionableAmount;
         data["maxCommissionRate"] = this.maxCommissionRate;
+        data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
@@ -74788,6 +74808,7 @@ export interface ICreateProductInput {
     price: number | undefined;
     commissionableAmount: number | undefined;
     maxCommissionRate: number | undefined;
+    maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
@@ -74840,6 +74861,7 @@ export class UpdateProductInput implements IUpdateProductInput {
     price!: number | undefined;
     commissionableAmount!: number | undefined;
     maxCommissionRate!: number | undefined;
+    maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
@@ -74865,6 +74887,7 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.price = data["price"];
             this.commissionableAmount = data["commissionableAmount"];
             this.maxCommissionRate = data["maxCommissionRate"];
+            this.maxCommissionRateTier2 = data["maxCommissionRateTier2"];
             this.unit = data["unit"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
@@ -74898,6 +74921,7 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["price"] = this.price;
         data["commissionableAmount"] = this.commissionableAmount;
         data["maxCommissionRate"] = this.maxCommissionRate;
+        data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
@@ -74924,6 +74948,7 @@ export interface IUpdateProductInput {
     price: number | undefined;
     commissionableAmount: number | undefined;
     maxCommissionRate: number | undefined;
+    maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
