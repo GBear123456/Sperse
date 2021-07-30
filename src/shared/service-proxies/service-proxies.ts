@@ -7368,110 +7368,6 @@ export class CommissionServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    createOrUpdate(body: AffiliateCommissionInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Commission/CreateOrUpdate";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateOrUpdate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateOrUpdate(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateOrUpdate(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
-    createOrUpdateCommissions(body: AffiliateCommissionInput[] | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Commission/CreateOrUpdateCommissions";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateOrUpdateCommissions(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateOrUpdateCommissions(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateOrUpdateCommissions(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
     updateCommissionableAmount(body: UpdateCommissionableAmountInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Commission/UpdateCommissionableAmount";
         url_ = url_.replace(/[?&]$/, "");
@@ -49887,90 +49783,6 @@ export interface IPendingCommissionContactInfo {
     affiliateCode: string | undefined;
 }
 
-export class AffiliateCommissionInput implements IAffiliateCommissionInput {
-    affiliateContactId!: number | undefined;
-    affiliateCode!: string | undefined;
-    earnedDate!: moment.Moment;
-    buyerInvoiceId!: number | undefined;
-    buyerInvoiceNumber!: string | undefined;
-    productCode!: string;
-    productName!: string;
-    productAmount!: number;
-    gatewayName!: string | undefined;
-    gatewayTransactionId!: string | undefined;
-    commissionableAmount!: number;
-    commissionRate!: number;
-    commissionAmount!: number;
-
-    constructor(data?: IAffiliateCommissionInput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.affiliateContactId = data["affiliateContactId"];
-            this.affiliateCode = data["affiliateCode"];
-            this.earnedDate = data["earnedDate"] ? moment(data["earnedDate"].toString()) : <any>undefined;
-            this.buyerInvoiceId = data["buyerInvoiceId"];
-            this.buyerInvoiceNumber = data["buyerInvoiceNumber"];
-            this.productCode = data["productCode"];
-            this.productName = data["productName"];
-            this.productAmount = data["productAmount"];
-            this.gatewayName = data["gatewayName"];
-            this.gatewayTransactionId = data["gatewayTransactionId"];
-            this.commissionableAmount = data["commissionableAmount"];
-            this.commissionRate = data["commissionRate"];
-            this.commissionAmount = data["commissionAmount"];
-        }
-    }
-
-    static fromJS(data: any): AffiliateCommissionInput {
-        data = typeof data === 'object' ? data : {};
-        let result = new AffiliateCommissionInput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["affiliateContactId"] = this.affiliateContactId;
-        data["affiliateCode"] = this.affiliateCode;
-        data["earnedDate"] = this.earnedDate ? this.earnedDate.toISOString() : <any>undefined;
-        data["buyerInvoiceId"] = this.buyerInvoiceId;
-        data["buyerInvoiceNumber"] = this.buyerInvoiceNumber;
-        data["productCode"] = this.productCode;
-        data["productName"] = this.productName;
-        data["productAmount"] = this.productAmount;
-        data["gatewayName"] = this.gatewayName;
-        data["gatewayTransactionId"] = this.gatewayTransactionId;
-        data["commissionableAmount"] = this.commissionableAmount;
-        data["commissionRate"] = this.commissionRate;
-        data["commissionAmount"] = this.commissionAmount;
-        return data; 
-    }
-}
-
-export interface IAffiliateCommissionInput {
-    affiliateContactId: number | undefined;
-    affiliateCode: string | undefined;
-    earnedDate: moment.Moment;
-    buyerInvoiceId: number | undefined;
-    buyerInvoiceNumber: string | undefined;
-    productCode: string;
-    productName: string;
-    productAmount: number;
-    gatewayName: string | undefined;
-    gatewayTransactionId: string | undefined;
-    commissionableAmount: number;
-    commissionRate: number;
-    commissionAmount: number;
-}
-
 export class UpdateCommissionableAmountInput implements IUpdateCommissionableAmountInput {
     commissionIds!: number[] | undefined;
     commissionableAmount!: number;
@@ -53955,6 +53767,7 @@ export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
     affiliateContactPhotoPublicId!: string | undefined;
     affiliateCode!: string | undefined;
     affiliateRate!: number | undefined;
+    affiliateRateTier2!: number | undefined;
     dateTime!: moment.Moment | undefined;
     userId!: number | undefined;
     userName!: string | undefined;
@@ -53977,6 +53790,7 @@ export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
             this.affiliateContactPhotoPublicId = data["affiliateContactPhotoPublicId"];
             this.affiliateCode = data["affiliateCode"];
             this.affiliateRate = data["affiliateRate"];
+            this.affiliateRateTier2 = data["affiliateRateTier2"];
             this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
             this.userId = data["userId"];
             this.userName = data["userName"];
@@ -53999,6 +53813,7 @@ export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
         data["affiliateContactPhotoPublicId"] = this.affiliateContactPhotoPublicId;
         data["affiliateCode"] = this.affiliateCode;
         data["affiliateRate"] = this.affiliateRate;
+        data["affiliateRateTier2"] = this.affiliateRateTier2;
         data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
         data["userId"] = this.userId;
         data["userName"] = this.userName;
@@ -54014,6 +53829,7 @@ export interface IAffiliateInfoHistoryInfo {
     affiliateContactPhotoPublicId: string | undefined;
     affiliateCode: string | undefined;
     affiliateRate: number | undefined;
+    affiliateRateTier2: number | undefined;
     dateTime: moment.Moment | undefined;
     userId: number | undefined;
     userName: string | undefined;
