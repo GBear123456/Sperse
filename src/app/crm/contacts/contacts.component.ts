@@ -5,7 +5,7 @@ import { ActivationEnd, Event, NavigationEnd, Params } from '@angular/router';
 /** Third party imports */
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, forkJoin, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, Observable, of, zip } from 'rxjs';
 import {
     first,
     buffer,
@@ -89,6 +89,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     leadInfo: LeadInfoDto;
     leadId: number;
     leadStages = [];
+    allPipelines = [];
     clientStageId: number;
     partnerInfo: PartnerInfoDto;
     partnerTypeId: string;
@@ -491,11 +492,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         });
 
         this.loadLeadsStages(() => {
-            if (this.leadInfo.stage) {
-                let leadStage = this.leadStages.find(
-                    stage => stage.name === this.leadInfo.stage
-                );
-                this.clientStageId = leadStage && leadStage.id;
+            if (this.leadInfo) {
+                this.clientStageId = this.leadInfo.stageId;
             }
         });
 
@@ -663,31 +661,32 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private loadLeadsStages(callback?: () => any) {
-        if (this.leadStages && this.leadStages.length)
-            callback && callback();
-        else {
-            this.leadInfo$.pipe(
-                map((leadInfo: LeadInfoDto) => leadInfo.pipelineId),
-                first(),
-                switchMap((pipelineId: number) => {
-                    return this.pipelineService.getPipelineDefinitionObservable(
-                        AppConsts.PipelinePurposeIds.lead,
-                        this.contactGroupId.value,
-                        pipelineId
-                    );
-                })
-            ).subscribe((pipeline: PipelineDto) => {
-                this.leadStages = pipeline.stages.map((stage: StageDto) => {
-                    return {
-                        id: stage.id,
-                        name: stage.name,
-                        index: stage.sortOrder,
-                        action: this.updateLeadStage.bind(this)
-                    };
-                });
-                callback && callback();
+        this.leadInfo$.pipe(
+            first(),
+            switchMap((leadInfo) => {
+                return zip(of(leadInfo), this.pipelineService.getAllPipelinesOberverable(
+                    AppConsts.PipelinePurposeIds.lead
+                ));
+            })
+        ).subscribe(([leadInfo, pipelines]) => {
+            this.allPipelines = pipelines.map((pipeline: PipelineDto) => {
+                return {
+                    id: pipeline.id,
+                    text: pipeline.name,
+                    items: pipeline.stages.map((stage: StageDto) => {
+                        return {
+                            id: stage.id,
+                            name: stage.name,
+                            index: stage.sortOrder,
+                            action: this.updateLeadStage.bind(this),
+                            disabled: leadInfo.pipelineId != pipeline.id && stage.isFinal,
+                            pipelineId: pipeline.id
+                        }
+                    })
+                };
             });
-        }
+            callback && callback();
+        });
     }
 
     private loadPartnerTypes() {
@@ -827,22 +826,28 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             map((leadInfo: LeadInfoDto) => leadInfo.pipelineId)
         ).subscribe((pipelineId: number) => {
             let sourceStage = this.pipelineService.getStageByName(pipelinePurposeId, this.leadInfo.stage, this.contactGroupId.value, pipelineId);
-            let targetStage = this.pipelineService.getStageByName(pipelinePurposeId, $event.itemData.name, this.contactGroupId.value, pipelineId);
-            if (this.pipelineService.updateEntityStage(
-                pipelinePurposeId,
-                this.contactGroupId.value,
-                this.leadInfo,
-                sourceStage,
-                targetStage,
-                () => {
-                    this.toolbarComponent.stagesComponent.listComponent.option(
-                        'selectedItemKeys',
-                        [this.clientStageId = targetStage.id]
-                    );
-                }
-            )) {
+
+            let isPipelineChange = pipelineId != $event.itemData.pipelineId;
+            let targetStage = isPipelineChange ?
+                this.pipelineService.getStage(pipelinePurposeId, $event.itemData.pipelineId, $event.itemData.id) :
+                this.pipelineService.getStageByName(pipelinePurposeId, $event.itemData.name, this.contactGroupId.value, $event.itemData.pipelineId);
+            let completeMethod = () => {
+                this.toolbarComponent.stagesComponent.listComponent.option(
+                    'selectedItemKeys',
+                    [this.clientStageId = targetStage.id]
+                );
+            };
+            let pipelineMethodResult = isPipelineChange ?
+                this.pipelineService.updateLeadPipeline(this.leadInfo, sourceStage, targetStage, completeMethod) :
+                this.pipelineService.updateEntityStage(this.contactGroupId.value, this.leadInfo, sourceStage, targetStage, completeMethod);
+
+            if (pipelineMethodResult) {
                 this.leadInfo.stage = targetStage.name;
                 this.notify.success(this.l('StageSuccessfullyUpdated'));
+                if (isPipelineChange) {
+                    this.reloadCurrentSection(); //TODO: Check
+                    this.contactService['data'].refresh = true;
+                }
             } else
                 this.message.warn(this.l('CannotChangeLeadStage', sourceStage.name, targetStage.name));
 

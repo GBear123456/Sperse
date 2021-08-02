@@ -68,6 +68,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     @Input() contactInfo: ContactInfoDto;
     @Input() customerType: string;
     @Input() leadId: number;
+    @Input() selectedPipelineId: number;
+    @Input() pipelineDataSource: any[];
     @Input() selectedStageId: number;
     @Input()
     set stages(stages: any[]) {

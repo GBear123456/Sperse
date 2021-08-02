@@ -16,14 +16,23 @@
                 <div class="dx-field">
                     <div class="dx-field-value w-100">
                         <dx-text-box #customSearch
-                            [showClearButton]="true"
-                            (onInput)="getNewListData($event, title)"
-                            [placeholder]="ls.l('Search')">
+                                     [showClearButton]="true"
+                                     (onInput)="getNewListData($event, title)"
+                                     [placeholder]="ls.l('Search')">
                         </dx-text-box>
                     </div>
                 </div>
             </div>
             <ng-content select="[custom-content]"></ng-content>
+            <dx-tabs *ngIf="selectedTabId"
+                     [dataSource]="tabsDataSource"
+                     [width]="174"
+                     keyExpr="id"
+                     [selectedItemKeys]="[selectedTabId]"
+                     [showNavButtons]="true"
+                     (onSelectionChanged)="onTabChanged($event)"
+                     (click)="onTabsClick($event)">
+            </dx-tabs>
             <dx-list #staticList
                      [ngClass]="{
                         'funnel-styling': funnelStyling,
@@ -50,8 +59,8 @@
                      (onItemClick)="onItemClick($event)">
                 <div *dxTemplate="let data of 'item'" [attr.filtered]="isFilteredItem(data)">
                     <div data-id="{{data.id}}"
-                        class="item-row {{data.name.replace(whiteSpaceRegExp, '-') | lowercase}}"
-                        [attr.index]="data.index > 5 ? 'positive' : data.index < -5 ? 'negative' : data.index">
+                         class="item-row {{data.name.replace(whiteSpaceRegExp, '-') | lowercase}}"
+                         [attr.index]="data.index > 5 ? 'positive' : data.index < -5 ? 'negative' : data.index">
                         <div [title]="data.displayName + (data.suffix ? ' ' + data.suffix : '') + (data.addition ? ' ' + data.addition : '')" class="item-text">
                             <span [ngClass]="{'head-line': data.hasOwnProperty('addition')}">{{data.displayName}}</span><span class="suffix" *ngIf="data.suffix">{{data.suffix}}</span>
                             <div *ngIf="data.addition" class="addition-line">{{data.addition}}</div>

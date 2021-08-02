@@ -66469,6 +66469,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
     stageId!: number;
     sortOrder!: number | undefined;
     ignoreChecklist!: boolean | undefined;
+    allowPipelineChange!: boolean | undefined;
 
     constructor(data?: IUpdateLeadStageInfo) {
         if (data) {
@@ -66485,6 +66486,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
             this.stageId = data["stageId"];
             this.sortOrder = data["sortOrder"];
             this.ignoreChecklist = data["ignoreChecklist"];
+            this.allowPipelineChange = data["allowPipelineChange"];
         }
     }
 
@@ -66501,6 +66503,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
         data["stageId"] = this.stageId;
         data["sortOrder"] = this.sortOrder;
         data["ignoreChecklist"] = this.ignoreChecklist;
+        data["allowPipelineChange"] = this.allowPipelineChange;
         return data; 
     }
 }
@@ -66510,6 +66513,7 @@ export interface IUpdateLeadStageInfo {
     stageId: number;
     sortOrder: number | undefined;
     ignoreChecklist: boolean | undefined;
+    allowPipelineChange: boolean | undefined;
 }
 
 export class UpdateLeadStagePointInput implements IUpdateLeadStagePointInput {
