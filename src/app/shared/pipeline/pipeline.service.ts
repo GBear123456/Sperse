@@ -67,7 +67,8 @@ export class PipelineService {
     compactView$: Observable<boolean> = this.compactView.asObservable();
     private lastIgnoreChecklist$: Observable<boolean>;
     private lastEntityData$: Observable<any>;
-    private pipelineObservables: { [pipelinePurposeId: string]: { [id: string]: Observable<PipelineDto> }} = {};
+    private pipelineObservables: { [pipelinePurposeId: string]: { [id: string]: Observable<PipelineDto> } } = {};
+    private allPipelineObservables: { [pipelinePurposeId: string]: Observable<PipelineDto[]> } = {};
 
     constructor(
         injector: Injector,
@@ -92,53 +93,89 @@ export class PipelineService {
         this.compactView.next(!this.compactView.value);
     }
 
+    getAllPipelinesOberverable(pipelinePurposeId: string): Observable<PipelineDto[]> {
+        let pipelines = this.allPipelineObservables[pipelinePurposeId];
+        if (pipelines)
+            return pipelines;
+
+        return this.allPipelineObservables[pipelinePurposeId] = this.store$.pipe(
+            select(PipelinesStoreSelectors.getPipelines({
+                purpose: pipelinePurposeId
+            })),
+            filter((pipelines: PipelineDto[]) => !!pipelines),
+            map((pipelines: PipelineDto[]) => {
+                if (pipelines) {
+                    pipelines.forEach(p => {
+                        p.stages = _.sortBy(p.stages,
+                            (stage: StageDto) => {
+                                return stage.sortOrder;
+                            });
+
+                        if (!this.pipelineDefinitions[p.purpose])
+                            this.pipelineDefinitions[p.purpose] = {};
+                        if (!this.pipelineDefinitions[p.purpose][p.id])
+                            this.pipelineDefinitions[p.purpose][p.id] = p;
+                    });
+                }
+                return pipelines;
+            }),
+            publishReplay(1),
+            refCount()
+        ) as Observable<PipelineDto[]>;
+    }
+
     getPipelineDefinitionObservable(pipelinePurposeId: string, contactGroupId: ContactGroup, pipelineId?: number): Observable<PipelineDto> {
         let pipelines = this.pipelineObservables[pipelinePurposeId] || {};
         const id = String(pipelineId || contactGroupId);
         if (pipelines[id])
             return pipelines[id];
-        else {
-            this.pipelineObservables[pipelinePurposeId] = pipelines;
-            return pipelines[id] = this.store$.pipe(
-                select(PipelinesStoreSelectors.getSortedPipeline({
-                    purpose: pipelinePurposeId,
-                    contactGroupId: contactGroupId,
-                    id: pipelineId
-                })),
-                filter((pipelineDefinition: PipelineDto) => {
-                    if (pipelineDefinition) {
-                        let oldDefinition: PipelineDto = this.pipelineDefinitions[pipelinePurposeId]
-                            && this.pipelineDefinitions[pipelinePurposeId][id];
-                        if (!oldDefinition || pipelineDefinition.stages.length != oldDefinition.stages.length)
-                            return true;
 
-                        return pipelineDefinition.stages.some((stage: StageDto) => {
-                            let oldStage = _.findWhere(oldDefinition.stages, {id: stage.id});
-                            return !oldStage || oldStage.name != stage.name || oldStage.sortOrder != stage.sortOrder
-                                || (oldStage.checklistPoints || []).length != (stage.checklistPoints || []).length;
-                        });
-                    }
-                    return false;
-                }),
-                map((pipelineDefinition: PipelineDto) => {
-                    if (!this.pipelineDefinitions[pipelinePurposeId])
-                        this.pipelineDefinitions[pipelinePurposeId] = {};
-                    this.pipelineDefinitions[pipelinePurposeId][id] = pipelineDefinition;
-                    pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
-                        (stage: StageDto) => {
-                            return stage.sortOrder;
-                        });
-                    return pipelineDefinition;
-                }),
-                publishReplay(1),
-                refCount()
-            ) as Observable<PipelineDto>;
-        }
+        this.pipelineObservables[pipelinePurposeId] = pipelines;
+        return pipelines[id] = this.store$.pipe(
+            select(PipelinesStoreSelectors.getSortedPipeline({
+                purpose: pipelinePurposeId,
+                contactGroupId: contactGroupId,
+                id: pipelineId
+            })),
+            filter((pipelineDefinition: PipelineDto) => {
+                if (pipelineDefinition) {
+                    let oldDefinition: PipelineDto = this.pipelineDefinitions[pipelinePurposeId]
+                        && this.pipelineDefinitions[pipelinePurposeId][id];
+                    if (!oldDefinition || !oldDefinition['generatedObs' + id] || pipelineDefinition.stages.length != oldDefinition.stages.length)
+                        return true;
+
+                    return pipelineDefinition.stages.some((stage: StageDto) => {
+                        let oldStage = _.findWhere(oldDefinition.stages, {id: stage.id});
+                        return !oldStage || oldStage.name != stage.name || oldStage.sortOrder != stage.sortOrder
+                            || (oldStage.checklistPoints || []).length != (stage.checklistPoints || []).length;
+                    });
+                }
+                return false;
+            }),
+            map((pipelineDefinition: PipelineDto) => {
+                if (!this.pipelineDefinitions[pipelinePurposeId])
+                    this.pipelineDefinitions[pipelinePurposeId] = {};
+                this.pipelineDefinitions[pipelinePurposeId][id] = pipelineDefinition;
+                pipelineDefinition.stages = _.sortBy(pipelineDefinition.stages,
+                    (stage: StageDto) => {
+                        return stage.sortOrder;
+                    });
+                pipelineDefinition['generatedObs' + id] = true;
+                return pipelineDefinition;
+            }),
+            publishReplay(1),
+            refCount()
+        ) as Observable<PipelineDto>;
     }
 
     getStages(pipelinePurposeId: string, contactGroupId: ContactGroup, pipelineId?: number): StageDto[] {
         const pipeline = this.getPipeline(pipelinePurposeId, contactGroupId, pipelineId);
         return pipeline && pipeline.stages;
+    }
+
+    getStage(pipelinePurposeId: string, pipelineId: any, id: any): Stage {
+        let pipeline = this.pipelineDefinitions[pipelinePurposeId][pipelineId];
+        return <Stage>pipeline.stages.find(v => v.id == id);
     }
 
     getPipeline(pipelinePurposeId: string, contactGroupId: ContactGroup, pipelineId?: number): PipelineDto {
@@ -151,7 +188,15 @@ export class PipelineService {
         return _.findWhere(this.getStages(pipelinePurposeId, contactGroupId, pipelineId), { name: stageName });
     }
 
-    updateEntityStage(pipelinePurposeId: string, contactGroupId: ContactGroup,
+    updateLeadPipeline(entity: any, fromStage: Stage, toStage: Stage, complete = null) {
+        if (fromStage && toStage) {
+            this.updateLeadStage(fromStage, toStage, entity, complete, false, true);
+            return true;
+        } else
+            complete && complete();
+    }
+
+    updateEntityStage(contactGroupId: ContactGroup,
         entity: any, fromStage: Stage, toStage: Stage, complete = null, forced = false
     ) {
         if (fromStage && toStage) {
@@ -211,7 +256,6 @@ export class PipelineService {
                 entity.data = data;
             if (
                 !this.updateEntityStage(
-                    pipelineId,
                     contactGroupId,
                     entity,
                     this.getStageByName(pipelineId, entity.Stage || entity.stage, contactGroupId),
@@ -253,17 +297,18 @@ export class PipelineService {
         });
     }
 
-    updateLeadStage(fromStage: Stage, toStage: Stage, entity, complete, useLastData = false) {
+    updateLeadStage(fromStage: Stage, toStage: Stage, entity, complete, useLastData = false, updatePipeline = false) {
         let leadId = this.getEntityId(entity);
         this.ignoreStageChecklist(fromStage,
-            toStage.sortOrder > fromStage.sortOrder ? leadId : null, useLastData
+            toStage.sortOrder > fromStage.sortOrder ? leadId : null, useLastData, false, updatePipeline
         ).subscribe(ignore => {
             this.leadService.updateLeadStage(
                 new UpdateLeadStageInfo({
                     leadId: leadId,
                     stageId: toStage.id,
                     sortOrder: entity.SortOrder,
-                    ignoreChecklist: ignore
+                    ignoreChecklist: ignore,
+                    allowPipelineChange: updatePipeline
                 })
             ).pipe(finalize(() => {
                 entity.locked = false;
@@ -271,10 +316,12 @@ export class PipelineService {
             })).subscribe(() => {
                 this.completeEntityUpdate(entity, fromStage, toStage);
             }, () => {
-                this.moveEntityTo(entity, toStage, fromStage);
+                if (!updatePipeline)
+                    this.moveEntityTo(entity, toStage, fromStage);
             });
         }, () => {
-            this.moveEntityTo(entity, toStage, fromStage);
+            if (!updatePipeline)
+                this.moveEntityTo(entity, toStage, fromStage);
             entity.locked = false;
             complete && complete(true);
         });
@@ -342,7 +389,10 @@ export class PipelineService {
         });
     }
 
-    private ignoreStageChecklist(stage: Stage, entityId: number, useLastData = false, isOrder = false): Observable<boolean> {
+    private ignoreStageChecklist(stage: Stage, entityId: number, useLastData = false, isOrder = false, updatePipeline = false): Observable<boolean> {
+        if (updatePipeline)
+            return of(true);
+
         if (useLastData && this.lastIgnoreChecklist$)
             return this.lastIgnoreChecklist$;
         else if (stage.checklistPoints && stage.checklistPoints.length && entityId)

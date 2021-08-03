@@ -7,6 +7,7 @@
         min-width: 150px;
         text-align: left;
         white-space: nowrap;
+
         .apply {
             display: inline;
         }
@@ -61,7 +62,6 @@
 
                 &::before {
                     content: "\f027";
-
                     font: 18px/1 DXIcons;
                     position: absolute;
                     top: 50%;
@@ -87,20 +87,22 @@
 
         &.disableHindmost {
             .dx-item {
-                &:first-child ,
+                &:first-child,
                 &:last-child {
                     pointer-events: none;
                     cursor: default;
+
                     &.dx-state-hover {
                         background-color: transparent;
                     }
+
                     &.dx-state-focused {
                         background-color: initial;
                         color: #333;
                     }
 
                     .item-row:before {
-                        background: #ccc!important;
+                        background: #ccc !important;
                     }
                 }
             }
@@ -112,6 +114,7 @@
                     position: relative;
                     border: 0;
                     padding-left: 15px;
+
                     &::before {
                         width: 15px;
                         height: 15px;
@@ -124,57 +127,68 @@
                         border-radius: 50%;
                     }
                 }
+
                 .item-row[index="-5"],
                 .item-row[index="negative"] {
                     &::before {
                         background: #b52626;
                     }
                 }
+
                 .item-row[index="-4"] {
                     &::before {
                         background: #f02929;
                     }
                 }
+
                 .item-row[index="-3"] {
                     &::before {
                         background: #f05b29;
                     }
                 }
+
                 .item-row[index="-2"] {
                     &::before {
                         background: #f4ae55;
                     }
                 }
+
                 .item-row[index="-1"] {
                     &::before {
                         background: #f7d15e;
                     }
                 }
+
                 .item-row[index="0"] {
                     &::before {
                         background: #00aeef;
                     }
                 }
+
                 .item-row[index="1"] {
                     &::before {
                         background: #b6cf5e;
                     }
                 }
+
                 .item-row[index="2"] {
                     &::before {
                         background: #86c45d;
                     }
                 }
+
                 .item-row[index="3"] {
                     &::before {
                         background: #46aa6e;
                     }
                 }
+
                 .item-row[index="4"] {
                     &::before {
                         background: #0e9360;
                     }
                 }
+
                 .item-row[index="5"],
                 .item-row[index="positive"] {
                     &::before {
@@ -188,22 +202,27 @@
             .item-row {
                 display: flex;
                 justify-content: space-between;
+
                 a.dx-link-filter {
                     width: 30px;
                     background: url('../../../../assets/common/icons/filter.svg') no-repeat center;
                     cursor: pointer;
                 }
+
                 .head-line {
                     font-size: 15px;
                     font-weight: 500;
                 }
+
                 .suffix {
                     font-style: italic;
                     font-size: 15px;
                 }
+
                 .addition-line {
                     font-size: 12px;
                 }
+
                 .item-text {
                     width: 100%;
                     overflow: hidden;
@@ -216,7 +235,7 @@
             }
 
             [filtered=true] {
-                background-color: #effafe!important;
+                background-color: #effafe !important;
             }
 
             .dx-list-select-radiobutton.dx-radiobutton.dx-widget {
@@ -233,6 +252,7 @@
             background-color: transparent;
             cursor: default;
             color: #333;
+
             &.dx-state-focused {
                 color: #333333;
                 background-color: transparent;
@@ -242,9 +262,11 @@
         .dx-placeholder {
             font-weight: 400;
         }
+
         .dx-item-content {
             text-align: left;
         }
+
         .dx-icon-clear {
             right: 0;
         }
@@ -278,6 +300,7 @@
                             color: #24c26c;
                         }
                     }
+
                     &[aria-label="close"] {
                         .dx-icon {
                             color: #ed501a;
@@ -295,6 +318,20 @@
                     position: relative;
                     top: 10px;
                 }
+            }
+        }
+    }
+
+    ::ng-deep dx-tabs {
+        .dx-tab {
+            width: 120px;
+
+            &.dx-tab-selected::after {
+                border-right: 1px solid #ddd !important;
+                border-left: 1px solid #ddd !important;
+            }
+            &.dx-state-focused::after {
+                border: none;
             }
         }
     }

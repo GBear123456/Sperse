@@ -13,7 +13,7 @@ import ODataStore from 'devextreme/data/odata/store';
 import oDataUtils from 'devextreme/data/odata/utils';
 import dxTooltip from 'devextreme/ui/tooltip';
 import { Observable, Subject, from, of, forkJoin } from 'rxjs';
-import { filter, finalize, delayWhen, map, mergeMap, switchMap, takeUntil } from 'rxjs/operators';
+import { filter, finalize, delayWhen, map, mergeMap, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { DragulaService } from 'ng2-dragula';
 import * as moment from 'moment';
 import extend from 'lodash/extend';
@@ -760,7 +760,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 newStage.isLoading = oldStage.isLoading = true;
                 if (newStage.name != oldStage.name) {
                     this.pipelineService.updateEntityStage(
-                        this.pipelinePurposeId, this.contactGroupId, entity, oldStage, newStage, complete, forced
+                        this.contactGroupId, entity, oldStage, newStage, complete, forced
                     );
                 } else
                     this.pipelineService.updateEntitySortOrder(this.pipeline.id, entity, complete);
