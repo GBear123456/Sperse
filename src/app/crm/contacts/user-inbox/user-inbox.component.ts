@@ -304,12 +304,7 @@ export class UserInboxComponent implements OnDestroy {
 
     expandGroup(item) {
         item.expanded = !item.expanded;
-        this.markAsOpened(item);
         this.initActiveMessage(item);
-    }
-
-    markAsOpened(item) {
-        item.isNew = false;
     }
 
     initActiveMessage(record) {

@@ -54770,7 +54770,6 @@ export class MessageDto implements IMessageDto {
     recepients!: RecepientInfo[] | undefined;
     hasChildren!: boolean | undefined;
     isInbound!: boolean | undefined;
-    isNew!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: IMessageDto) {
@@ -54810,7 +54809,6 @@ export class MessageDto implements IMessageDto {
             }
             this.hasChildren = data["hasChildren"];
             this.isInbound = data["isInbound"];
-            this.isNew = data["isNew"];
             this.id = data["id"];
         }
     }
@@ -54850,7 +54848,6 @@ export class MessageDto implements IMessageDto {
         }
         data["hasChildren"] = this.hasChildren;
         data["isInbound"] = this.isInbound;
-        data["isNew"] = this.isNew;
         data["id"] = this.id;
         return data; 
     }
@@ -54875,7 +54872,6 @@ export interface IMessageDto {
     recepients: RecepientInfo[] | undefined;
     hasChildren: boolean | undefined;
     isInbound: boolean | undefined;
-    isNew: boolean | undefined;
     id: number | undefined;
 }
 
@@ -54896,7 +54892,6 @@ export class MessageListDto implements IMessageListDto {
     recepients!: RecepientInfo[] | undefined;
     hasChildren!: boolean | undefined;
     isInbound!: boolean | undefined;
-    isNew!: boolean | undefined;
     id!: number | undefined;
 
     constructor(data?: IMessageListDto) {
@@ -54930,7 +54925,6 @@ export class MessageListDto implements IMessageListDto {
             }
             this.hasChildren = data["hasChildren"];
             this.isInbound = data["isInbound"];
-            this.isNew = data["isNew"];
             this.id = data["id"];
         }
     }
@@ -54964,7 +54958,6 @@ export class MessageListDto implements IMessageListDto {
         }
         data["hasChildren"] = this.hasChildren;
         data["isInbound"] = this.isInbound;
-        data["isNew"] = this.isNew;
         data["id"] = this.id;
         return data; 
     }
@@ -54987,7 +54980,6 @@ export interface IMessageListDto {
     recepients: RecepientInfo[] | undefined;
     hasChildren: boolean | undefined;
     isInbound: boolean | undefined;
-    isNew: boolean | undefined;
     id: number | undefined;
 }
 
