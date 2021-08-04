@@ -35,8 +35,21 @@
                                               [isDeleteEnabled]="hasCommissionsManagePermission"
                                               [validationRules]="affiliateRateValidationRules"
                                               [isReadOnlyField]="!hasCommissionsManagePermission || !manageAllowed"
-                                              (valueChanged)="updateAffiliateRate($event)"
+                                              (valueChanged)="updateAffiliateRate($event, 'affiliateRate', 'affiliateRateInitil', CommissionTier.Tier1)"
                                               (itemDeleted)="deleteItem(ls.l('AffiliateRate'))">
+                                </inplace-edit>
+                            </div>
+                            <div class="field" *ngIf="hasCommissionsFeature">
+                                <label>{{ ls.l('AffiliateRateTier2') }}, %:</label>
+                                <inplace-edit [id]="contactInfo?.id"
+                                              [editPlaceholder]="''"
+                                              [value]="affiliateRate2 === null ? '' : affiliateRate2 + ''"
+                                              [showInlineEditButton]="hasCommissionsManagePermission"
+                                              [isDeleteEnabled]="hasCommissionsManagePermission"
+                                              [validationRules]="affiliateRateValidationRules"
+                                              [isReadOnlyField]="!hasCommissionsManagePermission || !manageAllowed"
+                                              (valueChanged)="updateAffiliateRate($event, 'affiliateRate2', 'affiliateRate2Initil', CommissionTier.Tier2)"
+                                              (itemDeleted)="deleteItem(ls.l('AffiliateRateTier2'))">
                                 </inplace-edit>
                             </div>
                         </mat-expansion-panel>
