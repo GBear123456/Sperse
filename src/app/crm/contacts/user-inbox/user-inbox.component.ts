@@ -429,7 +429,8 @@ export class UserInboxComponent implements OnDestroy {
     showNewEmailDialog(title = 'NewEmail', data: any = {}) {
         data = Object.assign({
             switchTemplate: true,
-            contactId: this.contactId
+            contactId: this.contactId,
+            replyToId: data.id
         }, data);
         this.contactsService.showEmailDialog(Object.assign(data, {
             to: data.to ? (data.to['join'] ? data.to : [data.to]) : []
