@@ -453,10 +453,9 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     extendMessage() {
-        let parentId = this.activeMessage.parentId || this.activeMessage.id;
         if (this.isActiveEmilType)
             this.showNewEmailDialog(undefined, {
-                parentId: parentId,
+                replyToId: this.activeMessage.id,
                 subject: 'Re: ' + this.activeMessage.subject,
                 body: this.instantMessageText,
                 to: this.activeMessage.to['join'] ?
@@ -464,7 +463,7 @@ export class UserInboxComponent implements OnDestroy {
             });
         else
             this.contactsService.showSMSDialog({
-                parentId: parentId,
+                parentId: this.activeMessage.parentId || this.activeMessage.id,
                 body: this.instantMessageText,
                 phoneNumber: this.activeMessage.to,
                 contact: this.contactInfo
