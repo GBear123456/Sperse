@@ -277,7 +277,6 @@
                                [ngClass]="{'edited':hostSettings.email.smtpPassword}" [(ngModel)]="hostSettings.email.smtpPassword"
                                maxlength="128" autocomplete="off">
                     </div>
-                    <hr />
                     <h5>{{l("TestEmailSettingsHeader")}}</h5>
                     <div class="row">
                         <div class="form-group col-md-4">
@@ -286,6 +285,30 @@
                         <div class="form-group col-md-2">
                             <button class="btn btn-primary" type="button" (click)="sendTestEmail()">{{l("SendTestEmail")}}</button>
                         </div>
+                    </div>
+                    <br />
+                    <div class="m-checkbox-list">
+                        <label for="Settings_Imap_IsEnabled" class="m-checkbox">
+                            <input id="Settings_Imap_IsEnabled" type="checkbox" name="ImapIsEnabled" [(ngModel)]="hostSettings.email.isImapEnabled">
+                            <h5>{{l("AllowImapSynchronization")}}</h5>
+                            <span></span>
+                        </label>
+                    </div>
+                    <br />
+                    <div class="form-group" [hidden]="!hostSettings.email.isImapEnabled">
+                        <label for="ImapHost">{{l("ImapHost")}}</label>
+                        <input id="ImapHost" type="text" name="ImapHost" class="form-control" [ngClass]="{'edited':hostSettings.email.imapHost}" [(ngModel)]="hostSettings.email.imapHost" maxlength="128">
+                    </div>
+                    <div class="form-group" [hidden]="!hostSettings.email.isImapEnabled">
+                        <label for="ImapPort">{{l("ImapPort")}}</label>
+                        <input id="ImapPort" type="number" name="ImapPort" class="form-control" [ngClass]="{'edited':hostSettings.email.imapPort}" [(ngModel)]="hostSettings.email.imapPort" maxlength="5">
+                    </div>
+                    <div class="m-checkbox-list" [hidden]="!hostSettings.email.isImapEnabled">
+                        <label for="Settings_Imap_UseSsl" class="m-checkbox">
+                            <input id="Settings_Imap_UseSsl" type="checkbox" name="ImapUseSsl" [(ngModel)]="hostSettings.email.imapUseSsl">
+                            {{l("ImapUseSsl")}}
+                            <span></span>
+                        </label>
                     </div>
                 </dx-scroll-view>
             </mat-tab>

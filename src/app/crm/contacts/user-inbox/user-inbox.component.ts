@@ -316,7 +316,7 @@ export class UserInboxComponent implements OnDestroy {
                 forkJoin(
                     this.communicationService.getMessage(record.id, this.contactId),
                     record.hasChildren ? this.communicationService.getMessages(this.contactId, record.id,
-                        undefined, undefined, undefined, undefined, undefined, undefined, undefined) : of({items: null})
+                        undefined, undefined, undefined, undefined, 'Id ASC', undefined, undefined) : of({items: null})
                 ).pipe(
                     finalize(() => this.loadingService.finishLoading(this.contentView.nativeElement))
                 ).subscribe(([message, children]) => {
@@ -429,7 +429,8 @@ export class UserInboxComponent implements OnDestroy {
     showNewEmailDialog(title = 'NewEmail', data: any = {}) {
         data = Object.assign({
             switchTemplate: true,
-            contactId: this.contactId
+            contactId: this.contactId,
+            replyToId: data.id
         }, data);
         this.contactsService.showEmailDialog(Object.assign(data, {
             to: data.to ? (data.to['join'] ? data.to : [data.to]) : []
@@ -452,10 +453,9 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     extendMessage() {
-        let parentId = this.activeMessage.parentId || this.activeMessage.id;
         if (this.isActiveEmilType)
             this.showNewEmailDialog(undefined, {
-                parentId: parentId,
+                replyToId: this.activeMessage.id,
                 subject: 'Re: ' + this.activeMessage.subject,
                 body: this.instantMessageText,
                 to: this.activeMessage.to['join'] ?
@@ -463,7 +463,7 @@ export class UserInboxComponent implements OnDestroy {
             });
         else
             this.contactsService.showSMSDialog({
-                parentId: parentId,
+                parentId: this.activeMessage.parentId || this.activeMessage.id,
                 body: this.instantMessageText,
                 phoneNumber: this.activeMessage.to,
                 contact: this.contactInfo
