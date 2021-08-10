@@ -21,8 +21,8 @@ import {
     OrderSubscriptionServiceProxy,
     SubscriptionInput,
     UpdateOrderSubscriptionInput,
-    ServiceProductServiceProxy,
-    ServiceProductDto,
+    MemberServiceServiceProxy,
+    MemberServiceDto,
     ProductServiceProxy,
     RecurringPaymentFrequency,
     ProductDto,
@@ -38,7 +38,7 @@ import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AddProductDialogComponent } from './add-product-dialog/add-product-dialog.component';
-import { AddServiceProductDialogComponent } from './add-service-product-dialog/add-service-product-dialog.component';
+import { AddMemberServiceDialogComponent } from './add-member-service-dialog/add-member-service-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 
@@ -50,7 +50,7 @@ import { AppPermissions } from '@shared/AppPermissions';
         '../../../../shared/common/styles/form.less',
         './add-subscription-dialog.component.less'
     ],
-    providers: [ServiceProductServiceProxy, ProductServiceProxy]
+    providers: [MemberServiceServiceProxy, ProductServiceProxy]
 })
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     @ViewChild('productGroup', { static: false }) validationProductGroup: DxValidationGroupComponent;
@@ -63,7 +63,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     readonly addNewItemId = -1;
     products: ProductDto[];
     paymentPeriodTypes: RecurringPaymentFrequency[] = [];
-    serviceTypes: ServiceProductDto[] = null;
+    serviceTypes: MemberServiceDto[] = null;
 
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         productCode: undefined,
@@ -96,7 +96,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     constructor(
         private elementRef: ElementRef,
         private orderSubscriptionProxy: OrderSubscriptionServiceProxy,
-        private serviceProductProxy: ServiceProductServiceProxy,
+        private memberServiceProxy: MemberServiceServiceProxy,
         private productProxy: ProductServiceProxy,
         private notify: NotifyService,
         private contactsService: ContactsService,
@@ -130,7 +130,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             this.products = products;
             this.checkAddManageOption(this.products);
         });
-        this.serviceProductProxy.getAll(false).subscribe(result => {
+        this.memberServiceProxy.getAll(false).subscribe(result => {
             this.serviceTypes = result;
             this.checkAddManageOption(this.serviceTypes);
         });
@@ -206,11 +206,11 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         if (!event.value)
             return;
 
-        let selectedItem: ServiceProductDto = event.component.option('selectedItem');
+        let selectedItem: MemberServiceDto = event.component.option('selectedItem');
         if (selectedItem.id == this.addNewItemId) {
-            this.showAddServiceProductDialog(event.component, event.previousValue);
+            this.showAddMemberServiceDialog(event.component, event.previousValue);
         } else {
-            this.setServiceProduct(selectedItem, sub);
+            this.setMemberService(selectedItem, sub);
         }
     }
 
@@ -219,17 +219,17 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         if (selectedItem) {
             sub.level = selectedItem.code;
             sub.amount = selectedItem.monthlyFee ? selectedItem.monthlyFee :
-                sub['serviceProduct'].monthlyFee ? sub['serviceProduct'].monthlyFee : null;
+                sub['memberService'].monthlyFee ? sub['memberService'].monthlyFee : null;
 
-            sub.startDate = selectedItem.activationTime ? (selectedItem.activationTime < this.today ? this.today : selectedItem.activationTime) : sub['serviceProduct'].activationTime;
-            sub['maxStartDate'] = selectedItem.deactivationTime ? selectedItem.deactivationTime : sub['serviceProduct'].deactivationTime;
+            sub.startDate = selectedItem.activationTime ? (selectedItem.activationTime < this.today ? this.today : selectedItem.activationTime) : sub['memberService'].activationTime;
+            sub['maxStartDate'] = selectedItem.deactivationTime ? selectedItem.deactivationTime : sub['memberService'].deactivationTime;
         } else {
-            this.setServiceProduct(sub['serviceProduct'], sub);
+            this.setMemberService(sub['memberService'], sub);
         }
     }
 
-    setServiceProduct(item: ServiceProductDto, sub: SubscriptionInput) {
-        sub['serviceProduct'] = item;
+    setMemberService(item: MemberServiceDto, sub: SubscriptionInput) {
+        sub['memberService'] = item;
         sub.name = item.name;
         sub.amount = item.monthlyFee ? item.monthlyFee : null;
         sub.startDate = item.activationTime < this.today ? this.today : item.activationTime;
@@ -237,15 +237,15 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         sub['maxStartDate'] = item.deactivationTime;
 
         sub.level = null;
-        sub['levels'] = item.serviceProductLevels.length ? item.serviceProductLevels : null;
+        sub['levels'] = item.memberServiceLevels.length ? item.memberServiceLevels : null;
     }
 
     onStartDateChanged(subscription) {
         subscription.endDate = null;
     }
 
-    showAddServiceProductDialog(component, previousValue: string) {
-        let dialogRef = this.dialog.open(AddServiceProductDialogComponent, {
+    showAddMemberServiceDialog(component, previousValue: string) {
+        let dialogRef = this.dialog.open(AddMemberServiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
@@ -256,7 +256,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             }
         });
 
-        dialogRef.afterClosed().subscribe((res: ServiceProductDto) => {
+        dialogRef.afterClosed().subscribe((res: MemberServiceDto) => {
             if (res) {
                 this.serviceTypes.splice(this.serviceTypes.length - 1, 0, res);
                 component.option('value', res.code);

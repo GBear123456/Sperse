@@ -21,8 +21,8 @@ import {
     InvoiceSettings,
     ProductServiceProxy,
     ProductGroupServiceProxy,
-    ServiceProductServiceProxy,
-    ServiceProductDto,
+    MemberServiceServiceProxy,
+    MemberServiceDto,
     ProductServiceInfo,
     CreateProductInput,
     ProductGroupInfo,
@@ -39,7 +39,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from '@abp/notify/notify.service';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { AddServiceProductDialogComponent } from '../add-service-product-dialog/add-service-product-dialog.component';
+import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -54,7 +54,7 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
         '../../../../../shared/common/styles/form.less',
         './add-product-dialog.component.less'
     ],
-    providers: [ProductServiceProxy, ProductGroupServiceProxy, ServiceProductServiceProxy],
+    providers: [ProductServiceProxy, ProductGroupServiceProxy, MemberServiceServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddProductDialogComponent implements AfterViewInit, OnInit {
@@ -72,7 +72,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     productTypes: string[] = Object.keys(ProductType);
     defaultProductType = ProductType.Subscription;
     productGroups: ProductGroupInfo[];
-    services: ServiceProductDto[];
+    services: MemberServiceDto[];
     productUnits = Object.keys(ProductMeasurementUnit).map(
         key => this.ls.l('ProductMeasurementUnit_' + key)
     );
@@ -89,7 +89,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         private permission: AppPermissionService,
         private invoicesService: InvoicesService,
         private changeDetection: ChangeDetectorRef,
-        private serviceProductProxy: ServiceProductServiceProxy,
+        private memberServiceProxy: MemberServiceServiceProxy,
         private userManagementService: UserManagementService,
         public dialogRef: MatDialogRef<AddProductDialogComponent>,
         public ls: AppLocalizationService,
@@ -118,7 +118,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             this.detectChanges();
         });
 
-        serviceProductProxy.getAll(false).subscribe((services: ServiceProductDto[]) => {
+        memberServiceProxy.getAll(false).subscribe((services: MemberServiceDto[]) => {
             this.services = services;
             this.checkAddManageOption(this.services);
             this.detectChanges();
@@ -240,7 +240,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     getServiceLevels(serviceId) {
         let service = (this.services || []).find(item => item.id == serviceId);
-        return service ? service.serviceProductLevels : [];
+        return service ? service.memberServiceLevels : [];
     }
 
     getFrequencies(selected) {
@@ -258,7 +258,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         if (selectedItem) {
             service.memberServiceLevelId = undefined;
             if (selectedItem.id == this.addNewItemId)
-                return this.showAddServiceProductDialog(event.component, event.previousValue);
+                return this.showAddMemberServiceDialog(event.component, event.previousValue);
 
             selectedItem['disabled'] = true;
             if (event.previousValue)
@@ -272,8 +272,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.detectChanges();
     }
 
-    showAddServiceProductDialog(component, previousValue: string) {
-        this.dialog.open(AddServiceProductDialogComponent, {
+    showAddMemberServiceDialog(component, previousValue: string) {
+        this.dialog.open(AddMemberServiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
@@ -282,7 +282,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 templateType: 'Contact',
                 saveTitle: this.ls.l('Save')
             }
-        }).afterClosed().subscribe((service: ServiceProductDto) => {
+        }).afterClosed().subscribe((service: MemberServiceDto) => {
             if (service) {
                 this.services.splice(this.services.length - 1, 0, service);
                 setTimeout(() => component.option('value', service.id));
