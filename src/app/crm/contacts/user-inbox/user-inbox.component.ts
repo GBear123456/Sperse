@@ -254,7 +254,7 @@ export class UserInboxComponent implements OnDestroy {
                 {
                     name: 'replyToAll',
                     visible: this.isActiveEmilType,
-                    action: this.replyToAll.bind(this)
+                    action: this.reply.bind(this, true)
                 },
                 {
                     name: 'forward',
@@ -414,16 +414,16 @@ export class UserInboxComponent implements OnDestroy {
             this.listComponent.instance.option('items') : [];
     }
 
-    reply() {
-        this.showNewEmailDialog('Reply', this.activeMessage);
+    reply(forAll = false) {
+        this.showNewEmailDialog(forAll ? 'ReplyToAll' : 'Reply', {
+            ...this.activeMessage,
+            subject: (this.activeMessage.subject.startsWith('Re:') 
+                ? '' : 'Re:') + this.activeMessage.subject 
+        });
     }
 
     forward() {
         this.showNewEmailDialog('Forward', this.activeMessage);
-    }
-
-    replyToAll() {
-        this.showNewEmailDialog('ReplyToAll', this.activeMessage);
     }
 
     showNewEmailDialog(title = 'NewEmail', data: any = {}) {
