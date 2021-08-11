@@ -55331,7 +55331,7 @@ export interface IFileInfo {
 
 export class SendEmailInput implements ISendEmailInput {
     contactId!: number;
-    parentId!: number | undefined;
+    replyToId!: number | undefined;
     emailSettingsSource!: EmailSettingsSource;
     to!: string[];
     replyTo!: string[] | undefined;
@@ -55356,7 +55356,7 @@ export class SendEmailInput implements ISendEmailInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            this.parentId = data["parentId"];
+            this.replyToId = data["replyToId"];
             this.emailSettingsSource = data["emailSettingsSource"];
             if (data["to"] && data["to"].constructor === Array) {
                 this.to = [];
@@ -55398,7 +55398,7 @@ export class SendEmailInput implements ISendEmailInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        data["parentId"] = this.parentId;
+        data["replyToId"] = this.replyToId;
         data["emailSettingsSource"] = this.emailSettingsSource;
         if (this.to && this.to.constructor === Array) {
             data["to"] = [];
@@ -55433,7 +55433,7 @@ export class SendEmailInput implements ISendEmailInput {
 
 export interface ISendEmailInput {
     contactId: number;
-    parentId: number | undefined;
+    replyToId: number | undefined;
     emailSettingsSource: EmailSettingsSource;
     to: string[];
     replyTo: string[] | undefined;
@@ -61903,6 +61903,10 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
     smtpDomain!: string | undefined;
     smtpUserName!: string | undefined;
     smtpPassword!: string | undefined;
+    isImapEnabled!: boolean | undefined;
+    imapHost!: string | undefined;
+    imapPort!: number | undefined;
+    imapUseSsl!: boolean | undefined;
     defaultFromAddress!: string | undefined;
     defaultFromDisplayName!: string | undefined;
 
@@ -61923,6 +61927,10 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
             this.smtpDomain = data["smtpDomain"];
             this.smtpUserName = data["smtpUserName"];
             this.smtpPassword = data["smtpPassword"];
+            this.isImapEnabled = data["isImapEnabled"];
+            this.imapHost = data["imapHost"];
+            this.imapPort = data["imapPort"];
+            this.imapUseSsl = data["imapUseSsl"];
             this.defaultFromAddress = data["defaultFromAddress"];
             this.defaultFromDisplayName = data["defaultFromDisplayName"];
         }
@@ -61943,6 +61951,10 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
         data["smtpDomain"] = this.smtpDomain;
         data["smtpUserName"] = this.smtpUserName;
         data["smtpPassword"] = this.smtpPassword;
+        data["isImapEnabled"] = this.isImapEnabled;
+        data["imapHost"] = this.imapHost;
+        data["imapPort"] = this.imapPort;
+        data["imapUseSsl"] = this.imapUseSsl;
         data["defaultFromAddress"] = this.defaultFromAddress;
         data["defaultFromDisplayName"] = this.defaultFromDisplayName;
         return data; 
@@ -61956,6 +61968,10 @@ export interface IEmailSettingsEditDto {
     smtpDomain: string | undefined;
     smtpUserName: string | undefined;
     smtpPassword: string | undefined;
+    isImapEnabled: boolean | undefined;
+    imapHost: string | undefined;
+    imapPort: number | undefined;
+    imapUseSsl: boolean | undefined;
     defaultFromAddress: string | undefined;
     defaultFromDisplayName: string | undefined;
 }
