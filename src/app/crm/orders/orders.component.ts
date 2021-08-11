@@ -949,13 +949,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return new FilterModel({
             component: FilterCheckBoxesComponent,
             caption: caption,
-            field: caption === 'Subscription' ? this.subscriptionFields.ServiceProductId : this.orderFields.ServiceProductId,
             filterMethod: oDataFilterMethod ? (filter: FilterModel) => {
                 return {or: (filter.items.element['selectedItems'] || []).map(item => {
                     if (item.parentId)
-                        return {ServiceProductId: item.parentId, ServiceLevelId: item.id};
+                        return {ServiceId: item.parentId, LevelId: item.id};
                     else
-                        return {ServiceProductId: item.id};
+                        return {ServiceId: item.id};
                 })};
             } : undefined,
             items: {
@@ -1530,7 +1529,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 isNaN(productIndex) ? productIndex = 0 : productIndex++;
                 productId = item.parentId || item.id;
                 result.push({
-                    name: 'subscriptionFilters[' + productIndex + '].ProductId',
+                    name: 'subscriptionFilters[' + productIndex + '].ServiceId',
                     value: productId
                 });
             }
