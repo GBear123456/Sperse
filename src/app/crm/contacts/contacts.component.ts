@@ -820,40 +820,60 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         if (!this.leadId || !this.leadInfo)
             return;
 
-        const pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
         this.leadInfo$.pipe(
             first(),
             map((leadInfo: LeadInfoDto) => leadInfo.pipelineId)
         ).subscribe((pipelineId: number) => {
-            let sourceStage = this.pipelineService.getStageByName(pipelinePurposeId, this.leadInfo.stage, this.contactGroupId.value, pipelineId);
+            if (pipelineId == $event.itemData.pipelineId)
+                this.updateStageInternal(pipelineId, $event.itemData);
+            else
+                this.message.confirm(
+                    this.l('ContactGroupStageChange'),
+                    this.l('AreYouSure'),
+                    confirmed => {
+                        if (confirmed)
+                            this.updateStageInternal(pipelineId, $event.itemData);
+                    }
+                )
 
-            let isPipelineChange = pipelineId != $event.itemData.pipelineId;
-            let targetStage = isPipelineChange ?
-                this.pipelineService.getStage(pipelinePurposeId, $event.itemData.pipelineId, $event.itemData.id) :
-                this.pipelineService.getStageByName(pipelinePurposeId, $event.itemData.name, this.contactGroupId.value, $event.itemData.pipelineId);
-            let completeMethod = () => {
-                this.toolbarComponent.stagesComponent.listComponent.option(
-                    'selectedItemKeys',
-                    [this.clientStageId = targetStage.id]
-                );
-            };
-            let pipelineMethodResult = isPipelineChange ?
-                this.pipelineService.updateLeadPipeline(this.leadInfo, sourceStage, targetStage, completeMethod) :
-                this.pipelineService.updateEntityStage(this.contactGroupId.value, this.leadInfo, sourceStage, targetStage, completeMethod);
-
-            if (pipelineMethodResult) {
-                this.leadInfo.stage = targetStage.name;
-                this.notify.success(this.l('StageSuccessfullyUpdated'));
-                if (isPipelineChange) {
-                    this.reloadCurrentSection(); //TODO: Check
-                    this.contactService['data'].refresh = true;
-                }
-            } else
-                this.message.warn(this.l('CannotChangeLeadStage', sourceStage.name, targetStage.name));
-
-            this.toolbarComponent.refresh();
+            this.refreshStageDropdown();
         });
         $event.event.stopPropagation();
+    }
+
+    private updateStageInternal(pipelineId, data) {
+        const pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
+        let isPipelineChange = pipelineId != data.pipelineId,
+            sourceStage = this.pipelineService.getStage(pipelinePurposeId, pipelineId, this.leadInfo.stageId),
+            targetStage = this.pipelineService.getStage(pipelinePurposeId, data.pipelineId, data.id);
+
+        if (!this.pipelineService.updateEntityStage(
+            isPipelineChange ? null : this.contactGroupId.value, 
+            this.leadInfo, sourceStage, targetStage, () => {
+                if (this.leadInfo.stage != sourceStage.name) {
+                    this.notify.success(this.l('StageSuccessfullyUpdated'));
+                    if (isPipelineChange) {
+                        this.leadInfo = undefined;
+                        this.reloadCurrentSection(this.params).pipe(
+                            first()
+                        ).subscribe(() => {
+                            this.contactService['data'].refresh = true;
+                        });
+                    } else {
+                        this.clientStageId = targetStage.id;
+                        this.refreshStageDropdown();
+                    }
+                }
+            }
+        ))
+            this.message.warn(this.l('CannotChangeLeadStage', sourceStage.name, targetStage.name));
+    }
+
+    refreshStageDropdown() {
+        this.toolbarComponent.stagesComponent.listComponent.option(
+            'selectedItemKeys', [this.clientStageId]
+        );
+        this.toolbarComponent.refresh();
     }
 
     updatePartnerType($event) {
