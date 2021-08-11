@@ -39,7 +39,7 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
-    OrderServiceProxy, UpdateOrderAffiliateContactInput } from '@shared/service-proxies/service-proxies';
+    OrderServiceProxy, UpdateOrderAffiliateContactInput, CommissionTier } from '@shared/service-proxies/service-proxies';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
@@ -320,6 +320,22 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     {
                         dataSource: Object.keys(CommissionStatus).map((status: string) => ({
                             id: CommissionStatus[status],
+                            name: startCase(status)
+                        })),
+                        nameField: 'name',
+                        keyExpr: 'id'
+                    })
+            }
+        }),
+        new FilterModel({
+            component: FilterCheckBoxesComponent,
+            caption: 'Tier',
+            field: this.commissionFields.Tier,
+            items: {
+                element: new FilterCheckBoxesModel(
+                    {
+                        dataSource: Object.keys(CommissionTier).map((status: string) => ({
+                            id: CommissionTier[status],
                             name: startCase(status)
                         })),
                         nameField: 'name',
