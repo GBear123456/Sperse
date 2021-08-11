@@ -852,7 +852,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.leadInfo, sourceStage, targetStage, () => {
                 if (this.leadInfo.stage != sourceStage.name) {
                     this.notify.success(this.l('StageSuccessfullyUpdated'));
-                    if (isPipelineChange) {
+                    if (isPipelineChange || sourceStage.isFinal != targetStage.isFinal) {
                         this.leadInfo = undefined;
                         this.reloadCurrentSection(this.params).pipe(
                             first()
