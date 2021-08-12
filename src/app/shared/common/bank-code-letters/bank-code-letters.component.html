@@ -18,11 +18,11 @@
         {{ bankCodeDefinition }}
     </span>
     <ng-container *ngIf="showReportLink">
-        <a  *ngIf="reportLinkType === 'Profile'; else salesReportButton"
-            class="reportLink"
-            [href]="bankCodeService.getBankCodeReportLink('EN', bankCode)"
-            target="_blank"
-            download>
+        <a *ngIf="reportLinkType === 'Profile'; else salesReportButton"
+           class="reportLink"
+           [href]="bankCodeService.getBankCodeReportLink('EN', bankCode)"
+           target="_blank"
+           download>
             <img [src]="reportIconSrc" [alt]="bankCodeDefinition">
         </a>
         <ng-template #salesReportButton>
@@ -42,12 +42,11 @@
                             </dx-select-box>
                         </div>
                         <div class="options">
-                            <dx-radio-group
-                                    [items]="resolutions"
-                                    [(value)]="selectedResolution"
-                                    displayExpr="text"
-                                    valueExpr="value"
-                                    layout="horizontal">
+                            <dx-radio-group [items]="resolutions"
+                                            [(value)]="selectedResolution"
+                                            displayExpr="text"
+                                            valueExpr="value"
+                                            layout="horizontal">
                                 <div *dxTemplate="let res of 'item'">
                                     <div class="text">{{ res.text }}</div>
                                     <div class="size">({{ res.size }})</div>
@@ -69,4 +68,5 @@
             </dx-tooltip>
         </ng-template>
     </ng-container>
+    <span *ngIf="hasBankCodeFeature && showHistoryLink" class="dx-icon-clock code-history" (click)="showBankCodeHistory($event)" [title]="ls.l('BankCodeHistory')"></span>
 </ng-container>

@@ -31,6 +31,7 @@
                                    key="detailsHeader"
                                    [showDescriptionsOnHover]="true"
                                    [showReportLink]="data?.personContactInfo?.person?.bankCode"
+                                   [showHistoryLink]="true"
                                    reportIconName="blue"
                                    (bankCodeChange)="contactsService.invalidate()">
                 </bank-code-letters>

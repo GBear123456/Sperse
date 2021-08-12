@@ -16,10 +16,13 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { BankCodeLettersEditorDialogComponent } from '@app/shared/common/bank-code-letters/bank-code-letters-editor-dialog/bank-code-letters-editor-dialog.component';
+import { BankCodeHistoryDialogComponent } from './bank-code-history-dialog/bank-code-history-dialog.component'
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     selector: 'bank-code-letters',
@@ -35,6 +38,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @Input() showDescriptionsOnClick = false;
     @Input() showBankCodeDefinition = false;
     @Input() showReportLink = false;
+    @Input() showHistoryLink = false;
     @Input() reportLinkType: 'Sales' | 'Profile' = 'Sales';
     @Input() reportIconName: string;
     @Input() editDialogPosition: { x?: number, y?: number };
@@ -47,6 +51,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @HostBinding('class.allow-edit') @Input() allowEdit = false;
     bankCodeDefinition: string;
     editPopupIsOpened = false;
+    hasBankCodeFeature = this.features.isEnabled(AppFeatures.CRMBANKCode);
     resolutions = [
         {
             text: this.ls.l('Standard'),
@@ -105,6 +110,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
         private changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
         public bankCodeService: BankCodeService,
+        public features: FeatureCheckerService,
         public ls: AppLocalizationService
     ) {}
 
@@ -182,6 +188,19 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
         this.showTooltip = !this.showTooltip;
         e.preventDefault();
         e.stopPropagation();
+    }
+
+    showBankCodeHistory(event) {
+        event.stopPropagation();
+        this.dialog.open(BankCodeHistoryDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                contactId: this.personId
+            }
+        }).afterClosed().subscribe(() => {
+        });
     }
 
     ngOnDestroy(): void {
