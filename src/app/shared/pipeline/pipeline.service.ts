@@ -188,19 +188,15 @@ export class PipelineService {
         return _.findWhere(this.getStages(pipelinePurposeId, contactGroupId, pipelineId), { name: stageName });
     }
 
-    updateLeadPipeline(entity: any, fromStage: Stage, toStage: Stage, complete = null) {
-        if (fromStage && toStage) {
-            this.updateLeadStage(fromStage, toStage, entity, complete, false, true);
-            return true;
-        } else
-            complete && complete();
-    }
-
     updateEntityStage(contactGroupId: ContactGroup,
         entity: any, fromStage: Stage, toStage: Stage, complete = null, forced = false
     ) {
         if (fromStage && toStage) {
-            let action = _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});
+            let isPipelineChange = entity.contactGroupId != contactGroupId,
+                action = isPipelineChange ?
+                    {sysId: AppConsts.SYS_ID_CRM_UPDATE_LEAD_STAGE} :
+                    _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});
+
             if (action && action.sysId && entity && !entity.locked) {
                 entity.locked = true;
                 if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_ACTIVITY_STAGE)
@@ -208,7 +204,7 @@ export class PipelineService {
                 else if (action.sysId == AppConsts.SYS_ID_CRM_CANCEL_LEAD)
                     this.cancelLead(fromStage, toStage, entity, complete);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_LEAD_STAGE)
-                    this.updateLeadStage(fromStage, toStage, entity, complete, forced);
+                    this.updateLeadStage(fromStage, toStage, entity, complete, forced, isPipelineChange);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_PROCESS_LEAD)
                     this.processLead(contactGroupId, fromStage, toStage, entity, complete, forced);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_CANCEL_ORDER)
@@ -300,7 +296,7 @@ export class PipelineService {
     updateLeadStage(fromStage: Stage, toStage: Stage, entity, complete, useLastData = false, updatePipeline = false) {
         let leadId = this.getEntityId(entity);
         this.ignoreStageChecklist(fromStage,
-            toStage.sortOrder > fromStage.sortOrder ? leadId : null, useLastData, false, updatePipeline
+            updatePipeline || toStage.sortOrder > fromStage.sortOrder ? leadId : null, useLastData, false
         ).subscribe(ignore => {
             this.leadService.updateLeadStage(
                 new UpdateLeadStageInfo({
@@ -389,10 +385,7 @@ export class PipelineService {
         });
     }
 
-    private ignoreStageChecklist(stage: Stage, entityId: number, useLastData = false, isOrder = false, updatePipeline = false): Observable<boolean> {
-        if (updatePipeline)
-            return of(true);
-
+    private ignoreStageChecklist(stage: Stage, entityId: number, useLastData = false, isOrder = false): Observable<boolean> {
         if (useLastData && this.lastIgnoreChecklist$)
             return this.lastIgnoreChecklist$;
         else if (stage.checklistPoints && stage.checklistPoints.length && entityId)
