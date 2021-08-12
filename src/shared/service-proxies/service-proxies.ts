@@ -21957,6 +21957,122 @@ export class MemberServiceServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getSystemTypes(): Observable<SystemTypeDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberService/GetSystemTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSystemTypes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSystemTypes(<any>response_);
+                } catch (e) {
+                    return <Observable<SystemTypeDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SystemTypeDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSystemTypes(response: HttpResponseBase): Observable<SystemTypeDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(SystemTypeDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SystemTypeDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getSystemFeatures(systemType: string): Observable<FlatFeatureDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberService/GetSystemFeatures?";
+        if (systemType === undefined || systemType === null)
+            throw new Error("The parameter 'systemType' must be defined and cannot be null.");
+        else
+            url_ += "systemType=" + encodeURIComponent("" + systemType) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSystemFeatures(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSystemFeatures(<any>response_);
+                } catch (e) {
+                    return <Observable<FlatFeatureDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FlatFeatureDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSystemFeatures(response: HttpResponseBase): Observable<FlatFeatureDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(FlatFeatureDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FlatFeatureDto[]>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -68158,6 +68274,7 @@ export class MemberServiceLevelDto implements IMemberServiceLevelDto {
     monthlyFee!: number | undefined;
     activationTime!: moment.Moment | undefined;
     deactivationTime!: moment.Moment | undefined;
+    features!: { [key: string] : string; } | undefined;
     id!: number | undefined;
     code!: string;
 
@@ -68176,6 +68293,13 @@ export class MemberServiceLevelDto implements IMemberServiceLevelDto {
             this.monthlyFee = data["monthlyFee"];
             this.activationTime = data["activationTime"] ? moment(data["activationTime"].toString()) : <any>undefined;
             this.deactivationTime = data["deactivationTime"] ? moment(data["deactivationTime"].toString()) : <any>undefined;
+            if (data["features"]) {
+                this.features = {};
+                for (let key in data["features"]) {
+                    if (data["features"].hasOwnProperty(key))
+                        this.features[key] = data["features"][key];
+                }
+            }
             this.id = data["id"];
             this.code = data["code"];
         }
@@ -68194,6 +68318,13 @@ export class MemberServiceLevelDto implements IMemberServiceLevelDto {
         data["monthlyFee"] = this.monthlyFee;
         data["activationTime"] = this.activationTime ? this.activationTime.toISOString() : <any>undefined;
         data["deactivationTime"] = this.deactivationTime ? this.deactivationTime.toISOString() : <any>undefined;
+        if (this.features) {
+            data["features"] = {};
+            for (let key in this.features) {
+                if (this.features.hasOwnProperty(key))
+                    data["features"][key] = this.features[key];
+            }
+        }
         data["id"] = this.id;
         data["code"] = this.code;
         return data; 
@@ -68205,6 +68336,7 @@ export interface IMemberServiceLevelDto {
     monthlyFee: number | undefined;
     activationTime: moment.Moment | undefined;
     deactivationTime: moment.Moment | undefined;
+    features: { [key: string] : string; } | undefined;
     id: number | undefined;
     code: string;
 }
@@ -68217,6 +68349,7 @@ export class MemberServiceDto implements IMemberServiceDto {
     monthlyFee!: number | undefined;
     activationTime!: moment.Moment | undefined;
     deactivationTime!: moment.Moment | undefined;
+    features!: { [key: string] : string; } | undefined;
     memberServiceLevels!: MemberServiceLevelDto[] | undefined;
 
     constructor(data?: IMemberServiceDto) {
@@ -68237,6 +68370,13 @@ export class MemberServiceDto implements IMemberServiceDto {
             this.monthlyFee = data["monthlyFee"];
             this.activationTime = data["activationTime"] ? moment(data["activationTime"].toString()) : <any>undefined;
             this.deactivationTime = data["deactivationTime"] ? moment(data["deactivationTime"].toString()) : <any>undefined;
+            if (data["features"]) {
+                this.features = {};
+                for (let key in data["features"]) {
+                    if (data["features"].hasOwnProperty(key))
+                        this.features[key] = data["features"][key];
+                }
+            }
             if (data["memberServiceLevels"] && data["memberServiceLevels"].constructor === Array) {
                 this.memberServiceLevels = [];
                 for (let item of data["memberServiceLevels"])
@@ -68261,6 +68401,13 @@ export class MemberServiceDto implements IMemberServiceDto {
         data["monthlyFee"] = this.monthlyFee;
         data["activationTime"] = this.activationTime ? this.activationTime.toISOString() : <any>undefined;
         data["deactivationTime"] = this.deactivationTime ? this.deactivationTime.toISOString() : <any>undefined;
+        if (this.features) {
+            data["features"] = {};
+            for (let key in this.features) {
+                if (this.features.hasOwnProperty(key))
+                    data["features"][key] = this.features[key];
+            }
+        }
         if (this.memberServiceLevels && this.memberServiceLevels.constructor === Array) {
             data["memberServiceLevels"] = [];
             for (let item of this.memberServiceLevels)
@@ -68278,7 +68425,44 @@ export interface IMemberServiceDto {
     monthlyFee: number | undefined;
     activationTime: moment.Moment | undefined;
     deactivationTime: moment.Moment | undefined;
+    features: { [key: string] : string; } | undefined;
     memberServiceLevels: MemberServiceLevelDto[] | undefined;
+}
+
+export class SystemTypeDto implements ISystemTypeDto {
+    code!: string | undefined;
+
+    constructor(data?: ISystemTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.code = data["code"];
+        }
+    }
+
+    static fromJS(data: any): SystemTypeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SystemTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        return data; 
+    }
+}
+
+export interface ISystemTypeDto {
+    code: string | undefined;
 }
 
 export class MemberServiceLevelBaseDto implements IMemberServiceLevelBaseDto {
