@@ -1,10 +1,11 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import startCase from 'lodash/startCase';
 import { select, Store } from '@ngrx/store';
+import { Subscription } from 'rxjs';
 import { filter, first, map, debounceTime, takeUntil } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
@@ -46,7 +47,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
     providers: [ LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
+export class PersonalDetailsComponent implements OnDestroy {
     person: PersonInfoDto;
     isEditAllowed = false;
     startCase = startCase;
@@ -100,6 +101,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
         preferredToD: this.getPreferredToD()
     };
     private readonly settingsDialogId = 'personal-details-dialog';
+    settingsDialog$: Subscription;
 
     constructor(
         private notifyService: NotifyService,
@@ -129,7 +131,8 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
                 this.person = contactInfo.personContactInfo.person;
                 this.getStates(this.person && this.person.citizenship);
                 this.isEditAllowed = this.permission.checkCGPermission(contactInfo.groupId);
-                setTimeout(() => this.updateToolbar());
+                setTimeout(() => this.updateToolbar(contactInfo));
+                this.initSettingsDialog(contactInfo);
                 this.changeDetector.markForCheck();
             }
         }, this.ident);
@@ -144,17 +147,8 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
         this.loadStates();
     }
 
-    ngAfterViewInit() {
-        this.contactsService.settingsDialogOpened$.pipe(
-            takeUntil(this.lifeCycleService.destroy$),
-            debounceTime(300)
-        ).subscribe(opened => {
-            this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, opened);
-        });
-    }
-
-    private updateToolbar() {
-        this.contactsService.toolbarUpdate({
+    private updateToolbar(contactInfo: ContactInfoDto) {
+        let toolbarConfig = {
             optionButton: {
                 name: 'options',
                 options: {
@@ -164,6 +158,20 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
                     this.contactsService.toggleSettingsDialog();
                 }
             }
+        };
+
+        this.contactsService.toolbarUpdate(contactInfo && !contactInfo.parentId ? toolbarConfig : null);
+    }
+
+    initSettingsDialog(contactInfo: ContactInfoDto) {
+        if (this.settingsDialog$)
+            this.settingsDialog$.unsubscribe();
+
+        this.settingsDialog$ = this.contactsService.settingsDialogOpened$.pipe(
+            takeUntil(this.lifeCycleService.destroy$),
+            debounceTime(300)
+        ).subscribe((opened) => {
+            this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, contactInfo.parentId ? false : opened);
         });
     }
 
