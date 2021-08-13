@@ -61,10 +61,13 @@
                         </dx-select-box>
                     </div>
                     <dx-check-box [(value)]="inviteSetRandomPassword" [text]="ls.l('SetRandomPassword')"></dx-check-box>
+                    <input *ngIf="!inviteSetRandomPassword" class="hidden-field" type="text">
+                    <input *ngIf="!inviteSetRandomPassword" class="hidden-field" type="password">
                     <dx-text-box *ngIf="!inviteSetRandomPassword"
                         width="300px"
                         placeholder="Password"
                         mode="password"
+                        [inputAttr]="{ autocomplete: 'new-password' }"
                         [(value)]="inviteData.password">
                         <dx-validator>
                             <dxi-validation-rule type="required"></dxi-validation-rule>
@@ -74,6 +77,7 @@
                         width="300px"
                         placeholder="Confirm Password"
                         mode="password"
+                        [inputAttr]="{ autocomplete: 'new-password' }"
                         [value]="">
                         <dx-validator>
                             <dxi-validation-rule type="required"></dxi-validation-rule>

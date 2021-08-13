@@ -10,6 +10,12 @@
         font-weight: 600;
     }
 
+    .hidden-field {
+        position: absolute !important;
+        left: -10000px !important;
+        top: -10000px !important;
+    }
+
     span.optional {
         color: #adadad;
         padding: 0 5px;
@@ -33,9 +39,11 @@
         dx-text-box, dx-button, country-phone-number {
             display: inline-block;
         }
+
         dx-text-box, country-phone-number {
             min-width: 170px;
         }
+
         ::ng-deep country-phone-number > .wrapper {
             width: 220px;
         }
@@ -44,6 +52,7 @@
             &.update i {
                 color: #00aeef;
             }
+
             &.exit i {
                 color: #f44336;
             }
@@ -54,7 +63,7 @@
 
         dx-validation-group {
             ::ng-deep dx-button {
-              top: -14px;
+                top: -14px;
             }
         }
     }
@@ -67,6 +76,7 @@
         line-height: 1.71;
         letter-spacing: 0.6px;
         opacity: 1;
+
         &.mat-tab-disabled {
             display: none;
         }
@@ -82,9 +92,11 @@
     ul.roles {
         display: flex;
         flex-wrap: wrap;
+
         li {
             margin-top: 12px;
             width: 50%;
+
             ::ng-deep .dx-checkbox-container {
                 width: 100%;
                 padding-right: 5px;
@@ -101,8 +113,10 @@
             & > div, dx-select-box {
                 display: inline-block;
             }
+
             ::ng-deep dx-select-box {
                 max-width: 450px;
+
                 input, .dx-placeholder {
                     font-size: 16px;
                 }
@@ -126,6 +140,7 @@
 
         & > div {
             min-width: 300px;
+
             &.onecolum {
                 flex: 0 0 100%;
                 max-width: 100%;
@@ -154,6 +169,7 @@
         .options {
             margin-top: 5px;
             width: 320px;
+
             li {
                 padding-bottom: 15px;
             }
@@ -182,6 +198,7 @@
 
     .section-item {
         line-height: 35px;
+
         div, inplace-edit {
             display: block;
             float: left;
@@ -193,8 +210,10 @@
 
         ul {
             margin-bottom: 0;
+
             li {
                 white-space: nowrap;
+
                 .edit-phone {
                     color: #00aeef;
                     display: none;
@@ -202,15 +221,18 @@
                     padding: 7px;
                     cursor: pointer;
                 }
-                .save-to-clipboard  {
+
+                .save-to-clipboard {
                     display: none;
                     cursor: pointer;
                 }
+
                 &:hover {
                     .edit-phone {
                         display: inline-block;
                     }
-                    .save-to-clipboard  {
+
+                    .save-to-clipboard {
                         display: inline-block;
                     }
                 }
