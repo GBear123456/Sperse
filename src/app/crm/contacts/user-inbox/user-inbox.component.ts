@@ -418,12 +418,25 @@ export class UserInboxComponent implements OnDestroy {
         this.showNewEmailDialog(forAll ? 'ReplyToAll' : 'Reply', {
             ...this.activeMessage,
             subject: (this.activeMessage.subject.startsWith('Re:') 
-                ? '' : 'Re:') + this.activeMessage.subject 
+                ? '' : 'Re: ') + this.activeMessage.subject 
         });
     }
 
     forward() {
-        this.showNewEmailDialog('Forward', this.activeMessage);
+        this.showNewEmailDialog('Forward', {
+            ...this.activeMessage,
+            to: [],
+            cc: [],
+            bcc: [],
+            replyToId: null,
+            subject: (this.activeMessage.subject.startsWith('Fwd:') 
+                ? '' : 'Fwd: ') + this.activeMessage.subject,
+            body: '<div dir="ltr">---------- Forwarded message ---------<br>' +
+                'From: <strong class="sendername" dir="auto">' + this.activeMessage.from + '</strong><br>' + 
+                'Date: ' + this.activeMessage.creationTime.format('ddd, MMM Do YYYY, h:mm:ss a') + '<br>' +
+                'Subject: ' + this.activeMessage.subject + '<br>' +
+                'To: ' + this.activeMessage.to + '<br></div><br><br>' + this.activeMessage.body
+        });
     }
 
     showNewEmailDialog(title = 'NewEmail', data: any = {}) {
@@ -432,6 +445,7 @@ export class UserInboxComponent implements OnDestroy {
             contactId: this.contactId,
             replyToId: data.id
         }, data);
+
         this.contactsService.showEmailDialog(Object.assign(data, {
             to: data.to ? (data.to['join'] ? data.to : [data.to]) : []
         }), title).subscribe(res => isNaN(res) ||
