@@ -84,7 +84,9 @@
                         <div class="details">
                             <span class="from">{{activeMessage?.fromUserName}}&nbsp;<small *ngIf="activeMessage?.from">&lt;{{activeMessage?.from}}&gt;</small></span>
                             <span class="subject">{{activeMessage?.subject}}</span>
-                            <span class="to" (click)="activeMessage.showTooltip = true">{{ls.l('to')}} {{activeMessage?.to}} <i class="info dx-icon-info"></i></span>
+                            <span class="to" (click)="activeMessage.showTooltip = true">{{ls.l('to')}}: {{activeMessage?.to}} <i class="info dx-icon-info"></i></span>
+                            <span class="to" *ngIf="activeMessage?.cc">{{ls.l('cc')}}: {{activeMessage?.cc}}</span>
+                            <span class="to" *ngIf="activeMessage?.bcc">{{ls.l('bcc')}}: {{activeMessage?.bcc}}</span>
                         </div>
                         <div class="date">{{activeMessage?.creationTime | datetime: formatting.fieldDateTime}}</div>
                         <div class="status {{activeMessage?.statusCalculated | lowercase}}">{{activeMessage?.statusCalculated}}</div>

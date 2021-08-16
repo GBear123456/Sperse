@@ -254,7 +254,8 @@ export class UserInboxComponent implements OnDestroy {
                 {
                     name: 'replyToAll',
                     visible: this.isActiveEmilType,
-                    action: this.reply.bind(this, true)
+                    action: this.reply.bind(this, true),
+                    disabled: !this.activeMessage.cc
                 },
                 {
                     name: 'forward',
@@ -417,8 +418,15 @@ export class UserInboxComponent implements OnDestroy {
     reply(forAll = false) {
         this.showNewEmailDialog(forAll ? 'ReplyToAll' : 'Reply', {
             ...this.activeMessage,
+            cc: forAll ? this.activeMessage.cc : [],
             subject: (this.activeMessage.subject.startsWith('Re:') 
-                ? '' : 'Re: ') + this.activeMessage.subject 
+                ? '' : 'Re: ') + this.activeMessage.subject,
+            body: '<br><br><div dir="ltr">On ' + 
+                this.activeMessage.creationTime.format('ddd, MMM Do YYYY, h:mm:ss A') + ' ' + (this.activeMessage.fromUserName || '') + 
+                '&lt;<a href="' + this.activeMessage.from + '">' + this.activeMessage.from + '</a>&gt;' +
+                ' wrote:<br></div><blockquote style="margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">' + 
+                this.activeMessage.body + 
+                '</blockquote>'
         });
     }
 
@@ -432,8 +440,9 @@ export class UserInboxComponent implements OnDestroy {
             subject: (this.activeMessage.subject.startsWith('Fwd:') 
                 ? '' : 'Fwd: ') + this.activeMessage.subject,
             body: '<br><br><div dir="ltr">---------- Forwarded message ---------<br>' +
-                'From: <strong class="sendername" dir="auto">' + this.activeMessage.from + '</strong><br>' + 
-                'Date: ' + this.activeMessage.creationTime.format('ddd, MMM Do YYYY, h:mm:ss a') + '<br>' +
+                'From: <strong class="sendername" dir="auto">' + (this.activeMessage.fromUserName || '') + '</strong>' +
+                '<span dir="auto">&lt;<a href="' + this.activeMessage.from + '">' + this.activeMessage.from + '</a>&gt;</span><br>' + 
+                'Date: ' + this.activeMessage.creationTime.format('ddd, MMM Do YYYY, h:mm:ss A') + '<br>' +
                 'Subject: ' + this.activeMessage.subject + '<br>' +
                 'To: ' + this.activeMessage.to + '<br></div><br><br>' + this.activeMessage.body
         });
