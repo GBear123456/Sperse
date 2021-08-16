@@ -249,12 +249,12 @@ export class UserInboxComponent implements OnDestroy {
                 {
                     name: 'reply',
                     visible: this.isActiveEmilType,
-                    action: this.reply.bind(this)
+                    action: () => this.reply()
                 },
                 {
                     name: 'replyToAll',
                     visible: this.isActiveEmilType,
-                    action: this.reply.bind(this, true),
+                    action: () => this.reply(true),
                     disabled: !this.activeMessage.cc
                 },
                 {
