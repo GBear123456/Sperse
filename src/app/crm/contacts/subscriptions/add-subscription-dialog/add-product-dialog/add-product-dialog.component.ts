@@ -42,7 +42,9 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AddServiceProductDialogComponent } from '../add-service-product-dialog/add-service-product-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppFeatures } from '@shared/AppFeatures';
 import { SettingService } from 'abp-ng2-module/dist/src/settings/setting.service';
+import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 
 @Component({
     selector: 'add-product-dialog',
@@ -62,6 +64,9 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(filter(Boolean),
         map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
     );
+    amountNullableFormat$: Observable<string> = this.invoicesService.settings$.pipe(filter(Boolean),
+        map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,###.##')
+    );
 
     readonly addNewItemId = -1;
     productTypes: string[] = Object.keys(ProductType);
@@ -74,6 +79,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     frequencies = Object.keys(RecurringPaymentFrequency);
     gracePeriodDefaultValue: number;
     customGroup: string;
+    isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);          //&& this.permission.isGranted(AppPermissions.CRMAffiliatesCommissions);
 
     constructor(
         private elementRef: ElementRef,
@@ -89,6 +95,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         public ls: AppLocalizationService,
         public dialog: MatDialog,
         private setting: SettingService,
+        private feature: FeatureCheckerService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
         this.dialogRef.beforeClose().subscribe(() => {
