@@ -348,7 +348,7 @@ export class ContactsService {
             emailData.suggestionEmails = emailData.contact.personContactInfo.details.emails
                 .filter(item => item.isActive).map(item => item.emailAddress);
     
-            if (emailData.suggestionEmails.length && !emailData.subject.startsWith('Fwd:'))
+            if (emailData.suggestionEmails.length && !(emailData.subject && emailData.subject.startsWith('Fwd:')))
                 emailData.to = [emailData.suggestionEmails[0]];
 
             emailData.contact.personContactInfo.details.phones

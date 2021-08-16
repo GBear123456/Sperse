@@ -418,9 +418,9 @@ export class UserInboxComponent implements OnDestroy {
     reply(forAll = false) {
         this.showNewEmailDialog(forAll ? 'ReplyToAll' : 'Reply', {
             ...this.activeMessage,
-            cc: forAll ? this.activeMessage.cc : [],
-            subject: (this.activeMessage.subject.startsWith('Re:') 
-                ? '' : 'Re: ') + this.activeMessage.subject,
+            cc: forAll ? (this.activeMessage.cc ? this.activeMessage.cc.split(','): []) : [],
+            bcc: this.activeMessage.bcc ? this.activeMessage.bcc.split(',') : [],
+            subject: (this.activeMessage.subject.startsWith('Re:')  ? '' : 'Re: ') + this.activeMessage.subject,
             body: '<br><br><div dir="ltr">On ' + 
                 this.activeMessage.creationTime.format('ddd, MMM Do YYYY, h:mm:ss A') + ' ' + (this.activeMessage.fromUserName || '') + 
                 '&lt;<a href="' + this.activeMessage.from + '">' + this.activeMessage.from + '</a>&gt;' +
@@ -437,8 +437,7 @@ export class UserInboxComponent implements OnDestroy {
             cc: [],
             bcc: [],
             replyToId: null,
-            subject: (this.activeMessage.subject.startsWith('Fwd:') 
-                ? '' : 'Fwd: ') + this.activeMessage.subject,
+            subject: (this.activeMessage.subject.startsWith('Fwd:') ? '' : 'Fwd: ') + this.activeMessage.subject,
             body: '<br><br><div dir="ltr">---------- Forwarded message ---------<br>' +
                 'From: <strong class="sendername" dir="auto">' + (this.activeMessage.fromUserName || '') + '</strong>' +
                 '<span dir="auto">&lt;<a href="' + this.activeMessage.from + '">' + this.activeMessage.from + '</a>&gt;</span><br>' + 
