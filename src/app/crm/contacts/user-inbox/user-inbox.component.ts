@@ -431,7 +431,7 @@ export class UserInboxComponent implements OnDestroy {
             replyToId: null,
             subject: (this.activeMessage.subject.startsWith('Fwd:') 
                 ? '' : 'Fwd: ') + this.activeMessage.subject,
-            body: '<div dir="ltr">---------- Forwarded message ---------<br>' +
+            body: '<br><br><div dir="ltr">---------- Forwarded message ---------<br>' +
                 'From: <strong class="sendername" dir="auto">' + this.activeMessage.from + '</strong><br>' + 
                 'Date: ' + this.activeMessage.creationTime.format('ddd, MMM Do YYYY, h:mm:ss a') + '<br>' +
                 'Subject: ' + this.activeMessage.subject + '<br>' +

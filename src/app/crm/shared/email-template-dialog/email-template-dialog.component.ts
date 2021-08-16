@@ -208,7 +208,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.emailSettingsSource = from.emailSettingsSource;
             }
             this.data.emailSettingsSource = this.emailSettingsSource;
-            if (from && from.ccEmailAddress && !this.data.subject.startsWith('Fwd:')) {
+            if (from && from.ccEmailAddress) {
                 this.data.cc = [from.ccEmailAddress];
                 this.showCC = true;
             }
@@ -452,7 +452,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         );
         if (from) {
             this.data.emailSettingsSource = from.emailSettingsSource;
-            if (from.ccEmailAddress && !this.data.subject.startsWith('Fwd:')) {
+            if (from.ccEmailAddress) {
                 this.data.cc = [from.ccEmailAddress];
                 this.showCC = true;
             }
