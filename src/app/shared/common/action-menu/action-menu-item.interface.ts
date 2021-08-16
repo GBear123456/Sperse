@@ -9,5 +9,6 @@ export interface ActionMenuItem {
     button?: {
         text: string;
         action: (event: any) => void;
+        checkVisible?: (itemData: any) => boolean;
     };
 }

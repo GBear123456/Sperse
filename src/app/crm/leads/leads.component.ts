@@ -197,7 +197,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         this.contactService.showSMSDialog({
                             phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
                         });
-                    }
+                    },
+                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail')
                 },
                 {
                     text: this.l('SendEmail'),
@@ -206,7 +207,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         this.contactService.showEmailDialog({
                             contactId: (data || this.actionEvent.data || this.actionEvent).CustomerId
                         }).subscribe();
-                    }
+                    },
+                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail')
                 },
             ]
         },
@@ -253,7 +255,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             this.showLeadDetails({ data: data || this.actionEvent }, 'notes', {
                                 addNew: true
                             });
-                        }
+                        },
+                        checkVisible: () => this.permission.checkCGPermission(this.selectedContactGroup)
                     }
                 },
                 {
@@ -311,12 +314,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     disabled: false,
                     action: (data?) => {
                         this.deleteLeads([(data || this.actionEvent.data || this.actionEvent).Id]);
-                    }
+                    },
+                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup)
                 },
                 {
                     text: this.l('EditRow'),
                     class: 'edit',
-                    action: (data?) => this.showLeadDetails({ data: data || this.actionEvent })
+                    action: (data?) => this.showLeadDetails({ data: data || this.actionEvent }),
+                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup)
                 }
             ]
         }
