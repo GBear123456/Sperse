@@ -826,6 +826,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     confirmed => {
                         if (confirmed)
                             this.updateStageInternal(pipelineId, $event.itemData);
+                        else 
+                            this.toolbarComponent.stagesComponent.disabled = false;
                     }
                 )
             this.toolbarComponent.stagesComponent.disabled = true;
