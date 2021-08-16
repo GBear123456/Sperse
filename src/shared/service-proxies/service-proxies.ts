@@ -54699,6 +54699,7 @@ export interface IAddressOwnershipTypeDtoListResultDto {
 export class AttachmentDto implements IAttachmentDto {
     name!: string | undefined;
     size!: number | undefined;
+    fileId!: string | undefined;
     id!: string | undefined;
 
     constructor(data?: IAttachmentDto) {
@@ -54714,6 +54715,7 @@ export class AttachmentDto implements IAttachmentDto {
         if (data) {
             this.name = data["name"];
             this.size = data["size"];
+            this.fileId = data["fileId"];
             this.id = data["id"];
         }
     }
@@ -54729,6 +54731,7 @@ export class AttachmentDto implements IAttachmentDto {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["size"] = this.size;
+        data["fileId"] = this.fileId;
         data["id"] = this.id;
         return data; 
     }
@@ -54737,6 +54740,7 @@ export class AttachmentDto implements IAttachmentDto {
 export interface IAttachmentDto {
     name: string | undefined;
     size: number | undefined;
+    fileId: string | undefined;
     id: string | undefined;
 }
 
