@@ -98,6 +98,14 @@
                            [(value)]="product.maxCommissionRate">
             </dx-number-box>
         </div>
+        <div *ngIf="isCommissionsEnabled" class="field">
+            <label>{{ls.l('MaxCommissionRateTier2')}}</label>
+            <dx-number-box name="maxCommissionRate2"
+                           width="300px"
+                           format="#.##%"
+                           [(value)]="product.maxCommissionRateTier2">
+            </dx-number-box>
+        </div>
         <ng-container *ngIf="product.type == defaultProductType">
             <div class="services-header">
                 {{ls.l('Services')}}:
