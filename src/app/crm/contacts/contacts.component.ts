@@ -830,7 +830,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                             this.toolbarComponent.stagesComponent.disabled = false;
                     }
                 )
-            this.toolbarComponent.stagesComponent.disabled = true;
             this.toolbarComponent.stagesComponent.toggle();
         });
         $event.event.stopPropagation();
@@ -842,6 +841,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             sourceStage = this.pipelineService.getStage(pipelinePurposeId, pipelineId, this.leadInfo.stageId),
             targetStage = this.pipelineService.getStage(pipelinePurposeId, data.pipelineId, data.id);
 
+        this.toolbarComponent.stagesComponent.disabled = true;
         if (!this.pipelineService.updateEntityStage(
             this.leadInfo, sourceStage, targetStage, () => {
                 this.toolbarComponent.stagesComponent.disabled = false;

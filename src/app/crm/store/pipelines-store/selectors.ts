@@ -24,7 +24,7 @@ export const getPipelines = (filter?: Filter) => createSelector(
             : state.pipelines
         ).map(pipeline => {
             pipeline.stages.forEach(stage => {
-                stage['pipelineId'] = pipeline.id;
+                stage['pipeline'] = pipeline;
             });
             return pipeline;
         });
