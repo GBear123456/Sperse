@@ -760,7 +760,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 newStage.isLoading = oldStage.isLoading = true;
                 if (newStage.name != oldStage.name) {
                     this.pipelineService.updateEntityStage(
-                        this.contactGroupId, entity, oldStage, newStage, complete, forced
+                        entity, oldStage, newStage, complete, forced
                     );
                 } else
                     this.pipelineService.updateEntitySortOrder(this.pipeline.id, entity, complete);

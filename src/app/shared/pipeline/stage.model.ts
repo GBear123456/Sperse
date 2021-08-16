@@ -3,6 +3,7 @@ import { IStage } from '@app/shared/pipeline/stage.interface';
 import { StageWidth } from '@app/shared/pipeline/stage-width.enum';
 
 export class Stage extends StageDto {
+    pipelineId: number;
     entities: any[];
     isLoading: boolean;
     isFull: boolean;

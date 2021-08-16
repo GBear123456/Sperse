@@ -51,6 +51,7 @@ export class StaticListComponent {
     @Input() searchExprType = 'displayName';
     @Input() bulkUpdatePermissionKey: AppPermissions = null;
     @Input() convertNameStartCase = true;
+    @Input() disabled = false;
     @Input('list')
     set list(value: any[]) {
         this._list = (value ? value.map((item) => {
