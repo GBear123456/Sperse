@@ -90,7 +90,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     leadId: number;
     leadStages = [];
     allPipelines = [];
-    clientStageId: number;
     partnerInfo: PartnerInfoDto;
     partnerTypeId: string;
     partnerTypes: any[] = [];
@@ -491,12 +490,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             ...leadInfo
         });
 
-        this.loadLeadsStages(() => {
-            if (this.leadInfo) {
-                this.clientStageId = this.leadInfo.stageId;
-            }
-        });
-
+        this.loadLeadsStages();
         this.storeInitialData();
     }
 
@@ -660,7 +654,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             });
     }
 
-    private loadLeadsStages(callback?: () => any) {
+    private loadLeadsStages() {
         this.leadInfo$.pipe(
             first(),
             switchMap((leadInfo) => {
@@ -685,7 +679,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     })
                 };
             });
-            callback && callback();
         });
     }
 
@@ -828,15 +821,15 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 this.updateStageInternal(pipelineId, $event.itemData);
             else
                 this.message.confirm(
-                    this.l('ContactGroupStageChange'),
+                    this.l('PipelineAndStageChange'),
                     this.l('AreYouSure'),
                     confirmed => {
                         if (confirmed)
                             this.updateStageInternal(pipelineId, $event.itemData);
                     }
                 )
-
-            this.refreshStageDropdown();
+            this.toolbarComponent.stagesComponent.disabled = true;
+            this.toolbarComponent.stagesComponent.toggle();
         });
         $event.event.stopPropagation();
     }
@@ -848,9 +841,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             targetStage = this.pipelineService.getStage(pipelinePurposeId, data.pipelineId, data.id);
 
         if (!this.pipelineService.updateEntityStage(
-            isPipelineChange ? null : this.contactGroupId.value, 
             this.leadInfo, sourceStage, targetStage, () => {
-                if (this.leadInfo.stage != sourceStage.name) {
+                this.toolbarComponent.stagesComponent.disabled = false;
+                if (this.leadInfo.stageId == targetStage.id) {
                     this.notify.success(this.l('StageSuccessfullyUpdated'));
                     if (isPipelineChange || sourceStage.isFinal != targetStage.isFinal) {
                         this.leadInfo = undefined;
@@ -859,20 +852,19 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                         ).subscribe(() => {
                             this.contactService['data'].refresh = true;
                         });
-                    } else {
-                        this.clientStageId = targetStage.id;
-                        this.refreshStageDropdown();
                     }
-                }
+                } else
+                    this.refreshStageDropdown();
             }
         ))
             this.message.warn(this.l('CannotChangeLeadStage', sourceStage.name, targetStage.name));
     }
 
     refreshStageDropdown() {
-        this.toolbarComponent.stagesComponent.listComponent.option(
-            'selectedItemKeys', [this.clientStageId]
-        );
+        if (this.leadInfo)
+            this.toolbarComponent.stagesComponent.listComponent.option(
+                'selectedItemKeys', [this.leadInfo.stageId]
+            );
         this.toolbarComponent.refresh();
     }
 

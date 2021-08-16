@@ -188,11 +188,11 @@ export class PipelineService {
         return _.findWhere(this.getStages(pipelinePurposeId, contactGroupId, pipelineId), { name: stageName });
     }
 
-    updateEntityStage(contactGroupId: ContactGroup,
+    updateEntityStage(
         entity: any, fromStage: Stage, toStage: Stage, complete = null, forced = false
     ) {
         if (fromStage && toStage) {
-            let isPipelineChange = entity.contactGroupId != contactGroupId,
+            let isPipelineChange = fromStage.pipelineId != toStage.pipelineId,
                 action = isPipelineChange ?
                     {sysId: AppConsts.SYS_ID_CRM_UPDATE_LEAD_STAGE} :
                     _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});
@@ -206,7 +206,7 @@ export class PipelineService {
                 else if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_LEAD_STAGE)
                     this.updateLeadStage(fromStage, toStage, entity, complete, forced, isPipelineChange);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_PROCESS_LEAD)
-                    this.processLead(contactGroupId, fromStage, toStage, entity, complete, forced);
+                    this.processLead(fromStage, toStage, entity, complete, forced);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_CANCEL_ORDER)
                     this.cancelOrder(fromStage, toStage, entity, complete);
                 else if (action.sysId == AppConsts.SYS_ID_CRM_UPDATE_ORDER_STAGE)
@@ -252,7 +252,6 @@ export class PipelineService {
                 entity.data = data;
             if (
                 !this.updateEntityStage(
-                    contactGroupId,
                     entity,
                     this.getStageByName(pipelineId, entity.Stage || entity.stage, contactGroupId),
                     this.getStageByName(pipelineId, targetStageName, contactGroupId),
@@ -312,24 +311,22 @@ export class PipelineService {
             })).subscribe(() => {
                 this.completeEntityUpdate(entity, fromStage, toStage);
             }, () => {
-                if (!updatePipeline)
-                    this.moveEntityTo(entity, toStage, fromStage);
+                this.moveEntityTo(entity, toStage, fromStage);
             });
         }, () => {
-            if (!updatePipeline)
-                this.moveEntityTo(entity, toStage, fromStage);
+            this.moveEntityTo(entity, toStage, fromStage);
             entity.locked = false;
             complete && complete(true);
         });
     }
 
-    processLead(contactGroupId: ContactGroup, fromStage: Stage, toStage: Stage, entity, complete, useLastData = false) {
+    processLead(fromStage: Stage, toStage: Stage, entity, complete, useLastData = false) {
         this.ignoreStageChecklist(fromStage, this.getEntityId(entity), useLastData).subscribe(ignore => {
             if (entity.data)
                 return this.processLeadInternal(entity,
                     {...entity.data, fromStage, toStage, ignoreChecklist: ignore}, complete);
             if (!useLastData || !this.lastEntityData$) {
-                this.lastEntityData$ = contactGroupId == ContactGroup.Client ? this.getPipelineDefinitionObservable(
+                this.lastEntityData$ = entity.contactGroupId == ContactGroup.Client ? this.getPipelineDefinitionObservable(
                     AppConsts.PipelinePurposeIds.order,
                     null
                 ).pipe(first(),
@@ -545,13 +542,13 @@ export class PipelineService {
                 targetStage.entities.unshift(entity);
         }
 
-        entity.StageId = targetStage.id;
+        entity.stageId = entity.StageId = targetStage.id;
         entity.stage = entity.Stage = targetStage.name;
         entity.locked = false;
     }
 
     completeEntityUpdate(entity, fromStage: Stage, toStage: Stage) {
-        entity.StageId = toStage.id;
+        entity.stageId = entity.StageId = toStage.id;
         entity.stage = entity.Stage = toStage.name;
         fromStage.total--;
         toStage.total++;
