@@ -2626,8 +2626,8 @@ export class BANKCodeServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    createLead(body: CreateLeadInput | null | undefined): Observable<CreateLeadOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/CreateLead";
+    createOrUpdateLead(body: CreateOrEditLeadInput | null | undefined): Observable<CreateLeadOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/CreateOrUpdateLead";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -2643,11 +2643,11 @@ export class BANKCodeServiceProxy {
         };
 
         return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateLead(response_);
+            return this.processCreateOrUpdateLead(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processCreateLead(<any>response_);
+                    return this.processCreateOrUpdateLead(<any>response_);
                 } catch (e) {
                     return <Observable<CreateLeadOutput>><any>_observableThrow(e);
                 }
@@ -2656,7 +2656,7 @@ export class BANKCodeServiceProxy {
         }));
     }
 
-    protected processCreateLead(response: HttpResponseBase): Observable<CreateLeadOutput> {
+    protected processCreateOrUpdateLead(response: HttpResponseBase): Observable<CreateLeadOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -2731,6 +2731,61 @@ export class BANKCodeServiceProxy {
             }));
         }
         return _observableOf<GetSystemTotalsOutput>(<any>null);
+    }
+
+    /**
+     * @aiGeneratedOnly (optional) 
+     * @return Success
+     */
+    getUserTotals(aiGeneratedOnly: boolean | null | undefined): Observable<GetUserTotalsOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetUserTotals?";
+        if (aiGeneratedOnly !== undefined)
+            url_ += "aiGeneratedOnly=" + encodeURIComponent("" + aiGeneratedOnly) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetUserTotals(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetUserTotals(<any>response_);
+                } catch (e) {
+                    return <Observable<GetUserTotalsOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetUserTotalsOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetUserTotals(response: HttpResponseBase): Observable<GetUserTotalsOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetUserTotalsOutput.fromJS(resultData200) : new GetUserTotalsOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetUserTotalsOutput>(<any>null);
     }
 
     /**
@@ -16286,6 +16341,130 @@ export class EventServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getSubscriptions(): Observable<EventSubscriptionDto[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/Event/GetSubscriptions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSubscriptions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSubscriptions(<any>response_);
+                } catch (e) {
+                    return <Observable<EventSubscriptionDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EventSubscriptionDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSubscriptions(response: HttpResponseBase): Observable<EventSubscriptionDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(EventSubscriptionDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EventSubscriptionDto[]>(<any>null);
+    }
+
+    /**
+     * @eventSubscriptionId (optional) 
+     * @searchString (optional) 
+     * @maxResultCount (optional) 
+     * @skipCount (optional) 
+     * @return Success
+     */
+    getEventExecutions(eventSubscriptionId: number | null | undefined, searchString: string | null | undefined, maxResultCount: number | null | undefined, skipCount: number | null | undefined): Observable<EventJobExecutionDto[]> {
+        let url_ = this.baseUrl + "/api/services/Platform/Event/GetEventExecutions?";
+        if (eventSubscriptionId !== undefined)
+            url_ += "EventSubscriptionId=" + encodeURIComponent("" + eventSubscriptionId) + "&"; 
+        if (searchString !== undefined)
+            url_ += "SearchString=" + encodeURIComponent("" + searchString) + "&"; 
+        if (maxResultCount !== undefined)
+            url_ += "MaxResultCount=" + encodeURIComponent("" + maxResultCount) + "&"; 
+        if (skipCount !== undefined)
+            url_ += "SkipCount=" + encodeURIComponent("" + skipCount) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetEventExecutions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetEventExecutions(<any>response_);
+                } catch (e) {
+                    return <Observable<EventJobExecutionDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<EventJobExecutionDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetEventExecutions(response: HttpResponseBase): Observable<EventJobExecutionDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(EventJobExecutionDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EventJobExecutionDto[]>(<any>null);
     }
 
     /**
@@ -44335,7 +44514,8 @@ export interface ICreateContactAddressInputWithoutCheck {
     ownershipTypeId: string | undefined;
 }
 
-export class CreateLeadInput implements ICreateLeadInput {
+export class CreateOrEditLeadInput implements ICreateOrEditLeadInput {
+    id!: number | undefined;
     namePrefix!: string | undefined;
     firstName!: string | undefined;
     middleName!: string | undefined;
@@ -44349,7 +44529,7 @@ export class CreateLeadInput implements ICreateLeadInput {
     isAIGeneratedBankCode!: boolean | undefined;
     bankCode!: string | undefined;
 
-    constructor(data?: ICreateLeadInput) {
+    constructor(data?: ICreateOrEditLeadInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -44360,6 +44540,7 @@ export class CreateLeadInput implements ICreateLeadInput {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.namePrefix = data["namePrefix"];
             this.firstName = data["firstName"];
             this.middleName = data["middleName"];
@@ -44375,15 +44556,16 @@ export class CreateLeadInput implements ICreateLeadInput {
         }
     }
 
-    static fromJS(data: any): CreateLeadInput {
+    static fromJS(data: any): CreateOrEditLeadInput {
         data = typeof data === 'object' ? data : {};
-        let result = new CreateLeadInput();
+        let result = new CreateOrEditLeadInput();
         result.init(data);
         return result;
     }
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["namePrefix"] = this.namePrefix;
         data["firstName"] = this.firstName;
         data["middleName"] = this.middleName;
@@ -44400,7 +44582,8 @@ export class CreateLeadInput implements ICreateLeadInput {
     }
 }
 
-export interface ICreateLeadInput {
+export interface ICreateOrEditLeadInput {
+    id: number | undefined;
     namePrefix: string | undefined;
     firstName: string | undefined;
     middleName: string | undefined;
@@ -44509,6 +44692,46 @@ export interface IGetSystemTotalsOutput {
     systemTotals: { [key: string] : number; } | undefined;
     lastCrackedCode: string | undefined;
     generationTime: moment.Moment | undefined;
+}
+
+export class GetUserTotalsOutput implements IGetUserTotalsOutput {
+    totalCount!: number | undefined;
+    lastCrackedCode!: string | undefined;
+
+    constructor(data?: IGetUserTotalsOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.totalCount = data["totalCount"];
+            this.lastCrackedCode = data["lastCrackedCode"];
+        }
+    }
+
+    static fromJS(data: any): GetUserTotalsOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetUserTotalsOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["totalCount"] = this.totalCount;
+        data["lastCrackedCode"] = this.lastCrackedCode;
+        return data; 
+    }
+}
+
+export interface IGetUserTotalsOutput {
+    totalCount: number | undefined;
+    lastCrackedCode: string | undefined;
 }
 
 export class LeaderInfo implements ILeaderInfo {
@@ -60849,6 +61072,126 @@ export interface IUpdateEmailTemplateRequest {
     body: string;
 }
 
+export class EventSubscriptionDto implements IEventSubscriptionDto {
+    id!: number | undefined;
+    appEvent!: string | undefined;
+    targetUrl!: string | undefined;
+    creatorUserId!: number | undefined;
+    creatorUserName!: string | undefined;
+    creationTime!: moment.Moment | undefined;
+
+    constructor(data?: IEventSubscriptionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.appEvent = data["appEvent"];
+            this.targetUrl = data["targetUrl"];
+            this.creatorUserId = data["creatorUserId"];
+            this.creatorUserName = data["creatorUserName"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): EventSubscriptionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EventSubscriptionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["appEvent"] = this.appEvent;
+        data["targetUrl"] = this.targetUrl;
+        data["creatorUserId"] = this.creatorUserId;
+        data["creatorUserName"] = this.creatorUserName;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IEventSubscriptionDto {
+    id: number | undefined;
+    appEvent: string | undefined;
+    targetUrl: string | undefined;
+    creatorUserId: number | undefined;
+    creatorUserName: string | undefined;
+    creationTime: moment.Moment | undefined;
+}
+
+export class EventJobExecutionDto implements IEventJobExecutionDto {
+    id!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    requestBody!: string | undefined;
+    responseStatus!: string | undefined;
+    httpStatusCode!: number | undefined;
+    httpStatusName!: string | undefined;
+    responseContent!: string | undefined;
+    responseErrorMessage!: string | undefined;
+
+    constructor(data?: IEventJobExecutionDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.requestBody = data["requestBody"];
+            this.responseStatus = data["responseStatus"];
+            this.httpStatusCode = data["httpStatusCode"];
+            this.httpStatusName = data["httpStatusName"];
+            this.responseContent = data["responseContent"];
+            this.responseErrorMessage = data["responseErrorMessage"];
+        }
+    }
+
+    static fromJS(data: any): EventJobExecutionDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new EventJobExecutionDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["requestBody"] = this.requestBody;
+        data["responseStatus"] = this.responseStatus;
+        data["httpStatusCode"] = this.httpStatusCode;
+        data["httpStatusName"] = this.httpStatusName;
+        data["responseContent"] = this.responseContent;
+        data["responseErrorMessage"] = this.responseErrorMessage;
+        return data; 
+    }
+}
+
+export interface IEventJobExecutionDto {
+    id: number | undefined;
+    creationTime: moment.Moment | undefined;
+    requestBody: string | undefined;
+    responseStatus: string | undefined;
+    httpStatusCode: number | undefined;
+    httpStatusName: string | undefined;
+    responseContent: string | undefined;
+    responseErrorMessage: string | undefined;
+}
+
 export class SubscribeForEventInput implements ISubscribeForEventInput {
     eventName!: string;
     targetUrl!: string;
@@ -64264,6 +64607,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     productCode!: string | undefined;
     productName!: string | undefined;
     productType!: ProductType | undefined;
+    subscriptionXref!: string | undefined;
 
     constructor(data?: IInvoiceLineInfo) {
         if (data) {
@@ -64288,6 +64632,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.productCode = data["productCode"];
             this.productName = data["productName"];
             this.productType = data["productType"];
+            this.subscriptionXref = data["subscriptionXref"];
         }
     }
 
@@ -64312,6 +64657,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["productCode"] = this.productCode;
         data["productName"] = this.productName;
         data["productType"] = this.productType;
+        data["subscriptionXref"] = this.subscriptionXref;
         return data; 
     }
 }
@@ -64329,6 +64675,7 @@ export interface IInvoiceLineInfo {
     productCode: string | undefined;
     productName: string | undefined;
     productType: ProductType | undefined;
+    subscriptionXref: string | undefined;
 }
 
 export class InvoiceInfo implements IInvoiceInfo {
