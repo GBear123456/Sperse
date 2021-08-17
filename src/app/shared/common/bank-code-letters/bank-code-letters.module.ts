@@ -10,13 +10,17 @@ import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
 import { DxPopupModule } from 'devextreme-angular/ui/popup';
 import { DragDropModule } from '@angular/cdk/drag-drop';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 
 /** Application imports */
 import { BankCodeDecodeComponent } from './bank-code-decode/bank-code-decode.component';
 import { BankCodeLetterComponent } from './bank-code-letter/bank-code-letter.component';
+import { BankCodeAssessmentComponent } from './bank-code-assessment/bank-code-assessment.component';
 import { BankCodeLettersComponent } from './bank-code-letters.component';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { BankCodeLettersEditorDialogComponent } from './bank-code-letters-editor-dialog/bank-code-letters-editor-dialog.component';
+import { BankCodeHistoryDialogComponent } from './bank-code-history-dialog/bank-code-history-dialog.component';
+import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 
 @NgModule({
     imports: [
@@ -25,15 +29,19 @@ import { BankCodeLettersEditorDialogComponent } from './bank-code-letters-editor
         DxPopupModule,
         DxRadioGroupModule,
         DxSelectBoxModule,
+        DxScrollViewModule,
         MatDialogModule,
         DragulaModule,
-        DragDropModule
+        DragDropModule,
+        ModalDialogModule
     ],
     declarations: [
         BankCodeDecodeComponent,
         BankCodeLettersComponent,
+        BankCodeAssessmentComponent,
         BankCodeLetterComponent,
-        BankCodeLettersEditorDialogComponent
+        BankCodeLettersEditorDialogComponent,
+        BankCodeHistoryDialogComponent
     ],
     exports: [
         BankCodeDecodeComponent,
@@ -45,7 +53,8 @@ import { BankCodeLettersEditorDialogComponent } from './bank-code-letters-editor
         DecimalPipe
     ],
     entryComponents: [
-        BankCodeLettersEditorDialogComponent
+        BankCodeLettersEditorDialogComponent,
+        BankCodeHistoryDialogComponent
     ]
 })
 export class BankCodeLettersModule {}
