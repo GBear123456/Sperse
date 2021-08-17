@@ -909,7 +909,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     addNewContact(event, isSubContact = false) {
-        if (this.isUserProfile)
+        if (this.isUserProfile || !this.manageAllowed)
             return;
 
         let companyInfo = this.contactInfo['organizationContactInfo'];

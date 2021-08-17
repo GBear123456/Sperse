@@ -1,10 +1,10 @@
 /** Core imports */
-import { Component, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
-import { combineLatest, Observable } from 'rxjs';
+import { combineLatest, Observable, Subscription } from 'rxjs';
 import { debounceTime, filter, map, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
@@ -31,7 +31,7 @@ import { AppStore, TagsStoreSelectors, ListsStoreSelectors, StarsStoreSelectors 
     styleUrls: ['./contact-information.component.less'],
     providers: [ LifecycleSubjectsService ]
 })
-export class ContactInformationComponent implements AfterViewInit, OnDestroy {
+export class ContactInformationComponent implements OnDestroy {
     public data: {
         contactInfo: ContactInfoDto,
         leadInfo: LeadInfoDto
@@ -52,6 +52,7 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
             return stars.find((star: ContactStarInfoDto) => star.id === starId);
         })
     );
+    settingsDialog$: Subscription;
 
     constructor(
         private dialog: MatDialog,
@@ -65,22 +66,15 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
     ) {
         this.dialog.closeAll();
         this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
-            if (contactInfo)
+            if (contactInfo) {
                 setTimeout(() => this.updateToolbar());
+                this.initSettingsDialog(contactInfo);
+            }
         }, this.ident);
     }
 
     ngOnInit() {
         this.data = this.contactService['data'];
-    }
-
-    ngAfterViewInit() {
-        this.contactsService.settingsDialogOpened$.pipe(
-            takeUntil(this.lifeCycleService.destroy$),
-            debounceTime(300)
-        ).subscribe(opened => {
-            this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, opened);
-        });
     }
 
     updateAddress({ address, dialogData }, addresses: ContactAddressDto[]) {
@@ -108,7 +102,7 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
     }
 
     updateToolbar() {
-        this.contactsService.toolbarUpdate({
+        let toolbarConfig = {
             optionButton: {
                 name: 'options',
                 options: {
@@ -118,6 +112,20 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
                     this.contactsService.toggleSettingsDialog();
                 }
             }
+        };
+
+        this.contactsService.toolbarUpdate(this.data && !this.data.contactInfo.parentId ? toolbarConfig : null);
+    }
+
+    initSettingsDialog(contactInfo: ContactInfoDto) {
+        if (this.settingsDialog$)
+            this.settingsDialog$.unsubscribe();
+
+        this.settingsDialog$ = this.contactsService.settingsDialogOpened$.pipe(
+            takeUntil(this.lifeCycleService.destroy$),
+            debounceTime(300)
+        ).subscribe((opened) => {
+            this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, contactInfo.parentId ? false : opened);
         });
     }
 

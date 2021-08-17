@@ -65,7 +65,7 @@
                             ? this.l('subContact_single')
                             : this.l('subContact_plural')) }}
                         </div>
-                        <a class="add-new-contact sub-contact">+ {{l('AddSubContact')}}</a>
+                        <a *ngIf="manageAllowed" class="add-new-contact sub-contact">+ {{l('AddSubContact')}}</a>
                     </div>
                 </div>
                 <ng-template #backToParent>
