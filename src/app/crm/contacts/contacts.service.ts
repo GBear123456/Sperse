@@ -478,7 +478,7 @@ export class ContactsService {
                 if (res.attachments) {
                     res.attachments = res.attachments.map(item => {
                         return new FileInfo({
-                            id: item.id,
+                            id: item.fileId || item.id,
                             name: item.name
                         });
                     });
