@@ -37,7 +37,7 @@
             </div>
         </ng-template>
     </div>
-    <div *ngIf="data && !data.parentId" class="organization_info">
+    <div *ngIf="data" class="organization_info">
         <div *ngIf="!data?.primaryOrganizationContactId; else companyInfo" class="add-new-company">
             <a (click)="addCompanyDialog($event)">+ {{ ls.l('AddCompany') }}</a>
         </div>
