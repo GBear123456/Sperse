@@ -28,7 +28,6 @@ import { CrmStore, PipelinesStoreActions } from '@app/crm/store';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     PipelineDto,
-    StageDto,
     StageServiceProxy,
     CreateStageInput,
     RenameStageInput,
@@ -245,7 +244,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
             this.createStageInput.pipelineId = this.pipeline.id;
             this.mergeStagesInput.pipelineId = this.pipeline.id;
             this.onStagesLoaded.emit(pipeline);
-            this.stages = pipeline.stages.map((stage: StageDto) => {
+            this.stages = pipeline.stages.map((stage: Stage) => {
                 const columnWidthsCache = this.cacheService.get(this.getColumnWidthsCacheKey());
                 return new Stage({
                     ...stage,

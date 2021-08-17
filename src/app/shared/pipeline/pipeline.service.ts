@@ -173,7 +173,7 @@ export class PipelineService {
         return pipeline && pipeline.stages;
     }
 
-    getStage(pipelinePurposeId: string, pipelineId: any, id: any): Stage {
+    getStage(pipelinePurposeId: string, pipelineId: number, id: any): Stage {
         let pipeline = this.pipelineDefinitions[pipelinePurposeId][pipelineId];
         return <Stage>pipeline.stages.find(v => v.id == id);
     }
@@ -192,7 +192,7 @@ export class PipelineService {
         entity: any, fromStage: Stage, toStage: Stage, complete = null, forced = false
     ) {
         if (fromStage && toStage) {
-            let isPipelineChange = fromStage.pipelineId != toStage.pipelineId,
+            let isPipelineChange = fromStage.pipeline.id != toStage.pipeline.id,
                 action = isPipelineChange ?
                     {sysId: AppConsts.SYS_ID_CRM_UPDATE_LEAD_STAGE} :
                     _.findWhere(fromStage.accessibleActions, {targetStageId: toStage.id});
@@ -226,10 +226,10 @@ export class PipelineService {
             complete && complete();
     }
 
-    updateEntitiesStage(pipelineId: string, entities, targetStageName: string, contactGroupId: ContactGroup): Observable<any> {
+    updateEntitiesStage(pipelinePurposeId: string, entities, targetStageName: string, contactGroupId: ContactGroup): Observable<any> {
         let subject = new Subject<any>();
         this.updateEntitiesStageInternal(
-            pipelineId,
+            pipelinePurposeId,
             contactGroupId,
             entities.slice(0),
             targetStageName,
@@ -243,7 +243,7 @@ export class PipelineService {
         return subject.asObservable();
     }
 
-    private updateEntitiesStageInternal(pipelineId: string, contactGroupId: ContactGroup,
+    private updateEntitiesStageInternal(pipelinePurposeId: string, contactGroupId: ContactGroup,
         entities, targetStageName: string, data, complete, declinedList
     ) {
         let entity = entities.pop();
@@ -253,11 +253,11 @@ export class PipelineService {
             if (
                 !this.updateEntityStage(
                     entity,
-                    this.getStageByName(pipelineId, entity.Stage || entity.stage, contactGroupId),
-                    this.getStageByName(pipelineId, targetStageName, contactGroupId),
+                    this.getStageByName(pipelinePurposeId, entity.Stage || entity.stage, contactGroupId),
+                    this.getStageByName(pipelinePurposeId, targetStageName, contactGroupId),
                     (data) => {
                         this.updateEntitiesStageInternal(
-                            pipelineId,
+                            pipelinePurposeId,
                             contactGroupId,
                             entities,
                             targetStageName,
@@ -326,7 +326,7 @@ export class PipelineService {
                 return this.processLeadInternal(entity,
                     {...entity.data, fromStage, toStage, ignoreChecklist: ignore}, complete);
             if (!useLastData || !this.lastEntityData$) {
-                this.lastEntityData$ = entity.contactGroupId == ContactGroup.Client ? this.getPipelineDefinitionObservable(
+                this.lastEntityData$ = fromStage.pipeline.contactGroupId == ContactGroup.Client ? this.getPipelineDefinitionObservable(
                     AppConsts.PipelinePurposeIds.order,
                     null
                 ).pipe(first(),
