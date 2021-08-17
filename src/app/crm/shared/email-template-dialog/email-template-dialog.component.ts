@@ -192,7 +192,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
 
         this.ckConfig.height = this.editorHeight ? this.editorHeight : innerHeight -
-            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 460 : 420) + 'px';
+            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 500 : 460) + 'px';
 
         this.initDialogButtons();
         this.changeDetectorRef.detectChanges();
@@ -737,8 +737,12 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     attachmentClick(event, attachment) {
         if (!attachment.url) {
-            this.documentsService.downloadDocument(attachment.id);
+            this.startLoading();
+            this.communicationProxy.getAttachmentLink(attachment.id).pipe(
+                finalize(() => this.finishLoading())
+            ).subscribe(res => window.open(res, '_blank'));
             event.stopPropagation();
+            event.preventDefault();
         }
     }
 

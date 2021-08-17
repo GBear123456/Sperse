@@ -426,7 +426,8 @@ export class UserInboxComponent implements OnDestroy {
                 '&lt;<a href="' + this.activeMessage.from + '">' + this.activeMessage.from + '</a>&gt;' +
                 ' wrote:<br></div><blockquote style="margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">' + 
                 this.activeMessage.body + 
-                '</blockquote>'
+                '</blockquote>',
+            attachments: []
         });
     }
 
