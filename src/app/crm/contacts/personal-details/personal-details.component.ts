@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, AfterViewInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -47,7 +47,8 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
     providers: [ LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PersonalDetailsComponent implements OnDestroy {
+export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
+    contactInfo: ContactInfoDto;
     person: PersonInfoDto;
     isEditAllowed = false;
     startCase = startCase;
@@ -132,7 +133,8 @@ export class PersonalDetailsComponent implements OnDestroy {
                 this.getStates(this.person && this.person.citizenship);
                 this.isEditAllowed = this.permission.checkCGPermission(contactInfo.groupId);
                 setTimeout(() => this.updateToolbar(contactInfo));
-                this.initSettingsDialog(contactInfo);
+                if (contactInfo.parentId)
+                    this.contactsService.closeSettingsDialog(false);
                 this.changeDetector.markForCheck();
             }
         }, this.ident);
@@ -145,6 +147,16 @@ export class PersonalDetailsComponent implements OnDestroy {
         this.loadCountries();
         this.getCountries();
         this.loadStates();
+    }
+
+    ngAfterViewInit() {
+        this.contactsService.settingsDialogOpened$.pipe(
+            takeUntil(this.lifeCycleService.destroy$),
+            debounceTime(300)
+        ).subscribe(opened => {
+            let isOpened = this.contactInfo && this.contactInfo.parentId ? false : opened;
+            this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, isOpened);
+        });
     }
 
     private updateToolbar(contactInfo: ContactInfoDto) {
@@ -161,18 +173,6 @@ export class PersonalDetailsComponent implements OnDestroy {
         };
 
         this.contactsService.toolbarUpdate(contactInfo && !contactInfo.parentId ? toolbarConfig : null);
-    }
-
-    initSettingsDialog(contactInfo: ContactInfoDto) {
-        if (this.settingsDialog$)
-            this.settingsDialog$.unsubscribe();
-
-        this.settingsDialog$ = this.contactsService.settingsDialogOpened$.pipe(
-            takeUntil(this.lifeCycleService.destroy$),
-            debounceTime(300)
-        ).subscribe((opened) => {
-            this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, contactInfo.parentId ? false : opened);
-        });
     }
 
     private getCountries() {
