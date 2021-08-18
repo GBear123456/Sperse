@@ -24,15 +24,19 @@
                 </div>
             </div>
             <ng-content select="[custom-content]"></ng-content>
-            <dx-tabs *ngIf="selectedTabId"
-                     [dataSource]="tabsDataSource"
-                     [width]="174"
-                     keyExpr="id"
-                     [selectedItemKeys]="[selectedTabId]"
-                     [showNavButtons]="true"
-                     (onSelectionChanged)="onTabChanged($event)"
-                     (click)="onTabsClick($event)">
-            </dx-tabs>
+            <div [ngStyle]="{width: 'calc(' + width + ' - 30px)'}">
+                <dx-tabs *ngIf="selectedTabId"
+                         [dataSource]="tabsDataSource"
+                         keyExpr="id"
+                         [selectedItemKeys]="[selectedTabId]"
+                         [showNavButtons]="true"
+                         (onSelectionChanged)="onTabChanged($event)"
+                         (click)="onTabsClick($event)">
+                    <div *dxTemplate="let data of 'item'" [ngStyle]="{'min-width': '120px'}">
+                        {{data.text}}
+                    </div>
+                </dx-tabs>
+            </div>
             <dx-list #staticList
                      [ngClass]="{
                         'funnel-styling': funnelStyling,

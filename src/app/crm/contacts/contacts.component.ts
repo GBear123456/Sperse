@@ -664,7 +664,14 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 ));
             })
         ).subscribe(([leadInfo, pipelines]) => {
-            this.allPipelines = pipelines.map((pipeline: PipelineDto) => {
+            this.allPipelines = pipelines.filter(
+                (pipeline: PipelineDto) => this.permission.checkCGPermission(pipeline.contactGroupId)
+                    && (!pipeline.entityTypeSysId || (                        
+                        pipeline.entityTypeSysId.startsWith('Property')
+                            && this.leadInfo.propertyId
+                    )
+                )
+            ).map((pipeline: PipelineDto) => {
                 return {
                     id: pipeline.id,
                     text: pipeline.name,
