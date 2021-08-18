@@ -667,7 +667,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 (pipeline: PipelineDto) => this.permission.checkCGPermission(pipeline.contactGroupId)
                     && (!pipeline.entityTypeSysId || (                        
                         pipeline.entityTypeSysId.startsWith('Property')
-                            && this.leadInfo.propertyId
+                            && leadInfo.propertyId
                     )
                 )
             ).map((pipeline: PipelineDto) => {
