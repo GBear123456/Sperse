@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnDestroy } from '@angular/core';
+import { Component, AfterViewInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -31,7 +31,7 @@ import { AppStore, TagsStoreSelectors, ListsStoreSelectors, StarsStoreSelectors 
     styleUrls: ['./contact-information.component.less'],
     providers: [ LifecycleSubjectsService ]
 })
-export class ContactInformationComponent implements OnDestroy {
+export class ContactInformationComponent implements AfterViewInit, OnDestroy {
     public data: {
         contactInfo: ContactInfoDto,
         leadInfo: LeadInfoDto
@@ -68,13 +68,25 @@ export class ContactInformationComponent implements OnDestroy {
         this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo) {
                 setTimeout(() => this.updateToolbar());
-                this.initSettingsDialog(contactInfo);
+                if (contactInfo.parentId) {
+                    this.contactsService.closeSettingsDialog(false);
+                }
             }
         }, this.ident);
     }
 
     ngOnInit() {
         this.data = this.contactService['data'];
+    }
+
+    ngAfterViewInit() {
+        this.contactsService.settingsDialogOpened$.pipe(
+            takeUntil(this.lifeCycleService.destroy$),
+            debounceTime(300)
+        ).subscribe(opened => {
+            let isOpened = this.data.contactInfo && this.data.contactInfo.parentId ? false : opened;
+            this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, isOpened);
+        });
     }
 
     updateAddress({ address, dialogData }, addresses: ContactAddressDto[]) {
@@ -115,18 +127,6 @@ export class ContactInformationComponent implements OnDestroy {
         };
 
         this.contactsService.toolbarUpdate(this.data && !this.data.contactInfo.parentId ? toolbarConfig : null);
-    }
-
-    initSettingsDialog(contactInfo: ContactInfoDto) {
-        if (this.settingsDialog$)
-            this.settingsDialog$.unsubscribe();
-
-        this.settingsDialog$ = this.contactsService.settingsDialogOpened$.pipe(
-            takeUntil(this.lifeCycleService.destroy$),
-            debounceTime(300)
-        ).subscribe((opened) => {
-            this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, contactInfo.parentId ? false : opened);
-        });
     }
 
     ngOnDestroy() {

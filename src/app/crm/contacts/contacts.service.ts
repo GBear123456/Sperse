@@ -172,8 +172,9 @@ export class ContactsService {
         this.settingsDialogOpened.next(true);
     }
 
-    closeSettingsDialog() {
-        this.cacheService.set(this.settingsDialogOpenedCacheKey, false);
+    closeSettingsDialog(storeInCache: boolean = true) {
+        if (storeInCache)
+            this.cacheService.set(this.settingsDialogOpenedCacheKey, false);
         this.settingsDialogOpened.next(false);
     }
 
