@@ -30,7 +30,7 @@ export class StaticListComponent {
     @Output() onOptionChanged: EventEmitter<any> = new EventEmitter();
     @Output() onBottomInputApplyValue: EventEmitter<any> = new EventEmitter();
     @Output() onFilterApply: EventEmitter<any> = new EventEmitter();
-    @Input() width: string;
+    @Input() width: string = '100%';
     @Input() height: number;
     @Input() listHeight: string;
     @Input() template: string;
