@@ -20,6 +20,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 })
 export class BankCodeDecodeComponent {
     @Input() content: string;
+    @Input() source: string = 'Decode';
     @Output() onDecodeStart: EventEmitter<any> = new EventEmitter<any>();
     @Output() onDecodeFinish: EventEmitter<any> = new EventEmitter<any>();
     bankCodeEnabled = this.features.isEnabled(AppFeatures.CRMBANKCode);
@@ -37,7 +38,8 @@ export class BankCodeDecodeComponent {
         if (this.content) {
             this.onDecodeStart.emit();
             this.bankCodeServiceProxy.getBankCode(new GetBankCodeInput({
-                content: this.content.replace(/\<(\/)?(\w)*(\d)?\>/gim, '')
+                content: this.content.replace(/\<(\/)?(\w)*(\d)?\>/gim, ''),
+                source: this.source
             })).subscribe(res => {
                 this.bankCode = res.value;
                 this.onDecodeFinish.emit(res);

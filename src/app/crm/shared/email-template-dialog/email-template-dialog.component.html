@@ -223,7 +223,7 @@
             </dx-validation-group>
         </dx-scroll-view>
         <div class="bank-decode-wrapper" *ngIf="!templateEditMode">
-            <bank-code-decode [content]="data.body" (onDecodeStart)="startLoading()" (onDecodeFinish)="finishLoading()"></bank-code-decode>
+            <bank-code-decode [content]="data.body" [source]="'CRMEmail'" (onDecodeStart)="startLoading()" (onDecodeFinish)="finishLoading()"></bank-code-decode>
         </div>
     </div>
 </modal-dialog>
