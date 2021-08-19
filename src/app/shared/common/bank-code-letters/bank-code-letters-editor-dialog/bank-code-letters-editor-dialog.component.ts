@@ -103,7 +103,11 @@ export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
                     id: this.personId,
                     bankCode: bankCode
                 }))
-                : this.memberSettingsService.updateBANKCode(new UpdateUserBANKCodeDto({ bankCode: bankCode, bankCodeSelfAssessmentDto: null }))
+                : this.memberSettingsService.updateBANKCode(new UpdateUserBANKCodeDto({ 
+                    bankCode: bankCode, 
+                    bankCodeSelfAssessmentDto: null,
+                    source: 'CRM'
+                }))
             );
         updateMethod$.subscribe(
             (result) => {

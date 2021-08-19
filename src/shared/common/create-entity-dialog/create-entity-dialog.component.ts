@@ -400,6 +400,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             dealAmount: this.dealAmount,
             installmentAmount: this.installmentAmount,
             bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null,
+            bankCodeSource: 'CRM',
             leadTypeId: this.data.entityTypeId
         };
         if (this.disallowMultipleItems) {
