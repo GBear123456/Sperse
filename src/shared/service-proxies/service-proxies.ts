@@ -81847,6 +81847,11 @@ export enum Currency {
     BTC = "BTC", 
 }
 
+export enum Tier2CommissionSource {
+    CommissionableValue = "CommissionableValue", 
+    CommissionAmount = "CommissionAmount", 
+}
+
 export class InvoiceSettings implements IInvoiceSettings {
     legalName!: string | undefined;
     address!: string | undefined;
@@ -81857,6 +81862,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     currency!: Currency | undefined;
     showShippingAddress!: boolean | undefined;
     defaultAffiliateRate!: number | undefined;
+    tier2CommissionSource!: Tier2CommissionSource | undefined;
 
     constructor(data?: IInvoiceSettings) {
         if (data) {
@@ -81878,6 +81884,7 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.currency = data["currency"];
             this.showShippingAddress = data["showShippingAddress"];
             this.defaultAffiliateRate = data["defaultAffiliateRate"];
+            this.tier2CommissionSource = data["tier2CommissionSource"];
         }
     }
 
@@ -81899,6 +81906,7 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["currency"] = this.currency;
         data["showShippingAddress"] = this.showShippingAddress;
         data["defaultAffiliateRate"] = this.defaultAffiliateRate;
+        data["tier2CommissionSource"] = this.tier2CommissionSource;
         return data; 
     }
 }
@@ -81913,6 +81921,7 @@ export interface IInvoiceSettings {
     currency: Currency | undefined;
     showShippingAddress: boolean | undefined;
     defaultAffiliateRate: number | undefined;
+    tier2CommissionSource: Tier2CommissionSource | undefined;
 }
 
 export class TenantUserManagementSettingsEditDto implements ITenantUserManagementSettingsEditDto {

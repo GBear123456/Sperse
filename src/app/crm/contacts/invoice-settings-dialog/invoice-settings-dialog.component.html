@@ -48,16 +48,24 @@
                                       [text]="ls.l('InvoiceEmail_AttachPDF')"
                                       [(value)]="settings.attachPDF">
                         </dx-check-box>
-                        <dx-number-box *ngIf="hasCommissionsFeature"
-                                       [min]="0"
-                                       [max]="99"
-                                       mode="number"
-                                       [showClearButton]="true"
-                                       [readOnly]="isRateDisabled"
-                                       [placeholder]="ls.l('Default') + ' ' + ls.l('AffiliateRate') + ', %'"
-                                       [(value)]="settings.defaultAffiliateRate"
-                                       [showSpinButtons]="true">
-                        </dx-number-box>
+                        <ng-container *ngIf="hasCommissionsFeature">
+                            <dx-number-box [min]="0"
+                                           [max]="99"
+                                           mode="number"
+                                           [showClearButton]="true"
+                                           [readOnly]="isRateDisabled"
+                                           [placeholder]="ls.l('Default') + ' ' + ls.l('AffiliateRate') + ', %'"
+                                           [(value)]="settings.defaultAffiliateRate"
+                                           [showSpinButtons]="true">
+                            </dx-number-box>
+                            <h3>{{ls.l('InvoiceEmail_Tier2CommissionSource')}}</h3>
+                            <dx-select-box [items]="tier2SourceOptions"
+                                           displayExpr="text"
+                                           valueExpr="id"
+                                           placeholder=""
+                                           [(value)]="settings.tier2CommissionSource">
+                            </dx-select-box>
+                        </ng-container>
                     </div>
                 </div>
             </div>
