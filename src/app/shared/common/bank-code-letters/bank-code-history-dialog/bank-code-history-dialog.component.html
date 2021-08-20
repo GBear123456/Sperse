@@ -12,7 +12,7 @@
                              width="50" height="50">
                         <p [title]="bankCodeInfo.userName || ''">{{bankCodeInfo.userName || ''}}</p>
                     </div>
-                    <div class="m-alert__text">
+                    <div class="m-alert__text left">
                         <div class="row">
                             <label class="control-label col-sm-2">{{ls.l('BANKCode')}}:</label>
                             <p class="form-control-static nopadding">
@@ -33,7 +33,7 @@
                             </p>
                         </div>
                     </div>
-                    <div class="m-alert__text">
+                    <div class="m-alert__text right">
                         <div class="row" *ngIf="getBankCodeAssessment(bankCodeInfo)">
                             <label class="control-label col-sm-2">{{ls.l('BankCodeHistory_Assessment')}}:</label>
                             <p class="form-control-static nopadding">

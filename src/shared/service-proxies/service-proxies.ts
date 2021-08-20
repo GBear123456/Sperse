@@ -53317,7 +53317,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     links!: CreateContactLinkInputWithoutCheck[] | undefined;
     dob!: moment.Moment | undefined;
     bankCode!: string | undefined;
-    ignoreBankCodeIfExist!: boolean | undefined;
+    bankCodeSource!: string | undefined;
     gender!: Gender | undefined;
     experience!: string | undefined;
     profileSummary!: string | undefined;
@@ -53397,7 +53397,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             }
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
             this.bankCode = data["bankCode"];
-            this.ignoreBankCodeIfExist = data["ignoreBankCodeIfExist"];
+            this.bankCodeSource = data["bankCodeSource"];
             this.gender = data["gender"];
             this.experience = data["experience"];
             this.profileSummary = data["profileSummary"];
@@ -53489,7 +53489,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         }
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
         data["bankCode"] = this.bankCode;
-        data["ignoreBankCodeIfExist"] = this.ignoreBankCodeIfExist;
+        data["bankCodeSource"] = this.bankCodeSource;
         data["gender"] = this.gender;
         data["experience"] = this.experience;
         data["profileSummary"] = this.profileSummary;
@@ -53558,7 +53558,7 @@ export interface ICreateOrUpdateContactInput {
     links: CreateContactLinkInputWithoutCheck[] | undefined;
     dob: moment.Moment | undefined;
     bankCode: string | undefined;
-    ignoreBankCodeIfExist: boolean | undefined;
+    bankCodeSource: string | undefined;
     gender: Gender | undefined;
     experience: string | undefined;
     profileSummary: string | undefined;
@@ -62926,7 +62926,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
     phoneExt2!: string | undefined;
     ssn!: string | undefined;
     bankCode!: string | undefined;
-    ignoreBankCodeIfExist!: boolean | undefined;
     email1!: string | undefined;
     email2!: string | undefined;
     email3!: string | undefined;
@@ -62981,7 +62980,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
             this.phoneExt2 = data["phoneExt2"];
             this.ssn = data["ssn"];
             this.bankCode = data["bankCode"];
-            this.ignoreBankCodeIfExist = data["ignoreBankCodeIfExist"];
             this.email1 = data["email1"];
             this.email2 = data["email2"];
             this.email3 = data["email3"];
@@ -63040,7 +63038,6 @@ export class ImportPersonalInput implements IImportPersonalInput {
         data["phoneExt2"] = this.phoneExt2;
         data["ssn"] = this.ssn;
         data["bankCode"] = this.bankCode;
-        data["ignoreBankCodeIfExist"] = this.ignoreBankCodeIfExist;
         data["email1"] = this.email1;
         data["email2"] = this.email2;
         data["email3"] = this.email3;
@@ -63092,7 +63089,6 @@ export interface IImportPersonalInput {
     phoneExt2: string | undefined;
     ssn: string | undefined;
     bankCode: string | undefined;
-    ignoreBankCodeIfExist: boolean | undefined;
     email1: string | undefined;
     email2: string | undefined;
     email3: string | undefined;
@@ -66328,7 +66324,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     links!: CreateContactLinkInputWithoutCheck[] | undefined;
     dob!: moment.Moment | undefined;
     bankCode!: string | undefined;
-    ignoreBankCodeIfExist!: boolean | undefined;
+    bankCodeSource!: string | undefined;
     gender!: Gender | undefined;
     experience!: string | undefined;
     profileSummary!: string | undefined;
@@ -66405,7 +66401,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             }
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
             this.bankCode = data["bankCode"];
-            this.ignoreBankCodeIfExist = data["ignoreBankCodeIfExist"];
+            this.bankCodeSource = data["bankCodeSource"];
             this.gender = data["gender"];
             this.experience = data["experience"];
             this.profileSummary = data["profileSummary"];
@@ -66494,7 +66490,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         }
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
         data["bankCode"] = this.bankCode;
-        data["ignoreBankCodeIfExist"] = this.ignoreBankCodeIfExist;
+        data["bankCodeSource"] = this.bankCodeSource;
         data["gender"] = this.gender;
         data["experience"] = this.experience;
         data["profileSummary"] = this.profileSummary;
@@ -66560,7 +66556,7 @@ export interface ICreateOrUpdateLeadInput {
     links: CreateContactLinkInputWithoutCheck[] | undefined;
     dob: moment.Moment | undefined;
     bankCode: string | undefined;
-    ignoreBankCodeIfExist: boolean | undefined;
+    bankCodeSource: string | undefined;
     gender: Gender | undefined;
     experience: string | undefined;
     profileSummary: string | undefined;
@@ -68621,6 +68617,7 @@ export interface IBANKCodeSelfAssessmentDto {
 
 export class UpdateUserBANKCodeDto implements IUpdateUserBANKCodeDto {
     bankCode!: string;
+    source!: string | undefined;
     bankCodeSelfAssessmentDto!: BANKCodeSelfAssessmentDto | undefined;
 
     constructor(data?: IUpdateUserBANKCodeDto) {
@@ -68635,6 +68632,7 @@ export class UpdateUserBANKCodeDto implements IUpdateUserBANKCodeDto {
     init(data?: any) {
         if (data) {
             this.bankCode = data["bankCode"];
+            this.source = data["source"];
             this.bankCodeSelfAssessmentDto = data["bankCodeSelfAssessmentDto"] ? BANKCodeSelfAssessmentDto.fromJS(data["bankCodeSelfAssessmentDto"]) : <any>undefined;
         }
     }
@@ -68649,6 +68647,7 @@ export class UpdateUserBANKCodeDto implements IUpdateUserBANKCodeDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["bankCode"] = this.bankCode;
+        data["source"] = this.source;
         data["bankCodeSelfAssessmentDto"] = this.bankCodeSelfAssessmentDto ? this.bankCodeSelfAssessmentDto.toJSON() : <any>undefined;
         return data; 
     }
@@ -68656,6 +68655,7 @@ export class UpdateUserBANKCodeDto implements IUpdateUserBANKCodeDto {
 
 export interface IUpdateUserBANKCodeDto {
     bankCode: string;
+    source: string | undefined;
     bankCodeSelfAssessmentDto: BANKCodeSelfAssessmentDto | undefined;
 }
 
