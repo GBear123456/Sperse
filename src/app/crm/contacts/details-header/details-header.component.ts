@@ -549,7 +549,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                     closeOnNavigation: false,
                     data: dialogData
                 }).afterClosed().subscribe(() => {
-                    this.contactsService.invalidate('sub-contacts');
+                    this.onInvalidate.emit();
                 });
             });
         else if (selectedMenuItem.type === ContextType.AddFiles)
