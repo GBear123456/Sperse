@@ -68,9 +68,10 @@ export class FilterModel extends FilterModelBase<FilterItemModel> {
     }
 
     private filterByFilterElement() {
-        let data = {};
-        if (this.items.element && this.items.element.value) {
-            let filterData = _.map(this.items.element.value, x => {
+        let data = {}, 
+            value = this.items.element && this.items.element.value;
+        if (value != undefined && value != null) {
+            let filterData = _.map(value, x => {
                 let el = {};
                 el[this.field] = x;
                 return el;
