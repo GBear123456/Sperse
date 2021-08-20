@@ -264,7 +264,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     isStatusSelected = false;
     isListsSelected = false;
     isTagsSelected = false;
-    isRatingSelected = true;
+    isRatingSelected = false;
     isSourceSelected = false;
 
     isAssignDisabled: boolean = !this.permissionService.checkCGPermission(
@@ -451,7 +451,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         if (!this.data.refreshParent) {
             this.close(data);
         } else if (this.buttons[0].contextMenu.items[0].selected) {
-            this.resetFullDialog();
+            this.resetFullDialog(false, false);
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.data.refreshParent();
         } else if (this.buttons[0].contextMenu.items[1].selected) {
@@ -993,7 +993,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         this.phonesComponent = component;
     }
 
-    resetFullDialog(forced: boolean = true) {
+    resetFullDialog(showDialog: boolean = false, resetToolbar = true) {
         let resetInternal = () => {
             this.resetComponent(this.emailsComponent);
             this.phonesComponent.reset();
@@ -1005,7 +1005,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             this.contact.phones = [ new Phone(this.phonesTypeDefault) ];
             this.contact.links = [ new Link(this.linksTypeDefault) ];
             this.contact.addresses = [ new Address(this.addressesTypeDefault) ];
-            this.sourceContactId = undefined;
             this.notes = undefined;
             this.dealAmount = undefined;
             this.installmentAmount = undefined;
@@ -1013,33 +1012,42 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
             this.person = new PersonInfoDto();
             this.addressTypesLoad();
-            this.isTitleValid = true;
             this.company = undefined;
             this.similarCustomers = [];
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;
             this.photoSourceData = undefined;
             this.contactName = '';
-            this.tagsComponent && this.tagsComponent.reset();
-            this.listsComponent && this.listsComponent.reset();
             this.partnerTypesComponent && this.partnerTypesComponent.reset();
-            if (this.userAssignmentComponent) {
-                this.userAssignmentComponent.selectedItemKey = this.currentUserId;
+            if (resetToolbar) {
+                this.sourceContactId = undefined;
+                this.isSourceSelected = false;
+                this.tagsComponent && this.tagsComponent.reset();
+                this.listsComponent && this.listsComponent.reset();
+
+                if (this.userAssignmentComponent) {
+                    this.userAssignmentComponent.selectedItemKey = this.currentUserId;
+                }
+                this.stageId = this.stages.length
+                    ? this.stages.find(v => v.index === this.defaultStageSortOrder).id
+                    : undefined;
+                this.ratingComponent && this.ratingComponent.reset();
             }
-            this.stageId = this.stages.length
-                ? this.stages.find(v => v.index === this.defaultStageSortOrder).id
-                : undefined;
-            this.ratingComponent && this.ratingComponent.reset();
+
             this.changeDetectorRef.detectChanges();
+            setTimeout(() => {
+                this.isTitleValid = this.modalDialog.titleComponent.isValid = true;
+            });
         };
 
-        if (forced)
-            resetInternal();
-        else
+        if (showDialog)
             this.messageService.confirm('', this.ls.l('DiscardConfirmation'), (confirmed) => {
                 if (confirmed)
                     resetInternal();
             });
+        else
+            resetInternal();
+
     }
 
     onSaveOptionSelectionChanged() {
