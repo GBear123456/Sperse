@@ -2956,6 +2956,65 @@ export class BANKCodeServiceProxy {
         }
         return _observableOf<RecentlyAddedContact[]>(<any>null);
     }
+
+    /**
+     * @personId (optional) 
+     * @return Success
+     */
+    getBankCodeHistory(personId: number | null | undefined): Observable<BankCodeHistoryInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetBankCodeHistory?";
+        if (personId !== undefined)
+            url_ += "personId=" + encodeURIComponent("" + personId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetBankCodeHistory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetBankCodeHistory(<any>response_);
+                } catch (e) {
+                    return <Observable<BankCodeHistoryInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<BankCodeHistoryInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetBankCodeHistory(response: HttpResponseBase): Observable<BankCodeHistoryInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(BankCodeHistoryInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BankCodeHistoryInfo[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -44424,6 +44483,7 @@ export class CreateOrEditLeadInput implements ICreateOrEditLeadInput {
     address!: CreateContactAddressInputWithoutCheck | undefined;
     isAIGeneratedBankCode!: boolean | undefined;
     bankCode!: string | undefined;
+    bankCodeSource!: string | undefined;
 
     constructor(data?: ICreateOrEditLeadInput) {
         if (data) {
@@ -44449,6 +44509,7 @@ export class CreateOrEditLeadInput implements ICreateOrEditLeadInput {
             this.address = data["address"] ? CreateContactAddressInputWithoutCheck.fromJS(data["address"]) : <any>undefined;
             this.isAIGeneratedBankCode = data["isAIGeneratedBankCode"];
             this.bankCode = data["bankCode"];
+            this.bankCodeSource = data["bankCodeSource"];
         }
     }
 
@@ -44474,6 +44535,7 @@ export class CreateOrEditLeadInput implements ICreateOrEditLeadInput {
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["isAIGeneratedBankCode"] = this.isAIGeneratedBankCode;
         data["bankCode"] = this.bankCode;
+        data["bankCodeSource"] = this.bankCodeSource;
         return data; 
     }
 }
@@ -44492,6 +44554,7 @@ export interface ICreateOrEditLeadInput {
     address: CreateContactAddressInputWithoutCheck | undefined;
     isAIGeneratedBankCode: boolean | undefined;
     bankCode: string | undefined;
+    bankCodeSource: string | undefined;
 }
 
 export class CreateLeadOutput implements ICreateLeadOutput {
@@ -44820,6 +44883,82 @@ export interface IRecentlyAddedContact {
     bankCodeDate: moment.Moment | undefined;
     countryId: string | undefined;
     countryName: string | undefined;
+}
+
+export class BankCodeHistoryInfo implements IBankCodeHistoryInfo {
+    bankCode!: string | undefined;
+    source!: string | undefined;
+    overridden!: boolean | undefined;
+    selfAssessmentB!: number | undefined;
+    selfAssessmentA!: number | undefined;
+    selfAssessmentN!: number | undefined;
+    selfAssessmentK!: number | undefined;
+    dateTime!: moment.Moment | undefined;
+    userId!: number | undefined;
+    userName!: string | undefined;
+    userPhotoPublicId!: string | undefined;
+
+    constructor(data?: IBankCodeHistoryInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.bankCode = data["bankCode"];
+            this.source = data["source"];
+            this.overridden = data["overridden"];
+            this.selfAssessmentB = data["selfAssessmentB"];
+            this.selfAssessmentA = data["selfAssessmentA"];
+            this.selfAssessmentN = data["selfAssessmentN"];
+            this.selfAssessmentK = data["selfAssessmentK"];
+            this.dateTime = data["dateTime"] ? moment(data["dateTime"].toString()) : <any>undefined;
+            this.userId = data["userId"];
+            this.userName = data["userName"];
+            this.userPhotoPublicId = data["userPhotoPublicId"];
+        }
+    }
+
+    static fromJS(data: any): BankCodeHistoryInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new BankCodeHistoryInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["bankCode"] = this.bankCode;
+        data["source"] = this.source;
+        data["overridden"] = this.overridden;
+        data["selfAssessmentB"] = this.selfAssessmentB;
+        data["selfAssessmentA"] = this.selfAssessmentA;
+        data["selfAssessmentN"] = this.selfAssessmentN;
+        data["selfAssessmentK"] = this.selfAssessmentK;
+        data["dateTime"] = this.dateTime ? this.dateTime.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
+        data["userName"] = this.userName;
+        data["userPhotoPublicId"] = this.userPhotoPublicId;
+        return data; 
+    }
+}
+
+export interface IBankCodeHistoryInfo {
+    bankCode: string | undefined;
+    source: string | undefined;
+    overridden: boolean | undefined;
+    selfAssessmentB: number | undefined;
+    selfAssessmentA: number | undefined;
+    selfAssessmentN: number | undefined;
+    selfAssessmentK: number | undefined;
+    dateTime: moment.Moment | undefined;
+    userId: number | undefined;
+    userName: string | undefined;
+    userPhotoPublicId: string | undefined;
 }
 
 export class BudgetImportInput implements IBudgetImportInput {
@@ -53070,6 +53209,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     links!: CreateContactLinkInputWithoutCheck[] | undefined;
     dob!: moment.Moment | undefined;
     bankCode!: string | undefined;
+    bankCodeSource!: string | undefined;
     gender!: Gender | undefined;
     experience!: string | undefined;
     profileSummary!: string | undefined;
@@ -53149,6 +53289,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             }
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
             this.bankCode = data["bankCode"];
+            this.bankCodeSource = data["bankCodeSource"];
             this.gender = data["gender"];
             this.experience = data["experience"];
             this.profileSummary = data["profileSummary"];
@@ -53240,6 +53381,7 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         }
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
         data["bankCode"] = this.bankCode;
+        data["bankCodeSource"] = this.bankCodeSource;
         data["gender"] = this.gender;
         data["experience"] = this.experience;
         data["profileSummary"] = this.profileSummary;
@@ -53308,6 +53450,7 @@ export interface ICreateOrUpdateContactInput {
     links: CreateContactLinkInputWithoutCheck[] | undefined;
     dob: moment.Moment | undefined;
     bankCode: string | undefined;
+    bankCodeSource: string | undefined;
     gender: Gender | undefined;
     experience: string | undefined;
     profileSummary: string | undefined;
@@ -66053,6 +66196,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     links!: CreateContactLinkInputWithoutCheck[] | undefined;
     dob!: moment.Moment | undefined;
     bankCode!: string | undefined;
+    bankCodeSource!: string | undefined;
     gender!: Gender | undefined;
     experience!: string | undefined;
     profileSummary!: string | undefined;
@@ -66129,6 +66273,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             }
             this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
             this.bankCode = data["bankCode"];
+            this.bankCodeSource = data["bankCodeSource"];
             this.gender = data["gender"];
             this.experience = data["experience"];
             this.profileSummary = data["profileSummary"];
@@ -66217,6 +66362,7 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         }
         data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
         data["bankCode"] = this.bankCode;
+        data["bankCodeSource"] = this.bankCodeSource;
         data["gender"] = this.gender;
         data["experience"] = this.experience;
         data["profileSummary"] = this.profileSummary;
@@ -66282,6 +66428,7 @@ export interface ICreateOrUpdateLeadInput {
     links: CreateContactLinkInputWithoutCheck[] | undefined;
     dob: moment.Moment | undefined;
     bankCode: string | undefined;
+    bankCodeSource: string | undefined;
     gender: Gender | undefined;
     experience: string | undefined;
     profileSummary: string | undefined;
@@ -68288,8 +68435,58 @@ export interface IUpdateUserAffiliateCodeDto {
     affiliateCode: string | undefined;
 }
 
+export class BANKCodeSelfAssessmentDto implements IBANKCodeSelfAssessmentDto {
+    b!: number | undefined;
+    a!: number | undefined;
+    n!: number | undefined;
+    k!: number | undefined;
+
+    constructor(data?: IBANKCodeSelfAssessmentDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.b = data["b"];
+            this.a = data["a"];
+            this.n = data["n"];
+            this.k = data["k"];
+        }
+    }
+
+    static fromJS(data: any): BANKCodeSelfAssessmentDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new BANKCodeSelfAssessmentDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["b"] = this.b;
+        data["a"] = this.a;
+        data["n"] = this.n;
+        data["k"] = this.k;
+        return data; 
+    }
+}
+
+export interface IBANKCodeSelfAssessmentDto {
+    b: number | undefined;
+    a: number | undefined;
+    n: number | undefined;
+    k: number | undefined;
+}
+
 export class UpdateUserBANKCodeDto implements IUpdateUserBANKCodeDto {
     bankCode!: string;
+    source!: string | undefined;
+    bankCodeSelfAssessmentDto!: BANKCodeSelfAssessmentDto | undefined;
 
     constructor(data?: IUpdateUserBANKCodeDto) {
         if (data) {
@@ -68303,6 +68500,8 @@ export class UpdateUserBANKCodeDto implements IUpdateUserBANKCodeDto {
     init(data?: any) {
         if (data) {
             this.bankCode = data["bankCode"];
+            this.source = data["source"];
+            this.bankCodeSelfAssessmentDto = data["bankCodeSelfAssessmentDto"] ? BANKCodeSelfAssessmentDto.fromJS(data["bankCodeSelfAssessmentDto"]) : <any>undefined;
         }
     }
 
@@ -68316,12 +68515,16 @@ export class UpdateUserBANKCodeDto implements IUpdateUserBANKCodeDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["bankCode"] = this.bankCode;
+        data["source"] = this.source;
+        data["bankCodeSelfAssessmentDto"] = this.bankCodeSelfAssessmentDto ? this.bankCodeSelfAssessmentDto.toJSON() : <any>undefined;
         return data; 
     }
 }
 
 export interface IUpdateUserBANKCodeDto {
     bankCode: string;
+    source: string | undefined;
+    bankCodeSelfAssessmentDto: BANKCodeSelfAssessmentDto | undefined;
 }
 
 export class SubscriptionShortInfoOutput implements ISubscriptionShortInfoOutput {
