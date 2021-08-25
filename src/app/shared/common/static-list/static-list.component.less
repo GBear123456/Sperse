@@ -80,6 +80,7 @@
     }
 
     ::ng-deep dx-list {
+        height: auto;
         &.highlightSelected .dx-item.dx-list-item-selected,
         &.highlightSelected .dx-item.filtered {
             background-color: #effafe;
@@ -323,10 +324,16 @@
     }
 
     ::ng-deep dx-tabs {
+        height: 40px;
+        overflow: hidden;
+        .dx-tabs-nav-button-left .dx-button-content {
+            border-right: 1px solid #ddd;
+        }
+        .dx-tabs-nav-button-right .dx-button-content {
+            border-left: 1px solid #ddd;
+        }
         .dx-tab {
             &.dx-tab-selected::after {
-                border-right: 1px solid #ddd !important;
-                border-left: 1px solid #ddd !important;
             }
             &.dx-state-focused::after {
                 border: none;
