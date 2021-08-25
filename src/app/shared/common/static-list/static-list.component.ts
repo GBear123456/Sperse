@@ -214,6 +214,7 @@ export class StaticListComponent {
         let item = $event.addedItems[0];
         this.selectedTabId = item.id;
         this.list = item.items;
+        this.dxList.instance.updateDimensions();
         setTimeout(() => this.dxTooltip.instance.repaint());
     }
 
