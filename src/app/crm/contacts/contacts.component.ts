@@ -935,7 +935,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             data: dialogData
         }).afterClosed().subscribe(() => {
             if (isSubContact)
-                this.contactsService.invalidate('sub-contacts');
+                this.reloadCurrentSection();
             else
                 this.orgContactService.getOrganizationContactInfo(companyInfo.id).subscribe((result: OrganizationContactInfoDto) => {
                     this.contactInfo['organizationContactInfo'] = result;
