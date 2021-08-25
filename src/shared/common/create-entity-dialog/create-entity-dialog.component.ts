@@ -21,6 +21,7 @@ import { CacheService } from 'ng2-cache-service';
 import { Observable, Subscription } from 'rxjs';
 import { filter, finalize, first, map, switchMap, pluck } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
+import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 import { Address as AutocompleteAddress } from 'ngx-google-places-autocomplete/objects/address';
 
 /** Application imports */
@@ -146,6 +147,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     @ViewChild('propertyValidationGroup', { static: false }) propertyValidationGroup: DxValidationGroupComponent;
     @ViewChild('propertyAddressComponent', { static: false }) propertyAddressComponent: AddressFieldsComponent;
     @ViewChildren('linksComponent') linkComponents: QueryList<DxTextBoxComponent>;
+    @ViewChild('dialogScroll', { static: false }) dialogScroll: DxScrollViewComponent;
 
     showPropertyFields: boolean = this.data.entityTypeSysId === EntityTypeSys.PropertyAcquisition;
     showPropertiesDropdown: boolean = this.data.entityTypeSysId && this.data.entityTypeSysId.startsWith(EntityTypeSys.PropertyRentAndSale);
@@ -1160,5 +1162,10 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     checkPropertyNameValid(event) {
         this.isTitleValid = Boolean(event.target.value);
+    }
+
+    dropDownHover($event) {
+        if (this.dialogScroll)
+            this.dialogScroll.disabled = $event;
     }
 }
