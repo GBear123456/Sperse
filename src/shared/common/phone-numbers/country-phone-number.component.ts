@@ -24,6 +24,7 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
     @Output() phoneCountryChange = new EventEmitter();
     @Output() onInitialized = new EventEmitter();
     @Output() onKeyUp = new EventEmitter();
+    @Output() onDropDownHover = new EventEmitter<boolean>();
 
     value = '';
     focused = false;
@@ -79,6 +80,10 @@ export class CountryPhoneNumberComponent implements OnInit, AfterViewInit {
 
     focusOut() {
         this.focused = false;
+    }
+
+    dropDownHover($event) {
+        this.onDropDownHover.emit($event);
     }
 
     reset() {

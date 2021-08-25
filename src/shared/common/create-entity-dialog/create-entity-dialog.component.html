@@ -186,7 +186,7 @@
         {{ls.l('SimilarRecordsFound')}}
     </div>
     <div class="form-content">
-        <dx-scroll-view showScrollbar="onHover">
+        <dx-scroll-view showScrollbar="onHover" #dialogScroll>
             <dx-validation-group *ngIf="showPropertyFields" class="property-info" #propertyValidationGroup>
                 <h3>{{ ls.l('PropertyInfo') }}:</h3>
                 <div class="field">
@@ -382,7 +382,8 @@
                                                   [required]="false"
                                                   (onKeyUp)="onPhoneKeyUp($event)"
                                                   (phoneNumberChange)="onPhoneChanged(countryPhoneNumber, i)"
-                                                  (onInitialized)="onPhoneComponentInitialized($event)">
+                                                  (onInitialized)="onPhoneComponentInitialized($event)"
+                                                  (onDropDownHover)="dropDownHover($event)">
                             </country-phone-number>
                             <dx-number-box
                                 class="tabular"
