@@ -347,9 +347,11 @@ export class ContactsService {
             emailData.contactId = emailData.contact.id;
             emailData.suggestionEmails = emailData.contact.personContactInfo.details.emails
                 .filter(item => item.isActive).map(item => item.emailAddress);
-    
-            if (emailData.suggestionEmails.length && !(emailData.subject && emailData.subject.startsWith('Fwd:')))
-                emailData.to = [emailData.suggestionEmails[0]];
+
+            let subject = emailData.subject;
+            if (emailData.suggestionEmails.length && !(subject &&
+                (subject.startsWith('Fwd:') || subject.startsWith('Re:'))
+            )) emailData.to = [emailData.suggestionEmails[0]];
 
             emailData.contact.personContactInfo.details.phones
                 .filter(item => item.usageTypeId == 'F' && item.isActive) //Home Fax
