@@ -81824,6 +81824,11 @@ export enum Tier2CommissionSource {
     CommissionableValue = "CommissionableValue", 
 }
 
+export enum CommissionAffiliateAssignmentMode {
+    Linear = "Linear", 
+    Dynamic = "Dynamic", 
+}
+
 export class InvoiceSettings implements IInvoiceSettings {
     legalName!: string | undefined;
     address!: string | undefined;
@@ -81835,6 +81840,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     showShippingAddress!: boolean | undefined;
     defaultAffiliateRate!: number | undefined;
     tier2CommissionSource!: Tier2CommissionSource | undefined;
+    commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode | undefined;
 
     constructor(data?: IInvoiceSettings) {
         if (data) {
@@ -81857,6 +81863,7 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.showShippingAddress = data["showShippingAddress"];
             this.defaultAffiliateRate = data["defaultAffiliateRate"];
             this.tier2CommissionSource = data["tier2CommissionSource"];
+            this.commissionAffiliateAssignmentMode = data["commissionAffiliateAssignmentMode"];
         }
     }
 
@@ -81879,6 +81886,7 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["showShippingAddress"] = this.showShippingAddress;
         data["defaultAffiliateRate"] = this.defaultAffiliateRate;
         data["tier2CommissionSource"] = this.tier2CommissionSource;
+        data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
         return data; 
     }
 }
@@ -81894,6 +81902,7 @@ export interface IInvoiceSettings {
     showShippingAddress: boolean | undefined;
     defaultAffiliateRate: number | undefined;
     tier2CommissionSource: Tier2CommissionSource | undefined;
+    commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode | undefined;
 }
 
 export class TenantUserManagementSettingsEditDto implements ITenantUserManagementSettingsEditDto {

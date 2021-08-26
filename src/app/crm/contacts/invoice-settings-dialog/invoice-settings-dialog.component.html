@@ -65,6 +65,13 @@
                                            placeholder=""
                                            [(value)]="settings.tier2CommissionSource">
                             </dx-select-box>
+                            <h3>{{ls.l('InvoiceEmail_CommissionAffiliateAssignmentMode')}}</h3>
+                            <dx-select-box [items]="commissionAffiliateAssignmentModeOptions"
+                                           displayExpr="text"
+                                           valueExpr="id"
+                                           placeholder=""
+                                           [(value)]="settings.commissionAffiliateAssignmentMode">
+                            </dx-select-box>
                         </ng-container>
                     </div>
                 </div>
