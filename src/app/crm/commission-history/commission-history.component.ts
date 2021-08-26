@@ -39,7 +39,7 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
-    OrderServiceProxy, UpdateOrderAffiliateContactInput, CommissionTier } from '@shared/service-proxies/service-proxies';
+    OrderServiceProxy, UpdateOrderAffiliateContactInput, CommissionTier, UpdateCommissionAffiliateInput } from '@shared/service-proxies/service-proxies';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
@@ -1050,17 +1050,11 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             (isConfirmed: boolean, [ assignToBuyerContact ]: boolean[]) => {
                 if (isConfirmed) {
                     this.startLoading();
-                    forkJoin.apply(forkJoin,
-                        this.selectedRecords.map((item, index) => {
-                            if (index == this.selectedRecords.indexOf(item) && item.OrderId) {
-                                return this.orderProxy.updateAffiliateContact(new UpdateOrderAffiliateContactInput({
-                                    orderId: item.OrderId,
-                                    affiliateContactId: event[0].id,
-                                    assignToBuyerContact: assignToBuyerContact
-                                }));
-                            }
-                        }).filter(Boolean)
-                    ).pipe(
+                    this.commissionProxy.updateCommissionAffiliate(new UpdateCommissionAffiliateInput({
+                        commissionIds: this.selectedRecords.map(item => item.Id),
+                        affiliateContactId: event[0].id,
+                        assignToBuyerContact: assignToBuyerContact
+                    })).pipe(
                         finalize(() => this.finishLoading())
                     ).subscribe(() => {
                         this.refresh();
