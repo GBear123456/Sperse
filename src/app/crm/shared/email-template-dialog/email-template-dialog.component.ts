@@ -213,7 +213,12 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     checkUpdateCCFromEmail(from) {
-        if (from && from.ccEmailAddress) {
+        if (this.data.cc && this.data.cc.length)
+            this.data.cc = this.data.cc.filter(item => {
+                return !(item.includes(from.emailAddress) || from.emailAddress.includes(item));
+            });
+
+        if (from && from.ccEmailAddress && this.data.to.every(item => item != from.ccEmailAddress)) {
             if (this.data.cc && this.data.cc.length) {
                 this.data.cc.push(from.ccEmailAddress);
                 this.data.cc = this.data.cc.map((item, index) => {
