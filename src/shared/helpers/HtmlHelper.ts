@@ -36,8 +36,8 @@ export class HtmlHelper {
             .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gim, '')
             .replace(/<[^>]*>/gim, '')
             .replace(/\&nbsp;/gim, ' ')
-            .replace(/\&lsquo;/gim, '‘')
-            .replace(/\&rsquo;/gim, '’')
+            .replace(/\&lsquo;/gim, String.fromCharCode(8216))
+            .replace(/\&rsquo;/gim, String.fromCharCode(8217))
             .replace(/\&amp;/gim, '&')
             .replace(/\&lt;/gim, '<')
             .replace(/\&gt;/gim, '>');
