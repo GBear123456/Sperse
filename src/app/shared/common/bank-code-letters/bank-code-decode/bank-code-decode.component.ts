@@ -5,6 +5,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 
 /** Application imports */
 import { AppFeatures } from '@shared/AppFeatures';
+import { HtmlHelper } from '@shared/helpers/HtmlHelper';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -37,7 +38,7 @@ export class BankCodeDecodeComponent {
         if (this.content) {
             this.onDecodeStart.emit();
             this.bankCodeServiceProxy.getBankCode(new GetBankCodeInput({
-                content: this.content.replace(/\<(\/)?(\w)*(\d)?\>/gim, '')
+                content: HtmlHelper.htmlToPlainText(this.content)
             })).subscribe(res => {
                 this.bankCode = res.value;
                 this.onDecodeFinish.emit(res);
@@ -46,5 +47,5 @@ export class BankCodeDecodeComponent {
             });
         } else
             return this.notify.warn(this.ls.l('RequiredField', this.ls.l('Message')));
-    }
+    }    
 }
