@@ -39,7 +39,7 @@ export class BankCodeDecodeComponent {
         if (this.content) {
             this.onDecodeStart.emit();
             this.bankCodeServiceProxy.getBankCode(new GetBankCodeInput({
-                content: HtmlHelper.htmlToPlainText(this.content)
+                content: HtmlHelper.htmlToPlainText(this.content),
                 source: this.source
             })).subscribe(res => {
                 this.bankCode = res.value;
