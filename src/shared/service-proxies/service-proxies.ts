@@ -50401,6 +50401,7 @@ export class UpdateCommissionAffiliateInput implements IUpdateCommissionAffiliat
     commissionIds!: number[] | undefined;
     affiliateContactId!: number;
     assignToBuyerContact!: boolean | undefined;
+    reassignTier2Commissions!: boolean | undefined;
 
     constructor(data?: IUpdateCommissionAffiliateInput) {
         if (data) {
@@ -50420,6 +50421,7 @@ export class UpdateCommissionAffiliateInput implements IUpdateCommissionAffiliat
             }
             this.affiliateContactId = data["affiliateContactId"];
             this.assignToBuyerContact = data["assignToBuyerContact"];
+            this.reassignTier2Commissions = data["reassignTier2Commissions"];
         }
     }
 
@@ -50439,6 +50441,7 @@ export class UpdateCommissionAffiliateInput implements IUpdateCommissionAffiliat
         }
         data["affiliateContactId"] = this.affiliateContactId;
         data["assignToBuyerContact"] = this.assignToBuyerContact;
+        data["reassignTier2Commissions"] = this.reassignTier2Commissions;
         return data; 
     }
 }
@@ -50447,6 +50450,7 @@ export interface IUpdateCommissionAffiliateInput {
     commissionIds: number[] | undefined;
     affiliateContactId: number;
     assignToBuyerContact: boolean | undefined;
+    reassignTier2Commissions: boolean | undefined;
 }
 
 export class RecordEarningsInput implements IRecordEarningsInput {
