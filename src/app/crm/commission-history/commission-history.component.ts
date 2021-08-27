@@ -39,7 +39,7 @@ import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-grou
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
-    OrderServiceProxy, UpdateOrderAffiliateContactInput, CommissionTier, UpdateCommissionAffiliateInput } from '@shared/service-proxies/service-proxies';
+    CommissionTier, UpdateCommissionAffiliateInput } from '@shared/service-proxies/service-proxies';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
@@ -451,7 +451,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         injector: Injector,
         public dialog: MatDialog,
         public appService: AppService,
-        private orderProxy: OrderServiceProxy,
         private filtersService: FiltersService,
         private invoicesService: InvoicesService,
         private productProxy: ProductServiceProxy,
