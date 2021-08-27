@@ -32,8 +32,12 @@ export class HtmlHelper {
     }
 
     static htmlToPlainText(html: string) {
-        return html.replace(/<[^>]*>/gim, '')
+        return html.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gim, '')
+            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gim, '')
+            .replace(/<[^>]*>/gim, '')
             .replace(/\&nbsp;/gim, ' ')
+            .replace(/\&lsquo;/gim, '‘')
+            .replace(/\&rsquo;/gim, '’')
             .replace(/\&amp;/gim, '&')
             .replace(/\&lt;/gim, '<')
             .replace(/\&gt;/gim, '>');
