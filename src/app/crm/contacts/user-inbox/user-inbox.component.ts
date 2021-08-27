@@ -416,10 +416,14 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     reply(forAll = false) {
-        this.showNewEmailDialog(forAll ? 'ReplyToAll' : 'Reply', {
+        let ccList = forAll ? (this.activeMessage.cc ? this.activeMessage.cc.split(','): []) : [];
+        if (this.activeMessage.isInbound)
+            ccList.push(this.activeMessage.to);
+
+        this.showNewEmailDialog(forAll ? 'ReplyToAll' : 'Reply', {                          
             ...this.activeMessage,
             to: [(this.activeMessage.fromUserName || '') + ' <' + this.activeMessage.from + '>'],
-            cc: forAll ? (this.activeMessage.cc ? this.activeMessage.cc.split(','): []) : [],
+            cc: ccList,
             bcc: this.activeMessage.bcc ? this.activeMessage.bcc.split(',') : [],
             subject: (this.activeMessage.subject.startsWith('Re:')  ? '' : 'Re: ') + this.activeMessage.subject,
             body: '<br><br><div dir="ltr">On ' + 
