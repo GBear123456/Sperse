@@ -4,6 +4,7 @@ import { Component, Input, EventEmitter, Output, HostBinding, ViewChild } from '
 /** Third party imports */
 import { DxListComponent } from 'devextreme-angular/ui/list';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
+import { DxTabsComponent } from 'devextreme-angular/ui/tabs';
 import startCase from 'lodash/startCase';
 import * as _ from 'underscore';
 
@@ -21,6 +22,7 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 })
 export class StaticListComponent {
     @ViewChild('staticList', { static: false }) dxList: DxListComponent;
+    @ViewChild(DxTabsComponent, { static: false }) dxTabs: DxTabsComponent;
     @ViewChild(DxTooltipComponent, { static: true }) dxTooltip: DxTooltipComponent;
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();
@@ -28,7 +30,7 @@ export class StaticListComponent {
     @Output() onOptionChanged: EventEmitter<any> = new EventEmitter();
     @Output() onBottomInputApplyValue: EventEmitter<any> = new EventEmitter();
     @Output() onFilterApply: EventEmitter<any> = new EventEmitter();
-    @Input() width: string;
+    @Input() width: string = '100%';
     @Input() height: number;
     @Input() listHeight: string;
     @Input() template: string;
@@ -49,6 +51,7 @@ export class StaticListComponent {
     @Input() searchExprType = 'displayName';
     @Input() bulkUpdatePermissionKey: AppPermissions = null;
     @Input() convertNameStartCase = true;
+    @Input() disabled = false;
     @Input('list')
     set list(value: any[]) {
         this._list = (value ? value.map((item) => {
@@ -59,6 +62,15 @@ export class StaticListComponent {
     }
     get list(): any[] {
         return this._list;
+    }
+    @Input() selectedTabId;
+    @Input('tabsDataSource')
+    set tabsDataSource(value: any[]) {
+        this._tabsDataSource = value;
+        this.list = value && this.selectedTabId ? this._tabsDataSource.find((v) => v.id == this.selectedTabId).items : null;
+    }
+    get tabsDataSource() {
+        return this._tabsDataSource;
     }
     @Input() showTitle = true;
     @Input() selectionMode;
@@ -71,6 +83,7 @@ export class StaticListComponent {
     @HostBinding('class.funnel-styling') @Input() funnelStyling = false;
     whiteSpaceRegExp = /\s/gim;
     private _list: any[];
+    private _tabsDataSource: any[];
     get selectionDisabled() {
         return (this.relatedItemsKeys && !this.relatedItemsKeys.length)
             || (!this.highlightSelected && !this.isBulkUpdateAvailable());
@@ -195,5 +208,27 @@ export class StaticListComponent {
     setValue(event, data) {
         event.event.stopPropagation();
         this.onBottomInputApplyValue.emit(data);
+    }
+
+    onTabChanged($event) {
+        let item = $event.addedItems[0];
+        this.selectedTabId = item.id;
+        this.list = item.items;
+        this.dxList.instance.updateDimensions();
+        setTimeout(() => this.dxTooltip.instance.repaint());
+    }
+
+    onTabsClick($event) {
+        let button = $event.target.closest('.dx-tabs-nav-button');
+        if (!button)
+            return;
+
+        let currentIndex = this._tabsDataSource.findIndex((v) => v.id == this.selectedTabId);
+        if (button.classList.contains('dx-tabs-nav-button-right')) {
+            this.dxTabs.selectedIndex = currentIndex == this._tabsDataSource.length - 1 ? currentIndex : currentIndex + 1;
+        }
+        else {
+            this.dxTabs.selectedIndex = currentIndex == 0 ? currentIndex : currentIndex - 1;
+        }
     }
 }
