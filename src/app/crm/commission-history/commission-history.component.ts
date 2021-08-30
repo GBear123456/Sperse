@@ -38,8 +38,10 @@ import { ODataRequestValues } from '@shared/common/odata/odata-request-values.in
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
-import { CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
-    OrderServiceProxy, UpdateOrderAffiliateContactInput, CommissionTier } from '@shared/service-proxies/service-proxies';
+import {
+    CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
+    CommissionTier, UpdateCommissionAffiliateInput, Tier2CommissionSource
+} from '@shared/service-proxies/service-proxies';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
 import { CommissionEarningsDialogComponent } from '@app/crm/commission-history/commission-earnings-dialog/commission-earnings-dialog.component';
@@ -102,7 +104,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     headlineButtons: HeadlineButton[] = [
         {
             enabled: false,
-            action: () => {},
+            action: () => { },
             label: this.l('SomeAction')
         }
     ];
@@ -199,7 +201,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 request.params.$select = DataGridService.getSelectFields(
                     this.ledgerDataGrid,
-                    [ this.ledgerFields.Id, this.ledgerFields.ContactId ]
+                    [this.ledgerFields.Id, this.ledgerFields.ContactId]
                 );
             }
         })
@@ -217,7 +219,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 request.params.$select = DataGridService.getSelectFields(
                     this.resellersDataGrid,
-                    [ this.resellersFields.Id ]
+                    [this.resellersFields.Id]
                 );
             }
         })
@@ -232,8 +234,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     public readonly COMMISSION_VIEW = 0;
-    public readonly LEDGER_VIEW     = 1;
-    public readonly RESELLERS_VIEW  = 2;
+    public readonly LEDGER_VIEW = 1;
+    public readonly RESELLERS_VIEW = 2;
     selectedViewType = this.COMMISSION_VIEW;
     viewTypes = [{
         value: this.COMMISSION_VIEW,
@@ -345,7 +347,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         }),
         new FilterModel({
             component: FilterInputsComponent,
-            options: { type: 'number'},
+            options: { type: 'number' },
             operator: { from: 'ge', to: 'le' },
             caption: 'Commission',
             field: this.commissionFields.CommissionAmount,
@@ -367,7 +369,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         }),
         new FilterModel({
             component: FilterInputsComponent,
-            options: { type: 'number'},
+            options: { type: 'number' },
             operator: { from: 'ge', to: 'le' },
             caption: 'ProductAmount',
             field: this.commissionFields.ProductAmount,
@@ -375,7 +377,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         }),
         new FilterModel({
             component: FilterInputsComponent,
-            options: { type: 'number'},
+            options: { type: 'number' },
             operator: { from: 'ge', to: 'le' },
             caption: 'CommissionRate',
             field: this.commissionFields.CommissionRate,
@@ -437,7 +439,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         }),
         new FilterModel({
             component: FilterInputsComponent,
-            options: { type: 'number'},
+            options: { type: 'number' },
             operator: { from: 'ge', to: 'le' },
             caption: 'TotalAmount',
             field: this.ledgerFields.TotalAmount,
@@ -451,7 +453,6 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         injector: Injector,
         public dialog: MatDialog,
         public appService: AppService,
-        private orderProxy: OrderServiceProxy,
         private filtersService: FiltersService,
         private invoicesService: InvoicesService,
         private productProxy: ProductServiceProxy,
@@ -509,7 +510,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     if (params['refresh'] || searchValueChanged) {
                         this.refresh();
                     }
-            });
+                });
     }
 
     private getContactId(data: CommissionDto | LedgerDto | ResellersDto, dataField: string): number {
@@ -539,9 +540,11 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 setTimeout(() => {
                     this._router.navigate(
                         CrmService.getEntityDetailsLink(contactId),
-                        { queryParams: {
+                        {
+                            queryParams: {
                                 referrer: 'app/crm/commission-history'
-                            }}
+                            }
+                        }
                     );
                 });
             }
@@ -608,8 +611,8 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         return this.selectedViewType === this.COMMISSION_VIEW
             ? this.commissionFilters
             : (this.selectedViewType === this.LEDGER_VIEW
-               ? this.ledgerFilters
-               : []
+                ? this.ledgerFilters
+                : []
             );
     }
 
@@ -763,7 +766,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             ]
                         }
                     }
-                ]
+                    ]
             }, {
                 location: 'before',
                 locateInMenu: 'auto',
@@ -897,7 +900,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             this.refresh();
                         });
                     }
-                }, [ ]
+                }, []
             );
         }
     }
@@ -930,7 +933,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             this.refresh();
                         });
                     }
-                }, [ ]
+                }, []
             );
         }
     }
@@ -966,7 +969,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         if (this.searchValue != e['value']) {
             this.searchValueChanged = true;
             this.searchValue = e['value'];
-            this._router.navigate([], {queryParams: {search: this.searchValue}});
+            this._router.navigate([], { queryParams: { search: this.searchValue } });
             this._refresh.next(null);
             this.changeDetectorRef.detectChanges();
         }
@@ -1045,22 +1048,22 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     onSourceApply(event) {
+        let checkBoxes = [{ text: this.l('AssignAffiliateContact'), visible: true, checked: true }];
+        let showReassign = this.selectedRecords.some(v => v.Tier == CommissionTier.Tier1);
+        if (showReassign)
+            checkBoxes.push({ text: this.l('ReassignRelatedTier2Commissions'), visible: true, checked: true });
+
         ContactsHelper.showConfirmMessage(
             this.l('ConfirmReassignCommissions'),
-            (isConfirmed: boolean, [ assignToBuyerContact ]: boolean[]) => {
+            (isConfirmed: boolean, [assignToBuyerContact, reassignTier2Commissions]: boolean[]) => {
                 if (isConfirmed) {
                     this.startLoading();
-                    forkJoin.apply(forkJoin,
-                        this.selectedRecords.map((item, index) => {
-                            if (index == this.selectedRecords.indexOf(item) && item.OrderId) {
-                                return this.orderProxy.updateAffiliateContact(new UpdateOrderAffiliateContactInput({
-                                    orderId: item.OrderId,
-                                    affiliateContactId: event[0].id,
-                                    assignToBuyerContact: assignToBuyerContact
-                                }));
-                            }
-                        }).filter(Boolean)
-                    ).pipe(
+                    this.commissionProxy.updateCommissionAffiliate(new UpdateCommissionAffiliateInput({
+                        commissionIds: this.selectedRecords.map(item => item.Id),
+                        affiliateContactId: event[0].id,
+                        assignToBuyerContact: assignToBuyerContact,
+                        reassignTier2Commissions: reassignTier2Commissions
+                    })).pipe(
                         finalize(() => this.finishLoading())
                     ).subscribe(() => {
                         this.refresh();
@@ -1068,7 +1071,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     });
                 }
             },
-            [ { text: this.l('AssignAffiliateContact'), visible: true, checked: true }]
+            checkBoxes
         );
     }
 }
