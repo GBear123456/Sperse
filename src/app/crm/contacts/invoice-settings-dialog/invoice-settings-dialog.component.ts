@@ -59,7 +59,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     commissionAffiliateAssignmentModeOptions = Object.keys(CommissionAffiliateAssignmentMode).map(item => {
         return {
             id: CommissionAffiliateAssignmentMode[item],
-            text: this.ls.l(item)
+            text: this.ls.l('AffiliateAssignmentMode_' + item)
         };
     });
 
