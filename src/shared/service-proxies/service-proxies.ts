@@ -2789,6 +2789,110 @@ export class BANKCodeServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getAiSystemTotals(): Observable<GetSystemTotalsOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetAiSystemTotals";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAiSystemTotals(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAiSystemTotals(<any>response_);
+                } catch (e) {
+                    return <Observable<GetSystemTotalsOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetSystemTotalsOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAiSystemTotals(response: HttpResponseBase): Observable<GetSystemTotalsOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetSystemTotalsOutput.fromJS(resultData200) : new GetSystemTotalsOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetSystemTotalsOutput>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getAiUserTotals(): Observable<GetUserTotalsOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetAiUserTotals";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAiUserTotals(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAiUserTotals(<any>response_);
+                } catch (e) {
+                    return <Observable<GetUserTotalsOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetUserTotalsOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAiUserTotals(response: HttpResponseBase): Observable<GetUserTotalsOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetUserTotalsOutput.fromJS(resultData200) : new GetUserTotalsOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetUserTotalsOutput>(<any>null);
+    }
+
+    /**
      * @aiGeneratedOnly (optional) 
      * @return Success
      */
@@ -44171,6 +44275,7 @@ export interface IUpdateBankAccountDto {
 
 export class GetBankCodeInput implements IGetBankCodeInput {
     content!: string;
+    source!: string | undefined;
 
     constructor(data?: IGetBankCodeInput) {
         if (data) {
@@ -44184,6 +44289,7 @@ export class GetBankCodeInput implements IGetBankCodeInput {
     init(data?: any) {
         if (data) {
             this.content = data["content"];
+            this.source = data["source"];
         }
     }
 
@@ -44197,12 +44303,14 @@ export class GetBankCodeInput implements IGetBankCodeInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["content"] = this.content;
+        data["source"] = this.source;
         return data; 
     }
 }
 
 export interface IGetBankCodeInput {
     content: string;
+    source: string | undefined;
 }
 
 export class GetBankCodeOutput implements IGetBankCodeOutput {
