@@ -5,7 +5,7 @@ import { NgModule } from '@angular/core';
 import { PipelinesStoreModule } from '@app/crm/store/pipelines-store';
 import { OrganizationUnitsStoreModule } from '@app/crm/store/organization-units-store';
 import { SubscriptionsStoreModule } from '@app/crm/store/subscriptions';
-import { ServiceProductServiceProxy } from 'shared/service-proxies/service-proxies';
+import { MemberServiceServiceProxy } from 'shared/service-proxies/service-proxies';
 
 @NgModule({
     imports: [
@@ -13,6 +13,6 @@ import { ServiceProductServiceProxy } from 'shared/service-proxies/service-proxi
         OrganizationUnitsStoreModule,
         SubscriptionsStoreModule
     ],
-    providers: [ServiceProductServiceProxy]
+    providers: [MemberServiceServiceProxy]
 })
 export class CrmStoreModule {}

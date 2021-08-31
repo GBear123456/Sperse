@@ -1,7 +1,7 @@
-import { ServiceProductDto } from 'shared/service-proxies/service-proxies';
+import { MemberServiceDto } from 'shared/service-proxies/service-proxies';
 
 export interface State {
-    items: ServiceProductDto[];
+    items: MemberServiceDto[];
     error: string;
     loading: boolean;
     loadedTime: number;

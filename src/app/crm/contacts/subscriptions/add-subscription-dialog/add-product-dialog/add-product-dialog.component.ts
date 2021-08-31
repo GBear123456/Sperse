@@ -21,8 +21,8 @@ import {
     InvoiceSettings,
     ProductServiceProxy,
     ProductGroupServiceProxy,
-    ServiceProductServiceProxy,
-    ServiceProductDto,
+    MemberServiceServiceProxy,
+    MemberServiceDto,
     ProductServiceInfo,
     CreateProductInput,
     ProductGroupInfo,
@@ -54,7 +54,7 @@ import { FeatureCheckerService } from '@abp/features/feature-checker.service';
         '../../../../../shared/common/styles/form.less',
         './add-product-dialog.component.less'
     ],
-    providers: [ProductServiceProxy, ProductGroupServiceProxy, ServiceProductServiceProxy],
+    providers: [ProductServiceProxy, ProductGroupServiceProxy, MemberServiceServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddProductDialogComponent implements AfterViewInit, OnInit {
@@ -72,7 +72,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     productTypes: string[] = Object.keys(ProductType);
     defaultProductType = ProductType.Subscription;
     productGroups: ProductGroupInfo[];
-    services: ServiceProductDto[];
+    services: MemberServiceDto[];
     productUnits = Object.keys(ProductMeasurementUnit).map(
         key => this.ls.l('ProductMeasurementUnit_' + key)
     );
@@ -89,7 +89,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         private permission: AppPermissionService,
         private invoicesService: InvoicesService,
         private changeDetection: ChangeDetectorRef,
-        private serviceProductProxy: ServiceProductServiceProxy,
+        private serviceProductProxy: MemberServiceServiceProxy,
         private userManagementService: UserManagementService,
         public dialogRef: MatDialogRef<AddProductDialogComponent>,
         public ls: AppLocalizationService,
@@ -118,7 +118,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             this.detectChanges();
         });
 
-        serviceProductProxy.getAll(false).subscribe((services: ServiceProductDto[]) => {
+        serviceProductProxy.getAll(false).subscribe((services: MemberServiceDto[]) => {
             this.services = services;
             this.checkAddManageOption(this.services);
             this.detectChanges();
@@ -240,7 +240,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     getServiceLevels(serviceId) {
         let service = (this.services || []).find(item => item.id == serviceId);
-        return service ? service.serviceProductLevels : [];
+        return service ? service.memberServiceLevels : [];
     }
 
     getFrequencies(selected) {
@@ -282,7 +282,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 templateType: 'Contact',
                 saveTitle: this.ls.l('Save')
             }
-        }).afterClosed().subscribe((service: ServiceProductDto) => {
+        }).afterClosed().subscribe((service: MemberServiceDto) => {
             if (service) {
                 this.services.splice(this.services.length - 1, 0, service);
                 setTimeout(() => component.option('value', service.id));
