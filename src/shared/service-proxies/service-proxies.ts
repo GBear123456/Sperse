@@ -65155,7 +65155,6 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     orderId!: number | undefined;
     orderNumber!: string | undefined;
     leadId!: number | undefined;
-    systemType!: string | undefined;
     status!: InvoiceStatus;
     number!: string | undefined;
     date!: moment.Moment;
@@ -65186,7 +65185,6 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
             this.orderId = data["orderId"];
             this.orderNumber = data["orderNumber"];
             this.leadId = data["leadId"];
-            this.systemType = data["systemType"];
             this.status = data["status"];
             this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
@@ -65221,7 +65219,6 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         data["orderId"] = this.orderId;
         data["orderNumber"] = this.orderNumber;
         data["leadId"] = this.leadId;
-        data["systemType"] = this.systemType;
         data["status"] = this.status;
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
@@ -65249,7 +65246,6 @@ export interface ICreateInvoiceInput {
     orderId: number | undefined;
     orderNumber: string | undefined;
     leadId: number | undefined;
-    systemType: string | undefined;
     status: InvoiceStatus;
     number: string | undefined;
     date: moment.Moment;
