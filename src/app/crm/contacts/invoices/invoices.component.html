@@ -64,6 +64,7 @@
                 <dx-select-box
                     displayExpr="name"
                     valueExpr="name"
+                    [disabled]="!hasOrdersManage"
                     [(value)]="cellData.value"
                     [dataSource]="stages$ | async"
                     (onOptionChanged)="onStageOptionChanged(cellData, $event)"
