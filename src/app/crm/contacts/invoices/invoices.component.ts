@@ -76,6 +76,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     duplicateInvoiceDisabled = false;
     isSendEmailAllowed = false;
 
+    hasOrdersManage = this.isGranted(AppPermissions.CRMOrdersManage);
+
     private readonly ident = 'Invoices';
     private _selectedTabIndex = 0;
 
@@ -389,6 +391,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     updateOrderStage(event) {
+        if (!this.hasOrdersManage)
+            return;
+
         this.startLoading(true);
         const invoice: InvoiceDto = event.data;
         this.pipelineService.updateEntitiesStage(
@@ -433,6 +438,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onStageOptionChanged(data, event) {
+        if (event.component.option('disabled'))
+            return;
+
         event.component.option('disabled', event.component.option('dataSource')
             .some(item => data.value == item.name && item.isFinal));
     }

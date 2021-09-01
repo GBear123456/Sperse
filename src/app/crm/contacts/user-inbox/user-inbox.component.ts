@@ -249,18 +249,20 @@ export class UserInboxComponent implements OnDestroy {
                 {
                     name: 'reply',
                     visible: this.isActiveEmilType,
-                    action: () => this.reply()
+                    action: () => this.reply(),
+                    disabled: !this.isSendSmsAndEmailAllowed
                 },
                 {
                     name: 'replyToAll',
                     visible: this.isActiveEmilType,
                     action: () => this.reply(true),
-                    disabled: !this.activeMessage.cc
+                    disabled: !this.isSendSmsAndEmailAllowed || !this.activeMessage.cc
                 },
                 {
                     name: 'forward',
                     visible: this.isActiveEmilType,
-                    action: this.forward.bind(this)
+                    action: this.forward.bind(this),
+                    disabled: !this.isSendSmsAndEmailAllowed
                 }
             ]
         }];
