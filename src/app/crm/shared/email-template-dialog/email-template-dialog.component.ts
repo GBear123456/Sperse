@@ -429,7 +429,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     onTemplateChanged(event) {
         this.data.templateId = event.value;
         if (event.value) {
-            if (this.templateEditMode || this.data.switchTemplate)
+            if (this.templateEditMode)
                 this.loadTemplateById(event.value);
             else
                 this.onTemplateChange.emit(event.value);

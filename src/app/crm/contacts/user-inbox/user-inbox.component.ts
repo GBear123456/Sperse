@@ -455,7 +455,6 @@ export class UserInboxComponent implements OnDestroy {
 
     showNewEmailDialog(title = 'NewEmail', data: any = {}) {
         data = Object.assign({
-            switchTemplate: true,
             contactId: this.contactId,
             replyToId: data.id
         }, data);
