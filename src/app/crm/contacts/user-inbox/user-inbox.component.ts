@@ -340,7 +340,7 @@ export class UserInboxComponent implements OnDestroy {
                 if (message.deliveryType == CommunicationMessageDeliveryType.Email)
                     this.loadOneMoreChild(record);
                 else
-                    message.items = children.items.reverse();
+                    message.items = children.items;
                 if (record.expanded == undefined)
                     record.expanded = true;
                 component.repaint();
