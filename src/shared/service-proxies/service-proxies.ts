@@ -55180,6 +55180,7 @@ export class MessageDto implements IMessageDto {
     status!: CommunicationMessageSendingStatus | undefined;
     recepients!: RecepientInfo[] | undefined;
     hasChildren!: boolean | undefined;
+    hasAttachments!: boolean | undefined;
     isInbound!: boolean | undefined;
     id!: number | undefined;
 
@@ -55219,6 +55220,7 @@ export class MessageDto implements IMessageDto {
                     this.recepients.push(RecepientInfo.fromJS(item));
             }
             this.hasChildren = data["hasChildren"];
+            this.hasAttachments = data["hasAttachments"];
             this.isInbound = data["isInbound"];
             this.id = data["id"];
         }
@@ -55258,6 +55260,7 @@ export class MessageDto implements IMessageDto {
                 data["recepients"].push(item.toJSON());
         }
         data["hasChildren"] = this.hasChildren;
+        data["hasAttachments"] = this.hasAttachments;
         data["isInbound"] = this.isInbound;
         data["id"] = this.id;
         return data; 
@@ -55282,6 +55285,7 @@ export interface IMessageDto {
     status: CommunicationMessageSendingStatus | undefined;
     recepients: RecepientInfo[] | undefined;
     hasChildren: boolean | undefined;
+    hasAttachments: boolean | undefined;
     isInbound: boolean | undefined;
     id: number | undefined;
 }
@@ -55302,6 +55306,7 @@ export class MessageListDto implements IMessageListDto {
     status!: CommunicationMessageSendingStatus | undefined;
     recepients!: RecepientInfo[] | undefined;
     hasChildren!: boolean | undefined;
+    hasAttachments!: boolean | undefined;
     isInbound!: boolean | undefined;
     id!: number | undefined;
 
@@ -55335,6 +55340,7 @@ export class MessageListDto implements IMessageListDto {
                     this.recepients.push(RecepientInfo.fromJS(item));
             }
             this.hasChildren = data["hasChildren"];
+            this.hasAttachments = data["hasAttachments"];
             this.isInbound = data["isInbound"];
             this.id = data["id"];
         }
@@ -55368,6 +55374,7 @@ export class MessageListDto implements IMessageListDto {
                 data["recepients"].push(item.toJSON());
         }
         data["hasChildren"] = this.hasChildren;
+        data["hasAttachments"] = this.hasAttachments;
         data["isInbound"] = this.isInbound;
         data["id"] = this.id;
         return data; 
@@ -55390,6 +55397,7 @@ export interface IMessageListDto {
     status: CommunicationMessageSendingStatus | undefined;
     recepients: RecepientInfo[] | undefined;
     hasChildren: boolean | undefined;
+    hasAttachments: boolean | undefined;
     isInbound: boolean | undefined;
     id: number | undefined;
 }
@@ -81848,8 +81856,8 @@ export enum Currency {
 }
 
 export enum Tier2CommissionSource {
-    CommissionableValue = "CommissionableValue", 
     CommissionAmount = "CommissionAmount", 
+    CommissionableValue = "CommissionableValue", 
 }
 
 export class InvoiceSettings implements IInvoiceSettings {
