@@ -108,26 +108,26 @@
                                     cssClass="clipboard-holder">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.OrderDate"
-                                    [caption]="l('OrderDate')" 
+                                    [caption]="l('OrderDate')"
                                     cellTemplate="dateCell"
                                     [visible]="false"
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.EarnedDate"
-                                    [caption]="l('EarnedDate')" 
+                                    [caption]="l('EarnedDate')"
                                     cellTemplate="dateCell"
                                     cssClass="tabular">
-                        </dxi-column> 
+                        </dxi-column>
                         <dxi-column [dataField]="commissionFields.InvoiceDate"
-                                    [caption]="l('InvoiceDate')" 
-                                    cellTemplate="dateCell" 
+                                    [caption]="l('InvoiceDate')"
+                                    cellTemplate="dateCell"
                                     [visible]="false"
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.TransactionDate"
-                                    [caption]="l('TransactionDate')" 
+                                    [caption]="l('TransactionDate')"
                                     cellTemplate="dateCell"
-                                    [visible]="false" 
+                                    [visible]="false"
                                     cssClass="tabular">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.ProductCode"
@@ -140,6 +140,11 @@
                                     [caption]="l('Price')"
                                     [format]="currencyFormat$ | async"
                                     cssClass="clipboard-holder padding-right">
+                        </dxi-column>
+                        <dxi-column width="100px"
+                                    [dataField]="commissionFields.Tier"
+                                    [caption]="l('Tier')"
+                                    cellTemplate="tierCell">
                         </dxi-column>
                         <dxi-column width="120px"
                                     [dataField]="commissionFields.CommissionableAmount"
@@ -219,24 +224,26 @@
                         </dxi-column>
                         <dxi-column width="120px"
                                     [dataField]="commissionFields.Status"
-                                    [caption]="l('Status')" 
+                                    [caption]="l('Status')"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.InvoiceStatus"
                                     [caption]="l('InvoiceStatus')"
-                                    [visible]="false" 
+                                    [visible]="false"
                                     cssClass="clipboard-holder padding-right">
                         </dxi-column>
                         <dxi-column [dataField]="commissionFields.TransactionGatewayName"
                                     [caption]="l('TransactionGatewayName')"
-                                    [visible]="false" 
+                                    [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
-                        
+
                         <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
                             {{cellData.value}}
                         </div>
-
+                        <div *dxTemplate="let cellData of 'tierCell'" class="clipboard-holder">
+                            {{l(cellData.value)}}
+                        </div>
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | datetime: formatting.dateTimeMoment}}
                         </div>

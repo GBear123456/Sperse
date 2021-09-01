@@ -131,7 +131,6 @@
                         <label class="caption">{{ls.l('CC')}}:</label>
                         <dx-tag-box #CCElement
                             name="cc"
-                            height="40px"
                             width="calc(100% - 35px)"
                             placeholder=""
                             noDataText=""
@@ -154,7 +153,6 @@
                         <label class="caption">{{ls.l('BCC')}}:</label>
                         <dx-tag-box #BCCElement
                             name="bcc"
-                            height="40px"
                             width="calc(100% - 46px)"
                             noDataText=""
                             placeholder=""
@@ -223,7 +221,7 @@
             </dx-validation-group>
         </dx-scroll-view>
         <div class="bank-decode-wrapper" *ngIf="!templateEditMode">
-            <bank-code-decode [content]="data.body" (onDecodeStart)="startLoading()" (onDecodeFinish)="finishLoading()"></bank-code-decode>
+            <bank-code-decode [content]="data.body" [source]="'CRMEmail'" (onDecodeStart)="startLoading()" (onDecodeFinish)="finishLoading()"></bank-code-decode>
         </div>
     </div>
 </modal-dialog>

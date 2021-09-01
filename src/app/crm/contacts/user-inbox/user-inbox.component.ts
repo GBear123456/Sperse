@@ -249,14 +249,14 @@ export class UserInboxComponent implements OnDestroy {
                 {
                     name: 'reply',
                     visible: this.isActiveEmilType,
-                    action: this.reply.bind(this),
+                    action: () => this.reply(),
                     disabled: !this.isSendSmsAndEmailAllowed
                 },
                 {
                     name: 'replyToAll',
                     visible: this.isActiveEmilType,
-                    action: this.replyToAll.bind(this),
-                    disabled: !this.isSendSmsAndEmailAllowed
+                    action: () => this.reply(true),
+                    disabled: !this.isSendSmsAndEmailAllowed || !this.activeMessage.cc
                 },
                 {
                     name: 'forward',
@@ -319,7 +319,7 @@ export class UserInboxComponent implements OnDestroy {
                 forkJoin(
                     this.communicationService.getMessage(record.id, this.contactId),
                     record.hasChildren ? this.communicationService.getMessages(this.contactId, record.id,
-                        undefined, undefined, undefined, undefined, undefined, undefined, undefined) : of({items: null})
+                        undefined, undefined, undefined, undefined, 'Id ASC', undefined, undefined) : of({items: null})
                 ).pipe(
                     finalize(() => this.loadingService.finishLoading(this.contentView.nativeElement))
                 ).subscribe(([message, children]) => {
@@ -417,23 +417,51 @@ export class UserInboxComponent implements OnDestroy {
             this.listComponent.instance.option('items') : [];
     }
 
-    reply() {
-        this.showNewEmailDialog('Reply', this.activeMessage);
+    reply(forAll = false) {
+        let ccList = forAll ? (this.activeMessage.cc ? this.activeMessage.cc.split(','): []) : [];
+        if (this.activeMessage.isInbound)
+            ccList.push(this.activeMessage.to);
+
+        this.showNewEmailDialog(forAll ? 'ReplyToAll' : 'Reply', {                          
+            ...this.activeMessage,
+            to: [(this.activeMessage.fromUserName || '') + ' <' + this.activeMessage.from + '>'],
+            cc: ccList,
+            bcc: this.activeMessage.bcc ? this.activeMessage.bcc.split(',') : [],
+            subject: (this.activeMessage.subject.startsWith('Re:')  ? '' : 'Re: ') + this.activeMessage.subject,
+            body: '<br><br><div dir="ltr">On ' + 
+                this.activeMessage.creationTime.format('ddd, MMM Do YYYY, h:mm:ss A') + ' ' + (this.activeMessage.fromUserName || '') + 
+                '&lt;<a href="' + this.activeMessage.from + '">' + this.activeMessage.from + '</a>&gt;' +
+                ' wrote:<br></div><blockquote style="margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">' + 
+                this.activeMessage.body + 
+                '</blockquote>',
+            attachments: []
+        });
     }
 
     forward() {
-        this.showNewEmailDialog('Forward', this.activeMessage);
-    }
-
-    replyToAll() {
-        this.showNewEmailDialog('ReplyToAll', this.activeMessage);
+        this.showNewEmailDialog('Forward', {
+            ...this.activeMessage,
+            to: [],
+            cc: [],
+            bcc: [],
+            replyToId: null,
+            subject: (this.activeMessage.subject.startsWith('Fwd:') ? '' : 'Fwd: ') + this.activeMessage.subject,
+            body: '<br><br><div dir="ltr">---------- Forwarded message ---------<br>' +
+                'From: <strong class="sendername" dir="auto">' + (this.activeMessage.fromUserName || '') + '</strong>' +
+                '<span dir="auto">&lt;<a href="' + this.activeMessage.from + '">' + this.activeMessage.from + '</a>&gt;</span><br>' + 
+                'Date: ' + this.activeMessage.creationTime.format('ddd, MMM Do YYYY, h:mm:ss A') + '<br>' +
+                'Subject: ' + this.activeMessage.subject + '<br>' +
+                'To: ' + this.activeMessage.to + '<br></div><br><br>' + this.activeMessage.body
+        });
     }
 
     showNewEmailDialog(title = 'NewEmail', data: any = {}) {
         data = Object.assign({
             switchTemplate: true,
-            contactId: this.contactId
+            contactId: this.contactId,
+            replyToId: data.id
         }, data);
+
         this.contactsService.showEmailDialog(Object.assign(data, {
             to: data.to ? (data.to['join'] ? data.to : [data.to]) : []
         }), title).subscribe(res => isNaN(res) ||
@@ -455,10 +483,9 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     extendMessage() {
-        let parentId = this.activeMessage.parentId || this.activeMessage.id;
         if (this.isActiveEmilType)
             this.showNewEmailDialog(undefined, {
-                parentId: parentId,
+                replyToId: this.activeMessage.id,
                 subject: 'Re: ' + this.activeMessage.subject,
                 body: this.instantMessageText,
                 to: this.activeMessage.to['join'] ?
@@ -466,7 +493,7 @@ export class UserInboxComponent implements OnDestroy {
             });
         else
             this.contactsService.showSMSDialog({
-                parentId: parentId,
+                parentId: this.activeMessage.parentId || this.activeMessage.id,
                 body: this.instantMessageText,
                 phoneNumber: this.activeMessage.to,
                 contact: this.contactInfo

@@ -162,7 +162,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
             },
             {
                 name: 'email',
-                text: this.ls.l('EmailSMTP'),
+                text: this.ls.l('EmailSmtp'),
                 getComponent: () => this.emailComponent,
                 saved: false,
                 visible: true

@@ -68,6 +68,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     @Input() contactInfo: ContactInfoDto;
     @Input() customerType: string;
     @Input() leadId: number;
+    @Input() selectedPipelineId: number;
+    @Input() pipelineDataSource: any[];
     @Input() selectedStageId: number;
     @Input()
     set stages(stages: any[]) {
@@ -374,14 +376,13 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'stage',
                             action: this.toggleStages.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType),
-                            visible: this.contactInfo.statusId == ContactStatus.Prospective
+                            disabled: !this.permission.checkCGPermission(this.customerType)
                         },
                         {
                             name: 'status',
                             action: this.toggleStatus.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType),
-                            visible: this.contactInfo.statusId != ContactStatus.Prospective
+                            disabled: !this.permission.checkCGPermission(this.customerType)
+                                || this.contactInfo.statusId == ContactStatus.Prospective
                         },
                         {
                             name: 'partnerType',

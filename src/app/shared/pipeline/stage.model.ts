@@ -1,8 +1,9 @@
-import { StageDto } from '@shared/service-proxies/service-proxies';
+import { StageDto, PipelineDto } from '@shared/service-proxies/service-proxies';
 import { IStage } from '@app/shared/pipeline/stage.interface';
 import { StageWidth } from '@app/shared/pipeline/stage-width.enum';
 
 export class Stage extends StageDto {
+    pipeline: PipelineDto;
     entities: any[];
     isLoading: boolean;
     isFull: boolean;

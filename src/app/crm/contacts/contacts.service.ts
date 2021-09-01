@@ -348,8 +348,11 @@ export class ContactsService {
             emailData.contactId = emailData.contact.id;
             emailData.suggestionEmails = emailData.contact.personContactInfo.details.emails
                 .filter(item => item.isActive).map(item => item.emailAddress);
-            if (emailData.suggestionEmails.length)
-                emailData.to = [emailData.suggestionEmails[0]];
+
+            let subject = emailData.subject;
+            if (emailData.suggestionEmails.length && !(subject &&
+                (subject.startsWith('Fwd:') || subject.startsWith('Re:'))
+            )) emailData.to = [emailData.suggestionEmails[0]];
 
             emailData.contact.personContactInfo.details.phones
                 .filter(item => item.usageTypeId == 'F' && item.isActive) //Home Fax
@@ -478,7 +481,7 @@ export class ContactsService {
                 if (res.attachments) {
                     res.attachments = res.attachments.map(item => {
                         return new FileInfo({
-                            id: item.id,
+                            id: item.fileId || item.id,
                             name: item.name
                         });
                     });

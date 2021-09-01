@@ -5,7 +5,7 @@ import { ActivationEnd, Event, NavigationEnd, Params } from '@angular/router';
 /** Third party imports */
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, forkJoin, Observable, of } from 'rxjs';
+import { BehaviorSubject, combineLatest, forkJoin, Observable, of, zip } from 'rxjs';
 import {
     first,
     buffer,
@@ -89,7 +89,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     leadInfo: LeadInfoDto;
     leadId: number;
     leadStages = [];
-    clientStageId: number;
+    allPipelines = [];
     partnerInfo: PartnerInfoDto;
     partnerTypeId: string;
     partnerTypes: any[] = [];
@@ -490,15 +490,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             ...leadInfo
         });
 
-        this.loadLeadsStages(() => {
-            if (this.leadInfo.stage) {
-                let leadStage = this.leadStages.find(
-                    stage => stage.name === this.leadInfo.stage
-                );
-                this.clientStageId = leadStage && leadStage.id;
-            }
-        });
-
+        this.loadLeadsStages();
         this.storeInitialData();
     }
 
@@ -663,32 +655,39 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             });
     }
 
-    private loadLeadsStages(callback?: () => any) {
-        if (this.leadStages && this.leadStages.length)
-            callback && callback();
-        else {
-            this.leadInfo$.pipe(
-                map((leadInfo: LeadInfoDto) => leadInfo.pipelineId),
-                first(),
-                switchMap((pipelineId: number) => {
-                    return this.pipelineService.getPipelineDefinitionObservable(
-                        AppConsts.PipelinePurposeIds.lead,
-                        this.contactGroupId.value,
-                        pipelineId
-                    );
-                })
-            ).subscribe((pipeline: PipelineDto) => {
-                this.leadStages = pipeline.stages.map((stage: StageDto) => {
-                    return {
-                        id: stage.id,
-                        name: stage.name,
-                        index: stage.sortOrder,
-                        action: this.updateLeadStage.bind(this)
-                    };
-                });
-                callback && callback();
+    private loadLeadsStages() {
+        this.leadInfo$.pipe(
+            first(),
+            switchMap((leadInfo) => {
+                return zip(of(leadInfo), this.pipelineService.getAllPipelinesOberverable(
+                    AppConsts.PipelinePurposeIds.lead
+                ));
+            })
+        ).subscribe(([leadInfo, pipelines]) => {
+            this.allPipelines = pipelines.filter(
+                (pipeline: PipelineDto) => this.permission.checkCGPermission(pipeline.contactGroupId)
+                    && (!pipeline.entityTypeSysId || (                        
+                        pipeline.entityTypeSysId.startsWith('Property')
+                            && leadInfo.propertyId
+                    )
+                )
+            ).map((pipeline: PipelineDto) => {
+                return {
+                    id: pipeline.id,
+                    text: pipeline.name,
+                    items: pipeline.stages.map((stage: StageDto) => {
+                        return {
+                            id: stage.id,
+                            name: stage.name,
+                            index: stage.sortOrder,
+                            action: this.updateLeadStage.bind(this),
+                            disabled: leadInfo.pipelineId != pipeline.id && stage.isFinal,
+                            pipelineId: pipeline.id
+                        }
+                    })
+                };
             });
-        }
+        });
     }
 
     private loadPartnerTypes() {
@@ -822,34 +821,61 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         if (!this.leadId || !this.leadInfo)
             return;
 
-        const pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
         this.leadInfo$.pipe(
             first(),
             map((leadInfo: LeadInfoDto) => leadInfo.pipelineId)
         ).subscribe((pipelineId: number) => {
-            let sourceStage = this.pipelineService.getStageByName(pipelinePurposeId, this.leadInfo.stage, this.contactGroupId.value, pipelineId);
-            let targetStage = this.pipelineService.getStageByName(pipelinePurposeId, $event.itemData.name, this.contactGroupId.value, pipelineId);
-            if (this.pipelineService.updateEntityStage(
-                pipelinePurposeId,
-                this.contactGroupId.value,
-                this.leadInfo,
-                sourceStage,
-                targetStage,
-                () => {
-                    this.toolbarComponent.stagesComponent.listComponent.option(
-                        'selectedItemKeys',
-                        [this.clientStageId = targetStage.id]
-                    );
-                }
-            )) {
-                this.leadInfo.stage = targetStage.name;
-                this.notify.success(this.l('StageSuccessfullyUpdated'));
-            } else
-                this.message.warn(this.l('CannotChangeLeadStage', sourceStage.name, targetStage.name));
-
-            this.toolbarComponent.refresh();
+            if (pipelineId == $event.itemData.pipelineId)
+                this.updateStageInternal(pipelineId, $event.itemData);
+            else
+                this.message.confirm(
+                    this.l('PipelineAndStageChange'),
+                    this.l('AreYouSure'),
+                    confirmed => {
+                        if (confirmed)
+                            this.updateStageInternal(pipelineId, $event.itemData);
+                        else 
+                            this.toolbarComponent.stagesComponent.disabled = false;
+                    }
+                )
+            this.toolbarComponent.stagesComponent.toggle();
         });
         $event.event.stopPropagation();
+    }
+
+    private updateStageInternal(pipelineId, data) {
+        const pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
+        let isPipelineChange = pipelineId != data.pipelineId,
+            sourceStage = this.pipelineService.getStage(pipelinePurposeId, pipelineId, this.leadInfo.stageId),
+            targetStage = this.pipelineService.getStage(pipelinePurposeId, data.pipelineId, data.id);
+
+        this.toolbarComponent.stagesComponent.disabled = true;
+        if (!this.pipelineService.updateEntityStage(
+            this.leadInfo, sourceStage, targetStage, () => {
+                this.toolbarComponent.stagesComponent.disabled = false;
+                if (this.leadInfo.stageId == targetStage.id) {
+                    this.notify.success(this.l('StageSuccessfullyUpdated'));
+                    if (isPipelineChange || sourceStage.isFinal != targetStage.isFinal) {
+                        this.leadInfo = undefined;
+                        this.reloadCurrentSection(this.params).pipe(
+                            first()
+                        ).subscribe(() => {
+                            this.contactService['data'].refresh = true;
+                        });
+                    }
+                } else
+                    this.refreshStageDropdown();
+            }
+        ))
+            this.message.warn(this.l('CannotChangeLeadStage', sourceStage.name, targetStage.name));
+    }
+
+    refreshStageDropdown() {
+        if (this.leadInfo)
+            this.toolbarComponent.stagesComponent.listComponent.option(
+                'selectedItemKeys', [this.leadInfo.stageId]
+            );
+        this.toolbarComponent.refresh();
     }
 
     updatePartnerType($event) {

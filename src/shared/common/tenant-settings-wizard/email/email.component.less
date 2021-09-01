@@ -3,7 +3,7 @@
         margin-bottom: 32px !important;
     }
     h5 {
-        margin-bottom: 17px;
+        margin-bottom: 10px;
     }
     .form-group {
         display: flex;
@@ -16,11 +16,23 @@
 
     .checkbox-list {
         display: flex;
-        margin-top: 19px;
-        margin-bottom: 22px;
+        margin-top: 16px;
+        margin-bottom: 5px;
         .form-group {
             &:first-child {
                 margin-right: 40px;
+            }
+        }
+    }
+
+    .checkbox-list {
+        &.is-imap-enabled {
+            margin-top: 5px;
+            margin-bottom: 0px;
+
+            ::ng-deep .dx-checkbox-text {
+                font-size: 18px;
+                font-weight: 600;
             }
         }
     }

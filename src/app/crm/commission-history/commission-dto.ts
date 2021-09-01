@@ -5,6 +5,7 @@ export interface CommissionDto {
     BuyerContactId: number;
     BuyerEmailAddress: string;
     BuyerName: string;
+    Tier: string;
     CommissionAmount: number;
     CommissionRate: number;
     CommissionableAmount: number;

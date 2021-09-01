@@ -27,7 +27,7 @@ import {
     UpdateLeadStagePointInput, UpdateOrderStagePointInput, LeadServiceProxy, OrderServiceProxy,
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto,
-    GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput
+    GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput, CommissionTier
 } from '@shared/service-proxies/service-proxies';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
@@ -125,6 +125,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     defaultAffiliateRate;
     affiliateRateInitil;
     affiliateRate;
+    affiliateRate2Initil;
+    affiliateRate2;
+    CommissionTier = CommissionTier;
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     hasCommissionsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
     affiliateManageAllowed = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesManage);
@@ -178,6 +181,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.affiliateRateInitil = this.affiliateRate =
                     this.contactInfo.affiliateRate === null ? null
                         : (this.contactInfo.affiliateRate * 100).toFixed(2);
+                this.affiliateRate2Initil = this.affiliateRate2 =
+                    this.contactInfo.affiliateRateTier2 === null ? null
+                        : (this.contactInfo.affiliateRateTier2 * 100).toFixed(2);
                 this.manageAllowed = this.permissionChecker.checkCGPermission(contactInfo.groupId);
                 this.affiliateCode.next(contactInfo.affiliateCode);
                 this.contactXref.next(contactInfo.personContactInfo.xref);
@@ -250,24 +256,25 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         });
     }
 
-    updateAffiliateRate(value?) {
+    updateAffiliateRate(value, valueProp, valueInitialProp, tier) {
         ContactsHelper.showConfirmMessage(
             this.ls.l(value ? 'ChangeCommissionRate' : 'ClearCommissionRate'),
             (isConfirmed: boolean, [ updatePending ]: boolean[]) => {
                 if (isConfirmed) {
-                    this.affiliateRate = value == '' || isNaN(value) ? null : parseFloat(value);
+                    this[valueProp] = value == '' || isNaN(value) ? null : parseFloat(value);
                     this.contactProxy.updateAffiliateRate(new UpdateContactAffiliateRateInput({
                         contactId: this.contactInfo.id,
                         updatePendingCommissions: updatePending,
-                        affiliateRate: this.affiliateRate == null ? null : parseFloat((this.affiliateRate / 100).toFixed(4))
+                        affiliateRate: this[valueProp] == null ? null : parseFloat((this[valueProp] / 100).toFixed(4)),
+                        commissionTier: tier
                     })).subscribe(() => {
-                        this.affiliateRateInitil = this.affiliateRate;
+                        this[valueInitialProp] = this[valueProp];
                         this.notifyService.info(this.ls.l('SavedSuccessfully'));
                     }, () => {
-                        this.affiliateRate = this.affiliateRateInitil;
+                            this[valueProp] = this[valueInitialProp];
                     });
                 } else
-                    this.affiliateRate = this.affiliateRateInitil;
+                    this[valueProp] = this[valueInitialProp];
             },
             [ { text: this.ls.l('AssignCommissionRateForPending'), visible: true, checked: true }]
         );
@@ -484,7 +491,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 this.updateXref('');
                 break;
             case this.ls.l('AffiliateRate'):
-                this.updateAffiliateRate();
+                this.updateAffiliateRate(undefined, 'affiliateRate', 'affiliateRateInitil', CommissionTier.Tier1);
+                break;
+            case this.ls.l('AffiliateRate2'):
+                this.updateAffiliateRate(undefined, 'affiliateRate2', 'affiliateRate2Initil', CommissionTier.Tier2);
                 break;
         }
     }

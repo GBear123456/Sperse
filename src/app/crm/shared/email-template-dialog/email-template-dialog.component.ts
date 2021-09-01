@@ -192,7 +192,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
 
         this.ckConfig.height = this.editorHeight ? this.editorHeight : innerHeight -
-            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 460 : 420) + 'px';
+            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 500 : 460) + 'px';
 
         this.initDialogButtons();
         this.changeDetectorRef.detectChanges();
@@ -208,12 +208,33 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.emailSettingsSource = from.emailSettingsSource;
             }
             this.data.emailSettingsSource = this.emailSettingsSource;
-            if (from && from.ccEmailAddress) {
-                this.data.cc = [from.ccEmailAddress];
-                this.showCC = true;
-            }
-            this.changeDetectorRef.detectChanges();
+            this.checkUpdateCCFromEmail(from);
         }
+    }
+
+    checkUpdateCCFromEmail(from) {
+        if (this.data.cc && this.data.cc.length)
+            this.data.cc = this.data.cc.filter(item => {
+                return !(item.includes(from.emailAddress) || from.emailAddress.includes(item));
+            });
+
+        if (from && from.ccEmailAddress && this.data.to.every(item => item != from.ccEmailAddress)) {
+            if (this.data.cc && this.data.cc.length) {
+                this.data.cc.push(from.ccEmailAddress);
+                this.data.cc = this.data.cc.map((item, index) => {
+                    if (this.data.cc.some((item2, index2) => {
+                        if (index2 > index)
+                            return item2.includes(item) || item.includes(item2);
+                        return false;
+                    }))
+                        return undefined;
+                    return item;
+                }).filter(Boolean);
+            } else
+                this.data.cc = [from.ccEmailAddress];
+            this.showCC = true;
+        }
+        this.changeDetectorRef.detectChanges();
     }
 
     initDialogButtons() {
@@ -452,11 +473,13 @@ export class EmailTemplateDialogComponent implements OnInit {
         );
         if (from) {
             this.data.emailSettingsSource = from.emailSettingsSource;
-            if (from.ccEmailAddress) {
-                this.data.cc = [from.ccEmailAddress];
-                this.showCC = true;
-            }
-            this.changeDetectorRef.detectChanges();
+            if (this.data.cc && this.data.cc.length)
+                this.data.from.forEach(item => {
+                    let index = this.data.cc.indexOf(item.ccEmailAddress);
+                    if (index >= 0)
+                        this.data.cc.splice(index, 1);                    
+                });
+                this.checkUpdateCCFromEmail(from);
         }
     }
 
@@ -737,8 +760,12 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     attachmentClick(event, attachment) {
         if (!attachment.url) {
-            this.documentsService.downloadDocument(attachment.id);
+            this.startLoading();
+            this.communicationProxy.getAttachmentLink(attachment.id).pipe(
+                finalize(() => this.finishLoading())
+            ).subscribe(res => window.open(res, '_blank'));
             event.stopPropagation();
+            event.preventDefault();
         }
     }
 
