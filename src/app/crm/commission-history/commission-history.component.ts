@@ -1048,10 +1048,12 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     onSourceApply(event) {
-        let checkBoxes = [{ text: this.l('AssignAffiliateContact'), visible: true, checked: true }];
-        let showReassign = this.selectedRecords.some(v => v.Tier == CommissionTier.Tier1);
-        if (showReassign)
+        let checkBoxes = [];
+        let hasTer1CommissionSeleted = this.selectedRecords.some(v => v.Tier == CommissionTier.Tier1);
+        if (hasTer1CommissionSeleted) {
+            checkBoxes.push({ text: this.l('AssignAffiliateContact'), visible: true, checked: true });
             checkBoxes.push({ text: this.l('ReassignRelatedTier2Commissions'), visible: true, checked: true });
+        }
 
         ContactsHelper.showConfirmMessage(
             this.l('ConfirmReassignCommissions'),
