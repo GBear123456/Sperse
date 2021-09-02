@@ -19,7 +19,6 @@ export interface EmailTemplateData {
     templateId: number;
     replyTo: string;
     templateType: EmailTemplateType;
-    switchTemplate: EmailTemplateType;
     tags: { [key: string]: string; } | undefined;
     hideContextMenu?: boolean;
     addMode?: boolean;

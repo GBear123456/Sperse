@@ -429,7 +429,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     onTemplateChanged(event) {
         this.data.templateId = event.value;
         if (event.value) {
-            if (this.templateEditMode || this.data.switchTemplate)
+            if (this.templateEditMode)
                 this.loadTemplateById(event.value);
             else
                 this.onTemplateChange.emit(event.value);
@@ -733,7 +733,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         const templateDocumentsDialogData: TemplateDocumentsDialogData = {
             fullHeight: true,
             contactId: this.data.contact && this.data.contact.id,
-            dropFiles: this.addAttachments.bind(this)
+            dropFiles: this.addAttachments.bind(this),
+            showDocuments: true
         };
         this.dialog.open(TemplateDocumentsDialogComponent, {
             id: 'templateDialog',
