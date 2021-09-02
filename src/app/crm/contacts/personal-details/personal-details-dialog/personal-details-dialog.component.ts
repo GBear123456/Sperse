@@ -493,7 +493,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             case this.ls.l('AffiliateRate'):
                 this.updateAffiliateRate(undefined, 'affiliateRate', 'affiliateRateInitil', CommissionTier.Tier1);
                 break;
-            case this.ls.l('AffiliateRate2'):
+            case this.ls.l('AffiliateRateTier2'):
                 this.updateAffiliateRate(undefined, 'affiliateRate2', 'affiliateRate2Initil', CommissionTier.Tier2);
                 break;
         }
