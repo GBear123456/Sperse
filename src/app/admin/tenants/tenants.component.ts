@@ -155,7 +155,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
                     (loadOptions.sort || []).map((item) => {
                         return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
                     }).join(','),
-                    loadOptions.take,
+                    loadOptions.take || 10000,
                     loadOptions.skip
                 ).toPromise().then(response => {
                     return {
@@ -239,11 +239,8 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
                         widget: 'dxDropDownMenu',
                         options: {
                             hint: this.l('Download'),
-                            items: [{
-                                action: Function(),
-                                text: this.l('Save as PDF'),
-                                icon: 'pdf',
-                            }, {
+                            items: [
+                            {
                                 action: this.exportToXLS.bind(this),
                                 text: this.l('Export to Excel'),
                                 icon: 'xls',
