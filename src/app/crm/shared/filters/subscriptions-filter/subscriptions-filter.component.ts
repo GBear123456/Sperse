@@ -57,7 +57,7 @@ export class SubscriptionsFilterComponent implements FilterComponent {
     setLevelValue(id: number, productId: number, type: string, value: boolean) {
         this.items.element.dataSource.some(product => {
             if (product.id == productId) {
-                product.serviceProductLevels.some(level => {
+                product.memberServiceLevels.some(level => {
                     if (level.id == id) {
                         level[type] = value;
                         return true;
@@ -72,7 +72,7 @@ export class SubscriptionsFilterComponent implements FilterComponent {
         if (event.name == 'dataSource')
             this.items.element.dataSource.forEach(parent => {
                 parent.uid = parent.id;
-                parent.serviceProductLevels.forEach(child => {
+                parent.memberServiceLevels.forEach(child => {
                     child.uid = parent.id + ':' + child.id;
                 });
             });

@@ -969,7 +969,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             map(items => {
                                 return (items || []).map(parent => {
                                     parent['uid'] = parent.id;
-                                    parent.serviceProductLevels.forEach(child => {
+                                    parent.memberServiceLevels.forEach(child => {
                                         child['uid'] = parent.id + ':' + child.id;
                                     });
                                     return parent;

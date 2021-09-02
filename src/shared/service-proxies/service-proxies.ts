@@ -22157,6 +22157,300 @@ export class MemberServiceProxy {
 }
 
 @Injectable()
+export class MemberServiceServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @includeDeactivated (optional) 
+     * @return Success
+     */
+    getAll(includeDeactivated: boolean | null | undefined): Observable<MemberServiceDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberService/GetAll?";
+        if (includeDeactivated !== undefined)
+            url_ += "includeDeactivated=" + encodeURIComponent("" + includeDeactivated) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<MemberServiceDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<MemberServiceDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<MemberServiceDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(MemberServiceDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<MemberServiceDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getSystemTypes(): Observable<SystemTypeDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberService/GetSystemTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSystemTypes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSystemTypes(<any>response_);
+                } catch (e) {
+                    return <Observable<SystemTypeDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SystemTypeDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSystemTypes(response: HttpResponseBase): Observable<SystemTypeDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(SystemTypeDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SystemTypeDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getSystemFeatures(systemType: string): Observable<FlatFeatureDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberService/GetSystemFeatures?";
+        if (systemType === undefined || systemType === null)
+            throw new Error("The parameter 'systemType' must be defined and cannot be null.");
+        else
+            url_ += "systemType=" + encodeURIComponent("" + systemType) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSystemFeatures(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSystemFeatures(<any>response_);
+                } catch (e) {
+                    return <Observable<FlatFeatureDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FlatFeatureDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetSystemFeatures(response: HttpResponseBase): Observable<FlatFeatureDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(FlatFeatureDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FlatFeatureDto[]>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    createOrUpdate(body: MemberServiceDto | null | undefined): Observable<CreateOrUpdateMemberServiceOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberService/CreateOrUpdate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrUpdate(<any>response_);
+                } catch (e) {
+                    return <Observable<CreateOrUpdateMemberServiceOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CreateOrUpdateMemberServiceOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrUpdate(response: HttpResponseBase): Observable<CreateOrUpdateMemberServiceOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateOrUpdateMemberServiceOutput.fromJS(resultData200) : new CreateOrUpdateMemberServiceOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreateOrUpdateMemberServiceOutput>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    delete(id: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/MemberService/Delete?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class MemberSettingsServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -30887,184 +31181,6 @@ export class SecurityManagementServiceProxy {
             }));
         }
         return _observableOf<BankAccountUsers[]>(<any>null);
-    }
-}
-
-@Injectable()
-export class ServiceProductServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @includeDeactivated (optional) 
-     * @return Success
-     */
-    getAll(includeDeactivated: boolean | null | undefined): Observable<ServiceProductDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/ServiceProduct/GetAll?";
-        if (includeDeactivated !== undefined)
-            url_ += "includeDeactivated=" + encodeURIComponent("" + includeDeactivated) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAll(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetAll(<any>response_);
-                } catch (e) {
-                    return <Observable<ServiceProductDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<ServiceProductDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetAll(response: HttpResponseBase): Observable<ServiceProductDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(ServiceProductDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<ServiceProductDto[]>(<any>null);
-    }
-
-    /**
-     * @body (optional) 
-     * @return Success
-     */
-    createOrUpdate(body: ServiceProductDto | null | undefined): Observable<CreateOrUpdateServiceProductOutput> {
-        let url_ = this.baseUrl + "/api/services/CRM/ServiceProduct/CreateOrUpdate";
-        url_ = url_.replace(/[?&]$/, "");
-
-        const content_ = JSON.stringify(body);
-
-        let options_ : any = {
-            body: content_,
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processCreateOrUpdate(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processCreateOrUpdate(<any>response_);
-                } catch (e) {
-                    return <Observable<CreateOrUpdateServiceProductOutput>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<CreateOrUpdateServiceProductOutput>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processCreateOrUpdate(response: HttpResponseBase): Observable<CreateOrUpdateServiceProductOutput> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? CreateOrUpdateServiceProductOutput.fromJS(resultData200) : new CreateOrUpdateServiceProductOutput();
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<CreateOrUpdateServiceProductOutput>(<any>null);
-    }
-
-    /**
-     * @id (optional) 
-     * @return Success
-     */
-    delete(id: number | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/ServiceProduct/Delete?";
-        if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDelete(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDelete(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processDelete(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
     }
 }
 
@@ -65147,7 +65263,6 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     orderId!: number | undefined;
     orderNumber!: string | undefined;
     leadId!: number | undefined;
-    systemType!: string | undefined;
     status!: InvoiceStatus;
     number!: string | undefined;
     date!: moment.Moment;
@@ -65178,7 +65293,6 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
             this.orderId = data["orderId"];
             this.orderNumber = data["orderNumber"];
             this.leadId = data["leadId"];
-            this.systemType = data["systemType"];
             this.status = data["status"];
             this.number = data["number"];
             this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
@@ -65213,7 +65327,6 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         data["orderId"] = this.orderId;
         data["orderNumber"] = this.orderNumber;
         data["leadId"] = this.leadId;
-        data["systemType"] = this.systemType;
         data["status"] = this.status;
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
@@ -65241,7 +65354,6 @@ export interface ICreateInvoiceInput {
     orderId: number | undefined;
     orderNumber: string | undefined;
     leadId: number | undefined;
-    systemType: string | undefined;
     status: InvoiceStatus;
     number: string | undefined;
     date: moment.Moment;
@@ -68637,6 +68749,290 @@ export interface IRegisterMemberRequest {
     packageId: number;
     utmParameter: UTMParameterInfo | undefined;
     trackingInfo: TrackingInfo | undefined;
+}
+
+export class MemberServiceLevelDto implements IMemberServiceLevelDto {
+    name!: string;
+    monthlyFee!: number | undefined;
+    activationTime!: moment.Moment | undefined;
+    deactivationTime!: moment.Moment | undefined;
+    features!: { [key: string] : string; } | undefined;
+    id!: number | undefined;
+    code!: string;
+
+    constructor(data?: IMemberServiceLevelDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.monthlyFee = data["monthlyFee"];
+            this.activationTime = data["activationTime"] ? moment(data["activationTime"].toString()) : <any>undefined;
+            this.deactivationTime = data["deactivationTime"] ? moment(data["deactivationTime"].toString()) : <any>undefined;
+            if (data["features"]) {
+                this.features = {};
+                for (let key in data["features"]) {
+                    if (data["features"].hasOwnProperty(key))
+                        this.features[key] = data["features"][key];
+                }
+            }
+            this.id = data["id"];
+            this.code = data["code"];
+        }
+    }
+
+    static fromJS(data: any): MemberServiceLevelDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MemberServiceLevelDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["monthlyFee"] = this.monthlyFee;
+        data["activationTime"] = this.activationTime ? this.activationTime.toISOString() : <any>undefined;
+        data["deactivationTime"] = this.deactivationTime ? this.deactivationTime.toISOString() : <any>undefined;
+        if (this.features) {
+            data["features"] = {};
+            for (let key in this.features) {
+                if (this.features.hasOwnProperty(key))
+                    data["features"][key] = this.features[key];
+            }
+        }
+        data["id"] = this.id;
+        data["code"] = this.code;
+        return data; 
+    }
+}
+
+export interface IMemberServiceLevelDto {
+    name: string;
+    monthlyFee: number | undefined;
+    activationTime: moment.Moment | undefined;
+    deactivationTime: moment.Moment | undefined;
+    features: { [key: string] : string; } | undefined;
+    id: number | undefined;
+    code: string;
+}
+
+export class MemberServiceDto implements IMemberServiceDto {
+    id!: number | undefined;
+    systemType!: string;
+    code!: string;
+    name!: string;
+    monthlyFee!: number | undefined;
+    activationTime!: moment.Moment | undefined;
+    deactivationTime!: moment.Moment | undefined;
+    features!: { [key: string] : string; } | undefined;
+    memberServiceLevels!: MemberServiceLevelDto[] | undefined;
+
+    constructor(data?: IMemberServiceDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.systemType = data["systemType"];
+            this.code = data["code"];
+            this.name = data["name"];
+            this.monthlyFee = data["monthlyFee"];
+            this.activationTime = data["activationTime"] ? moment(data["activationTime"].toString()) : <any>undefined;
+            this.deactivationTime = data["deactivationTime"] ? moment(data["deactivationTime"].toString()) : <any>undefined;
+            if (data["features"]) {
+                this.features = {};
+                for (let key in data["features"]) {
+                    if (data["features"].hasOwnProperty(key))
+                        this.features[key] = data["features"][key];
+                }
+            }
+            if (data["memberServiceLevels"] && data["memberServiceLevels"].constructor === Array) {
+                this.memberServiceLevels = [];
+                for (let item of data["memberServiceLevels"])
+                    this.memberServiceLevels.push(MemberServiceLevelDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): MemberServiceDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MemberServiceDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["systemType"] = this.systemType;
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["monthlyFee"] = this.monthlyFee;
+        data["activationTime"] = this.activationTime ? this.activationTime.toISOString() : <any>undefined;
+        data["deactivationTime"] = this.deactivationTime ? this.deactivationTime.toISOString() : <any>undefined;
+        if (this.features) {
+            data["features"] = {};
+            for (let key in this.features) {
+                if (this.features.hasOwnProperty(key))
+                    data["features"][key] = this.features[key];
+            }
+        }
+        if (this.memberServiceLevels && this.memberServiceLevels.constructor === Array) {
+            data["memberServiceLevels"] = [];
+            for (let item of this.memberServiceLevels)
+                data["memberServiceLevels"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IMemberServiceDto {
+    id: number | undefined;
+    systemType: string;
+    code: string;
+    name: string;
+    monthlyFee: number | undefined;
+    activationTime: moment.Moment | undefined;
+    deactivationTime: moment.Moment | undefined;
+    features: { [key: string] : string; } | undefined;
+    memberServiceLevels: MemberServiceLevelDto[] | undefined;
+}
+
+export class SystemTypeDto implements ISystemTypeDto {
+    code!: string | undefined;
+
+    constructor(data?: ISystemTypeDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.code = data["code"];
+        }
+    }
+
+    static fromJS(data: any): SystemTypeDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new SystemTypeDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["code"] = this.code;
+        return data; 
+    }
+}
+
+export interface ISystemTypeDto {
+    code: string | undefined;
+}
+
+export class MemberServiceLevelBaseDto implements IMemberServiceLevelBaseDto {
+    id!: number | undefined;
+    code!: string;
+
+    constructor(data?: IMemberServiceLevelBaseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.code = data["code"];
+        }
+    }
+
+    static fromJS(data: any): MemberServiceLevelBaseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MemberServiceLevelBaseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["code"] = this.code;
+        return data; 
+    }
+}
+
+export interface IMemberServiceLevelBaseDto {
+    id: number | undefined;
+    code: string;
+}
+
+export class CreateOrUpdateMemberServiceOutput implements ICreateOrUpdateMemberServiceOutput {
+    id!: number | undefined;
+    memberServiceLevels!: MemberServiceLevelBaseDto[] | undefined;
+
+    constructor(data?: ICreateOrUpdateMemberServiceOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            if (data["memberServiceLevels"] && data["memberServiceLevels"].constructor === Array) {
+                this.memberServiceLevels = [];
+                for (let item of data["memberServiceLevels"])
+                    this.memberServiceLevels.push(MemberServiceLevelBaseDto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateOrUpdateMemberServiceOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrUpdateMemberServiceOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        if (this.memberServiceLevels && this.memberServiceLevels.constructor === Array) {
+            data["memberServiceLevels"] = [];
+            for (let item of this.memberServiceLevels)
+                data["memberServiceLevels"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICreateOrUpdateMemberServiceOutput {
+    id: number | undefined;
+    memberServiceLevels: MemberServiceLevelBaseDto[] | undefined;
 }
 
 export class UpdateUserAffiliateCodeDto implements IUpdateUserAffiliateCodeDto {
@@ -79150,222 +79546,6 @@ export class BankAccountUsers implements IBankAccountUsers {
 export interface IBankAccountUsers {
     bankAccountId: number | undefined;
     userIds: number[] | undefined;
-}
-
-export class ServiceProductLevelDto implements IServiceProductLevelDto {
-    name!: string;
-    monthlyFee!: number | undefined;
-    activationTime!: moment.Moment | undefined;
-    deactivationTime!: moment.Moment | undefined;
-    id!: number | undefined;
-    code!: string;
-
-    constructor(data?: IServiceProductLevelDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.name = data["name"];
-            this.monthlyFee = data["monthlyFee"];
-            this.activationTime = data["activationTime"] ? moment(data["activationTime"].toString()) : <any>undefined;
-            this.deactivationTime = data["deactivationTime"] ? moment(data["deactivationTime"].toString()) : <any>undefined;
-            this.id = data["id"];
-            this.code = data["code"];
-        }
-    }
-
-    static fromJS(data: any): ServiceProductLevelDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ServiceProductLevelDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["name"] = this.name;
-        data["monthlyFee"] = this.monthlyFee;
-        data["activationTime"] = this.activationTime ? this.activationTime.toISOString() : <any>undefined;
-        data["deactivationTime"] = this.deactivationTime ? this.deactivationTime.toISOString() : <any>undefined;
-        data["id"] = this.id;
-        data["code"] = this.code;
-        return data; 
-    }
-}
-
-export interface IServiceProductLevelDto {
-    name: string;
-    monthlyFee: number | undefined;
-    activationTime: moment.Moment | undefined;
-    deactivationTime: moment.Moment | undefined;
-    id: number | undefined;
-    code: string;
-}
-
-export class ServiceProductDto implements IServiceProductDto {
-    id!: number | undefined;
-    systemType!: string;
-    code!: string;
-    name!: string;
-    monthlyFee!: number | undefined;
-    activationTime!: moment.Moment | undefined;
-    deactivationTime!: moment.Moment | undefined;
-    serviceProductLevels!: ServiceProductLevelDto[] | undefined;
-
-    constructor(data?: IServiceProductDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.systemType = data["systemType"];
-            this.code = data["code"];
-            this.name = data["name"];
-            this.monthlyFee = data["monthlyFee"];
-            this.activationTime = data["activationTime"] ? moment(data["activationTime"].toString()) : <any>undefined;
-            this.deactivationTime = data["deactivationTime"] ? moment(data["deactivationTime"].toString()) : <any>undefined;
-            if (data["serviceProductLevels"] && data["serviceProductLevels"].constructor === Array) {
-                this.serviceProductLevels = [];
-                for (let item of data["serviceProductLevels"])
-                    this.serviceProductLevels.push(ServiceProductLevelDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): ServiceProductDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ServiceProductDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["systemType"] = this.systemType;
-        data["code"] = this.code;
-        data["name"] = this.name;
-        data["monthlyFee"] = this.monthlyFee;
-        data["activationTime"] = this.activationTime ? this.activationTime.toISOString() : <any>undefined;
-        data["deactivationTime"] = this.deactivationTime ? this.deactivationTime.toISOString() : <any>undefined;
-        if (this.serviceProductLevels && this.serviceProductLevels.constructor === Array) {
-            data["serviceProductLevels"] = [];
-            for (let item of this.serviceProductLevels)
-                data["serviceProductLevels"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface IServiceProductDto {
-    id: number | undefined;
-    systemType: string;
-    code: string;
-    name: string;
-    monthlyFee: number | undefined;
-    activationTime: moment.Moment | undefined;
-    deactivationTime: moment.Moment | undefined;
-    serviceProductLevels: ServiceProductLevelDto[] | undefined;
-}
-
-export class ServiceProductLevelBaseDto implements IServiceProductLevelBaseDto {
-    id!: number | undefined;
-    code!: string;
-
-    constructor(data?: IServiceProductLevelBaseDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.code = data["code"];
-        }
-    }
-
-    static fromJS(data: any): ServiceProductLevelBaseDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ServiceProductLevelBaseDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["code"] = this.code;
-        return data; 
-    }
-}
-
-export interface IServiceProductLevelBaseDto {
-    id: number | undefined;
-    code: string;
-}
-
-export class CreateOrUpdateServiceProductOutput implements ICreateOrUpdateServiceProductOutput {
-    memberServiceId!: number | undefined;
-    memberServiceLevels!: ServiceProductLevelBaseDto[] | undefined;
-
-    constructor(data?: ICreateOrUpdateServiceProductOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.memberServiceId = data["memberServiceId"];
-            if (data["memberServiceLevels"] && data["memberServiceLevels"].constructor === Array) {
-                this.memberServiceLevels = [];
-                for (let item of data["memberServiceLevels"])
-                    this.memberServiceLevels.push(ServiceProductLevelBaseDto.fromJS(item));
-            }
-        }
-    }
-
-    static fromJS(data: any): CreateOrUpdateServiceProductOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new CreateOrUpdateServiceProductOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["memberServiceId"] = this.memberServiceId;
-        if (this.memberServiceLevels && this.memberServiceLevels.constructor === Array) {
-            data["memberServiceLevels"] = [];
-            for (let item of this.memberServiceLevels)
-                data["memberServiceLevels"].push(item.toJSON());
-        }
-        return data; 
-    }
-}
-
-export interface ICreateOrUpdateServiceProductOutput {
-    memberServiceId: number | undefined;
-    memberServiceLevels: ServiceProductLevelBaseDto[] | undefined;
 }
 
 export class UserLoginInfoDto implements IUserLoginInfoDto {

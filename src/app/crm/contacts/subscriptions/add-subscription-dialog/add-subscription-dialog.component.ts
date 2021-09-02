@@ -21,8 +21,8 @@ import {
     OrderSubscriptionServiceProxy,
     SubscriptionInput,
     UpdateOrderSubscriptionInput,
-    ServiceProductServiceProxy,
-    ServiceProductDto,
+    MemberServiceServiceProxy,
+    MemberServiceDto,
     ProductServiceProxy,
     RecurringPaymentFrequency,
     ProductDto,
@@ -50,7 +50,7 @@ import { AppPermissions } from '@shared/AppPermissions';
         '../../../../shared/common/styles/form.less',
         './add-subscription-dialog.component.less'
     ],
-    providers: [ServiceProductServiceProxy, ProductServiceProxy]
+    providers: [MemberServiceServiceProxy, ProductServiceProxy]
 })
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     @ViewChild('productGroup', { static: false }) validationProductGroup: DxValidationGroupComponent;
@@ -63,7 +63,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     readonly addNewItemId = -1;
     products: ProductDto[];
     paymentPeriodTypes: RecurringPaymentFrequency[] = [];
-    serviceTypes: ServiceProductDto[] = null;
+    serviceTypes: MemberServiceDto[] = null;
 
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         productCode: undefined,
@@ -96,7 +96,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     constructor(
         private elementRef: ElementRef,
         private orderSubscriptionProxy: OrderSubscriptionServiceProxy,
-        private serviceProductProxy: ServiceProductServiceProxy,
+        private serviceProductProxy: MemberServiceServiceProxy,
         private productProxy: ProductServiceProxy,
         private notify: NotifyService,
         private contactsService: ContactsService,
@@ -206,7 +206,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         if (!event.value)
             return;
 
-        let selectedItem: ServiceProductDto = event.component.option('selectedItem');
+        let selectedItem: MemberServiceDto = event.component.option('selectedItem');
         if (selectedItem.id == this.addNewItemId) {
             this.showAddServiceProductDialog(event.component, event.previousValue);
         } else {
@@ -228,7 +228,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         }
     }
 
-    setServiceProduct(item: ServiceProductDto, sub: SubscriptionInput) {
+    setServiceProduct(item: MemberServiceDto, sub: SubscriptionInput) {
         sub['serviceProduct'] = item;
         sub.name = item.name;
         sub.amount = item.monthlyFee ? item.monthlyFee : null;
@@ -237,7 +237,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         sub['maxStartDate'] = item.deactivationTime;
 
         sub.level = null;
-        sub['levels'] = item.serviceProductLevels.length ? item.serviceProductLevels : null;
+        sub['levels'] = item.memberServiceLevels.length ? item.memberServiceLevels : null;
     }
 
     onStartDateChanged(subscription) {
@@ -256,7 +256,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             }
         });
 
-        dialogRef.afterClosed().subscribe((res: ServiceProductDto) => {
+        dialogRef.afterClosed().subscribe((res: MemberServiceDto) => {
             if (res) {
                 this.serviceTypes.splice(this.serviceTypes.length - 1, 0, res);
                 component.option('value', res.code);
