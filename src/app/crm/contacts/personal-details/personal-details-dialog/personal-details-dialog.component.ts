@@ -68,6 +68,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         verification: true
     };
 
+    private NoName = `<${this.ls.l('ClientNoName')}>`;
+
     private slider: any;
     private affiliateCode: ReplaySubject<string> = new ReplaySubject(1);
     private readonly ident = 'PersonalDetailsDialog';

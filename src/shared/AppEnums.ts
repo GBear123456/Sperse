@@ -96,8 +96,9 @@ export class AddressUsageType {
 }
 
 export class ContactTypes {
-    static Personal = 'personal';
-    static Business = 'business';
+    static Person = 'P';
+    static Organization = 'O';
+    static Property = 'Y';
 }
 
 export class ContactStatus {
