@@ -1,7 +1,7 @@
 <header>
-    <h2 mat-dialog-title>{{ls.l('AddService')}}</h2>
+    <h2 mat-dialog-title>{{ls.l((serviceProduct.id ? 'Edit' : 'Add') + 'Service')}}</h2>
     <mat-dialog-actions>
-        <button mat-button (click)="saveService()" class="button-layout button-primary">{{ls.l('Save')}}</button>
+        <button mat-button (click)="saveService()" class="button-layout button-primary">{{ls.l(serviceProduct.id ? 'Update' : 'Save')}}</button>
     </mat-dialog-actions>
     <span class="close" (click)="close()"></span>
 </header>
@@ -30,23 +30,23 @@
                 </dx-validator>
             </dx-text-box>
         </div>
-        <!-- div class="field">
-            <label for="activationTime">{{ls.l('StartDate')}}</label>
-            <dx-date-box [min]="today"
-                width="300px"
-                type="date"
-                [(value)]="serviceProduct.activationTime"
-                (onValueChanged)="detectChanges()">
-            </dx-date-box>
-        </div>
         <div class="field">
-            <label for="deactivationTime">{{ls.l('EndDate')}}</label>
-            <dx-date-box [min]="serviceProduct.activationTime"
+            <label for="name">{{ls.l('Type')}}</label>
+            <dx-select-box 
+                name="type"
                 width="300px"
-                type="date"
-                [(value)]="serviceProduct.deactivationTime">
-            </dx-date-box>
-        </div -->
+                [dataSource]="systemTypes"
+                [inputAttr]="{ id: 'type' }"
+                [(value)]="serviceProduct.systemType"
+                (onValueChanged)="onSystemTypeChanged($event)">
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{ls.l('TypeIsRequired')}}."></dxi-validation-rule>
+                </dx-validator>
+            </dx-select-box>
+        </div>
+        <div class="field features">
+            <feature-tree [editData]="featuresData"></feature-tree>
+        </div>
         <div class="levels-header">
             {{ls.l('ServiceLevels')}}:
         </div>
@@ -74,37 +74,9 @@
                     </dx-validator>
                 </dx-text-box>
             </div>
-            <div class="field">
-                <label for="name">{{ls.l('Type')}}</label>
-                <dx-select-box 
-                    name="type"
-                    width="250px"
-                    [dataSource]="systemTypes"
-                    [inputAttr]="{ id: 'type' }"
-                    [(value)]="serviceLevel.systemType"
-                    (onValueChanged)="onSystemTypeChanged($event)">
-                    <dx-validator>
-                        <dxi-validation-rule type="required" message="{{ls.l('TypeIsRequired')}}."></dxi-validation-rule>
-                    </dx-validator>
-                </dx-select-box>
+            <div class="field features">
+                <feature-tree [editData]="getServiceLevelFeatures(serviceLevel)"></feature-tree>
             </div>
-            <!-- div class="field">
-                <label for="activationTime">{{ls.l('StartDate')}}</label>
-                <dx-date-box [min]="today"
-                    width="250px"
-                    type="date"
-                    [(value)]="serviceLevel.activationTime"
-                    (onValueChanged)="detectChanges()">
-                </dx-date-box>
-            </div>
-            <div class="field">
-                <label for="deactivationTime">{{ls.l('EndDate')}}</label>
-                <dx-date-box [min]="serviceLevel.activationTime"
-                    width="250px"
-                    type="date"
-                    [(value)]="serviceLevel.deactivationTime">
-                </dx-date-box>
-            </div -->
         </div>
         <div class="field">
             <div class="add-new-button" (click)="addNewLevelFields()"><span>+ Add</span></div>

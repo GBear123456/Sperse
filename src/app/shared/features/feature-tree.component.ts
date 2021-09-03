@@ -6,7 +6,7 @@ import some from 'lodash/some';
 import each from 'lodash/each';
 
 /** Application imports */
-import { FeatureTreeEditModel } from '@app/admin/shared/feature-tree-edit.model';
+import { FeatureTreeEditModel } from '@app/shared/features/feature-tree-edit.model';
 import { FlatFeatureDto, NameValueDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -16,7 +16,6 @@ import { FlatFeatureDto, NameValueDto } from '@shared/service-proxies/service-pr
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeatureTreeComponent implements AfterViewInit {
-    @Input()
     @Input() set editData(val: FeatureTreeEditModel) {
         if (val) {
             this._editData = val;
@@ -66,7 +65,6 @@ export class FeatureTreeComponent implements AfterViewInit {
         }
 
         this.createdTreeBefore = false;
-
         if (!this._editData || !this.$tree) {
             return;
         }
@@ -202,6 +200,7 @@ export class FeatureTreeComponent implements AfterViewInit {
             if (!feature || !feature.inputType) {
                 return;
             }
+console.log(feature);
 
             if (feature.inputType.name === 'CHECKBOX') {
                 //no change for checkbox

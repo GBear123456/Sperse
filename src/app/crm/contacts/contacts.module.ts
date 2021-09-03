@@ -91,6 +91,7 @@ import { TemplateDocumentsDialogComponent } from './documents/template-documents
 import { DocumentTypesListComponent } from './document-types-list/document-types-list.component';
 import { PermissionTreeComponent } from './permission-tree/permission-tree.component';
 import { ContactsRoutingModule } from './contacts-routing.module';
+import { FeaturesModule } from '@app/shared/features/features.module';
 import {
     ContactServiceProxy,
     MemberServiceProxy,
@@ -280,7 +281,8 @@ import { PropertyInformationComponent } from '@app/crm/contacts/property-informa
         OrgUnitsTreeModule,
         MatExpansionModule,
         GooglePlaceModule,
-        MatTooltipModule
+        MatTooltipModule,
+        FeaturesModule
     ],
     entryComponents: [
         CreateInvoiceDialogComponent,

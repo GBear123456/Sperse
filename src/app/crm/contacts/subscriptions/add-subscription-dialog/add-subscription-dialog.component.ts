@@ -248,12 +248,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         let dialogRef = this.dialog.open(AddServiceProductDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
-            closeOnNavigation: false,
-            data: {
-                title: this.ls.l('Edit Template'),
-                templateType: 'Contact',
-                saveTitle: this.ls.l('Save')
-            }
+            closeOnNavigation: false
         });
 
         dialogRef.afterClosed().subscribe((res: MemberServiceDto) => {
