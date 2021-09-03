@@ -7690,6 +7690,58 @@ export class CommissionServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    updateCommissionAffiliate(body: UpdateCommissionAffiliateInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Commission/UpdateCommissionAffiliate";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateCommissionAffiliate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateCommissionAffiliate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateCommissionAffiliate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     cancelCommissions(body: number[] | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Commission/CancelCommissions";
         url_ = url_.replace(/[?&]$/, "");
@@ -50453,6 +50505,62 @@ export interface IUpdateCommissionRateInput {
     commissionRate: number;
 }
 
+export class UpdateCommissionAffiliateInput implements IUpdateCommissionAffiliateInput {
+    commissionIds!: number[] | undefined;
+    affiliateContactId!: number;
+    assignToBuyerContact!: boolean | undefined;
+    reassignTier2Commissions!: boolean | undefined;
+
+    constructor(data?: IUpdateCommissionAffiliateInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["commissionIds"] && data["commissionIds"].constructor === Array) {
+                this.commissionIds = [];
+                for (let item of data["commissionIds"])
+                    this.commissionIds.push(item);
+            }
+            this.affiliateContactId = data["affiliateContactId"];
+            this.assignToBuyerContact = data["assignToBuyerContact"];
+            this.reassignTier2Commissions = data["reassignTier2Commissions"];
+        }
+    }
+
+    static fromJS(data: any): UpdateCommissionAffiliateInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateCommissionAffiliateInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.commissionIds && this.commissionIds.constructor === Array) {
+            data["commissionIds"] = [];
+            for (let item of this.commissionIds)
+                data["commissionIds"].push(item);
+        }
+        data["affiliateContactId"] = this.affiliateContactId;
+        data["assignToBuyerContact"] = this.assignToBuyerContact;
+        data["reassignTier2Commissions"] = this.reassignTier2Commissions;
+        return data; 
+    }
+}
+
+export interface IUpdateCommissionAffiliateInput {
+    commissionIds: number[] | undefined;
+    affiliateContactId: number;
+    assignToBuyerContact: boolean | undefined;
+    reassignTier2Commissions: boolean | undefined;
+}
+
 export class RecordEarningsInput implements IRecordEarningsInput {
     contactIds!: number[] | undefined;
     startDate!: moment.Moment;
@@ -53978,6 +54086,7 @@ export interface ISimilarContactOutput {
 export class SourceContactInfo implements ISourceContactInfo {
     id!: number | undefined;
     groupId!: string | undefined;
+    typeId!: string | undefined;
     affiliateCode!: string | undefined;
     companyName!: string | undefined;
     personName!: string | undefined;
@@ -53996,6 +54105,7 @@ export class SourceContactInfo implements ISourceContactInfo {
         if (data) {
             this.id = data["id"];
             this.groupId = data["groupId"];
+            this.typeId = data["typeId"];
             this.affiliateCode = data["affiliateCode"];
             this.companyName = data["companyName"];
             this.personName = data["personName"];
@@ -54014,6 +54124,7 @@ export class SourceContactInfo implements ISourceContactInfo {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["groupId"] = this.groupId;
+        data["typeId"] = this.typeId;
         data["affiliateCode"] = this.affiliateCode;
         data["companyName"] = this.companyName;
         data["personName"] = this.personName;
@@ -54025,6 +54136,7 @@ export class SourceContactInfo implements ISourceContactInfo {
 export interface ISourceContactInfo {
     id: number | undefined;
     groupId: string | undefined;
+    typeId: string | undefined;
     affiliateCode: string | undefined;
     companyName: string | undefined;
     personName: string | undefined;
@@ -81848,8 +81960,13 @@ export enum Currency {
 }
 
 export enum Tier2CommissionSource {
-    CommissionableValue = "CommissionableValue", 
     CommissionAmount = "CommissionAmount", 
+    CommissionableValue = "CommissionableValue", 
+}
+
+export enum CommissionAffiliateAssignmentMode {
+    Linear = "Linear", 
+    Dynamic = "Dynamic", 
 }
 
 export class InvoiceSettings implements IInvoiceSettings {
@@ -81863,6 +81980,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     showShippingAddress!: boolean | undefined;
     defaultAffiliateRate!: number | undefined;
     tier2CommissionSource!: Tier2CommissionSource | undefined;
+    commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode | undefined;
 
     constructor(data?: IInvoiceSettings) {
         if (data) {
@@ -81885,6 +82003,7 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.showShippingAddress = data["showShippingAddress"];
             this.defaultAffiliateRate = data["defaultAffiliateRate"];
             this.tier2CommissionSource = data["tier2CommissionSource"];
+            this.commissionAffiliateAssignmentMode = data["commissionAffiliateAssignmentMode"];
         }
     }
 
@@ -81907,6 +82026,7 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["showShippingAddress"] = this.showShippingAddress;
         data["defaultAffiliateRate"] = this.defaultAffiliateRate;
         data["tier2CommissionSource"] = this.tier2CommissionSource;
+        data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
         return data; 
     }
 }
@@ -81922,6 +82042,7 @@ export interface IInvoiceSettings {
     showShippingAddress: boolean | undefined;
     defaultAffiliateRate: number | undefined;
     tier2CommissionSource: Tier2CommissionSource | undefined;
+    commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode | undefined;
 }
 
 export class TenantUserManagementSettingsEditDto implements ITenantUserManagementSettingsEditDto {

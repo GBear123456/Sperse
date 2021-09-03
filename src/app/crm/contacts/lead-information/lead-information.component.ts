@@ -189,8 +189,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
     ngOnInit() {
         this.contactsService.leadInfoSubscribe(leadInfo => {
             this.data.leadInfo = leadInfo;
-            this.sourceContactName = leadInfo
-                && leadInfo.sourceContactName;
+            this.sourceContactName = leadInfo && leadInfo.sourceContactName || `<${this.ls.l('ClientNoName')}>`;
         }, this.ident);
         this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo) {
