@@ -200,7 +200,6 @@ export class FeatureTreeComponent implements AfterViewInit {
             if (!feature || !feature.inputType) {
                 return;
             }
-console.log(feature);
 
             if (feature.inputType.name === 'CHECKBOX') {
                 //no change for checkbox
