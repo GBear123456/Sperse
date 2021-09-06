@@ -98,15 +98,22 @@
         margin-bottom: 15px;
         position: relative;
         
-        dx-select-box[name="name"] {
+        .name-wrapper {
+            width: 270px;
             position: relative;
-            right: -15px;
-        }
 
-        .fa-pencil {
-            cursor: pointer;
-            position: absolute;
-            right: -15px;
+            dx-select-box[name="name"] {
+                display: inline-block;
+            }
+
+            .fa-pencil {
+                width: 15px;
+                cursor: pointer;
+                display: inline-block;
+                position: absolute;
+                right: -20px;
+                top: 20px;
+            }
         }
 
         .fa-close {

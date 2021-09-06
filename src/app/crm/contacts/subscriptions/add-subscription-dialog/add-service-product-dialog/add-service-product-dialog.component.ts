@@ -104,8 +104,7 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
                 features: features,
                 featureValues: features.map(feature => new FeatureValuesDto({
                     name: feature.name,
-                    value: this.serviceProduct.features[feature.name] || feature.defaultValue,
-                    defaultValue: feature.defaultValue
+                    value: this.serviceProduct.features[feature.name] || feature.defaultValue
                 }))
             };
             this.detectChanges();
@@ -138,9 +137,10 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
             if (this.serviceProduct.deactivationTime)
                 this.serviceProduct.deactivationTime = DateHelper.removeTimezoneOffset(new Date(this.serviceProduct.deactivationTime), true, 'to');
             this.serviceProduct.memberServiceLevels.forEach(level => {
-                level['featureValues'].forEach(feature => {
-                    if (feature.value != null && feature.value != undefined)
-                        level.features[feature.name] = feature.value;
+                level['featureValues'].forEach((feature, index) => {
+                    if (feature.value != null && feature.value != undefined &&
+                        feature.value != this.featuresData.featureValues[index].value
+                    ) level.features[feature.name] = feature.value;
                 });
                 if (level.activationTime)
                     level.activationTime = DateHelper.removeTimezoneOffset(new Date(level.activationTime), true, 'from');
@@ -148,9 +148,10 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
                     level.deactivationTime = DateHelper.removeTimezoneOffset(new Date(level.deactivationTime), true, 'to');
             });
 
-            this.featuresData.featureValues.forEach(feature => {
-                if (feature.value != null && feature.value != undefined)
-                    this.serviceProduct.features[feature.name] = feature.value;
+            this.featuresData.featureValues.forEach((feature, index) => {
+                if (feature.value != null && feature.value != undefined &&
+                    feature.value != this.featuresData.features[index].defaultValue
+                ) this.serviceProduct.features[feature.name] = feature.value;
             });
             this.serviceProductProxy.createOrUpdate(this.serviceProduct).subscribe(res => {
                 if (!this.serviceProduct.id)
@@ -187,8 +188,7 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
                 (feature, index) => new FeatureValuesDto({
                     name: feature.name,
                     value: level.features[feature.name] || 
-                        this.featuresData.featureValues[index].value,
-                    defaultValue: this.featuresData.featureValues[index].value
+                        this.featuresData.featureValues[index].value
                 })
             );
         }
@@ -202,7 +202,13 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
             this.defineFeatureLevelValues(serviceLevel);
 
         return {
-            features: this.featuresData.features,
+            features: this.featuresData.features.map((feature, index) => {
+                return {
+                    ...feature,
+                    defaultValue: this.featuresData.featureValues[index].value
+                        || feature.defaultValue
+                };
+            }),
             featureValues: serviceLevel['featureValues']
         };
     }

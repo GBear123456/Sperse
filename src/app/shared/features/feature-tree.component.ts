@@ -16,6 +16,7 @@ import { FlatFeatureDto, NameValueDto } from '@shared/service-proxies/service-pr
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeatureTreeComponent implements AfterViewInit {
+    @Input() showResetToDefault: boolean = false;
     @Input() set editData(val: FeatureTreeEditModel) {
         if (val) {
             this._editData = val;
@@ -195,7 +196,10 @@ export class FeatureTreeComponent implements AfterViewInit {
 
             const featureName = $nodeLi.attr('id');
             const feature = self.findFeatureByName(featureName);
-            const featureValue = self.findFeatureValueByName(featureName) || '';
+            const featureDefaultValue = feature.defaultValue || '';
+            let featureValue = self.findFeatureValueByName(featureName) || '';
+            if (featureValue == featureDefaultValue)
+                featureValue = '';
 
             if (!feature || !feature.inputType) {
                 return;
@@ -215,8 +219,11 @@ export class FeatureTreeComponent implements AfterViewInit {
                         }
                     }
 
-                    const $textbox = $('<input class="feature-tree-textbox" type="' + inputType + '" />')
-                        .val(featureValue);
+                    const $textbox = $(
+                        '<input class="feature-tree-textbox" type="' + inputType +                        
+                        '" placeholder="' + featureDefaultValue + '"' + 
+                        (self.showResetToDefault ? ' required' : '') + '/>'
+                    ).val(featureValue);
 
                     if (inputType === 'number') {
                         $textbox.attr('min', validator.minValue);
@@ -245,7 +252,14 @@ export class FeatureTreeComponent implements AfterViewInit {
                         }
                     });
 
-                    $textbox.appendTo($nodeLi);
+                    if (self.showResetToDefault) {
+                        let $form = $('<form></form>'),
+                            $reset = $('<button type="reset">');
+                        $textbox.appendTo($form);
+                        $reset.appendTo($form);
+                        $form.appendTo($nodeLi);
+                    } else
+                        $textbox.appendTo($nodeLi);
                 }
             } else if (feature.inputType.name === 'COMBOBOX') {
                 if (!$nodeLi.find('.feature-tree-combobox').length) {
