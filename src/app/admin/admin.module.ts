@@ -59,7 +59,7 @@ import { RolesComponent } from './roles/roles.component';
 import { HostSettingsComponent } from './settings/host-settings/host-settings.component';
 import { TenantSettingsComponent } from './settings/tenant-settings/tenant-settings.component';
 import { EditionComboComponent } from './shared/edition-combo.component';
-import { FeatureTreeComponent } from './shared/feature-tree.component';
+import { FeaturesModule } from '@app/shared/features/features.module';
 import { OrganizationUnitsTreeComponent } from './shared/organization-units-tree/organization-units-tree.component';
 import { PermissionComboComponent } from './shared/permission-combo.component';
 import { PermissionTreeComponent } from './shared/permission-tree.component';
@@ -138,7 +138,8 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         ItemDetailsLayoutModule,
         LoadingSpinnerModule,
         ActionMenuModule,
-        ModalDialogModule
+        ModalDialogModule,
+        FeaturesModule
     ],
     declarations: [
         UsersComponent,
@@ -170,7 +171,6 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         UiCustomizationComponent,
         EditionsComponent,
         CreateOrEditEditionModalComponent,
-        FeatureTreeComponent,
         EditionComboComponent,
         TenantsComponent,
         CreateTenantModalComponent,
@@ -202,4 +202,4 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
     ]
 })
 
-export class AdminModule { }
+export class AdminModule {}

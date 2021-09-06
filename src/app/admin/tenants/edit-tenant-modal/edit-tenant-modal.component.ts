@@ -33,7 +33,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ModulesEditionsSelectComponent } from '../modules-edtions-select.component.ts/modules-editions-select.component';
-import { FeatureTreeComponent } from '@admin/shared/feature-tree.component';
+import { FeatureTreeComponent } from '@app/shared/features/feature-tree.component';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { MessageService } from '@abp/message/message.service';
 import { StorageChangeDialog } from './storage-change-dialog/storage-change-dialog.component';

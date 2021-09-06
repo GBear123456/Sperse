@@ -24,9 +24,11 @@ import {
     MemberServiceLevelDto,
     FlatFeatureDto,
     SystemTypeDto,
+    NameValueDto,
     LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { FeatureTreeEditModel, FeatureValuesDto } from '@app/shared/features/feature-tree-edit.model';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -53,6 +55,7 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
         filter(Boolean), map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
     );
     systemTypes: string[];
+    featuresData: FeatureTreeEditModel;
 
     constructor(
         private elementRef: ElementRef,
@@ -70,22 +73,42 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
                 top: '75px',
                 right: '-100vw'
             });
-        });
+        });        
 
         this.serviceProductProxy.getSystemTypes().subscribe((types: SystemTypeDto[]) => {
             this.systemTypes = types.map(type => type.code);
-            this.serviceProduct.systemType = this.systemTypes[0];
-            //this.userManagementService.isLayout(LayoutType.BankCode) ? 'BANKCODE' : 'General';
+            if (data && data.service)
+                this.onSystemTypeChanged({value: data.service.systemType});
+            else {
+                this.serviceProduct.systemType = this.systemTypes[0];
+                this.detectChanges();
+            }
         });
 
-        this.serviceProduct = new MemberServiceDto();
-        this.serviceProduct.memberServiceLevels = [];
+        if (data && data.service)
+            this.serviceProduct = data.service;
+        else
+            this.serviceProduct = new MemberServiceDto();
+
+        if (!this.serviceProduct.memberServiceLevels)
+            this.serviceProduct.memberServiceLevels = [];
+        if (!this.serviceProduct.features)
+            this.serviceProduct.features = {};
     }
 
     onSystemTypeChanged(event) {
         this.serviceProductProxy.getSystemFeatures(
             event.value
         ).subscribe((features: FlatFeatureDto[]) => {
+            this.featuresData = {
+                features: features,
+                featureValues: features.map(feature => new FeatureValuesDto({
+                    name: feature.name,
+                    value: this.serviceProduct.features[feature.name] || feature.defaultValue,
+                    defaultValue: feature.defaultValue
+                }))
+            };
+            this.detectChanges();
         });        
     }
 
@@ -114,13 +137,21 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
                 this.serviceProduct.activationTime = DateHelper.removeTimezoneOffset(new Date(this.serviceProduct.activationTime), true, 'from');
             if (this.serviceProduct.deactivationTime)
                 this.serviceProduct.deactivationTime = DateHelper.removeTimezoneOffset(new Date(this.serviceProduct.deactivationTime), true, 'to');
-            this.serviceProduct.memberServiceLevels.map(level => {
+            this.serviceProduct.memberServiceLevels.forEach(level => {
+                level['featureValues'].forEach(feature => {
+                    if (feature.value != null && feature.value != undefined)
+                        level.features[feature.name] = feature.value;
+                });
                 if (level.activationTime)
                     level.activationTime = DateHelper.removeTimezoneOffset(new Date(level.activationTime), true, 'from');
                 if (level.deactivationTime)
                     level.deactivationTime = DateHelper.removeTimezoneOffset(new Date(level.deactivationTime), true, 'to');
             });
 
+            this.featuresData.featureValues.forEach(feature => {
+                if (feature.value != null && feature.value != undefined)
+                    this.serviceProduct.features[feature.name] = feature.value;
+            });
             this.serviceProductProxy.createOrUpdate(this.serviceProduct).subscribe(res => {
                 if (!this.serviceProduct.id)
                     this.serviceProduct.id = res.id;
@@ -143,9 +174,37 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     addNewLevelFields() {
-        this.serviceProduct.memberServiceLevels.push(
-            new MemberServiceLevelDto()
-        );
+        let level = new MemberServiceLevelDto();
+        level.features = {};
+        this.defineFeatureLevelValues(level);
+        this.serviceProduct.memberServiceLevels.push(level);
+    }
+
+    defineFeatureLevelValues(level) {
+        if (this.featuresData) {
+            let features = this.featuresData.features;
+            level['featureValues'] = features.map(
+                (feature, index) => new FeatureValuesDto({
+                    name: feature.name,
+                    value: level.features[feature.name] || 
+                        this.featuresData.featureValues[index].value,
+                    defaultValue: this.featuresData.featureValues[index].value
+                })
+            );
+        }
+    }
+
+    getServiceLevelFeatures(serviceLevel) {
+        if (!this.featuresData)
+            return undefined;
+
+        if (!serviceLevel['featureValues'])
+            this.defineFeatureLevelValues(serviceLevel);
+
+        return {
+            features: this.featuresData.features,
+            featureValues: serviceLevel['featureValues']
+        };
     }
 
     removeLevelFields(index) {

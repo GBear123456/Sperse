@@ -28,7 +28,7 @@ import {
     GetEditionEditOutput,
     SubscribableEditionComboboxItemDtoListResultDto
 } from '@shared/service-proxies/service-proxies';
-import { FeatureTreeComponent } from '../../shared/feature-tree.component';
+import { FeatureTreeComponent } from '@app/shared/features/feature-tree.component';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';

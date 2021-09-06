@@ -272,16 +272,29 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.detectChanges();
     }
 
+    showEditServiceProductDialog(service: ProductServiceInfo, component: any) {
+        let memberService = this.services.find(item => item.id == service.memberServiceId);
+        if (memberService)
+            this.dialog.open(AddServiceProductDialogComponent, {
+                panelClass: 'slider',
+                disableClose: true,
+                closeOnNavigation: false,
+                data: {
+                    service: memberService
+                }
+            }).afterClosed().subscribe((service: MemberServiceDto) => {
+                if (service) {
+                    component.instance.repaint();
+                    this.detectChanges();
+                }
+            });
+    }
+
     showAddServiceProductDialog(component, previousValue: string) {
         this.dialog.open(AddServiceProductDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
-            closeOnNavigation: false,
-            data: {
-                title: this.ls.l('EditTemplate'),
-                templateType: 'Contact',
-                saveTitle: this.ls.l('Save')
-            }
+            closeOnNavigation: false
         }).afterClosed().subscribe((service: MemberServiceDto) => {
             if (service) {
                 this.services.splice(this.services.length - 1, 0, service);
@@ -314,6 +327,6 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     detectChanges() {
-        this.changeDetection.detectChanges();
+        this.changeDetection.markForCheck();
     }
 }
