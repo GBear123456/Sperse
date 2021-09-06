@@ -129,14 +129,16 @@ export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
                 });
             }
         });
-        $(this.topBarUserProfile.nativeElement)['mDropdown']().on('beforeHide', () => {
-            this.closeBankCodeDialogs();
+        $(this.topBarUserProfile.nativeElement)['mDropdown']().on('beforeHide', (e) => {
+            return this.closeBankCodeDialogs();
         });
     }
 
     private closeBankCodeDialogs() {
         if (this.bankCodeLetters) {
-            this.bankCodeLetters.closeDialog();
+            if (this.bankCodeLetters.editPopupIsOpened) {
+                return false;
+            }
         }
     }
 

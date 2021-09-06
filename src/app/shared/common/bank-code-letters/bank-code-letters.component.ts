@@ -42,10 +42,8 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @Input() reportLinkType: 'Sales' | 'Profile' = 'Sales';
     @Input() reportIconName: string;
     @Input() editDialogPosition: { x?: number, y?: number };
-    @Input() closeAfterEdit = false;
     @Input() updateOnServerAfterEdit = true;
     @Output() bankCodeChange: EventEmitter<string> = new EventEmitter<string>();
-    @Output() onBankCodeStarIdChange: EventEmitter<number> = new EventEmitter<number>();
     @HostBinding('class.active') @Input() active = true;
     @HostBinding('class.allow-add') @Input() allowAdd = false;
     @HostBinding('class.allow-edit') @Input() allowEdit = false;
@@ -134,7 +132,8 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
             this.editPopupIsOpened = true;
             const editDialog = this.dialog.open(BankCodeLettersEditorDialogComponent, {
                 id: 'bankCodeLettersEditorDialog',
-                hasBackdrop: false,
+                hasBackdrop: true,
+                backdropClass: 'no-backdrop',
                 position: DialogService.calculateDialogPosition(
                     e,
                     e.target.closest('div'),
@@ -155,12 +154,6 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
                 this.bankCode = bankCode;
                 this.bankCodeChange.emit(this.bankCode);
                 this.changeDetectorRef.detectChanges();
-                if (this.closeAfterEdit) {
-                    editDialog.close();
-                }
-            });
-            editDialog.componentInstance.bankCodeStarIdChange.subscribe((starId: number) => {
-                 this.onBankCodeStarIdChange.emit(starId);
             });
             e.stopPropagation();
             e.preventDefault();
