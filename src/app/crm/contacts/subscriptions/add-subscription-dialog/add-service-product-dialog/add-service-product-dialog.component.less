@@ -64,6 +64,19 @@
 
         &.features {
             padding: 20px 0;
+
+            ::ng-deep feature-tree {
+                .jstree-anchor {
+                    font-family: 'Lato';
+                }
+                .feature-tree-textbox {
+                    font-weight: 700;
+                    &::placeholder {
+                        font-weight: 500;
+                        font-style: italic;
+                    }
+                }
+            }
         }
     }
 

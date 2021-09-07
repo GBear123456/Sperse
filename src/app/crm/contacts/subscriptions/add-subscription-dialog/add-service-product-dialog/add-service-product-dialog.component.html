@@ -45,7 +45,7 @@
             </dx-select-box>
         </div>
         <div class="field features">
-            <feature-tree [editData]="featuresData"></feature-tree>
+            <feature-tree [showResetToDefault]="true" [editData]="featuresData"></feature-tree>
         </div>
         <div class="levels-header">
             {{ls.l('ServiceLevels')}}:
@@ -75,7 +75,7 @@
                 </dx-text-box>
             </div>
             <div class="field features">
-                <feature-tree [editData]="getServiceLevelFeatures(serviceLevel)"></feature-tree>
+                <feature-tree [showResetToDefault]="true" [editData]="getServiceLevelFeatures(serviceLevel)"></feature-tree>
             </div>
         </div>
         <div class="field">
