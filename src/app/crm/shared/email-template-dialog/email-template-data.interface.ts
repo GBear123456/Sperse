@@ -9,6 +9,7 @@ export interface EmailTemplateData {
     saveDisabled: boolean;
     suggestionEmails: string[];
     emailSettingsSource: EmailSettingsSource;
+    saveAttachmentsToDocuments: boolean;
     attachments: Partial<EmailAttachment>[];
     from: EmailFromInfo[];
     to: string[];

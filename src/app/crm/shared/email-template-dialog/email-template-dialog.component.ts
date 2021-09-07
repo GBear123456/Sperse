@@ -25,6 +25,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { CacheService } from 'ng2-cache-service';
 import {
     EmailTemplateServiceProxy,
     GetTemplatesResponse,
@@ -103,6 +104,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     forceValidationBypass = true;
     emailRegEx = AppConsts.regexPatterns.email;
 
+    storeAttachmentsToDocumentsCacheKey = 'StoreAttachmentsToDocuments';
+
     ckConfig: any = {
         enterMode: 3, /*CKEDITOR.ENTER_DIV*/
         pasteFilter: null,
@@ -144,6 +147,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         private notifyService: NotifyService,
         private profileService: ProfileService,
         private cacheHelper: CacheHelper,
+        private cacheService: CacheService,
         private contactProxy: ContactServiceProxy,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
@@ -151,7 +155,6 @@ export class EmailTemplateDialogComponent implements OnInit {
         private permission: AppPermissionService,
         private features: FeatureCheckerService,
         private communicationProxy: ContactCommunicationServiceProxy,
-        private documentsService: DocumentsService,
         public changeDetectorRef: ChangeDetectorRef,
         public appService: AppService,
         public dialog: MatDialog,
@@ -160,6 +163,9 @@ export class EmailTemplateDialogComponent implements OnInit {
     ) {
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
+
+        data.saveAttachmentsToDocuments = this.getAttachmentsToDocumentsCache();
+        console.log(data.saveAttachmentsToDocuments);
     }
 
     ngOnInit() {
@@ -268,6 +274,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
         setTimeout(() => {
             if (this.validateData()) {
+                this.storeAttachmentsToDocumentsCache();
                 if (this.templateEditMode)
                     this.saveTemplateData();
                 else {
@@ -343,6 +350,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                 if (id)
                     this.data.templateId = id;
                 this.onSave.emit(this.data);
+
                 if (this.isSaveAndClose())
                     this.close();
                 else
@@ -768,6 +776,21 @@ export class EmailTemplateDialogComponent implements OnInit {
             event.stopPropagation();
             event.preventDefault();
         }
+    }
+
+    storeAttachmentsToDocumentsCache() {
+        this.cacheService.set(
+            this.cacheHelper.getCacheKey(this.storeAttachmentsToDocumentsCacheKey),
+            this.data.saveAttachmentsToDocuments
+        );
+    }
+
+    getAttachmentsToDocumentsCache(): boolean {
+        let key = this.cacheHelper.getCacheKey(this.storeAttachmentsToDocumentsCacheKey);
+        if (this.cacheService.get(key) == false)
+            return false;
+
+        return true;
     }
 
     close() {

@@ -208,6 +208,7 @@
                         <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)" *ngIf="!templateEditMode">
                             <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
                                 <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>
+                                <dx-check-box *ngIf="attachments && attachments.length" class="saveToDocs" [(value)]="data.saveAttachmentsToDocuments" [rtlEnabled]="true" [text]="ls.l('Save to Documents')"></dx-check-box>
                             </ng-template>
                         </ngx-file-drop>
                     </div>

@@ -55701,6 +55701,7 @@ export class SendEmailInput implements ISendEmailInput {
     bcc!: string[] | undefined;
     subject!: string;
     body!: string;
+    saveAttachmentsToDocuments!: boolean | undefined;
     attachments!: FileInfo[] | undefined;
 
     constructor(data?: ISendEmailInput) {
@@ -55742,6 +55743,7 @@ export class SendEmailInput implements ISendEmailInput {
             }
             this.subject = data["subject"];
             this.body = data["body"];
+            this.saveAttachmentsToDocuments = data["saveAttachmentsToDocuments"];
             if (data["attachments"] && data["attachments"].constructor === Array) {
                 this.attachments = [];
                 for (let item of data["attachments"])
@@ -55784,6 +55786,7 @@ export class SendEmailInput implements ISendEmailInput {
         }
         data["subject"] = this.subject;
         data["body"] = this.body;
+        data["saveAttachmentsToDocuments"] = this.saveAttachmentsToDocuments;
         if (this.attachments && this.attachments.constructor === Array) {
             data["attachments"] = [];
             for (let item of this.attachments)
@@ -55803,6 +55806,7 @@ export interface ISendEmailInput {
     bcc: string[] | undefined;
     subject: string;
     body: string;
+    saveAttachmentsToDocuments: boolean | undefined;
     attachments: FileInfo[] | undefined;
 }
 
