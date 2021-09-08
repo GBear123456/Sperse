@@ -41,7 +41,6 @@ export class InplaceEditComponent extends AppComponentBase {
             this.value = this.valueOriginal = model.value;
             this.id = model.id;
             this.displayValue = model.displayValue;
-            this.value = model.value;
             this.link = model.link;
             this.validationRules = model.validationRules;
             this.isReadOnlyField = model.isReadOnlyField;
@@ -66,7 +65,7 @@ export class InplaceEditComponent extends AppComponentBase {
     @Input() maxLength;
     @Input() isOptional;
     @Input() label: string;
-    @Input() value: string;
+    @Input() value: any;
     @Input() displayValue: string;
     @Input() link: string;
     @Input() validationRules: object[];
@@ -91,6 +90,10 @@ export class InplaceEditComponent extends AppComponentBase {
     @Output() valueChanged: EventEmitter<any> = new EventEmitter();
     @Output() itemDeleted: EventEmitter<any> = new EventEmitter();
     @Output() openDialog: EventEmitter<any> = new EventEmitter();
+
+    get hasValue(): boolean {
+        return !!this.value || this.value == 0;
+    }
 
     valueOriginal = '';
     private _data: InplaceEditModel;
@@ -140,7 +143,7 @@ export class InplaceEditComponent extends AppComponentBase {
         if (this.isReadOnlyField)
             return ;
 
-        if (this.value) {
+        if (this.hasValue) {
             this._clickCounter++;
             clearTimeout(this._clickTimeout);
             this._clickTimeout = setTimeout(() => {
