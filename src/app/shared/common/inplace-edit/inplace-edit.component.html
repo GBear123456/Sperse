@@ -1,14 +1,14 @@
-<div *ngIf="value && label">{{ label }}</div>
+<div *ngIf="hasValue && label">{{ label }}</div>
 <div [hidden]="isEditModeEnabled"
      class="inplace-edit-view-mode {{multiline ? 'multiline': ''}}"
      (click)="setEditModeEnabled(true, $event)">
-    <span class="link" [ngClass]="{ 'placeholder': !value }" [attr.title]="link">
+    <span class="link" [ngClass]="{ 'placeholder': !hasValue }" [attr.title]="link">
         <a (click)="onLinkClick($event, link)" [attr.href]="link" [attr.title]="displayValue || value || editPlaceholder" target="_blank" #editText>
             <ng-container *ngIf="format?.style == 'currency'; else plaine">{{displayValue || (value | currency: format.currency) || editPlaceholder}}</ng-container>
             <ng-template #plaine>{{displayValue || value || editPlaceholder}}</ng-template>
         </a>
     </span>
-    <div class="actions {{ buttonsPosition }}" [ngClass]="{ empty: !displayValue && !value && !editPlaceholder}">
+    <div class="actions {{ buttonsPosition }}" [ngClass]="{ empty: !displayValue && !hasValue && !editPlaceholder}">
         <i *ngIf="isEditDialogEnabled"
            [ngClass]="{ hidden: isReadOnlyField }"
            class="edit fa fa-pencil"
@@ -21,13 +21,13 @@
            aria-hidden="true"
            (click)="showInput(true)">
         </i>
-        <i *ngIf="isDeleteEnabled && value"
+        <i *ngIf="isDeleteEnabled && hasValue"
            [ngClass]="{ hidden: isReadOnlyField }"
            class="delete fa fa-times"
            aria-hidden="true"
            (click)="deleteItem($event)">
         </i>
-        <i *ngIf="isCopyEnabled && value"
+        <i *ngIf="isCopyEnabled && hasValue"
            class="save-to-clipboard"
            aria-hidden="true"
            [title]="l('Copy')"
@@ -55,11 +55,12 @@
         (onFocusOut)="onFocusOut($event)">
         <dx-validator [validationRules]="validationRules || []"></dx-validator>
     </dx-text-box>
-    <dx-number-box *ngIf="!multiline && format?.style == 'currency'"
+    <dx-number-box *ngIf="!multiline && format"
         [min]="0" 
         width="calc(100% - 70px)"
         [placeholder]="editPlaceholder" 
         [format]="format"
+        [step]="0"
         [(value)]="valueOriginal"
         (onFocusIn)="onFocusIn($event)"
         (onEnterKey)="onEnterKey()"

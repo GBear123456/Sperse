@@ -145,7 +145,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
     readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
     private filters: FilterModel[];
-    private subscriptionStatusFilter = this.getSubscriptionsFilter('SubscriptionStatus');
+    private orderSubscriptionStatusFilter = this.getSubscriptionsFilter('SubscriptionStatus');
+    private subscriptionStatusFilter = this.getSubscriptionsFilter('Subscription');
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
     public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || undefined);
     showCompactView$: Observable<Boolean> = combineLatest(
@@ -224,7 +225,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             field: this.orderFields.Amount,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
-        this.subscriptionStatusFilter,
+        this.orderSubscriptionStatusFilter,
         this.getSourceOrganizationUnitFilter(),
         this.sourceFilter,
         new FilterModel({
@@ -330,7 +331,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             field: this.subscriptionFields.Fee,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         }),
-        this.getSubscriptionsFilter('Subscription', true),
+        this.subscriptionStatusFilter,
         this.getSourceOrganizationUnitFilter(),
         this.sourceFilter,
         new FilterModel({
@@ -594,6 +595,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 oDataRequestValues.filter,
                 null,
                 [
+                    ...this.getSubscriptionsParams(),
                     ...oDataRequestValues.params,
                     {
                         name: 'totalSummary',
@@ -948,19 +950,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    private getSubscriptionsFilter(caption: string, oDataFilterMethod = false) {
+    private getSubscriptionsFilter(caption: string) {
         return new FilterModel({
             component: FilterCheckBoxesComponent,
-            caption: caption,
+            caption: 'SubscriptionStatus',
             field: caption === 'Subscription' ? this.subscriptionFields.ServiceProductId : this.orderFields.ServiceProductId,
-            filterMethod: oDataFilterMethod ? (filter: FilterModel) => {
-                return {or: (filter.items.element['selectedItems'] || []).map(item => {
-                    if (item.parentId)
-                        return {ServiceProductId: item.parentId, ServiceLevelId: item.id};
-                    else
-                        return {ServiceProductId: item.id};
-                })};
-            } : undefined,
             items: {
                 element: new FilterCheckBoxesModel(
                     {
@@ -1518,7 +1512,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.filters,
             this.getCheckCustomFilter.bind(this),
             null,
-            this.selectedOrderType.value === OrderType.Order ? this.getSubscriptionsParams() : undefined
+            this.getSubscriptionsParams()
         );
     }
 
@@ -1531,14 +1525,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     private getSubscriptionsParams() {
         let productIndex, levelIndex, productId = null, result = [],
-            selectedItems = this.subscriptionStatusFilter.items.element['selectedItems'];
+            selectedItems = this.selectedOrderType.value === OrderType.Order ?
+                this.orderSubscriptionStatusFilter.items.element['selectedItems'] :
+                this.subscriptionStatusFilter.items.element['selectedItems'];
         selectedItems && selectedItems.forEach(item => {
             if (productId != item.parentId) {
                 levelIndex = 0;
                 isNaN(productIndex) ? productIndex = 0 : productIndex++;
                 productId = item.parentId || item.id;
                 result.push({
-                    name: 'subscriptionFilters[' + productIndex + '].ProductId',
+                    name: 'subscriptionFilters[' + productIndex + '].ServiceId',
                     value: productId
                 });
             }
