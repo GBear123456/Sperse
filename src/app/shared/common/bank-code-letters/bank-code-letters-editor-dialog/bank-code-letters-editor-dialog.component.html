@@ -10,7 +10,7 @@
     </ul>
     <button *ngIf="bankCodeIsEmpty"
             class="button-layout button-primary"
-            (click)="updateBankCode(bankCode)">
+            (click)="close()">
         {{ ls.l('Save') }}
     </button>
 </mat-dialog-content>

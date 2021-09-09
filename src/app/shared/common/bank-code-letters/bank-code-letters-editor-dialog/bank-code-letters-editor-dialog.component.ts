@@ -33,13 +33,13 @@ import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-l
     selector: 'bank-code-letters-editor',
     templateUrl: './bank-code-letters-editor-dialog.component.html',
     styleUrls: ['./bank-code-letters-editor-dialog.component.less'],
-    providers: [ MemberSettingsServiceProxy ],
+    providers: [MemberSettingsServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
     @Output() bankCodeChange: EventEmitter<string> = new EventEmitter<string>();
-    @Output() bankCodeStarIdChange: EventEmitter<number> = new EventEmitter<number>();
     bankCode: string;
+    bankCodeInitial: string;
     personId: number = this.data.personId;
     bankCodeDefinitions: BankCodeDefinition[] = [
         { letter: BankCodeLetter.B, name: this.ls.l('Blueprint') },
@@ -61,15 +61,17 @@ export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
     ) {
+        this.bankCodeInitial = this.data.bankCode;
         this.bankCodeIsEmpty = this.data.bankCode === this.bankCodeService.emptyBankCode;
         this.bankCode = this.bankCodeIsEmpty ? 'BANK' : this.data.bankCode;
         this.resortDefinitions();
+
     }
 
     @HostListener('document:click', ['$event'])
     onDocumentClick(event) {
         if (!event.target.closest('#bankCodeLettersEditorDialog')) {
-            this.dialogRef.close();
+            this.close();
         }
     }
 
@@ -95,32 +97,41 @@ export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
         this.updateBankCode(newBankCode);
     }
 
-    updateBankCode(bankCode: string) {
-        const updateMethod$: any = this.dontUpdateOnServer
-            ? of(true)
-            : (this.personId
-                ? this.personContactServiceProxy.updatePersonBANKCode(new UpdatePersonBANKCodeInput({
-                    id: this.personId,
-                    bankCode: bankCode
-                }))
-                : this.memberSettingsService.updateBANKCode(new UpdateUserBANKCodeDto({ 
-                    bankCode: bankCode, 
-                    bankCodeSelfAssessmentDto: null,
-                    source: 'CRM'
-                }))
+    close() {
+        if (!this.bankCodeIsEmpty && !this.dontUpdateOnServer && this.bankCode != this.bankCodeInitial) {
+            const updateMethod$ =
+                this.personId ?
+                    this.personContactServiceProxy.updatePersonBANKCode(new UpdatePersonBANKCodeInput({
+                        id: this.personId,
+                        bankCode: this.bankCode
+                    })) :
+                    this.memberSettingsService.updateBANKCode(new UpdateUserBANKCodeDto({
+                        bankCode: this.bankCode,
+                        bankCodeSelfAssessmentDto: null,
+                        source: 'CRM'
+                    }));
+            updateMethod$.subscribe(
+                () => {
+                    this.bankCodeChange.emit(this.bankCode);
+                    this.dialogRef.close();
+                },
+                () => this.resortDefinitions
             );
-        updateMethod$.subscribe(
-            (result) => {
-                if (result) {
-                    this.bankCodeStarIdChange.emit(result);
-                }
-                this.bankCode = bankCode;
-                this.bankCodeIsEmpty = false;
-                this.bankCodeChange.emit(this.bankCode);
-                this.changeDetectorRef.detectChanges();
-            },
-            () => this.resortDefinitions
-        );
+        }
+        else {
+            this.dialogRef.close();
+        }
+    }
+
+    updateBankCode(bankCode: string) {
+        this.bankCode = bankCode;
+        this.bankCodeIsEmpty = false;
+
+        if (this.dontUpdateOnServer) {
+            this.bankCodeChange.emit(this.bankCode);
+        }
+
+        this.changeDetectorRef.detectChanges();
     }
 
     private resortDefinitions() {
