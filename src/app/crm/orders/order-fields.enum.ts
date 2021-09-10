@@ -25,6 +25,5 @@ export const OrderFields: KeysEnum<OrderDto> = {
     DateProcessed: 'DateProcessed',
     ContactGroupId: 'ContactGroupId',
     ContactXref: 'ContactXref',
-    ServiceProductId: 'ServiceProductId',
     SourceOrganizationUnitId: 'SourceOrganizationUnitId'
 };
