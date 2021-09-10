@@ -145,8 +145,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
     readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
     private filters: FilterModel[];
-    private orderSubscriptionStatusFilter = this.getSubscriptionsFilter('SubscriptionStatus');
-    private subscriptionStatusFilter = this.getSubscriptionsFilter('Subscription');
+    private orderSubscriptionStatusFilter = this.getSubscriptionsFilter();
+    private subscriptionStatusFilter = this.getSubscriptionsFilter();
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
     public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || undefined);
     showCompactView$: Observable<Boolean> = combineLatest(
@@ -950,11 +950,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    private getSubscriptionsFilter(caption: string) {
+    private getSubscriptionsFilter() {
         return new FilterModel({
             component: FilterCheckBoxesComponent,
             caption: 'SubscriptionStatus',
-            field: caption === 'Subscription' ? this.subscriptionFields.ServiceProductId : this.orderFields.ServiceProductId,
             items: {
                 element: new FilterCheckBoxesModel(
                     {

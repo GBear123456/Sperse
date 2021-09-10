@@ -138,9 +138,10 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
                 this.serviceProduct.deactivationTime = DateHelper.removeTimezoneOffset(new Date(this.serviceProduct.deactivationTime), true, 'to');
             this.serviceProduct.memberServiceLevels.forEach(level => {
                 level['featureValues'].forEach((feature, index) => {
-                    if (feature.value != null && feature.value != undefined &&
-                        feature.value != this.featuresData.featureValues[index].value
-                    ) level.features[feature.name] = feature.value;
+                    if (feature.value == this.featuresData.featureValues[index].value || feature.value == '')
+                        level.features[feature.name] = undefined;
+                    else if (feature.value != null && feature.value != undefined) 
+                        level.features[feature.name] = feature.value;
                 });
                 if (level.activationTime)
                     level.activationTime = DateHelper.removeTimezoneOffset(new Date(level.activationTime), true, 'from');
@@ -149,9 +150,10 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
             });
 
             this.featuresData.featureValues.forEach((feature, index) => {
-                if (feature.value != null && feature.value != undefined &&
-                    feature.value != this.featuresData.features[index].defaultValue
-                ) this.serviceProduct.features[feature.name] = feature.value;
+                if (feature.value == this.featuresData.features[index].defaultValue || feature.value == '')
+                    this.serviceProduct.features[feature.name] = undefined;                
+                else if (feature.value != null && feature.value != undefined) 
+                    this.serviceProduct.features[feature.name] = feature.value;
             });
             this.serviceProductProxy.createOrUpdate(this.serviceProduct).subscribe(res => {
                 if (!this.serviceProduct.id)

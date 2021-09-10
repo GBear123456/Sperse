@@ -226,18 +226,18 @@ export class FeatureTreeComponent implements AfterViewInit {
                     ).val(featureValue);
 
                     if (inputType === 'number') {
-                        $textbox.attr('min', validator.minValue);
-                        $textbox.attr('max', validator.maxValue);
+                        $textbox.attr('min', validator.minValue || validator.attributes['MinValue']);
+                        $textbox.attr('max', validator.maxValue || validator.attributes['MaxValue']);
                     } else {
                         if (feature.inputType.validator && feature.inputType.validator.name === 'STRING') {
                             if (validator.maxLength > 0) {
-                                $textbox.attr('maxlength', validator.maxLength);
+                                $textbox.attr('maxlength', validator.maxLength || validator.attributes['MaxLength']);
                             }
                             if (validator.minLength > 0) {
                                 $textbox.attr('required', 'required');
                             }
                             if (validator.regularExpression) {
-                                $textbox.attr('pattern', validator.regularExpression);
+                                $textbox.attr('pattern', validator.regularExpression || validator.attributes['RegularExpression']);
                             }
                         }
                     }
@@ -258,6 +258,9 @@ export class FeatureTreeComponent implements AfterViewInit {
                         $textbox.appendTo($form);
                         $reset.appendTo($form);
                         $form.appendTo($nodeLi);
+                        $form.on('reset', () => {
+                            self.setFeatureValueByName(featureName, featureDefaultValue);
+                        });
                     } else
                         $textbox.appendTo($nodeLi);
                 }
