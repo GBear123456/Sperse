@@ -165,7 +165,6 @@ export class EmailTemplateDialogComponent implements OnInit {
             data.suggestionEmails = [];
 
         data.saveAttachmentsToDocuments = this.getAttachmentsToDocumentsCache();
-        console.log(data.saveAttachmentsToDocuments);
     }
 
     ngOnInit() {
