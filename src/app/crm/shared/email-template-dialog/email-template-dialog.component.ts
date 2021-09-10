@@ -197,7 +197,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
 
         this.ckConfig.height = this.editorHeight ? this.editorHeight : innerHeight -
-            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 500 : 460) + 'px';
+            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 544 : 498) + 'px';
 
         this.initDialogButtons();
         this.changeDetectorRef.detectChanges();
