@@ -560,20 +560,21 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
     }
 
     getViewerType(extension: string): DocumentViewerType {
+        let lowerExtension = extension ? extension.toLowerCase() : extension;
         let viewerType = DocumentViewerType.UNKNOWN;
-        if (this.validWopiExtensions.indexOf(extension) >= 0) {
+        if (this.validWopiExtensions.indexOf(lowerExtension) >= 0) {
             viewerType = DocumentViewerType.WOPI;
-        } else if (this.validCsvExtensions.indexOf(extension) >= 0) {
+        } else if (this.validCsvExtensions.indexOf(lowerExtension) >= 0) {
             viewerType = DocumentViewerType.CSV;
-        } else if (this.validImageExtensions.indexOf(extension) >= 0) {
+        } else if (this.validImageExtensions.indexOf(lowerExtension) >= 0) {
             viewerType = DocumentViewerType.IMAGE;
-        } else if (this.validTextExtensions.indexOf(extension) >= 0) {
+        } else if (this.validTextExtensions.indexOf(lowerExtension) >= 0) {
             viewerType = DocumentViewerType.TEXT;
-        }  else if (this.validVideoExtensions.indexOf(extension) >= 0) {
+        }  else if (this.validVideoExtensions.indexOf(lowerExtension) >= 0) {
             viewerType = DocumentViewerType.VIDEO;
-        } else if (this.validArchiveExtensions.indexOf(extension) >= 0) {
+        } else if (this.validArchiveExtensions.indexOf(lowerExtension) >= 0) {
             viewerType = DocumentViewerType.ARCHIVE;
-        }  else if (this.validXmlExtensions.indexOf(extension) >= 0) {
+        }  else if (this.validXmlExtensions.indexOf(lowerExtension) >= 0) {
             viewerType = DocumentViewerType.XML;
         }
         return viewerType;
