@@ -54086,6 +54086,7 @@ export interface ISimilarContactOutput {
 export class SourceContactInfo implements ISourceContactInfo {
     id!: number | undefined;
     groupId!: string | undefined;
+    typeId!: string | undefined;
     affiliateCode!: string | undefined;
     companyName!: string | undefined;
     personName!: string | undefined;
@@ -54104,6 +54105,7 @@ export class SourceContactInfo implements ISourceContactInfo {
         if (data) {
             this.id = data["id"];
             this.groupId = data["groupId"];
+            this.typeId = data["typeId"];
             this.affiliateCode = data["affiliateCode"];
             this.companyName = data["companyName"];
             this.personName = data["personName"];
@@ -54122,6 +54124,7 @@ export class SourceContactInfo implements ISourceContactInfo {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["groupId"] = this.groupId;
+        data["typeId"] = this.typeId;
         data["affiliateCode"] = this.affiliateCode;
         data["companyName"] = this.companyName;
         data["personName"] = this.personName;
@@ -54133,6 +54136,7 @@ export class SourceContactInfo implements ISourceContactInfo {
 export interface ISourceContactInfo {
     id: number | undefined;
     groupId: string | undefined;
+    typeId: string | undefined;
     affiliateCode: string | undefined;
     companyName: string | undefined;
     personName: string | undefined;

@@ -115,9 +115,9 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         this.selectedOrganizationId$
     ).pipe(
         map(([personContactInfo, selectedRelationId]: [PersonContactInfoDto, number]) => {
-           return  personContactInfo.orgRelations && personContactInfo.orgRelations.find((orgRelation: PersonOrgRelationShortInfo) => {
-               return orgRelation.id === selectedRelationId;
-           });
+            return (personContactInfo.orgRelations && personContactInfo.orgRelations.find((orgRelation: PersonOrgRelationShortInfo) => {
+                return orgRelation.id === selectedRelationId;
+            })) || personContactInfo['personOrgRelationInfo'];
         })
     );
     personJobTitleInSelectedOrganization$: Observable<string> = this.selectedOrganizationInfo$.pipe(
@@ -549,7 +549,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                     closeOnNavigation: false,
                     data: dialogData
                 }).afterClosed().subscribe(() => {
-                    this.contactsService.invalidate('sub-contacts');
+                    this.onInvalidate.emit();
                 });
             });
         else if (selectedMenuItem.type === ContextType.AddFiles)

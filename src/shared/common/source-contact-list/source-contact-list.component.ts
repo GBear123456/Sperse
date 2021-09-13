@@ -24,6 +24,7 @@ import { OrganizationUnitsTreeComponent } from '@shared/common/organization-unit
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { NotifyService } from '@abp/notify/notify.service';
+import { ContactTypes } from '../../AppEnums';
 
 @Component({
     selector: 'source-contact-list',
@@ -104,12 +105,13 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
                 .pipe(finalize(() => elm && abp.ui.clearBusy(elm)))
                 .subscribe((contacts: SourceContactInfo[]) => {
                     this.onDataLoaded.emit(this.contacts = contacts.map(item => {
-                        let person = item.personName && item.personName.trim();
+                        let isPerson = item.typeId == ContactTypes.Person;
+                        let personName = item.personName && item.personName.trim() || `<${this.ls.l('ClientNoName')}>`;
                         return {
                             id: item.id,
-                            name: person || item.companyName,
+                            name: isPerson ? personName : item.companyName,
                             suffix: item.affiliateCode ? ' (' + item.affiliateCode + ')' : '',
-                            addition: person ?
+                            addition: isPerson ?
                                 [item.jobTitle, item.companyName].filter(Boolean).join(' @ ') :
                                 (item.companyName ? this.ls.l('Company') : ''),
                             affiliateCode: item.affiliateCode

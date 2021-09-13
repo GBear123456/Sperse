@@ -107,10 +107,6 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService
     ) {
         this.contactsService.loadLeadInfo();
-        this.contactsService.invalidateSubscribe(area => {
-            if (area == 'sub-contacts')
-                this.subContactDataGrid.instance.refresh();
-        });
     }
 
     ngOnInit() {

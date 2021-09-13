@@ -17,7 +17,9 @@
                [class.disabled]="!isSendSmsAndEmailAllowed">
                 <i class="inbox-icon" aria-hidden="true"></i>
             </a>
-            <a><i class="note-icon" aria-hidden="true" (click)="contactsService.showNoteAddDialog()"></i></a>
+            <a [class.disabled]="!manageAllowed" (click)="contactsService.showNoteAddDialog()">
+                <i class="note-icon" aria-hidden="true"></i>
+            </a>
             <a (click)="contactsService.showSMSDialog({ contact: contactInfo })"
                [class.disabled]="!isSendSmsAndEmailAllowed">
                 <i class="sms-icon fa fa-commenting-o"></i>
@@ -65,7 +67,7 @@
                             ? this.l('subContact_single')
                             : this.l('subContact_plural')) }}
                         </div>
-                        <a class="add-new-contact sub-contact">+ {{l('AddSubContact')}}</a>
+                        <a *ngIf="manageAllowed" class="add-new-contact sub-contact">+ {{l('AddSubContact')}}</a>
                     </div>
                 </div>
                 <ng-template #backToParent>
