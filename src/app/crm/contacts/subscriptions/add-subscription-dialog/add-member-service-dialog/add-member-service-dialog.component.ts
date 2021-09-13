@@ -36,21 +36,21 @@ import { DxValidationGroupComponent } from 'devextreme-angular';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 
 @Component({
-    selector: 'add-service-product-dialog',
-    templateUrl: './add-service-product-dialog.component.html',
+    selector: 'add-member-service-dialog',
+    templateUrl: './add-member-service-dialog.component.html',
     styleUrls: [
         '../../../../../../shared/common/styles/close-button.less',
         '../../../../../shared/common/styles/form.less',
-        './add-service-product-dialog.component.less'
+        './add-member-service-dialog.component.less'
     ],
     providers: [MemberServiceServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
+export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
     today = new Date();
     private slider: any;
-    serviceProduct: MemberServiceDto;
+    memberService: MemberServiceDto;
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
         filter(Boolean), map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
     );
@@ -59,12 +59,12 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
 
     constructor(
         private elementRef: ElementRef,
-        private serviceProductProxy: MemberServiceServiceProxy,
+        private memberServiceProxy: MemberServiceServiceProxy,
         private notify: NotifyService,
         private invoicesService: InvoicesService,
         private changeDetection: ChangeDetectorRef,
         private userManagementService: UserManagementService,
-        public dialogRef: MatDialogRef<AddServiceProductDialogComponent>,
+        public dialogRef: MatDialogRef<AddMemberServiceDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
@@ -75,7 +75,7 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
             });
         });        
 
-        this.serviceProductProxy.getSystemTypes().subscribe((types: SystemTypeDto[]) => {
+        this.memberServiceProxy.getSystemTypes().subscribe((types: SystemTypeDto[]) => {
             this.systemTypes = types.map(type => type.code);
             if (data && data.service)
                 this.onSystemTypeChanged({value: data.service.systemType});
@@ -86,25 +86,25 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
         });
 
         if (data && data.service)
-            this.serviceProduct = data.service;
+            this.memberService = data.service;
         else
-            this.serviceProduct = new MemberServiceDto();
+            this.memberService = new MemberServiceDto();
 
-        if (!this.serviceProduct.memberServiceLevels)
-            this.serviceProduct.memberServiceLevels = [];
-        if (!this.serviceProduct.features)
-            this.serviceProduct.features = {};
+        if (!this.memberService.memberServiceLevels)
+            this.memberService.memberServiceLevels = [];
+        if (!this.memberService.features)
+            this.memberService.features = {};
     }
 
     onSystemTypeChanged(event) {
-        this.serviceProductProxy.getSystemFeatures(
+        this.memberServiceProxy.getSystemFeatures(
             event.value
         ).subscribe((features: FlatFeatureDto[]) => {
             this.featuresData = {
                 features: features,
                 featureValues: features.map(feature => new FeatureValuesDto({
                     name: feature.name,
-                    value: this.serviceProduct.features[feature.name] || feature.defaultValue
+                    value: this.memberService.features[feature.name] || feature.defaultValue
                 }))
             };
             this.detectChanges();
@@ -132,11 +132,11 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
 
     saveService() {
         if (this.validationGroup.instance.validate().isValid) {
-            if (this.serviceProduct.activationTime)
-                this.serviceProduct.activationTime = DateHelper.removeTimezoneOffset(new Date(this.serviceProduct.activationTime), true, 'from');
-            if (this.serviceProduct.deactivationTime)
-                this.serviceProduct.deactivationTime = DateHelper.removeTimezoneOffset(new Date(this.serviceProduct.deactivationTime), true, 'to');
-            this.serviceProduct.memberServiceLevels.forEach(level => {
+            if (this.memberService.activationTime)
+                this.memberService.activationTime = DateHelper.removeTimezoneOffset(new Date(this.memberService.activationTime), true, 'from');
+            if (this.memberService.deactivationTime)
+                this.memberService.deactivationTime = DateHelper.removeTimezoneOffset(new Date(this.memberService.deactivationTime), true, 'to');
+            this.memberService.memberServiceLevels.forEach(level => {
                 level['featureValues'].forEach((feature, index) => {
                     if (feature.value == this.featuresData.featureValues[index].value || feature.value == '')
                         level.features[feature.name] = undefined;
@@ -151,14 +151,14 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
 
             this.featuresData.featureValues.forEach((feature, index) => {
                 if (feature.value == this.featuresData.features[index].defaultValue || feature.value == '')
-                    this.serviceProduct.features[feature.name] = undefined;                
+                    this.memberService.features[feature.name] = undefined;                
                 else if (feature.value != null && feature.value != undefined) 
-                    this.serviceProduct.features[feature.name] = feature.value;
+                    this.memberService.features[feature.name] = feature.value;
             });
-            this.serviceProductProxy.createOrUpdate(this.serviceProduct).subscribe(res => {
-                if (!this.serviceProduct.id)
-                    this.serviceProduct.id = res.id;
-                this.serviceProduct.memberServiceLevels.forEach(level => {
+            this.memberServiceProxy.createOrUpdate(this.memberService).subscribe(res => {
+                if (!this.memberService.id)
+                    this.memberService.id = res.id;
+                this.memberService.memberServiceLevels.forEach(level => {
                     res.memberServiceLevels.some(item => {
                         if (level.code == item.code) {
                             level.id = item.id;
@@ -166,7 +166,7 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
                         }
                     });
                 });
-                this.dialogRef.close(this.serviceProduct);
+                this.dialogRef.close(this.memberService);
                 this.notify.info(this.ls.l('SavedSuccessfully'));
             });
         }
@@ -180,7 +180,7 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
         let level = new MemberServiceLevelDto();
         level.features = {};
         this.defineFeatureLevelValues(level);
-        this.serviceProduct.memberServiceLevels.push(level);
+        this.memberService.memberServiceLevels.push(level);
     }
 
     defineFeatureLevelValues(level) {
@@ -216,7 +216,7 @@ export class AddServiceProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     removeLevelFields(index) {
-        this.serviceProduct.memberServiceLevels.splice(index, 1);
+        this.memberService.memberServiceLevels.splice(index, 1);
     }
 
     detectChanges() {

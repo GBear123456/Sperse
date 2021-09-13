@@ -13,7 +13,7 @@
             <dx-text-box name="code"
                 width="300px"               
                 [inputAttr]="{ id: 'code' }"
-                [(value)]="serviceProduct.code">
+                [(value)]="memberService.code">
                 <dx-validator>
                     <dxi-validation-rule type="required" message="{{ls.l('CodeIsRequired')}}."></dxi-validation-rule>
                 </dx-validator>
@@ -24,7 +24,7 @@
             <dx-text-box name="name"
                 width="300px"
                 [inputAttr]="{ id: 'name' }"
-                [(value)]="serviceProduct.name">
+                [(value)]="memberService.name">
                 <dx-validator>
                     <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
                 </dx-validator>
@@ -37,7 +37,7 @@
                 width="300px"
                 [dataSource]="systemTypes"
                 [inputAttr]="{ id: 'type' }"
-                [(value)]="serviceProduct.systemType"
+                [(value)]="memberService.systemType"
                 (onValueChanged)="onSystemTypeChanged($event)">
                 <dx-validator>
                     <dxi-validation-rule type="required" message="{{ls.l('TypeIsRequired')}}."></dxi-validation-rule>
@@ -50,7 +50,7 @@
         <div class="levels-header">
             {{ls.l('ServiceLevels')}}:
         </div>
-        <div class="levels" *ngFor="let serviceLevel of serviceProduct.memberServiceLevels; let i = index">
+        <div class="levels" *ngFor="let serviceLevel of memberService.memberServiceLevels; let i = index">
             <i class="fa fa-close" (click)="removeLevelFields(i)"></i>
             <div class="field">
                 <label for="code">{{ls.l('Code')}}</label>
