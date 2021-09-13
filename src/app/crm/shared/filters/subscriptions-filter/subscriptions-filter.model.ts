@@ -20,7 +20,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                 if (item.current || item.past || item.never) {
                     result.push(
                         {
-                            name: ['subscriptionFilters[' + filterIndex + '].ProductId'],
+                            name: ['subscriptionFilters[' + filterIndex + '].ServiceId'],
                             value: item.id
                         },
                         {
@@ -40,7 +40,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                         if (level.current || level.past || level.never) {
                             result.push(
                                 {
-                                    name: ['subscriptionFilters[' + filterIndex + '].ProductId'],
+                                    name: ['subscriptionFilters[' + filterIndex + '].ServiceId'],
                                     value: item.id
                                 },
                                 {

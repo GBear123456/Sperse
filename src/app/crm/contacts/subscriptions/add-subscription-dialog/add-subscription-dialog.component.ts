@@ -38,7 +38,7 @@ import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AddProductDialogComponent } from './add-product-dialog/add-product-dialog.component';
-import { AddServiceProductDialogComponent } from './add-service-product-dialog/add-service-product-dialog.component';
+import { AddMemberServiceDialogComponent } from './add-member-service-dialog/add-member-service-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 
@@ -96,7 +96,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     constructor(
         private elementRef: ElementRef,
         private orderSubscriptionProxy: OrderSubscriptionServiceProxy,
-        private serviceProductProxy: MemberServiceServiceProxy,
+        private memberServiceProxy: MemberServiceServiceProxy,
         private productProxy: ProductServiceProxy,
         private notify: NotifyService,
         private contactsService: ContactsService,
@@ -130,7 +130,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             this.products = products;
             this.checkAddManageOption(this.products);
         });
-        this.serviceProductProxy.getAll(false).subscribe(result => {
+        this.memberServiceProxy.getAll(false).subscribe(result => {
             this.serviceTypes = result;
             this.checkAddManageOption(this.serviceTypes);
         });
@@ -208,9 +208,9 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
 
         let selectedItem: MemberServiceDto = event.component.option('selectedItem');
         if (selectedItem.id == this.addNewItemId) {
-            this.showAddServiceProductDialog(event.component, event.previousValue);
+            this.showAddMemberServiceDialog(event.component, event.previousValue);
         } else {
-            this.setServiceProduct(selectedItem, sub);
+            this.setMemberService(selectedItem, sub);
         }
     }
 
@@ -219,17 +219,17 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         if (selectedItem) {
             sub.level = selectedItem.code;
             sub.amount = selectedItem.monthlyFee ? selectedItem.monthlyFee :
-                sub['serviceProduct'].monthlyFee ? sub['serviceProduct'].monthlyFee : null;
+                sub['memberService'].monthlyFee ? sub['memberService'].monthlyFee : null;
 
-            sub.startDate = selectedItem.activationTime ? (selectedItem.activationTime < this.today ? this.today : selectedItem.activationTime) : sub['serviceProduct'].activationTime;
-            sub['maxStartDate'] = selectedItem.deactivationTime ? selectedItem.deactivationTime : sub['serviceProduct'].deactivationTime;
+            sub.startDate = selectedItem.activationTime ? (selectedItem.activationTime < this.today ? this.today : selectedItem.activationTime) : sub['memberService'].activationTime;
+            sub['maxStartDate'] = selectedItem.deactivationTime ? selectedItem.deactivationTime : sub['memberService'].deactivationTime;
         } else {
-            this.setServiceProduct(sub['serviceProduct'], sub);
+            this.setMemberService(sub['memberService'], sub);
         }
     }
 
-    setServiceProduct(item: MemberServiceDto, sub: SubscriptionInput) {
-        sub['serviceProduct'] = item;
+    setMemberService(item: MemberServiceDto, sub: SubscriptionInput) {
+        sub['memberService'] = item;
         sub.name = item.name;
         sub.amount = item.monthlyFee ? item.monthlyFee : null;
         sub.startDate = item.activationTime < this.today ? this.today : item.activationTime;
@@ -244,8 +244,8 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         subscription.endDate = null;
     }
 
-    showAddServiceProductDialog(component, previousValue: string) {
-        let dialogRef = this.dialog.open(AddServiceProductDialogComponent, {
+    showAddMemberServiceDialog(component, previousValue: string) {
+        let dialogRef = this.dialog.open(AddMemberServiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false

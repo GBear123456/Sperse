@@ -974,7 +974,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         nameField: 'name',
                         keyExpr: 'uid',
                         dataStructure: 'tree',
-                        itemsExpr: 'serviceProductLevels'
+                        itemsExpr: 'memberServiceLevels'
                     })
             }
         });

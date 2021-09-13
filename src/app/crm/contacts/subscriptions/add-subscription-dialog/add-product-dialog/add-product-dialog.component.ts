@@ -39,7 +39,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from '@abp/notify/notify.service';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { AddServiceProductDialogComponent } from '../add-service-product-dialog/add-service-product-dialog.component';
+import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -89,7 +89,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         private permission: AppPermissionService,
         private invoicesService: InvoicesService,
         private changeDetection: ChangeDetectorRef,
-        private serviceProductProxy: MemberServiceServiceProxy,
+        private memberServiceProxy: MemberServiceServiceProxy,
         private userManagementService: UserManagementService,
         public dialogRef: MatDialogRef<AddProductDialogComponent>,
         public ls: AppLocalizationService,
@@ -118,7 +118,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             this.detectChanges();
         });
 
-        serviceProductProxy.getAll(false).subscribe((services: MemberServiceDto[]) => {
+        memberServiceProxy.getAll(false).subscribe((services: MemberServiceDto[]) => {
             this.services = services;
             this.checkAddManageOption(this.services);
             this.detectChanges();
@@ -258,7 +258,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         if (selectedItem) {
             service.memberServiceLevelId = undefined;
             if (selectedItem.id == this.addNewItemId)
-                return this.showAddServiceProductDialog(event.component, event.previousValue);
+                return this.showAddMemberServiceDialog(event.component, event.previousValue);
 
             selectedItem['disabled'] = true;
             if (event.previousValue)
@@ -272,10 +272,10 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.detectChanges();
     }
 
-    showEditServiceProductDialog(service: ProductServiceInfo, component: any) {
+    showEditMemberServiceDialog(service: ProductServiceInfo, component: any) {
         let memberService = this.services.find(item => item.id == service.memberServiceId);
         if (memberService)
-            this.dialog.open(AddServiceProductDialogComponent, {
+            this.dialog.open(AddMemberServiceDialogComponent, {
                 panelClass: 'slider',
                 disableClose: true,
                 closeOnNavigation: false,
@@ -290,8 +290,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             });
     }
 
-    showAddServiceProductDialog(component, previousValue: string) {
-        this.dialog.open(AddServiceProductDialogComponent, {
+    showAddMemberServiceDialog(component, previousValue: string) {
+        this.dialog.open(AddMemberServiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false
