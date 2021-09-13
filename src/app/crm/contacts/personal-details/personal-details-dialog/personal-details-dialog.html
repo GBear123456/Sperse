@@ -25,7 +25,7 @@
                                               (itemDeleted)="deleteItem(ls.l('Affiliate'))">
                                 </inplace-edit>
                             </div>
-                            <div class="field" *ngIf="hasCommissionsFeature">
+                            <div class="field tier" *ngIf="hasCommissionsFeature">
                                 <label>{{ ls.l('AffiliateRateTier1') }}:</label>
                                 <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
@@ -41,7 +41,7 @@
                                               (itemDeleted)="deleteItem(ls.l('AffiliateRate'))">
                                 </inplace-edit>
                             </div>
-                            <div class="field" *ngIf="hasCommissionsFeature">
+                            <div class="field tier" *ngIf="hasCommissionsFeature">
                                 <label>{{ ls.l('AffiliateRateTier2') }}:</label>
                                 <inplace-edit [id]="contactInfo?.id"
                                               [editPlaceholder]="''"
