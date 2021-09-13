@@ -130,7 +130,7 @@
                                 <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
                             </dx-validator>
                         </dx-select-box>
-                        <i *ngIf="service.memberServiceId" class="edit fa fa-pencil" aria-hidden="true" (click)="showEditServiceProductDialog(service, cmp)"></i>
+                        <i *ngIf="service.memberServiceId" class="edit fa fa-pencil" aria-hidden="true" (click)="showEditMemberServiceDialog(service, cmp)"></i>
                     </div>
                 </div>
                 <div class="field" *ngIf="getServiceLevels(service.memberServiceId) as levels">

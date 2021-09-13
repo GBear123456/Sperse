@@ -80,7 +80,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
             if (data && data.service)
                 this.onSystemTypeChanged({value: data.service.systemType});
             else {
-                this.serviceProduct.systemType = this.systemTypes[0];
+                this.memberService.systemType = this.systemTypes[0];
                 this.detectChanges();
             }
         });

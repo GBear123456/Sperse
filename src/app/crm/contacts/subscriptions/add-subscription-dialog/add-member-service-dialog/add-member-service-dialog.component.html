@@ -1,7 +1,7 @@
 <header>
-    <h2 mat-dialog-title>{{ls.l((serviceProduct.id ? 'Edit' : 'Add') + 'Service')}}</h2>
+    <h2 mat-dialog-title>{{ls.l((memberService.id ? 'Edit' : 'Add') + 'Service')}}</h2>
     <mat-dialog-actions>
-        <button mat-button (click)="saveService()" class="button-layout button-primary">{{ls.l(serviceProduct.id ? 'Update' : 'Save')}}</button>
+        <button mat-button (click)="saveService()" class="button-layout button-primary">{{ls.l(memberService.id ? 'Update' : 'Save')}}</button>
     </mat-dialog-actions>
     <span class="close" (click)="close()"></span>
 </header>

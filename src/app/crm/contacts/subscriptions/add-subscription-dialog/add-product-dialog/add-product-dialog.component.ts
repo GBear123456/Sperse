@@ -272,7 +272,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.detectChanges();
     }
 
-    showAddMemberServiceDialog(service: ProductServiceInfo, component: any) {
+    showEditMemberServiceDialog(service: ProductServiceInfo, component: any) {
         let memberService = this.services.find(item => item.id == service.memberServiceId);
         if (memberService)
             this.dialog.open(AddMemberServiceDialogComponent, {
@@ -290,7 +290,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             });
     }
 
-    showAddServiceProductDialog(component, previousValue: string) {
+    showAddMemberServiceDialog(component, previousValue: string) {
         this.dialog.open(AddMemberServiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
