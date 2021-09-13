@@ -3,7 +3,6 @@
     position: relative;
     display: block;
     // width: calc(~"100vw - 60px"); width for layout, need add it and fix some styles later
-
     ::ng-deep header {
         height: 82px;
         background: #f3f7fa;
@@ -42,6 +41,7 @@
             border: none;
             padding-top: 12px;
         }
+
         .mat-drawer-inner-container {
             overflow: hidden;
         }
@@ -86,7 +86,7 @@
         flex-direction: column;
 
         .mat-tab-disabled {
-            opacity: 0.3!important;
+            opacity: 0.3 !important;
             pointer-events: none;
         }
     }
@@ -99,7 +99,7 @@
         }
 
         &.phone {
-            &.type-H, &.type-P, &.type-C {
+            &.type-H, &.type-P, &.type-C, &.type-U {
                 background-image: url("../../../assets/common/icons/phone.svg");
             }
 
@@ -109,6 +109,12 @@
 
             &.type-M {
                 background-image: url("../../../assets/common/icons/phone-mobile.svg");
+            }
+
+            &.type-F {
+                background-image: url("../../../assets/common/icons/fax.svg");
+                background-size: 30px;
+                background-position: -5px !important;
             }
         }
     }

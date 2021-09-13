@@ -177,7 +177,7 @@
                        [hint]="ls.l('DiscardChanges')"
                        [text]=""
                        class="discard-button"
-                       (onClick)="resetFullDialog(false)">
+                       (onClick)="resetFullDialog(true)">
             </dx-button>
         </div>
     </dx-toolbar>
@@ -186,7 +186,7 @@
         {{ls.l('SimilarRecordsFound')}}
     </div>
     <div class="form-content">
-        <dx-scroll-view showScrollbar="onHover">
+        <dx-scroll-view showScrollbar="onHover" #dialogScroll>
             <dx-validation-group *ngIf="showPropertyFields" class="property-info" #propertyValidationGroup>
                 <h3>{{ ls.l('PropertyInfo') }}:</h3>
                 <div class="field">
@@ -382,7 +382,8 @@
                                                   [required]="false"
                                                   (onKeyUp)="onPhoneKeyUp($event)"
                                                   (phoneNumberChange)="onPhoneChanged(countryPhoneNumber, i)"
-                                                  (onInitialized)="onPhoneComponentInitialized($event)">
+                                                  (onInitialized)="onPhoneComponentInitialized($event)"
+                                                  (onDropDownHover)="dropDownHover($event)">
                             </country-phone-number>
                             <dx-number-box
                                 class="tabular"
@@ -444,7 +445,7 @@
                                                 (onSelectionChanged)="link.type = $event.addedItems[0].id"
                                                 [itemTemplate]="'linkItemTemplate'">
                                                 <div *dxTemplate="let data of 'linkItemTemplate'">
-                                                <span><img src="./assets/common/icons/social/{{data.uri}}.svg"
+                                                <span><img src="./assets/common/icons/social/{{data.uri || 'OtherLink'}}.svg"
                                                            onError="this.src='./assets/common/icons/social/OtherLink.svg';"
                                                            width="25px" height="25px">&nbsp;&nbsp;&nbsp;{{data.name}}</span>
                                                 </div>

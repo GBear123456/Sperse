@@ -19,6 +19,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { BehaviorSubject, combineLatest, concat, forkJoin, Observable, of } from 'rxjs';
 import {
+    catchError,
     distinctUntilChanged,
     filter,
     finalize,
@@ -129,7 +130,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
     filterModelStages: FilterModel;
     layoutTypes = DataLayoutType;
-    private rootComponent: any;
     private ordersDataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     public subscriptionsDataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
     private gridCompactView: BehaviorSubject<Boolean> = new BehaviorSubject(true);
@@ -140,6 +140,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.appService.isClientSearchDisabled = layoutType != DataLayoutType.DataGrid;
     }));
     private readonly ordersDataSourceURI = 'Order';
+    private readonly orderCountDataSourceURI = 'OrderCount';
     private readonly subscriptionsDataSourceURI = 'Subscription';
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
     readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
@@ -395,6 +396,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ];
     permissions = AppPermissions;
     currency: string;
+    totalErrorMsg: string;
     ordersTotalCount: number;
     subscriptionsTotalCount: number;
     ordersToolbarConfig: ToolbarGroupModel[];
@@ -402,29 +404,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     orderTypesEnum = OrderType;
     searchValue = this._activatedRoute.snapshot.queryParams.search || '';
     searchClear = false;
-    ordersDataSource: any = {
-        uri: this.ordersDataSourceURI,
-        requireTotalCount: true,
-        store: {
-            type: 'odata',
-            key: this.orderFields.Id,
-            url: this.getODataUrl(this.ordersDataSourceURI),
-            version: AppConsts.ODataVersion,
-            deserializeDates: false,
-            beforeSend: (request) => {
-                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-                request.params.$select = DataGridService.getSelectFields(
-                    this.ordersGrid,
-                    [
-                        this.orderFields.Id,
-                        this.orderFields.LeadId,
-                        this.orderFields.ContactId,
-                        this.orderFields.ContactGroupId
-                    ]
-                );
-            }
-        }
-    };
+    ordersDataSource: any = new DataSource(this.getOrdersDataSourceConfig());
     subscriptionsDataSource = new DataSource({
         requireTotalCount: true,
         store: new ODataStore({
@@ -443,6 +423,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         this.subscriptionFields.ContactGroupId
                     ]
                 );
+            },
+            onLoaded: (records) => {
+                if (records instanceof Array)
+                    this.subscriptionsDataSource['entities'] = (this.subscriptionsDataSource['entities'] || []).concat(records);
             }
         })
     });
@@ -569,11 +553,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         switchMap(this.waitUntilLayoutType(DataLayoutType.DataGrid)),
         switchMap(this.waitUntilOrderType(OrderType.Order)),
         map(([oDataRequestValues, ]: [ODataRequestValues, ]) => {
-            return this.getODataUrl('OrderCount', oDataRequestValues.filter, null,
+            return this.getODataUrl(this.orderCountDataSourceURI, oDataRequestValues.filter, null,
                 [...this.getSubscriptionsParams(), ...oDataRequestValues.params]);
         }),
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
         switchMap((totalUrl: string) => {
+            this.totalCount = this.totalErrorMsg = undefined;
             return this.http.get(
                 totalUrl,
                 {
@@ -581,7 +566,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         'Authorization': 'Bearer ' + abp.auth.getToken()
                     })
                 }
-            );
+            ).pipe(catchError(() => {
+                this.totalErrorMsg = this.l('AnHttpErrorOccured');
+                return of({});
+            }));
         }),
         map((summaryData: { [stageId: string]: OrderStageSummary }) => {
             return Object.values(summaryData).reduce((summary: OrderStageSummary, stageSummary: OrderStageSummary) => {
@@ -602,7 +590,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         switchMap(this.waitUntilOrderType(OrderType.Subscription)),
         map(([oDataRequestValues, ]: [ODataRequestValues, ]) => {
             return this.getODataUrl(
-                'SubscriptionSlice',
+                this.subscriptionGroupDataSourceURI,
                 oDataRequestValues.filter,
                 null,
                 [
@@ -619,14 +607,22 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             );
         }),
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
-        switchMap((subscriptionSummaryUrl: string) => this.http.get(
-            subscriptionSummaryUrl,
-            {
-                headers: new HttpHeaders({
-                    'Authorization': 'Bearer ' + abp.auth.getToken()
+        switchMap((subscriptionSummaryUrl: string) => {
+            this.totalCount = this.totalErrorMsg = undefined;
+            return this.http.get(
+                subscriptionSummaryUrl,
+                {
+                    headers: new HttpHeaders({
+                        'Authorization': 'Bearer ' + abp.auth.getToken()
+                    })
+                }
+            ).pipe(
+                catchError(() => {
+                    this.totalErrorMsg = this.l('AnHttpErrorOccured');
+                    return of({});
                 })
-            }
-        )),
+            )
+        }),
     );
     private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
     private activate$: Observable<boolean> = this._activate.asObservable();
@@ -787,10 +783,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.handleFiltersPining();
         this.ordersSummary$.subscribe((ordersSummary: OrderStageSummary) => {
             this.ordersSum = ordersSummary.sum;
-            this.totalCount = ordersSummary.count;
+            this.ordersDataSource['total'] = this.totalCount = ordersSummary.count;
         });
         this.subscriptionsSummary$.subscribe((data) => {
-            this.totalCount = data.summary[0];
+            this.subscriptionsDataSource['total'] = this.totalCount = data.summary[0];
             this.subscriptionsTotalOrderAmount = data.summary[1];
             this.subscriptionsTotalFee = data.summary[2];
             if (this.subscriptionsGrid) {
@@ -841,8 +837,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.handleQueryParams();
         this.initFilterConfig();
         this.subscribeToFilter();
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
         this.showHostElement(() => {
             this.pipelineComponent.detectChanges();
         });
@@ -881,6 +875,36 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             first(),
             mapTo(data)
         );
+    }
+
+    private getOrdersDataSourceConfig(options?) {
+        return {
+            ...options,
+            requireTotalCount: true,
+            store: {
+                type: 'odata',
+                key: this.orderFields.Id,
+                url: this.getODataUrl(this.ordersDataSourceURI),
+                version: AppConsts.ODataVersion,
+                deserializeDates: false,
+                beforeSend: (request) => {
+                    request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                    request.params.$select = DataGridService.getSelectFields(
+                        this.ordersGrid,
+                        [
+                            this.orderFields.Id,
+                            this.orderFields.LeadId,
+                            this.orderFields.ContactId,
+                            this.orderFields.ContactGroupId
+                        ]
+                    );
+                },
+                onLoaded: (records) => {
+                    if (records instanceof Array)
+                        this.ordersDataSource['entities'] = (this.ordersDataSource['entities'] || []).concat(records);
+                }
+            }
+        };
     }
 
     get dataSource() {
@@ -1358,7 +1382,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         if (this.selectedOrderType.value === OrderType.Order) {
             if (this.showOrdersPipeline) {
                 if (!this.pipelineDataSource)
-                    setTimeout(() => this.pipelineDataSource = this.ordersDataSource);
+                    setTimeout(() => this.pipelineDataSource = this.getOrdersDataSourceConfig({uri: this.ordersDataSourceURI}));
             } else
                 this.setDataGridInstance(this.dataGrid);
         } else if (this.selectedOrderType.value === OrderType.Subscription) {
@@ -1561,7 +1585,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         this.onCardClick({
             entity: event.data,
-            entityStageDataSource: this.dataGrid.instance.getDataSource(),
+            entityStageDataSource: this.dataSource,
             loadMethod: null,
             queryParams: {},
             section: section
@@ -1589,6 +1613,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     }
                 }
             );
+
             if (entityStageDataSource)
                 this.itemDetailsService.setItemsSource(isOrder ? ItemTypeEnum.Order :
                     ItemTypeEnum.Subscription, entityStageDataSource, loadMethod);
@@ -1722,8 +1747,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         this.onCardClick({
             entity: event.data,
-            entityStageDataSource: event.dataSource
-                || this.ordersGrid.instance.getDataSource(),
+            entityStageDataSource: event.dataSource || this.dataSource,
             loadMethod: event.loadMethod,
             queryParams: queryParams,
             section: section
@@ -1760,8 +1784,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     deactivate() {
         super.deactivate();
         this.filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
-
         this.hideHostElement();
     }
 

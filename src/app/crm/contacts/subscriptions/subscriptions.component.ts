@@ -93,7 +93,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     ngOnInit() {
         this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo) {
-                this.manageAllowed = this.permission.isGranted(AppPermissions.CRMOrdersManage)
+                this.manageAllowed = abp.session.tenantId && this.permission.isGranted(AppPermissions.CRMOrdersManage)
                     && this.permission.checkCGPermission(contactInfo.groupId);
                 this.data = this.contactService['data'];
                 this.refreshData();
@@ -111,8 +111,8 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                 );
             }
         });
-
-        data.forEach(item => {
+        let sortedData = _.sortBy(data, (x: OrderSubscriptionDto) => x.id).reverse();
+        sortedData.forEach(item => {
             let services = item.services.map(service => service.serviceCode);
             if (item.status != 'Current' &&
                 _.difference(services, currentServices).length

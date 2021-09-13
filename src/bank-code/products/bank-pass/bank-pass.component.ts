@@ -41,8 +41,8 @@ import { UrlHelper } from '@shared/helpers/UrlHelper';
 import {
     BANKCodeServiceProxy,
     ContactServiceProxy,
-    CreateLeadInput,
-    MemberSettingsServiceProxy
+    MemberSettingsServiceProxy,
+    CreateOrEditLeadInput
 } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
@@ -141,8 +141,10 @@ export class BankPassComponent implements OnInit, OnDestroy {
                 this.transformRequest(request);
             },
             onLoaded: (count: any) => {
-                this.totalCount = count;
-                this.changeDetectorRef.detectChanges();
+                if (!isNaN(count)) {
+                    this.totalCount = count;
+                    this.changeDetectorRef.detectChanges();
+                }
             }
         })
     });
@@ -324,8 +326,8 @@ export class BankPassComponent implements OnInit, OnDestroy {
     openAddLeadDialog() {
         const dialogData: CreateEntityDialogData = {
             refreshParent: () => this.refresh(),
-            createMethod: this.bankCodeServiceProxy.createLead.bind(this.bankCodeServiceProxy),
-            createModel: CreateLeadInput,
+            createMethod: this.bankCodeServiceProxy.createOrUpdateLead.bind(this.bankCodeServiceProxy),
+            createModel: CreateOrEditLeadInput,
             isInLeadMode: true,
             customerType: ContactGroup.Client,
             hideToolbar: true,
@@ -347,7 +349,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
     }
 
     create(createData) {
-        this.bankCodeServiceProxy.createLead(new CreateLeadInput(createData)).subscribe();
+        this.bankCodeServiceProxy.createOrUpdateLead(new CreateOrEditLeadInput(createData)).subscribe();
     }
 
     onContentReady() {

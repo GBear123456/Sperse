@@ -83,14 +83,16 @@ export class PlatformSelectComponent {
                     if (module.name !== 'CFO' && module.name !== 'PFM' && !this.isDisabled(module.name)) {
                         this.modules.footerItems.push(moduleConfig);
                     } else if (module.name === 'CFO'
-                        && this.appService.isModuleActive(module.name)
+                        && !AppConsts.appMemberPortalUrl
                         && !appService.isHostTenant
+                        && this.appService.isModuleActive(module.name)
                         && this.feature.isEnabled(AppFeatures.CFOPartner)
                         && this.permission.isGranted(AppPermissions.CFOMemberAccess)
                     ) {
                         this.modules.footerItems.push(moduleConfig);
                     } else if (
                         module.name === 'PFM'
+                        && !AppConsts.appMemberPortalUrl
                         && this.appService.isModuleActive(module.name)
                         && (this.feature.isEnabled(AppFeatures.PFMApplications) || this.feature.isEnabled(AppFeatures.PFMCreditReport))
                     ) {

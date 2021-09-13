@@ -19,6 +19,7 @@
         <salt-edge
             [mode]="connectionMode"
             [accountId]="data?.config?.accountId"
+            [loadingContainerElement]="data?.loadingContainerElement"
             (onComplete)="complete()" 
             (onClose)="closeDialog()">
         </salt-edge>

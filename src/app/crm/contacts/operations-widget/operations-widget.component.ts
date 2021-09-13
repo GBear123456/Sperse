@@ -68,6 +68,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     @Input() contactInfo: ContactInfoDto;
     @Input() customerType: string;
     @Input() leadId: number;
+    @Input() selectedPipelineId: number;
+    @Input() pipelineDataSource: any[];
     @Input() selectedStageId: number;
     @Input()
     set stages(stages: any[]) {
@@ -274,7 +276,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                     text: this.l('LoginToPortal'),
                                     visible: (this.canImpersonate || this.autoLoginAllowed) 
                                         && !!AppConsts.appMemberPortalUrl
-                                        && !this.authService.checkCurrentTopDomainByUri(),
+                                        && !this.isBankCodeLayout,
                                     action: () => {
                                         this.impersonationService.impersonate(
                                             this.contactInfo.personContactInfo.userId,
@@ -374,14 +376,13 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'stage',
                             action: this.toggleStages.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType),
-                            visible: this.contactInfo.statusId == ContactStatus.Prospective
+                            disabled: !this.permission.checkCGPermission(this.customerType)
                         },
                         {
                             name: 'status',
                             action: this.toggleStatus.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType),
-                            visible: this.contactInfo.statusId != ContactStatus.Prospective
+                            disabled: !this.permission.checkCGPermission(this.customerType)
+                                || this.contactInfo.statusId == ContactStatus.Prospective
                         },
                         {
                             name: 'partnerType',

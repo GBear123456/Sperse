@@ -179,6 +179,8 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
 
     onCellPrepared($event) {
         if ($event.rowType === 'data' && $event.column.command === 'edit') {
+            if (!this.isUpdateDeleteAllowed)
+                $event.cellElement.classList.add('no-manage');
             if (this.isUpdateDeleteAllowed)
                 this.addActionButton('delete', $event.cellElement, () => {
                     if ($event.data.hasOwnProperty('id'))

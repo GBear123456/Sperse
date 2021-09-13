@@ -16,6 +16,7 @@ import { ContactGroup } from '@shared/AppEnums';
 })
 export class OrdersHeaderDropdownComponent {
     @Input() totalCount: number;
+    @Input() totalErrorMsg: string;
     @Input() orderType: OrderType;
     @Input() contactGroup: ContactGroup;
     @Output() onOrderTypeChanged: EventEmitter<OrderType> = new EventEmitter<OrderType>();
@@ -46,7 +47,7 @@ export class OrdersHeaderDropdownComponent {
         private permission: AppPermissionService
     ) {}
 
-    getTitleWidth(component) {
-        return component ? Math.max(component.option('value').length * 15, 260) + 'px' : 'auto';
+    isTotalCountValid() {
+        return Number.isInteger(this.totalCount);
     }
 }

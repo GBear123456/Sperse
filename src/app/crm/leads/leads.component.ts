@@ -197,7 +197,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         this.contactService.showSMSDialog({
                             phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
                         });
-                    }
+                },
+                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail')
                 },
                 {
                     text: this.l('SendEmail'),
@@ -206,7 +207,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         this.contactService.showEmailDialog({
                             contactId: (data || this.actionEvent.data || this.actionEvent).CustomerId
                         }).subscribe();
-                    }
+                },
+                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail')
                 },
             ]
         },
@@ -235,8 +237,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         && (
                             this.impersonationIsGranted ||
                             this.permission.checkCGPermission(this.selectedContactGroup, 'UserInformation.AutoLogin')
-                        )
-                        && !this.authService.checkCurrentTopDomainByUri(),
+                        ),
                     action: (data?) => {
                         const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
                         this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl);
@@ -254,8 +255,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             this.showLeadDetails({ data: data || this.actionEvent }, 'notes', {
                                 addNew: true
                             });
+                        },
+                        checkVisible: () => this.permission.checkCGPermission(this.selectedContactGroup)
                         }
-                    }
                 },
                 {
                     text: this.l('Appointment'),
@@ -312,12 +314,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     disabled: false,
                     action: (data?) => {
                         this.deleteLeads([(data || this.actionEvent.data || this.actionEvent).Id]);
-                    }
+                },
+                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup)
                 },
                 {
                     text: this.l('EditRow'),
                     class: 'edit',
-                    action: (data?) => this.showLeadDetails({ data: data || this.actionEvent })
+                    action: (data?) => this.showLeadDetails({ data: data || this.actionEvent }),
+                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup)
                 }
             ]
         }
@@ -412,7 +416,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
     });
 
-    private rootComponent: any;
     private exportCallback: Function;
     private isSlice = this.appService.getModule() === 'slice';
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
@@ -663,6 +666,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         filter(() => this.componentIsActivated)
     );
     totalCount: number;
+    totalErrorMsg: string;
     toolbarConfig: ToolbarGroupModel[];
     private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
     private activate$: Observable<boolean> = this._activate.asObservable();
@@ -736,6 +740,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
+                    onLoaded: (records) => {
+                        if (records instanceof Array)
+                            this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
+                    },
                     deserializeDates: false
                 }
             };
@@ -744,13 +752,17 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 store: new ODataStore({
                     version: AppConsts.ODataVersion,
                     beforeSend: (request) => {
-                        this.totalCount = undefined;
+                        this.totalCount = this.totalErrorMsg = undefined;
                         request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                         request.params.contactGroupId = this.selectedContactGroup;
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
                     onLoaded: (count: any) => {
-                        this.totalCount = count;
+                        if (!isNaN(count))
+                            this.dataSource['total'] = this.totalCount = count;
+                    },
+                    errorHandler: (e: any) => {
+                        this.totalErrorMsg = this.l('AnHttpErrorOccured');
                     }
                 })
             });
@@ -873,6 +885,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.refresh$
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
+            filter(() => !this.showPipeline),
             debounceTime(300)
         ).subscribe(([odataRequestValues, ]) => {
             let url = this.getODataUrl(this.totalDataSourceURI,
@@ -1560,7 +1573,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.isSmsAndEmailSendingAllowed,
+                        disabled: !this.selectedClientKeys.length || this.selectedClientKeys.length > 1 || !this.isSmsAndEmailSendingAllowed,
                         options: {
                             items: [
                                 {
@@ -1974,7 +1987,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             let orgId = lead.OrganizationId;
             event.component && event.component.cancelEditData();
             this.itemDetailsService.setItemsSource(ItemTypeEnum.Lead, event.dataSource
-                || this.dataGrid.instance.getDataSource(), event.loadMethod);
+                || this.dataSource, event.loadMethod);
             setTimeout(() => {
                 this._router.navigate(
                     CrmService.getEntityDetailsLink(clientId, section, leadId, orgId),
@@ -2075,8 +2088,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initFilterConfig();
         this.initToolbarConfig();
         this.handleQueryParams();
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
 
         this.showHostElement(() => {
             this.repaintToolbar();
@@ -2089,7 +2100,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         super.deactivate();
         this._activate.next(false);
         this.filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
         this.pipelineComponent.deactivate();
         this.hideHostElement();
     }
@@ -2194,6 +2204,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.contactService.mergeContact(source, target, false, true, () => this.refresh(), true);
             });
         }
+    }
+
+    onTotalChange(totalCount: number) {
+        this.totalCount = totalCount;
     }
 
     openEntityChecklistDialog(data?) {

@@ -1,5 +1,5 @@
 <div [@routerTransition]>
-    <app-headline [names]="headerLabels"
+    <app-headline [names]="[l('Users')]"
                   icon="people"
                   [showToggleToolbarButton]="true"
                   [showReloadButton]="ui.showReload"
@@ -8,6 +8,9 @@
                   [showToggleColumnSelectorButton]="true"
                   [buttons]="headlineButtons"
                   [showStateResetButton]="true"
+                  [showTotalCount]="true"
+                  [totalCount]="totalCount"
+                  [totalErrorMsg]="totalErrorMsg"
                   (onToggleToolbar)="repaintDataGrid()"
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
@@ -35,7 +38,6 @@
                                   [columnAutoWidth]="true"
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
-                                  [pager]="defaultGridPagerConfig"
                                   (onOptionChanged)="onGridOptionChanged($event)"
                                   (onInitialized)="onInitialized($event)"
                                   (onContentReady)="setGridDataLoaded()"
@@ -53,7 +55,7 @@
                                 [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
                                 [allowUpdating]="true">
                         </dxo-editing>
-                        <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                        <dxo-scrolling mode="infinite"></dxo-scrolling>
                         <dxi-column
                                 caption=" "
                                 dataField="profileThumbnailId"
@@ -67,7 +69,7 @@
                         <dxi-column dataField="userName" [caption]="l('UserName')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="name" [caption]="l('FirstName')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="surname" [caption]="l('LastName')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="roles" [caption]="l('Roles')" cellTemplate="roleCell" [allowSorting]="false" [renderAsync]="true"></dxi-column>
+                        <dxi-column dataField="roles" width="200px" [caption]="l('Roles')" cellTemplate="roleCell" [allowSorting]="false" [renderAsync]="true" alignment="left"></dxi-column>
                         <dxi-column dataField="emailAddress" [caption]="l('EmailAddress')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column dataField="phoneNumber" [caption]="l('PhoneNumber')" cellTemplate="phoneCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="isEmailConfirmed" [caption]="l('EmailConfirmed')" cssClass="clipboard-holder"></dxi-column>
@@ -81,10 +83,8 @@
                         </div>
 
                         <div *dxTemplate="let cellData of 'roleCell'" class="clipboard-holder">
-                        <span class="role-container">
-                            <ng-container *ngFor="let item of cellData.value; let i = index">
-                                {{(i ? ',&nbsp;': '') + item.roleName}}
-                            </ng-container>
+                        <span class="role-container" *ngIf="getRolesTitle(cellData.value) as roles" [title]="roles">
+                            {{roles}}
                         </span>
                         </div>
 
@@ -97,7 +97,7 @@
                         </div>
 
                         <dxo-sorting mode="multiple"></dxo-sorting>
-                        <dxo-paging [pageSize]="20"></dxo-paging>
+                        <dxo-pager [visible]="true"></dxo-pager>
                         <dxo-group-panel [visible]="false"></dxo-group-panel>
                     </dx-data-grid>
                 </div>

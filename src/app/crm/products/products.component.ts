@@ -407,7 +407,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     onCellClick(event) {
-        if (event.data)
+        if (event.rowType == 'data' && event.data)
             this.editProduct(event.data.Id);
     }
 

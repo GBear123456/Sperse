@@ -15,6 +15,7 @@ import { NgxFileDropEntry } from 'ngx-file-drop';
 import startCase from 'lodash/startCase';
 
 /** Application imports */
+import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -23,6 +24,8 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
+import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { CacheService } from 'ng2-cache-service';
 import {
     EmailTemplateServiceProxy,
     GetTemplatesResponse,
@@ -32,7 +35,7 @@ import {
     GetTemplateReponse,
     ContactServiceProxy,
     GetEmailDataOutput,
-
+    EmailSettingsSource,
     EmailTemplateType
 } from '@shared/service-proxies/service-proxies';
 import { DocumentsService } from '@app/crm/contacts/documents/documents.service';
@@ -50,7 +53,7 @@ import { AppPermissions } from '@shared/AppPermissions';
     selector: 'email-template-dialog',
     templateUrl: 'email-template-dialog.component.html',
     styleUrls: [ 'email-template-dialog.component.less' ],
-    providers: [ PhoneFormatPipe, EmailTemplateServiceProxy ],
+    providers: [ CacheHelper, PhoneFormatPipe, EmailTemplateServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailTemplateDialogComponent implements OnInit {
@@ -63,6 +66,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     ckEditor: any;
     templateLoaded: boolean;
+    emailSettingsSource: EmailSettingsSource;
     showCC = false;
     showBCC = false;
     tagLastValue: string;
@@ -81,6 +85,11 @@ export class EmailTemplateDialogComponent implements OnInit {
     @Output() onTemplateDelete: EventEmitter<number> = new EventEmitter<number>();
 
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
+    isSettingsAllowed = this.permission.isGranted(AppPermissions.AdministrationTenantHosts) 
+        || (this.appService.isHostTenant ? 
+            this.permission.isGranted(AppPermissions.AdministrationHostSettings) :
+            this.permission.isGranted(AppPermissions.AdministrationTenantSettings)
+    );
 
     buttons: IDialogButton[];
     _refresh: Subject<null> = new Subject<null>();
@@ -94,6 +103,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     charCount: number;
     forceValidationBypass = true;
     emailRegEx = AppConsts.regexPatterns.email;
+
+    storeAttachmentsToDocumentsCacheKey = 'StoreAttachmentsToDocuments';
 
     ckConfig: any = {
         enterMode: 3, /*CKEDITOR.ENTER_DIV*/
@@ -124,42 +135,59 @@ export class EmailTemplateDialogComponent implements OnInit {
         skin: 'moono-lisa' //kama,moono,moono-lisa
     };
 
+    saveButtonOptions = [
+        { text: this.ls.l('Save'), selected: false },
+        { text: this.ls.l('SaveAsNew'), selected: false },
+        { text: this.ls.l('SaveAndClose'), selected: false }
+    ];
+
     constructor(
         private phonePipe: PhoneFormatPipe,
         private domSanitizer: DomSanitizer,
         private notifyService: NotifyService,
         private profileService: ProfileService,
+        private cacheHelper: CacheHelper,
+        private cacheService: CacheService,
         private contactProxy: ContactServiceProxy,
         private dialogRef: MatDialogRef<EmailTemplateDialogComponent>,
         private emailTemplateProxy: EmailTemplateServiceProxy,
-        sessionService: AppSessionService,
+        private sessionService: AppSessionService,
         private permission: AppPermissionService,
         private features: FeatureCheckerService,
         private communicationProxy: ContactCommunicationServiceProxy,
-        private documentsService: DocumentsService,
         public changeDetectorRef: ChangeDetectorRef,
+        public appService: AppService,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: EmailTemplateData
     ) {
-        data.from = sessionService.user.emailAddress;
         if (!data.suggestionEmails)
             data.suggestionEmails = [];
 
-        if (this.data.templateId)
-            this.loadTemplateById(this.data.templateId);
-        else {
-            if (!this.data.tags && this.data.contact)
-                this.communicationProxy.getEmailData(
-                    undefined, this.data.contact.id
-                ).subscribe((res: GetEmailDataOutput) => {
-                    this.data.tags = res.tags;
-                });
-            this.templateLoaded = true;
-        }
+        data.saveAttachmentsToDocuments = this.getAttachmentsToDocumentsCache();
     }
 
     ngOnInit() {
+        if (this.templateEditMode && this.data.templateId)
+            this.loadTemplateById(this.data.templateId);
+        else {
+            if (!this.data.tags && (this.data.contactId || this.data.contact)) {
+                this.startLoading();
+                this.communicationProxy.getEmailData(
+                    undefined, this.data.contactId || this.data.contact.id
+                ).pipe(
+                    finalize(() => this.finishLoading())
+                ).subscribe((res: GetEmailDataOutput) => {
+                    this.data.tags = res.tags;
+                    if (res.from && res.from.length)
+                        this.data.from = res.from;
+                    this.initFromField();
+                });
+            } else
+                this.initFromField();
+            this.templateLoaded = true;
+        }
+
         delete this.data.attachments;
         this.dialogRef.afterClosed().subscribe(() => {
             if (this.attachments.length && !this.data.attachments)
@@ -169,9 +197,48 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.showBCC = Boolean(this.data.bcc && this.data.bcc.length);
 
         this.ckConfig.height = this.editorHeight ? this.editorHeight : innerHeight -
-            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 460 : 420) + 'px';
+            (this.features.isEnabled(AppFeatures.CRMBANKCode) ? 544 : 498) + 'px';
 
         this.initDialogButtons();
+        this.changeDetectorRef.detectChanges();
+    }
+
+    initFromField() {
+        if (this.data.from instanceof Array && this.data.from.length) {
+            let from = this.data.from.find(item => item.emailSettingsSource == EmailSettingsSource.User);
+            if (from) {
+                this.emailSettingsSource = from.emailSettingsSource;
+            } else {
+                from = this.data.from[0];
+                this.emailSettingsSource = from.emailSettingsSource;
+            }
+            this.data.emailSettingsSource = this.emailSettingsSource;
+            this.checkUpdateCCFromEmail(from);
+        }
+    }
+
+    checkUpdateCCFromEmail(from) {
+        if (this.data.cc && this.data.cc.length)
+            this.data.cc = this.data.cc.filter(item => {
+                return !(item.includes(from.emailAddress) || from.emailAddress.includes(item));
+            });
+
+        if (from && from.ccEmailAddress && this.data.to.every(item => item != from.ccEmailAddress)) {
+            if (this.data.cc && this.data.cc.length) {
+                this.data.cc.push(from.ccEmailAddress);
+                this.data.cc = this.data.cc.map((item, index) => {
+                    if (this.data.cc.some((item2, index2) => {
+                        if (index2 > index)
+                            return item2.includes(item) || item.includes(item2);
+                        return false;
+                    }))
+                        return undefined;
+                    return item;
+                }).filter(Boolean);
+            } else
+                this.data.cc = [from.ccEmailAddress];
+            this.showCC = true;
+        }
         this.changeDetectorRef.detectChanges();
     }
 
@@ -191,32 +258,37 @@ export class EmailTemplateDialogComponent implements OnInit {
                 action: this.save.bind(this),
                 contextMenu: {
                     hidden: this.data.hideContextMenu,
-                    items: [
-                        { text: this.ls.l('Save'), selected: false },
-                        { text: this.ls.l('SaveAsNew'), selected: false }
-                    ],
+                    items: this.saveButtonOptions,
+                    cacheKey: this.cacheHelper.getCacheKey(
+                        'save_option_active_index', 'EmailTemplateDialog'),
                     defaultIndex: 0
-                }
+                },
             }
         ];
     }
 
     save() {
-        if (this.validateData()) {
-            if (this.templateEditMode)
-                this.saveTemplateData();
-            else {
-                this.data.attachments = [];
-                if (this.attachments.every((item: Partial<EmailAttachment>) => {
-                    if (item.loader)
-                        this.notifyService.info(this.ls.l('AttachmentsUploadInProgress'));
-                    else
-                        this.data.attachments.push(item);
-                    return !item.loader;
-                }))
-                    this.onSave.emit(this.data);
+        if (this.ckEditor.mode == 'source')
+            this.ckEditor.execCommand('source');
+
+        setTimeout(() => {
+            if (this.validateData()) {
+                this.storeAttachmentsToDocumentsCache();
+                if (this.templateEditMode)
+                    this.saveTemplateData();
+                else {
+                    this.data.attachments = [];
+                    if (this.attachments.every((item: Partial<EmailAttachment>) => {
+                        if (item.loader)
+                            this.notifyService.info(this.ls.l('AttachmentsUploadInProgress'));
+                        else
+                            this.data.attachments.push(item);
+                        return !item.loader;
+                    }))
+                        this.onSave.emit(this.data);
+                }
             }
-        }
+        }, 100);
     }
 
     validateData() {
@@ -234,7 +306,9 @@ export class EmailTemplateDialogComponent implements OnInit {
 
             if (!this.data.from)
                 return this.notifyService.error(
-                    this.ls.l('RequiredField', this.ls.l('From')));
+                    this.ls.l('MailerSettingsAreNotConfigured', this.ls.l('SMTP')), 
+                    this.ls.l('RequiredField', this.ls.l('From'))
+                );
 
             if (!this.data.to || !this.data.to.length)
                 return this.notifyService.error(
@@ -267,20 +341,36 @@ export class EmailTemplateDialogComponent implements OnInit {
 
             this.startLoading();
             let request$: Observable<any> = this.data.templateId
-            && this.buttons[1].contextMenu.items[0].selected
-            && !this.data.addMode
-                ? this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data))
-                : this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data));
+                && !this.data.addMode && !this.isSaveAsNew()
+                    ? this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data))
+                    : this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data));
 
             request$.pipe(finalize(() => this.finishLoading())).subscribe((id: number) => {
                 if (id)
                     this.data.templateId = id;
                 this.onSave.emit(this.data);
+
+                if (this.isSaveAndClose())
+                    this.close();
+                else
+                    this.refresh();
             });
         } else {
             this.templateComponent.instance.option('isValid', false);
         }
         this.forceValidationBypass = true;
+    }
+
+    isSaveAsNew() {
+        return this.saveButtonOptions.some(item => {
+            return item.selected && item.text == this.ls.l('SaveAsNew');
+        });
+    }
+
+    isSaveAndClose() {
+        return this.saveButtonOptions.some(item => {
+            return item.selected && item.text == this.ls.l('SaveAndClose');
+        });
     }
 
     getTemplateName() {
@@ -346,7 +436,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     onTemplateChanged(event) {
         this.data.templateId = event.value;
         if (event.value) {
-            if (this.templateEditMode || this.data.switchTemplate)
+            if (this.templateEditMode)
                 this.loadTemplateById(event.value);
             else
                 this.onTemplateChange.emit(event.value);
@@ -354,20 +444,22 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     loadTemplateById(templateId) {
-        this.startLoading();
-        this.emailTemplateProxy.getTemplate(templateId).pipe(
-            finalize(() => this.finishLoading())
-        ).subscribe((res: GetTemplateReponse) => {
-            this.data.bcc = res.bcc;
-            this.data.body = res.body;
-            this.data.cc = res.cc;
-            this.data.subject = res.subject;
-            this.showCC = Boolean(res.cc && res.cc.length);
-            this.showBCC = Boolean(res.bcc && res.bcc.length);
-            this.onTemplateChange.emit(templateId);
-            this.invalidate();
-            this.templateLoaded = true;
-        });
+        if (this.templateEditMode) {
+            this.startLoading();
+            this.emailTemplateProxy.getTemplate(templateId).pipe(
+                finalize(() => this.finishLoading())
+            ).subscribe((res: GetTemplateReponse) => {
+                this.data.bcc = res.bcc;
+                this.data.body = res.body;
+                this.data.cc = res.cc;
+                this.data.subject = res.subject;
+                this.showCC = Boolean(res.cc && res.cc.length);
+                this.showBCC = Boolean(res.bcc && res.bcc.length);
+                this.onTemplateChange.emit(templateId);
+                this.invalidate();
+                this.templateLoaded = true;
+            });
+        }
     }
 
     validateEmailList(element) {
@@ -380,6 +472,22 @@ export class EmailTemplateDialogComponent implements OnInit {
     invalidate() {
         this.updateDataLength();
         this.changeDetectorRef.markForCheck();
+    }
+
+    onFromChanged(event) {
+        let from = this.data.from.find(
+            item => item.emailSettingsSource == event.value
+        );
+        if (from) {
+            this.data.emailSettingsSource = from.emailSettingsSource;
+            if (this.data.cc && this.data.cc.length)
+                this.data.from.forEach(item => {
+                    let index = this.data.cc.indexOf(item.ccEmailAddress);
+                    if (index >= 0)
+                        this.data.cc.splice(index, 1);                    
+                });
+                this.checkUpdateCCFromEmail(from);
+        }
     }
 
     onCustomItemCreating(event, callback?) {
@@ -607,27 +715,33 @@ export class EmailTemplateDialogComponent implements OnInit {
         this.onTemplateCreate.emit(data);
     }
 
-    deleteTemplate(e, templateId: number) {
-        this.startLoading();
-        this.emailTemplateProxy.delete(templateId)
-            .pipe(finalize(() => this.finishLoading()))
-            .subscribe(() => {
-                this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
-                this.refresh();
-                if (this.data.templateId === templateId) {
-                    this.data.templateId = null;
-                }
-                this.onTemplateDelete.emit(templateId);
-            });
-        e.stopPropagation();
-        e.preventDefault();
+    deleteTemplate(event, template, component) {
+        component.instance.option('opened', false);
+        abp.message.confirm(this.ls.l('DeleteItemConfirmation', template.name), (isConfimed) => {
+            if (isConfimed) {
+                this.startLoading();
+                this.emailTemplateProxy.delete(template.id)
+                    .pipe(finalize(() => this.finishLoading()))
+                    .subscribe(() => {
+                        this.notifyService.success(this.ls.l('SuccessfullyDeleted'));
+                        this.refresh();
+                        if (this.data.templateId === template.id) {
+                            this.data.templateId = null;
+                        }
+                        this.onTemplateDelete.emit(template.id);
+                    });
+            }
+        });
+        event.stopPropagation();
+        event.preventDefault();
     }
 
     openDocuments() {
         const templateDocumentsDialogData: TemplateDocumentsDialogData = {
             fullHeight: true,
             contactId: this.data.contact && this.data.contact.id,
-            dropFiles: this.addAttachments.bind(this)
+            dropFiles: this.addAttachments.bind(this),
+            showDocuments: true
         };
         this.dialog.open(TemplateDocumentsDialogComponent, {
             id: 'templateDialog',
@@ -654,9 +768,28 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     attachmentClick(event, attachment) {
         if (!attachment.url) {
-            this.documentsService.downloadDocument(attachment.id);
+            this.startLoading();
+            this.communicationProxy.getAttachmentLink(attachment.id).pipe(
+                finalize(() => this.finishLoading())
+            ).subscribe(res => window.open(res, '_blank'));
             event.stopPropagation();
+            event.preventDefault();
         }
+    }
+
+    storeAttachmentsToDocumentsCache() {
+        this.cacheService.set(
+            this.cacheHelper.getCacheKey(this.storeAttachmentsToDocumentsCacheKey),
+            this.data.saveAttachmentsToDocuments
+        );
+    }
+
+    getAttachmentsToDocumentsCache(): boolean {
+        let key = this.cacheHelper.getCacheKey(this.storeAttachmentsToDocumentsCacheKey);
+        if (this.cacheService.get(key) == false)
+            return false;
+
+        return true;
     }
 
     close() {

@@ -160,7 +160,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private readonly totalDataSourceURI: string = 'Contact/$count';
     private readonly groupDataSourceURI: string = 'ContactSlice';
     private readonly dateField = 'ContactDate';
-    private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
     rowsViewHeight: number;
@@ -364,8 +363,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         && (
                             this.impersonationIsGranted ||
                             this.permission.checkCGPermission(client.GroupId, 'UserInformation.AutoLogin')
-                        )
-                        && !this.authService.checkCurrentTopDomainByUri(),
+                        ),
                     action: () => this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl)
                 },
                 {
@@ -585,6 +583,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
     public usersInstancesLoadingSubscription: Subscription;
     totalCount: number;
+    totalErrorMsg: string;
     toolbarConfig: ToolbarGroupModel[];
     private subscriptionStatusFilter = new FilterModel({
         component: SubscriptionsFilterComponent,
@@ -681,11 +680,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (records) => {
-                    let userIds = this.getUserIds(records);
-                    this.usersInstancesLoadingSubscription = this.appService.isCfoLinkOrVerifyEnabled && userIds.length ?
-                        this.crmService.getUsersWithInstances(userIds).subscribe(() => {
-                            this.changeDetectorRef.markForCheck();
-                        }) : of().subscribe();
+                    if (records instanceof Array) {
+                        let userIds = this.getUserIds(records);
+                        this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
+                        this.usersInstancesLoadingSubscription = this.appService.isCfoLinkOrVerifyEnabled && userIds.length ?
+                            this.crmService.getUsersWithInstances(userIds).subscribe(() => {
+                                this.changeDetectorRef.markForCheck();
+                            }) : of().subscribe();
+                    }
                 }
             })
         });
@@ -698,14 +700,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 ]),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
-                    this.totalCount = undefined;
+                    this.totalCount = this.totalErrorMsg = undefined;
                     request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (count: any) => {
-                    this.totalCount = count;
-                }
+                    if (!isNaN(count))
+                        this.dataSource['total'] = this.totalCount = count;
+                },
+                errorHandler: (e: any) => {
+                    this.totalErrorMsg = this.l('AnHttpErrorOccured');
+                }                
             })
         });
     }
@@ -966,7 +972,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         if (clientId) {
             if (event.component)
                 event.component.cancelEditData();
-
             this.searchClear = false;
             setTimeout(() => {
                 this._router.navigate(
@@ -1260,7 +1265,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: this.selectedClientKeys.length > 1 || !this.permission.checkCGPermission(ContactGroup.Client, 'ViewCommunicationHistory.SendSMSAndEmail'),
+                        disabled: !this.selectedClientKeys.length || this.selectedClientKeys.length > 1 || 
+                            !this.permission.checkCGPermission(ContactGroup.Client, 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [
                                 {
@@ -1631,8 +1637,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
         if (this.dependencyChanged)
             this.refresh();
 
@@ -1645,7 +1649,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         super.deactivate();
         this.subRouteParams.unsubscribe();
         this.filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
         if (this.dataGrid) {
             this.itemDetailsService.setItemsSource(
                 ItemTypeEnum.Customer,

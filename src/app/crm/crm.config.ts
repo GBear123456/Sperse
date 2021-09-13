@@ -39,7 +39,8 @@ export class CrmConfig implements ConfigInterface {
         {
             text: 'Products',
             permission: AppPermissions.CRM,
-            route: '/app/crm/products'
+            route: '/app/crm/products',
+            host: 'tenant'
         },
         {
             text: 'Tasks',

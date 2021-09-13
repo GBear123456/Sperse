@@ -9,7 +9,8 @@
         #intPhoneNumberModel="ngModel"
         (onFocusIn)="focusIn()"
         (onFocusOut)="focusOut()"
-        (onKeyUp)="keyUp($event)">
+        (onKeyUp)="keyUp($event)"
+        (onDropDownHover)="dropDownHover($event)">
     </international-phone-number>
     <div *ngIf="focused && !isValid()" class="invalid-message-wrapper">
         <div class="invalid-message">{{ ls.l('PhoneValidationError') }}</div>

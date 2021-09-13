@@ -10,7 +10,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { EmailTemplateType, TenantPaymentSettingsServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
+import { EmailTemplateType, TenantPaymentSettingsServiceProxy, InvoiceSettings, Tier2CommissionSource, CommissionAffiliateAssignmentMode } from '@shared/service-proxies/service-proxies';
 import { BankSettingsDialogComponent } from '@app/crm/shared/bank-settings-dialog/bank-settings-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
@@ -50,6 +50,18 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         }
     ]
     EmailTemplateType = EmailTemplateType;
+    tier2SourceOptions = Object.keys(Tier2CommissionSource).map(item => {
+        return {
+            id: Tier2CommissionSource[item],
+            text: this.ls.l(item)
+        };
+    });
+    commissionAffiliateAssignmentModeOptions = Object.keys(CommissionAffiliateAssignmentMode).map(item => {
+        return {
+            id: CommissionAffiliateAssignmentMode[item],
+            text: this.ls.l('AffiliateAssignmentMode_' + item)
+        };
+    });
 
     constructor(
         public dialog: MatDialog,

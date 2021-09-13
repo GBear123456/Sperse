@@ -3,25 +3,24 @@
                   [buttons]="headlineButtons">
     </app-headline>
 
-    <div class="wrapper">
-        <mat-tab-group *ngIf="hostSettings">
+    <div class="wrapper" #tabGroup>
+        <mat-tab-group *ngIf="hostSettings" [selectedIndex]="tabIndex | async">
             <mat-tab label="{{l('General')}}" *ngIf="showTimezoneSelection">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">
                         <label for="Timezone">{{l("Timezone")}}</label>
                         <timezone-combo id="Timezone"
-                            [(selectedTimeZone)]="hostSettings.general.timezone"
-                            [defaultTimezoneScope]="defaultTimezoneScope">
+                                        [(selectedTimeZone)]="hostSettings.general.timezone"
+                                        [defaultTimezoneScope]="defaultTimezoneScope">
                         </timezone-combo>
                     </div>
                     <div class="form-group">
                         <label for="DefaultCountry">{{l("DefaultCountry")}}</label>
-                        <dx-select-box
-                            stylingMode="outlined"
-                            valueExpr="key"
-                            displayExpr="text"
-                            [(value)]="hostSettings.general.defaultCountryCode"
-                            [dataSource]="supportedCountries">
+                        <dx-select-box stylingMode="outlined"
+                                       valueExpr="key"
+                                       displayExpr="text"
+                                       [(value)]="hostSettings.general.defaultCountryCode"
+                                       [dataSource]="supportedCountries">
                         </dx-select-box>
                     </div>
                 </dx-scroll-view>
@@ -62,7 +61,7 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('UserManagement')}}" *ngIf="hostSettings.userManagement">
+            <mat-tab label="{{l('UserRegistration')}}" *ngIf="hostSettings.userManagement">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">
                         <dx-check-box id="Settings_IsEmailConfirmationRequiredForLogin"
@@ -221,6 +220,11 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
+            <mat-tab [label]="l('Domain')" *ngIf="isAdminCustomizations && isTenantHosts">
+                <dx-scroll-view showScrollbar="onHover">
+                    <system-settings></system-settings>
+                </dx-scroll-view>
+            </mat-tab>
             <mat-tab label="{{l('EmailSmtp')}}" *ngIf="hostSettings.email">
                 <dx-scroll-view showScrollbar="onHover">
                     <div class="form-group">
@@ -255,27 +259,21 @@
                                           [(value)]="hostSettings.email.smtpEnableSsl">
                             </dx-check-box>
                         </div>
-                        <div class="form-group">
-                            <dx-check-box id="Settings_SmtpUseDefaultCredentials"
-                                          [text]="l('UseDefaultCredentials')"
-                                          [(value)]="hostSettings.email.smtpUseDefaultCredentials">
-                            </dx-check-box>
-                        </div>
                     </div>
 
-                    <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
+                    <div class="form-group">
                         <label for="SmtpDomainName">{{l("DomainName")}}</label>
                         <input id="SmtpDomainName" type="text" name="SmtpDomainName" class="form-control"
                                [ngClass]="{'edited':hostSettings.email.smtpDomain}"
                                [(ngModel)]="hostSettings.email.smtpDomain" maxlength="128">
                     </div>
-                    <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
+                    <div class="form-group">
                         <label for="SmtpUserName">{{l("UserName")}}</label>
                         <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control"
                                [ngClass]="{'edited':hostSettings.email.smtpUserName}"
                                [(ngModel)]="hostSettings.email.smtpUserName" maxlength="128">
                     </div>
-                    <div class="form-group" [hidden]="hostSettings.email.smtpUseDefaultCredentials">
+                    <div class="form-group">
                         <label for="SmtpPassword">{{l("Password")}}</label>
                         <input type="text" class="hidden-field">
                         <input type="password" class="hidden-field">
@@ -283,7 +281,6 @@
                                [ngClass]="{'edited':hostSettings.email.smtpPassword}" [(ngModel)]="hostSettings.email.smtpPassword"
                                maxlength="128" autocomplete="off">
                     </div>
-                    <hr />
                     <h5>{{l("TestEmailSettingsHeader")}}</h5>
                     <div class="row">
                         <div class="form-group col-md-4">
@@ -293,6 +290,72 @@
                             <button class="btn btn-primary" type="button" (click)="sendTestEmail()">{{l("SendTestEmail")}}</button>
                         </div>
                     </div>
+                    <br />
+                    <div class="m-checkbox-list">
+                        <label for="Settings_Imap_IsEnabled" class="m-checkbox">
+                            <input id="Settings_Imap_IsEnabled" type="checkbox" name="ImapIsEnabled" [(ngModel)]="hostSettings.email.isImapEnabled">
+                            <h5>{{l("AllowImapSynchronization")}}</h5>
+                            <span></span>
+                        </label>
+                    </div>
+                    <br />
+                    <div class="form-group" [hidden]="!hostSettings.email.isImapEnabled">
+                        <label for="ImapHost">{{l("ImapHost")}}</label>
+                        <input id="ImapHost" type="text" name="ImapHost" class="form-control" [ngClass]="{'edited':hostSettings.email.imapHost}" [(ngModel)]="hostSettings.email.imapHost" maxlength="128">
+                    </div>
+                    <div class="form-group" [hidden]="!hostSettings.email.isImapEnabled">
+                        <label for="ImapPort">{{l("ImapPort")}}</label>
+                        <input id="ImapPort" type="number" name="ImapPort" class="form-control" [ngClass]="{'edited':hostSettings.email.imapPort}" [(ngModel)]="hostSettings.email.imapPort" maxlength="5">
+                    </div>
+                    <div class="m-checkbox-list" [hidden]="!hostSettings.email.isImapEnabled">
+                        <label for="Settings_Imap_UseSsl" class="m-checkbox">
+                            <input id="Settings_Imap_UseSsl" type="checkbox" name="ImapUseSsl" [(ngModel)]="hostSettings.email.imapUseSsl">
+                            {{l("ImapUseSsl")}}
+                            <span></span>
+                        </label>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('YTel')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <br />
+                            <label for="YTelIsEnabled" class="m-checkbox">
+                                <input id="YTelIsEnabled" type="checkbox" name="YTelIsEnabled" [(ngModel)]="yTelSettings.isEnabled">
+                                {{l("YTelIsEnabled")}}
+                                <span></span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelUserName">{{l("YTelUserName")}}</label>
+                            <input id="YTelUserName" type="text" name="YTelUserName" class="form-control" [(ngModel)]="yTelSettings.userName" maxlength="128">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelPassword">{{l("YTelPassword")}}</label>
+                            <input id="YTelPassword" type="text" name="YTelPassword" class="form-control" [(ngModel)]="yTelSettings.password" maxlength="128">
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelFrom">{{l("YTelFrom")}}</label>
+                            <dx-text-box type="tel" id="YTelFrom" name="YTelFrom" class="form-control" [(ngModel)]="yTelSettings.from" maxlength="128" [mask]="masks.phone" useMaskedValue="true" maskInvalidMessage=""></dx-text-box>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="form-group">
+                            <label for="YTelInboundSMSKey">{{l("YTelInboundSMSKey")}}</label>
+                            <input id="YTelInboundSMSKey" type="text" name="YTelInboundSMSKey" class="form-control" [(ngModel)]="yTelSettings.inboundSmsKey" maxlength="128">
+                        </div>
+                    </div>
+                    <p>
+                        <span [innerHtml]="l('YTelInboundSMSHint', 'https://app.ytel.com/#/numbers')"></span><br />
+                        <span class="copy-url"><b>{{getYtelInboundSMSUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span><br /><br />
+                    </p>
                 </dx-scroll-view>
             </mat-tab>
             <mat-tab label="{{l('Bugsnag')}}">
@@ -305,33 +368,6 @@
                         <div class="form-group">
                             <label for="BugsnagUIAPIKey">{{l("UI Api Key")}}</label>
                             <input id="BugsnagUIAPIKey" type="text" name="BugsnagUIAPIKey" class="form-control" [(ngModel)]="hostSettings.bugsnag.uiApiKey" maxlength="128">
-                        </div>
-                    </div>
-                </dx-scroll-view>
-            </mat-tab>
-            <mat-tab label="{{l('Base Commerce Link')}}">
-                <dx-scroll-view showScrollbar="onHover">
-                    <div>
-                        <div class="form-group">
-                            <label for="BCUserName">{{l("User Name")}}</label>
-                            <input id="BCUserName" type="text" name="BCUserName" class="form-control" [(ngModel)]="baseCommercePaymentSettings.userName" maxlength="128">
-                        </div>
-                        <div class="form-group">
-                            <label for="BCPassword">{{l("Password")}}</label>
-                            <input id="BCPassword" type="password" name="BCPassword" class="form-control" [(ngModel)]="baseCommercePaymentSettings.password" maxlength="128">
-                        </div>
-                        <div class="form-group">
-                            <label for="BCKey">{{l("Key")}}</label>
-                            <input id="BCKey" type="text" name="BCKey" class="form-control" [(ngModel)]="baseCommercePaymentSettings.key" maxlength="128">
-                        </div>
-                        <h5>{{l("Environment")}}</h5>
-                        <div class="checkbox-list">
-                            <div class="form-group">
-                                <dx-check-box id="BCIsSandBox"
-                                              [text]="l('SandBox')"
-                                              [(value)]="baseCommercePaymentSettings.sandBox">
-                                </dx-check-box>
-                            </div>
                         </div>
                     </div>
                 </dx-scroll-view>
@@ -376,7 +412,29 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
-            <mat-tab label="{{l('Recurly Link')}}">
+            <mat-tab label="{{l('Stripe')}}">
+                <dx-scroll-view showScrollbar="onHover">
+                    <div>
+                        <div class="form-group">
+                            <label for="StripeSecretKey">{{l("Secret key")}}</label>
+                            <input id="StripeSecretKey" type="text" name="StripeSecretKey" class="form-control" [(ngModel)]="stripePaymentSettings.apiKey">
+                        </div>
+                        <p>
+                            <span class="small" [innerHtml]="l('StripeSecretKeyHint')"></span>
+                        </p>
+                        <div class="form-group">
+                            <label for="StripeWebhookSecret">{{l("Signing secret")}}</label>
+                            <input id="StripeWebhookSecret" type="text" name="StripeWebhookSecret" class="form-control" [(ngModel)]="stripePaymentSettings.webhookSingingSecret">
+                        </div>
+                        <p>
+                            <span class="small" [innerHtml]="l('StripeWebhookSecretHint1')"></span><br />
+                            <span class="small">URL - <span class="copy-url"><b>{{getStripeWebhookUrl()}}</b><i class="copy save-to-clipboard" (click)="copyToClipboard($event)"></i></span></span><br />
+                            <span class="small" [innerHtml]="l('StripeWebhookSecretHint2')"></span>
+                        </p>
+                    </div>
+                </dx-scroll-view>
+            </mat-tab>
+            <mat-tab label="{{l('RecurlyLink')}}">
                 <dx-scroll-view showScrollbar="onHover">
                     <div>
                         <div class="form-group">
@@ -396,48 +454,6 @@
                             <input id="RecurlyPageSize" type="text" name="RecurlyPageSize" class="form-control" [(ngModel)]="recurlySettings.pageSize" maxlength="128">
                         </div>
                     </div>
-                </dx-scroll-view>
-            </mat-tab>
-            <mat-tab label="{{l('YTel')}}">
-                <dx-scroll-view showScrollbar="onHover">
-                    <div>
-                        <div class="form-group">
-                            <br />
-                            <label for="YTelIsEnabled" class="m-checkbox">
-                                <input id="YTelIsEnabled" type="checkbox" name="YTelIsEnabled" [(ngModel)]="yTelSettings.isEnabled">
-                                {{l("YTelIsEnabled")}}
-                                <span></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="form-group">
-                            <label for="YTelUserName">{{l("YTelUserName")}}</label>
-                            <input id="YTelUserName" type="text" name="YTelUserName" class="form-control" [(ngModel)]="yTelSettings.userName" maxlength="128">
-                        </div>
-                    </div>
-                    <div>
-                        <div class="form-group">
-                            <label for="YTelPassword">{{l("YTelPassword")}}</label>
-                            <input id="YTelPassword" type="text" name="YTelPassword" class="form-control" [(ngModel)]="yTelSettings.password" maxlength="128">
-                        </div>
-                    </div>
-                    <div>
-                        <div class="form-group">
-                            <label for="YTelFrom">{{l("YTelFrom")}}</label>
-                            <dx-text-box type="tel" id="YTelFrom" name="YTelFrom" class="form-control" [(ngModel)]="yTelSettings.from" maxlength="128" [mask]="masks.phone" useMaskedValue="true" maskInvalidMessage=""></dx-text-box>
-                        </div>
-                    </div>
-                    <div>
-                        <div class="form-group">
-                            <label for="YTelInboundSMSKey">{{l("YTelInboundSMSKey")}}</label>
-                            <input id="YTelInboundSMSKey" type="text" name="YTelInboundSMSKey" class="form-control" [(ngModel)]="yTelSettings.inboundSmsKey" maxlength="128">
-                        </div>
-                    </div>
-                    <p>
-                        <span [innerHtml]="l('YTelInboundSMSHint', 'https://app.ytel.com/#/numbers')"></span>
-                        <br /><b>{{getYtelInboundSMSUrl()}}</b><br /><br />
-                    </p>
                 </dx-scroll-view>
             </mat-tab>
         </mat-tab-group>

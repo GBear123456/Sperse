@@ -1,9 +1,10 @@
 <modal-dialog [title]="data.title"
               [titleClearButton]="false"
               [buttons]="buttons"
-              [editTitle]="false">
+              [editTitle]="false"
+              (onContextItemChanged)="save()">
     <ng-container headerContent>
-        <dx-select-box
+        <dx-select-box #templateSelector
             name="template"
             width="380px"
             height="40px"
@@ -24,7 +25,7 @@
             </dx-validator>
             <div *dxTemplate="let item of 'itemTemplate'" class="email-templates-select-box">
                 {{ item.name }}
-                <i *ngIf="!isManageUnallowed" class="delete fa fa-times" [title]="ls.l('DeleteTemplate')" (click)="deleteTemplate($event, item.id)"></i>
+                <i *ngIf="!isManageUnallowed" class="delete fa fa-times" [title]="ls.l('DeleteTemplate')" (click)="deleteTemplate($event, item, templateSelector)"></i>
             </div>
         </dx-select-box>
         <div class="buttons" *ngIf="!isManageUnallowed && data.contact && onTemplateCreate.observers.length">
@@ -37,25 +38,45 @@
             <dx-validation-group>
                 <div class="row">
                     <div class="field-area from">
-                        <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>
-                        <dx-text-box
+                        <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>            
+                        <dx-select-box *ngIf="data?.from?.length || templateEditMode; else configure"
                             name="from"
                             width="calc(50% - 52px)"
                             height="40px"
                             placeholder=""
-                            [(value)]="data.from"
-                            [disabled]="templateEditMode">
+                            [value]="emailSettingsSource"
+                            valueExpr="emailSettingsSource"
+                            displayExpr="emailAddress"
+                            [dataSource]="data.from"
+                            itemTemplate="itemTemplate"
+                            fieldTemplate="fieldTemplate"
+                            [disabled]="templateEditMode"
+                            (onValueChanged)="onFromChanged($event)">
+                            <div *dxTemplate="let item of 'itemTemplate'" class="from-item-select-box" [title]="item?.emailAddress">
+                                {{ item?.emailAddress }}
+                            </div>
+                            <div *dxTemplate="let item of 'fieldTemplate'" class="from-field-select-box">
+                                <dx-text-box
+                                    width="320px"
+                                    height="40px"
+                                    [readOnly]="true"
+                                    [value]="item?.emailAddress"
+                                    [hint]="item?.emailAddress">
+                                </dx-text-box>
+                            </div>
                             <dx-validator>
-                                <dxi-validation-rule type="pattern"
-                                                     [pattern]="emailRegEx"
-                                                     [message]="ls.l('InvalidEmailAddress')">
-                                </dxi-validation-rule>
                                 <dxi-validation-rule
-                                                    type="required" 
-                                                    [message]="ls.l('ThisFieldIsRequired')">
+                                    type="required" 
+                                    [message]="ls.l('MailerSettingsAreNotConfigured', ls.l('SMTP'))">
                                 </dxi-validation-rule>
                             </dx-validator>
-                        </dx-text-box>
+                        </dx-select-box>
+                        <ng-template #configure>
+                            <a class="config-link" (click)="close()" 
+                                [routerLink]="'app/admin/' + (appService.isHostTenant ? 'host': 'tenant') + 'Settings'" 
+                                [queryParams]="{tab: 'smtp'}" 
+                                [ngClass]="{disabled: !isSettingsAllowed}">{{ls.l('MailerSettingsAreNotConfigured', ls.l('SMTP'))}}&nbsp;</a>
+                        </ng-template>
                         <label class="caption disabled">{{ls.l('ReplyTo')}}:</label>
                         <dx-tag-box #ReplyToElement
                             name="replyTo"
@@ -110,7 +131,6 @@
                         <label class="caption">{{ls.l('CC')}}:</label>
                         <dx-tag-box #CCElement
                             name="cc"
-                            height="40px"
                             width="calc(100% - 35px)"
                             placeholder=""
                             noDataText=""
@@ -133,7 +153,6 @@
                         <label class="caption">{{ls.l('BCC')}}:</label>
                         <dx-tag-box #BCCElement
                             name="bcc"
-                            height="40px"
                             width="calc(100% - 46px)"
                             noDataText=""
                             placeholder=""
@@ -184,11 +203,12 @@
                         <span #tagsButton [class]="'cke_toolgroup tags-button id' + uniqId" *ngIf="tagsList.length">
                             <a (click)="tagsTooltipVisible = true">Tags</a>
                         </span>
-                        <ckeditor *ngIf="ckConfig.height && templateLoaded" [config]="ckConfig" [(data)]="this.data.body" (ready)="onCKReady($event)" (change)="updateDataLength()"></ckeditor>
+                        <ckeditor *ngIf="ckConfig.height && templateLoaded" [config]="ckConfig" [(data)]="data.body" (ready)="onCKReady($event)" (change)="updateDataLength()"></ckeditor>
                         <p class="char-count">{{charCount}}</p>
                         <ngx-file-drop accept="*.*" (onFileDrop)="addAttachments($event)" *ngIf="!templateEditMode">
                             <ng-template ngx-file-drop-content-tmp let-openFileSelector="openFileSelector">
                                 <a href="javascript:void(0);" class="attach-link" (click)="openDocuments()"><img src="assets/common/icons/attach.svg">{{ls.l('Add attachment')}}</a>
+                                <dx-check-box *ngIf="attachments && attachments.length" class="saveToDocs" [(value)]="data.saveAttachmentsToDocuments" [rtlEnabled]="true" [text]="ls.l('Save to Documents')"></dx-check-box>
                             </ng-template>
                         </ngx-file-drop>
                     </div>
@@ -202,7 +222,7 @@
             </dx-validation-group>
         </dx-scroll-view>
         <div class="bank-decode-wrapper" *ngIf="!templateEditMode">
-            <bank-code-decode [content]="data.body" (onDecodeStart)="startLoading()" (onDecodeFinish)="finishLoading()"></bank-code-decode>
+            <bank-code-decode [content]="data.body" [source]="'CRMEmail'" (onDecodeStart)="startLoading()" (onDecodeFinish)="finishLoading()"></bank-code-decode>
         </div>
     </div>
 </modal-dialog>

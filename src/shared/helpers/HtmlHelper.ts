@@ -30,4 +30,16 @@ export class HtmlHelper {
 
         return JSON.parse(this.decodeText(JSON.stringify(jsonObject)));
     }
+
+    static htmlToPlainText(html: string) {
+        return html.replace(/<style\b[^<]*(?:(?!<\/style>)<[^<]*)*<\/style>/gim, '')
+            .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gim, '')
+            .replace(/<[^>]*>/gim, '')
+            .replace(/\&nbsp;/gim, ' ')
+            .replace(/\&lsquo;/gim, String.fromCharCode(8216))
+            .replace(/\&rsquo;/gim, String.fromCharCode(8217))
+            .replace(/\&amp;/gim, '&')
+            .replace(/\&lt;/gim, '<')
+            .replace(/\&gt;/gim, '>');
+    } 
 }

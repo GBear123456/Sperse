@@ -64,6 +64,7 @@
                 <dx-select-box
                     displayExpr="name"
                     valueExpr="name"
+                    [disabled]="!hasOrdersManage"
                     [(value)]="cellData.value"
                     [dataSource]="stages$ | async"
                     (onOptionChanged)="onStageOptionChanged(cellData, $event)"
@@ -98,17 +99,17 @@
         </mat-tab>
         <mat-tab [label]="l('GeneratedCommissions')">
             <dx-data-grid #generatedCommissionDataGrid
-                height="calc(100vh - 270px)"
-                class="main-component-view"
-                accessKey="narrowHeaderPanel"
-                noDataText=""
-                [renderAsync]="true"
-                [loadPanel]="{enabled: false}"
-                [dataSource]="generatedCommissionDataSource"
-                [allowColumnReordering]="true"
-                [columnAutoWidth]="true"
-                [cacheEnabled]="false"
-                [remoteOperations]="{
+                          height="calc(100vh - 270px)"
+                          class="main-component-view"
+                          accessKey="narrowHeaderPanel"
+                          noDataText=""
+                          [renderAsync]="true"
+                          [loadPanel]="{enabled: false}"
+                          [dataSource]="generatedCommissionDataSource"
+                          [allowColumnReordering]="true"
+                          [columnAutoWidth]="true"
+                          [cacheEnabled]="false"
+                          [remoteOperations]="{
                     filtering: false,
                     grouping: false,
                     groupPaging: true,
@@ -116,12 +117,12 @@
                     sorting: true,
                     summary: true
                 }"
-                [allowColumnResizing]="true"
-                [hoverStateEnabled]="true"
-                [pager]="defaultGridPagerConfig"
-                (onCellClick)="onCellClick($event)"
-                (onContentReady)="loadingService.finishLoading()"
-                (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                          [allowColumnResizing]="true"
+                          [hoverStateEnabled]="true"
+                          [pager]="defaultGridPagerConfig"
+                          (onCellClick)="onCellClick($event)"
+                          (onContentReady)="loadingService.finishLoading()"
+                          (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                 <dxo-selection mode="none"></dxo-selection>
                 <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
 
@@ -141,15 +142,20 @@
                 </dxi-column>
                 <dxi-column width="180px"
                             dataField="EarnedDate"
-                            [caption]="l('EarnedDate')" 
-                            cellTemplate="dateCell"                                     
+                            [caption]="l('EarnedDate')"
+                            cellTemplate="dateCell"
                             cssClass="tabular">
-                </dxi-column> 
+                </dxi-column>
                 <dxi-column width="120px"
                             dataField="ProductAmount"
                             [caption]="l('Price')"
                             [format]="currencyFormat"
                             cssClass="clipboard-holder padding-right">
+                </dxi-column>
+                <dxi-column width="100px"
+                            dataField="Tier"
+                            [caption]="l('Tier')"
+                            cellTemplate="tierCell">
                 </dxi-column>
                 <dxi-column width="120px"
                             dataField="CommissionableAmount"
@@ -176,10 +182,10 @@
                 </dxi-column>
                 <dxi-column width="120px"
                             dataField="Status"
-                            [caption]="l('Status')" 
+                            [caption]="l('Status')"
                             cssClass="clipboard-holder padding-right">
                 </dxi-column>
-                
+
                 <div *dxTemplate="let cellData of 'staticWidthCell'" class="clipboard-holder fixed-right static-width" [title]="cellData.value">
                     {{cellData.value}}
                 </div>
@@ -187,7 +193,9 @@
                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                     {{cellData.value | datetime: formatting.dateTimeMoment}}
                 </div>
-
+                <div *dxTemplate="let cellData of 'tierCell'" class="clipboard-holder">
+                    {{l(cellData.value)}}
+                </div>
                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                     {{cellData.value | datetime: formatting.dateTimeMoment}}
                 </div>

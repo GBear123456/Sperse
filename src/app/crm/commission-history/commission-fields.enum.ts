@@ -8,6 +8,7 @@ export const CommissionFields: KeysEnum<CommissionDto> = {
     BuyerContactId: 'BuyerContactId',
     BuyerEmailAddress: 'BuyerEmailAddress',
     BuyerName: 'BuyerName',
+    Tier: 'Tier',
     CommissionAmount: 'CommissionAmount',
     CommissionRate: 'CommissionRate',
     CommissionableAmount: 'CommissionableAmount',

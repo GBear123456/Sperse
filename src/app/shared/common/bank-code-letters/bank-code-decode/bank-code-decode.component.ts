@@ -5,6 +5,7 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 
 /** Application imports */
 import { AppFeatures } from '@shared/AppFeatures';
+import { HtmlHelper } from '@shared/helpers/HtmlHelper';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -20,6 +21,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 })
 export class BankCodeDecodeComponent {
     @Input() content: string;
+    @Input() source: string = 'Decode';
     @Output() onDecodeStart: EventEmitter<any> = new EventEmitter<any>();
     @Output() onDecodeFinish: EventEmitter<any> = new EventEmitter<any>();
     bankCodeEnabled = this.features.isEnabled(AppFeatures.CRMBANKCode);
@@ -37,7 +39,8 @@ export class BankCodeDecodeComponent {
         if (this.content) {
             this.onDecodeStart.emit();
             this.bankCodeServiceProxy.getBankCode(new GetBankCodeInput({
-                content: this.content.replace(/\<(\/)?(\w)*(\d)?\>/gim, '')
+                content: HtmlHelper.htmlToPlainText(this.content),
+                source: this.source
             })).subscribe(res => {
                 this.bankCode = res.value;
                 this.onDecodeFinish.emit(res);
@@ -46,5 +49,5 @@ export class BankCodeDecodeComponent {
             });
         } else
             return this.notify.warn(this.ls.l('RequiredField', this.ls.l('Message')));
-    }
+    }    
 }

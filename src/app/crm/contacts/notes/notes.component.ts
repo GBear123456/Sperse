@@ -67,6 +67,7 @@ export class NotesComponent extends AppComponentBase implements OnDestroy {
 
     leadInfo: any;
     contactInfo: any;
+    manageAllowed: boolean;
     notes: NoteInfoDto[];
     contactIds$: Observable<number[]> = zip(
         this.clientService.contactInfo$.pipe(filter(Boolean)),
@@ -75,6 +76,7 @@ export class NotesComponent extends AppComponentBase implements OnDestroy {
         map(([contactInfo, leadInfo]: [ ContactInfoDto, LeadInfoDto]) => {
             this.leadInfo = leadInfo;
             this.contactInfo = contactInfo;
+            this.manageAllowed = this.permission.checkCGPermission(contactInfo.groupId);
             this.updateToolbar();
             return [
                 contactInfo.id, contactInfo.primaryOrganizationContactId || 0, leadInfo.propertyId || 0
@@ -127,7 +129,7 @@ export class NotesComponent extends AppComponentBase implements OnDestroy {
 
         this.notes$.pipe(first()).subscribe((notes: NoteInfoDto[]) => {
             if (this.componentIsActivated) {
-                if (!notes || !notes.length || this.route.snapshot.queryParams.addNew)
+                if (this.manageAllowed && (!notes || !notes.length || this.route.snapshot.queryParams.addNew))
                     setTimeout(() => this.clientService.showNoteAddDialog());
             }
         });

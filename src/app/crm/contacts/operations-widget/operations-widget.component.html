@@ -1,10 +1,12 @@
 <div class="operations-widget">
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <ng-container *ngIf="enabled">
-        <app-static-list
+        <app-static-list *ngIf="permission.checkCGPermission(customerType) && pipelineDataSource?.length"
             #stagesList
             [width]="'210px'"
             [title]="l('Stages')"
+            [selectedTabId]="selectedPipelineId"
+            [tabsDataSource]="pipelineDataSource"
             [selectedKeys]="[selectedStageId]"
             [selectedItems]=""
             [hideButtons]="true"

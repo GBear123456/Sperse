@@ -53,8 +53,8 @@ export class SystemSettingsComponent implements OnInit {
         private notifyService: NotifyService,
         private permission: AppPermissionService,
         private appService: AppService,
-        public httpInterceptor: AppHttpInterceptor,
         private dialog: MatDialog,
+        public httpInterceptor: AppHttpInterceptor,
         public ls: AppLocalizationService
     ) {
         this.dictionaryProxy.getOrganizationUnits(
@@ -149,6 +149,6 @@ export class SystemSettingsComponent implements OnInit {
               if (this.orgUnits[i].id == id)
                   return this.orgUnits[i].displayName;
         }
-        return this.ls.l('Default');
+        return this.ls.l('AllOrganizationUnits');
     }
 }

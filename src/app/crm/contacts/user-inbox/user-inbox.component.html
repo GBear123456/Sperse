@@ -27,7 +27,10 @@
                             <span class="subject">{{item.subject}}</span>
                         </div>
                         <div class="date">{{item.creationTime | datetime: formatting.monthDay.toUpperCase()}}</div>
-                        <div class="status {{item.statusCalculated | lowercase}}">{{item.statusCalculated}}</div>
+                        <div class="status {{item.statusCalculated | lowercase}}">
+                            <i *ngIf="item.hasAttachments" class="fa fa-paperclip"></i>
+                            {{item.statusCalculated}}
+                        </div>
                     </div>
                 </div>
                 <div *dxTemplate="let item of 'item'" class="sub-item" [ngClass]="{selected: item.id == activeMessage?.id}">
@@ -38,7 +41,10 @@
                             <span class="subject">{{item.subject}}</span>
                         </div>
                         <div class="date">{{item.creationTime | datetime: formatting.monthDay.toUpperCase()}}</div>
-                        <div class="status {{item.statusCalculated | lowercase}}">{{item.statusCalculated}}</div>
+                        <div class="status {{item.statusCalculated | lowercase}}">
+                            <i *ngIf="item.hasAttachments" class="fa fa-paperclip"></i>
+                            {{item.statusCalculated}}
+                        </div>
                     </div>
                 </div>
         </dx-list>
@@ -84,10 +90,15 @@
                         <div class="details">
                             <span class="from">{{activeMessage?.fromUserName}}&nbsp;<small *ngIf="activeMessage?.from">&lt;{{activeMessage?.from}}&gt;</small></span>
                             <span class="subject">{{activeMessage?.subject}}</span>
-                            <span class="to" (click)="activeMessage.showTooltip = true">{{ls.l('to')}} {{activeMessage?.to}} <i class="info dx-icon-info"></i></span>
+                            <span class="to" (click)="activeMessage.showTooltip = true">{{ls.l('to')}}: {{activeMessage?.to}} <i class="info dx-icon-info"></i></span>
+                            <span class="to" *ngIf="activeMessage?.cc">{{ls.l('cc')}}: {{activeMessage?.cc}}</span>
+                            <span class="to" *ngIf="activeMessage?.bcc">{{ls.l('bcc')}}: {{activeMessage?.bcc}}</span>
                         </div>
                         <div class="date">{{activeMessage?.creationTime | datetime: formatting.fieldDateTime}}</div>
-                        <div class="status {{activeMessage?.statusCalculated | lowercase}}">{{activeMessage?.statusCalculated}}</div>
+                        <div class="status {{activeMessage?.statusCalculated | lowercase}}">
+                            <i *ngIf="activeMessage?.hasAttachments" class="fa fa-paperclip"></i>
+                            {{activeMessage?.statusCalculated}}
+                        </div>
                     </div>
                 </ng-container>
             </ng-container>

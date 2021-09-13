@@ -20,6 +20,8 @@ export class TypesDropdownComponent {
     @ViewChild(DxSelectBoxComponent, { static: false }) selectBox: DxSelectBoxComponent;
     @Input() items: TypeItem[];
     @Input() totalCount: number;
+    @Input() totalErrorMsg: string = '';
+    @Input() showTotalCount: Boolean;
     @Input() value;
     @Input() allowEdit = false;
     @Output() valueChange: EventEmitter<any> = new EventEmitter<any>();
@@ -67,6 +69,10 @@ export class TypesDropdownComponent {
         this.updatePopupWidth(e.component._popup);
     }
 
+    isTotalCountValid() {
+        return Number.isInteger(this.totalCount);
+    }
+
     private updatePopupWidth(popup) {
         /** Get the widest item and set popup width with its width */
         const longestItemWidth: number = Array.prototype.reduce.call(
@@ -82,5 +88,4 @@ export class TypesDropdownComponent {
             popup.option('width', longestItemWidth + 20 + (this.allowEdit ? 25 : 0));
         }
     }
-
 }

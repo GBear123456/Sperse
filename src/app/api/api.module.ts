@@ -13,6 +13,7 @@ import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group'
 import { DxTooltipModule } from 'devextreme-angular/ui/tooltip';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { CommonModule } from '@shared/common/common.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { ApiRoutingModule } from './api-routing.module';
@@ -50,7 +51,7 @@ import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.servic
     ],
     providers: [
         LeftMenuService,
-        { provide: 'leftMenuCollapsed', useValue: false }
+        { provide: 'leftMenuCollapsed', useValue: AppConsts.isMobile }
     ]
 })
 

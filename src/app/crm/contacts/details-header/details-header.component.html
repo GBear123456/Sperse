@@ -25,12 +25,13 @@
         <ng-template #bankCode>
             <div class="bank-code">
                 <bank-code-letters [bankCode]="data?.personContactInfo?.person?.bankCode || '????'"
-                                   [allowAdd]="true"
-                                   [allowEdit]="true"
+                                   [allowAdd]="manageAllowed"
+                                   [allowEdit]="manageAllowed"
                                    [personId]="data.id"
                                    key="detailsHeader"
                                    [showDescriptionsOnHover]="true"
                                    [showReportLink]="data?.personContactInfo?.person?.bankCode"
+                                   [showHistoryLink]="true"
                                    reportIconName="blue"
                                    (bankCodeChange)="contactsService.invalidate()">
                 </bank-code-letters>
@@ -38,8 +39,10 @@
         </ng-template>
     </div>
     <div *ngIf="data" class="organization_info">
-        <div *ngIf="!data?.primaryOrganizationContactId; else companyInfo" class="add-new-company">
-            <a (click)="addCompanyDialog($event)">+ {{ ls.l('AddCompany') }}</a>
+        <div *ngIf="!data?.primaryOrganizationContactId; else companyInfo">
+            <div *ngIf="manageAllowed" class="add-new-company">
+                <a (click)="addCompanyDialog($event)">+ {{ ls.l('AddCompany') }}</a>
+            </div>
         </div>
         <ng-template #companyInfo>
             <div class="company-details" [ngClass]="{ 'with-company-logo': data?.organizationContactInfo?.primaryPhoto }">

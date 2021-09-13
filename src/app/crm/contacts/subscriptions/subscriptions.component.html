@@ -45,7 +45,7 @@
         (mouseleave)="onDateLeave($event)">
         <dx-date-box width="33px"
             applyValueMode="useButtons"
-            [visible]="!appService.isHostTenant"
+            [visible]="!appService.isHostTenant && manageAllowed"
             [min]="cellData.column.dataField == 'endDate' ? (cellData.data.startDate | datetime: formatting.dateMoment) : undefined"
             [max]="cellData.column.dataField == 'startDate' ? (cellData.data.endDate | datetime: formatting.dateMoment) : undefined"
             [value]="cellData.value ? (cellData.value | datetime: formatting.dateTimeMoment) : undefined"

@@ -14,7 +14,9 @@
                   (onStateReset)="dataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="pipelineTypes$ | async"
+                        [showTotalCount]="true"
                         [totalCount]="totalCount"
+                        [totalErrorMsg]="totalErrorMsg"
                         [allowEdit]="true"
                         [value]="selectedPipelineId$ | async"
                         (onValueChanged)="onSelectedPipelineChanged($event)"
@@ -95,7 +97,6 @@
                             [renderAsync]="true"
                             [allowColumnReordering]="true"
                             [columnAutoWidth]="true"
-                            [cacheEnabled]="false"
                             [rowDragging]="{
                                 cursorOffset: {x: 30},
                                 allowDropInsideItem: isMergeAllowed,
@@ -116,14 +117,13 @@
                             [columnChooser]="{
                                 height: rowsViewHeight
                             }"
-                            [pager]="defaultGridPagerConfig"
                             (onOptionChanged)="onGridOptionChanged($event)"
                             (onContentReady)="onContentReady($event)"
                             (onCellClick)="onCellClick($event)"
                             (onEditingStart)="toggleActionsMenu($event)"
                             (onSelectionChanged)="onSelectionChanged($event)"
                             (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
-                            <dxo-paging [pageSize]="20" [enabled]="true" [pageIndex]="0"></dxo-paging>
+                            <dxo-pager [visible]="true"></dxo-pager>
                             <dxo-selection selectAllMode="page"
                                 showCheckBoxesMode="always"
                                 mode="multiple">
@@ -133,7 +133,7 @@
                                          [popup]="{ onShowing: onShowingPopup, height: '0', width: '0' }"
                                          [allowUpdating]="true">
                             </dxo-editing>
-                            <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
+                            <dxo-scrolling mode="infinite"></dxo-scrolling>
                             <dxi-column cssClass="stars" [width]="40" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
                             <dxi-column [dataField]="leadFields.Id"
                                         [caption]="l('Id')"
@@ -349,7 +349,8 @@
                             [moveDisabled]="manageDisabled"
                             (onEntityStageChanged)="onLeadStageChanged($event)"
                             (onStagesLoaded)="onStagesLoaded($event)"
-                            (onCardClick)="onCardClick($event)">
+                            (onCardClick)="onCardClick($event)"
+                            (onTotalChange)="onTotalChange($event)">
                         Loading...
                     </app-pipeline>
                 </div>

@@ -62,7 +62,7 @@
             width: 80px;
             text-transform: uppercase;
         }
-        .dx-selectbox {
+        .dx-selectbox[name="template"] {
             margin: 23px 0;
             &, input {
                 background: transparent;
@@ -201,6 +201,15 @@
             max-width: calc(40vw - 100px);
         }
 
+        a.config-link {
+            margin-right: 10px;
+            &.disabled {
+                color: #8a969b;
+                pointer-events: none;
+                cursor: default;
+            }
+        }
+
         ::ng-deep .field-area {
             width: 100%;
             display: block;
@@ -218,9 +227,11 @@
             }
 
             &.from {
-                ::ng-deep dx-text-box input {
-                    border-bottom: 0px;
-                    padding-bottom: 5px;
+                dx-select-box, dx-text-box {
+                    input {
+                        border-bottom: 0px;
+                        padding-bottom: 5px;
+                    }
                 }
             }
 
@@ -244,8 +255,7 @@
                     border-radius: 15px;
                     margin: 5px;
                     border: 1px dashed #646464;
-                    text-align: right;
-                    float: right;
+                    float: left;
                     i.delete {
                         color: #58a3dcb8;
                         cursor: pointer;
@@ -260,6 +270,20 @@
                     height: 12px;
                     padding-right: 8px;
                     vertical-align: inherit;
+                }
+            }
+
+            .saveToDocs {
+                position: relative;
+                margin-left: 20px;
+
+                &::after {
+                    content: "";
+                    border-left: 1px solid #dfdfdf;
+                    height: 27px;
+                    position: absolute;
+                    left: -10px;
+                    top: -5px;
                 }
             }
 
@@ -280,7 +304,7 @@
                 ::ng-deep ngx-file-drop {
                     position: absolute;
                     bottom: 0px;
-                    right: 60px;
+                    left: 15px;
                     .ngx-file-drop__drop-zone {
                         height: 30px;
                         width: auto;
@@ -331,6 +355,7 @@
 
             dx-tag-box {
                 cursor: text;
+                min-height: 40px;
                 &.dx-state-disabled {
                     opacity: 0.5;
                 }
@@ -346,7 +371,7 @@
                 }
             }
 
-            dx-text-box, dx-tag-box {
+            dx-text-box, dx-tag-box, dx-select-box {
                 display: inline-block;
 
                 &.dx-invalid {

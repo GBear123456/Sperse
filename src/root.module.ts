@@ -145,7 +145,7 @@ export function convertAbpLocaleToAngularLocale(locale: string): string {
 }
 
 export function getRemoteServiceBaseUrl(): string {
-    return AppConsts.remoteServiceBaseUrl;
+    return AppConsts.remoteServiceBaseUrl || location.origin;
 }
 
 export function getCurrentLanguage(): string {

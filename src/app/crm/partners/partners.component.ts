@@ -173,7 +173,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     private readonly totalDataSourceURI: string = 'Contact/$count';
     private readonly groupDataSourceURI = 'ContactSlice';
     public readonly dateField = 'ContactDate';
-    private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
 
@@ -232,8 +231,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         && (
                             this.impersonationIsGranted ||
                             this.permission.checkCGPermission(ContactGroup.Partner, 'UserInformation.AutoLogin')
-                        )
-                        && !this.authService.checkCurrentTopDomainByUri(),
+                        ),
                     action: () => {
                         const partner: PartnerDto = this.actionEvent.data || this.actionEvent;
                         this.impersonationService.impersonate(partner.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl);
@@ -522,6 +520,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     selectedMapArea$: Observable<MapArea> = this.mapService.selectedMapArea$;
     assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: this.partnerContactGroup });
     totalCount: number;
+    totalErrorMsg: string;
     toolbarConfig: ToolbarGroupModel[];
     private filters: FilterModel[] = this.getFilters();
     odataRequestValues$: Observable<ODataRequestValues> = concat(
@@ -572,6 +571,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 ]
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+        },
+        onLoaded: (records) => {
+            if (records instanceof Array)
+                this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
         }
     };
 
@@ -622,13 +625,17 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     ]
                 ),
                 beforeSend: (request) => {
-                    this.totalCount = undefined;
+                    this.totalCount = this.totalErrorMsg = undefined;
                     request.params.contactGroupId = ContactGroup.Partner;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (count: any) => {
-                    this.totalCount = count;
+                    if (!isNaN(count))
+                        this.dataSource['total'] = this.totalCount = count;
+                },
+                errorHandler: (e: any) => {
+                    this.totalErrorMsg = this.l('AnHttpErrorOccured');
                 }
             })
         });
@@ -864,7 +871,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         if (partnerId) {
             if (event.component)
                 event.component.cancelEditData();
-
             this.searchClear = false;
             setTimeout(() => {
                 this._router.navigate(
@@ -1256,7 +1262,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail'),
+                        disabled: !this.selectedPartnerKeys.length || this.selectedPartnerKeys.length > 1 || 
+                            !this.permission.checkCGPermission(this.partnerContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [
                                 {
@@ -1616,9 +1623,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.paramsSubscribe();
         this.initFilterConfig();
         this.initToolbarConfig();
-        this.rootComponent = this.getRootComponent();
-        this.rootComponent.overflowHidden(true);
-
         if (this.dependencyChanged)
             this.invalidate();
 
@@ -1637,7 +1641,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         super.deactivate();
         this.subRouteParams.unsubscribe();
         this.filtersService.unsubscribe();
-        this.rootComponent.overflowHidden();
         this.itemDetailsService.setItemsSource(ItemTypeEnum.Partner, this.dataGrid.instance.getDataSource());
         this.showHostElement(() => {
             this.repaintToolbar();

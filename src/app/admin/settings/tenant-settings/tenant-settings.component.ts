@@ -1,11 +1,13 @@
 /** Core imports */
 import { Component, Injector, OnInit, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef, ElementRef, ViewChild } from '@angular/core';
+import { ActivatedRoute, Params } from '@angular/router';
+import { ClipboardService } from 'ngx-clipboard';
 
 /** Third party imports */
 import { IAjaxResponse } from '@abp/abpHttpInterceptor';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of } from 'rxjs';
-import { finalize, tap } from 'rxjs/operators';
+import { finalize, tap, first, map, delay } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
@@ -17,18 +19,13 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
     SettingScopes,
-    SendTestEmailInput,
     TenantSettingsEditDto,
     TenantSettingsServiceProxy,
     TenantCustomizationServiceProxy,
     MemberPortalSettingsDto,
     IdcsSettings,
-    BaseCommercePaymentSettings,
-    PayPalSettings,
     TenantSettingsCreditReportServiceProxy,
     TenantPaymentSettingsServiceProxy,
-    ACHWorksSettings,
-    RecurlyPaymentSettings,
     EPCVIPOfferProviderSettings,
     TenantOfferProviderSettingsServiceProxy,
     TenantCustomizationInfoDto,
@@ -40,7 +37,9 @@ import {
     YTelSettingsEditDto,
     LayoutType,
     RapidSettingsDto,
-    EmailTemplateType
+    EmailTemplateType,
+
+    StripeSettings
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -48,6 +47,8 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppService } from '@app/app.service';
+import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
+import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
@@ -61,6 +62,7 @@ import { AppService } from '@app/app.service';
     ]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @ViewChild('tabGroup', { static: false }) tabGroup: ElementRef;
     @ViewChild('privacyInput', { static: false }) privacyInput: ElementRef;
     @ViewChild('tosInput', { static: false }) tosInput: ElementRef;
     @ViewChild('logoInput', { static: false }) logoInput: ElementRef;
@@ -76,10 +78,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     settings: TenantSettingsEditDto = undefined;
     memberPortalSettings: MemberPortalSettingsDto = new MemberPortalSettingsDto();
     idcsSettings: IdcsSettings = new IdcsSettings();
-    baseCommercePaymentSettings: BaseCommercePaymentSettings = new BaseCommercePaymentSettings();
-    payPalPaymentSettings: PayPalSettings = new PayPalSettings();
-    achWorksSettings: ACHWorksSettings = new ACHWorksSettings();
-    recurlySettings: RecurlyPaymentSettings = new RecurlyPaymentSettings();
+    stripePaymentSettings: StripeSettings = new StripeSettings();
     isTenantHosts: boolean = this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
@@ -120,9 +119,11 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         }
     ];
     EmailTemplateType = EmailTemplateType;
+    tabIndex: Observable<number>;
 
     constructor(
         injector: Injector,
+        private route: ActivatedRoute,
         private tenantSettingsService: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         private tenantSettingsCreditReportService: TenantSettingsCreditReportServiceProxy,
@@ -131,8 +132,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private tokenService: TokenService,
         private tenantOfferProviderSettingsService: TenantOfferProviderSettingsServiceProxy,
         private faviconsService: FaviconService,
+        private clipboardService: ClipboardService,
         private contactService: ContactsService,
         private appService: AppService,
+        private emailSmtpSettingsService: EmailSmtpSettingsService,
         public changeDetection: ChangeDetectorRef,
         public dialog: MatDialog
     ) {
@@ -148,6 +151,20 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this.initUploaders();
     }
 
+    ngAfterViewInit() {
+        this.tabIndex = this.route.queryParams.pipe(
+            first(), delay(100), 
+            map((params: Params) => {
+                return (params['tab'] == 'smtp' ? 
+                    DomHelper.getElementIndexByInnerText(
+                        this.tabGroup.nativeElement.getElementsByClassName('mat-tab-label'), 
+                        this.l('EmailSmtp')
+                    ) : 0
+                );
+            })
+        );        
+    }
+
     ngOnDestroy() {
         this.rootComponent.overflowHidden(false);
     }
@@ -158,10 +175,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         let requests: Observable<any>[] = [
             this.tenantSettingsService.getAllSettings(),
             this.isAdminCustomizations ? this.tenantSettingsService.getMemberPortalSettings() : of<MemberPortalSettingsDto>(<any>null),
-            this.tenantPaymentSettingsService.getBaseCommercePaymentSettings(),
-            this.tenantPaymentSettingsService.getPayPalSettings(),
-            this.tenantPaymentSettingsService.getACHWorksSettings(),
-            this.tenantPaymentSettingsService.getRecurlyPaymentSettings(),
+            this.tenantPaymentSettingsService.getStripeSettings(),
             this.isCreditReportFeatureEnabled ? this.tenantSettingsCreditReportService.getIdcsSettings() : of<IdcsSettings>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantOfferProviderSettingsService.getEPCVIPOfferProviderSettings() : of<EPCVIPOfferProviderSettings>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
@@ -185,10 +199,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 [
                     this.settings,
                     this.memberPortalSettings,
-                    this.baseCommercePaymentSettings,
-                    this.payPalPaymentSettings,
-                    this.achWorksSettings,
-                    this.recurlySettings,
+                    this.stripePaymentSettings,
                     this.idcsSettings,
                     this.epcvipSettings,
                     this.epcvipEmailSettings,
@@ -352,10 +363,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.tenantSettingsService.updateAllSettings(this.settings).pipe(tap(() => {
                 this.appSessionService.checkSetDefaultCountry(this.settings.general.defaultCountryCode);
             })),
-            this.tenantPaymentSettingsService.updateBaseCommercePaymentSettings(this.baseCommercePaymentSettings),
-            this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
-            this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
-            this.tenantPaymentSettingsService.updateRecurlyPaymentSettings(this.recurlySettings),
+            this.tenantPaymentSettingsService.updateStripeSettings(this.stripePaymentSettings),
             this.tenantSettingsService.updateSendGridSettings(this.sendGridSettings),
             this.tenantSettingsService.updateYTelSettings(this.yTelSettings)
         ];
@@ -377,7 +385,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         if (this.isRapidTenantLayout)
             requests.push(this.tenantSettingsService.updateRapidSettings(this.rapidSettings));
 
-        forkJoin(requests).subscribe(() => {
+        this.startLoading();
+        forkJoin(requests).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
             if (this.initialDefaultCountry !== this.settings.general.defaultCountryCode) {
                 this.message.info(this.l('DefaultCountrySettingChangedRefreshPageNotification')).done(() => {
@@ -393,11 +404,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     sendTestEmail(): void {
-        const input = new SendTestEmailInput();
-        input.emailAddress = this.testEmailAddress;
-        this.tenantSettingsService.sendTestEmail(input).subscribe(() => {
-            this.notify.info(this.l('TestEmailSentSuccessfully'));
-        });
+        this.startLoading();
+        let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.settings.email);
+        this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this));
     }
 
     getSendGridWebhookUrl(): string {
@@ -408,5 +417,14 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     getYtelInboundSMSUrl(): string {
         let key = this.yTelSettings.inboundSmsKey || '{inbound_sms_key}';
         return AppConsts.remoteServiceBaseUrl + `/api/YTel/ProcessInboundSms?tenantId=${this.appSessionService.tenantId}&key=${key}`;
+    }
+
+    getStripeWebhookUrl(): string {
+        return AppConsts.remoteServiceBaseUrl + `/api/stripe/processWebhook?tenantId=${this.appSessionService.tenantId}`;
+    }
+
+    copyToClipboard(event) {
+        this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
+        this.notify.info(this.l('SavedToClipboard'));
     }
 }
