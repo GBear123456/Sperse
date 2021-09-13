@@ -342,7 +342,7 @@ export class UserInboxComponent implements OnDestroy {
                 if (message.deliveryType == CommunicationMessageDeliveryType.Email)
                     this.loadOneMoreChild(record);
                 else
-                    message.items = children.items.reverse();
+                    message.items = children.items;
                 if (record.expanded == undefined)
                     record.expanded = true;
                 component.repaint();
@@ -457,7 +457,6 @@ export class UserInboxComponent implements OnDestroy {
 
     showNewEmailDialog(title = 'NewEmail', data: any = {}) {
         data = Object.assign({
-            switchTemplate: true,
             contactId: this.contactId,
             replyToId: data.id
         }, data);

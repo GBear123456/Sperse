@@ -9,6 +9,7 @@ export interface EmailTemplateData {
     saveDisabled: boolean;
     suggestionEmails: string[];
     emailSettingsSource: EmailSettingsSource;
+    saveAttachmentsToDocuments: boolean;
     attachments: Partial<EmailAttachment>[];
     from: EmailFromInfo[];
     to: string[];
@@ -19,7 +20,6 @@ export interface EmailTemplateData {
     templateId: number;
     replyTo: string;
     templateType: EmailTemplateType;
-    switchTemplate: EmailTemplateType;
     tags: { [key: string]: string; } | undefined;
     hideContextMenu?: boolean;
     addMode?: boolean;
