@@ -24,6 +24,5 @@ export interface SubscriptionDto {
     SourceEntryUrl: string;
     ContactGroupId: string;
     ContactXref: string;
-    ServiceProductId: string;
     SourceOrganizationUnitId: number;
 }

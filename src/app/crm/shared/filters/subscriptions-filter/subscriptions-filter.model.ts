@@ -20,7 +20,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                 if (item.current || item.past || item.never) {
                     result.push(
                         {
-                            name: ['subscriptionFilters[' + filterIndex + '].ProductId'],
+                            name: ['subscriptionFilters[' + filterIndex + '].ServiceId'],
                             value: item.id
                         },
                         {
@@ -36,11 +36,11 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                 if (item.current || item.past || item.never || 
                     item.current == undefined || item.past == undefined || item.never == undefined
                 ) {
-                    item.serviceProductLevels.forEach(level => {
+                    item.memberServiceLevels.forEach(level => {
                         if (level.current || level.past || level.never) {
                             result.push(
                                 {
-                                    name: ['subscriptionFilters[' + filterIndex + '].ProductId'],
+                                    name: ['subscriptionFilters[' + filterIndex + '].ServiceId'],
                                     value: item.id
                                 },
                                 {
@@ -75,8 +75,8 @@ export class SubscriptionsFilterModel extends FilterItemModel {
         if (this.dataSource) {
             this.dataSource.forEach((item) => {
                 let initialCount = result.length;
-                if (item.serviceProductLevels && item.serviceProductLevels.length)
-                    item.serviceProductLevels.forEach(level => {
+                if (item.memberServiceLevels && item.memberServiceLevels.length)
+                    item.memberServiceLevels.forEach(level => {
                         if (level.current && !item.current ||
                             level.past && !item.past ||
                             level.never && !item.never
@@ -116,8 +116,8 @@ export class SubscriptionsFilterModel extends FilterItemModel {
 
     clearItem(item) {
         item.current = item.past = item.never = null;
-        if (item.serviceProductLevels)
-            item.serviceProductLevels.forEach(level => {
+        if (item.memberServiceLevels)
+            item.memberServiceLevels.forEach(level => {
                 level.current = level.past = level.never = null;
             });
     }
@@ -130,8 +130,8 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                         return result;
                     else if (item.uid === uid)
                         return item;
-                    else if (item.serviceProductLevels)
-                        return item.serviceProductLevels.find(level => level.uid == uid);
+                    else if (item.memberServiceLevels)
+                        return item.memberServiceLevels.find(level => level.uid == uid);
                 }, null)
             );
         } else {

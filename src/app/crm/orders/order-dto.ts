@@ -22,6 +22,5 @@ export interface OrderDto {
     DateProcessed: string;
     ContactGroupId: string;
     ContactXref: string;
-    ServiceProductId: string;
     SourceOrganizationUnitId: number;
 }

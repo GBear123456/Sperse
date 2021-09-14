@@ -6,7 +6,7 @@ import some from 'lodash/some';
 import each from 'lodash/each';
 
 /** Application imports */
-import { FeatureTreeEditModel } from '@app/admin/shared/feature-tree-edit.model';
+import { FeatureTreeEditModel } from '@app/shared/features/feature-tree-edit.model';
 import { FlatFeatureDto, NameValueDto } from '@shared/service-proxies/service-proxies';
 
 @Component({
@@ -16,7 +16,7 @@ import { FlatFeatureDto, NameValueDto } from '@shared/service-proxies/service-pr
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FeatureTreeComponent implements AfterViewInit {
-    @Input()
+    @Input() showResetToDefault: boolean = false;
     @Input() set editData(val: FeatureTreeEditModel) {
         if (val) {
             this._editData = val;
@@ -66,7 +66,6 @@ export class FeatureTreeComponent implements AfterViewInit {
         }
 
         this.createdTreeBefore = false;
-
         if (!this._editData || !this.$tree) {
             return;
         }
@@ -197,7 +196,10 @@ export class FeatureTreeComponent implements AfterViewInit {
 
             const featureName = $nodeLi.attr('id');
             const feature = self.findFeatureByName(featureName);
-            const featureValue = self.findFeatureValueByName(featureName) || '';
+            const featureDefaultValue = feature.defaultValue || '';
+            let featureValue = self.findFeatureValueByName(featureName) || '';
+            if (featureValue == featureDefaultValue)
+                featureValue = '';
 
             if (!feature || !feature.inputType) {
                 return;
@@ -217,22 +219,25 @@ export class FeatureTreeComponent implements AfterViewInit {
                         }
                     }
 
-                    const $textbox = $('<input class="feature-tree-textbox" type="' + inputType + '" />')
-                        .val(featureValue);
+                    const $textbox = $(
+                        '<input class="feature-tree-textbox" type="' + inputType +                        
+                        '" placeholder="' + featureDefaultValue + '"' + 
+                        (self.showResetToDefault ? ' required' : '') + '/>'
+                    ).val(featureValue);
 
                     if (inputType === 'number') {
-                        $textbox.attr('min', validator.minValue);
-                        $textbox.attr('max', validator.maxValue);
+                        $textbox.attr('min', validator.minValue || validator.attributes['MinValue']);
+                        $textbox.attr('max', validator.maxValue || validator.attributes['MaxValue']);
                     } else {
                         if (feature.inputType.validator && feature.inputType.validator.name === 'STRING') {
                             if (validator.maxLength > 0) {
-                                $textbox.attr('maxlength', validator.maxLength);
+                                $textbox.attr('maxlength', validator.maxLength || validator.attributes['MaxLength']);
                             }
                             if (validator.minLength > 0) {
                                 $textbox.attr('required', 'required');
                             }
                             if (validator.regularExpression) {
-                                $textbox.attr('pattern', validator.regularExpression);
+                                $textbox.attr('pattern', validator.regularExpression || validator.attributes['RegularExpression']);
                             }
                         }
                     }
@@ -247,7 +252,17 @@ export class FeatureTreeComponent implements AfterViewInit {
                         }
                     });
 
-                    $textbox.appendTo($nodeLi);
+                    if (self.showResetToDefault) {
+                        let $form = $('<form></form>'),
+                            $reset = $('<button type="reset">');
+                        $textbox.appendTo($form);
+                        $reset.appendTo($form);
+                        $form.appendTo($nodeLi);
+                        $form.on('reset', () => {
+                            self.setFeatureValueByName(featureName, featureDefaultValue);
+                        });
+                    } else
+                        $textbox.appendTo($nodeLi);
                 }
             } else if (feature.inputType.name === 'COMBOBOX') {
                 if (!$nodeLi.find('.feature-tree-combobox').length) {

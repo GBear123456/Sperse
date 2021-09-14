@@ -1,6 +1,7 @@
 /** Core imports */
 import { Component, OnInit, ViewChild, AfterViewInit, Inject, ElementRef, OnDestroy } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { formatPercent } from '@angular/common';
 
 /** Third party imports */
 import * as moment from 'moment-timezone';
@@ -95,13 +96,13 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     affiliateRateValidationRules = [
         {
             type: 'pattern',
-            pattern: AppConsts.regexPatterns.affiliateRate,
+            pattern: AppConsts.regexPatterns.affiliateRateZeroBase,
             message: this.ls.l('InvalidAffiliateRate')
         },
         {
             type: 'stringLength',
-            max: AppConsts.maxAffiliateRateLength,
-            message: this.ls.l('MaxLengthIs', AppConsts.maxAffiliateRateLength)
+            max: AppConsts.maxAffiliateRateZeroBaseLength,
+            message: this.ls.l('MaxLengthIs', AppConsts.maxAffiliateRateZeroBaseLength)
         }
     ];
     xrefValidationRules = [
@@ -124,7 +125,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     refreshSourceContactInfo: BehaviorSubject<any> = new BehaviorSubject<any>(null);
     checklistSources = [];
     manageAllowed = false;
-    defaultAffiliateRate;
+    defaultAffiliateRateStr;
     affiliateRateInitil;
     affiliateRate;
     affiliateRate2Initil;
@@ -133,6 +134,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     hasCommissionsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
     affiliateManageAllowed = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesManage);
+    formatPercentValue = formatPercent;
 
     constructor(
         private route: ActivatedRoute,
@@ -174,18 +176,16 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             filter(Boolean), first()
         ).subscribe((res: InvoiceSettings) => {
             if (res.defaultAffiliateRate !== null)
-                this.defaultAffiliateRate = (res.defaultAffiliateRate * 100).toFixed(2);
+                this.defaultAffiliateRateStr = formatPercent(res.defaultAffiliateRate, 'en-US', '1.0-2');
         });
 
         contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo && contactInfo.id) {
                 this.contactInfo = contactInfo;
                 this.affiliateRateInitil = this.affiliateRate =
-                    this.contactInfo.affiliateRate === null ? null
-                        : (this.contactInfo.affiliateRate * 100).toFixed(2);
+                    this.contactInfo.affiliateRate === null ? null : this.contactInfo.affiliateRate;
                 this.affiliateRate2Initil = this.affiliateRate2 =
-                    this.contactInfo.affiliateRateTier2 === null ? null
-                        : (this.contactInfo.affiliateRateTier2 * 100).toFixed(2);
+                    this.contactInfo.affiliateRateTier2 === null ? null : this.contactInfo.affiliateRateTier2;
                 this.manageAllowed = this.permissionChecker.checkCGPermission(contactInfo.groupId);
                 this.affiliateCode.next(contactInfo.affiliateCode);
                 this.contactXref.next(contactInfo.personContactInfo.xref);
@@ -258,16 +258,16 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         });
     }
 
-    updateAffiliateRate(value, valueProp, valueInitialProp, tier) {
+    updateAffiliateRate(value: number, valueProp, valueInitialProp, tier) {
         ContactsHelper.showConfirmMessage(
-            this.ls.l(value ? 'ChangeCommissionRate' : 'ClearCommissionRate'),
+            this.ls.l(value >= 0 ? 'ChangeCommissionRate' : 'ClearCommissionRate'),
             (isConfirmed: boolean, [ updatePending ]: boolean[]) => {
                 if (isConfirmed) {
-                    this[valueProp] = value == '' || isNaN(value) ? null : parseFloat(value);
+                    this[valueProp] = value >= 0 ? value : null;
                     this.contactProxy.updateAffiliateRate(new UpdateContactAffiliateRateInput({
                         contactId: this.contactInfo.id,
                         updatePendingCommissions: updatePending,
-                        affiliateRate: this[valueProp] == null ? null : parseFloat((this[valueProp] / 100).toFixed(4)),
+                        affiliateRate: this[valueProp],
                         commissionTier: tier
                     })).subscribe(() => {
                         this[valueInitialProp] = this[valueProp];

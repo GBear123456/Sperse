@@ -29,7 +29,7 @@ export class ProfileService {
             delay(3000),
             startWith(null),
             switchMap(() => this.subscriptionProxy.getMemberInfo(
-                'BankCode',
+                'General',
                 undefined,
                 undefined
             )),

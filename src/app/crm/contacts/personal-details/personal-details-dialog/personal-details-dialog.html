@@ -25,12 +25,14 @@
                                               (itemDeleted)="deleteItem(ls.l('Affiliate'))">
                                 </inplace-edit>
                             </div>
-                            <div class="field" *ngIf="hasCommissionsFeature">
-                                <label>{{ ls.l('AffiliateRate') }}, %:</label>
+                            <div class="field tier" *ngIf="hasCommissionsFeature">
+                                <label>{{ ls.l('AffiliateRateTier1') }}:</label>
                                 <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
-                                              [editPlaceholder]="defaultAffiliateRate !== undefined ? ls.l('DefaultRate') + ' ' + defaultAffiliateRate : ''"
-                                              [value]="affiliateRate === null ? '' : affiliateRate + ''"
+                                              [editPlaceholder]="defaultAffiliateRateStr !== undefined ? ls.l('DefaultRate') + ' ' + defaultAffiliateRateStr : ''"
+                                              [displayValue]="affiliateRate === null ? '' : formatPercentValue(affiliateRate, 'en-US', '1.0-2')"
+                                              [value]="affiliateRate"
+                                              format="#0.##%"
                                               [showInlineEditButton]="hasCommissionsManagePermission"
                                               [isDeleteEnabled]="hasCommissionsManagePermission"
                                               [validationRules]="affiliateRateValidationRules"
@@ -39,11 +41,13 @@
                                               (itemDeleted)="deleteItem(ls.l('AffiliateRate'))">
                                 </inplace-edit>
                             </div>
-                            <div class="field" *ngIf="hasCommissionsFeature">
-                                <label>{{ ls.l('AffiliateRateTier2') }}, %:</label>
+                            <div class="field tier" *ngIf="hasCommissionsFeature">
+                                <label>{{ ls.l('AffiliateRateTier2') }}:</label>
                                 <inplace-edit [id]="contactInfo?.id"
                                               [editPlaceholder]="''"
-                                              [value]="affiliateRate2 === null ? '' : affiliateRate2 + ''"
+                                              [displayValue]="affiliateRate2 === null ? '' : formatPercentValue(affiliateRate2, 'en-US', '1.0-2')"
+                                              [value]="affiliateRate2"
+                                              format="#0.##%"
                                               [showInlineEditButton]="hasCommissionsManagePermission"
                                               [isDeleteEnabled]="hasCommissionsManagePermission"
                                               [validationRules]="affiliateRateValidationRules"

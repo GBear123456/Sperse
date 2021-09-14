@@ -116,19 +116,22 @@
             <div class="services" *ngFor="let service of product.productServices; let i = index">
                 <i class="fa fa-close" (click)="removeServiceFields(i)"></i>
                 <div class="field">
-                    <label class="wide" for="name">{{ls.l('Name')}}</label>
-                    <dx-select-box name="name"
-                                   width="270px"
-                                   valueExpr="id"
-                                   displayExpr="name"
-                                   [dataSource]="services"
-                                   placeholder="Select service..."
-                                   [(value)]="service.memberServiceId"
-                                   (onValueChanged)="onServiceChanged($event, service)">
-                        <dx-validator>
-                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
-                        </dx-validator>
-                    </dx-select-box>
+                    <label for="name">{{ls.l('Name')}}</label>
+                    <div class="name-wrapper">
+                        <dx-select-box #cmp name="name"
+                                       width="270px"
+                                       valueExpr="id"
+                                       displayExpr="name"
+                                       [dataSource]="services"
+                                       placeholder="Select service..."
+                                       [(value)]="service.memberServiceId"
+                                       (onValueChanged)="onServiceChanged($event, service)">
+                            <dx-validator>
+                                <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Name'))}}."></dxi-validation-rule>
+                            </dx-validator>
+                        </dx-select-box>
+                        <i *ngIf="service.memberServiceId" class="edit fa fa-pencil" aria-hidden="true" (click)="showEditMemberServiceDialog(service, cmp)"></i>
+                    </div>
                 </div>
                 <div class="field" *ngIf="getServiceLevels(service.memberServiceId) as levels">
                     <label *ngIf="levels.length" for="level">{{ls.l('Level')}}</label>

@@ -1,7 +1,7 @@
 <header>
-    <h2 mat-dialog-title>{{ls.l('AddService')}}</h2>
+    <h2 mat-dialog-title>{{ls.l((memberService.id ? 'Edit' : 'Add') + 'Service')}}</h2>
     <mat-dialog-actions>
-        <button mat-button (click)="saveService()" class="button-layout button-primary">{{ls.l('Save')}}</button>
+        <button mat-button (click)="saveService()" class="button-layout button-primary">{{ls.l(memberService.id ? 'Update' : 'Save')}}</button>
     </mat-dialog-actions>
     <span class="close" (click)="close()"></span>
 </header>
@@ -13,7 +13,7 @@
             <dx-text-box name="code"
                 width="300px"               
                 [inputAttr]="{ id: 'code' }"
-                [(value)]="serviceProduct.code">
+                [(value)]="memberService.code">
                 <dx-validator>
                     <dxi-validation-rule type="required" message="{{ls.l('CodeIsRequired')}}."></dxi-validation-rule>
                 </dx-validator>
@@ -24,33 +24,33 @@
             <dx-text-box name="name"
                 width="300px"
                 [inputAttr]="{ id: 'name' }"
-                [(value)]="serviceProduct.name">
+                [(value)]="memberService.name">
                 <dx-validator>
                     <dxi-validation-rule type="required" message="{{ls.l('NameIsRequired')}}."></dxi-validation-rule>
                 </dx-validator>
             </dx-text-box>
         </div>
-        <!-- div class="field">
-            <label for="activationTime">{{ls.l('StartDate')}}</label>
-            <dx-date-box [min]="today"
-                width="300px"
-                type="date"
-                [(value)]="serviceProduct.activationTime"
-                (onValueChanged)="detectChanges()">
-            </dx-date-box>
-        </div>
         <div class="field">
-            <label for="deactivationTime">{{ls.l('EndDate')}}</label>
-            <dx-date-box [min]="serviceProduct.activationTime"
+            <label for="name">{{ls.l('Type')}}</label>
+            <dx-select-box 
+                name="type"
                 width="300px"
-                type="date"
-                [(value)]="serviceProduct.deactivationTime">
-            </dx-date-box>
-        </div -->
+                [dataSource]="systemTypes"
+                [inputAttr]="{ id: 'type' }"
+                [(value)]="memberService.systemType"
+                (onValueChanged)="onSystemTypeChanged($event)">
+                <dx-validator>
+                    <dxi-validation-rule type="required" message="{{ls.l('TypeIsRequired')}}."></dxi-validation-rule>
+                </dx-validator>
+            </dx-select-box>
+        </div>
+        <div class="field features">
+            <feature-tree [showResetToDefault]="true" [editData]="featuresData"></feature-tree>
+        </div>
         <div class="levels-header">
             {{ls.l('ServiceLevels')}}:
         </div>
-        <div class="levels" *ngFor="let serviceLevel of serviceProduct.serviceProductLevels; let i = index">
+        <div class="levels" *ngFor="let serviceLevel of memberService.memberServiceLevels; let i = index">
             <i class="fa fa-close" (click)="removeLevelFields(i)"></i>
             <div class="field">
                 <label for="code">{{ls.l('Code')}}</label>
@@ -74,23 +74,9 @@
                     </dx-validator>
                 </dx-text-box>
             </div>
-            <!-- div class="field">
-                <label for="activationTime">{{ls.l('StartDate')}}</label>
-                <dx-date-box [min]="today"
-                    width="250px"
-                    type="date"
-                    [(value)]="serviceLevel.activationTime"
-                    (onValueChanged)="detectChanges()">
-                </dx-date-box>
+            <div class="field features">
+                <feature-tree [showResetToDefault]="true" [editData]="getServiceLevelFeatures(serviceLevel)"></feature-tree>
             </div>
-            <div class="field">
-                <label for="deactivationTime">{{ls.l('EndDate')}}</label>
-                <dx-date-box [min]="serviceLevel.activationTime"
-                    width="250px"
-                    type="date"
-                    [(value)]="serviceLevel.deactivationTime">
-                </dx-date-box>
-            </div -->
         </div>
         <div class="field">
             <div class="add-new-button" (click)="addNewLevelFields()"><span>+ Add</span></div>
