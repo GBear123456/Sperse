@@ -41,6 +41,7 @@ export class HostAutoLoginComponent {
     accessCodeMaxTriesCount = 3;
     accessCodeIsValid: boolean;
     accessCode: string;
+    isInstantForm: boolean = false;
     userEmail: string;
 
     constructor(
@@ -54,7 +55,13 @@ export class HostAutoLoginComponent {
         private loginService: LoginService
     ) {
         this.activatedRoute.queryParams.pipe(first())
-            .subscribe((params: Params) => this.userEmail = params.email);
+            .subscribe((params: Params) => {
+                this.userEmail = params.email;
+                if (this.userEmail) {
+                    if (this.isInstantForm = params.hasOwnProperty('instant'))
+                        setTimeout(() => this.sendloginLink());
+                }
+            });
     }
 
     checkAccessCodeMaxTries(showInvalidMessage = true) {

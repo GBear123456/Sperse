@@ -8,6 +8,7 @@ import { HostForgotPasswordComponent } from '../host/host-forgot-password.compon
 @Component({
     templateUrl: './lend-space-forgot-password.component.html',
     styleUrls: [
+        '../host/host-forgot-password.component.less',
         './lend-space-password.component.less'
     ],
     animations: [accountModuleAnimation()]

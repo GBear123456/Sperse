@@ -7,7 +7,10 @@ import { HostForgotPasswordComponent } from '../host/host-forgot-password.compon
 
 @Component({
     templateUrl: './sperser-forgot-password.component.html',
-    styleUrls: [ './sperser-password.component.less' ],
+    styleUrls: [
+        '../host/host-forgot-password.component.less', 
+        './sperser-password.component.less' 
+    ],
     animations: [accountModuleAnimation()]
 })
 export class SperserForgotPasswordComponent extends HostForgotPasswordComponent {

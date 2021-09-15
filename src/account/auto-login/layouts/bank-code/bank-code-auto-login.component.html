@@ -8,7 +8,7 @@
         </div>
         <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
             <h3>{{ls.l('Auto Login')}}</h3>
-            <div class="form-group clearfix" [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', (isLinkSent ? '<br>' : '') + '<b>' + userEmail + '</b>' + (isLinkSent ? '<br>' : ''), tenantName)"></div>
+            <div class="form-group clearfix" [innerHTML]="ls.l(isLinkSent || isInstantForm ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', (isLinkSent ? '<br>' : '') + '<b>' + userEmail + '</b>' + (isLinkSent ? '<br>' : ''), tenantName)"></div>
             <div class="form-actions">
                 <ng-container *ngIf="isLinkSent && accessCodeMaxTriesCount">
                     <dx-text-box
