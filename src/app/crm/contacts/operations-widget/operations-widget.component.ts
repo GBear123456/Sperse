@@ -69,7 +69,15 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     @Input() customerType: string;
     @Input() leadId: number;
     @Input() selectedPipelineId: number;
-    @Input() pipelineDataSource: any[];
+    @Input() 
+    set pipelineDataSource(pipelines: any[]) {
+        this._pipelines = pipelines;
+        if (pipelines.length)
+            this.initToolbarConfig();
+    }
+    get pipelineDataSource(): any[] {
+        return this._pipelines;
+    }
     @Input() selectedStageId: number;
     @Input()
     set stages(stages: any[]) {
@@ -101,6 +109,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     private initTimeout;
     private _enabled: Boolean;
     private _stages: any[] = [];
+    private _pipelines: any[] = [];
     private _partnerTypes: any[] = [];
     manageCGPermision = '';
     toolbarConfig = [];
@@ -192,7 +201,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         }
     }
 
-    initToolbarConfig(ms = 300) {
+    initToolbarConfig(ms = 600) {
         this.toolbarConfig = [];
         clearTimeout(this.initTimeout);
         this.initTimeout = setTimeout(() => {
@@ -376,7 +385,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'stage',
                             action: this.toggleStages.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType)
+                            disabled: !this.permission.checkCGPermission(this.customerType),
+                            visible: this.pipelineDataSource && this.pipelineDataSource.length
                         },
                         {
                             name: 'status',
