@@ -167,7 +167,6 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
         private permissionService: AppPermissionService,
         public ls: AppLocalizationService
     ) {
-        this.contactsService.loadLeadInfo();
         contactsService.orgUnitsSaveSubscribe((data) => {
             let orgUnitId = data.length ? data[0] : undefined;
             if (orgUnitId && orgUnitId != this.data.leadInfo.sourceOrganizationUnitId) {

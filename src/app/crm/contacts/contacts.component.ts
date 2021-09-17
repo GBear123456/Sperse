@@ -25,6 +25,7 @@ import * as _ from 'underscore';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AppStore, ContactAssignedUsersStoreSelectors, PartnerTypesStoreSelectors } from '@app/store';
+import { PipelinesStoreActions } from '@app/crm/store';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -563,6 +564,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         );
         res$.subscribe((res: ContactInfoDto) => {
             this.fillContactDetails(res, res['id']);
+            if (this.permission.isGranted(AppPermissions.CRM)) {
+                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(false));
+                this.loadLeadData();
+            }
         });
         return res$;
     }
