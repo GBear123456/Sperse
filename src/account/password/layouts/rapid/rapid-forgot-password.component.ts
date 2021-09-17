@@ -7,6 +7,7 @@ import { HostForgotPasswordComponent } from "@root/account/password/layouts/host
     animations: [accountModuleAnimation()],
     styleUrls: [
         'rapid-password.component.less',
+        '../host/host-forgot-password.component.less',
         '../../../layouts/rapid/rapid-layout.component.less'
     ]
 })
