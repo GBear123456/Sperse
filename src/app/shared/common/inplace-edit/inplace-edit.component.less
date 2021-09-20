@@ -11,11 +11,11 @@
 
         &.multiline {
             a {
-                white-space: unset!important;
+                white-space: unset !important;
             }
         }
 
-        .actions  {
+        .actions {
             float: right;
             bottom: 2px;
             left: 5px;
@@ -32,6 +32,11 @@
                 color: #00aeef;
             }
 
+            i.history {
+                color: #00aeef;
+                padding-left: 0;
+            }
+
             i.delete {
                 color: #f44336;
             }
@@ -46,6 +51,7 @@
                 left: initial;
                 right: 0;
             }
+
             @media (max-width: 768px) {
                 display: none;
             }
@@ -78,11 +84,11 @@
         span {
             display: inline-block;
             -webkit-touch-callout: none; /* iOS Safari */
-               -webkit-user-select: none; /* Safari */
-                -khtml-user-select: none; /* Konqueror HTML */
-                  -moz-user-select: none; /* Firefox */
-                   -ms-user-select: none; /* Internet Explorer/Edge */
-                       user-select: none; /* Non-prefixed version, currently
+            -webkit-user-select: none; /* Safari */
+            -khtml-user-select: none; /* Konqueror HTML */
+            -moz-user-select: none; /* Firefox */
+            -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
                                           supported by Chrome and Opera */
         }
     }
@@ -104,9 +110,11 @@
                 background: transparent;
                 height: 35px;
                 top: initial;
+
                 &.button-update {
                     right: 25px;
                 }
+
                 &.button-exit {
                     right: -5px;
                 }
@@ -133,12 +141,14 @@
                 font-size: 14px;
                 font-weight: 400;
             }
+
             &.dx-state-focused {
                 .dx-placeholder {
                     top: -25px;
                 }
             }
         }
+
         ::ng-deep dx-button {
             border: none;
             position: absolute;
@@ -150,12 +160,15 @@
 
             &.button-update {
                 right: 30px;
+
                 i {
                     color: #00aeef;
                 }
             }
+
             &.button-exit {
                 right: -5px;
+
                 i {
                     color: #f44336;
                 }
