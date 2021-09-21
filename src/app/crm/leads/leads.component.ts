@@ -183,6 +183,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     impersonationIsGranted = this.permission.isGranted(
         AppPermissions.AdministrationUsersImpersonation
     );
+    pipelineEditIsGranted =  this.permission.isGranted(
+        AppPermissions.CRMPipelinesConfigure
+    );
     actionEvent: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     actionMenuGroups: ActionMenuGroup[] = [
@@ -2145,12 +2148,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     editPipeline({ id, value }) {
-        this.pipelineServiceProxy.rename(new PipelineRenameInput({
-            id: id,
-            name: value
-        })).subscribe(() => {
-            this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
-        });
+        if (this.pipelineEditIsGranted)
+            this.pipelineServiceProxy.rename(new PipelineRenameInput({
+                id: id,
+                name: value
+            })).subscribe(() => {
+                this.store$.dispatch(new PipelinesStoreActions.LoadRequestAction(true));
+            });
     }
 
     onOwnerFilterApply(event?) {
