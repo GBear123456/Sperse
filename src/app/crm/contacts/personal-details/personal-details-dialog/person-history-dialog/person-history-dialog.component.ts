@@ -79,7 +79,6 @@ export class PersonHistoryDialogComponent implements OnInit {
         }
 
         this.processedHistory = processedHistory.reverse();
-        console.log('tes');
     }
 
     formatValue(value: any): string {

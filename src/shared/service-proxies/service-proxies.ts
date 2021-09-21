@@ -75061,7 +75061,6 @@ export interface ICreateUserForContactOutput {
 
 export class PersonHistoryDto implements IPersonHistoryDto {
     creationTime!: moment.Moment | undefined;
-    creatorUserId!: number | undefined;
     creatorUserName!: string | undefined;
     creatorUserPhotoPublicId!: string | undefined;
     source!: string | undefined;
@@ -75101,7 +75100,6 @@ export class PersonHistoryDto implements IPersonHistoryDto {
     init(data?: any) {
         if (data) {
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
-            this.creatorUserId = data["creatorUserId"];
             this.creatorUserName = data["creatorUserName"];
             this.creatorUserPhotoPublicId = data["creatorUserPhotoPublicId"];
             this.source = data["source"];
@@ -75141,7 +75139,6 @@ export class PersonHistoryDto implements IPersonHistoryDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["creatorUserId"] = this.creatorUserId;
         data["creatorUserName"] = this.creatorUserName;
         data["creatorUserPhotoPublicId"] = this.creatorUserPhotoPublicId;
         data["source"] = this.source;
@@ -75174,7 +75171,6 @@ export class PersonHistoryDto implements IPersonHistoryDto {
 
 export interface IPersonHistoryDto {
     creationTime: moment.Moment | undefined;
-    creatorUserId: number | undefined;
     creatorUserName: string | undefined;
     creatorUserPhotoPublicId: string | undefined;
     source: string | undefined;
