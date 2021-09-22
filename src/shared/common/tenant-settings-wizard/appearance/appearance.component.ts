@@ -53,12 +53,16 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     save(): Observable<any> {
         return forkJoin(
             this.logoUploader.uploadFile().pipe(tap((res: any) => {
-                this.tenant.logoId = res.result && res.result.id;
-                this.changeDetectorRef.detectChanges();
+                if (res.result && res.result.id) {
+                    this.tenant.logoId = res.result && res.result.id;
+                    this.changeDetectorRef.detectChanges();
+                }
             })),
             this.cssUploader.uploadFile().pipe(tap((res: any) => {
-                this.tenant.customCssId = res.result && res.result.id;
-                this.changeDetectorRef.detectChanges();
+                if (res.result && res.result.id) {
+                    this.tenant.customCssId = res.result.id;
+                    this.changeDetectorRef.detectChanges();
+                }
             })),
             this.faviconsUploader.uploadFile()
         );
