@@ -1537,8 +1537,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     processFilterInternal() {
-        if (this.showDataGrid && this.dataGrid && this.dataGrid.instance
-            || this.showPivotGrid && this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance) {
+        if (this.showDataGrid && this.dataGrid && this.dataGrid.instance || this.showPivotGrid && 
+            this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
+        ) {
+            this.dataSource['total'] = this.dataSource['entities'] = undefined;
             this.processODataFilter(
                 (this.showPivotGrid ? this.pivotGridComponent : this).dataGrid.instance,
                 this.dataSourceURI,

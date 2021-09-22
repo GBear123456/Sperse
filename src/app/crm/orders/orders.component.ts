@@ -902,8 +902,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     );
                 },
                 onLoaded: (records) => {
+                    let dataSource = this.showOrdersPipeline ? this.pipelineDataSource : this.ordersDataSource;
                     if (records instanceof Array)
-                        this.ordersDataSource['entities'] = (this.ordersDataSource['entities'] || []).concat(records);
+                        dataSource['entities'] = (dataSource['entities'] || []).concat(records);
                 }
             }
         };
@@ -1494,9 +1495,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     processFilterInternal() {
         let context: any = this;
-        let grid = this.selectedOrderType.value === OrderType.Order
-            ? this.ordersGrid
-            : (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid ? this.subscriptionsGrid : this.pivotGridComponent.dataGrid);
+        let grid: any;
+
+        if (this.selectedOrderType.value === OrderType.Order) {
+            grid = this.ordersGrid;
+            this.ordersDataSource['entities'] = this.ordersDataSource['total'] = undefined;
+        } else if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
+            grid = this.subscriptionsGrid;
+            this.subscriptionsDataSource['entities'] = this.subscriptionsDataSource['total'] = undefined;
+        } else
+            grid = this.pivotGridComponent.dataGrid;
+
         if (this.selectedOrderType.value === OrderType.Order && this.showOrdersPipeline && this.pipelineComponent) {
             context = this.pipelineComponent;
             context.searchColumns = this.searchColumns;

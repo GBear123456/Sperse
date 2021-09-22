@@ -1529,13 +1529,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     processFilterInternal() {
         if (this.showDataGrid || this.showPivotGrid) {
             let dataGrid = (this.showPivotGrid ? this.pivotGridComponent : this).dataGrid;
-            if (dataGrid)
+            if (dataGrid) {
+                this.dataSource['entities'] = this.dataSource['total'] = undefined;
                 this.processODataFilter(
                     dataGrid.instance,
                     this.dataSourceURI,
                     this.filters,
                     this.filtersService.getCheckCustom
                 );
+            }
         }
     }
 
