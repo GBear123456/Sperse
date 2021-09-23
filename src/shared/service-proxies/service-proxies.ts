@@ -22451,6 +22451,78 @@ export class MemberServiceServiceProxy {
 }
 
 @Injectable()
+export class ServiceProductServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @includeDeactivated (optional) 
+     * @return Success
+     * @deprecated
+     */
+    getAll(includeDeactivated: boolean | null | undefined): Observable<MemberServiceDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ServiceProduct/GetAll?";
+        if (includeDeactivated !== undefined)
+            url_ += "includeDeactivated=" + encodeURIComponent("" + includeDeactivated) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<MemberServiceDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<MemberServiceDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<MemberServiceDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(MemberServiceDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<MemberServiceDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class MemberSettingsServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -72282,6 +72354,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     endDate!: moment.Moment | undefined;
     fee!: number | undefined;
     tenantId!: string | undefined;
+    productCode!: string | undefined;
     productName!: string | undefined;
     orderType!: string | undefined;
     trialEndDate!: moment.Moment | undefined;
@@ -72307,6 +72380,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.fee = data["fee"];
             this.tenantId = data["tenantId"];
+            this.productCode = data["productCode"];
             this.productName = data["productName"];
             this.orderType = data["orderType"];
             this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
@@ -72340,6 +72414,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["fee"] = this.fee;
         data["tenantId"] = this.tenantId;
+        data["productCode"] = this.productCode;
         data["productName"] = this.productName;
         data["orderType"] = this.orderType;
         data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
@@ -72366,6 +72441,7 @@ export interface IOrderSubscriptionDto {
     endDate: moment.Moment | undefined;
     fee: number | undefined;
     tenantId: string | undefined;
+    productCode: string | undefined;
     productName: string | undefined;
     orderType: string | undefined;
     trialEndDate: moment.Moment | undefined;
