@@ -21,6 +21,13 @@
            aria-hidden="true"
            (click)="showInput(true)">
         </i>
+        <i *ngIf="isHistoryEnabled"
+           [ngClass]="{ hidden: isReadOnlyField }"
+           class="history dx-icon-clock"
+           aria-hidden="true"
+           [title]="l('History')"
+           (click)="historyClick($event)">
+        </i>
         <i *ngIf="isDeleteEnabled && hasValue"
            [ngClass]="{ hidden: isReadOnlyField }"
            class="delete fa fa-times"

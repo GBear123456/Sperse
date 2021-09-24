@@ -68,6 +68,7 @@ import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/mode
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
+import { PersonHistoryDialogComponent } from '../personal-details/personal-details-dialog/person-history-dialog/person-history-dialog.component';
 
 @Component({
     selector: 'details-header',
@@ -467,6 +468,19 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 event, event.target.closest('div'), 200, -12)
         });
         event.stopPropagation();
+    }
+
+    showPersonHistory(event) {
+        event.stopPropagation();
+        this.dialog.open(PersonHistoryDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                contactId: this.data.id
+            }
+        }).afterClosed().subscribe(() => {
+        });
     }
 
     updateCompanyField(value, field = 'companyName') {
