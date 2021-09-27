@@ -22451,6 +22451,78 @@ export class MemberServiceServiceProxy {
 }
 
 @Injectable()
+export class ServiceProductServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @includeDeactivated (optional) 
+     * @return Success
+     * @deprecated
+     */
+    getAll(includeDeactivated: boolean | null | undefined): Observable<MemberServiceDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ServiceProduct/GetAll?";
+        if (includeDeactivated !== undefined)
+            url_ += "includeDeactivated=" + encodeURIComponent("" + includeDeactivated) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<MemberServiceDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<MemberServiceDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<MemberServiceDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(MemberServiceDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<MemberServiceDto[]>(<any>null);
+    }
+}
+
+@Injectable()
 export class MemberSettingsServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -51859,6 +51931,12 @@ export interface IPersonContactInfoDto {
     comment: string | undefined;
 }
 
+export enum AffiliateServiceStatus {
+    NoService = "NoService", 
+    Available = "Available", 
+    FullAccess = "FullAccess", 
+}
+
 export class ContactInfoDto implements IContactInfoDto {
     id!: number | undefined;
     typeId!: string | undefined;
@@ -51881,6 +51959,7 @@ export class ContactInfoDto implements IContactInfoDto {
     affiliateCode!: string | undefined;
     affiliateRate!: number | undefined;
     affiliateRateTier2!: number | undefined;
+    affiliateServiceStatus!: AffiliateServiceStatus | undefined;
     parentId!: number | undefined;
     parentName!: string | undefined;
     contactDate!: moment.Moment | undefined;
@@ -51928,6 +52007,7 @@ export class ContactInfoDto implements IContactInfoDto {
             this.affiliateCode = data["affiliateCode"];
             this.affiliateRate = data["affiliateRate"];
             this.affiliateRateTier2 = data["affiliateRateTier2"];
+            this.affiliateServiceStatus = data["affiliateServiceStatus"];
             this.parentId = data["parentId"];
             this.parentName = data["parentName"];
             this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
@@ -51975,6 +52055,7 @@ export class ContactInfoDto implements IContactInfoDto {
         data["affiliateCode"] = this.affiliateCode;
         data["affiliateRate"] = this.affiliateRate;
         data["affiliateRateTier2"] = this.affiliateRateTier2;
+        data["affiliateServiceStatus"] = this.affiliateServiceStatus;
         data["parentId"] = this.parentId;
         data["parentName"] = this.parentName;
         data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
@@ -52007,6 +52088,7 @@ export interface IContactInfoDto {
     affiliateCode: string | undefined;
     affiliateRate: number | undefined;
     affiliateRateTier2: number | undefined;
+    affiliateServiceStatus: AffiliateServiceStatus | undefined;
     parentId: number | undefined;
     parentName: string | undefined;
     contactDate: moment.Moment | undefined;
