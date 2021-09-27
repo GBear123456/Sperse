@@ -6,7 +6,7 @@
             <span class="bg-yellow"></span>
             <span class="bg-green"></span>
         </div>
-        <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
+        <form *ngIf="isLinkSent || !isInstantForm || detectedTenancies?.length" #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
             <h3>{{ls.l('Auto Login')}}</h3>
             <div class="form-group clearfix" [innerHTML]="ls.l(isLinkSent || isInstantForm ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', (isLinkSent ? '<br>' : '') + '<b>' + userEmail + '</b>' + (isLinkSent ? '<br>' : ''), tenantName)"></div>
             <div class="form-actions">
