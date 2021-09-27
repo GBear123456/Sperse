@@ -64,8 +64,9 @@
                 </div>
                 <div class="form-group clearfix options row">
                     <div class="col">
-                        <a routerLink="/account/forgot-password" [queryParams]="{extlogin: isExtLogin}" id="forget-password" class="forget-password">
-                            {{ls.l("IForgotMyPassword")}}
+                        <a routerLink="/account/forgot-password" 
+                           [queryParams]="{extlogin: isExtLogin, 'email': loginService.authenticateModel.userNameOrEmailAddress}" id="forget-password" class="forget-password">
+                            {{ls.l("IForgotMyPassword")}}                                               
                         </a>
                     </div>
                 </div>

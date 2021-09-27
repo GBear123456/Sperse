@@ -37,6 +37,9 @@ export class HostForgotPasswordComponent {
             first()
         ).subscribe((paramsMap: ParamMap) => {
             this.isExtLogin = paramsMap.get('extlogin') == 'true';
+            let email = paramsMap.get('email');
+            if (email)
+                this.model.emailAddress = email;
         });
     }
 
