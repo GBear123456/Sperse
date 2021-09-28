@@ -17,7 +17,7 @@
                         [showTotalCount]="true"
                         [totalCount]="totalCount"
                         [totalErrorMsg]="totalErrorMsg"
-                        [allowEdit]="true"
+                        [allowEdit]="pipelineEditIsGranted"
                         [value]="selectedPipelineId$ | async"
                         (onValueChanged)="onSelectedPipelineChanged($event)"
                         (onEdit)="editPipeline($event)">

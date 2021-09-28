@@ -38,14 +38,7 @@
                     [columnChooser]="{
                         height: rowsViewHeight
                     }"
-                    [remoteOperations]="{ 
-                        filtering: false, 
-                        grouping: false, 
-                        groupPaging: true, 
-                        paging: true, 
-                        sorting: true, 
-                        summary: true 
-                    }"
+                    [remoteOperations]="{ filtering: false }"
                     [loadPanel]="{ enabled: false }"
                     [pager]="defaultGridPagerConfig"
                     (onOptionChanged)="onGridOptionChanged($event)"
