@@ -4,8 +4,7 @@ import { Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, takeUntil, finalize } from 'rxjs/operators';
+import { filter, finalize } from 'rxjs/operators';
 import DataSource from '@root/node_modules/devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 
@@ -17,15 +16,10 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
-import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
-import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { ContactsService } from '@app/crm/contacts/contacts.service';
-import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
@@ -39,7 +33,6 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ProductDto } from '@app/crm/products/products-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ProductFields } from '@app/crm/products/products-fields.enum';
-import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 
 @Component({
     templateUrl: './products.component.html',
@@ -61,13 +54,8 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
-    public headlineButtons: HeadlineButton[] = [
-        {
-            enabled: true,
-            action: () => this.showProductDialog(),
-            label: this.l('AddProduct')
-        }
-    ];
+    hasManage = false;
+    public headlineButtons: HeadlineButton[] = [];
 
     actionEvent: any;
     actionMenuGroups: ActionMenuGroup[] = [
@@ -125,7 +113,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
-        private invoicesService: InvoicesService,
+        invoicesService: InvoicesService,
         private filtersService: FiltersService,
         private productProxy: ProductServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
@@ -133,6 +121,13 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         public dialog: MatDialog
     ) {
         super(injector);
+        this.hasManage = this.permission.isGranted(this.permissions.CRMProductsManage) || this.permission.isGranted(this.permissions.CRMOrdersInvoicesManage);
+        this.headlineButtons.push({
+            enabled: this.hasManage,
+            action: () => this.showProductDialog(),
+            label: this.l('AddProduct')
+        });
+        console.log(this.headlineButtons);
         this.dataSource = new DataSource({store: new ODataStore(this.dataStore)});
         invoicesService.settings$.pipe(filter(Boolean)).subscribe(
             (res: InvoiceSettings) => this.currency = res.currency
@@ -167,6 +162,9 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     editProduct(id: number) {
+        if (!this.hasManage)
+            return;
+
         this.startLoading();
         this.productProxy.getProductInfo(id).pipe(
             finalize(() => this.finishLoading())
@@ -179,6 +177,9 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     deteleProduct(id: number) {
+        if (!this.hasManage)
+            return;
+
         this.message.confirm('',
             this.l('DeleteConfiramtion'),
             isConfirmed => {
@@ -412,6 +413,9 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     toggleActionsMenu(event) {
+        if (!this.hasManage)
+            return;
+
         ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {
             ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, event.data);
             this.actionEvent = actionRecord;
