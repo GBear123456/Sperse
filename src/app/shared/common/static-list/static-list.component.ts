@@ -220,15 +220,19 @@ export class StaticListComponent {
 
     onTabsClick($event) {
         let button = $event.target.closest('.dx-tabs-nav-button');
-        if (!button)
-            return;
+        if (button) {
+            let currentIndex = this._tabsDataSource.findIndex((v) => v.id == this.selectedTabId),
+                isMoveRight = button.classList.contains('dx-tabs-nav-button-right'),
+                lastIndex = this._tabsDataSource.length - 1,
+                isLastTab = currentIndex == lastIndex,
+                isFirstTab = currentIndex == 0;
 
-        let currentIndex = this._tabsDataSource.findIndex((v) => v.id == this.selectedTabId);
-        if (button.classList.contains('dx-tabs-nav-button-right')) {
-            this.dxTabs.selectedIndex = currentIndex == this._tabsDataSource.length - 1 ? currentIndex : currentIndex + 1;
-        }
-        else {
-            this.dxTabs.selectedIndex = currentIndex == 0 ? currentIndex : currentIndex - 1;
+            if (isFirstTab)
+                this.dxTabs.selectedIndex = isMoveRight ? currentIndex + 1 : lastIndex;
+            else if (isLastTab)
+                this.dxTabs.selectedIndex = isMoveRight ? 0 : currentIndex - 1;
+            else
+                this.dxTabs.selectedIndex = currentIndex + (isMoveRight ? 1 : -1);
         }
     }
 }

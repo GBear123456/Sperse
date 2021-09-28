@@ -470,6 +470,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     pivotGridDataIsLoading: boolean;
     searchValue: string = this._activatedRoute.snapshot.queryParams.search || '';
     searchClear = false;
+    dataSourceConfig: any;
     private pivotGridDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
@@ -713,7 +714,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.crmService.updateCountryStateFilter(this._activatedRoute.snapshot.queryParams, this.filterCountryStates);
         this.selectedPipelineId$.pipe(first()).subscribe((selectedPipelineId: number) => {
             this.pipelineFilter.items.PipelineId.value = selectedPipelineId;
-            this.dataSource = {
+            this.dataSourceConfig = {
                 uri: this.dataSourceURI,
                 requireTotalCount: true,
                 store: {
@@ -739,12 +740,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
                     onLoaded: (records) => {
+                        let dataSource = this.showPipeline ? this.pipelineDataSource : this.dataSource;
                         if (records instanceof Array)
-                            this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
+                            dataSource['entities'] = (dataSource['entities'] || []).concat(records);
                     },
                     deserializeDates: false
                 }
             };
+            this.dataSource = new DataSource(this.dataSourceConfig);
             this.totalDataSource = new DataSource({
                 paginate: false,
                 store: new ODataStore({
@@ -756,8 +759,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     },
                     onLoaded: (count: any) => {
+                        let dataSource = this.showPipeline ? this.pipelineDataSource : this.dataSource;
                         if (!isNaN(count))
-                            this.dataSource['total'] = this.totalCount = count;
+                            dataSource['total'] = this.totalCount = count;
                     },
                     errorHandler: (e: any) => {
                         this.totalErrorMsg = this.l('AnHttpErrorOccured');
@@ -1841,6 +1845,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         ? this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
                         : context.dataGrid && context.dataGrid.instance;
                     if (this.showPipeline || dataGridInstance) {
+                        this.pipelineDataSource['total'] = this.pipelineDataSource['entities'] = 
+                        this.dataSource['total'] = this.dataSource['entities'] = undefined;
                         const filterQuery$: Observable<string> = context.processODataFilter.call(
                             context,
                             dataGridInstance,
@@ -1857,7 +1863,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     initLayoutDataSource() {
         if (this.showPipeline) {
             if (!this.pipelineDataSource)
-                setTimeout(() => this.pipelineDataSource = cloneDeep(this.dataSource));
+                setTimeout(() => this.pipelineDataSource = cloneDeep(this.dataSourceConfig));
         } else if (this.showDataGrid) {
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {

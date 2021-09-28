@@ -56,7 +56,8 @@ export class ItemDetailsService {
                     itemIndex = this.getDistinctItemIndex(items, itemId, itemDirection, itemKeyField, itemDistinctField),
                     itemData = items[itemIndex],
                     isFirstOnPage = itemIndex === 0,
-                    totalCount = dataSource.totalCount() > 0 ? dataSource.totalCount() : items.length,
+                    totalCount = dataSource.totalCount && dataSource.totalCount() > 0 
+                        ? dataSource.totalCount() : items.length,
                     itemsCountOnTheLastPage = this.getItemsCountOnLastPage(
                         dataSource['total'] || totalCount,
                         dataSource.pageSize(), dataSource.pageIndex()
@@ -64,7 +65,6 @@ export class ItemDetailsService {
                     isLastOnPage = itemIndex + 1 === items.length || dataSource.isLastPage() && itemIndex + 1 === itemsCountOnTheLastPage,
                     isFirstOnList = isFirstOnPage && dataSource.pageIndex() === 0,
                     isLastOnList = dataSource.isLastPage() && itemIndex + 1 === itemsCountOnTheLastPage;
-
                 fullInfo$ = of({
                     itemData: itemData,
                     isFirstOnPage: isFirstOnPage,
@@ -103,7 +103,7 @@ export class ItemDetailsService {
                                 switchMap(() => {
                                     let entities = dataSource['entities'],
                                         newItemId = entities
-                                            ? entities[entities.length - dataSource.pageSize() - 1][itemKeyField]
+                                            ? entities[entities.length - (dataSource.pageSize ? dataSource.pageSize() : 20) - 1][itemKeyField]
                                             : this.getItemsByDataSourceItems(dataSource.items())[0][itemKeyField];
                                     /** Get data of the first item from the next page */
                                     return this.getItemFullInfo(itemType, newItemId, entities ? TargetDirectionEnum.Next : TargetDirectionEnum.Current, itemKeyField, itemDistinctField);
