@@ -77,7 +77,7 @@ export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.elementRef.nativeElement.closest(
-            '.cdk-overlay-container'
+            '.cdk-global-overlay-wrapper'
         ).style.zIndex = 1001;
     }
 

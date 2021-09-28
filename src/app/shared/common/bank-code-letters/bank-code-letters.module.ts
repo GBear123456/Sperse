@@ -21,6 +21,7 @@ import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service'
 import { BankCodeLettersEditorDialogComponent } from './bank-code-letters-editor-dialog/bank-code-letters-editor-dialog.component';
 import { BankCodeHistoryDialogComponent } from './bank-code-history-dialog/bank-code-history-dialog.component';
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
+import { DynamicMatDialogModule } from '@shared/common/dialogs/dynamic-overlay/dynamic-overlay.module';
 
 @NgModule({
     imports: [
@@ -33,7 +34,8 @@ import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.mod
         MatDialogModule,
         DragulaModule,
         DragDropModule,
-        ModalDialogModule
+        ModalDialogModule,
+        DynamicMatDialogModule
     ],
     declarations: [
         BankCodeDecodeComponent,
