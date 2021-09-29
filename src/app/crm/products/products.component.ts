@@ -54,7 +54,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
-    hasManage = false;
+    isReadOnly = false;
     public headlineButtons: HeadlineButton[] = [];
 
     actionEvent: any;
@@ -121,13 +121,12 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         public dialog: MatDialog
     ) {
         super(injector);
-        this.hasManage = this.permission.isGranted(this.permissions.CRMProductsManage) || this.permission.isGranted(this.permissions.CRMOrdersInvoicesManage);
+        this.isReadOnly = !this.permission.isGranted(this.permissions.CRMProductsManage);
         this.headlineButtons.push({
-            enabled: this.hasManage,
+            enabled: this.isReadOnly,
             action: () => this.showProductDialog(),
             label: this.l('AddProduct')
         });
-        console.log(this.headlineButtons);
         this.dataSource = new DataSource({store: new ODataStore(this.dataStore)});
         invoicesService.settings$.pipe(filter(Boolean)).subscribe(
             (res: InvoiceSettings) => this.currency = res.currency
@@ -162,9 +161,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     editProduct(id: number) {
-        if (!this.hasManage)
-            return;
-
         this.startLoading();
         this.productProxy.getProductInfo(id).pipe(
             finalize(() => this.finishLoading())
@@ -177,9 +173,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     deteleProduct(id: number) {
-        if (!this.hasManage)
-            return;
-
         this.message.confirm('',
             this.l('DeleteConfiramtion'),
             isConfirmed => {
@@ -198,7 +191,8 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     showProductDialog(product?) {
         const dialogData = {
             fullHeigth: true,
-            product: product
+            product: product,
+            isReadOnly: this.isReadOnly
         };
         this.dialog.open(AddProductDialogComponent, {
             panelClass: 'slider',
@@ -413,7 +407,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     toggleActionsMenu(event) {
-        if (!this.hasManage)
+        if (!this.isReadOnly)
             return;
 
         ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {

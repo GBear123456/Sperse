@@ -54,7 +54,7 @@
                     <dxo-editing mode="popup"
                         [texts]="{ editRow: '' }"
                         [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
-                        [allowUpdating]="hasManage">
+                        [allowUpdating]="!isReadOnly">
                     </dxo-editing>
 
                     <dxi-column [dataField]="productFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
