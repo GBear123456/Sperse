@@ -157,9 +157,19 @@
             .field {
                 padding: 2px 0 !important;
 
-                &.tier .inplace-edit-view-mode {
-                    font-size: 17px;
-                    font-weight: bold;
+                &.tier {
+                    line-height: normal;
+                    label {
+                        line-height: 36px;
+                    }
+
+                    inplace-edit {
+                        vertical-align: top;
+                        .inplace-edit-view-mode {
+                            font-size: 17px;
+                            font-weight: bold;
+                        }
+                    }
                 }
             }
 

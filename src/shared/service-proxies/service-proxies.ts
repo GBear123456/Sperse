@@ -72364,6 +72364,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     endDate!: moment.Moment | undefined;
     fee!: number | undefined;
     tenantId!: string | undefined;
+    productCode!: string | undefined;
     productName!: string | undefined;
     orderType!: string | undefined;
     trialEndDate!: moment.Moment | undefined;
@@ -72389,6 +72390,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.fee = data["fee"];
             this.tenantId = data["tenantId"];
+            this.productCode = data["productCode"];
             this.productName = data["productName"];
             this.orderType = data["orderType"];
             this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
@@ -72422,6 +72424,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["fee"] = this.fee;
         data["tenantId"] = this.tenantId;
+        data["productCode"] = this.productCode;
         data["productName"] = this.productName;
         data["orderType"] = this.orderType;
         data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
@@ -72448,6 +72451,7 @@ export interface IOrderSubscriptionDto {
     endDate: moment.Moment | undefined;
     fee: number | undefined;
     tenantId: string | undefined;
+    productCode: string | undefined;
     productName: string | undefined;
     orderType: string | undefined;
     trialEndDate: moment.Moment | undefined;
