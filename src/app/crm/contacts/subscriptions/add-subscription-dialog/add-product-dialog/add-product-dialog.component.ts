@@ -33,15 +33,11 @@ import {
     ProductSubscriptionOptionInfo,
     ProductMeasurementUnit
 } from '@shared/service-proxies/service-proxies';
-import { DateHelper } from '@shared/helpers/DateHelper';
-import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
-import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { SettingService } from 'abp-ng2-module/dist/src/settings/setting.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
@@ -79,18 +75,18 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     frequencies = Object.keys(RecurringPaymentFrequency);
     gracePeriodDefaultValue: number;
     customGroup: string;
-    isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);          //&& this.permission.isGranted(AppPermissions.CRMAffiliatesCommissions);
+    isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
+    title: string;
+    isReadOnly = true;
 
     constructor(
         private elementRef: ElementRef,
         private productProxy: ProductServiceProxy,
-        private productGroupProxy: ProductGroupServiceProxy,
+        productGroupProxy: ProductGroupServiceProxy,
         private notify: NotifyService,
-        private permission: AppPermissionService,
         private invoicesService: InvoicesService,
         private changeDetection: ChangeDetectorRef,
-        private memberServiceProxy: MemberServiceServiceProxy,
-        private userManagementService: UserManagementService,
+        memberServiceProxy: MemberServiceServiceProxy,
         public dialogRef: MatDialogRef<AddProductDialogComponent>,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
@@ -105,6 +101,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             });
         });
 
+        this.isReadOnly = !!data.isReadOnly;
+        this.title = ls.l(this.isReadOnly ? 'Product' : data.product ? 'EditProduct' : 'AddProduct');
         if (data.product && data.product.id) {
             this.product = new UpdateProductInput(data.product);
         } else {
@@ -138,7 +136,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     checkAddManageOption(options) {
-        if (this.permission.isGranted(AppPermissions.CRMOrdersManage)) {
+        if (!this.isReadOnly) {
             let addNewItemElement: any = {
                 id: this.addNewItemId
             };
@@ -280,7 +278,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 disableClose: true,
                 closeOnNavigation: false,
                 data: {
-                    service: memberService
+                    service: memberService,
+                    isReadOnly: this.isReadOnly
                 }
             }).afterClosed().subscribe((service: MemberServiceDto) => {
                 if (service) {
@@ -294,7 +293,10 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.dialog.open(AddMemberServiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
-            closeOnNavigation: false
+            closeOnNavigation: false,
+            data: {
+                isReadOnly: this.isReadOnly
+            }
         }).afterClosed().subscribe((service: MemberServiceDto) => {
             if (service) {
                 this.services.splice(this.services.length - 1, 0, service);

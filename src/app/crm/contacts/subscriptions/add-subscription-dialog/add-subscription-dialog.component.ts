@@ -34,7 +34,6 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dropdown.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AddProductDialogComponent } from './add-product-dialog/add-product-dialog.component';
@@ -64,6 +63,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     products: ProductDto[];
     paymentPeriodTypes: RecurringPaymentFrequency[] = [];
     serviceTypes: MemberServiceDto[] = null;
+    hasProductManage = this.permission.isGranted(AppPermissions.CRMProductsManage);
 
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         productCode: undefined,
@@ -146,7 +146,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     }
 
     checkAddManageOption(options) {
-        if (this.permission.isGranted(AppPermissions.CRMOrdersManage)) {
+        if (this.hasProductManage) {
             let addNewItemElement: any = {
                 id: this.addNewItemId
             };
@@ -248,7 +248,10 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         let dialogRef = this.dialog.open(AddMemberServiceDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
-            closeOnNavigation: false
+            closeOnNavigation: false,
+            data: {
+                isReadOnly: !this.hasProductManage
+            }
         });
 
         dialogRef.afterClosed().subscribe((res: MemberServiceDto) => {
@@ -269,7 +272,8 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             data: {
                 title: this.ls.l('EditTemplate'),
                 templateType: 'Contact',
-                saveTitle: this.ls.l('Save')
+                saveTitle: this.ls.l('Save'),
+                isReadOnly: !this.hasProductManage
             }
         }).afterClosed().subscribe((product: ProductDto) => {
             if (product)
