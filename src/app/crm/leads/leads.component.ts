@@ -1808,7 +1808,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     () => dataSource.filter(null));
             } else {
                 instance.option('dataSource',
-                    dataSource = new DataSource(this.dataSource)
+                    dataSource = new DataSource(this.dataSourceConfig)
                 );
                 checkExportOption(dataSource);
                 this.exportCallback = () => {
