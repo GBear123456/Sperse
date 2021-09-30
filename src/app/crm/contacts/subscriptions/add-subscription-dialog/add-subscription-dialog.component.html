@@ -130,7 +130,7 @@
             </dx-validation-group>
         </mat-tab>
     </mat-tab-group>
-    <div class="field order-field">
+    <div *ngIf="!data.length" class="field order-field">
         <label for="orderNumber">
             {{ls.l('OrderNumber')}}
             <small class="small-gray">*optional</small>

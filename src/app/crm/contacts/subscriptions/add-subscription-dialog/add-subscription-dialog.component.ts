@@ -39,6 +39,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AddProductDialogComponent } from './add-product-dialog/add-product-dialog.component';
 import { AddMemberServiceDialogComponent } from './add-member-service-dialog/add-member-service-dialog.component';
+import { BulkProgressDialogComponent } from '@shared/common/dialogs/bulk-progress/bulk-progress-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 
@@ -55,7 +56,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     @ViewChild('productGroup', { static: false }) validationProductGroup: DxValidationGroupComponent;
     @ViewChild('serviceGroup', { static: false }) validationServiceGroup: DxValidationGroupComponent;
-    @ViewChild(OrderDropdownComponent, { static: true }) orderDropdownComponent: OrderDropdownComponent;
+    @ViewChild(OrderDropdownComponent, { static: false }) orderDropdownComponent: OrderDropdownComponent;
     today = new Date();
     private slider: any;
     selectedTabIndex: number;
@@ -124,7 +125,6 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             top: '75px',
             right: '-100vw'
         });
-        this.orderDropdownComponent.initOrderDataSource();
 
         this.productProxy.getProducts(ProductType.Subscription).subscribe((products: ProductDto[]) => {
             this.products = products;
@@ -137,6 +137,9 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     }
 
     ngAfterViewInit() {
+        if (this.orderDropdownComponent)
+            this.orderDropdownComponent.initOrderDataSource();
+
         this.slider.classList.remove('hide');
         this.dialogRef.updateSize(undefined, '100vh');
         this.dialogRef.updatePosition({
@@ -171,11 +174,24 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                 });
             } else
                 subscriptionInput.subscriptions = undefined;
-            this.orderSubscriptionProxy.update(subscriptionInput).subscribe(() => {
-                this.notify.info(this.ls.l('SavedSuccessfully'));
-                this.contactsService.invalidate('subscriptions');
+
+            if (this.data.length) {
                 this.dialogRef.close();
-            });
+                this.dialog.open(BulkProgressDialogComponent, {
+                    minWidth: 420,
+                    disableClose: true,
+                    closeOnNavigation: false,
+                    data: this.data.map((entity, i) => {
+                        subscriptionInput.contactId = i ? entity.Id : -1;
+                        return this.orderSubscriptionProxy.update(subscriptionInput);
+                    })
+                });
+            } else
+                this.orderSubscriptionProxy.update(subscriptionInput).subscribe(() => {
+                    this.notify.info(this.ls.l('SavedSuccessfully'));
+                    this.contactsService.invalidate('subscriptions');
+                    this.dialogRef.close();
+                });
         }
     }
 
