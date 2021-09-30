@@ -23,7 +23,7 @@ export class FeatureTreeComponent implements AfterViewInit {
             this.refreshTree();
         }
     }
-    @Input() isReadOnly: boolean = false;
+    @Input() isReadOnly: boolean = true;
 
     private _editData: FeatureTreeEditModel;
     private $tree: JQuery;
@@ -292,6 +292,10 @@ export class FeatureTreeComponent implements AfterViewInit {
                         })
                         .appendTo($nodeLi);
                 }
+            }
+
+            if (self.isReadOnly) {
+                self.$tree.jstree().disable_node($(this));
             }
         });
     }

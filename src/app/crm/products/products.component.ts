@@ -54,7 +54,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
-    isReadOnly = false;
+    isReadOnly = true;
     public headlineButtons: HeadlineButton[] = [];
 
     actionEvent: any;
