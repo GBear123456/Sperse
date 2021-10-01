@@ -51991,7 +51991,7 @@ export interface IPersonContactInfoDto {
 }
 
 export enum AffiliateServiceStatus {
-    NoService = "NoService", 
+    Unavailable = "Unavailable", 
     Available = "Available", 
     FullAccess = "FullAccess", 
 }
