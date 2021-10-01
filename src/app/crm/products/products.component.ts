@@ -54,7 +54,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
-    isReadOnly = false;
+    isReadOnly = true;
     public headlineButtons: HeadlineButton[] = [];
 
     actionEvent: any;
@@ -68,6 +68,19 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                     class: 'edit',
                     action: () => {
                         this.editProduct(this.actionEvent.Id);
+                    }
+                }
+            ]
+        },
+        {
+            key: '',
+            visible: true,
+            items: [
+                {
+                    text: this.l('SyncSubscriptionsWithProduct'),
+                    class: 'sync',
+                    action: () => {
+                        this.syncSubscriptionsWithProduct(this.actionEvent.Id);
                     }
                 }
             ]
@@ -123,7 +136,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         super(injector);
         this.isReadOnly = !this.permission.isGranted(this.permissions.CRMProductsManage);
         this.headlineButtons.push({
-            enabled: this.isReadOnly,
+            enabled: !this.isReadOnly,
             action: () => this.showProductDialog(),
             label: this.l('AddProduct')
         });
@@ -169,6 +182,15 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                 id: id,
                 ...product
             });
+        });
+    }
+
+    syncSubscriptionsWithProduct(id: number) {
+        this.startLoading();
+        this.productProxy.synchronizeSubscriptions(id).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(() => {
+            this.message.success(this.l('SuccessfullyUpdated'));
         });
     }
 
@@ -407,7 +429,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     toggleActionsMenu(event) {
-        if (!this.isReadOnly)
+        if (this.isReadOnly)
             return;
 
         ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {
