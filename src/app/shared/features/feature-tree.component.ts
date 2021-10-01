@@ -23,7 +23,7 @@ export class FeatureTreeComponent implements AfterViewInit {
             this.refreshTree();
         }
     }
-    @Input() isReadOnly: boolean = true;
+    @Input() isReadOnly: boolean = false;
 
     private _editData: FeatureTreeEditModel;
     private $tree: JQuery;
