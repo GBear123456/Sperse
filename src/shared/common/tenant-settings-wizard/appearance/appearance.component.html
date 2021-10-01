@@ -33,6 +33,8 @@
             <div class="col-md-12">
                 <uploader #faviconsUploader
                           [title]="ls.l('CustomFavicons')"
+                          [documentId]="tenant.tenantCustomizations.favicons?.length"
+                          [documentLink]="tenant.tenantCustomizations.favicons?.length ? remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons' : undefined"
                           [uploadInfoText]="ls.l('UploadFavicons_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
                           [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons'"
