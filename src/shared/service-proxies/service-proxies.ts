@@ -51931,6 +51931,12 @@ export interface IPersonContactInfoDto {
     comment: string | undefined;
 }
 
+export enum AffiliateServiceStatus {
+    Unavailable = "Unavailable", 
+    Available = "Available", 
+    FullAccess = "FullAccess", 
+}
+
 export class ContactInfoDto implements IContactInfoDto {
     id!: number | undefined;
     typeId!: string | undefined;
@@ -51953,6 +51959,7 @@ export class ContactInfoDto implements IContactInfoDto {
     affiliateCode!: string | undefined;
     affiliateRate!: number | undefined;
     affiliateRateTier2!: number | undefined;
+    affiliateServiceStatus!: AffiliateServiceStatus | undefined;
     parentId!: number | undefined;
     parentName!: string | undefined;
     contactDate!: moment.Moment | undefined;
@@ -52000,6 +52007,7 @@ export class ContactInfoDto implements IContactInfoDto {
             this.affiliateCode = data["affiliateCode"];
             this.affiliateRate = data["affiliateRate"];
             this.affiliateRateTier2 = data["affiliateRateTier2"];
+            this.affiliateServiceStatus = data["affiliateServiceStatus"];
             this.parentId = data["parentId"];
             this.parentName = data["parentName"];
             this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
@@ -52047,6 +52055,7 @@ export class ContactInfoDto implements IContactInfoDto {
         data["affiliateCode"] = this.affiliateCode;
         data["affiliateRate"] = this.affiliateRate;
         data["affiliateRateTier2"] = this.affiliateRateTier2;
+        data["affiliateServiceStatus"] = this.affiliateServiceStatus;
         data["parentId"] = this.parentId;
         data["parentName"] = this.parentName;
         data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
@@ -52079,6 +52088,7 @@ export interface IContactInfoDto {
     affiliateCode: string | undefined;
     affiliateRate: number | undefined;
     affiliateRateTier2: number | undefined;
+    affiliateServiceStatus: AffiliateServiceStatus | undefined;
     parentId: number | undefined;
     parentName: string | undefined;
     contactDate: moment.Moment | undefined;
