@@ -10,7 +10,7 @@
                                 <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
                                 <span class="dx-icon-clock history-icon" (click)="showAffiliateHistory($event)" [title]="ls.l('AffiliateHistory')"></span>
                             </mat-expansion-panel-header>
-                            <div class="field affiliate-code {{contactInfo.affiliateServiceStatus}}">
+                            <div class="field affiliate-code {{contactInfo?.affiliateServiceStatus}}">
                                 <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
                                               [editPlaceholder]="ls.l('AffiliateEditPlaceholder')"
