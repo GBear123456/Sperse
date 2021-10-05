@@ -72638,6 +72638,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     productCode!: string | undefined;
     paymentPeriodType!: RecurringPaymentFrequency | undefined;
     hasRecurringBilling!: boolean | undefined;
+    onlyAddNew!: boolean | undefined;
 
     constructor(data?: IUpdateOrderSubscriptionInput) {
         if (data) {
@@ -72663,6 +72664,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             this.productCode = data["productCode"];
             this.paymentPeriodType = data["paymentPeriodType"];
             this.hasRecurringBilling = data["hasRecurringBilling"];
+            this.onlyAddNew = data["onlyAddNew"];
         }
     }
 
@@ -72688,6 +72690,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
         data["productCode"] = this.productCode;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
+        data["onlyAddNew"] = this.onlyAddNew;
         return data; 
     }
 }
@@ -72702,6 +72705,7 @@ export interface IUpdateOrderSubscriptionInput {
     productCode: string | undefined;
     paymentPeriodType: RecurringPaymentFrequency | undefined;
     hasRecurringBilling: boolean | undefined;
+    onlyAddNew: boolean | undefined;
 }
 
 export class UpdateOrderSubscriptionPeriodInput implements IUpdateOrderSubscriptionPeriodInput {

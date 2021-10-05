@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 
 /** Third party imports */
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
@@ -23,6 +24,7 @@ import { AddressFormatPipe } from './pipes/address-format.pipe';
 import { FileSizePipe } from './pipes/file-size.pipe';
 import { TitleCasePipe } from './pipes/title-case/title-case.pipe';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
+import { BulkProgressDialogComponent } from '@shared/common/dialogs/bulk-progress/bulk-progress-dialog.component';
 import { RegisterConfirmComponent } from '@shared/common/dialogs/register-confirm/register-confirm.component';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { DxDataGridDirective } from '@shared/common/dx-data-grid/dx-data-grid.directive';
@@ -49,6 +51,7 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
         TitleCasePipe,
         RegisterConfirmComponent,
         ConditionsModalComponent,
+        BulkProgressDialogComponent,
         DxDataGridDirective
     ],
     exports: [
@@ -75,6 +78,7 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
         RouterModule,
         FormsModule,
         CountryPhoneNumberModule,
+        MatProgressBarModule,
         MatDialogModule,
         DxTextBoxModule,
         DxCheckBoxModule,
@@ -83,7 +87,8 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
     ],
     entryComponents: [
         RegisterConfirmComponent,
-        ConditionsModalComponent
+        ConditionsModalComponent,
+        BulkProgressDialogComponent
     ],
     providers: [
         AppUrlService,
