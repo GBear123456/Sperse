@@ -26,7 +26,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 import { AddProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
-import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ProductServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
@@ -55,53 +55,36 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     private subRouteParams: any;
     private dependencyChanged = false;
     isReadOnly = true;
+    permissions = AppPermissions;
     public headlineButtons: HeadlineButton[] = [];
 
     actionEvent: any;
-    actionMenuGroups: ActionMenuGroup[] = [
+    actionMenuGroups: ActionMenuItem[] = [
         {
-            key: '',
-            visible: true,
-            items: [
-                {
-                    text: this.l('Edit'),
-                    class: 'edit',
-                    action: () => {
-                        this.editProduct(this.actionEvent.Id);
-                    }
-                }
-            ]
+            text: this.l('Edit'),
+            class: 'edit',
+            action: () => {
+                this.editProduct(this.actionEvent.Id);
+            }
         },
         {
-            key: '',
-            visible: true,
-            items: [
-                {
-                    text: this.l('SyncSubscriptionsWithProduct'),
-                    class: 'sync',
-                    action: () => {
-                        this.syncSubscriptionsWithProduct(this.actionEvent.Id);
-                    }
-                }
-            ]
+            text: this.l('SyncSubscriptionsWithProduct'),
+            class: 'sync',
+            visible: this.permission.isGranted(AppPermissions.CRMOrdersManage),
+            action: () => {
+                this.syncSubscriptionsWithProduct(this.actionEvent.Id);
+            }
         },
         {
-            key: '',
-            visible: true,
-            items: [
-                {
-                    text: this.l('Delete'),
-                    class: 'delete',
-                    action: () => {
-                        this.deteleProduct(this.actionEvent.Id);
-                    }
-                }
-            ]
+            text: this.l('Delete'),
+            class: 'delete',
+            action: () => {
+                this.deteleProduct(this.actionEvent.Id);
+            }
         }
     ];
 
     currency: string;
-    permissions = AppPermissions;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
@@ -433,7 +416,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             return;
 
         ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {
-            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, event.data);
             this.actionEvent = actionRecord;
         });
     }
