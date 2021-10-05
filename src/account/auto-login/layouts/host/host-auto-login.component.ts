@@ -42,7 +42,10 @@ export class HostAutoLoginComponent {
     accessCodeIsValid: boolean;
     accessCode: string;
     isInstantForm: boolean = false;
+    isLoggedIn: boolean = false;
+    isExtLogin: boolean = false; 
     userEmail: string;
+
 
     constructor(
         injector: Injector,
@@ -56,6 +59,11 @@ export class HostAutoLoginComponent {
     ) {
         this.activatedRoute.queryParams.pipe(first())
             .subscribe((params: Params) => {
+                if (this.isExtLogin = params.extlogin == 'true') {
+                    if (this.isLoggedIn = !!this.appSession.user)
+                        this.loginService.completeSourceEvent();
+                }
+
                 this.userEmail = params.email;
                 if (this.userEmail) {
                     if (this.isInstantForm = params.hasOwnProperty('instant'))
@@ -109,7 +117,12 @@ export class HostAutoLoginComponent {
         })).pipe(
             finalize(() => abp.ui.clearBusy())
         ).subscribe((res: AuthenticateResultModel) => {
-            this.loginService.processAuthenticateResult(res, AppConsts.appBaseUrl);
+            if (this.isLoggedIn = this.isExtLogin) {
+                if (!res.shouldResetPassword)
+                    this.loginService.completeSourceEvent();                
+            }
+            this.loginService.processAuthenticateResult(
+                res, AppConsts.appBaseUrl, this.isExtLogin);
         }, () => {
             this.checkAccessCodeMaxTries(false);
         });
