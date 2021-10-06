@@ -72304,9 +72304,12 @@ export interface ISubscriptionServiceDto {
 
 export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     id!: number | undefined;
+    invoiceId!: number | undefined;
+    invoiceDate!: moment.Moment | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
     status!: string | undefined;
+    paymentDate!: moment.Moment | undefined;
     fee!: number | undefined;
     isSubscription!: boolean | undefined;
 
@@ -72322,9 +72325,12 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.invoiceId = data["invoiceId"];
+            this.invoiceDate = data["invoiceDate"] ? moment(data["invoiceDate"].toString()) : <any>undefined;
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.status = data["status"];
+            this.paymentDate = data["paymentDate"] ? moment(data["paymentDate"].toString()) : <any>undefined;
             this.fee = data["fee"];
             this.isSubscription = data["isSubscription"];
         }
@@ -72340,9 +72346,12 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["invoiceId"] = this.invoiceId;
+        data["invoiceDate"] = this.invoiceDate ? this.invoiceDate.toISOString() : <any>undefined;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["status"] = this.status;
+        data["paymentDate"] = this.paymentDate ? this.paymentDate.toISOString() : <any>undefined;
         data["fee"] = this.fee;
         data["isSubscription"] = this.isSubscription;
         return data; 
@@ -72351,9 +72360,12 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
 
 export interface ISubscriptionPaymentDto {
     id: number | undefined;
+    invoiceId: number | undefined;
+    invoiceDate: moment.Moment | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
     status: string | undefined;
+    paymentDate: moment.Moment | undefined;
     fee: number | undefined;
     isSubscription: boolean | undefined;
 }
@@ -72680,7 +72692,8 @@ export interface ICancelOrderSubscriptionInput {
 
 export class CancelAllInput implements ICancelAllInput {
     contactId!: number;
-    serviceProductCodes!: string[] | undefined;
+    productCodes!: string[] | undefined;
+    serviceCodes!: string[] | undefined;
     cancelationReason!: string | undefined;
 
     constructor(data?: ICancelAllInput) {
@@ -72695,10 +72708,15 @@ export class CancelAllInput implements ICancelAllInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            if (data["serviceProductCodes"] && data["serviceProductCodes"].constructor === Array) {
-                this.serviceProductCodes = [];
-                for (let item of data["serviceProductCodes"])
-                    this.serviceProductCodes.push(item);
+            if (data["productCodes"] && data["productCodes"].constructor === Array) {
+                this.productCodes = [];
+                for (let item of data["productCodes"])
+                    this.productCodes.push(item);
+            }
+            if (data["serviceCodes"] && data["serviceCodes"].constructor === Array) {
+                this.serviceCodes = [];
+                for (let item of data["serviceCodes"])
+                    this.serviceCodes.push(item);
             }
             this.cancelationReason = data["cancelationReason"];
         }
@@ -72714,10 +72732,15 @@ export class CancelAllInput implements ICancelAllInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        if (this.serviceProductCodes && this.serviceProductCodes.constructor === Array) {
-            data["serviceProductCodes"] = [];
-            for (let item of this.serviceProductCodes)
-                data["serviceProductCodes"].push(item);
+        if (this.productCodes && this.productCodes.constructor === Array) {
+            data["productCodes"] = [];
+            for (let item of this.productCodes)
+                data["productCodes"].push(item);
+        }
+        if (this.serviceCodes && this.serviceCodes.constructor === Array) {
+            data["serviceCodes"] = [];
+            for (let item of this.serviceCodes)
+                data["serviceCodes"].push(item);
         }
         data["cancelationReason"] = this.cancelationReason;
         return data; 
@@ -72726,7 +72749,8 @@ export class CancelAllInput implements ICancelAllInput {
 
 export interface ICancelAllInput {
     contactId: number;
-    serviceProductCodes: string[] | undefined;
+    productCodes: string[] | undefined;
+    serviceCodes: string[] | undefined;
     cancelationReason: string | undefined;
 }
 
