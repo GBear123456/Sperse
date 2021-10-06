@@ -9815,66 +9815,11 @@ export class ContactServiceProxy {
     }
 
     /**
-     * @contactId (optional) 
-     * @return Success
-     */
-    getIsAdvisor(contactId: number | null | undefined): Observable<boolean> {
-        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetIsAdvisor?";
-        if (contactId !== undefined)
-            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetIsAdvisor(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetIsAdvisor(<any>response_);
-                } catch (e) {
-                    return <Observable<boolean>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<boolean>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetIsAdvisor(response: HttpResponseBase): Observable<boolean> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<boolean>(<any>null);
-    }
-
-    /**
      * @body (optional) 
      * @return Success
      */
-    updateIsAdvisor(body: UpdateIsAdvisorInput | null | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateIsAdvisor";
+    updateAffiliateIsAdvisor(body: UpdateAffiliateIsAdvisorInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateAffiliateIsAdvisor";
         url_ = url_.replace(/[?&]$/, "");
 
         const content_ = JSON.stringify(body);
@@ -9889,11 +9834,11 @@ export class ContactServiceProxy {
         };
 
         return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processUpdateIsAdvisor(response_);
+            return this.processUpdateAffiliateIsAdvisor(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processUpdateIsAdvisor(<any>response_);
+                    return this.processUpdateAffiliateIsAdvisor(<any>response_);
                 } catch (e) {
                     return <Observable<void>><any>_observableThrow(e);
                 }
@@ -9902,7 +9847,7 @@ export class ContactServiceProxy {
         }));
     }
 
-    protected processUpdateIsAdvisor(response: HttpResponseBase): Observable<void> {
+    protected processUpdateAffiliateIsAdvisor(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -52330,6 +52275,7 @@ export class ContactInfoDto implements IContactInfoDto {
     personContactInfo!: PersonContactInfoDto | undefined;
     primaryOrganizationContactId!: number | undefined;
     affiliateCode!: string | undefined;
+    affiliateIsAdvisor!: boolean | undefined;
     affiliateRate!: number | undefined;
     affiliateRateTier2!: number | undefined;
     affiliateServiceStatus!: AffiliateServiceStatus | undefined;
@@ -52378,6 +52324,7 @@ export class ContactInfoDto implements IContactInfoDto {
             this.personContactInfo = data["personContactInfo"] ? PersonContactInfoDto.fromJS(data["personContactInfo"]) : <any>undefined;
             this.primaryOrganizationContactId = data["primaryOrganizationContactId"];
             this.affiliateCode = data["affiliateCode"];
+            this.affiliateIsAdvisor = data["affiliateIsAdvisor"];
             this.affiliateRate = data["affiliateRate"];
             this.affiliateRateTier2 = data["affiliateRateTier2"];
             this.affiliateServiceStatus = data["affiliateServiceStatus"];
@@ -52426,6 +52373,7 @@ export class ContactInfoDto implements IContactInfoDto {
         data["personContactInfo"] = this.personContactInfo ? this.personContactInfo.toJSON() : <any>undefined;
         data["primaryOrganizationContactId"] = this.primaryOrganizationContactId;
         data["affiliateCode"] = this.affiliateCode;
+        data["affiliateIsAdvisor"] = this.affiliateIsAdvisor;
         data["affiliateRate"] = this.affiliateRate;
         data["affiliateRateTier2"] = this.affiliateRateTier2;
         data["affiliateServiceStatus"] = this.affiliateServiceStatus;
@@ -52459,6 +52407,7 @@ export interface IContactInfoDto {
     personContactInfo: PersonContactInfoDto | undefined;
     primaryOrganizationContactId: number | undefined;
     affiliateCode: string | undefined;
+    affiliateIsAdvisor: boolean | undefined;
     affiliateRate: number | undefined;
     affiliateRateTier2: number | undefined;
     affiliateServiceStatus: AffiliateServiceStatus | undefined;
@@ -55281,11 +55230,11 @@ export interface IUpdateContactAffiliateRateInput {
     commissionTier: CommissionTier | undefined;
 }
 
-export class UpdateIsAdvisorInput implements IUpdateIsAdvisorInput {
+export class UpdateAffiliateIsAdvisorInput implements IUpdateAffiliateIsAdvisorInput {
     contactId!: number;
     isAdvisor!: boolean;
 
-    constructor(data?: IUpdateIsAdvisorInput) {
+    constructor(data?: IUpdateAffiliateIsAdvisorInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -55301,9 +55250,9 @@ export class UpdateIsAdvisorInput implements IUpdateIsAdvisorInput {
         }
     }
 
-    static fromJS(data: any): UpdateIsAdvisorInput {
+    static fromJS(data: any): UpdateAffiliateIsAdvisorInput {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdateIsAdvisorInput();
+        let result = new UpdateAffiliateIsAdvisorInput();
         result.init(data);
         return result;
     }
@@ -55316,7 +55265,7 @@ export class UpdateIsAdvisorInput implements IUpdateIsAdvisorInput {
     }
 }
 
-export interface IUpdateIsAdvisorInput {
+export interface IUpdateAffiliateIsAdvisorInput {
     contactId: number;
     isAdvisor: boolean;
 }
