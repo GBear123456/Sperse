@@ -120,6 +120,42 @@
                     font-weight: 300;
                 }
             }
+
+            .default-advisor {
+                display: flex;
+                margin: 10px 0;
+
+                ::ng-deep dx-tooltip {
+                    padding-top: 0;
+                }
+
+                label {
+                    line-height: 32px;
+                    margin: 0;
+                }
+
+                .advisor-name {
+                    margin-left: 15px;
+
+                    .empty {
+                        font-style: italic;
+                        color: #aaa;
+                    }
+
+                    .edit {
+                        font-size: 18px;
+                        padding: 7px;
+                        cursor: pointer;
+                        color: #00aeef;
+                    }
+
+                    .remove {
+                        font-weight: 100;
+                        font-size: 20px;
+                        color: red;
+                    }
+                }
+            }
         }
 
         .left-side {

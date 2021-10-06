@@ -43,7 +43,6 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailTemplateDialogComponent } from '@app/crm/shared/email-template-dialog/email-template-dialog.component';
-import { InvoiceSettingsDialogComponent } from './invoice-settings-dialog/invoice-settings-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { NotifyService } from '@abp/notify/notify.service';
 import { StringHelper } from '@shared/helpers/StringHelper';
@@ -550,15 +549,6 @@ export class ContactsService {
                 })
             );
         });
-    }
-
-    showInvoiceSettingsDialog() {
-        return this.dialog.open(InvoiceSettingsDialogComponent, {
-            panelClass: 'slider',
-            disableClose: true,
-            closeOnNavigation: false,
-            data: {}
-        }).afterClosed();
     }
 
     showNoteAddDialog(noteData?: NoteInfoDto) {
