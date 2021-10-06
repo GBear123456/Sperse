@@ -2623,6 +2623,58 @@ export class BANKCodeServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getAdvisorInfo(): Observable<GetAdvisorInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetAdvisorInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAdvisorInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAdvisorInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<GetAdvisorInfoOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetAdvisorInfoOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAdvisorInfo(response: HttpResponseBase): Observable<GetAdvisorInfoOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetAdvisorInfoOutput.fromJS(resultData200) : new GetAdvisorInfoOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetAdvisorInfoOutput>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -9744,6 +9796,113 @@ export class ContactServiceProxy {
     }
 
     protected processUpdateAffiliateRate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @contactId (optional) 
+     * @return Success
+     */
+    getIsAdvisor(contactId: number | null | undefined): Observable<boolean> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetIsAdvisor?";
+        if (contactId !== undefined)
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetIsAdvisor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetIsAdvisor(<any>response_);
+                } catch (e) {
+                    return <Observable<boolean>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<boolean>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetIsAdvisor(response: HttpResponseBase): Observable<boolean> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<boolean>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateIsAdvisor(body: UpdateIsAdvisorInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateIsAdvisor";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateIsAdvisor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateIsAdvisor(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateIsAdvisor(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -44605,6 +44764,110 @@ export interface IGetBankCodeOutput {
     value: string | undefined;
 }
 
+export class AdvisorLinkInfo implements IAdvisorLinkInfo {
+    linkTypeId!: string | undefined;
+    url!: string | undefined;
+
+    constructor(data?: IAdvisorLinkInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.linkTypeId = data["linkTypeId"];
+            this.url = data["url"];
+        }
+    }
+
+    static fromJS(data: any): AdvisorLinkInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new AdvisorLinkInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["linkTypeId"] = this.linkTypeId;
+        data["url"] = this.url;
+        return data; 
+    }
+}
+
+export interface IAdvisorLinkInfo {
+    linkTypeId: string | undefined;
+    url: string | undefined;
+}
+
+export class GetAdvisorInfoOutput implements IGetAdvisorInfoOutput {
+    fullName!: string | undefined;
+    emailAddress!: string | undefined;
+    phone!: string | undefined;
+    bankCode!: string | undefined;
+    profilePictureId!: string | undefined;
+    advisorLinks!: AdvisorLinkInfo[] | undefined;
+
+    constructor(data?: IGetAdvisorInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.fullName = data["fullName"];
+            this.emailAddress = data["emailAddress"];
+            this.phone = data["phone"];
+            this.bankCode = data["bankCode"];
+            this.profilePictureId = data["profilePictureId"];
+            if (data["advisorLinks"] && data["advisorLinks"].constructor === Array) {
+                this.advisorLinks = [];
+                for (let item of data["advisorLinks"])
+                    this.advisorLinks.push(AdvisorLinkInfo.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetAdvisorInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetAdvisorInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fullName"] = this.fullName;
+        data["emailAddress"] = this.emailAddress;
+        data["phone"] = this.phone;
+        data["bankCode"] = this.bankCode;
+        data["profilePictureId"] = this.profilePictureId;
+        if (this.advisorLinks && this.advisorLinks.constructor === Array) {
+            data["advisorLinks"] = [];
+            for (let item of this.advisorLinks)
+                data["advisorLinks"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IGetAdvisorInfoOutput {
+    fullName: string | undefined;
+    emailAddress: string | undefined;
+    phone: string | undefined;
+    bankCode: string | undefined;
+    profilePictureId: string | undefined;
+    advisorLinks: AdvisorLinkInfo[] | undefined;
+}
+
 export class CreateContactEmailInputWithoutCheck implements ICreateContactEmailInputWithoutCheck {
     contactId!: number | undefined;
     emailAddress!: string | undefined;
@@ -54906,6 +55169,46 @@ export interface IUpdateContactAffiliateRateInput {
     affiliateRate: number | undefined;
     updatePendingCommissions: boolean | undefined;
     commissionTier: CommissionTier | undefined;
+}
+
+export class UpdateIsAdvisorInput implements IUpdateIsAdvisorInput {
+    contactId!: number;
+    isAdvisor!: boolean;
+
+    constructor(data?: IUpdateIsAdvisorInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.isAdvisor = data["isAdvisor"];
+        }
+    }
+
+    static fromJS(data: any): UpdateIsAdvisorInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateIsAdvisorInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["isAdvisor"] = this.isAdvisor;
+        return data; 
+    }
+}
+
+export interface IUpdateIsAdvisorInput {
+    contactId: number;
+    isAdvisor: boolean;
 }
 
 export class UpdateContactXrefInput implements IUpdateContactXrefInput {
@@ -72680,7 +72983,8 @@ export interface ICancelOrderSubscriptionInput {
 
 export class CancelAllInput implements ICancelAllInput {
     contactId!: number;
-    serviceProductCodes!: string[] | undefined;
+    productCodes!: string[] | undefined;
+    serviceCodes!: string[] | undefined;
     cancelationReason!: string | undefined;
 
     constructor(data?: ICancelAllInput) {
@@ -72695,10 +72999,15 @@ export class CancelAllInput implements ICancelAllInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            if (data["serviceProductCodes"] && data["serviceProductCodes"].constructor === Array) {
-                this.serviceProductCodes = [];
-                for (let item of data["serviceProductCodes"])
-                    this.serviceProductCodes.push(item);
+            if (data["productCodes"] && data["productCodes"].constructor === Array) {
+                this.productCodes = [];
+                for (let item of data["productCodes"])
+                    this.productCodes.push(item);
+            }
+            if (data["serviceCodes"] && data["serviceCodes"].constructor === Array) {
+                this.serviceCodes = [];
+                for (let item of data["serviceCodes"])
+                    this.serviceCodes.push(item);
             }
             this.cancelationReason = data["cancelationReason"];
         }
@@ -72714,10 +73023,15 @@ export class CancelAllInput implements ICancelAllInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        if (this.serviceProductCodes && this.serviceProductCodes.constructor === Array) {
-            data["serviceProductCodes"] = [];
-            for (let item of this.serviceProductCodes)
-                data["serviceProductCodes"].push(item);
+        if (this.productCodes && this.productCodes.constructor === Array) {
+            data["productCodes"] = [];
+            for (let item of this.productCodes)
+                data["productCodes"].push(item);
+        }
+        if (this.serviceCodes && this.serviceCodes.constructor === Array) {
+            data["serviceCodes"] = [];
+            for (let item of this.serviceCodes)
+                data["serviceCodes"].push(item);
         }
         data["cancelationReason"] = this.cancelationReason;
         return data; 
@@ -72726,7 +73040,8 @@ export class CancelAllInput implements ICancelAllInput {
 
 export interface ICancelAllInput {
     contactId: number;
-    serviceProductCodes: string[] | undefined;
+    productCodes: string[] | undefined;
+    serviceCodes: string[] | undefined;
     cancelationReason: string | undefined;
 }
 
@@ -82257,6 +82572,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     currency!: Currency | undefined;
     showShippingAddress!: boolean | undefined;
     defaultAffiliateRate!: number | undefined;
+    defaultAdvisorContactId!: number | undefined;
     tier2CommissionSource!: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode | undefined;
 
@@ -82280,6 +82596,7 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.currency = data["currency"];
             this.showShippingAddress = data["showShippingAddress"];
             this.defaultAffiliateRate = data["defaultAffiliateRate"];
+            this.defaultAdvisorContactId = data["defaultAdvisorContactId"];
             this.tier2CommissionSource = data["tier2CommissionSource"];
             this.commissionAffiliateAssignmentMode = data["commissionAffiliateAssignmentMode"];
         }
@@ -82303,6 +82620,7 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["currency"] = this.currency;
         data["showShippingAddress"] = this.showShippingAddress;
         data["defaultAffiliateRate"] = this.defaultAffiliateRate;
+        data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
         data["tier2CommissionSource"] = this.tier2CommissionSource;
         data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
         return data; 
@@ -82319,6 +82637,7 @@ export interface IInvoiceSettings {
     currency: Currency | undefined;
     showShippingAddress: boolean | undefined;
     defaultAffiliateRate: number | undefined;
+    defaultAdvisorContactId: number | undefined;
     tier2CommissionSource: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode | undefined;
 }
