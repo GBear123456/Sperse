@@ -14,7 +14,10 @@
 
 /* Error Modal Design */
 .swal-modal {
-    min-width: 500px;
+    @media (min-width: 768px) {
+        min-width: 500px;
+    }
+
     .swal-icon.swal-icon--error {
         border: 5px solid #E7F9F9;
         box-shadow: 0 0 20px 20px #F4FCFC;
