@@ -28,7 +28,7 @@ import {
     UpdateLeadStagePointInput, UpdateOrderStagePointInput, LeadServiceProxy, OrderServiceProxy,
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto,
-    GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput, CommissionTier, UpdateIsAdvisorInput
+    GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput, CommissionTier, UpdateAffiliateIsAdvisorInput
 } from '@shared/service-proxies/service-proxies';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
@@ -197,12 +197,9 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 ).subscribe((lastModificationInfo: ContactLastModificationInfoDto) => {
                     this.lastModificationInfo = lastModificationInfo;
                 });
+
                 if (this.hasBankCodeFeature) {
-                    this.isAdvisor.next(null);
-                    this.contactProxy.getIsAdvisor(contactInfo.id)
-                        .subscribe((value) =>
-                            this.isAdvisor.next(value)
-                        );
+                    this.isAdvisor.next(contactInfo.affiliateIsAdvisor);
                 }
             }
         }, this.ident);
@@ -523,10 +520,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     updateIsAdvisor($event) {
-        if ($event.value == null || $event.previousValue == null)
+        if (!$event.event)
             return;
 
-        this.contactProxy.updateIsAdvisor(new UpdateIsAdvisorInput({
+        this.contactProxy.updateAffiliateIsAdvisor(new UpdateAffiliateIsAdvisorInput({
             contactId: this.contactInfo.id,
             isAdvisor: $event.value
         })).subscribe(() => {
