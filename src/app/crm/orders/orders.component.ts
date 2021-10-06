@@ -92,6 +92,7 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
+import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -1636,7 +1637,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     invoiceSettings() {
-        this.contactsService.showInvoiceSettingsDialog();
+        this.dialog.open(InvoiceSettingsDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+        });
     }
 
     onOrderStageChanged(order: OrderDto) {

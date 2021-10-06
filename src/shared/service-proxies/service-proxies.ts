@@ -35066,10 +35066,13 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     /**
+     * @includeAdvisorDetails (optional) 
      * @return Success
      */
-    getInvoiceSettings(): Observable<InvoiceSettings> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetInvoiceSettings";
+    getInvoiceSettings(includeAdvisorDetails: boolean | null | undefined): Observable<InvoiceSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetInvoiceSettings?";
+        if (includeAdvisorDetails !== undefined)
+            url_ += "includeAdvisorDetails=" + encodeURIComponent("" + includeAdvisorDetails) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -35088,14 +35091,14 @@ export class TenantPaymentSettingsServiceProxy {
                 try {
                     return this.processGetInvoiceSettings(<any>response_);
                 } catch (e) {
-                    return <Observable<InvoiceSettings>><any>_observableThrow(e);
+                    return <Observable<InvoiceSettingsDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<InvoiceSettings>><any>_observableThrow(response_);
+                return <Observable<InvoiceSettingsDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetInvoiceSettings(response: HttpResponseBase): Observable<InvoiceSettings> {
+    protected processGetInvoiceSettings(response: HttpResponseBase): Observable<InvoiceSettingsDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -35106,7 +35109,7 @@ export class TenantPaymentSettingsServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? InvoiceSettings.fromJS(resultData200) : new InvoiceSettings();
+            result200 = resultData200 ? InvoiceSettingsDto.fromJS(resultData200) : new InvoiceSettingsDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -35114,7 +35117,7 @@ export class TenantPaymentSettingsServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<InvoiceSettings>(<any>null);
+        return _observableOf<InvoiceSettingsDto>(<any>null);
     }
 
     /**
@@ -82763,6 +82766,90 @@ export enum Tier2CommissionSource {
 export enum CommissionAffiliateAssignmentMode {
     Linear = "Linear", 
     Dynamic = "Dynamic", 
+}
+
+export class InvoiceSettingsDto implements IInvoiceSettingsDto {
+    advisorName!: string | undefined;
+    legalName!: string | undefined;
+    address!: string | undefined;
+    taxVatNo!: string | undefined;
+    defaultTemplateId!: number | undefined;
+    attachPDF!: boolean | undefined;
+    defaultNote!: string | undefined;
+    currency!: Currency | undefined;
+    showShippingAddress!: boolean | undefined;
+    defaultAffiliateRate!: number | undefined;
+    defaultAdvisorContactId!: number | undefined;
+    tier2CommissionSource!: Tier2CommissionSource | undefined;
+    commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode | undefined;
+
+    constructor(data?: IInvoiceSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.advisorName = data["advisorName"];
+            this.legalName = data["legalName"];
+            this.address = data["address"];
+            this.taxVatNo = data["taxVatNo"];
+            this.defaultTemplateId = data["defaultTemplateId"];
+            this.attachPDF = data["attachPDF"];
+            this.defaultNote = data["defaultNote"];
+            this.currency = data["currency"];
+            this.showShippingAddress = data["showShippingAddress"];
+            this.defaultAffiliateRate = data["defaultAffiliateRate"];
+            this.defaultAdvisorContactId = data["defaultAdvisorContactId"];
+            this.tier2CommissionSource = data["tier2CommissionSource"];
+            this.commissionAffiliateAssignmentMode = data["commissionAffiliateAssignmentMode"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["advisorName"] = this.advisorName;
+        data["legalName"] = this.legalName;
+        data["address"] = this.address;
+        data["taxVatNo"] = this.taxVatNo;
+        data["defaultTemplateId"] = this.defaultTemplateId;
+        data["attachPDF"] = this.attachPDF;
+        data["defaultNote"] = this.defaultNote;
+        data["currency"] = this.currency;
+        data["showShippingAddress"] = this.showShippingAddress;
+        data["defaultAffiliateRate"] = this.defaultAffiliateRate;
+        data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
+        data["tier2CommissionSource"] = this.tier2CommissionSource;
+        data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
+        return data; 
+    }
+}
+
+export interface IInvoiceSettingsDto {
+    advisorName: string | undefined;
+    legalName: string | undefined;
+    address: string | undefined;
+    taxVatNo: string | undefined;
+    defaultTemplateId: number | undefined;
+    attachPDF: boolean | undefined;
+    defaultNote: string | undefined;
+    currency: Currency | undefined;
+    showShippingAddress: boolean | undefined;
+    defaultAffiliateRate: number | undefined;
+    defaultAdvisorContactId: number | undefined;
+    tier2CommissionSource: Tier2CommissionSource | undefined;
+    commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode | undefined;
 }
 
 export class InvoiceSettings implements IInvoiceSettings {
