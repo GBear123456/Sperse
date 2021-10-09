@@ -72528,7 +72528,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     productCode!: string | undefined;
     paymentPeriodType!: RecurringPaymentFrequency | undefined;
     hasRecurringBilling!: boolean | undefined;
-    onlyAddNew!: boolean | undefined;
+    skipExisting!: boolean | undefined;
 
     constructor(data?: IUpdateOrderSubscriptionInput) {
         if (data) {
@@ -72554,7 +72554,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             this.productCode = data["productCode"];
             this.paymentPeriodType = data["paymentPeriodType"];
             this.hasRecurringBilling = data["hasRecurringBilling"];
-            this.onlyAddNew = data["onlyAddNew"];
+            this.skipExisting = data["skipExisting"];
         }
     }
 
@@ -72580,7 +72580,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
         data["productCode"] = this.productCode;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
-        data["onlyAddNew"] = this.onlyAddNew;
+        data["skipExisting"] = this.skipExisting;
         return data; 
     }
 }
@@ -72595,7 +72595,7 @@ export interface IUpdateOrderSubscriptionInput {
     productCode: string | undefined;
     paymentPeriodType: RecurringPaymentFrequency | undefined;
     hasRecurringBilling: boolean | undefined;
-    onlyAddNew: boolean | undefined;
+    skipExisting: boolean | undefined;
 }
 
 export class UpdateOrderSubscriptionPeriodInput implements IUpdateOrderSubscriptionPeriodInput {
@@ -72684,7 +72684,8 @@ export interface ICancelOrderSubscriptionInput {
 
 export class CancelAllInput implements ICancelAllInput {
     contactId!: number;
-    serviceProductCodes!: string[] | undefined;
+    productCodes!: string[] | undefined;
+    serviceCodes!: string[] | undefined;
     cancelationReason!: string | undefined;
 
     constructor(data?: ICancelAllInput) {
@@ -72699,10 +72700,15 @@ export class CancelAllInput implements ICancelAllInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            if (data["serviceProductCodes"] && data["serviceProductCodes"].constructor === Array) {
-                this.serviceProductCodes = [];
-                for (let item of data["serviceProductCodes"])
-                    this.serviceProductCodes.push(item);
+            if (data["productCodes"] && data["productCodes"].constructor === Array) {
+                this.productCodes = [];
+                for (let item of data["productCodes"])
+                    this.productCodes.push(item);
+            }
+            if (data["serviceCodes"] && data["serviceCodes"].constructor === Array) {
+                this.serviceCodes = [];
+                for (let item of data["serviceCodes"])
+                    this.serviceCodes.push(item);
             }
             this.cancelationReason = data["cancelationReason"];
         }
@@ -72718,10 +72724,15 @@ export class CancelAllInput implements ICancelAllInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        if (this.serviceProductCodes && this.serviceProductCodes.constructor === Array) {
-            data["serviceProductCodes"] = [];
-            for (let item of this.serviceProductCodes)
-                data["serviceProductCodes"].push(item);
+        if (this.productCodes && this.productCodes.constructor === Array) {
+            data["productCodes"] = [];
+            for (let item of this.productCodes)
+                data["productCodes"].push(item);
+        }
+        if (this.serviceCodes && this.serviceCodes.constructor === Array) {
+            data["serviceCodes"] = [];
+            for (let item of this.serviceCodes)
+                data["serviceCodes"].push(item);
         }
         data["cancelationReason"] = this.cancelationReason;
         return data; 
@@ -72730,7 +72741,8 @@ export class CancelAllInput implements ICancelAllInput {
 
 export interface ICancelAllInput {
     contactId: number;
-    serviceProductCodes: string[] | undefined;
+    productCodes: string[] | undefined;
+    serviceCodes: string[] | undefined;
     cancelationReason: string | undefined;
 }
 
