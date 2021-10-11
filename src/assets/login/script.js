@@ -330,7 +330,7 @@
         forgetPasswordButton.addEventListener('click', function(e) {
             var email = window['loginForm'].elements['userNameOrEmailAddress'].value;
             if (email)
-                forgetPasswordButton.href = forgetPasswordButton.href + '?email=' + email;
+                forgetPasswordButton.href = forgetPasswordButton.href + '?email=' + encodeURIComponent(email);
         });
 
         Array.prototype.forEach.call(document.getElementsByClassName('tenantName'), function(elm) {
