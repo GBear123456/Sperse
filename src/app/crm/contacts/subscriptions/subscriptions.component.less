@@ -46,8 +46,8 @@
         cursor: pointer;
     }
 
-    ::ng-deep #gridContainer {
-        height: calc(~'100vh - 299px');
+    ::ng-deep .main-component-view {
+        height: calc(~'100vh - 300px');
         ::ng-deep dx-date-box {
             background: transparent;
             display: inline-block;
@@ -59,11 +59,116 @@
                 display: none;
             }
         }
+        .dx-master-detail-cell {
+            padding: 0!important;
+            .dx-datagrid-rowsview td {
+                height: 64px!important;
+            }
+        }
         .dx-datagrid-focus-overlay.dx-pointer-events-target {
             display: none;
         }
         .date-time {
             display: inline-block;
+        }
+        .dx-datagrid-expand:before {
+            content: none!important;
+        }
+        .dx-datagrid-headers {
+            .dx-header-row:first-child {
+                border-bottom: 1px solid #dedede;
+            }
+            .header-top {
+                position: relative;
+                &:before {
+                    content: "";
+                    position: absolute;
+                    left: 0;
+                    bottom: 0;
+                    height: 1px;
+                    width: 347px;
+                    border-bottom: 1px solid #000;
+                }
+                &.second:before {
+                    width: 300px;
+                }
+                color: #000;
+                font-weight: 600;
+            }
+            td.dx-command-edit + td:before {
+                content: none!important;
+            }
+        }
+        .dx-datagrid-content table col:first-child {
+            width: 18px!important;
+        }
+        .dx-datagrid-pager {
+            border-top: none;
+        }
+        .dx-datagrid-pager {
+            .dx-pages .dx-page,
+            .dx-page-sizes .dx-page-size.dx-selection {
+                padding: 4px 15px 4px!important;
+                color: #fff!important;
+                background-color: #80cfed!important;
+            }
+        }
+        dx-date-box {
+            .dx-dropdowneditor-icon {
+                background: url(../../../../assets/common/icons/calendar2.svg) no-repeat center;
+                &:before {
+                    content: ''!important;
+                }
+            }
+        }
+        .product-name {
+            font-weight: 500;
+            color: #4a50ff;
+            font-size: 20px;
+        }
+        .services {
+            font-size: 14px;
+            color: #d3d3d3;
+        }
+        .status {
+            background: #f3f7fa;
+            color: #424c56;
+            text-transform: uppercase;
+            text-align: center;
+            width: 100px;
+            position: relative;
+            border: 0;
+            font-weight: 400 !important;
+            border-radius: 15px;
+            padding: 2px 0 2px 10px;
+            font-family: 'Montserrat',sans-serif;
+            font-size: 12px;
+            &::before {
+                width: 8px;
+                height: 8px;
+                content: '';
+                display: block;
+                position: absolute;
+                left: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                border-radius: 50%;
+            }
+            &.current::before {
+                background: #37d749;
+            }
+            &.cancelled::before {
+                background: red;
+            }
+            &.valid::before {
+                background: #00aeef;
+            }
+            &.pending::before {
+                background: #dedede;
+            }
+            &.failed::before {
+                background: red;
+            }
         }
     }
 }

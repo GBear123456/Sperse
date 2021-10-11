@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material/dialog';
 import { map, first, filter, finalize } from 'rxjs/operators';
+import * as moment from 'moment-timezone';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -40,6 +41,8 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { AppService } from '@app/app.service';
 
 @Component({
@@ -48,6 +51,7 @@ import { AppService } from '@app/app.service';
     styleUrls: ['./subscriptions.component.less']
 })
 export class SubscriptionsComponent implements OnInit, OnDestroy {
+    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
     @ViewChild('mainGrid', { static: false }) dataGrid: DxDataGridComponent;
     public data: {
         contactInfo: ContactInfoDto,
@@ -65,6 +69,16 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     userTimezone = DateHelper.getUserTimezone();
     private readonly ident = 'Subscriptions';
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
+    public actionRecordData: any;
+    public actionMenuItems: ActionMenuItem[]  = [
+        {
+            text: this.ls.l('Cancel'),
+            class: 'cancel',
+            action: () => {
+                this.cancelSubscription.bind(this);
+            }
+        }
+    ];
 
     constructor(
         private invoicesService: InvoicesService,
@@ -99,6 +113,30 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                 this.refreshData();
             }
         }, this.ident);
+    }
+
+    onCellClick($event) {
+        let target = $event.event.target;
+        if ($event.rowType === 'data') {
+            if (target.closest('.dx-link.dx-link-edit'))
+                this.toggleActionsMenu($event.data, target);
+        }
+    }
+
+    toggleActionsMenu(data, target) {
+        this.actionRecordData = data;
+        this.actionMenu.toggle(target);
+    }
+
+    onMenuItemClick($event) {
+        $event.itemData.action.call(this);
+        this.actionRecordData = null;
+        //this.actionMenu.hide();
+    }
+
+    onShowingPopup(e) {
+        e.component.option('visible', false);
+        e.component.hide();
     }
 
     setDataSource(data: OrderSubscriptionDto[]) {
@@ -139,6 +177,17 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                     map(subscriptions => subscriptions.filter(subscription => subscription.statusCode !== 'D')),
                     finalize(() => this.loadingService.finishLoading())
                 ).subscribe(result => {
+                    result.forEach(record => {
+                        if (record.services) {
+                            record['isTrial'] = Boolean(record.trialEndDate && record.trialEndDate.diff(moment()) > 0);
+                            record['serviceCodeList'] = record.services.map(service => {
+                                return service.serviceCode + (service.levelCode ? '(' + service.levelCode + ')' : '');
+                            }).join(', ');
+                            record['serviceList'] = record.services.map(service => {
+                                return service.serviceName + (service.levelName ? '(' + service.levelName + ')' : '');
+                            }).join(', ');
+                        }
+                    });
                     this.orderSubscriptionProxy['data'] = {
                         contactId: contactId,
                         source: result
