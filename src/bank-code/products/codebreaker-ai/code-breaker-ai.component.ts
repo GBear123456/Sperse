@@ -3,8 +3,8 @@ import { ChangeDetectionStrategy, ChangeDetectorRef, Component } from '@angular/
 import { SafeUrl } from '@angular/platform-browser';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Observable, zip } from 'rxjs';
+import { tap, map } from 'rxjs/operators';
 
 /** Application imports */
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
@@ -19,11 +19,17 @@ import { ProductsService } from '@root/bank-code/products/products.service';
 })
 export class CodeBreakerAiComponent {
     dataIsLoading = true;
-    hasSubscription$: Observable<boolean> = this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass).pipe(
+    hasSubscription$: Observable<boolean> = zip(
+        this.profileService.checkServiceSubscription(BankCodeServiceType.CodebreakerAI),
+        this.profileService.checkServiceSubscription(BankCodeServiceType.BANKVault),
+        this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass)
+    ).pipe(
+        map((res: boolean[]) => res.some(Boolean)),
         tap(() => setTimeout(() => {
             this.changeDetectorRef.detectChanges();
         }))
     );
+
     environmentLink$: Observable<SafeUrl> = this.productsService.getResourceLink('codebreaker-ai-landing');
 
     constructor(
