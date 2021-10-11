@@ -27,6 +27,10 @@ export class ActionMenuComponent {
 
     show(target: any) {
         if (this.actionsTooltip && this.actionsTooltip.instance) {
+            this.items.forEach(item => {
+                if (item.checkVisible)
+                    item.visible = item.checkVisible();
+            });
             this.actionsTooltip.instance.show(target);
         }
     }
