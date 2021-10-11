@@ -85,7 +85,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         productId: undefined,
         paymentPeriodType: undefined,
         hasRecurringBilling: false,
-        onlyAddNew: false
+        skipExisting: false
     });
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
@@ -183,7 +183,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                     disableClose: true,
                     closeOnNavigation: false,
                     data: this.data.map((entity, i) => {
-                        subscriptionInput.onlyAddNew = true;
+                        subscriptionInput.skipExisting = true;
                         subscriptionInput.contactId = entity.Id;
                         return this.orderSubscriptionProxy.update(subscriptionInput);
                     })
