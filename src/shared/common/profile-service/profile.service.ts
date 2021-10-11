@@ -68,6 +68,14 @@ export class ProfileService {
         }
     };
 
+    get isWhiteLabel(): boolean {
+        return this.appSession.tenant ? this.appSession.tenant.isWhiteLabel : false;
+    }
+
+    get isAscira(): boolean {
+        return this.appSession.tenant.name.toUpperCase() == 'ASCIRA';
+    }
+
     constructor(
         private appSession: AppSessionService,
         private subscriptionProxy: MemberSubscriptionServiceProxy,
