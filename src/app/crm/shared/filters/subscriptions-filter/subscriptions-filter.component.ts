@@ -92,4 +92,8 @@ export class SubscriptionsFilterComponent implements FilterComponent {
                     });
             });
     }
+
+    onModeChanged(event) {
+        this.items.products.filterMode = event.value;        
+    }
 }

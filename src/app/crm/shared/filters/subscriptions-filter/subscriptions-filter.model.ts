@@ -7,6 +7,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
     filterKey: string;
     nameField: string;    
     itemsExpr: string;
+    filterMode: string;
     autoExpandAll = false;
     dataStructure = 'tree';
     keyExpr = 'uid';
@@ -64,6 +65,13 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                     });
                 }
             });
+        
+        if (this.filterMode)
+            result.push({
+                name: 'subscriptionFilters.Mode',
+                value: this.filterMode
+            });
+
         return result;
     }
 

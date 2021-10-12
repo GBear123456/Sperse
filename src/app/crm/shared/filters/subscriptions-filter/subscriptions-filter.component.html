@@ -1,8 +1,17 @@
 <div class="wrapper">
-    <dx-tabs width="310px"
+    <dx-tabs width="200px"
         [dataSource]="filterTabs"
         [(selectedIndex)]="selectedTabIndex">
     </dx-tabs>
+    <div class="mode">
+        <dx-radio-group
+            value="All"
+            valueExpr="value"
+            layout="horizontal"
+            [dataSource]="[{text: ls.l('All'), value: 'All'}, {text: ls.l('Any'), value: 'Any'}]"
+            (onValueChanged)="onModeChanged($event)">
+        </dx-radio-group>
+    </div>
     <div class="labels">
         <div>{{ ls.l('Current') }}</div>
         <div>{{ ls.l('Past') }}</div>
