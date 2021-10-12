@@ -68,7 +68,8 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { InvoiceSettings, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InvoiceSettings, OrderServiceProxy, 
+    ProductServiceProxy, ProductType, ProductDto } from '@shared/service-proxies/service-proxies';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
@@ -76,6 +77,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { CrmService } from '../crm.service';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { FilterSourceComponent } from '@app/crm/shared/filters/source-filter/source-filter.component';
+import { FilterServicesAndProductsComponent } from '@app/crm/shared/filters/services-and-products-filter/services-and-products-filter.component';
 import { SourceFilterModel } from '@app/crm/shared/filters/source-filter/source-filter.model';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { OrderDto } from '@app/crm/orders/order-dto';
@@ -98,7 +100,7 @@ import { ArrayHelper } from '@shared/helpers/ArrayHelper';
         '../shared/styles/grouped-action-menu.less',
         './orders.component.less'
     ],
-    providers: [ OrderServiceProxy, CurrencyPipe ]
+    providers: [ OrderServiceProxy, CurrencyPipe, ProductServiceProxy ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('ordersGrid', { static: false }) ordersGrid: DxDataGridComponent;
@@ -747,6 +749,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ];
 
     constructor(injector: Injector,
+        private productProxy: ProductServiceProxy,
         private orderProxy: OrderServiceProxy,
         private invoicesService: InvoicesService,
         private contactsService: ContactsService,
@@ -949,10 +952,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     private getSubscriptionsFilter() {
         return new FilterModel({
-            component: FilterCheckBoxesComponent,
+            component: FilterServicesAndProductsComponent,
             caption: 'SubscriptionStatus',
             items: {
-                element: new FilterCheckBoxesModel(
+                services: new FilterCheckBoxesModel(
                     {
                         dataSource$: this.store$.pipe(
                             select(SubscriptionsStoreSelectors.getSubscriptions),
@@ -972,7 +975,19 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         keyExpr: 'uid',
                         dataStructure: 'tree',
                         itemsExpr: 'memberServiceLevels'
-                    })
+                    }
+                ),
+                products: new FilterCheckBoxesModel(
+                    {
+                        dataSource$: this.productProxy.getProducts(
+                            ProductType.Subscription
+                        ),
+                        recursive: true,
+                        nameField: 'name',
+                        keyExpr: 'id',
+                        dataStructure: 'plain'
+                    }
+                )
             }
         });
     }
@@ -1515,23 +1530,32 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     private getSubscriptionsParams() {
-        let productIndex, levelIndex, productId = null, result = [],
-            selectedItems = this.selectedOrderType.value === OrderType.Order ?
-                this.orderSubscriptionStatusFilter.items.element['selectedItems'] :
-                this.subscriptionStatusFilter.items.element['selectedItems'];
-        selectedItems && selectedItems.forEach(item => {
-            if (productId != item.parentId) {
+        let serviceIndex, levelIndex, serviceId = null, result = [],
+            selectedFilter = this.selectedOrderType.value === OrderType.Order ?
+                this.orderSubscriptionStatusFilter : this.subscriptionStatusFilter,
+            selectedServices = selectedFilter.items.services['selectedItems'],
+            selectedProducts = selectedFilter.items.products['selectedItems'];
+
+        selectedProducts && selectedProducts.forEach((item, i) => {
+            result.push({
+                name: 'subscriptionFilters.ProductIds[' + i + ']',
+                value: item.id
+            });            
+        });
+
+        selectedServices && selectedServices.forEach(item => {
+            if (serviceId != item.parentId) {
                 levelIndex = 0;
-                isNaN(productIndex) ? productIndex = 0 : productIndex++;
-                productId = item.parentId || item.id;
+                isNaN(serviceIndex) ? serviceIndex = 0 : serviceIndex++;
+                serviceId = item.parentId || item.id;
                 result.push({
-                    name: 'subscriptionFilters[' + productIndex + '].ServiceId',
-                    value: productId
+                    name: 'subscriptionFilters[' + serviceIndex + '].ServiceId',
+                    value: serviceId
                 });
             }
             if (item.parentId) {
                 result.push({
-                    name: 'subscriptionFilters[' + productIndex + '].LevelIds[' + levelIndex + ']',
+                    name: 'subscriptionFilters[' + serviceIndex + '].LevelIds[' + levelIndex + ']',
                     value: item.id
                 });
                 levelIndex++;

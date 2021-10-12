@@ -29,6 +29,9 @@ export class FilterItemModel {
             this.selectedKeys$.subscribe(keys => {
                 this.value = keys;
             });
+
+        if (this.dispatch)
+            this.dispatch();
     }
 
     get value(): any {

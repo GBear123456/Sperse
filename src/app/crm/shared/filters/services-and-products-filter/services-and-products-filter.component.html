@@ -1,0 +1,26 @@
+<div class="wrapper">
+    <dx-tabs width="310px"
+        [dataSource]="filterTabs"
+        [(selectedIndex)]="selectedTabIndex">
+    </dx-tabs>
+    <dx-tree-list *ngIf="filterTabs[selectedTabIndex].field as field"
+                  [dataSource]="items[field].dataSource"
+                  [keyExpr]="items[field].keyExpr"
+                  [parentIdExpr]="items[field].parentExpr"
+                  [dataStructure]="items[field].dataStructure"
+                  [itemsExpr]="items[field].itemsExpr"
+                  [showColumnHeaders]="false"
+                  [autoExpandAll]="true"
+                  height="calc(100vh - 172px)"
+                  [scrolling]="{ preloadEnabled: true, rowRenderingMode: 'virtual' }"
+                  [selectedRowKeys]="items[field].value"
+                  (onInitialized)="onInitialized($event)"
+                  (onDisposing)="onDisposing($event)"
+                  (onSelectionChanged)="onSelectionChanged($event)">
+        <dxo-selection [allowSelectAll]="true" mode="multiple" [recursive]="true"></dxo-selection>
+        <dxi-column [dataField]="items[field].nameField" [cellTemplate]="items[field].templateFunc ? 'checkBoxTemplate' : null"></dxi-column>
+        <div *dxTemplate="let cell of 'checkBoxTemplate'">
+            <div [innerHTML]="items[field].templateFunc(cell.data)"></div>
+        </div>
+    </dx-tree-list>
+</div>
