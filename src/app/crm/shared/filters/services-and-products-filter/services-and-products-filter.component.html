@@ -17,6 +17,7 @@
                   (onInitialized)="onInitialized($event)"
                   (onDisposing)="onDisposing($event)"
                   (onSelectionChanged)="onSelectionChanged($event)">
+        <dxo-search-panel [visible]="true" width="100%"></dxo-search-panel>
         <dxo-selection [allowSelectAll]="true" mode="multiple" [recursive]="true"></dxo-selection>
         <dxi-column [dataField]="items[field].nameField" [cellTemplate]="items[field].templateFunc ? 'checkBoxTemplate' : null"></dxi-column>
         <div *dxTemplate="let cell of 'checkBoxTemplate'">

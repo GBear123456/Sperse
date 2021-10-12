@@ -981,8 +981,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     {
                         dataSource$: this.productProxy.getProducts(
                             ProductType.Subscription
-                        ),
-                        recursive: true,
+                        ).pipe(map((products: ProductDto[]) => {
+                            return products.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
+                        })),
                         nameField: 'name',
                         keyExpr: 'id',
                         dataStructure: 'plain'
