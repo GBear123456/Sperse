@@ -124,7 +124,12 @@
         .product-name {
             font-weight: 500;
             color: #4a50ff;
-            font-size: 20px;
+            font-size: 18px;
+            b {
+                color: #000;
+                font-size: 16px;
+                margin-right: 10px;
+            }
         }
         .services {
             font-size: 14px;
@@ -149,7 +154,7 @@
                 content: '';
                 display: block;
                 position: absolute;
-                left: 10px;
+                left: 8px;
                 top: 50%;
                 transform: translateY(-50%);
                 border-radius: 50%;
@@ -157,8 +162,24 @@
             &.current::before {
                 background: #37d749;
             }
-            &.cancelled::before {
+            &.canceled::before {
                 background: red;
+            }
+            &.canceled.show-tooltip::after, 
+            &.current.show-tooltip::after {
+                content: 'i';
+                display: block;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                background: #f3f7fa;
+                color: #80cfed;
+                position: absolute;
+                right: -24px;
+                top: 1px;
+                text-transform: lowercase;
+                font-weight: 600;
+                font-size: 14px;
             }
             &.valid::before {
                 background: #00aeef;

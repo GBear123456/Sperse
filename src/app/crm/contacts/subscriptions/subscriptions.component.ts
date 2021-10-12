@@ -72,11 +72,21 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     public actionRecordData: any;
     public actionMenuItems: ActionMenuItem[]  = [
         {
+            text: this.ls.l('Login'),
+            class: 'login',
+            checkVisible: () => 
+                this.actionRecordData.systemMemberId &&
+                this.actionRecordData.systemType == 'Tenant' &&
+                this.permission.isGranted(AppPermissions.TenantsImpersonation), 
+            action: () => this.showUserImpersonateLookUpModal()
+        },
+        {
             text: this.ls.l('Cancel'),
             class: 'cancel',
-            action: () => {
-                this.cancelSubscription.bind(this);
-            }
+            checkVisible: () => 
+                this.actionRecordData.statusCode === 'A' && 
+                this.permission.isGranted(AppPermissions.CRMOrdersManage),
+            action: () => this.cancelSubscription(this.actionRecordData.id)
         }
     ];
 
@@ -131,37 +141,12 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     onMenuItemClick($event) {
         $event.itemData.action.call(this);
         this.actionRecordData = null;
-        //this.actionMenu.hide();
+        this.actionMenu.hide();
     }
 
     onShowingPopup(e) {
         e.component.option('visible', false);
         e.component.hide();
-    }
-
-    setDataSource(data: OrderSubscriptionDto[]) {
-        let currentServices = [];
-        data.forEach(item => {
-            if (item.status == 'Current') {
-                item['isLastSubscription'] = true;
-                currentServices = currentServices.concat(
-                    item.services.map(service => service.serviceCode)
-                );
-            }
-        });
-        let sortedData = _.sortBy(data, (x: OrderSubscriptionDto) => x.id).reverse();
-        sortedData.forEach(item => {
-            let services = item.services.map(service => service.serviceCode);
-            if (item.status != 'Current' &&
-                _.difference(services, currentServices).length
-            ) {
-                item['isLastSubscription'] = true;
-                currentServices = currentServices.concat(services);
-            }
-        });
-
-        this.dataSource = new DataSource(data);
-        this.filterDataSource();
     }
 
     refreshData(forced = false) {
@@ -197,9 +182,8 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         }
     }
 
-    cancelSubscription(id: number, $event) {
+    cancelSubscription(id: number) {
         this.dialog.closeAll();
-        $event.stopPropagation();
         this.dialog.open(CancelSubscriptionDialogComponent, {
             width: '400px',
             data: {
@@ -219,17 +203,16 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             }
         });
     }
-
-    showUserImpersonateLookUpModal(e, record: any): void {
-        this.impersonateTenantId = record.tenantId;
+                          
+    showUserImpersonateLookUpModal(): void {
+        this.impersonateTenantId = this.actionRecordData.systemMemberId;
         const impersonateDialog = this.dialog.open(CommonLookupModalComponent, {
             panelClass: [ 'slider' ],
-            data: { tenantId: this.impersonateTenantId }
+            data: {tenantId: this.impersonateTenantId}
         });
         impersonateDialog.componentInstance.itemSelected.subscribe((item: NameValueDto) => {
             this.impersonateUser(item);
         });
-        e.stopPropagation();
     }
 
     impersonateUser(item: NameValueDto): void {
@@ -244,16 +227,16 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         this.filterDataSource();
     }
 
+    setDataSource(data: OrderSubscriptionDto[]) {
+        this.dataSource = new DataSource(data);
+        this.filterDataSource();        
+    }
+
     filterDataSource() {
         if (this.showAll)
-            this.dataSource.filter(null);
+            this.dataGrid.instance.expandAll(-1);
         else
-            this.dataSource.filter([['isLastSubscription', '=', true]]);
-
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.clearSorting();
-        this.dataSource.sort(['productName', { getter: 'id', desc: true }]);
-        this.dataSource.load();
+            this.dataGrid.instance.collapseAll(-1);
     }
 
     openSubscriptionDialog(e?: any) {
@@ -324,6 +307,11 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             popup.style.transform = 'translate(' +
                 (isWidthOverflow ? -300 : 0) + 'px, ' +
                 (isHeightOverflow ? -300 : 0) + 'px)';
+    }
+
+    onRowExpandedCollapsed(event) {
+        event.key['expanded'] = event.expanded;
+        this.showAll = event.component.getDataSource().items().some(item => item.expanded);
     }
 
     ngOnDestroy() {
