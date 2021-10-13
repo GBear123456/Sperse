@@ -106,7 +106,7 @@ export class HostAutoLoginComponent {
 
     getAppRoute() {
         let path = UrlHelper.getInitialUrlRelativePath();
-        return !path || path.indexOf('auto-login') > 0 ? '' : path;
+        return !path || path.indexOf('auto-login') > 0 || path.indexOf('forgot-password') > 0 ? '' : path;
     }
 
     authenticateByCode() {
