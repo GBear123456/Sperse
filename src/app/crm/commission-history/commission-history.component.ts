@@ -274,7 +274,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         ][this.selectedViewType];
     }
 
-    commissionFilters = [
+    commissionFilters = [].concat([
         new FilterModel({
             component: FilterSourceComponent,
             caption: 'Reseller',
@@ -352,22 +352,26 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             caption: 'Commission',
             field: this.commissionFields.CommissionAmount,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
-        }),
-        new FilterModel({
-            component: FilterCheckBoxesComponent,
-            caption: 'Product',
-            field: this.commissionFields.ProductCode,
-            options: { method: 'filterByFilterElement' },
-            items: {
-                element: new FilterCheckBoxesModel(
-                    {
-                        dataSource$: this.productProxy.getProducts(undefined),
-                        nameField: 'name',
-                        keyExpr: 'code'
-                    })
-            }
-        }),
-        new FilterModel({
+        })],
+        this.permission.isGranted(AppPermissions.CRMOrders) || 
+        this.permission.isGranted(AppPermissions.CRMProducts) ?
+        [
+            new FilterModel({
+                component: FilterCheckBoxesComponent,
+                caption: 'Product',
+                field: this.commissionFields.ProductCode,
+                options: { method: 'filterByFilterElement' },
+                items: {
+                    element: new FilterCheckBoxesModel(
+                        {
+                            dataSource$: this.productProxy.getProducts(undefined),
+                            nameField: 'name',
+                            keyExpr: 'code'
+                        })
+                }
+            }) 
+        ]: [],
+        [new FilterModel({
             component: FilterInputsComponent,
             options: { type: 'number' },
             operator: { from: 'ge', to: 'le' },
@@ -383,7 +387,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
             field: this.commissionFields.CommissionRate,
             items: { from: new FilterItemModel(), to: new FilterItemModel() }
         })
-    ];
+    ]);
 
     ledgerFilters = [
         new FilterModel({
