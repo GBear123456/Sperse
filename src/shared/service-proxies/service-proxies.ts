@@ -72302,15 +72302,35 @@ export interface ISubscriptionServiceDto {
     levelName: string | undefined;
 }
 
+export enum SubscriptionPaymentType {
+    OriginalPayment = "OriginalPayment", 
+    Installment = "Installment", 
+    Refund = "Refund", 
+    Chargeback = "Chargeback", 
+    RecurringBilling = "RecurringBilling", 
+}
+
+export enum SubscriptionPaymentStatus {
+    Pending = "Pending", 
+    Approved = "Approved", 
+    Declined = "Declined", 
+    Active = "Active", 
+}
+
 export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     id!: number | undefined;
     invoiceId!: number | undefined;
     invoiceDate!: moment.Moment | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
-    status!: string | undefined;
-    paymentDate!: moment.Moment | undefined;
+    type!: SubscriptionPaymentType | undefined;
+    secNo!: number | undefined;
+    status!: SubscriptionPaymentStatus | undefined;
     fee!: number | undefined;
+    gatewayName!: string | undefined;
+    paymentId!: string | undefined;
+    paymentDate!: moment.Moment | undefined;
+    authorizationCode!: string | undefined;
 
     constructor(data?: ISubscriptionPaymentDto) {
         if (data) {
@@ -72328,9 +72348,14 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
             this.invoiceDate = data["invoiceDate"] ? moment(data["invoiceDate"].toString()) : <any>undefined;
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.type = data["type"];
+            this.secNo = data["secNo"];
             this.status = data["status"];
-            this.paymentDate = data["paymentDate"] ? moment(data["paymentDate"].toString()) : <any>undefined;
             this.fee = data["fee"];
+            this.gatewayName = data["gatewayName"];
+            this.paymentId = data["paymentId"];
+            this.paymentDate = data["paymentDate"] ? moment(data["paymentDate"].toString()) : <any>undefined;
+            this.authorizationCode = data["authorizationCode"];
         }
     }
 
@@ -72348,9 +72373,14 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
         data["invoiceDate"] = this.invoiceDate ? this.invoiceDate.toISOString() : <any>undefined;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["type"] = this.type;
+        data["secNo"] = this.secNo;
         data["status"] = this.status;
-        data["paymentDate"] = this.paymentDate ? this.paymentDate.toISOString() : <any>undefined;
         data["fee"] = this.fee;
+        data["gatewayName"] = this.gatewayName;
+        data["paymentId"] = this.paymentId;
+        data["paymentDate"] = this.paymentDate ? this.paymentDate.toISOString() : <any>undefined;
+        data["authorizationCode"] = this.authorizationCode;
         return data; 
     }
 }
@@ -72361,9 +72391,14 @@ export interface ISubscriptionPaymentDto {
     invoiceDate: moment.Moment | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
-    status: string | undefined;
-    paymentDate: moment.Moment | undefined;
+    type: SubscriptionPaymentType | undefined;
+    secNo: number | undefined;
+    status: SubscriptionPaymentStatus | undefined;
     fee: number | undefined;
+    gatewayName: string | undefined;
+    paymentId: string | undefined;
+    paymentDate: moment.Moment | undefined;
+    authorizationCode: string | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
