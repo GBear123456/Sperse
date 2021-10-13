@@ -46,7 +46,7 @@ export class HostForgotPasswordComponent {
     autoLogin() {
         if (this.form.valid)
             this.router.navigate(['account/auto-login'], 
-                {queryParams: {email: this.model.emailAddress, instant: true}}
+                {queryParams: {email: this.model.emailAddress, instant: true, extlogin: this.isExtLogin}}
             )
     }
 
