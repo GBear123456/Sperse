@@ -3,8 +3,14 @@ import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-i
 import { SubscriptionAvailability } from '@app/crm/shared/filters/subscriptions-filter/subscription-availability.enum';
 
 export class SubscriptionsFilterModel extends FilterItemModel {
-    nameField: string;
+    filterBy: string;
+    filterKey: string;
+    nameField: string;    
+    itemsExpr: string;
+    filterMode: string;
     autoExpandAll = false;
+    dataStructure = 'tree';
+    keyExpr = 'uid';
 
     public constructor(init?: Partial<SubscriptionsFilterModel>) {
         super(init, true);
@@ -20,11 +26,11 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                 if (item.current || item.past || item.never) {
                     result.push(
                         {
-                            name: ['subscriptionFilters[' + filterIndex + '].ServiceId'],
+                            name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].' + this.filterKey],
                             value: item.id
                         },
                         {
-                            name: ['subscriptionFilters[' + filterIndex + '].Availability'],
+                            name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].Availability'],
                             value: (item.current ? SubscriptionAvailability.Current : 0) |
                                    (item.past ? SubscriptionAvailability.Past : 0) |
                                    (item.never ? SubscriptionAvailability.Never : 0)
@@ -33,22 +39,22 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                     filterIndex++;
                 }
 
-                if (item.current || item.past || item.never || 
-                    item.current == undefined || item.past == undefined || item.never == undefined
+                if (item.memberServiceLevels && (item.current || item.past || item.never || 
+                    item.current == undefined || item.past == undefined || item.never == undefined)
                 ) {
                     item.memberServiceLevels.forEach(level => {
                         if (level.current || level.past || level.never) {
                             result.push(
                                 {
-                                    name: ['subscriptionFilters[' + filterIndex + '].ServiceId'],
+                                    name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].' + this.filterKey],
                                     value: item.id
                                 },
                                 {
-                                    name: ['subscriptionFilters[' + filterIndex + '].LevelId'],
+                                    name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].LevelId'],
                                     value: level.id
                                 },
                                 {
-                                    name: ['subscriptionFilters[' + filterIndex + '].Availability'],
+                                    name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].Availability'],
                                     value: (level.current ? SubscriptionAvailability.Current : 0) |
                                            (level.past ? SubscriptionAvailability.Past : 0) |
                                            (level.never ? SubscriptionAvailability.Never : 0)
@@ -59,6 +65,13 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                     });
                 }
             });
+        
+        if (this.filterMode)
+            result.push({
+                name: 'subscriptionFilters.Mode',
+                value: this.filterMode
+            });
+
         return result;
     }
 
