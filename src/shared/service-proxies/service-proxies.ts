@@ -27151,6 +27151,65 @@ export class PersonContactServiceProxy {
         }
         return _observableOf<CreateUserForContactOutput>(<any>null);
     }
+
+    /**
+     * @personId (optional) 
+     * @return Success
+     */
+    getPersonHistory(personId: number | null | undefined): Observable<PersonHistoryDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonContact/GetPersonHistory?";
+        if (personId !== undefined)
+            url_ += "personId=" + encodeURIComponent("" + personId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPersonHistory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPersonHistory(<any>response_);
+                } catch (e) {
+                    return <Observable<PersonHistoryDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PersonHistoryDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPersonHistory(response: HttpResponseBase): Observable<PersonHistoryDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(PersonHistoryDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PersonHistoryDto[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -75279,6 +75338,146 @@ export class CreateUserForContactOutput implements ICreateUserForContactOutput {
 
 export interface ICreateUserForContactOutput {
     autoLoginLink: string | undefined;
+}
+
+export class PersonHistoryDto implements IPersonHistoryDto {
+    creationTime!: moment.Moment | undefined;
+    creatorUserName!: string | undefined;
+    creatorUserPhotoPublicId!: string | undefined;
+    source!: string | undefined;
+    namePrefix!: string | undefined;
+    firstName!: string | undefined;
+    middleName!: string | undefined;
+    lastName!: string | undefined;
+    nameSuffix!: string | undefined;
+    nickName!: string | undefined;
+    dob!: moment.Moment | undefined;
+    ssn!: string | undefined;
+    bankCode!: string | undefined;
+    timeZone!: string | undefined;
+    maritalStatus!: MaritalStatus | undefined;
+    marriageDate!: moment.Moment | undefined;
+    divorceDate!: moment.Moment | undefined;
+    gender!: Gender | undefined;
+    isUSCitizen!: boolean | undefined;
+    citizenship!: string | undefined;
+    experience!: string | undefined;
+    profileSummary!: string | undefined;
+    preferredToD!: TimeOfDay | undefined;
+    drivingLicense!: string | undefined;
+    drivingLicenseState!: string | undefined;
+    isActiveMilitaryDuty!: boolean | undefined;
+    monthlyGoal!: number | undefined;
+
+    constructor(data?: IPersonHistoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserName = data["creatorUserName"];
+            this.creatorUserPhotoPublicId = data["creatorUserPhotoPublicId"];
+            this.source = data["source"];
+            this.namePrefix = data["namePrefix"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
+            this.nameSuffix = data["nameSuffix"];
+            this.nickName = data["nickName"];
+            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
+            this.ssn = data["ssn"];
+            this.bankCode = data["bankCode"];
+            this.timeZone = data["timeZone"];
+            this.maritalStatus = data["maritalStatus"];
+            this.marriageDate = data["marriageDate"] ? moment(data["marriageDate"].toString()) : <any>undefined;
+            this.divorceDate = data["divorceDate"] ? moment(data["divorceDate"].toString()) : <any>undefined;
+            this.gender = data["gender"];
+            this.isUSCitizen = data["isUSCitizen"];
+            this.citizenship = data["citizenship"];
+            this.experience = data["experience"];
+            this.profileSummary = data["profileSummary"];
+            this.preferredToD = data["preferredToD"];
+            this.drivingLicense = data["drivingLicense"];
+            this.drivingLicenseState = data["drivingLicenseState"];
+            this.isActiveMilitaryDuty = data["isActiveMilitaryDuty"];
+            this.monthlyGoal = data["monthlyGoal"];
+        }
+    }
+
+    static fromJS(data: any): PersonHistoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonHistoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserName"] = this.creatorUserName;
+        data["creatorUserPhotoPublicId"] = this.creatorUserPhotoPublicId;
+        data["source"] = this.source;
+        data["namePrefix"] = this.namePrefix;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
+        data["nameSuffix"] = this.nameSuffix;
+        data["nickName"] = this.nickName;
+        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["ssn"] = this.ssn;
+        data["bankCode"] = this.bankCode;
+        data["timeZone"] = this.timeZone;
+        data["maritalStatus"] = this.maritalStatus;
+        data["marriageDate"] = this.marriageDate ? this.marriageDate.toISOString() : <any>undefined;
+        data["divorceDate"] = this.divorceDate ? this.divorceDate.toISOString() : <any>undefined;
+        data["gender"] = this.gender;
+        data["isUSCitizen"] = this.isUSCitizen;
+        data["citizenship"] = this.citizenship;
+        data["experience"] = this.experience;
+        data["profileSummary"] = this.profileSummary;
+        data["preferredToD"] = this.preferredToD;
+        data["drivingLicense"] = this.drivingLicense;
+        data["drivingLicenseState"] = this.drivingLicenseState;
+        data["isActiveMilitaryDuty"] = this.isActiveMilitaryDuty;
+        data["monthlyGoal"] = this.monthlyGoal;
+        return data; 
+    }
+}
+
+export interface IPersonHistoryDto {
+    creationTime: moment.Moment | undefined;
+    creatorUserName: string | undefined;
+    creatorUserPhotoPublicId: string | undefined;
+    source: string | undefined;
+    namePrefix: string | undefined;
+    firstName: string | undefined;
+    middleName: string | undefined;
+    lastName: string | undefined;
+    nameSuffix: string | undefined;
+    nickName: string | undefined;
+    dob: moment.Moment | undefined;
+    ssn: string | undefined;
+    bankCode: string | undefined;
+    timeZone: string | undefined;
+    maritalStatus: MaritalStatus | undefined;
+    marriageDate: moment.Moment | undefined;
+    divorceDate: moment.Moment | undefined;
+    gender: Gender | undefined;
+    isUSCitizen: boolean | undefined;
+    citizenship: string | undefined;
+    experience: string | undefined;
+    profileSummary: string | undefined;
+    preferredToD: TimeOfDay | undefined;
+    drivingLicense: string | undefined;
+    drivingLicenseState: string | undefined;
+    isActiveMilitaryDuty: boolean | undefined;
+    monthlyGoal: number | undefined;
 }
 
 export class CreatePersonOrgRelationInput implements ICreatePersonOrgRelationInput {
