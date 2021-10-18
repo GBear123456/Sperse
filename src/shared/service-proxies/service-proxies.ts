@@ -26856,6 +26856,62 @@ export class PaymentServiceProxy {
         }
         return _observableOf<PaymentMethodInfo[]>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getTransactionTypes(): Observable<string[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Payment/GetTransactionTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTransactionTypes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTransactionTypes(<any>response_);
+                } catch (e) {
+                    return <Observable<string[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetTransactionTypes(response: HttpResponseBase): Observable<string[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -75341,7 +75397,9 @@ export interface ICreateUserForContactOutput {
 }
 
 export class PersonHistoryDto implements IPersonHistoryDto {
+    id!: number | undefined;
     creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
     creatorUserName!: string | undefined;
     creatorUserPhotoPublicId!: string | undefined;
     source!: string | undefined;
@@ -75380,7 +75438,9 @@ export class PersonHistoryDto implements IPersonHistoryDto {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
             this.creatorUserName = data["creatorUserName"];
             this.creatorUserPhotoPublicId = data["creatorUserPhotoPublicId"];
             this.source = data["source"];
@@ -75419,7 +75479,9 @@ export class PersonHistoryDto implements IPersonHistoryDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
         data["creatorUserName"] = this.creatorUserName;
         data["creatorUserPhotoPublicId"] = this.creatorUserPhotoPublicId;
         data["source"] = this.source;
@@ -75451,7 +75513,9 @@ export class PersonHistoryDto implements IPersonHistoryDto {
 }
 
 export interface IPersonHistoryDto {
+    id: number | undefined;
     creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
     creatorUserName: string | undefined;
     creatorUserPhotoPublicId: string | undefined;
     source: string | undefined;
