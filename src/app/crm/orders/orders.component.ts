@@ -1631,6 +1631,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }) {
         if (entity && entity.ContactId) {
             let isOrder = this.selectedOrderType.value === OrderType.Order;
+
+            if (!this.isGranted(AppPermissions.CRMOrdersInvoices))
+                section = 'contact-information';
+
             this.searchClear = false;
             this._router.navigate(
                 CrmService.getEntityDetailsLink(entity.ContactId, section, entity.LeadId),
