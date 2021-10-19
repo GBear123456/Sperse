@@ -34,6 +34,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
+import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
@@ -172,6 +173,12 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                                 return service.serviceName + (service.levelName ? '(' + service.levelName + ')' : '');
                             }).join(', ');
                         }
+                        let paymentCount = record.payments.length;
+                        if (record.payments && paymentCount) {
+                            record.payments.forEach((payment, i) => {
+                                payment['index'] = paymentCount - i;
+                            });
+                        }
                     });
                     this.orderSubscriptionProxy['data'] = {
                         contactId: contactId,
@@ -222,11 +229,6 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         );
     }
 
-    toggleHistory() {
-        this.showAll = !this.showAll;
-        this.filterDataSource();
-    }
-
     setDataSource(data: OrderSubscriptionDto[]) {
         this.dataSource = new DataSource(data);
         this.filterDataSource();        
@@ -265,18 +267,6 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         e.stopPropagation ? e.stopPropagation() : e.event.stopPropagation();
     }
 
-    onDateHover(event) {
-        let target = event.target.children[1];
-        if (target)
-            target.innerText = target.title;
-    }
-
-    onDateLeave(event) {
-        let target = event.target.children[1];
-        if (target)
-            target.innerText = target.title.split(' ').shift();
-    }
-
     onDateChanged(event, cell) {
         let leadId = this.route.parent.snapshot.paramMap.get('leadId') ?
             this.data.leadInfo.id :
@@ -312,6 +302,41 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     onRowExpandedCollapsed(event) {
         event.key['expanded'] = event.expanded;
         this.showAll = event.component.getDataSource().items().some(item => item.expanded);
+    }
+
+    toogleMasterDatails(cell) {
+        if (cell.data.payments && cell.data.payments.length) {
+            let instance = this.dataGrid.instance,
+                isExpanded = instance.isRowExpanded(cell.key);
+            if (isExpanded)                
+                instance.collapseRow(cell.key);
+            else
+                instance.expandRow(cell.key);
+            setTimeout(() => {
+                let row = instance.getRowElement(cell.rowIndex)[0];
+                if (isExpanded)
+                    row.classList.remove('expanded');
+                else
+                    row.classList.add('expanded');
+            }, 100);
+        }
+    }
+
+    onPaymentClick(cell) {
+        this.dialog.open(CreateInvoiceDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                addNew: false,
+                saveAsDraft: false,
+                invoice: {InvoiceId: cell.data.invoiceId},
+                contactInfo: this.data.contactInfo,
+                refreshParent: () => {
+                    this.dataGrid.instance.refresh();
+                }
+            }
+        });        
     }
 
     ngOnDestroy() {
