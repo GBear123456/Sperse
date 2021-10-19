@@ -52,7 +52,9 @@
         <dxi-column dataField="status" [allowResizing]="false" [caption]="ls.l('Status')" cellTemplate="statusCell" width="130px"></dxi-column>
     </dxi-column>
 
-    <dxi-column caption="" visibleIndex="7" [allowResizing]="false" width="20px"></dxi-column>
+    <dxi-column caption="" visibleIndex="7">
+        <dxi-column caption="" [allowResizing]="false" width="20px"></dxi-column>
+    </dxi-column>
 
     <div *dxTemplate="let cellData of 'photoCell'">
         <img width="64px" height="64px" [src]="cellData.data.photoUrl || 'assets/common/images/product.png'" onerror="this.src='assets/common/images/product.png'">
@@ -60,12 +62,12 @@
 
     <div *dxTemplate="let cellData of 'productCell'">
         <div class="product-icon-wrapper">
-            <img width="64px" height="64px" [src]="cellData.data.photoUrl || 'assets/common/images/product.png'" onerror="this.src='assets/common/images/product.png'">
+            <img width="64px" height="64px" [src]="cellData.data.photoUrl || 'assets/common/images/' + (cellData.data.productCode ? 'product' : 'service') + '.png'" onerror="this.src='assets/common/images/product.png'">
         </div>
         <div class="product-name-wrapper">
             <div class="product-name clipboard-holder" 
                 (click)="toogleMasterDatails(cellData)"
-                [title]="cellData.data.productCode ? 'Product Code: ' + cellData.data.productCode : ''">
+                [title]="cellData.data.productCode ? 'Product Code: ' + cellData.data.productCode : cellData.data.serviceCodeList">
                 {{cellData.data.productName}}<b *ngIf="!cellData.data.productCode && cellData.data.services[0].levelName">{{' - ' + cellData.data.services[0].levelName}}</b>
             </div>
             <div *ngIf="cellData.data.productCode" class="services" [title]="cellData.data.serviceCodeList">{{cellData.data.serviceList}}</div>
@@ -80,7 +82,7 @@
             {{cellData.value ? (cellData.value | datetime: formatting.dateMoment) : ''}}
         </span>
     </div>
-    <div *dxTemplate="let cellData of 'dateTimeTemplate'">
+    <div *dxTemplate="let cellData of 'dateTimeTemplate'" class="date-box">
         <span [ngStyle]="{visibility: cellData.value ? 'visible': 'hidden'}" class="date-time {{cellData.column.dataField}}" title="{{cellData.value | datetime: formatting.dateTimeMoment}}">{{cellData.value | datetime: formatting.dateMoment}}</span>
         <dx-date-box width="33px"
             applyValueMode="useButtons"
@@ -96,9 +98,9 @@
         </div>
     </div>
     <div *dxTemplate="let cellData of 'statusCell'">
-        <div class="status {{cellData.value.toLowerCase()}}" [ngClass]="{'show-tooltip': !!cellData?.data?.cancelationReason || !!cellData?.data?.gracePeriodEndDate}"
+        <div class="status {{cellData.value.toLowerCase()}}" [ngClass]="{'show-tooltip': cellData.value == 'Canceled' ? !!cellData?.data?.cancelationReason : !!cellData?.data?.gracePeriodEndDate}"
               [matTooltip]="cellData?.data?.cancelationReason ? 'Cancellation Reason: ' + cellData.data.cancelationReason : cellData?.data?.gracePeriodDayCount + ' day(s) grace period ends at ' + cellData?.data?.gracePeriodEndDate?.format(formatting.dateTimeMoment)"
-              [matTooltipDisabled]="!cellData.data.cancelationReason && !cellData.data.gracePeriodEndDate"
+              [matTooltipDisabled]="cellData.value == 'Canceled' ? !cellData.data.cancelationReason : !cellData.data.gracePeriodEndDate"
               matTooltipClass="mat-primary-tooltip"
               matTooltipShowDelay="200"
               matTooltipHideDelay="0">
@@ -109,31 +111,34 @@
         <span (click)="toogleMasterDatails(cell)" class="amount"> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
     </div>
     <div *dxTemplate="let detail of 'detail'">
-        <dx-data-grid
+        <span *ngIf="detail?.data?.payments?.length > 4" class="show-more" (click)="toogleMorePayment(details, $event)">{{ls.l('ShowAll')}}</span>
+        <dx-data-grid #details
             width="100%"
             class="alone"
+            [pager]="{visible: false}"
             [dataSource]="detail.data.payments"
             [allowColumnReordering]="false"
             [columnAutoWidth]="true"
             [allowColumnResizing]="false"
             [paging]="{enabled: true, pageSize: 4}"
             [showBorders]="false">
+            <dxo-sorting mode="multiple"></dxo-sorting>
 
-            <dxi-column dataField="id" caption="" visibleIndex="1" alignment="left" cellTemplate="captionTemplate"></dxi-column>
-            <dxi-column dataField="cog" caption="" visibleIndex="2" width="30px"></dxi-column>
-            <dxi-column dataField="invoiceDate" visibleIndex="3" dataType="date" format="dd/MM/yyyy" width="150px" cssClass="tabular clipboard-holder"></dxi-column>
-            <dxi-column dataField="paymentDate" visibleIndex="4" dataType="date" format="dd/MM/yyyy" width="150px" cssClass="tabular clipboard-holder"></dxi-column>
-            <dxi-column dataField="startDate" caption="" visibleIndex="5" dataType="date" format="dd/MM/yyyy" width="150px" cssClass="tabular clipboard-holder"></dxi-column>
-            <dxi-column dataField="endDate" caption="" visibleIndex="6" dataType="date" format="dd/MM/yyyy" width="150px" cssClass="tabular clipboard-holder"></dxi-column>
-            <dxi-column dataField="fee" caption="" visibleIndex="7" width="90px" cellTemplate="amountTemplate"></dxi-column>
-            <dxi-column dataField="status" caption="" visibleIndex="8" width="130px" cellTemplate="statusCell"></dxi-column>
-            <dxi-column caption="" visibleIndex="9" width="20px"></dxi-column>
+            <dxi-column dataField="id" [allowSorting]="false" caption="" visibleIndex="1" alignment="left" cellTemplate="captionTemplate"></dxi-column>
+            <dxi-column dataField="cog" [allowSorting]="false" caption="" visibleIndex="2" width="30px"></dxi-column>
+            <dxi-column dataField="invoiceDate" [allowSorting]="false" visibleIndex="3" dataType="date" format="dd/MM/yyyy" width="150px" cssClass="tabular clipboard-holder"></dxi-column>
+            <dxi-column dataField="paymentDate" [allowSorting]="false" visibleIndex="4" dataType="date" format="dd/MM/yyyy" width="150px" cssClass="tabular clipboard-holder"></dxi-column>
+            <dxi-column dataField="startDate" [allowSorting]="false" caption="" visibleIndex="5" dataType="date" format="dd/MM/yyyy" width="150px" cssClass="tabular clipboard-holder"></dxi-column>
+            <dxi-column dataField="endDate" [allowSorting]="false" caption="" visibleIndex="6" dataType="date" format="dd/MM/yyyy" width="150px" cssClass="tabular clipboard-holder"></dxi-column>
+            <dxi-column dataField="fee" [allowSorting]="false" caption="" visibleIndex="7" width="90px" cellTemplate="amountTemplate"></dxi-column>
+            <dxi-column dataField="status" [allowSorting]="false" caption="" visibleIndex="8" width="130px" cellTemplate="statusCell"></dxi-column>
+            <dxi-column caption="" [allowSorting]="false" visibleIndex="9" width="20px"></dxi-column>
 
             <div *dxTemplate="let cell of 'captionTemplate'" class="clipboard-holder installment">
                 <span [ngClass]="{invoice: !!cell.data.invoiceId}" (click)="onPaymentClick(cell)"> {{ 'Installment ' }}<b>{{'#' + cell.data.index}}</b> </span>
             </div>
-            <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
-                <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
+            <div *dxTemplate="let cell of 'amountTemplate'" class="amount clipboard-holder">
+                <span (click)="onPaymentClick(cell)"> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
             </div>
             <div *dxTemplate="let cell of 'statusCell'">
                 <div class="status {{cell.value.toLowerCase()}}">
