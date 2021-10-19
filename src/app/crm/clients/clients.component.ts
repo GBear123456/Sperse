@@ -594,7 +594,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         select(SubscriptionsStoreSelectors.getSubscriptions),
                         filter(Boolean), first()
                     ),
-                    dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
+                    dispatch: () => {
+                        if (this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts))
+                            this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false));
+                    },
                     nameField: 'name'
                 })
         }
@@ -997,7 +1000,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     private getFilters() {
-        return [
+        return [].concat([
             new FilterModel({
                 component: FilterInputsComponent,
                 operator: 'startswith',
@@ -1040,9 +1043,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         name: 'AffiliateCode'
                     })
                 }
-            }),
-            this.subscriptionStatusFilter,
-            new FilterModel({
+            })],
+            this.isGranted(AppPermissions.CRMOrders) ||
+                this.isGranted(AppPermissions.CRMProducts) ?
+                    [this.subscriptionStatusFilter] : [],
+            [new FilterModel({
                 component: FilterCalendarComponent,
                 operator: {from: 'ge', to: 'le'},
                 caption: 'creation',
@@ -1094,7 +1099,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 caption: 'parentId',
                 hidden: true
             })
-        ];
+        ]);
     }
 
     initToolbarConfig() {
