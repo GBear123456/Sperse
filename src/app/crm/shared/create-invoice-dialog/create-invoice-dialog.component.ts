@@ -77,6 +77,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { CustomerListDialogComponent } from '@app/crm/shared/create-invoice-dialog/customer-list-dialog/customer-list-dialog.component';
 import { CreateInvoiceDialogData } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog-data.interface';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
+import { InvoiceSettingsDialogComponent } from '../../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
 
 @Component({
     templateUrl: 'create-invoice-dialog.component.html',
@@ -905,7 +906,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     openInvoiceSettings() {
-        this.contactsService.showInvoiceSettingsDialog().subscribe(settings => {
+        this.dialog.open(InvoiceSettingsDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false
+        }).afterClosed()
+        .subscribe(settings => {
             if (settings) {
                 this.invoiceSettings = settings;
                 this.changeDetectorRef.detectChanges();

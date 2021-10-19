@@ -2,12 +2,15 @@
     .dx-state-invisible + .dx-list-item {
         border-top: none;
     }
-    .dx-list-item  {
+
+    .dx-list-item {
         border: none !important;
         text-align: left !important;
+
         .dx-item-content {
             position: relative;
             padding-right: 70px;
+
             div {
                 font-size: 13px;
                 letter-spacing: 0.26px;
@@ -38,6 +41,7 @@
 
                 &.sms {
                     font-family: Montserrat;
+
                     &:before {
                         font: normal normal normal 16px/1 FontAwesome;
                     }
@@ -71,6 +75,7 @@
 
                 &.delete {
                     color: #e7326a;
+
                     &:before {
                         content: url("../../../../assets/common/icons/delete-icon-red.svg");
                         height: 18px;
@@ -113,7 +118,13 @@
                     background: url("../../../../assets/landing/notification-icon.svg") center center no-repeat;
                     background-size: cover;
                 }
+
+                &.sync:before {
+                    content: "\f021";
+                    font: normal normal normal 14px/1 FontAwesome;
+                }
             }
+
             button {
                 margin-left: auto;
                 border: none;
@@ -127,12 +138,15 @@
                 bottom: 0;
             }
         }
+
         &.dx-state-focused {
             color: initial !important;
             background-color: #f5f5f5 !important;
         }
+
         &.dx-state-disabled .dx-item-content div.delete {
             color: #424c56;
+
             &:before {
                 content: url("../../../../assets/common/icons/delete-icon.svg");
             }

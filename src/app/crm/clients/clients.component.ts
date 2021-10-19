@@ -600,7 +600,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         select(SubscriptionsStoreSelectors.getSubscriptions),
                         filter(Boolean), first()
                     ),
-                    dispatch: () => this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false)),
+                    dispatch: () => {
+                        if (this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts))
+                            this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false));
+                    },
                     nameField: 'name',
                     itemsExpr: 'memberServiceLevels'
                 }
@@ -609,11 +612,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     filterBy: 'Products',
                     filterKey: 'ProductId',
-                    dataSource$: this.productProxy.getProducts(
-                        ProductType.Subscription
-                    ).pipe(map((products: ProductDto[]) => {
-                        return products.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
-                    })),
+                    dataSource$: this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts) ?
+                        this.productProxy.getProducts(
+                            ProductType.Subscription
+                        ).pipe(map((products: ProductDto[]) => {
+                            return products.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
+                        })) : undefined,
                     nameField: 'name',
                     keyExpr: 'id',
                     dataStructure: 'plain'
@@ -1034,7 +1038,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     private getFilters() {
-        return [
+        return [].concat([
             new FilterModel({
                 component: FilterInputsComponent,
                 operator: 'startswith',
@@ -1077,9 +1081,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         name: 'AffiliateCode'
                     })
                 }
-            }),
-            this.subscriptionStatusFilter,
-            new FilterModel({
+            })],
+            this.isGranted(AppPermissions.CRMOrders) ||
+                this.isGranted(AppPermissions.CRMProducts) ?
+                    [this.subscriptionStatusFilter] : [],
+            [new FilterModel({
                 component: FilterCalendarComponent,
                 operator: {from: 'ge', to: 'le'},
                 caption: 'creation',
@@ -1131,7 +1137,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 caption: 'parentId',
                 hidden: true
             })
-        ];
+        ]);
     }
 
     initToolbarConfig() {
@@ -1572,8 +1578,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     processFilterInternal() {
-        if (this.showDataGrid && this.dataGrid && this.dataGrid.instance
-            || this.showPivotGrid && this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance) {
+        if (this.showDataGrid && this.dataGrid && this.dataGrid.instance || this.showPivotGrid && 
+            this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
+        ) {
+            this.dataSource['total'] = this.dataSource['entities'] = undefined;
             this.processODataFilter(
                 (this.showPivotGrid ? this.pivotGridComponent : this).dataGrid.instance,
                 this.dataSourceURI,

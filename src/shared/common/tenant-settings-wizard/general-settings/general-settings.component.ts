@@ -96,7 +96,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
         public ls: AppLocalizationService
     ) {
         if (this.paymentSettingsAllowed)
-            this.tenantPaymentSettingsProxy.getInvoiceSettings().subscribe(res => {
+            this.tenantPaymentSettingsProxy.getInvoiceSettings(false).subscribe(res => {
                 this.paymentSettings = res;
                 this.changeDetectorRef.detectChanges();
             });

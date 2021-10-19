@@ -10,7 +10,7 @@
                                 <mat-panel-title>{{ ls.l('AffiliateInfo') }}</mat-panel-title>
                                 <span class="dx-icon-clock history-icon" (click)="showAffiliateHistory($event)" [title]="ls.l('AffiliateHistory')"></span>
                             </mat-expansion-panel-header>
-                            <div class="field affiliate-code" [ngClass]="{'zero': affiliateRate == 0, 'undefined': affiliateRate === null}">
+                            <div class="field affiliate-code {{contactInfo?.affiliateServiceStatus}}">
                                 <inplace-edit [id]="contactInfo?.id"
                                               lEntityName="Name"
                                               [editPlaceholder]="ls.l('AffiliateEditPlaceholder')"
@@ -24,6 +24,14 @@
                                               (valueChanged)="updateAffiliateCode($event)"
                                               (itemDeleted)="deleteItem(ls.l('Affiliate'))">
                                 </inplace-edit>
+                            </div>
+                            <div class="field isAdvisor" *ngIf="hasBankCodeFeature">
+                                <dx-check-box [disabled]="!affiliateManageAllowed || !contactInfo?.personContactInfo.userId"
+                                              [value]="isAdvisor$ | async"
+                                              [text]="':' + ls.l('IsAdvisor')"
+                                              rtlEnabled="true"
+                                              (onValueChanged)="updateIsAdvisor($event)">
+                                </dx-check-box>
                             </div>
                             <div class="field tier" *ngIf="hasCommissionsFeature">
                                 <label>{{ ls.l('AffiliateRateTier1') }}:</label>

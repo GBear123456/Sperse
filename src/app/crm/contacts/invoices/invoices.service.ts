@@ -8,7 +8,7 @@ import { Observable, ReplaySubject } from 'rxjs';
 import {
     UpdateInvoiceStatusInput,
     InvoiceServiceProxy,
-    InvoiceSettings,
+    InvoiceSettingsDto,
     InvoiceStatus,
     TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
@@ -17,8 +17,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 
 @Injectable()
 export class InvoicesService {
-    private settings: ReplaySubject<InvoiceSettings> = new ReplaySubject<any>(1);
-    settings$: Observable<InvoiceSettings> = this.settings.asObservable();
+    private settings: ReplaySubject<InvoiceSettingsDto> = new ReplaySubject<any>(1);
+    settings$: Observable<InvoiceSettingsDto> = this.settings.asObservable();
 
     constructor(
         private invoiceProxy: InvoiceServiceProxy,
@@ -34,7 +34,7 @@ export class InvoicesService {
             this.permissionService.isGranted(AppPermissions.CRMOrdersInvoices) ||
             this.permissionService.isGranted(AppPermissions.CRMSettingsConfigure)
         ))
-            this.tenantPaymentSettingsProxy.getInvoiceSettings().subscribe(res => {
+            this.tenantPaymentSettingsProxy.getInvoiceSettings(true).subscribe(res => {
                 this.settings.next(res);
             });
     }

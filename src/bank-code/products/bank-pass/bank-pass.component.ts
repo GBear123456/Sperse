@@ -149,12 +149,20 @@ export class BankPassComponent implements OnInit, OnDestroy {
         })
     });
     formatting = AppConsts.formatting;
-    hasSubscription$: Observable<boolean> = (this.shared
-        ? of(this.permissionService.isGranted(AppPermissions.CRMCustomers))
-        : zip(this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass), this.profileService.checkServiceSubscription(BankCodeServiceType.Connect))
-            .pipe(map((res: boolean[]) => res.some(Boolean)))
+    hasConnectSubscription$: Observable<boolean> = zip(
+        this.profileService.checkServiceSubscription(BankCodeServiceType.Connect),
+        this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPassOnly),
+    ).pipe(map((res: boolean[]) => res.some(Boolean)));
+    hasSubscription$: Observable<boolean> = zip(
+        this.profileService.checkServiceSubscription(BankCodeServiceType.BANKVault),
+        this.profileService.checkServiceSubscription(BankCodeServiceType.BANKPass),
+        this.profileService.checkServiceSubscription(BankCodeServiceType.StarterKitPro).pipe(
+            map((enabled: boolean) => enabled && this.profileService.isAscira)
+        ),
+        this.hasConnectSubscription$
     ).pipe(
-        tap((hasSubscription) => setTimeout(() => {
+        map((res: boolean[]) => res.some(Boolean)),
+        tap((hasSubscription: boolean) => setTimeout(() => {
             if (hasSubscription) this.dataIsLoading = false;
             this.changeDetectorRef.detectChanges();
         }))

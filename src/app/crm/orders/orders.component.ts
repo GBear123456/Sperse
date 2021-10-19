@@ -93,6 +93,7 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
+import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -902,8 +903,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     );
                 },
                 onLoaded: (records) => {
+                    let dataSource = this.showOrdersPipeline ? this.pipelineDataSource : this.ordersDataSource;
                     if (records instanceof Array)
-                        this.ordersDataSource['entities'] = (this.ordersDataSource['entities'] || []).concat(records);
+                        dataSource['entities'] = (dataSource['entities'] || []).concat(records);
                 }
             }
         };
@@ -1502,9 +1504,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     processFilterInternal() {
         let context: any = this;
-        let grid = this.selectedOrderType.value === OrderType.Order
-            ? this.ordersGrid
-            : (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid ? this.subscriptionsGrid : this.pivotGridComponent.dataGrid);
+        let grid: any;
+
+        if (this.selectedOrderType.value === OrderType.Order) {
+            grid = this.ordersGrid;
+            this.ordersDataSource['entities'] = this.ordersDataSource['total'] = undefined;
+        } else if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
+            grid = this.subscriptionsGrid;
+            this.subscriptionsDataSource['entities'] = this.subscriptionsDataSource['total'] = undefined;
+        } else
+            grid = this.pivotGridComponent.dataGrid;
+
         if (this.selectedOrderType.value === OrderType.Order && this.showOrdersPipeline && this.pipelineComponent) {
             context = this.pipelineComponent;
             context.searchColumns = this.searchColumns;
@@ -1613,6 +1623,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }) {
         if (entity && entity.ContactId) {
             let isOrder = this.selectedOrderType.value === OrderType.Order;
+
+            if (!this.isGranted(AppPermissions.CRMOrdersInvoices))
+                section = 'contact-information';
+
             this.searchClear = false;
             this._router.navigate(
                 CrmService.getEntityDetailsLink(entity.ContactId, section, entity.LeadId),
@@ -1644,7 +1658,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     invoiceSettings() {
-        this.contactsService.showInvoiceSettingsDialog();
+        this.dialog.open(InvoiceSettingsDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+        });
     }
 
     onOrderStageChanged(order: OrderDto) {

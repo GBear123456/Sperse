@@ -74,6 +74,9 @@
                                            [(value)]="subscription.level"
                                            showClearButton="true"
                                            (onValueChanged)="onServiceLevelChanged($event, subscription)">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="{{ls.l('RequiredField', 'Level')}}."></dxi-validation-rule>
+                                </dx-validator>
                             </dx-select-box>
                         </div>
                         <div class="field">

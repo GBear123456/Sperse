@@ -115,6 +115,9 @@
                         </div>
                         <div class="col-md-4">
                             <h5>{{l('CustomFavicons')}}</h5>
+                            <p *ngIf="appSession.tenant.tenantCustomizations?.favicons?.length">
+                                <a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons'" target="_blank">{{l('Download')}}</a>
+                            </p>
                             <form #faviconsUploadForm>
                                 <div class="form-group row">
                                     <input type="file" ng2FileSelect [uploader]="faviconsUploader" class="col-lg-12" required #faviconInput />

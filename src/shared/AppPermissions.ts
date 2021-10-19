@@ -75,6 +75,8 @@ export enum AppPermissions {
     CRMFileStorageTemplatesManage = 'Pages.CRM.FileStorage.Templates.Manage',
     CRMFileStorageMemberPortal = 'Pages.CRM.FileStorage.MemberPortal',
     CRMFileStorageMemberPortalManage = 'Pages.CRM.FileStorage.MemberPortal.Manage',
+    CRMProducts = 'Pages.CRM.Products',
+    CRMProductsManage = 'Pages.CRM.Products.Manage',
     CRMCustomers = 'Pages.CRM.Customers',
     CRMCustomersManage = 'Pages.CRM.Customers.Manage',
     CRMCustomersManageAllCompanies = 'Pages.CRM.Customers.ManageAllCompanies',

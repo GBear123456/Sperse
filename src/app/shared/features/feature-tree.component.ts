@@ -23,13 +23,17 @@ export class FeatureTreeComponent implements AfterViewInit {
             this.refreshTree();
         }
     }
+    @Input() isReadOnly: boolean = false;
 
     private _editData: FeatureTreeEditModel;
     private $tree: JQuery;
     private createdTreeBefore;
     initialGrantedFeatures;
 
-    constructor(private element: ElementRef) {}
+    constructor(private element: ElementRef) {
+        if (this.isReadOnly)
+            this.showResetToDefault = false;
+    }
 
     ngAfterViewInit(): void {
         this.$tree = $(this.element.nativeElement);
@@ -220,10 +224,12 @@ export class FeatureTreeComponent implements AfterViewInit {
                     }
 
                     const $textbox = $(
-                        '<input class="feature-tree-textbox" type="' + inputType +                        
-                        '" placeholder="' + featureDefaultValue + '"' + 
+                        '<input class="feature-tree-textbox" type="' + inputType +
+                        '" placeholder="' + featureDefaultValue + '"' +
                         (self.showResetToDefault ? ' required' : '') + '/>'
                     ).val(featureValue);
+                    if (self.isReadOnly)
+                        $textbox.attr('disabled', 'disabled');
 
                     if (inputType === 'number') {
                         $textbox.attr('min', validator.minValue || validator.attributes['MinValue']);
@@ -276,7 +282,8 @@ export class FeatureTreeComponent implements AfterViewInit {
                             .text(opt.displayText)
                             .appendTo($combobox);
                     });
-
+                    if (self.isReadOnly)
+                        $combobox.attr('disabled', 'disabled');
                     $combobox
                         .val(featureValue)
                         .on('change', () => {
@@ -285,6 +292,10 @@ export class FeatureTreeComponent implements AfterViewInit {
                         })
                         .appendTo($nodeLi);
                 }
+            }
+
+            if (self.isReadOnly) {
+                self.$tree.jstree().disable_node($(this));
             }
         });
     }

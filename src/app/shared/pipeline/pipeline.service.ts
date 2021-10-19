@@ -21,12 +21,14 @@ import { EntityCancelDialogComponent } from './confirm-cancellation-dialog/confi
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { Stage } from '@app/shared/pipeline/stage.model';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { MessageService } from '@abp/message/message.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 interface StageColor {
     [stageSortOrder: string]: string;
@@ -79,6 +81,7 @@ export class PipelineService {
         private orderService: OrderServiceProxy,
         private activityService: ActivityServiceProxy,
         private pipelineServiceProxy: PipelineServiceProxy,
+        private permission: AppPermissionService,
         private ls: AppLocalizationService,
         private notify: NotifyService,
         private store$: Store<CrmStore.State>,
@@ -326,18 +329,18 @@ export class PipelineService {
                 return this.processLeadInternal(entity,
                     {...entity.data, fromStage, toStage, ignoreChecklist: ignore}, complete);
             if (!useLastData || !this.lastEntityData$) {
-                this.lastEntityData$ = fromStage.pipeline.contactGroupId == ContactGroup.Client ? this.getPipelineDefinitionObservable(
-                    AppConsts.PipelinePurposeIds.order,
-                    null
-                ).pipe(first(),
-                    switchMap((pipeline: PipelineDto) => {
-                        return this.dialog.open(LeadCompleteDialogComponent, {
-                            data: {
-                                entity: entity,
-                                stages: pipeline.stages
-                            }
-                        }).afterClosed();
-                    }), publishReplay(), refCount()
+                this.lastEntityData$ = fromStage.pipeline.contactGroupId == ContactGroup.Client &&
+                    this.permission.isGranted(AppPermissions.CRMOrders) ? this.getPipelineDefinitionObservable(
+                        AppConsts.PipelinePurposeIds.order, null
+                    ).pipe(first(),
+                        switchMap((pipeline: PipelineDto) => {
+                            return this.dialog.open(LeadCompleteDialogComponent, {
+                                data: {
+                                    entity: entity,
+                                    stages: pipeline.stages
+                                }
+                            }).afterClosed();
+                        }), publishReplay(), refCount()
                 ) : of({});
             }
 

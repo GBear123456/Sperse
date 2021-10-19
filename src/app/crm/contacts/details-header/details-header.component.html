@@ -16,8 +16,10 @@
                               lEntityName="Name"
                               [editPlaceholder]="ls.l('ClientNamePlaceholder')"
                               [isEditDialogEnabled]="true"
+                              [isHistoryEnabled]="true"
                               (valueChanged)="updatePrimaryContactName($event)"
-                              (openDialog)="showEditPersonDialog($event)">
+                              (openDialog)="showEditPersonDialog($event)"
+                              (onHistoryClick)="showPersonHistory($event)">
                 </inplace-edit>
             </h1>
         </div>

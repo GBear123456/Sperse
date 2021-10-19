@@ -23,11 +23,14 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppFeatures } from '@shared/AppFeatures';
+import { DynamicMatDialog } from '@shared/common/dialogs/dynamic-overlay/dynamic-dialog';
+import { DYNAMIC_MAT_DIALOG_PROVIDERS } from '@shared/common/dialogs/dynamic-overlay/dynamic-overlay.module';
 
 @Component({
     selector: 'bank-code-letters',
     templateUrl: './bank-code-letters.component.html',
     styleUrls: ['./bank-code-letters.component.less'],
+    providers: DYNAMIC_MAT_DIALOG_PROVIDERS,
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankCodeLettersComponent implements OnChanges, OnDestroy {
@@ -107,10 +110,12 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
         public dialog: MatDialog,
+        public customDialog: DynamicMatDialog,
         public bankCodeService: BankCodeService,
         public features: FeatureCheckerService,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+    }
 
     ngOnChanges(change: SimpleChanges) {
         if (change.bankCode && change.bankCode.currentValue && (this.showBankCodeDefinition || this.showReportLink)) {
@@ -130,7 +135,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     showEditPopup(e) {
         if (!this.dialog.getDialogById('bankCodeLettersEditorDialog')) {
             this.editPopupIsOpened = true;
-            const editDialog = this.dialog.open(BankCodeLettersEditorDialogComponent, {
+            const editDialog = this.customDialog.open(BankCodeLettersEditorDialogComponent, {
                 id: 'bankCodeLettersEditorDialog',
                 hasBackdrop: true,
                 backdropClass: 'no-backdrop',

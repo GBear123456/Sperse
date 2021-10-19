@@ -21,7 +21,6 @@
                      [visible]="!!actionEvent"
                      class="grouped-action-menu"
                      width="300px"
-                     [grouped]="true"
                      (onItemClick)="onMenuItemClick($event)">
         </action-menu>
         <div class="portlet light no-padding margin-bottom-0">
@@ -38,14 +37,7 @@
                     [columnChooser]="{
                         height: rowsViewHeight
                     }"
-                    [remoteOperations]="{ 
-                        filtering: false, 
-                        grouping: false, 
-                        groupPaging: true, 
-                        paging: true, 
-                        sorting: true, 
-                        summary: true 
-                    }"
+                    [remoteOperations]="{ filtering: false }"
                     [loadPanel]="{ enabled: false }"
                     [pager]="defaultGridPagerConfig"
                     (onOptionChanged)="onGridOptionChanged($event)"
@@ -61,7 +53,7 @@
                     <dxo-editing mode="popup"
                         [texts]="{ editRow: '' }"
                         [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
-                        [allowUpdating]="true">
+                        [allowUpdating]="!isReadOnly">
                     </dxo-editing>
 
                     <dxi-column [dataField]="productFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>

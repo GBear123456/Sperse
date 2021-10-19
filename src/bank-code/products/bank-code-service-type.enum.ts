@@ -1,9 +1,21 @@
 export enum BankCodeServiceType {
     BANKAffiliate = 'Affiliate',
+    BANKAudio = 'BANK AUDIO',
     BANKPass = 'BANKPASS',
+    BANKPassOnly = 'BANKPASS ONLY',
     BANKVault = 'BANKVAULT',
     BANKTrainer = 'Certified Trainer',
     BANKCoach = 'Certified Coach',
+    BCRM = 'BCRM',
     WTBeBook = 'WTB eBook',
-    Connect = 'Connect'
+    Profile = 'Profile',
+    Connect = 'Connect',
+    Coin = 'COIN',
+    Partner = 'PARTNER',
+    StarterKit = 'KICKSTARTER',
+    StarterKitPro = 'KICKSTARTERPRO',
+    MasterClassSales = 'MASTERCLASS SALES',
+    MasterClassRelationships = 'MASTERCLASS RELATIONSHIPS',
+    AdvancedAssessment = 'ADVANCED ASSESSMENT',
+    CodebreakerAI = 'AI'
 }
