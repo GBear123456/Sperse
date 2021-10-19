@@ -6,7 +6,7 @@ import {
 
 /** Third party imports */
 import * as moment from 'moment';
-import { Observable, forkJoin, zip, combineLatest } from 'rxjs';
+import { Observable, combineLatest } from 'rxjs';
 import { finalize, first, filter } from 'rxjs/operators';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
