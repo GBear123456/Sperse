@@ -1,7 +1,12 @@
 :host {
+    position: relative;
     h2 {
-        padding: 20px;
-
+        z-index: 1;
+        width: calc(100vw - 351px);
+        height: 42px;
+        padding: 5px 20px;
+        position: absolute;
+        font-size: 1.8em;
         span {
             font-size: 16px;
             line-height: 40px;
@@ -47,7 +52,7 @@
     }
 
     ::ng-deep .main-component-view {
-        height: calc(~'100vh - 300px');
+        height: calc(~'100vh - 220px');
         ::ng-deep dx-date-box {
             background: transparent;
             display: inline-block;
@@ -59,10 +64,64 @@
                 display: none;
             }
         }
+        .dx-data-row.expanded {
+            background: #f2f7fa !important;            
+            .dx-link.dx-link-edit.action {
+                display: inline-block!important;
+            }
+            .time {
+                display: block;    
+            }
+            .date-hidden {
+                color: #f2f7fa;
+            }
+        }
+        .dx-master-detail-row {
+            .dx-datagrid-rowsview {
+                border: none !important;
+                tr:not(:last-child) td {
+                    border-bottom: none !important;
+                    border-top: 1px solid transparent;
+                    position: relative;
+                    &:after {
+                        content: '';
+                        display: block;
+                        position: absolute;
+                        height: 1px;
+                        background: #dedede;
+                        width: 100%;
+                        bottom: 0;
+                        left: 0;
+                    }
+                }
+                tr:not(:last-child) td:first-child {
+                    &:after {
+                        margin-left: 60px;
+                    }
+                }
+            }
+            .dx-gridbase-container {
+                background: #f2f7fa !important;
+                .dx-datagrid-scroll-container {
+                    border: 0;
+                }
+            }
+            .dx-datagrid-headers {
+                border: none !important;
+                tr, td {
+                    border: none !important;
+                }
+                .dx-datagrid-text-content {
+                    color: #959595;
+                    font-size: 14px;
+                    font-weight: 400;
+                }
+            }
+        }
         .dx-master-detail-cell {
             padding: 0!important;
             .dx-datagrid-rowsview td {
-                height: 64px!important;
+                height: 40px!important;
             }
         }
         .dx-datagrid-focus-overlay.dx-pointer-events-target {
@@ -75,6 +134,9 @@
             content: none!important;
         }
         .dx-datagrid-headers {
+            td[aria-colindex="7"] {
+                padding-right: 30px;
+            }
             .dx-header-row:first-child {
                 border-bottom: 1px solid #dedede;
             }
@@ -83,24 +145,28 @@
                 &:before {
                     content: "";
                     position: absolute;
-                    left: 0;
+                    left: 5px;
                     bottom: 0;
                     height: 1px;
-                    width: 347px;
+                    width: 280px;
                     border-bottom: 1px solid #000;
                 }
                 &.second:before {
-                    width: 300px;
+                    width: 230px;
+                }
+                & > div {
+                    text-align: center;
+                    width: 280px;    
+                }
+                &.second > div {
+                    width: 230px;
                 }
                 color: #000;
-                font-weight: 600;
+                font-weight: 500;
             }
             td.dx-command-edit + td:before {
                 content: none!important;
             }
-        }
-        .dx-datagrid-content table col:first-child {
-            width: 18px!important;
         }
         .dx-datagrid-pager {
             border-top: none;
@@ -121,14 +187,55 @@
                 }
             }
         }
+        .product-name-wrapper {
+            display: inline-table;
+            vertical-align: middle;
+        }
         .product-name {
             font-weight: 500;
-            color: #4a50ff;
-            font-size: 18px;
+            color: #00aeef;
+            font-size: 15px;
             b {
                 color: #000;
-                font-size: 16px;
+                font-size: 15px;
                 margin-right: 10px;
+            }
+            &:hover {
+                cursor: pointer;
+                text-decoration: underline;
+            }
+        }
+        .product-icon-wrapper {
+            display: inline-block;
+        }  
+        .amount:hover {
+            cursor: pointer;
+            text-decoration: underline;
+        }        
+        .date-hidden {
+            width: 0px;
+            color: #fff;
+            display: inline-block;
+        }
+        .time {
+            display: none;
+        }
+        .installment {
+            padding-left: 64px;
+            .invoice {
+                cursor: pointer;
+                text-decoration: underline;
+                &:hover {
+                    color: #00aeef;
+                }
+            }
+        }
+        .dx-link.dx-link-edit.action {
+            display: none;
+        }
+        .dx-column-lines:hover {
+            .dx-link.dx-link-edit.action {
+                display: inline-block;
             }
         }
         .services {
