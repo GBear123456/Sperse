@@ -14,8 +14,8 @@
                 <div class="data-section">
                     <div class="row">
                         <div class="col-md-6 history-prop-column">
-                            <ng-container *ngFor="let key of Object.keys(personHistoryDto); even as even">
-                                <div *ngIf="even" class="history-prop">
+                            <ng-container *ngFor="let key of Object.keys(personHistoryDto); index as i">
+                                <div *ngIf="canShowProperty(personHistoryDto, i, true)" class="history-prop">
                                     <label class="control-label">{{ls.l('PersonHistory_'+key)}}:</label>
                                     <span class="form-control-static" [title]="personHistoryDto[key]">
                                         {{personHistoryDto[key]}}
@@ -24,8 +24,8 @@
                             </ng-container>
                         </div>
                         <div class="col-md-6 history-prop-column">
-                            <ng-container *ngFor="let key of Object.keys(personHistoryDto); odd as odd">
-                                <div *ngIf="odd" class="history-prop">
+                            <ng-container *ngFor="let key of Object.keys(personHistoryDto); index as i">
+                                <div *ngIf="canShowProperty(personHistoryDto, i, false)" class="history-prop">
                                     <label class="control-label">{{ls.l('PersonHistory_'+key)}}:</label>
                                     <span class="form-control-static" [title]="personHistoryDto[key]">
                                         {{personHistoryDto[key]}}
