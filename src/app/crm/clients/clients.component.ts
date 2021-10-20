@@ -616,11 +616,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     filterBy: 'Products',
                     filterKey: 'ProductId',
-                    dataSource$: this.productProxy.getProducts(
-                        ProductType.Subscription
-                    ).pipe(map((products: ProductDto[]) => {
-                        return products.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
-                    })),
+                    dataSource$: this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts) ?
+                        this.productProxy.getProducts(
+                            ProductType.Subscription
+                        ).pipe(map((products: ProductDto[]) => {
+                            return products.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
+                        })) : undefined,
                     nameField: 'name',
                     keyExpr: 'id',
                     dataStructure: 'plain'
