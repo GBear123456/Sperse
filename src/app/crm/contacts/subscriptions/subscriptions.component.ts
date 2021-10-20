@@ -83,7 +83,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         },
         {
             text: this.ls.l('Cancel'),
-            class: 'cancel',
+            class: 'delete',
             checkVisible: () => 
                 this.actionRecordData.statusCode === 'A' && 
                 this.permission.isGranted(AppPermissions.CRMOrdersManage),
@@ -337,6 +337,12 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                 }
             }
         });        
+    }
+
+    toogleMorePayment(grid, event) {
+        let visible = grid.instance.option('paging.enabled');
+        grid.instance.option('paging.enabled', !visible);
+        event.target.innerText = this.ls.l(visible ? 'Hide' : 'ShowAll');
     }
 
     ngOnDestroy() {

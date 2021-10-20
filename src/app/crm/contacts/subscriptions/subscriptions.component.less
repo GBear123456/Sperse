@@ -1,12 +1,14 @@
 :host {
     position: relative;
     h2 {
+        margin: 0;
         z-index: 1;
+        color: #151617;
         width: calc(100vw - 351px);
-        height: 42px;
-        padding: 5px 20px;
+        height: 80px;
+        padding: 24px 20px;
         position: absolute;
-        font-size: 1.8em;
+        font-size: 23px;
         span {
             font-size: 16px;
             line-height: 40px;
@@ -32,15 +34,21 @@
         color: #00aeef;
         margin-right: 10px;
         cursor: pointer;
+        border: 1px solid #DDDDDD;
+        border-radius: 5px;
+        padding: 2px 10px;
+        position: relative;
+        bottom: 8px;
         &:before {
             content: '+';
             background-color: #00aeef;
             border-radius: 50%;
             color: #fff;
-            width: 16px;
-            height: 16px;
+            width: 22px;
+            height: 22px;
             display: inline-block;
-            line-height: 16px;
+            line-height: 22px;
+            font-size: 22px;
             text-align: center;
         }
     }
@@ -65,22 +73,52 @@
             }
         }
         .dx-data-row.expanded {
-            background: #f2f7fa !important;            
+            background: #F9FBFC !important;            
+            td {
+                border-bottom: none !important;
+                position: relative;
+                &:after {
+                    content: '';
+                    display: block;
+                    position: absolute;
+                    height: 1px;
+                    background: #dedede;
+                    width: 100%;
+                    bottom: 1px;
+                    left: 0;
+                }
+                &:first-child {
+                    &:after {
+                        left: 100px;
+                    }        
+                }
+            }
             .dx-link.dx-link-edit.action {
                 display: inline-block!important;
             }
             .time {
-                display: block;    
+                display: block;
+                color: #777E84;
+                font-size: 14px;
             }
             .date-hidden {
-                color: #f2f7fa;
+                color: #F9FBFC;
             }
         }
         .dx-master-detail-row {
+            position: relative;
+            .show-more {
+                position: absolute;
+                z-index: 1;
+                bottom: 12px;
+                left: 20px;
+                cursor: pointer;
+                color: #00aeef;
+            }
             .dx-datagrid-rowsview {
                 border: none !important;
                 tr:not(:last-child) td {
-                    border-bottom: none !important;
+                    border-bottom: none;
                     border-top: 1px solid transparent;
                     position: relative;
                     &:after {
@@ -90,18 +128,25 @@
                         height: 1px;
                         background: #dedede;
                         width: 100%;
-                        bottom: 0;
+                        top: 0;
                         left: 0;
                     }
                 }
                 tr:not(:last-child) td:first-child {
                     &:after {
-                        margin-left: 60px;
+                        margin-left: 100px;
                     }
+                }
+                tr:nth-last-child(2) td {
+                    border-bottom: 1px solid #dedede;
+                }
+                .tabular {
+                    color: #777E84;
+                    font-size: 14px;
                 }
             }
             .dx-gridbase-container {
-                background: #f2f7fa !important;
+                background: #F9FBFC !important;
                 .dx-datagrid-scroll-container {
                     border: 0;
                 }
@@ -120,8 +165,14 @@
         }
         .dx-master-detail-cell {
             padding: 0!important;
+            border: none!important;
             .dx-datagrid-rowsview td {
-                height: 40px!important;
+                height: 50px!important;
+            }
+            .dx-datagrid-headers {
+                tr, td {
+                    height: 30px!important;
+                }
             }
         }
         .dx-datagrid-focus-overlay.dx-pointer-events-target {
@@ -129,16 +180,27 @@
         }
         .date-time {
             display: inline-block;
+            color: #777E84;
+            font-size: 14px;
         }
         .dx-datagrid-expand:before {
             content: none!important;
         }
         .dx-datagrid-headers {
+            td[aria-colindex="1"] div {
+                padding-left: 15px;
+            }
             td[aria-colindex="7"] {
                 padding-right: 30px;
             }
             .dx-header-row:first-child {
                 border-bottom: 1px solid #dedede;
+                td:first-child {
+                    height: 80px;
+                }
+            }
+            .dx-header-row:last-child {
+                height: 60px;
             }
             .header-top {
                 position: relative;
@@ -149,10 +211,10 @@
                     bottom: 0;
                     height: 1px;
                     width: 280px;
-                    border-bottom: 1px solid #000;
+                    border-bottom: 1px solid #151617;
                 }
                 &.second:before {
-                    width: 230px;
+                    width: 234px;
                 }
                 & > div {
                     text-align: center;
@@ -161,7 +223,7 @@
                 &.second > div {
                     width: 230px;
                 }
-                color: #000;
+                color: #151617;
                 font-weight: 500;
             }
             td.dx-command-edit + td:before {
@@ -194,10 +256,10 @@
         .product-name {
             font-weight: 500;
             color: #00aeef;
-            font-size: 15px;
+            font-size: 14px;
             b {
                 color: #000;
-                font-size: 15px;
+                font-size: 14px;
                 margin-right: 10px;
             }
             &:hover {
@@ -207,10 +269,23 @@
         }
         .product-icon-wrapper {
             display: inline-block;
-        }  
-        .amount:hover {
-            cursor: pointer;
-            text-decoration: underline;
+            padding: 4px 15px;
+            height: 72px;
+        }          
+        .amount {
+            color: #151617;
+            font-size: 14px;
+            font-weight: 500;
+            &:hover {                
+                cursor: pointer;
+                text-decoration: underline;
+            }
+        }
+        .date-box {
+            dx-date-box {
+                height: 22px;
+                top: 5px;
+            }
         }        
         .date-hidden {
             width: 0px;
@@ -221,9 +296,11 @@
             display: none;
         }
         .installment {
-            padding-left: 64px;
+            padding-left: 100px;
             .invoice {
+                color: #777E84;
                 cursor: pointer;
+                font-size: 14px;
                 text-decoration: underline;
                 &:hover {
                     color: #00aeef;
@@ -239,8 +316,8 @@
             }
         }
         .services {
-            font-size: 14px;
-            color: #d3d3d3;
+            font-size: 13px;
+            color: #777E84;
         }
         .status {
             background: #f3f7fa;
@@ -252,7 +329,7 @@
             border: 0;
             font-weight: 400 !important;
             border-radius: 15px;
-            padding: 2px 0 2px 10px;
+            padding: 4px 0 4px 10px;
             font-family: 'Montserrat',sans-serif;
             font-size: 12px;
             &::before {
@@ -279,11 +356,11 @@
                 width: 20px;
                 height: 20px;
                 border-radius: 50%;
-                background: #f3f7fa;
+                background: #F3F7FA;
                 color: #80cfed;
                 position: absolute;
                 right: -24px;
-                top: 1px;
+                top: 3px;
                 text-transform: lowercase;
                 font-weight: 600;
                 font-size: 14px;
@@ -295,7 +372,7 @@
                 background: #dedede;
             }
             &.failed::before {
-                background: red;
+                background: #5EB912;
             }
         }
     }
