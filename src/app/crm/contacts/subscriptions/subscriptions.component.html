@@ -1,8 +1,5 @@
 <h2>
     {{ ls.l('Subscriptions') }}
-    <span *ngIf="manageAllowed" class="add-subscription pull-right" (click)="openSubscriptionDialog($event)">
-        {{ ls.l('AddSubscription') }}
-    </span>
 </h2>
 <action-menu 
     target=""
