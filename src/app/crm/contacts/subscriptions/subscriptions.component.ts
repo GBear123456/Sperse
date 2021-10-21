@@ -7,7 +7,6 @@ import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material/dialog';
 import { map, first, filter, finalize } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
-import * as _ from 'underscore';
 
 /** Application imports */
 import {
@@ -173,12 +172,17 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                                 return service.serviceName + (service.levelName ? '(' + service.levelName + ')' : '');
                             }).join(', ');
                         }
-                        let paymentCount = record.payments.length;
-                        if (record.payments && paymentCount) {
-                            record.payments.forEach((payment, i) => {
-                                payment['index'] = paymentCount - i;
+
+                        if (record.payments) {
+                            record['totals'] = {};
+                            record.payments.forEach(payment => {
+                                if (['Approved', 'Active'].indexOf(payment.status) >= 0) {
+                                    if (!record['totals'][payment.type])
+                                        record['totals'][payment.type] = 0;
+                                    record['totals'][payment.type] += payment.fee;
+                                }
                             });
-                        }
+                        }                        
                     });
                     this.orderSubscriptionProxy['data'] = {
                         contactId: contactId,

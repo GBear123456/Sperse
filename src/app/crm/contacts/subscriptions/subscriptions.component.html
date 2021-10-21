@@ -108,7 +108,21 @@
         </div>
     </div>
     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
-        <span (click)="toogleMasterDatails(cell)" class="amount"> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
+        <span id="product{{cell.data.id}}" (click)="toogleMasterDatails(cell)" class="amount"> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
+        <dx-tooltip 
+            position="bottom" 
+            target="#product{{cell.data.id}}" 
+            showEvent="dxhoverstart" 
+            hideEvent="dxhoverend">
+            <div *dxTemplate="let data = data of 'content'" class="product-payment-details">
+                <div><h3>{{ls.l('Type')}}</h3><h3>{{ls.l('Totals')}}</h3></div>
+                <div *ngIf="cell?.data?.totals['OriginalPayment'] as amount" class="initial"><label>{{ls.l('SubscriptionPaymentType_OriginalPayment')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
+                <div *ngIf="cell?.data?.totals['Installment'] as amount" class="installment"><label>{{ls.l('SubscriptionPaymentType_Installment')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
+                <div *ngIf="cell?.data?.totals['Refund'] as amount" class="refund"><label>{{ls.l('SubscriptionPaymentType_Refund')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
+                <div *ngIf="cell?.data?.totals['Chargeback'] as amount" class="chargeback"><label>{{ls.l('SubscriptionPaymentType_Chargeback')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
+                <div *ngIf="cell?.data?.totals['RecurringBilling'] as amount" class="recurring"><label>{{ls.l('SubscriptionPaymentType_RecurringBilling')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
+            </div>
+        </dx-tooltip>
     </div>
     <div *dxTemplate="let detail of 'detail'">
         <span *ngIf="detail?.data?.payments?.length > 4" class="show-more" (click)="toogleMorePayment(details, $event)">{{ls.l('ShowAll')}}</span>
@@ -135,15 +149,27 @@
             <dxi-column caption="" [allowSorting]="false" visibleIndex="9" width="20px"></dxi-column>
 
             <div *dxTemplate="let cell of 'captionTemplate'" class="clipboard-holder installment">
-                <span [ngClass]="{invoice: !!cell.data.invoiceId}" (click)="onPaymentClick(cell)"> {{ 'Installment ' }}<b>{{'#' + cell.data.index}}</b> </span>
+                <span [ngClass]="{invoice: !!cell.data.invoiceId}" (click)="onPaymentClick(cell)"> {{ ls.l('SubscriptionPaymentType_' + cell.data.type) }}<b>{{' #' + cell.data.seqNo}}</b> </span>
             </div>
             <div *dxTemplate="let cell of 'amountTemplate'" class="amount clipboard-holder">
                 <span (click)="onPaymentClick(cell)"> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
             </div>
             <div *dxTemplate="let cell of 'statusCell'">
-                <div class="status {{cell.value.toLowerCase()}}">
+                <div id="payment{{cell.data.id}}" class="status {{cell.value.toLowerCase()}}">
                     {{ cell.value }}
                 </div>
+                <dx-tooltip 
+                    *ngIf="cell.data.paymentProvider || cell.data.paymentId || cell.data.authorizationCode"
+                    position="bottom" 
+                    target="#payment{{cell.data.id}}" 
+                    showEvent="dxhoverstart" 
+                    hideEvent="dxhoverend">
+                    <div *dxTemplate="let data = data of 'content'" class="product-payment-details">
+                        <div><label>{{ls.l('Provider')}}:&nbsp;</label><span>{{cell.data.paymentProvider}}</span></div>
+                        <div><label>{{ls.l('PaymentId')}}:&nbsp;</label><span>{{cell.data.paymentId}}</span></div>
+                        <div><label>{{ls.l('Auth')}}:&nbsp;</label><span>{{cell.data.authorizationCode}}</span></div>
+                    </div>
+                </dx-tooltip>
             </div>
         </dx-data-grid>
     </div>
