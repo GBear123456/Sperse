@@ -25636,6 +25636,62 @@ export class OrganizationContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    createOrgUnitForOrganization(body: CreateOrgUnitForOrganizationInput | null | undefined): Observable<CreateOrgUnitForOrganizationOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/CreateOrgUnitForOrganization";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrgUnitForOrganization(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrgUnitForOrganization(<any>response_);
+                } catch (e) {
+                    return <Observable<CreateOrgUnitForOrganizationOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CreateOrgUnitForOrganizationOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrgUnitForOrganization(response: HttpResponseBase): Observable<CreateOrgUnitForOrganizationOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateOrgUnitForOrganizationOutput.fromJS(resultData200) : new CreateOrgUnitForOrganizationOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreateOrgUnitForOrganizationOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     updateOrganizationInfo(body: UpdateOrganizationInfoInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/UpdateOrganizationInfo";
         url_ = url_.replace(/[?&]$/, "");
@@ -42720,6 +42776,7 @@ export interface IApiKeyInfo {
 export class GenerateApiKeyInput implements IGenerateApiKeyInput {
     name!: string;
     expirationDate!: moment.Moment | undefined;
+    userId!: number | undefined;
 
     constructor(data?: IGenerateApiKeyInput) {
         if (data) {
@@ -42734,6 +42791,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
         if (data) {
             this.name = data["name"];
             this.expirationDate = data["expirationDate"] ? moment(data["expirationDate"].toString()) : <any>undefined;
+            this.userId = data["userId"];
         }
     }
 
@@ -42748,6 +42806,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
         return data; 
     }
 }
@@ -42755,6 +42814,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
 export interface IGenerateApiKeyInput {
     name: string;
     expirationDate: moment.Moment | undefined;
+    userId: number | undefined;
 }
 
 export enum OfferProviderType {
@@ -73495,6 +73555,86 @@ export interface ICreateOrganizationOutput {
     id: number | undefined;
 }
 
+export class CreateOrgUnitForOrganizationInput implements ICreateOrgUnitForOrganizationInput {
+    organizationId!: number | undefined;
+    organizationName!: string | undefined;
+    groupId!: string | undefined;
+
+    constructor(data?: ICreateOrgUnitForOrganizationInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.organizationId = data["organizationId"];
+            this.organizationName = data["organizationName"];
+            this.groupId = data["groupId"];
+        }
+    }
+
+    static fromJS(data: any): CreateOrgUnitForOrganizationInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrgUnitForOrganizationInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["organizationId"] = this.organizationId;
+        data["organizationName"] = this.organizationName;
+        data["groupId"] = this.groupId;
+        return data; 
+    }
+}
+
+export interface ICreateOrgUnitForOrganizationInput {
+    organizationId: number | undefined;
+    organizationName: string | undefined;
+    groupId: string | undefined;
+}
+
+export class CreateOrgUnitForOrganizationOutput implements ICreateOrgUnitForOrganizationOutput {
+    organizationUnitId!: number | undefined;
+
+    constructor(data?: ICreateOrgUnitForOrganizationOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.organizationUnitId = data["organizationUnitId"];
+        }
+    }
+
+    static fromJS(data: any): CreateOrgUnitForOrganizationOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrgUnitForOrganizationOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["organizationUnitId"] = this.organizationUnitId;
+        return data; 
+    }
+}
+
+export interface ICreateOrgUnitForOrganizationOutput {
+    organizationUnitId: number | undefined;
+}
+
 export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput {
     id!: number;
     companyName!: string;
@@ -75356,6 +75496,7 @@ export interface ICreateUserForContactInput {
 }
 
 export class CreateUserForContactOutput implements ICreateUserForContactOutput {
+    userId!: number | undefined;
     autoLoginLink!: string | undefined;
 
     constructor(data?: ICreateUserForContactOutput) {
@@ -75369,6 +75510,7 @@ export class CreateUserForContactOutput implements ICreateUserForContactOutput {
 
     init(data?: any) {
         if (data) {
+            this.userId = data["userId"];
             this.autoLoginLink = data["autoLoginLink"];
         }
     }
@@ -75382,17 +75524,21 @@ export class CreateUserForContactOutput implements ICreateUserForContactOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
         data["autoLoginLink"] = this.autoLoginLink;
         return data; 
     }
 }
 
 export interface ICreateUserForContactOutput {
+    userId: number | undefined;
     autoLoginLink: string | undefined;
 }
 
 export class PersonHistoryDto implements IPersonHistoryDto {
+    id!: number | undefined;
     creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
     creatorUserName!: string | undefined;
     creatorUserPhotoPublicId!: string | undefined;
     source!: string | undefined;
@@ -75431,7 +75577,9 @@ export class PersonHistoryDto implements IPersonHistoryDto {
 
     init(data?: any) {
         if (data) {
+            this.id = data["id"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
             this.creatorUserName = data["creatorUserName"];
             this.creatorUserPhotoPublicId = data["creatorUserPhotoPublicId"];
             this.source = data["source"];
@@ -75470,7 +75618,9 @@ export class PersonHistoryDto implements IPersonHistoryDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
         data["creatorUserName"] = this.creatorUserName;
         data["creatorUserPhotoPublicId"] = this.creatorUserPhotoPublicId;
         data["source"] = this.source;
@@ -75502,7 +75652,9 @@ export class PersonHistoryDto implements IPersonHistoryDto {
 }
 
 export interface IPersonHistoryDto {
+    id: number | undefined;
     creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
     creatorUserName: string | undefined;
     creatorUserPhotoPublicId: string | undefined;
     source: string | undefined;
