@@ -60,7 +60,6 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
     currency: string;
     public dataSource: DataSource;
-    showAll = false;
     impersonateTenantId: number;
     permissions = AppPermissions;
     manageAllowed = false;
@@ -172,7 +171,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                             }).join(', ');
                         }
 
-                        if (record.payments) {
+                        if (record.payments && record.payments.length) {
                             record['totals'] = {};
                             record.payments.forEach(payment => {
                                 if (['Approved', 'Active'].indexOf(payment.status) >= 0) {
@@ -234,14 +233,6 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
     setDataSource(data: OrderSubscriptionDto[]) {
         this.dataSource = new DataSource(data);
-        this.filterDataSource();        
-    }
-
-    filterDataSource() {
-        if (this.showAll)
-            this.dataGrid.instance.expandAll(-1);
-        else
-            this.dataGrid.instance.collapseAll(-1);
     }
 
     onDateChanged(event, cell) {
@@ -278,7 +269,6 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
     onRowExpandedCollapsed(event) {
         event.key['expanded'] = event.expanded;
-        this.showAll = event.component.getDataSource().items().some(item => item.expanded);
     }
 
     toogleMasterDatails(cell) {

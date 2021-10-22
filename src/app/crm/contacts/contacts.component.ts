@@ -581,6 +581,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             case 'notes': newSelectedContextType = ContextType.AddNotes;  break;
             case 'invoices': newSelectedContextType = ContextType.AddInvoice; break;
             case 'lead-related-contacts': newSelectedContextType = ContextType.AddContact; break;
+            case 'subscriptions': newSelectedContextType = ContextType.AddSubscription; break;
         }
         if (newSelectedContextType !== undefined) {
             this.detailsHeaderComponent.updateSaveOption(
