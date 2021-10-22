@@ -28,6 +28,7 @@ import { PersonDialogComponent } from '../person-dialog/person-dialog.component'
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { RelationCompaniesDialogComponent } from '../relation-companies-dialog/relation-companies-dialog.component';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
+import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import {
     ContactInfoDto,
     ContactPhotoServiceProxy,
@@ -302,6 +303,15 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 icon: 'money',
                 visible: !this.data.parentId &&
                     this.permissionChecker.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+                contactGroups: this.allContactGroups
+            },
+            {
+                type: ContextType.AddSubscription,
+                text: this.ls.l('AddSubscription'),
+                selected: false,
+                icon: 'product',
+                visible: abp.session.tenantId && manageAllowed &&
+                    this.permissionChecker.isGranted(AppPermissions.CRMOrdersManage),                    
                 contactGroups: this.allContactGroups
             }
         ];
@@ -609,6 +619,20 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                     }
                 });
             });
+        else if (selectedMenuItem.type === ContextType.AddSubscription) {
+            let leadId = this.activatedRoute.parent.snapshot.paramMap.get('leadId') ?
+                this.leadId :
+                null;
+
+            this.dialog.open(AddSubscriptionDialogComponent, {
+                panelClass: ['slider'],
+                hasBackdrop: false,
+                closeOnNavigation: false,
+                disableClose: true,
+                data: { contactId: this.data.id, leadId: leadId }
+            });
+
+        }
     }
 
     private getContextMenuItemByType(contextType: ContextType): ContextMenuItem {

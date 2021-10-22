@@ -7,7 +7,6 @@ import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material/dialog';
 import { map, first, filter, finalize } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
-import * as _ from 'underscore';
 
 /** Application imports */
 import {
@@ -32,7 +31,6 @@ import { ContactsService } from '../contacts.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
@@ -173,12 +171,17 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                                 return service.serviceName + (service.levelName ? '(' + service.levelName + ')' : '');
                             }).join(', ');
                         }
-                        let paymentCount = record.payments.length;
-                        if (record.payments && paymentCount) {
-                            record.payments.forEach((payment, i) => {
-                                payment['index'] = paymentCount - i;
+
+                        if (record.payments) {
+                            record['totals'] = {};
+                            record.payments.forEach(payment => {
+                                if (['Approved', 'Active'].indexOf(payment.status) >= 0) {
+                                    if (!record['totals'][payment.type])
+                                        record['totals'][payment.type] = 0;
+                                    record['totals'][payment.type] += payment.fee;
+                                }
                             });
-                        }
+                        }                        
                     });
                     this.orderSubscriptionProxy['data'] = {
                         contactId: contactId,
@@ -239,32 +242,6 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             this.dataGrid.instance.expandAll(-1);
         else
             this.dataGrid.instance.collapseAll(-1);
-    }
-
-    openSubscriptionDialog(e?: any) {
-        this.dialog.closeAll();
-
-        let leadId = this.route.parent.snapshot.paramMap.get('leadId') ?
-            this.data.leadInfo.id :
-            null;
-
-        let data: any = { contactId: this.data.contactInfo.id, leadId: leadId };
-        if (e && e.data) {
-            const subscription: OrderSubscriptionDto = e.data;
-            data = {
-                ...data,
-                endDate: subscription.endDate,
-                name: subscription.productName
-            };
-        }
-        this.dialog.open(AddSubscriptionDialogComponent, {
-            panelClass: ['slider'],
-            hasBackdrop: false,
-            closeOnNavigation: false,
-            disableClose: true,
-            data: data
-        });
-        e.stopPropagation ? e.stopPropagation() : e.event.stopPropagation();
     }
 
     onDateChanged(event, cell) {

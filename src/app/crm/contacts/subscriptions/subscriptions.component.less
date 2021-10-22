@@ -1,3 +1,54 @@
+::ng-deep .product-payment-details {
+    display: flex;
+    flex-direction: column;
+    h3 {
+        color: #000;
+        font-weight: 500;
+        font-size: 12px;
+        text-transform: uppercase;
+    }
+    div {
+        display: flex;
+        min-width: 200px;
+        justify-content: space-between;
+        &.initial {
+            label, span {
+                color: #36b37e!important;
+            }
+        }
+        &.installment {
+            label, span {
+                color: #00b8d9!important;
+            }    
+        }
+        &.refund {
+            label, span {
+                color: #ff5630!important;
+            }
+        }
+        &.chargeback {
+            label, span {
+                color: #ff5630!important;
+            }
+        }
+        &.recurring {
+            label, span {
+                color: #97a0af!important;
+            }
+        }
+    }
+    label {
+        font-size: 13px;
+        color: #92999D;
+    }
+    span {
+        font-size: 13px;
+        color: #151617;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+}
+
 :host {
     position: relative;
     h2 {
@@ -25,32 +76,6 @@
         border: 1px solid #ddd;
         padding: 0 10px;
         border-radius: 5px;
-    }
-
-    .add-subscription {
-        font-size: 16px;
-        font-weight: 500;
-        letter-spacing: 0.32px;
-        color: #00aeef;
-        margin-right: 10px;
-        cursor: pointer;
-        border: 1px solid #DDDDDD;
-        border-radius: 5px;
-        padding: 2px 10px;
-        position: relative;
-        bottom: 8px;
-        &:before {
-            content: '+';
-            background-color: #00aeef;
-            border-radius: 50%;
-            color: #fff;
-            width: 22px;
-            height: 22px;
-            display: inline-block;
-            line-height: 22px;
-            font-size: 22px;
-            text-align: center;
-        }
     }
 
     .billing-actions a {
@@ -343,12 +368,18 @@
                 transform: translateY(-50%);
                 border-radius: 50%;
             }
-            &.current::before {
+            &.current::before,
+            &.active::before {
                 background: #37d749;
             }
             &.canceled::before {
                 background: red;
             }
+
+            &.active::after, 
+            &.pending::after, 
+            &.approved::after, 
+            &.declined::after, 
             &.canceled.show-tooltip::after, 
             &.current.show-tooltip::after {
                 content: 'i';
@@ -368,10 +399,14 @@
             &.valid::before {
                 background: #00aeef;
             }
+            &.approved::before {
+                background: #36b37e;
+            }
             &.pending::before {
                 background: #dedede;
             }
-            &.failed::before {
+            &.failed::before,
+            &.declined::before {
                 background: #5EB912;
             }
         }
