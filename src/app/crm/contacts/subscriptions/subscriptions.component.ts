@@ -171,7 +171,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                             }).join(', ');
                         }
 
-                        if (record.payments) {
+                        if (record.payments && record.payments.length) {
                             record['totals'] = {};
                             record.payments.forEach(payment => {
                                 if (['Approved', 'Active'].indexOf(payment.status) >= 0) {

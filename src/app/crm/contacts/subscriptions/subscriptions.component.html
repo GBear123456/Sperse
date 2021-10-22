@@ -106,18 +106,19 @@
     </div>
     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
         <span id="product{{cell.data.id}}" (click)="toogleMasterDatails(cell)" class="amount"> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
-        <dx-tooltip 
+        <dx-tooltip
+            *ngIf="cell?.data?.totals as totals" 
             position="bottom" 
             target="#product{{cell.data.id}}" 
             showEvent="dxhoverstart" 
             hideEvent="dxhoverend">
             <div *dxTemplate="let data = data of 'content'" class="product-payment-details">
                 <div><h3>{{ls.l('Type')}}</h3><h3>{{ls.l('Totals')}}</h3></div>
-                <div *ngIf="cell?.data?.totals['OriginalPayment'] as amount" class="initial"><label>{{ls.l('SubscriptionPaymentType_OriginalPayment')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
-                <div *ngIf="cell?.data?.totals['Installment'] as amount" class="installment"><label>{{ls.l('SubscriptionPaymentType_Installment')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
-                <div *ngIf="cell?.data?.totals['Refund'] as amount" class="refund"><label>{{ls.l('SubscriptionPaymentType_Refund')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
-                <div *ngIf="cell?.data?.totals['Chargeback'] as amount" class="chargeback"><label>{{ls.l('SubscriptionPaymentType_Chargeback')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
-                <div *ngIf="cell?.data?.totals['RecurringBilling'] as amount" class="recurring"><label>{{ls.l('SubscriptionPaymentType_RecurringBilling')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
+                <div *ngIf="totals['OriginalPayment'] as amount" class="initial"><label>{{ls.l('SubscriptionPaymentType_OriginalPayment')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
+                <div *ngIf="totals['Installment'] as amount" class="installment"><label>{{ls.l('SubscriptionPaymentType_Installment')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
+                <div *ngIf="totals['Refund'] as amount" class="refund"><label>{{ls.l('SubscriptionPaymentType_Refund')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
+                <div *ngIf="totals['Chargeback'] as amount" class="chargeback"><label>{{ls.l('SubscriptionPaymentType_Chargeback')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
+                <div *ngIf="totals['RecurringBilling'] as amount" class="recurring"><label>{{ls.l('SubscriptionPaymentType_RecurringBilling')}}:&nbsp;</label><span>{{amount | currency:currency:'symbol':'1.2-2'}}</span></div>
             </div>
         </dx-tooltip>
     </div>
