@@ -11,21 +11,25 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import { MatDialogRef } from '@angular/material/dialog';
 import { MAT_DIALOG_DATA, MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
 import { MaskPipe } from 'ngx-mask';
 import { DxDateBoxComponent, DxValidatorComponent } from 'devextreme-angular';
 import * as moment from 'moment';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { finalize, takeUntil, filter } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { RootStore } from '@root/store';
 import { OrganizationTypeStoreActions, OrganizationTypeSelectors } from '@app/store';
+import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { CountriesStoreActions, CountriesStoreSelectors, StatesStoreActions, StatesStoreSelectors } from '@root/store';
-import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationContactServiceProxy, UpdateOrganizationInfoInput, NotesServiceProxy, CreateNoteInput, ContactPhotoServiceProxy, NoteType } from '@shared/service-proxies/service-proxies';
+import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationContactServiceProxy, 
+    UpdateOrganizationInfoInput, NotesServiceProxy, CreateNoteInput, ContactPhotoServiceProxy, 
+    NoteType, OrganizationUnitShortDto, CreateOrgUnitForOrganizationInput } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -94,8 +98,10 @@ export class CompanyDialogComponent implements OnInit {
     currentDate = new Date();
     title: string;
     buttons: IDialogButton[] = [];
+    orgUnitName: string;
 
     constructor(
+        private crmStore$: Store<CrmStore.State>,
         private organizationContactServiceProxy: OrganizationContactServiceProxy,
         private notesService: NotesServiceProxy,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
@@ -107,6 +113,7 @@ export class CompanyDialogComponent implements OnInit {
         private permissionService: AppPermissionService,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
+        private dialogRef: MatDialogRef<CompanyDialogComponent>,
         @Inject(MAT_DIALOG_DATA) private data: CompanyDialogData
     ) {}
 
@@ -129,6 +136,7 @@ export class CompanyDialogComponent implements OnInit {
             this.company.sizeId = size ? size.id : null;
         }
         this.company.primaryPhoto = company.primaryPhoto;
+        this.loadOrganizationUnits();
         this.loadOrganizationTypes();
         this.loadCountries();
         this.initButtons();
@@ -263,6 +271,37 @@ export class CompanyDialogComponent implements OnInit {
             inputElement.value = inputElement.value.slice(0, maxLength);
         if (mask)
             inputElement.value = this.maskPipe.transform(inputElement.value, mask);
+    }
+
+    private loadOrganizationUnits(forced = false) {
+        if (this.company.rootOrganizationUnitId) {
+            this.crmStore$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(forced));
+            this.crmStore$.pipe(
+                select(OrganizationUnitsStoreSelectors.getOrganizationUnits),
+                filter(Boolean), takeUntil(this.dialogRef.afterClosed())
+            ).subscribe((organizationUnits: OrganizationUnitShortDto[]) => {
+                organizationUnits.forEach(orgUnit => {
+                    if (this.company.rootOrganizationUnitId == orgUnit.id)
+                        this.orgUnitName = orgUnit.displayName;
+                });
+                this.changeDetectorRef.markForCheck();
+            });
+        }
+    }
+
+    createOrgUnit() {
+        if (this.company && this.company.id)
+            this.organizationContactServiceProxy.createOrgUnitForOrganization(
+                new CreateOrgUnitForOrganizationInput({
+                    organizationId: this.company.id,
+                    organizationName: undefined,
+                    groupId: undefined
+                })
+            ).subscribe((res) => {
+                this.company.rootOrganizationUnitId = res.organizationUnitId;                
+                this.notifyService.success(this.ls.l('SuccessfullyRegistered'));
+                this.loadOrganizationUnits(true);
+            });
     }
 
     calendarOnKeyDown($event) {

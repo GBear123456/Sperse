@@ -196,7 +196,18 @@
                         </dx-text-box>
                         <span [class]="company.ticker && 'clear-contact' || 'hidden'" (click)="company.ticker = ''"><i class="minus-icon"></i></span>
                     </div>
-                    <div *ngIf="company.rootOrganizationUnitId" class="field">
+                    <div class="field" [title]="orgUnitName">
+                        <label for="departmentCode">{{ls.l('OrganizationUnit')}}&nbsp;</label>
+                        <dx-text-box *ngIf="company.rootOrganizationUnitId; else createButton" 
+                                     name="OrganizationUnit"
+                                     [disabled]="true"                                     
+                                     [value]="orgUnitName">
+                        </dx-text-box>
+                        <ng-template #createButton>
+                            <button (click)="createOrgUnit()" class="create-org-unit">Create</button>
+                        </ng-template>
+                    </div>
+                    <div *ngIf="company.rootOrganizationUnitId && company.departmentCode" class="field">
                         <label for="departmentCode">{{ls.l('Department Code')}}</label>
                         <dx-text-box name="departmentCode"
                                      [disabled]="!manageAllowed"
