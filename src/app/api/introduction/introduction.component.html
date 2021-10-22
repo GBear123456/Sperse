@@ -37,7 +37,7 @@
                                   keyExpr="id"
                                   [dataSource]="apiKeys">
                         <dxi-column dataField="name" [caption]="l('ApiKey_Name')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="key" [caption]="l('ApiKey_Key')" cellTemplate="keyTemplate" [width]="400"></dxi-column>
+                        <dxi-column dataField="key" [caption]="l('ApiKey_Key')" cellTemplate="keyTemplate" [width]="420"></dxi-column>
                         <dxi-column dataField="expirationDate" [caption]="l('ApiKey_ExpirationDate')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="userName" [caption]="l('UserName')" cssClass="clipboard-holder"></dxi-column>
@@ -45,8 +45,8 @@
                         <div *dxTemplate="let data of 'editDeleteTemplate'">
                             <a class="dx-link" (click)="deleteApiKey(data)">{{l('Delete')}}</a>
                         </div>
-                        <div *dxTemplate="let data of 'keyTemplate'" class="key-container">
-                            <span [title]="data.data.key" class="clipboard-holder">{{data.data.key}}</span>
+                        <div *dxTemplate="let data of 'keyTemplate'" class="key-container" [title]="data.data.key">
+                            <span>{{getMaskedKey(data.data.key)}}<i class="save-to-clipboard" (click)="copyToClipboard(data.data.key)"></i></span>
                         </div>
                     </dx-data-grid>
                 </div>

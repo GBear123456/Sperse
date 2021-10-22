@@ -5,6 +5,7 @@ import * as ngCommon from '@angular/common';
 /** Third party imports */
 import { MatDialogModule } from '@angular/material/dialog';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
+import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxModule } from 'devextreme-angular/ui/date-box';
 import { DxValidatorModule } from 'devextreme-angular/ui/validator';
@@ -30,6 +31,7 @@ import { LeftMenuService } from '../cfo/shared/common/left-menu/left-menu.servic
         ApiRoutingModule,
         ngCommon.CommonModule,
         AppCommonModule,
+        DxSelectBoxModule,
         DxDataGridModule,
         DxTextBoxModule,
         DxDateBoxModule,
