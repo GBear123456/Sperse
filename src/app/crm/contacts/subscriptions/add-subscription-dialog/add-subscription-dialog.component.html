@@ -27,7 +27,8 @@
                                 <div *dxTemplate="let data of 'field'">
                                     <dx-text-box
                                         [readOnly]="true"
-                                        style="width:99%!important"
+                                        class="product-value"
+                                        accessKey="product"
                                         placeholder="Select product..."
                                         [hint]="data?.name"
                                         [value]="data?.name">
@@ -39,7 +40,7 @@
                         </dx-select-box>
                     </div>
                     <div class="field">
-                        <label for="code">{{ls.l('Type')}}</label>
+                        <label for="code" [title]="ls.l('PaymentPeriodType')">{{ls.l('Type')}}</label>
                         <dx-select-box [showClearButton]="true"
                                        [dataSource]="paymentPeriodTypes"
                                        [(value)]="subscription.paymentPeriodType"
