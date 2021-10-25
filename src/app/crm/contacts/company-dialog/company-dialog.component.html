@@ -122,6 +122,17 @@
                             <button *ngIf="manageAllowed" (click)="createOrgUnit()" class="button-layout button-primary create-org-unit">Create</button>
                         </ng-template>
                     </div>
+                    <div *ngIf="company.rootOrganizationUnitId && company.departmentCode" class="field">
+                        <label for="departmentCode">{{ls.l('Department Code')}}</label>
+                        <dx-text-box name="departmentCode"
+                                     [disabled]="!manageAllowed"
+                                     [inputAttr]="{ id: 'departmentCode' }"
+                                     [valueChangeEvent]="'focusout'"
+                                     [(value)]="company.departmentCode"
+                                     (onInput)="onInput($event, 50)">
+                        </dx-text-box>
+                        <span [class]="company.departmentCode && 'clear-contact' || 'hidden'" (click)="company.departmentCode = ''"><i class="minus-icon"></i></span>
+                    </div>
                     <div class="field productsAndServices">
                         <label for="productsAndServices">{{ls.l('Company_ProductsAndServices')}}</label>
                         <dx-text-area
@@ -207,17 +218,6 @@
                             </dx-validator>
                         </dx-text-box>
                         <span [class]="company.affiliateCode && 'clear-contact' || 'hidden'" (click)="company.affiliateCode = ''"><i class="minus-icon"></i></span>
-                    </div>
-                    <div *ngIf="company.rootOrganizationUnitId && company.departmentCode" class="field">
-                        <label for="departmentCode">{{ls.l('Department Code')}}</label>
-                        <dx-text-box name="departmentCode"
-                                     [disabled]="!manageAllowed"
-                                     [inputAttr]="{ id: 'departmentCode' }"
-                                     [valueChangeEvent]="'focusout'"
-                                     [(value)]="company.departmentCode"
-                                     (onInput)="onInput($event, 50)">
-                        </dx-text-box>
-                        <span [class]="company.departmentCode && 'clear-contact' || 'hidden'" (click)="company.departmentCode = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div class="field notes">
                         <label for="notes">{{ls.l('Company_Notes')}}</label>
