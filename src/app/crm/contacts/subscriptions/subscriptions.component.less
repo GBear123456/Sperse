@@ -119,7 +119,7 @@
                 }
             }
             .dx-link.dx-link-edit.action {
-                display: inline-block!important;
+                visibility: visible;
             }
             .time {
                 display: block;
@@ -142,7 +142,7 @@
             }
             .dx-datagrid-rowsview {
                 border: none !important;
-                tr:not(:last-child) td {
+                tr:not(:last-child):not(:first-child) td {
                     border-bottom: none;
                     border-top: 1px solid transparent;
                     position: relative;
@@ -156,6 +156,9 @@
                         top: 0;
                         left: 0;
                     }
+                }
+                tr:first-child td {
+                    border-bottom: none;
                 }
                 tr:not(:last-child) td:first-child {
                     &:after {
@@ -196,7 +199,7 @@
             }
             .dx-datagrid-headers {
                 tr, td {
-                    height: 30px!important;
+                    height: 20px!important;
                 }
             }
         }
@@ -296,6 +299,10 @@
             display: inline-block;
             padding: 4px 15px;
             height: 72px;
+            img {
+                cursor: pointer;
+                opacity: 0.6;
+            }
         }          
         .amount {
             color: #151617;
@@ -305,6 +312,10 @@
                 cursor: pointer;
                 text-decoration: underline;
             }
+        }
+        .field-product-name {
+            display: flex;
+            justify-content: space-between;
         }
         .date-box {
             dx-date-box {
@@ -321,23 +332,25 @@
             display: none;
         }
         .installment {
-            padding-left: 100px;
+            padding-left: 95px;
             .invoice {
                 color: #777E84;
                 cursor: pointer;
                 font-size: 14px;
-                text-decoration: underline;
                 &:hover {
                     color: #00aeef;
+                    text-decoration: underline;
                 }
             }
         }
         .dx-link.dx-link-edit.action {
-            display: none;
+            margin-top: 20px;
+            display: inline-block;
+            visibility: hidden;
         }
         .dx-column-lines:hover {
             .dx-link.dx-link-edit.action {
-                display: inline-block;
+                visibility: visible;
             }
         }
         .services {
