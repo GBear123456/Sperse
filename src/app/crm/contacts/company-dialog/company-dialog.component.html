@@ -110,19 +110,17 @@
                         </dx-number-box>
                         <span [class]="company.businessSicCode && 'clear-contact' || 'hidden'" (click)="company.businessSicCode = null"><i class="minus-icon"></i></span>
                     </div>
-                    <div class="field affiliateCode">
-                        <label for="affiliateCode">{{ls.l('Company_affiliateCode')}}</label>
-                        <dx-text-box name="affiliateCode"
-                                     [disabled]="!manageAllowed"
-                                     [inputAttr]="{ id: 'affiliateCode' }"
-                                     [valueChangeEvent]="'focusout'"
-                                     [(value)]="company.affiliateCode"
-                                     (onInput)="onInput($event, maxAffiliateCodeLength)">
-                            <dx-validator>
-                                <dxi-validation-rule type="pattern" [pattern]="affiliateRegex" message="{{ls.l('InvalidAffiliateCode')}}."></dxi-validation-rule>
-                            </dx-validator>
+                    <div class="field org-unit" [title]="orgUnitName ? orgUnitName : ls.l('CreateOrganizationUnit')">
+                        <label for="OrganizationUnit">{{ls.l('OrganizationUnit')}}&nbsp;</label>
+                        <dx-text-box *ngIf="company.rootOrganizationUnitId; else createButton" 
+                                     width="284px"
+                                     name="OrganizationUnit"
+                                     [readOnly]="true"                                     
+                                     [value]="orgUnitName">
                         </dx-text-box>
-                        <span [class]="company.affiliateCode && 'clear-contact' || 'hidden'" (click)="company.affiliateCode = ''"><i class="minus-icon"></i></span>
+                        <ng-template #createButton>
+                            <button *ngIf="manageAllowed" (click)="createOrgUnit()" class="button-layout button-primary create-org-unit">Create</button>
+                        </ng-template>
                     </div>
                     <div class="field productsAndServices">
                         <label for="productsAndServices">{{ls.l('Company_ProductsAndServices')}}</label>
@@ -196,16 +194,19 @@
                         </dx-text-box>
                         <span [class]="company.ticker && 'clear-contact' || 'hidden'" (click)="company.ticker = ''"><i class="minus-icon"></i></span>
                     </div>
-                    <div class="field" [title]="orgUnitName">
-                        <label for="departmentCode">{{ls.l('OrganizationUnit')}}&nbsp;</label>
-                        <dx-text-box *ngIf="company.rootOrganizationUnitId; else createButton" 
-                                     name="OrganizationUnit"
-                                     [disabled]="true"                                     
-                                     [value]="orgUnitName">
+                    <div class="field affiliateCode">
+                        <label for="affiliateCode">{{ls.l('Company_affiliateCode')}}</label>
+                        <dx-text-box name="affiliateCode"
+                                     [disabled]="!manageAllowed"
+                                     [inputAttr]="{ id: 'affiliateCode' }"
+                                     [valueChangeEvent]="'focusout'"
+                                     [(value)]="company.affiliateCode"
+                                     (onInput)="onInput($event, maxAffiliateCodeLength)">
+                            <dx-validator>
+                                <dxi-validation-rule type="pattern" [pattern]="affiliateRegex" message="{{ls.l('InvalidAffiliateCode')}}."></dxi-validation-rule>
+                            </dx-validator>
                         </dx-text-box>
-                        <ng-template #createButton>
-                            <button (click)="createOrgUnit()" class="create-org-unit">Create</button>
-                        </ng-template>
+                        <span [class]="company.affiliateCode && 'clear-contact' || 'hidden'" (click)="company.affiliateCode = ''"><i class="minus-icon"></i></span>
                     </div>
                     <div *ngIf="company.rootOrganizationUnitId && company.departmentCode" class="field">
                         <label for="departmentCode">{{ls.l('Department Code')}}</label>

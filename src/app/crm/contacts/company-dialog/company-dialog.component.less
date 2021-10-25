@@ -25,8 +25,9 @@
     }
 
     .create-org-unit {
+        max-width: 150px;
         cursor: pointer;
-        margin: 0 10px;
+        margin: 0 0 0 20px;
     }
 
     .organization_logo {
@@ -174,6 +175,13 @@
                     color: #424c56;
                     padding: 0px;
                 }
+
+                input {
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    display: inline-block;
+                }
             }
 
             dx-date-box {
@@ -230,11 +238,14 @@
         }
 
         .field.annualRevenue,
-        .field.affiliateCode,
         .field.stubField,
         ::ng-deep .drop-zone {
-            margin-bottom: 37px;
+            margin-bottom: 36px;
         }
+        .field.org-unit {
+            margin-bottom: 21px;
+        }
+
         .field.stubField {
             height: 34px;
         }
