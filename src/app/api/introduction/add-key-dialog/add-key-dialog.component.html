@@ -24,7 +24,7 @@
                 </dx-date-box>
             </div>
         </div>
-        <div class="dx-field d-flex align-items-center">
+        <div *ngIf="hasAccessAll" class="dx-field d-flex align-items-center">
             <div class="dx-field-label">{{l('User')}}</div>
             <div class="dx-field-value">
                 <dx-select-box

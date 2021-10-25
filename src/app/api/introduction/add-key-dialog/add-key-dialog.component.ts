@@ -8,7 +8,9 @@ import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { GenerateApiKeyInput, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
+import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: 'add-key-dialog.component.html',
@@ -32,14 +34,18 @@ export class EditKeyDialog extends AppComponentBase {
 
     private readonly ONE_HOUR_MILISECONDS = 3600000;
 
+    hasAccessAll = this.permissionChecker.isGranted(AppPermissions.APIManageKeysAccessAll);
+
     constructor(injector: Injector,
         @Inject(MAT_DIALOG_DATA) public data: any,
         private contactProxy: ContactServiceProxy,
+        private permissionChecker: PermissionCheckerService,
         public dialogRef: MatDialogRef<EditKeyDialog>
     ) {
         super(injector);
         this.model.expirationDate.setTime(this.minCalendarDate.getTime() + this.ONE_HOUR_MILISECONDS);
-        this.contactLookupRequest();
+        if (this.hasAccessAll)
+            this.contactLookupRequest();
     }
 
     contactLookupRequest(phrase = '', callback?) {
