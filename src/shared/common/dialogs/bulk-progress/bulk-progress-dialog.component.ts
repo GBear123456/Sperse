@@ -5,7 +5,7 @@ import {
 
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable, combineLatest, of } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { catchError, finalize, tap } from 'rxjs/operators';
 import { NotifyService } from '@abp/notify/notify.service';
 
@@ -36,7 +36,7 @@ export class BulkProgressDialogComponent implements OnInit {
 
         if (this.totalCount) {
             this.appHttpConfiguration.avoidErrorHandling = true;
-            combineLatest(this.data.map(request => request.pipe(
+            forkJoin(this.data.map(request => request.pipe(
                 catchError(e => of(e)),
                 tap(res => {
                     if (res)
