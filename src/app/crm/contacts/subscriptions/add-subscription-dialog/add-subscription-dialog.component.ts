@@ -179,8 +179,9 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                 subscriptionInput.subscriptions = undefined;
 
             if (this.data.length) {
-                this.message.confirm('',
+                this.message.confirm(
                     this.ls.l('AddMultipleSubscriptions', this.data.length, this.ls.l('Customers')),
+                    this.ls.l('AreYouSure'),
                     isConfirmed => {
                         if (isConfirmed) {
                             this.dialogRef.close();
