@@ -6,36 +6,42 @@
             <span class="bg-yellow"></span>
             <span class="bg-green"></span>
         </div>
-        <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
-            <h3>{{ls.l('Auto Login')}}</h3>
-            <div class="form-group clearfix" [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', (isLinkSent ? '<br>' : '') + '<b>' + userEmail + '</b>' + (isLinkSent ? '<br>' : ''), tenantName)"></div>
-            <div class="form-actions">
-                <ng-container *ngIf="isLinkSent && accessCodeMaxTriesCount">
-                    <dx-text-box
-                        width="115px"
-                        height="40px"
-                        mask="000-000"
-                        [(value)]="accessCode"
-                        accessKey="AccessCode"
-                        validationMessageMode="always"
-                        [placeholder]="ls.l('EnterCode')"
-                        (onFocusOut)="onAutoLoginCodeFocusOut($event)"
-                        (onKeyUp)="onAutoLoginCodeChanged($event)">
-                    </dx-text-box>
-                    <dx-button icon="check" 
-                        height="40px"
-                        accessKey="AccessCode"
-                        (onClick)="onAccessCodeProcess()">
-                    </dx-button>
-                </ng-container>
-                <ng-container *ngIf="accessCodeMaxTriesCount <= 0">
-                    <div class="auto-login-error">{{ ls.l('AutoLoginMaxTriesMessage') }}</div>
-                </ng-container>
-                <button type="submit" class="submit" [hidden]="isLinkSent">
-                    {{ls.l("Auto Login")}}
-                </button>
-            </div>
-        </form>
+        <div class="success" *ngIf="isLoggedIn; else defaultForm">
+            <h3>{{ls.l('YouAreLoggedIn')}}</h3>
+            <img src="assets/common/images/bank-code/success-check.png">
+        </div>
+        <ng-template #defaultForm>
+            <form *ngIf="isLinkSent || !isInstantForm || detectedTenancies?.length" #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
+                <h3>{{ls.l('Auto Login')}}</h3>
+                <div class="form-group clearfix" [innerHTML]="ls.l(isLinkSent || isInstantForm ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', (isLinkSent ? '<br>' : '') + '<b>' + userEmail + '</b>' + (isLinkSent ? '<br>' : ''), tenantName)"></div>
+                <div class="form-actions">
+                    <ng-container *ngIf="isLinkSent && accessCodeMaxTriesCount">
+                        <dx-text-box
+                            width="115px"
+                            height="40px"
+                            mask="000-000"
+                            [(value)]="accessCode"
+                            accessKey="AccessCode"
+                            validationMessageMode="always"
+                            [placeholder]="ls.l('EnterCode')"
+                            (onFocusOut)="onAutoLoginCodeFocusOut($event)"
+                            (onKeyUp)="onAutoLoginCodeChanged($event)">
+                        </dx-text-box>
+                        <dx-button icon="check" 
+                            height="40px"
+                            accessKey="AccessCode"
+                            (onClick)="onAccessCodeProcess()">
+                        </dx-button>
+                    </ng-container>
+                    <ng-container *ngIf="accessCodeMaxTriesCount <= 0">
+                        <div class="auto-login-error">{{ ls.l('AutoLoginMaxTriesMessage') }}</div>
+                    </ng-container>
+                    <button type="submit" class="submit" [hidden]="isLinkSent">
+                        {{ls.l("Auto Login")}}
+                    </button>
+                </div>
+            </form>
+        </ng-template>
         <div class="login-terms-and-condition">
             <span>{{ls.l('ByContinuingYouAgree')}} <br><a (click)="openConditionsDialog(conditions.Terms)">{{ls.l('TermsOfUse')}}</a> {{ls.l('and')}} <a (click)="openConditionsDialog(conditions.Policies)">{{ls.l('PrivacyPolicy')}}</a></span>
         </div>

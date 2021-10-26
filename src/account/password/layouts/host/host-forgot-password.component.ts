@@ -14,6 +14,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 
 @Component({
     templateUrl: './host-forgot-password.component.html',
+    styleUrls: [
+        './host-forgot-password.component.less'
+    ],
     animations: [accountModuleAnimation()]
 })
 export class HostForgotPasswordComponent {
@@ -34,7 +37,17 @@ export class HostForgotPasswordComponent {
             first()
         ).subscribe((paramsMap: ParamMap) => {
             this.isExtLogin = paramsMap.get('extlogin') == 'true';
+            let email = paramsMap.get('email');
+            if (email)
+                this.model.emailAddress = email;
         });
+    }
+
+    autoLogin() {
+        if (this.form.valid)
+            this.router.navigate(['account/auto-login'], 
+                {queryParams: {email: this.model.emailAddress, instant: true, extlogin: this.isExtLogin}}
+            )
     }
 
     save(): void {
