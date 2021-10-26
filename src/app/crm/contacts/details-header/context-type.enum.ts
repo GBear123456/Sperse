@@ -3,5 +3,6 @@ export enum ContextType {
     AddPropertyFiles,
     AddNotes,
     AddContact,
-    AddInvoice
+    AddInvoice,
+    AddSubscription
 }

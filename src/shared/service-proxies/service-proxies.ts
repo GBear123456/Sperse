@@ -72667,13 +72667,35 @@ export interface ISubscriptionServiceDto {
     levelName: string | undefined;
 }
 
+export enum SubscriptionPaymentType {
+    OriginalPayment = "OriginalPayment", 
+    Installment = "Installment", 
+    Refund = "Refund", 
+    Chargeback = "Chargeback", 
+    RecurringBilling = "RecurringBilling", 
+}
+
+export enum SubscriptionPaymentStatus {
+    Pending = "Pending", 
+    Approved = "Approved", 
+    Declined = "Declined", 
+    Active = "Active", 
+}
+
 export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     id!: number | undefined;
+    invoiceId!: number | undefined;
+    invoiceDate!: moment.Moment | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
-    status!: string | undefined;
+    type!: SubscriptionPaymentType | undefined;
+    seqNo!: number | undefined;
+    status!: SubscriptionPaymentStatus | undefined;
     fee!: number | undefined;
-    isSubscription!: boolean | undefined;
+    paymentProvider!: string | undefined;
+    paymentId!: string | undefined;
+    paymentDate!: moment.Moment | undefined;
+    authorizationCode!: string | undefined;
 
     constructor(data?: ISubscriptionPaymentDto) {
         if (data) {
@@ -72687,11 +72709,18 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.invoiceId = data["invoiceId"];
+            this.invoiceDate = data["invoiceDate"] ? moment(data["invoiceDate"].toString()) : <any>undefined;
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.type = data["type"];
+            this.seqNo = data["seqNo"];
             this.status = data["status"];
             this.fee = data["fee"];
-            this.isSubscription = data["isSubscription"];
+            this.paymentProvider = data["paymentProvider"];
+            this.paymentId = data["paymentId"];
+            this.paymentDate = data["paymentDate"] ? moment(data["paymentDate"].toString()) : <any>undefined;
+            this.authorizationCode = data["authorizationCode"];
         }
     }
 
@@ -72705,37 +72734,56 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["invoiceId"] = this.invoiceId;
+        data["invoiceDate"] = this.invoiceDate ? this.invoiceDate.toISOString() : <any>undefined;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["type"] = this.type;
+        data["seqNo"] = this.seqNo;
         data["status"] = this.status;
         data["fee"] = this.fee;
-        data["isSubscription"] = this.isSubscription;
+        data["paymentProvider"] = this.paymentProvider;
+        data["paymentId"] = this.paymentId;
+        data["paymentDate"] = this.paymentDate ? this.paymentDate.toISOString() : <any>undefined;
+        data["authorizationCode"] = this.authorizationCode;
         return data; 
     }
 }
 
 export interface ISubscriptionPaymentDto {
     id: number | undefined;
+    invoiceId: number | undefined;
+    invoiceDate: moment.Moment | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
-    status: string | undefined;
+    type: SubscriptionPaymentType | undefined;
+    seqNo: number | undefined;
+    status: SubscriptionPaymentStatus | undefined;
     fee: number | undefined;
-    isSubscription: boolean | undefined;
+    paymentProvider: string | undefined;
+    paymentId: string | undefined;
+    paymentDate: moment.Moment | undefined;
+    authorizationCode: string | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     id!: number | undefined;
+    originalStartDate!: moment.Moment | undefined;
+    originalTrialEndDate!: moment.Moment | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
-    fee!: number | undefined;
-    tenantId!: string | undefined;
+    trialEndDate!: moment.Moment | undefined;
+    gracePeriodDayCount!: number | undefined;
+    gracePeriodEndDate!: moment.Moment | undefined;
     productCode!: string | undefined;
     productName!: string | undefined;
-    orderType!: string | undefined;
-    trialEndDate!: moment.Moment | undefined;
+    fee!: number | undefined;
     statusCode!: string | undefined;
     status!: string | undefined;
     cancelationReason!: string | undefined;
+    systemType!: string | undefined;
+    systemMemberId!: string | undefined;
+    previousSubscriptionId!: number | undefined;
     services!: SubscriptionServiceDto[] | undefined;
     payments!: SubscriptionPaymentDto[] | undefined;
 
@@ -72751,17 +72799,22 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.originalStartDate = data["originalStartDate"] ? moment(data["originalStartDate"].toString()) : <any>undefined;
+            this.originalTrialEndDate = data["originalTrialEndDate"] ? moment(data["originalTrialEndDate"].toString()) : <any>undefined;
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.fee = data["fee"];
-            this.tenantId = data["tenantId"];
+            this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
+            this.gracePeriodDayCount = data["gracePeriodDayCount"];
+            this.gracePeriodEndDate = data["gracePeriodEndDate"] ? moment(data["gracePeriodEndDate"].toString()) : <any>undefined;
             this.productCode = data["productCode"];
             this.productName = data["productName"];
-            this.orderType = data["orderType"];
-            this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
+            this.fee = data["fee"];
             this.statusCode = data["statusCode"];
             this.status = data["status"];
             this.cancelationReason = data["cancelationReason"];
+            this.systemType = data["systemType"];
+            this.systemMemberId = data["systemMemberId"];
+            this.previousSubscriptionId = data["previousSubscriptionId"];
             if (data["services"] && data["services"].constructor === Array) {
                 this.services = [];
                 for (let item of data["services"])
@@ -72785,17 +72838,22 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["originalStartDate"] = this.originalStartDate ? this.originalStartDate.toISOString() : <any>undefined;
+        data["originalTrialEndDate"] = this.originalTrialEndDate ? this.originalTrialEndDate.toISOString() : <any>undefined;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["fee"] = this.fee;
-        data["tenantId"] = this.tenantId;
+        data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
+        data["gracePeriodDayCount"] = this.gracePeriodDayCount;
+        data["gracePeriodEndDate"] = this.gracePeriodEndDate ? this.gracePeriodEndDate.toISOString() : <any>undefined;
         data["productCode"] = this.productCode;
         data["productName"] = this.productName;
-        data["orderType"] = this.orderType;
-        data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
+        data["fee"] = this.fee;
         data["statusCode"] = this.statusCode;
         data["status"] = this.status;
         data["cancelationReason"] = this.cancelationReason;
+        data["systemType"] = this.systemType;
+        data["systemMemberId"] = this.systemMemberId;
+        data["previousSubscriptionId"] = this.previousSubscriptionId;
         if (this.services && this.services.constructor === Array) {
             data["services"] = [];
             for (let item of this.services)
@@ -72812,17 +72870,22 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
 
 export interface IOrderSubscriptionDto {
     id: number | undefined;
+    originalStartDate: moment.Moment | undefined;
+    originalTrialEndDate: moment.Moment | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
-    fee: number | undefined;
-    tenantId: string | undefined;
+    trialEndDate: moment.Moment | undefined;
+    gracePeriodDayCount: number | undefined;
+    gracePeriodEndDate: moment.Moment | undefined;
     productCode: string | undefined;
     productName: string | undefined;
-    orderType: string | undefined;
-    trialEndDate: moment.Moment | undefined;
+    fee: number | undefined;
     statusCode: string | undefined;
     status: string | undefined;
     cancelationReason: string | undefined;
+    systemType: string | undefined;
+    systemMemberId: string | undefined;
+    previousSubscriptionId: number | undefined;
     services: SubscriptionServiceDto[] | undefined;
     payments: SubscriptionPaymentDto[] | undefined;
 }
