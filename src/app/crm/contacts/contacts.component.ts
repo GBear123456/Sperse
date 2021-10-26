@@ -322,6 +322,13 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         });
     }
 
+    initContextTypeByRoute() {
+        this.detailsHeaderComponent.contextMenuInit$.pipe(first()).subscribe(() => {
+            let section = this._activatedRoute.children[0].routeConfig.path;
+            this.updateContextType(this.navLinks.find(link => link.name == section));
+        });
+    }
+
     private handleContactsOptions() {
         const routeData$: Observable<any> = this._router.events.pipe(
             takeUntil(this.destroy$),
@@ -480,6 +487,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.contactsService.updateUserId(
             this.userService['data'].userId = this.primaryContact.userId
         );
+        this.initContextTypeByRoute();
         this.storeInitialData();
     }
 
@@ -584,9 +592,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             case 'subscriptions': newSelectedContextType = ContextType.AddSubscription; break;
         }
         if (newSelectedContextType !== undefined) {
-            this.detailsHeaderComponent.updateSaveOption(
-                this.detailsHeaderComponent.addContextMenuItems[newSelectedContextType]
-            );
+            setTimeout(() => {
+                this.detailsHeaderComponent.updateSaveOption(
+                    this.detailsHeaderComponent.addContextMenuItems[newSelectedContextType]
+                );
+            });
         }
         return newSelectedContextType;
     }

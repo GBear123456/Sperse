@@ -145,6 +145,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         map((leadInfo: LeadInfoDto) => leadInfo.propertyId)
     );
     propertyId: number;
+    contextMenuInit$: Observable<any>;
     addContextMenuItems: ContextMenuItem[] = [];
     addButtonTitle = '';
     isBankCodeLayout = this.userManagementService.checkBankCodeFeature();
@@ -208,11 +209,13 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         ).subscribe((propertyId: number) => {
             this.propertyId = propertyId;
         });
-        combineLatest(
+        this.contextMenuInit$ = combineLatest(
             this.contactInfo$,
             this.propertyId$,
             this.manageAllowed$
-        ).pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(
+        ).pipe(takeUntil(this.lifeCycleService.destroy$));
+
+        this.contextMenuInit$.subscribe(
             ([contactInfo, propertyId, manageAllowed]: [ContactInfoDto, number, boolean]) => {
                 this.addContextMenuItems = this.getDefaultContextMenuItems(manageAllowed, !!propertyId)
                     .filter((menuItem: ContextMenuItem) => {
