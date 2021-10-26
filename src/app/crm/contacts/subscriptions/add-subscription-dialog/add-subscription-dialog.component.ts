@@ -10,6 +10,7 @@ import {
 import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
+import { MessageService } from '@abp/message/message.service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -105,6 +106,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         private userManagementService: UserManagementService,
         private invoicesService: InvoicesService,
         private permission: AppPermissionService,
+        private message: MessageService,
         public dialogRef: MatDialogRef<AddSubscriptionDialogComponent>,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
@@ -177,17 +179,24 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                 subscriptionInput.subscriptions = undefined;
 
             if (this.data.length) {
-                this.dialogRef.close();
-                this.dialog.open(BulkProgressDialogComponent, {
-                    minWidth: 420,
-                    disableClose: true,
-                    closeOnNavigation: false,
-                    data: this.data.map((entity, i) => {
-                        subscriptionInput.skipExisting = true;
-                        subscriptionInput.contactId = entity.Id;
-                        return this.orderSubscriptionProxy.update(subscriptionInput);
-                    })
-                });
+                this.message.confirm('',
+                    this.ls.l('AddMultipleSubscriptions', this.data.length, this.ls.l('Customers')),
+                    isConfirmed => {
+                        if (isConfirmed) {
+                            this.dialogRef.close();
+                            this.dialog.open(BulkProgressDialogComponent, {
+                                minWidth: 420,
+                                disableClose: true,
+                                closeOnNavigation: false,
+                                data: this.data.map((entity, i) => {
+                                    subscriptionInput.skipExisting = true;
+                                    subscriptionInput.contactId = entity.Id;
+                                    return this.orderSubscriptionProxy.update(subscriptionInput);
+                                })
+                            });
+                        }
+                    }
+                );
             } else
                 this.orderSubscriptionProxy.update(subscriptionInput).subscribe(() => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));

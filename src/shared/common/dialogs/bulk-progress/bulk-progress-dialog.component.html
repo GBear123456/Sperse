@@ -13,7 +13,6 @@
 </mat-dialog-content>
 <mat-dialog-actions>
     <button mat-dialog-close
-        [disabled]="totalCount != completedCount + failedCount"
         class="button-layout button-default">
         <span>{{ ls.l('Close') }}</span>
     </button>
