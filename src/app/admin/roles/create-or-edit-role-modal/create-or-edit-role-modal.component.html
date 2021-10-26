@@ -6,7 +6,7 @@
                     <tab heading="{{ls.l('RoleName')}}" customClass="m-tabs__item">
                         <div class="form-group">
                             <label>{{ls.l("RoleName")}} *</label>
-                            <input #roleNameInput="ngModel" class="form-control" type="text" name="DisplayName" [(ngModel)]="role.displayName" required maxlength="64">
+                            <input #roleNameInput="ngModel" class="form-control" type="text" name="DisplayName" [(ngModel)]="role.displayName" required maxlength="32">
                             <validation-messages [formCtrl]="roleNameInput"></validation-messages>
                         </div>
                         <dx-check-box [(value)]="role.isDefault" [text]="ls.l('DefaultRole_Description')"></dx-check-box>
