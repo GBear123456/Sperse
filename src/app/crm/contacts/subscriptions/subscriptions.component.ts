@@ -161,7 +161,33 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                     finalize(() => this.loadingService.finishLoading())
                 ).subscribe(result => {
                     result.forEach(record => {
+                        if (record.productName.includes('Summit'))
+                            record['photoUri'] = 'summit';
+
                         if (record.services) {
+                            record.services.some(service => {
+                                if (service.serviceCode == 'BANKVAULT')
+                                    return record['photoUri'] = 'explore';
+                                if (service.serviceCode == 'BANKPASS')
+                                    return record['photoUri'] = 'discover';
+                                if (service.serviceCode == 'Connect')
+                                    return record['photoUri'] = 'connect';
+                                if (service.serviceCode == 'COACHING')
+                                    return record['photoUri'] = 'coaching';
+                                if (service.serviceCode == 'Certified Coach')
+                                    return record['photoUri'] = 'coach';
+                                if (service.serviceCode == 'Certified Trainer')
+                                    return record['photoUri'] = 'trainer';
+                                if (service.serviceCode == 'WTB eBook')
+                                    return record['photoUri'] = 'wtb';
+                                if (service.serviceCode == 'BANK AUDIO')
+                                    return record['photoUri'] = 'audio';
+                                if (service.serviceCode == 'KICKSTARTER')
+                                    return record['photoUri'] = 'kickstarter';
+                                if (service.serviceCode == 'KICKSTARTERPRO')
+                                    return record['photoUri'] = 'kickstarter-pro';
+                            });
+
                             record['isTrial'] = Boolean(record.trialEndDate && record.trialEndDate.diff(moment()) > 0);
                             record['serviceCodeList'] = record.services.map(service => {
                                 return service.serviceCode + (service.levelCode ? '(' + service.levelCode + ')' : '');

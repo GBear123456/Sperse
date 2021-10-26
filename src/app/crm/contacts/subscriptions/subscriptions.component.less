@@ -165,8 +165,8 @@
                         margin-left: 100px;
                     }
                 }
-                tr:nth-last-child(2) td {
-                    border-bottom: 1px solid #dedede;
+                tr:nth-last-child(2) td, tr:last-child td {
+                    border-bottom: 1px solid #dedede!important;
                 }
                 .tabular {
                     color: #777E84;
@@ -297,11 +297,15 @@
         }
         .product-icon-wrapper {
             display: inline-block;
+            text-align: center;
             padding: 4px 15px;
             height: 72px;
+            width: 100px;
             img {
                 cursor: pointer;
-                opacity: 0.6;
+                &.default {
+                    opacity: 0.6;
+                }
             }
         }          
         .amount {
