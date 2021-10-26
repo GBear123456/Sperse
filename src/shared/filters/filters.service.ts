@@ -146,7 +146,7 @@ export class FiltersService {
         return data;
     }
 
-    static filterByAmount(filter, filterValueModifier?: (value) => number) {
+    static filterByNumber(filter, filterValueModifier?: (value) => number) {   
         let data = {};
         data[filter.field] = {};
         each(filter.items, (item: FilterItemModel, key) => {
@@ -158,6 +158,10 @@ export class FiltersService {
                 );
         });
         return data;
+    }
+
+    static filterByAmount(filter, filterValueModifier?: (value) => number) {
+        return FiltersService.filterByNumber(filter, filterValueModifier);
     }
 
     static filterByFee(filter) {
