@@ -123,6 +123,7 @@ import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
+import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Component({
@@ -164,6 +165,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private dependencyChanged = false;
     rowsViewHeight: number;
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
+    isOrdersMergeAllowed = this.isGranted(AppPermissions.CRMOrdersManage);
 
     formatting = AppConsts.formatting;
     isCfoLinkOrVerifyEnabled = this.appService.isCfoLinkOrVerifyEnabled;
@@ -1223,7 +1225,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'actions',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.selectedClientKeys.length || !this.isGranted(AppPermissions.CRMCustomersManage) || this.selectedClientKeys.length > 2,
+                        disabled: !this.selectedClientKeys.length || !this.isGranted(AppPermissions.CRMCustomersManage),
                         options: {
                             items: [
                                 {
@@ -1255,6 +1257,22 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                             });
                                         });
                                     }
+                               },
+                               {
+                                   text: this.l('AddSubscription'),
+                                   visible: this.isOrdersMergeAllowed,
+                                   disabled: !this.selectedClientKeys.length,
+                                   action: () => {
+                                       this.selectedClients.subscribe((clients: ContactDto[]) => {
+                                           this.dialog.open(AddSubscriptionDialogComponent, {
+                                               panelClass: ['slider'],
+                                               hasBackdrop: false,
+                                               closeOnNavigation: false,
+                                               disableClose: true,
+                                               data: clients
+                                           });
+                                       });
+                                   }
                                }
                             ]
                         }

@@ -1,0 +1,19 @@
+<header>
+    <h5 class="dialog-title">
+        {{ ls.l('Progress') }}
+    </h5>
+</header>
+<mat-dialog-content>
+    <div class="wrapper">
+        <p>{{ls.l('Total')}}: {{totalCount}}</p>
+        <p>{{ls.l('Failed')}}: {{failedCount}}</p>
+        <p>{{ls.l('Completed')}}: {{completedCount}}</p>
+        <mat-progress-bar color="#2fb8f0" [value]="(failedCount + completedCount) * 100 / totalCount"></mat-progress-bar>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <button mat-dialog-close
+        class="button-layout button-default">
+        <span>{{ ls.l('Close') }}</span>
+    </button>
+</mat-dialog-actions>
