@@ -1085,6 +1085,28 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         name: 'AffiliateCode'
                     })
                 }
+            }),
+            new FilterModel({
+                component: FilterInputsComponent,
+                options: { type: 'number', min: 0, max: 100},
+                operator: { from: 'ge', to: 'le' },
+                caption: 'AffiliateRate',
+                field: 'AffiliateRate',
+                filterMethod: (filter) => FiltersService.filterByNumber(filter, value => {
+                    return Number((value / 100).toFixed(2));
+                }),
+                items: { from: new FilterItemModel(), to: new FilterItemModel() }
+            }),
+            new FilterModel({
+                component: FilterInputsComponent,
+                options: { type: 'number', min: 0, max: 100},
+                operator: { from: 'ge', to: 'le' },
+                caption: 'AffiliateRateTier2',
+                field: 'AffiliateRateTier2',
+                filterMethod: (filter) => FiltersService.filterByNumber(filter, value => {
+                    return Number((value / 100).toFixed(2));
+                }),
+                items: { from: new FilterItemModel(), to: new FilterItemModel() }
             })],
             this.isGranted(AppPermissions.CRMOrders) ||
                 this.isGranted(AppPermissions.CRMProducts) ?
