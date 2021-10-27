@@ -159,7 +159,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
     selectedContactGroup$: Observable<ContactGroup> = this.selectedContactGroup.asObservable();
     contactGroupDataSource = Object.keys(ContactGroup).filter(
-        (group: string) => this.permission.checkCGPermission(ContactGroup[group], '')
+        (group: string) => this.permission.checkCGPermission([ContactGroup[group]], '')
     ).map((group: string) => ({
         id: ContactGroup[group],
         name: this.l('ContactGroup_' + group)

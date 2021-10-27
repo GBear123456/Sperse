@@ -49,7 +49,7 @@ export class EditAddressDialog {
     action: string;
     address: any;
     movePos: any;
-    isEditAllowed = this.permissionService.checkCGPermission(this.data.groupId);
+    isEditAllowed = this.permissionService.checkCGPermission(this.data.groups);
     states: CountryStateDto[];
     countries: CountryDto[];
     state: string;

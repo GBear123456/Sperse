@@ -270,11 +270,11 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     isSourceSelected = false;
 
     isAssignDisabled: boolean = !this.permissionService.checkCGPermission(
-        this.data.customerType,
+        [this.data.customerType],
         'ManageAssignments'
     );
-    isListAndTagsDisabled: boolean = !this.permissionService.checkCGPermission(this.data.customerType);
-    isRatingAndStarsDisabled: boolean = !this.permissionService.checkCGPermission(this.data.customerType);
+    isListAndTagsDisabled: boolean = !this.permissionService.checkCGPermission([this.data.customerType]);
+    isRatingAndStarsDisabled: boolean = !this.permissionService.checkCGPermission([this.data.customerType]);
     assignedUsersSelector = this.getAssignedUsersSelector();
     hideCompanyField: boolean = this.data.hideCompanyField;
     hideLinksField: boolean = this.data.hideLinksField;

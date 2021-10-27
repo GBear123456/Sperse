@@ -130,7 +130,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     private readonly CACHE_KEY_PREFIX = 'DetailsHeader';
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
-    private contactGroup: ContactGroup;
+    private contactGroups: ContactGroup[];
     showRemovingOrgRelationProgress = false;
 
     private readonly allContactGroups = _.values(ContactGroup);
@@ -138,7 +138,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     manageAllowed$: Observable<boolean> = this.contactInfo$.pipe(
         filter(Boolean),
-        map((contactInfo: ContactInfoDto) => this.permissionService.checkCGPermission(contactInfo.groupId))
+        map((contactInfo: ContactInfoDto) => this.permissionService.checkCGPermission(contactInfo.groups))
     );
     manageAllowed: boolean;
     propertyId$: Observable<number> = this.contactsService.leadInfo$.pipe(
@@ -196,8 +196,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         ).subscribe(
             (contactInfo: ContactInfoDto) => {
                 this.contactId = contactInfo.id;
-                this.contactGroup = contactInfo.groupId;
-                this.manageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
+                this.contactGroups = contactInfo.groups;
+                this.manageAllowed = this.permissionService.checkCGPermission(contactInfo.groups);
             }
         );
         this.manageAllowed$.pipe(
@@ -220,7 +220,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             ([contactInfo, propertyId, manageAllowed]: [ContactInfoDto, number, boolean]) => {
                 this.addContextMenuItems = this.getDefaultContextMenuItems(manageAllowed, !!propertyId)
                     .filter((menuItem: ContextMenuItem) => {
-                        return menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0;
+                        return contactInfo.groups.some(group => menuItem.contactGroups.indexOf(group) >= 0);
                     });
                 this.addOptionsInit();
             }
@@ -521,7 +521,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     }
 
     get addOptionCacheKey() {
-        return this.ADD_OPTION_CACHE_KEY + '_' + this.contactGroup;
+        return this.ADD_OPTION_CACHE_KEY + '_' + this.contactGroups.map(group => group.id).join('_');
     }
 
     addOptionsInit() {
@@ -568,7 +568,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             setTimeout(() => {
                 const dialogData: CreateEntityDialogData = {
                     parentId: this.data.id,
-                    customerType: this.contactGroup
+                    customerType: this.contactGroups[0]
                 };
                 this.dialog.open(CreateEntityDialogComponent, {
                     panelClass: 'slider',

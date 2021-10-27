@@ -36,7 +36,6 @@ import {
     PartnerTypesStoreSelectors,
     RatingsStoreSelectors,
     StarsStoreSelectors,
-    StatusesStoreSelectors,
     TagsStoreSelectors
 } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
@@ -214,7 +213,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     checkVisible: (partner: PartnerDto) => {
                         return !!partner.UserId && (
                             this.impersonationIsGranted ||
-                            this.permission.checkCGPermission(ContactGroup.Partner, 'UserInformation.AutoLogin')
+                            this.permission.checkCGPermission([ContactGroup.Partner], 'UserInformation.AutoLogin')
                         );
                     },
                     action: () => {
@@ -228,7 +227,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     checkVisible: (partner: PartnerDto) => !!partner.UserId && !!AppConsts.appMemberPortalUrl
                         && (
                             this.impersonationIsGranted ||
-                            this.permission.checkCGPermission(ContactGroup.Partner, 'UserInformation.AutoLogin')
+                            this.permission.checkCGPermission([ContactGroup.Partner], 'UserInformation.AutoLogin')
                         ),
                     action: () => {
                         const partner: PartnerDto = this.actionEvent.data || this.actionEvent;
@@ -333,7 +332,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         }
     });
     filterModelAssignment: FilterModel;
-    statuses$: Observable<ContactStatusDto[]> = this.store$.pipe(select(StatusesStoreSelectors.getStatuses));
+    statuses: Status[] = Object.keys(ContactStatus).map(status => {
+        return {
+            id: ContactStatus[status],
+            name: status,
+            displayName: this.l(status)
+        }
+    });
     filterModelStatus: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'status',
@@ -343,7 +348,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         items: {
             element: new FilterCheckBoxesModel(
                 {
-                    dataSource$: this.store$.pipe(select(StatusesStoreSelectors.getFilterStatuses)),
+                    dataSource: this.statuses,
                     nameField: 'name',
                     keyExpr: 'id',
                     selectedKeys$: of(['A'])
@@ -371,7 +376,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
 
     public headlineButtons: HeadlineButton[] = [
         {
-            enabled: this.permission.checkCGPermission(this.partnerContactGroup),
+            enabled: this.permission.checkCGPermission([this.partnerContactGroup]),
             action: this.createPartner.bind(this),
             label: this.l('CreateNewPartner')
         }
@@ -539,7 +544,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     rowsViewHeight: number;
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
     readonly partnerFields: KeysEnum<PartnerDto> = PartnerFields;
-    manageDisabled = !this.permission.checkCGPermission(this.partnerContactGroup);
+    manageDisabled = !this.permission.checkCGPermission([this.partnerContactGroup]);
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
     pipelineSelectFields: string[];
     pipelineDataSource: any;
@@ -1139,7 +1144,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
-                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, 'ManageAssignments'),
+                        disabled: !this.permission.checkCGPermission([this.partnerContactGroup], 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected,
                             class: 'assign-to'
@@ -1147,7 +1152,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     },
                     {
                         name: 'archive',
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
+                        disabled: !this.permission.checkCGPermission([ContactGroup.Client], ''),
                         options: {
                             text: this.l('Toolbar_ReferredBy'),
                             hint: this.l('Toolbar_ReferredBy')
@@ -1170,7 +1175,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'partnerType',
                         action: this.toggleType.bind(this),
-                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, ''),
+                        disabled: !this.permission.checkCGPermission([this.partnerContactGroup], ''),
                         attr: {
                             'filter-selected': this.filterModelTypes && this.filterModelTypes.isSelected
                         }
@@ -1178,7 +1183,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
-                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, ''),
+                        disabled: !this.permission.checkCGPermission([this.partnerContactGroup], ''),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -1186,7 +1191,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
-                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, ''),
+                        disabled: !this.permission.checkCGPermission([this.partnerContactGroup], ''),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -1194,7 +1199,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
-                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, ''),
+                        disabled: !this.permission.checkCGPermission([this.partnerContactGroup], ''),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -1202,7 +1207,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
-                        disabled: !this.permission.checkCGPermission(this.partnerContactGroup, ''),
+                        disabled: !this.permission.checkCGPermission([this.partnerContactGroup], ''),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
                         }
@@ -1261,7 +1266,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         name: 'message',
                         widget: 'dxDropDownMenu',
                         disabled: !this.selectedPartnerKeys.length || this.selectedPartnerKeys.length > 1 || 
-                            !this.permission.checkCGPermission(this.partnerContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail'),
+                            !this.permission.checkCGPermission([this.partnerContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [
                                 {

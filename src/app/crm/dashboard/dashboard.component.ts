@@ -156,7 +156,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                         showFirstAsDefault: true,
                         value: ContactGroup.Client,
                         list: Object.keys(ContactGroup).map(item => {
-                            if (this.permission.checkCGPermission(ContactGroup[item], ''))
+                            if (this.permission.checkCGPermission([ContactGroup[item]], ''))
                                 return {
                                     id: ContactGroup[item],
                                     name: this.ls.l('ContactGroup_' + item)

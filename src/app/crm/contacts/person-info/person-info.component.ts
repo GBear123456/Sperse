@@ -17,9 +17,9 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 })
 export class PersonInfoComponent {
     @Input() data;
-    @Input() groupId;
+    @Input() groups;
     capitalize = capitalize;
-    isEditAllowed = this.permissionService.checkCGPermission(this.groupId);
+    isEditAllowed = this.permissionService.checkCGPermission(this.groups);
     constructor(
         private contactsService: ContactsService,
         private personContactService: PersonContactServiceProxy,

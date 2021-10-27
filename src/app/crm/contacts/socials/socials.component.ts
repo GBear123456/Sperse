@@ -33,7 +33,7 @@ export class SocialsComponent {
     @Input()
     set contactInfo(val: ContactInfoDto) {
         if (this._contactInfo = val)
-            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groupId);
+            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groups);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -130,7 +130,7 @@ export class SocialsComponent {
             id: data && data.id,
             value: data && data.url,
             name: this.ls.l('Link'),
-            groupId: this.contactInfo.groupId,
+            groups: this.contactInfo.groups,
             contactId: data && data.contactId
             || this.contactInfoData && this.contactInfoData.contactId,
             url: data && data.url,

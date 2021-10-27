@@ -39,7 +39,7 @@ export class EditContactDialog {
     types: any[] = [];
     validator: any;
     movePos: any;
-    isEditAllowed = this.permissionService.checkCGPermission(this.data.groupId);
+    isEditAllowed = this.permissionService.checkCGPermission(this.data.groups);
     masks = AppConsts.masks;
     urlRegEx = AppConsts.regexPatterns.url;
     emailRegEx = AppConsts.regexPatterns.email;

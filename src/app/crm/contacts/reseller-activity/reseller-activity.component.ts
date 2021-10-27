@@ -132,7 +132,7 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
         this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo) {
                 this.data.contactInfo = contactInfo;
-                this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
+                this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groups);
                 this.refreshDataSources();
                 this.initQueryParams();
             }

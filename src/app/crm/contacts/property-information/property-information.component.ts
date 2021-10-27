@@ -222,7 +222,7 @@ export class PropertyInformationComponent implements OnInit {
             this.initialPropertyInvestmentDto = this.propertyInvestmentDto = investmentDto;
             this.savePropertyInfo(property);
             this.acquisitionLeadDealInfo = deals.find(v => v.leadTypeSysId == EntityTypeSys.PropertyAcquisition);
-            this.disableEdit = !this.permission.checkCGPermission(property.contactGroupId);
+            this.disableEdit = !this.permission.checkCGPermission([property.contactGroupId]);
             this.changeDetectorRef.detectChanges();
         });
 

@@ -42,7 +42,6 @@ import {
     ListsStoreSelectors,
     RatingsStoreSelectors,
     StarsStoreSelectors,
-    StatusesStoreSelectors,
     TagsStoreSelectors
 } from '@app/store';
 import { ClientService } from '@app/crm/clients/clients.service';
@@ -71,9 +70,9 @@ import { FilterMultilineInputComponent } from '@shared/filters/multiline-input/f
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { FilterMultilineInputModel } from '@shared/filters/multiline-input/filter-multiline-input.model';
 import {
+    UpdateContactStatusesInput,
     ContactEmailServiceProxy,
-    ContactServiceProxy,
-    ContactStatusDto,
+    ContactServiceProxy,    
     CreateContactEmailInput,
     LayoutType
 } from '@shared/service-proxies/service-proxies';
@@ -172,7 +171,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     canSendVerificationRequest = this.appService.canSendVerificationRequest();
     isCFOClientAccessAllowed = this.appService.checkCFOClientAccessPermission();
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
-    statuses$: Observable<ContactStatusDto[]> = this.store$.pipe(select(StatusesStoreSelectors.getStatuses));
+    statuses: Status[] = Object.keys(ContactStatus).map(status => {
+        return {
+            id: ContactStatus[status],
+            name: status,
+            displayName: this.l(status)
+        }
+    });
     assignedUsersSelector = select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, { contactGroup: ContactGroup.Client });
     filterModelOrgUnit: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
@@ -180,12 +185,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         hidden: this.appSession.userIsMember,
         field: 'SourceOrganizationUnitId',
         items: {
-            element: new FilterCheckBoxesModel(
-                {
-                    dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
-                    nameField: 'displayName',
-                    keyExpr: 'id'
-                })
+            element: new FilterCheckBoxesModel({
+                dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
+                nameField: 'displayName',
+                keyExpr: 'id'
+            })
         }
     });
     filterModelSource: FilterModel = new FilterModel({
@@ -246,7 +250,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         isSelected: true,
         items: {
             element: new FilterCheckBoxesModel({
-                dataSource$: this.store$.pipe(select(StatusesStoreSelectors.getFilterStatuses)),
+                dataSource: this.statuses,
                 nameField: 'name',
                 keyExpr: 'id',
                 selectedKeys$: of(['A'])
@@ -305,7 +309,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
     headlineButtons: HeadlineButton[] = [
         {
-            enabled: this.permission.checkCGPermission(ContactGroup.Client),
+            enabled: this.permission.checkCGPermission([ContactGroup.Client]),
             action: this.createClient.bind(this),
             label: this.l('CreateNewCustomer')
         }
@@ -351,7 +355,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     checkVisible: (client: ContactDto) => {
                         return !!client.UserId && (
                             this.impersonationIsGranted ||
-                            this.permission.checkCGPermission(client.GroupId, 'UserInformation.AutoLogin')
+                            this.permission.checkCGPermission([client.GroupId], 'UserInformation.AutoLogin')
                         );
                     },
                     action: () => {
@@ -364,7 +368,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     checkVisible: (client: ContactDto) => !!client.UserId && !!AppConsts.appMemberPortalUrl
                         && (
                             this.impersonationIsGranted ||
-                            this.permission.checkCGPermission(client.GroupId, 'UserInformation.AutoLogin')
+                            this.permission.checkCGPermission([client.GroupId], 'UserInformation.AutoLogin')
                         ),
                     action: () => this.impersonationService.impersonate(this.actionEvent.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl)
                 },
@@ -1154,7 +1158,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, 'ManageAssignments'),
+                        disabled: !this.permission.checkCGPermission([ContactGroup.Client], 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected,
                             class: 'assign-to'
@@ -1162,7 +1166,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     },
                     {
                         name: 'archive',
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
+                        disabled: !this.permission.checkCGPermission([ContactGroup.Client], ''),
                         options: {
                             text: this.l('Toolbar_ReferredBy'),
                             hint: this.l('Toolbar_ReferredBy')
@@ -1187,7 +1191,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'lists',
                         action: this.toggleLists.bind(this),
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
+                        disabled: !this.permission.checkCGPermission([ContactGroup.Client], ''),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
                         }
@@ -1195,7 +1199,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'tags',
                         action: this.toggleTags.bind(this),
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
+                        disabled: !this.permission.checkCGPermission([ContactGroup.Client], ''),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
                         }
@@ -1203,7 +1207,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'rating',
                         action: this.toggleRating.bind(this),
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
+                        disabled: !this.permission.checkCGPermission([ContactGroup.Client], ''),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
                         }
@@ -1211,7 +1215,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'star',
                         action: this.toggleStars.bind(this),
-                        disabled: !this.permission.checkCGPermission(ContactGroup.Client, ''),
+                        disabled: !this.permission.checkCGPermission([ContactGroup.Client], ''),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
                         }
@@ -1287,7 +1291,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         name: 'message',
                         widget: 'dxDropDownMenu',
                         disabled: !this.selectedClientKeys.length || this.selectedClientKeys.length > 1 || 
-                            !this.permission.checkCGPermission(ContactGroup.Client, 'ViewCommunicationHistory.SendSMSAndEmail'),
+                            !this.permission.checkCGPermission([ContactGroup.Client], 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [
                                 {
@@ -1574,13 +1578,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     updateClientStatuses(status: Status) {
-        if (this.permission.checkCGPermission(ContactGroup.Client)) {
+        if (this.permission.checkCGPermission([ContactGroup.Client])) {
             this.statusComponent.toggle();
             let selectedIds: number[] = this.selectedClientKeys;
             this.clientService.updateContactStatuses(
                 selectedIds,
                 ContactGroup.Client,
-                status.id,
+                status.id == ContactStatus.Active,
                 () => {
                     this.refresh();
                     this.dataGrid.instance.clearSelection();

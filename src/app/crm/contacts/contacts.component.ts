@@ -101,7 +101,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     public contactGroupId$: Observable<string> = this.contactGroupId.asObservable().pipe(filter(Boolean)) as Observable<string>;
     isCommunicationHistoryAllowed$: Observable<boolean> = this.contactGroupId$.pipe(
         map((contactGroupId: string) => this.permission.checkCGPermission(
-            contactGroupId,
+            [contactGroupId],
             'ViewCommunicationHistory'
         ))
     );
@@ -118,7 +118,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     );
     contactStatusId: Observable<string> = this.contactsService.contactInfo$.pipe(
         filter(Boolean),
-        map((contactInfo: ContactInfoDto) => contactInfo.statusId)
+        map((contactInfo: ContactInfoDto) => contactInfo.groups[0].isActive ? ContactStatus.Active)
     );
     showSubscriptionsSection$: Observable<boolean> = combineLatest(
         this.contactIsParent$,
@@ -174,7 +174,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             visible$: combineLatest(this.userId$, this.contactGroupId$).pipe(
                 map(([userId, contactGroupId] : [number, string]) => {
                     return userId ? this.permission.isGranted(AppPermissions.AdministrationUsersEdit)
-                        || this.permission.checkCGPermission(contactGroupId, 'UserInformation')
+                        || this.permission.checkCGPermission([contactGroupId], 'UserInformation')
                     : this.permission.isGranted(AppPermissions.AdministrationUsersCreate);
                 })
             ),
@@ -458,11 +458,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.checkUpdateToolbar();
         this.contactService['data'].contactInfo = result;
         this.contactsService.contactInfoUpdate(result);
-        this.contactGroupId.next(result.groupId);
-        this.manageAllowed = this.permission.checkCGPermission(result.groupId);
+        this.contactGroups.next(result.groups);
+        this.manageAllowed = this.permission.checkCGPermission(result.groups);
         this.assignedUsersSelector = select(
-            ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
-            { contactGroup: result.groupId }
+            ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers
         );
         contactId = contactId || result.personContactInfo.id;
         if (result['organizationContactInfo'] && result['organizationContactInfo'].contactPersons) {
@@ -472,11 +471,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         }
 
         this.isCommunicationHistoryAllowed = this.permission.checkCGPermission(
-            this.contactGroupId.value,
+            [this.contactGroupId.value],
             'ViewCommunicationHistory'
         );
         this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(
-            this.contactGroupId.value,
+            [this.contactGroupId.value],
             'ViewCommunicationHistory.SendSMSAndEmail'
         );
 
@@ -681,7 +680,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             })
         ).subscribe(([leadInfo, pipelines]) => {
             this.allPipelines = pipelines.filter(
-                (pipeline: PipelineDto) => this.permission.checkCGPermission(pipeline.contactGroupId)
+                (pipeline: PipelineDto) => this.permission.checkCGPermission([pipeline.contactGroupId])
                     && (!pipeline.entityTypeSysId || (                        
                         pipeline.entityTypeSysId.startsWith('Property')
                             && leadInfo.propertyId

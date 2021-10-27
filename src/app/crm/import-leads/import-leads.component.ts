@@ -1001,8 +1001,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private initToolbarConfig() {
-        this.manageCGPermission = this.permission.getCGPermissionKey(this.contactGroupId, 'Manage');
-        let disabledManage = !this.permission.checkCGPermission(this.contactGroupId);
+        this.manageCGPermission = this.permission.getCGPermissionKey([this.contactGroupId], 'Manage');
+        let disabledManage = !this.permission.checkCGPermission([this.contactGroupId]);
         this.toolbarConfig = [
             {
                 location: 'before',
@@ -1022,7 +1022,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                                     const contactGroup = this.importLeadsService.getContactGroupFromInputType(importType);
                                     return {
                                         disabled: importType == ImportTypeInput.Order
-                                            || !this.permission.checkCGPermission(contactGroup),
+                                            || !this.permission.checkCGPermission([contactGroup]),
                                         action: this.importTypeChanged.bind(this),
                                         contactGroupId: contactGroup,
                                         text: text,
@@ -1040,7 +1040,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
                     {
                         name: 'assign',
                         action: () => this.userAssignmentComponent.toggle(),
-                        disabled: !this.permission.checkCGPermission(this.contactGroupId, 'ManageAssignments'),
+                        disabled: !this.permission.checkCGPermission([this.contactGroupId], 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.isUserSelected,
                             class: 'assign-to'

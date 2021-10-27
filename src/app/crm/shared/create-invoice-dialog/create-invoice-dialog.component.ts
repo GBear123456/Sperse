@@ -338,7 +338,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.initContactAddresses(contact.id);
             this.customer = contact.personContactInfo.fullName;
             this.isSendEmailAllowed = this.permission.checkCGPermission(
-                contact.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
+                contact.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
             let details = contact.personContactInfo.details,
                 emailAddress = details.emails.length ? details.emails[0].emailAddress : undefined,
                 address: ContactAddressDto = details.addresses[0];
@@ -749,7 +749,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.contactId = contact.id;
             this.selectedContact = contact;
             this.isSendEmailAllowed = this.permission.checkCGPermission(
-                contact.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
+                contact.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
             if (this.orderId && !this.data.invoice) {
                 this.orderId = undefined;
                 this.orderNumber = undefined;

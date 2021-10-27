@@ -102,7 +102,6 @@ export class ContactTypes {
 }
 
 export class ContactStatus {
-    static Prospective = 'P';
     static Active = 'A';
     static Inactive = 'I';
 }

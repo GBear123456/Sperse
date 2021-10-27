@@ -1,7 +1,7 @@
 <div class="operations-widget">
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <ng-container *ngIf="enabled">
-        <app-static-list *ngIf="permission.checkCGPermission(customerType) && pipelineDataSource?.length"
+        <app-static-list *ngIf="permission.checkCGPermission([customerType]) && pipelineDataSource?.length"
             #stagesList
             [width]="'210px'"
             [title]="l('Stages')"
@@ -25,6 +25,8 @@
             [showConfirmation]="false"
             [hideButtons]="true"
             [highlightSelected]="true"
+            [showSelectionControls]="true"
+            [selectionMode]="'multiple'"
             [selectedKeys]="[contactInfo?.statusId]"
             targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
             [list]="statuses"

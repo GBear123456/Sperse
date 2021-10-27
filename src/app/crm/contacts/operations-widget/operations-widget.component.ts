@@ -180,7 +180,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
 
     ngOnChanges(changes: SimpleChanges) {
         /** Load users instance (or get from cache) for user id to find out whether to show cfo or verify button */
-        if (changes.contactInfo && this.contactInfo.groupId == ContactGroup.Client && this.appService.isCfoLinkOrVerifyEnabled) {
+        if (changes.contactInfo && this.contactInfo.groups.some(group => group.id == ContactGroup.Client) && this.appService.isCfoLinkOrVerifyEnabled) {
             const contactInfo: ContactInfoDto = changes.contactInfo.currentValue;
             if (contactInfo.id && contactInfo.personContactInfo) {
                 this.crmService.isCfoAvailable(contactInfo.personContactInfo.userId)
@@ -207,7 +207,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         this.toolbarConfig = [];
         clearTimeout(this.initTimeout);
         this.initTimeout = setTimeout(() => {
-            this.manageCGPermision = this.permission.getCGPermissionKey(this.customerType, 'Manage');
+            this.manageCGPermision = this.permission.getCGPermissionKey(this.contactInfo.groups, 'Manage');
             if (this.customToolbarConfig)
                 return (this.toolbarConfig = this.customToolbarConfig);
 
@@ -382,46 +382,46 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                 class: 'assign-to'
                             },
                             action: this.toggleUserAssignment.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType, 'ManageAssignments')
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, 'ManageAssignments')
                         },
                         {
                             name: 'stage',
                             action: this.toggleStages.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType),
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups),
                             visible: this.pipelineDataSource && this.pipelineDataSource.length
                         },
                         {
                             name: 'status',
                             action: this.toggleStatus.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType)
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups)
                                 || this.contactInfo.statusId == ContactStatus.Prospective
                         },
                         {
                             name: 'partnerType',
                             action: this.togglePartnerTypes.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType, ''),
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, ''),
                             visible: this.customerType == ContactGroup.Partner
                         },
                         {
                             name: 'lists',
                             action: this.toggleLists.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType, '')
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')
                         },
                         {
                             name: 'tags',
                             action: this.toggleTags.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType, '')
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')
                         },
                         {
                             name: 'rating',
                             action: this.toggleRating.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType, '')
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')
                         },
                         {
                             name: 'star',
                             action: this.toggleStars.bind(this),
                             visible: !this.isBankCodeLayout,
-                            disabled: !this.permission.checkCGPermission(this.customerType, '')
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')
                         }
                     ]
                 },
@@ -432,7 +432,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'delete',
                             action: this.delete.bind(this),
-                            visible: Boolean(this.leadId) && this.permission.checkCGPermission(this.customerType)
+                            visible: Boolean(this.leadId) && this.permission.checkCGPermission(this.contactInfo.groups)
                                 && this.route.snapshot.children[0].routeConfig.path == 'contact-information'                                
                         }
                     ]
@@ -459,7 +459,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     }
 
     get autoLoginAllowed(): Boolean {
-        return this.isUserAvailable() && this.permission.checkCGPermission(this.contactInfo.groupId, 'UserInformation.AutoLogin');
+        return this.isUserAvailable() && this.permission.checkCGPermission(this.contactInfo.groups, 'UserInformation.AutoLogin');
     }
 
     getNavigationConfig() {

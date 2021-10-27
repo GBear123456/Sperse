@@ -283,7 +283,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
 
     isPartner() {
         return this.contactInfoData && this.contactInfoData.contactInfo &&
-            this.contactInfoData.contactInfo.groupId === ContactGroup.Partner;
+            this.contactInfoData.contactInfo.groups.some(group =>  groupId == ContactGroup.Partner);
     }
 
     fillUserData(data) {

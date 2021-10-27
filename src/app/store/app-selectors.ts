@@ -5,7 +5,6 @@ import { ListsStoreSelectors } from './lists-store/index';
 import { PartnerTypesStoreSelectors } from './partner-types-store/index';
 import { RatingsStoreSelectors } from './ratings-store/index';
 import { StarsStoreSelectors } from './stars-store/index';
-import { StatusesStoreSelectors } from './statuses-store/index';
 import { TagsStoreSelectors } from './tags-store/index';
 import { OrganizationTypeSelectors } from './organization-types-store';
 
@@ -17,7 +16,6 @@ export {
     PartnerTypesStoreSelectors,
     RatingsStoreSelectors,
     StarsStoreSelectors,
-    StatusesStoreSelectors,
     TagsStoreSelectors,
     OrganizationTypeSelectors
 };

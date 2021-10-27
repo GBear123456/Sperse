@@ -55,7 +55,7 @@
                 [hideButtons]="true"
                 [filterModel]="filterModelStatus"
                 targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
-                [list]="statuses$ | async"
+                [list]="statuses"
                 (onItemSelected)="updateClientStatuses($event)">
         </app-static-list>
         <tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></tags-list>

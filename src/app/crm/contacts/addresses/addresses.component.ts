@@ -58,7 +58,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
     @Input()
     set contactInfo(val: ContactInfoDto) {
         if (this._contactInfo = val)
-            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groupId);
+            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groups);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -189,7 +189,7 @@ export class AddressesComponent implements OnInit, OnDestroy {
         this.getCountryName(address).subscribe((countryName: string) => {
             const dialogData: EditAddressDialogData = {
                 id: address && address.id,
-                groupId: this.contactInfo.groupId,
+                groups: this.contactInfo.groups,
                 contactId: this.contactId,
                 isCompany: this.isCompany,
                 deleteItem: (event: MouseEvent) => {

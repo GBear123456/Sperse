@@ -90,7 +90,7 @@ export class CompanyDialogComponent implements OnInit {
         rootOrganizationUnitId: null,
         departmentCode: null
     };
-    manageAllowed = this.permissionService.checkCGPermission(this.data.contactInfo.groupId);
+    manageAllowed = this.permissionService.checkCGPermission(this.data.contactInfo.groups);
     dunsRegex = AppConsts.regexPatterns.duns;
     einRegex = AppConsts.regexPatterns.ein;
     affiliateRegex = AppConsts.regexPatterns.affiliateCode;
@@ -294,8 +294,7 @@ export class CompanyDialogComponent implements OnInit {
             this.organizationContactServiceProxy.createOrgUnitForOrganization(
                 new CreateOrgUnitForOrganizationInput({
                     organizationId: this.company.id,
-                    organizationName: undefined,
-                    groupId: undefined
+                    organizationName: undefined
                 })
             ).subscribe((res) => {
                 this.company.rootOrganizationUnitId = res.organizationUnitId;                

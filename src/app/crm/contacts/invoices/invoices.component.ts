@@ -135,7 +135,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
             if (data && (!this.contactId || data.id != this.contactId)) {
                 this.contactId = data.id;
                 this.isSendEmailAllowed = this.permission.checkCGPermission(
-                    data.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
+                    data.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
                 this.dataSource = this.getDataSource();
                 this.initGeneratedCommissionDataSource(true);
             }

@@ -668,7 +668,7 @@ export class ContactsService {
         });
     }
 
-    deleteContact(customerName, contactGroup, entityId, callback?, isLead = false, userId?) {
+    deleteContact(customerName, contactGroups, entityId, callback?, isLead = false, userId?) {
         let text = this.ls.l('LeadDeleteWarningMessage', customerName);
         let canForceDelete = this.permission.isGranted(AppPermissions.CRMForceDeleteEntites);
         if (isLead) {
@@ -686,7 +686,7 @@ export class ContactsService {
                 [ { text: this.ls.l('ForceDelete'), visible: canForceDelete, checked: false }]
             );
         } else {
-            let text = contactGroup == ContactGroup.Partner ? this.ls.l('PartnerDeleteWarningMessage', customerName) : this.ls.l('ContactDeleteWarningMessage', customerName);
+            let text = contactGroups.some(group => group.id == ContactGroup.Partner) ? this.ls.l('PartnerDeleteWarningMessage', customerName) : this.ls.l('ContactDeleteWarningMessage', customerName);
             ContactsHelper.showConfirmMessage(
                 text,
                 (isConfirmed: boolean, [ forceDelete, notifyUser ]: boolean[]) => {
