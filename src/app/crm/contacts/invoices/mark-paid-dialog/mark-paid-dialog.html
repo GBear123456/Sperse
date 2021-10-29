@@ -2,54 +2,81 @@
 <mat-dialog-content>
     <div>
         <label>{{ls.l('Invoice #')}}</label>
-        <dx-text-box
-            name="invoiceNumber"
-            [readOnly]="true"
-            [(value)]="data.invoice.InvoiceNumber">
+        <dx-text-box name="invoiceNumber"
+                     [readOnly]="true"
+                     [(value)]="model.invoiceNumber">
         </dx-text-box>
     </div>
     <div>
         <label>{{ls.l('Date')}}</label>
         <dx-date-box #dateComponent
-            name="date"
-            width="250px"
-            [placeholder]="ls.l('Date')"
-            (onKeyDown)="allowDigitsOnly($event, ['/'])"
-            [(value)]="date">
+                     name="date"
+                     width="250px"
+                     [placeholder]="ls.l('Date')"
+                     (onKeyDown)="allowDigitsOnly($event, ['/'])"
+                     [(value)]="date">
         </dx-date-box>
     </div>
     <div>
         <label>{{ls.l('Description')}}</label>
-        <dx-text-box
-            name="description"
-            [(value)]="description">
+        <dx-text-box name="description"
+                     [(value)]="model.description">
         </dx-text-box>
     </div>
     <div>
         <label>{{ls.l('Stage')}}</label>
-        <dx-select-box
-            name="stage"
-            width="250px"
-            displayExpr="name"
-            valueExpr="name"
-            [dataSource]="data.stages$ | async"
-            [(value)]="stage">
+        <dx-select-box name="stage"
+                       width="250px"
+                       displayExpr="name"
+                       valueExpr="name"
+                       [dataSource]="data.stages$ | async"
+                       [(value)]="model.orderStage">
+        </dx-select-box>
+    </div>
+    <div>
+        <label>{{ls.l('Type')}}</label>
+        <dx-select-box name="type"
+                       width="250px"
+                       [dataSource]="transactionTypes"
+                       [(value)]="model.transactionType">
         </dx-select-box>
     </div>
     <div>
         <label>{{ls.l('Amount')}}</label>
-        <dx-number-box
-            name="amount"
-            [format]="currency + ' #,##0.##'"
-            [(value)]="amount">
+        <dx-number-box name="amount"
+                       [format]="currency + ' #,##0.##'"
+                       [min]="0"
+                       [max]="data.invoice.Amount"
+                       [(value)]="amount">
         </dx-number-box>
+    </div>
+    <div>
+        <label>{{ls.l('Provider')}}</label>
+        <dx-select-box name="paymentProvider"
+                       width="250px"
+                       [dataSource]="paymentProviders$ | async"
+                       [showClearButton]="true"
+                       [(value)]="model.gatewayName"
+                       (onChanged)="onPaymentProviderChanged($event)">
+        </dx-select-box>
+    </div>
+    <div *ngIf="model.gatewayName">
+        <label>{{ls.l('Transaction ID')}}</label>
+        <dx-text-box name="transactionId"
+                     [(value)]="model.gatewayTransactionId">
+        </dx-text-box>
+    </div>
+    <div *ngIf="model.gatewayName && model.transactionType != PaymentTransactionType.Sale">
+        <label>{{ls.l('Original Tran ID')}}</label>
+        <dx-text-box name="originalTransactionId"
+                     [(value)]="model.gatewayOriginTransactionId">
+        </dx-text-box>
     </div>
     <div class="recurring">
         <label>{{ls.l('Recurring')}}</label>
-        <dx-check-box
-            width="50px"
-            name="recurring"
-            [(value)]="recurring">
+        <dx-check-box width="50px"
+                      name="recurring"
+                      [(value)]="model.hasRecurringBilling">
         </dx-check-box>
     </div>
 </mat-dialog-content>
