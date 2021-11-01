@@ -5,7 +5,7 @@ import { SubscriptionAvailability } from '@app/crm/shared/filters/subscriptions-
 export class SubscriptionsFilterModel extends FilterItemModel {
     filterBy: string;
     filterKey: string;
-    nameField: string;    
+    nameField: string;
     itemsExpr: string;
     filterMode: string;
     autoExpandAll = false;
@@ -14,6 +14,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
 
     public constructor(init?: Partial<SubscriptionsFilterModel>) {
         super(init, true);
+        this.onDataSourceLoaded = this.onDataLoaded;
     }
 
     get value() {
@@ -32,14 +33,14 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                         {
                             name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].Availability'],
                             value: (item.current ? SubscriptionAvailability.Current : 0) |
-                                   (item.past ? SubscriptionAvailability.Past : 0) |
-                                   (item.never ? SubscriptionAvailability.Never : 0)
+                                (item.past ? SubscriptionAvailability.Past : 0) |
+                                (item.never ? SubscriptionAvailability.Never : 0)
                         }
                     );
                     filterIndex++;
                 }
 
-                if (item.memberServiceLevels && (item.current || item.past || item.never || 
+                if (item.memberServiceLevels && (item.current || item.past || item.never ||
                     item.current == undefined || item.past == undefined || item.never == undefined)
                 ) {
                     item.memberServiceLevels.forEach(level => {
@@ -56,8 +57,8 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                                 {
                                     name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].Availability'],
                                     value: (level.current ? SubscriptionAvailability.Current : 0) |
-                                           (level.past ? SubscriptionAvailability.Past : 0) |
-                                           (level.never ? SubscriptionAvailability.Never : 0)
+                                        (level.past ? SubscriptionAvailability.Past : 0) |
+                                        (level.never ? SubscriptionAvailability.Never : 0)
                                 }
                             );
                             filterIndex++;
@@ -65,7 +66,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                     });
                 }
             });
-        
+
         if (this.filterMode)
             result.push({
                 name: 'subscriptionFilters.Mode',
@@ -81,6 +82,16 @@ export class SubscriptionsFilterModel extends FilterItemModel {
             value[item.name] = item.value;
         });
         return value;
+    }
+
+    onDataLoaded() {
+        this.dataSource.forEach(parent => {
+            parent.uid = parent.id;
+            if (parent.memberServiceLevels)
+                parent.memberServiceLevels.forEach(child => {
+                    child.uid = parent.id + ':' + child.id;
+                });
+        });
     }
 
     getDisplayElements(): DisplayElement[] {
@@ -118,7 +129,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                         id: item.id,
                         args: item.uid,
                         displayValue: item.name + (columns.length ?
-                            ' (' +  columns.join(',') + ')' : ''
+                            ' (' + columns.join(',') + ')' : ''
                         )
                     });
                 }
@@ -127,30 +138,47 @@ export class SubscriptionsFilterModel extends FilterItemModel {
         return result;
     }
 
-    clearItem(item) {
-        item.current = item.past = item.never = null;
-        if (item.memberServiceLevels)
-            item.memberServiceLevels.forEach(level => {
-                level.current = level.past = level.never = null;
-            });
-    }
-
     removeFilterItem(filter: FilterModel, uid: any, id: string) {
         if (id !== undefined) {
-            this.clearItem(
-                filter.items.element.dataSource.reduce((result, item) => {
-                    if (result && result.uid === uid)
-                        return result;
-                    else if (item.uid === uid)
-                        return item;
-                    else if (item.memberServiceLevels)
-                        return item.memberServiceLevels.find(level => level.uid == uid);
-                }, null)
-            );
+            let itemToRemove = null;
+            let parentItem = null;
+            (<any[]>this.dataSource).some((item) => {
+                if (item.uid === uid) {
+                    itemToRemove = item;
+                }
+                else if (item[this.itemsExpr]) {
+                    itemToRemove = item[this.itemsExpr].find(level => level.uid == uid);
+                    parentItem = itemToRemove ? item : null;
+                }
+
+                return !!itemToRemove;
+            })
+
+            this.clearItem(itemToRemove, parentItem);
         } else {
-            filter.items.element.dataSource && filter.items.element.dataSource.forEach((item) => {
+            this.dataSource && this.dataSource.forEach((item) => {
                 this.clearItem(item);
             });
         }
+    }
+
+    clearItem(item, parentItem = null) {
+        item.current = item.past = item.never = null;
+        if (item[this.itemsExpr])
+            item[this.itemsExpr].forEach(level => {
+                level.current = level.past = level.never = null;
+            });
+        if (parentItem) {
+            parentItem.current = this.calculateParentSelected(parentItem, 'current');
+            parentItem.past = this.calculateParentSelected(parentItem, 'past');
+            parentItem.never = this.calculateParentSelected(parentItem, 'never');
+        }
+    }
+
+    calculateParentSelected(parentItem, availability): boolean {
+        let children = parentItem[this.itemsExpr];
+        let selectedCount = children.filter(item => item[availability]).length;
+        return selectedCount == children.length ? true :
+            selectedCount ? undefined : false;
     }
 }
