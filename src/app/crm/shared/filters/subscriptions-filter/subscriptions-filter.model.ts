@@ -14,7 +14,6 @@ export class SubscriptionsFilterModel extends FilterItemModel {
 
     public constructor(init?: Partial<SubscriptionsFilterModel>) {
         super(init, true);
-        this.onDataSourceLoaded = this.onDataLoaded;
     }
 
     get value() {
@@ -84,7 +83,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
         return value;
     }
 
-    onDataLoaded() {
+    onDataSourceLoaded() {
         this.dataSource.forEach(parent => {
             parent.uid = parent.id;
             if (parent.memberServiceLevels)
