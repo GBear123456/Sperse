@@ -10,7 +10,7 @@ import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-
 export class SubscriptionsFilterComponent implements FilterComponent {
     items: {
         services: SubscriptionsFilterModel,
-        products: SubscriptionsFilterModel        
+        products: SubscriptionsFilterModel
     };
     apply: (event) => void;
 
@@ -29,7 +29,8 @@ export class SubscriptionsFilterComponent implements FilterComponent {
 
     constructor(
         public ls: AppLocalizationService
-    ) {}
+    ) {
+    }
 
     checkSetInitialValue(event, cell, type) {
         if (!cell.row.node.children.some(level => level.data[type])
@@ -43,7 +44,7 @@ export class SubscriptionsFilterComponent implements FilterComponent {
 
         let parent = cell.row.node.parent,
             children = cell.row.node.children;
-        if (!parent.level || parent.level < 0) {
+        if (parent.level < 0) {
             this.setProductValue(field, cell.data.id, type, event.value);
             children && children.forEach(item => {
                 item.data[type] = event.value;
@@ -51,7 +52,7 @@ export class SubscriptionsFilterComponent implements FilterComponent {
             });
         } else if (parent.data) {
             this.setLevelValue(cell.data.id, parent.data.id, type, event.value);
-            children = cell.row.node.parent.children;
+            children = parent.children;
             let selectedCount = children.filter(item => item.data[type]).length;
             parent.data[type] = selectedCount == children.length
                 || (selectedCount ? undefined : false);
@@ -80,20 +81,5 @@ export class SubscriptionsFilterComponent implements FilterComponent {
                 return true;
             }
         });
-    }
-
-    onOptionChanged(field: string, event) {
-        if (event.name == 'dataSource')
-            this.items[field].dataSource.forEach(parent => {
-                parent.uid = parent.id;
-                if (parent.memberServiceLevels)
-                    parent.memberServiceLevels.forEach(child => {
-                        child.uid = parent.id + ':' + child.id;
-                    });
-            });
-    }
-
-    onModeChanged(event) {
-        this.items.products.filterMode = event.value;        
     }
 }
