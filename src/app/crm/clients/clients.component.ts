@@ -71,6 +71,9 @@ import { FilterMultilineInputComponent } from '@shared/filters/multiline-input/f
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { FilterMultilineInputModel } from '@shared/filters/multiline-input/filter-multiline-input.model';
 import {
+    ProductDto,
+    ProductType,
+    ProductServiceProxy,
     ContactEmailServiceProxy,
     ContactServiceProxy,
     ContactStatusDto,
@@ -139,7 +142,8 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
         ContactServiceProxy,
         MapService,
         LifecycleSubjectsService,
-        ImpersonationService
+        ImpersonationService,
+        ProductServiceProxy
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -445,7 +449,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 /** @todo change to strict typing and handle typescript error */
                 {
                     contactGroupId: ContactGroup.Client,
-                    ...this.subscriptionStatusFilter.items.element['getObjectValue']()
+                    ...this.getSubscriptionFilterObjectValue()
                 }
             );
         },
@@ -564,7 +568,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         this.dateField,
                         {
                             contactGroupId: ContactGroup.Client,
-                            ...this.subscriptionStatusFilter.items.element['getObjectValue']()
+                            ...this.getSubscriptionFilterObjectValue()
                         }
                     );
                     return this.httpClient.get(chartDataUrl);
@@ -590,8 +594,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         caption: 'SubscriptionStatus',
         field: 'ServiceTypeId',
         items: {
-            element: new SubscriptionsFilterModel(
+            services: new SubscriptionsFilterModel(
                 {
+                    filterBy: 'Services',
+                    filterKey: 'ServiceId',
                     dataSource$: this.store$.pipe(
                         select(SubscriptionsStoreSelectors.getSubscriptions),
                         filter(Boolean), first()
@@ -600,8 +606,26 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         if (this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts))
                             this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false));
                     },
-                    nameField: 'name'
-                })
+                    nameField: 'name',
+                    itemsExpr: 'memberServiceLevels'
+                }
+            ),
+            products: new SubscriptionsFilterModel(
+                {
+                    filterBy: 'Products',
+                    filterKey: 'ProductId',
+                    filterMode: 'All',
+                    dataSource$: this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts) ?
+                        this.productProxy.getProducts(
+                            ProductType.Subscription
+                        ).pipe(map((products: ProductDto[]) => {
+                            return products.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
+                        })) : undefined,
+                    nameField: 'name',
+                    keyExpr: 'id',
+                    dataStructure: 'plain'
+                }
+            )
         }
     });
     private filters: FilterModel[] = this.getFilters();
@@ -631,6 +655,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         private pipelineService: PipelineService,
         private filtersService: FiltersService,
         private clientService: ClientService,
+        private productProxy: ProductServiceProxy,
         private changeDetectorRef: ChangeDetectorRef,
         private contactEmailService: ContactEmailServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
@@ -790,7 +815,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             let url = this.getODataUrl(
                 this.totalDataSourceURI,
                 odataRequestValues.filter,
-                null, [...this.subscriptionStatusFilter.items.element.value, ...odataRequestValues.params]
+                null, [...this.getSubscriptionFilterValue(), ...odataRequestValues.params]
             );
             if (url && this.oDataService.requestLengthIsValid(url)) {
                 this.totalDataSource['_store']['_url'] = url;
@@ -859,7 +884,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     this.dateField,
                     {
                         contactGroupId: ContactGroup.Client,
-                        ...this.subscriptionStatusFilter.items.element['getObjectValue']()
+                        ...this.getSubscriptionFilterObjectValue()
                     }
                 );
             }),
@@ -1001,6 +1026,20 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         });
     }
 
+    private getSubscriptionFilterValue() {
+        return [
+            ...this.subscriptionStatusFilter.items.services.value,
+            ...this.subscriptionStatusFilter.items.products.value
+        ];
+    }
+
+    private getSubscriptionFilterObjectValue() {
+        return {
+            ...this.subscriptionStatusFilter.items.services['getObjectValue'](),
+            ...this.subscriptionStatusFilter.items.products['getObjectValue']()
+        };
+    }
+
     private getFilters() {
         return [].concat([
             new FilterModel({
@@ -1045,6 +1084,28 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                         name: 'AffiliateCode'
                     })
                 }
+            }),
+            new FilterModel({
+                component: FilterInputsComponent,
+                options: { type: 'number', min: 0, max: 100},
+                operator: { from: 'ge', to: 'le' },
+                caption: 'AffiliateRate',
+                field: 'AffiliateRate',
+                filterMethod: (filter) => FiltersService.filterByNumber(filter, value => {
+                    return Number((value / 100).toFixed(2));
+                }),
+                items: { from: new FilterItemModel(), to: new FilterItemModel() }
+            }),
+            new FilterModel({
+                component: FilterInputsComponent,
+                options: { type: 'number', min: 0, max: 100},
+                operator: { from: 'ge', to: 'le' },
+                caption: 'AffiliateRateTier2',
+                field: 'AffiliateRateTier2',
+                filterMethod: (filter) => FiltersService.filterByNumber(filter, value => {
+                    return Number((value / 100).toFixed(2));
+                }),
+                items: { from: new FilterItemModel(), to: new FilterItemModel() }
             })],
             this.isGranted(AppPermissions.CRMOrders) ||
                 this.isGranted(AppPermissions.CRMProducts) ?
@@ -1568,7 +1629,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 this.filters,
                 this.filtersService.getCheckCustom,
                 null,
-                this.subscriptionStatusFilter.items.element.value
+                this.getSubscriptionFilterValue()
             );
         }
     }

@@ -23,12 +23,16 @@ export class FilterItemModel {
         if (this.dataSource$)
             this.dataSource$.subscribe(source => {
                 this.dataSource = source;
+                this.onDataSourceLoaded();
             });
 
         if (this.selectedKeys$)
             this.selectedKeys$.subscribe(keys => {
                 this.value = keys;
             });
+
+        if (this.dispatch)
+            this.dispatch();
     }
 
     get value(): any {
@@ -67,6 +71,9 @@ export class FilterItemModel {
             this.value = false;
         else
             this.value = undefined;
+    }
+
+    onDataSourceLoaded() {
     }
 }
 

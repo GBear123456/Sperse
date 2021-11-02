@@ -22,6 +22,7 @@ export interface ContactDto {
     AffiliateContactName: string;
     AffiliateContactEmailAddress: string;
     AffiliateContactAffiliateCode: string;
-    AffiliateRate: number;
     AffiliateContactId: number;
+    AffiliateRate: number;
+    AffiliateRateTier2: number;
 }
