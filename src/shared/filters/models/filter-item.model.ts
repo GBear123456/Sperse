@@ -6,7 +6,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 export class FilterItemModel {
     dataSource: any;
     dataSource$: Observable<any>;
-    onDataSourceLoaded: () => void;
     dispatch: () => any;
     selectedKeys$: Observable<any>;
     disableOuterScroll: boolean;
@@ -24,7 +23,7 @@ export class FilterItemModel {
         if (this.dataSource$)
             this.dataSource$.subscribe(source => {
                 this.dataSource = source;
-                this.onDataSourceLoaded && this.onDataSourceLoaded();
+                this.onDataSourceLoaded();
             });
 
         if (this.selectedKeys$)
@@ -72,6 +71,9 @@ export class FilterItemModel {
             this.value = false;
         else
             this.value = undefined;
+    }
+
+    onDataSourceLoaded() {
     }
 }
 
