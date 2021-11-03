@@ -155,7 +155,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 area: 'column',
                 caption: 'Group',
                 dataType: 'string',
-                dataField: 'ProductGroup'
+                dataField: 'ProductGroup',
+                sortingMethod: (a, b) => !b.value || a.value < b.value ? -1 : 1,
+                customizeText: (cellInfo) => cellInfo.valueText || 'Other'
             },
             {
                 area: 'row',

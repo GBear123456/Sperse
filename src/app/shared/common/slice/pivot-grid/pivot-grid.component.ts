@@ -31,6 +31,7 @@ export class PivotGridComponent implements OnInit {
     @Input() storageKey: string;
     @Input() isLoading = true;
     @Input() height: number | string = 'auto';
+    @Input() showTotalsPrior: string = 'none';
     @HostBinding('style.height')
     public get  componentHeight(): string {
         return this.height + 'px';
