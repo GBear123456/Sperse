@@ -18,6 +18,20 @@
     <import-progress-bar></import-progress-bar>
 </app-headline>
 <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+<app-static-list #transactionTypes
+                 [width]="'265px'"
+                 [title]="ls.l('TransactionTypes')"
+                 [showConfirmation]="false"
+                 [targetSelector]="'[accessKey=TransactionTypes]'"
+                 [funnelStyling]="true"
+                 [list]="transactionTypes$ | async"
+                 [highlightSelected]="true"
+                 selectionMode="multiple"
+                 [hideButtons]="false"
+                 [hideApplyForEmpty]="false"
+                 [showSelectionControls]="true"
+                 (onApply)="onTransactionTypesApply($event)">
+</app-static-list>
 <div class="main-wrapper" [ngStyle]="{ height: 'calc(100% - ' + (appService.toolbarIsHidden.value ? '75px' : '136px' ) + ')' }">
     <ghost-list *ngIf="!isDataLoaded"></ghost-list>
     <div [hidden]="totalCount <= 0 || selectedReportType !== reportTypesEnum.Subscribers">
@@ -387,8 +401,7 @@
                           showTotalsPrior="columns">
         </slice-pivot-grid>
     </div>
-    <app-no-data
-        [hidden]="!isDataLoaded || totalCount || selectedReportType == reportTypesEnum.SalesReport"
-        [showLink]="false">
+    <app-no-data [hidden]="!isDataLoaded || totalCount || selectedReportType == reportTypesEnum.SalesReport"
+                 [showLink]="false">
     </app-no-data>
 </div>

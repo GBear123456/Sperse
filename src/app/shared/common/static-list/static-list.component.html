@@ -9,7 +9,7 @@
                 <span class="title" [hidden]="!showTitle">{{title}}</span>
                 <span class="filter-clear" [hidden]="!isFilteredItem()" (click)="applyFilter($event)">{{ls.l('ClearFilter')}}</span>
                 <div [hidden]="hideButtons" class="apply">
-                    <span class="filter-apply" [hidden]="!selectedItems?.length" (click)="apply()">{{ls.l('Apply')}}</span>
+                    <span class="filter-apply" [hidden]="hideApplyForEmpty && !selectedItems?.length" (click)="apply()">{{ls.l('Apply')}}</span>
                 </div>
             </div>
             <div class="custom-search" *ngIf="customSearchEnabled">

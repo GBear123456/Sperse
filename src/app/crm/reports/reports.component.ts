@@ -16,11 +16,11 @@ import { DxComponent } from 'devextreme-angular/core/component';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 import DataSource from 'devextreme/data/data_source';
-import ODataStore from 'devextreme/data/odata/store';
 import { Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
+import * as _ from 'underscore';
 
 /** Application imports */
 import { CrmService } from '@app/crm/crm.service';
@@ -36,7 +36,8 @@ import {
     InvoiceSettings,
     ReportServiceProxy,
     SubscriberDailyStatsReportInfo,
-    SubscribersReportInfo
+    SubscribersReportInfo,
+    PaymentServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
@@ -59,6 +60,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { SubscriptionTrackerFields } from '@app/crm/reports/subscription-tracker-fields.enum';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { TransactionDto } from '@app/crm/reports/transction-dto';
+import { StaticListComponent } from '../../shared/common/static-list/static-list.component';
 
 @Component({
     selector: 'reports-component',
@@ -67,7 +69,7 @@ import { TransactionDto } from '@app/crm/reports/transction-dto';
         '../shared/styles/client-status.less',
         './reports.component.less'
     ],
-    providers: [ CurrencyPipe, DatePipe, PhoneFormatPipe, ReportServiceProxy ],
+    providers: [CurrencyPipe, DatePipe, PhoneFormatPipe, ReportServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportsComponent implements OnInit, AfterViewInit {
@@ -75,6 +77,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     @ViewChild('statsDataGrid', { static: false }) statsDataGrid: DxDataGridComponent;
     @ViewChild('subscriptionTrackerGrid', { static: false }) subscriptionTrackerGrid: DxDataGridComponent;
     @ViewChild(PivotGridComponent, { static: false }) salesReportComponent: PivotGridComponent;
+    @ViewChild('transactionTypes', { static: false }) transactionTypes: StaticListComponent;
     toolbarConfig: ToolbarGroupModel[];
     filters = [];
     filtersValues = {
@@ -198,9 +201,17 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 dataField: 'Amount',
                 format: 'currency',
                 summaryType: 'sum'
+            },
+            {
+                area: 'filter',
+                dataType: 'string',
+                dataField: 'TransactionType'
             }
         ]
     };
+    transactionTypes$ = this.paymentService.getTransactionTypes().pipe(map(types => types.map(v => ({ id: v, name: v }))));
+    selectedTransactionTypes: string[] = [];
+
     readonly subscriptionTrackerFields: KeysEnum<SubscriptionTrackerDto> = SubscriptionTrackerFields;
     transactionMonthsObj = {};
     transactionMonths: string[];
@@ -280,6 +291,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     constructor(
         private filtersService: FiltersService,
         private reportService: ReportServiceProxy,
+        private paymentService: PaymentServiceProxy,
         private store$: Store<CrmStore.State>,
         private loadingService: LoadingService,
         private exportService: ExportService,
@@ -298,7 +310,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         public crmService: CrmService,
         public httpInterceptor: AppHttpInterceptor,
         @Inject(DOCUMENT) private document
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.activate();
@@ -328,7 +340,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         if (this.selectedReportType == ReportType.SalesReport)
             this.dataGrid.instance.getDataSource().reload().then(
                 () => this.dataGrid.instance.repaint()
-            ); 
+            );
         else
             (this.dataGrid as DxDataGridComponent).instance.refresh();
     }
@@ -362,15 +374,15 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
                 options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
             })] : [
-            new FilterModel({
-                component: FilterCalendarComponent,
-                caption: this.ls.l('Date'),
-                field: 'TransactionDate',
-                operator: {from: 'ge', to: 'le'},
-                items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
-            })
-        ];
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    caption: this.ls.l('Date'),
+                    field: 'TransactionDate',
+                    operator: { from: 'ge', to: 'le' },
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+                })
+            ];
         this.filtersService.setup(this.filters);
     }
 
@@ -403,6 +415,25 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                             'filter-selected': this.filtersService.hasFilterSelected
                         }
                     }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'transactionTypes',
+                        action: this.toggleTransactionTypes.bind(this),
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Types'),
+                            icon: './assets/common/icons/folder.svg',
+                            accessKey: 'TransactionTypes'
+                        },
+                        attr: {
+                            'filter-selected': !!this.selectedTransactionTypes.length
+                        }
+                    },
                 ]
             },
             {
@@ -474,9 +505,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             [ReportType.SalesReport]: this.salesReportComponent && this.salesReportComponent.dataGrid
         }[this.selectedReportType];
     }
-    
+
     get isDataGrid() {
-        return  this.dataGrid instanceof DxDataGridComponent;
+        return this.dataGrid instanceof DxDataGridComponent;
     }
 
     toggleColumnChooser() {
@@ -564,9 +595,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             this.initFilterConfig();
             this.initToolbarConfig();
             this.changeDetectorRef.detectChanges();
-             setTimeout(() => {
-                 this.initDataSource();
-                 this.refresh();
+            setTimeout(() => {
+                this.initDataSource();
+                this.refresh();
             });
         }
     }
@@ -592,7 +623,25 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             cell.event.stopPropagation();
         }
     }
-    
+
+    toggleTransactionTypes() {
+        this.transactionTypes.toggle();
+        this.changeDetectorRef.detectChanges();
+    }
+
+    onTransactionTypesApply(transactionTypes: any[]) {
+        let ids = transactionTypes.map(v => v.id);
+        if (this.selectedTransactionTypes.length == ids.length && _.intersection(this.selectedTransactionTypes, ids).length == this.selectedTransactionTypes.length)
+            return;
+
+        this.selectedTransactionTypes = ids;
+        this.salesReportComponent.dataGrid.instance.getDataSource().field("TransactionType", { filterValues: this.selectedTransactionTypes });
+        if (this.selectedReportType == ReportType.SalesReport) {
+            this.refresh();
+        }
+        this.initToolbarConfig();
+    }
+
     resetGridState() {
         if (this.isDataGrid)
             (this.dataGrid as DxDataGridComponent).instance.state(null);
