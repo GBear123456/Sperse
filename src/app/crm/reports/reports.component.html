@@ -30,7 +30,21 @@
                  [hideButtons]="false"
                  [hideApplyForEmpty]="false"
                  [showSelectionControls]="true"
-                 (onApply)="onTransactionTypesApply($event)">
+                 (onApply)="onSaleReportFilterApply('TransactionType', $event)">
+</app-static-list>
+<app-static-list #paymentProviders
+                 [width]="'265px'"
+                 [title]="ls.l('PaymentProviders')"
+                 [showConfirmation]="false"
+                 [targetSelector]="'[accessKey=PaymentProviders]'"
+                 [funnelStyling]="true"
+                 [list]="paymentProviders$ | async"
+                 [highlightSelected]="true"
+                 selectionMode="multiple"
+                 [hideButtons]="false"
+                 [hideApplyForEmpty]="false"
+                 [showSelectionControls]="true"
+                 (onApply)="onSaleReportFilterApply('PaymentProvider', $event)">
 </app-static-list>
 <div class="main-wrapper" [ngStyle]="{ height: 'calc(100% - ' + (appService.toolbarIsHidden.value ? '75px' : '136px' ) + ')' }">
     <ghost-list *ngIf="!isDataLoaded"></ghost-list>

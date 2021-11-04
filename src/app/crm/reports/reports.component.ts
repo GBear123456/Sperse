@@ -78,6 +78,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     @ViewChild('subscriptionTrackerGrid', { static: false }) subscriptionTrackerGrid: DxDataGridComponent;
     @ViewChild(PivotGridComponent, { static: false }) salesReportComponent: PivotGridComponent;
     @ViewChild('transactionTypes', { static: false }) transactionTypes: StaticListComponent;
+    @ViewChild('paymentProviders', { static: false }) paymentProviders: StaticListComponent;
     toolbarConfig: ToolbarGroupModel[];
     filters = [];
     filtersValues = {
@@ -206,11 +207,23 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 area: 'filter',
                 dataType: 'string',
                 dataField: 'TransactionType'
+            },
+            {
+                area: 'filter',
+                dataType: 'string',
+                dataField: 'PaymentProvider'
             }
         ]
     };
     transactionTypes$ = this.paymentService.getTransactionTypes().pipe(map(types => types.map(v => ({ id: v, name: v }))));
     selectedTransactionTypes: string[] = [];
+    paymentProviders$ = this.paymentService.getPaymentProviders().pipe(
+        map(providers => {
+            let providerObjects = providers.map(v => ({ id: v, name: v }));
+            providerObjects.push({ id: null, name: this.ls.l('Other') });
+            return providerObjects;
+        }));
+    selectedPaymentProviders: string[] = [];
 
     readonly subscriptionTrackerFields: KeysEnum<SubscriptionTrackerDto> = SubscriptionTrackerFields;
     transactionMonthsObj = {};
@@ -434,6 +447,19 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                             'filter-selected': !!this.selectedTransactionTypes.length
                         }
                     },
+                    {
+                        name: 'paymentProviders',
+                        action: this.togglePaymentProviders.bind(this),
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Providers'),
+                            icon: './assets/common/icons/folder.svg',
+                            accessKey: 'PaymentProviders'
+                        },
+                        attr: {
+                            'filter-selected': !!this.selectedPaymentProviders.length
+                        }
+                    }
                 ]
             },
             {
@@ -629,13 +655,22 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.changeDetectorRef.detectChanges();
     }
 
-    onTransactionTypesApply(transactionTypes: any[]) {
-        let ids = transactionTypes.map(v => v.id);
-        if (this.selectedTransactionTypes.length == ids.length && _.intersection(this.selectedTransactionTypes, ids).length == this.selectedTransactionTypes.length)
+    togglePaymentProviders() {
+        this.paymentProviders.toggle();
+        this.changeDetectorRef.detectChanges();
+    }
+
+    onSaleReportFilterApply(fieldName: string, newValues: any[]) {
+        let currentlySelectedItems = fieldName == 'PaymentProvider' ? this.selectedPaymentProviders :
+            fieldName == 'TransactionType' ? this.selectedTransactionTypes : null;
+
+        let ids = newValues.map(v => v.id);
+        if (currentlySelectedItems.length == ids.length && _.intersection(currentlySelectedItems, ids).length == currentlySelectedItems.length)
             return;
 
-        this.selectedTransactionTypes = ids;
-        this.salesReportComponent.dataGrid.instance.getDataSource().field("TransactionType", { filterValues: this.selectedTransactionTypes });
+        currentlySelectedItems.splice(0, currentlySelectedItems.length);
+        ids.forEach(v => currentlySelectedItems.push(v));
+        this.salesReportComponent.dataGrid.instance.getDataSource().field(fieldName, { filterValues: currentlySelectedItems });
         if (this.selectedReportType == ReportType.SalesReport) {
             this.refresh();
         }
