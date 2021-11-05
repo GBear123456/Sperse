@@ -35,8 +35,7 @@ import {
     Currency,
     InvoiceSettings,
     ReportServiceProxy,
-    SubscriberDailyStatsReportInfo,
-    SubscribersReportInfo
+    SubscriberDailyStatsReportInfo
 } from '@shared/service-proxies/service-proxies';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
@@ -59,6 +58,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { SubscriptionTrackerFields } from '@app/crm/reports/subscription-tracker-fields.enum';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { TransactionDto } from '@app/crm/reports/transction-dto';
+import { Param } from '@shared/common/odata/param.model';
 
 @Component({
     selector: 'reports-component',
@@ -67,7 +67,7 @@ import { TransactionDto } from '@app/crm/reports/transction-dto';
         '../shared/styles/client-status.less',
         './reports.component.less'
     ],
-    providers: [ CurrencyPipe, DatePipe, PhoneFormatPipe, ReportServiceProxy ],
+    providers: [CurrencyPipe, DatePipe, PhoneFormatPipe, ReportServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportsComponent implements OnInit, AfterViewInit {
@@ -78,30 +78,25 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     toolbarConfig: ToolbarGroupModel[];
     filters = [];
     filtersValues = {
-        sourceOrganizationUnits: undefined,
+        sourceOrganizationUnits: [],
         date: {
-            startDate: undefined,
-            endDate: undefined
+            ge: undefined,
+            le: undefined
         }
     };
+    private readonly subscribersReportURI = 'SubscribersReport';
     subscribersDataSource = new DataSource({
-        load: (options) => {
-            if (!options.requireTotalCount) {
+        requireTotalCount: true,
+        store: new ODataStore({
+            url: this.oDataService.getODataUrl(this.subscribersReportURI),
+            version: AppConsts.ODataVersion,
+            beforeSend: (request) => {
                 this.isDataLoaded = false;
                 this.changeDetectorRef.detectChanges();
-            }
-            return this.reportService.getSubscribersReport(
-                this.filtersValues.sourceOrganizationUnits,
-                this.filtersValues.date.startDate,
-                this.filtersValues.date.endDate
-            ).toPromise().then((response: SubscribersReportInfo[]) => {
-                this.totalCount = response.length;
-                return {
-                    data: response,
-                    totalCount: this.totalCount
-                };
-            });
-        }
+                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+            },
+            deserializeDates: false
+        })
     });
     statsDataSource = new DataSource({
         load: (options) => {
@@ -111,8 +106,8 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             }
             return this.reportService.getSubscriberDailyStatsReport(
                 this.filtersValues.sourceOrganizationUnits,
-                this.filtersValues.date.startDate,
-                this.filtersValues.date.endDate
+                this.filtersValues.date.ge,
+                this.filtersValues.date.le
             ).toPromise().then((response: SubscriberDailyStatsReportInfo[]) => {
                 this.totalCount = response.length;
                 return {
@@ -296,7 +291,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         public crmService: CrmService,
         public httpInterceptor: AppHttpInterceptor,
         @Inject(DOCUMENT) private document
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.activate();
@@ -326,9 +321,18 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         if (this.selectedReportType == ReportType.SalesReport)
             this.dataGrid.instance.getDataSource().reload().then(
                 () => this.dataGrid.instance.repaint()
-            ); 
-        else
+            );
+        else if (this.selectedReportType == ReportType.Subscribers) {
+            this.oDataService.processODataFilter(this.dataGrid.instance, this.subscribersReportURI, this.filters, null, [], null, null, this.getSourceOrgUnitsFilter());
+        } else
             (this.dataGrid as DxDataGridComponent).instance.refresh();
+    }
+
+    getSourceOrgUnitsFilter(): Param[] {
+        if (this.filtersValues.sourceOrganizationUnits && this.filtersValues.sourceOrganizationUnits.length) {
+            return this.filtersValues.sourceOrganizationUnits.map((v, i) => { return { name: `sourceOrgUnitIds[${i}]`, value: v }; });
+        }
+        return null;
     }
 
     ngAfterViewInit() {
@@ -355,20 +359,20 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             new FilterModel({
                 component: FilterCalendarComponent,
                 caption: this.ls.l('Date'),
-                operator: { from: 'startDate', to: 'endDate' },
+                operator: { from: 'ge', to: 'le' },
                 field: 'date',
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
                 options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
             })] : [
-            new FilterModel({
-                component: FilterCalendarComponent,
-                caption: this.ls.l('Date'),
-                field: 'TransactionDate',
-                operator: {from: 'ge', to: 'le'},
-                items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
-            })
-        ];
+                new FilterModel({
+                    component: FilterCalendarComponent,
+                    caption: this.ls.l('Date'),
+                    field: 'TransactionDate',
+                    operator: { from: 'ge', to: 'le' },
+                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
+                    options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+                })
+            ];
         this.filtersService.setup(this.filters);
     }
 
@@ -472,9 +476,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             [ReportType.SalesReport]: this.salesReportComponent && this.salesReportComponent.dataGrid
         }[this.selectedReportType];
     }
-    
+
     get isDataGrid() {
-        return  this.dataGrid instanceof DxDataGridComponent;
+        return this.dataGrid instanceof DxDataGridComponent;
     }
 
     toggleColumnChooser() {
@@ -510,21 +514,21 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.changeDetectorRef.detectChanges();
     }
 
-    customizePhoneCell = (data) => this.phonePipe.transform(data.phone);
+    customizePhoneCell = (data) => this.phonePipe.transform(data.Phone);
 
-    customizeStatusCell = (data) => this.ls.l('Status' + data.status);
+    customizeStatusCell = (data) => this.ls.l('Status' + data.Status);
 
-    customizeCreatedCell = (data) => this.datePipe.transform(data.created, this.formatting.dateTime, this.userTimezone);
+    customizeCreatedDateCell = (data) => this.datePipe.transform(data.Date, this.formatting.dateTime, this.userTimezone);
 
-    customizeDateCell = (data) => DateHelper.getDateWithoutTime(data.date).format('YYYY-MM-DD');
+    customizeDateCell = (data) => DateHelper.getDateWithoutTime(data.Date).format('YYYY-MM-DD');
 
-    customizeBankPassFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data.bankPassFee);
+    customizeBankPassFeeCell = (data) => this.customizeAmountCell(data.BankPassFee);
 
-    customizeBankVaultFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data.bankVaultFee);
+    customizeBankVaultFeeCell = (data) => this.customizeAmountCell(data.BankVaultFee);
 
-    customizeWtbFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data.wtbFee);
+    customizeWtbFeeCell = (data) => this.customizeAmountCell(data.WtbFee);
 
-    customizeTotalFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data.totalFee);
+    customizeTotalFeeCell = (data) => this.customizeAmountCell(data.TotalFee);
 
     customizeBankConnectAmountCell = (data: SubscriberDailyStatsReportInfo) => this.customizeAmountCell(data.bankConnectAmount);
 
@@ -562,9 +566,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             this.initFilterConfig();
             this.initToolbarConfig();
             this.changeDetectorRef.detectChanges();
-             setTimeout(() => {
-                 this.initDataSource();
-                 this.refresh();
+            setTimeout(() => {
+                this.initDataSource();
+                this.refresh();
             });
         }
     }
@@ -590,7 +594,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             cell.event.stopPropagation();
         }
     }
-    
+
     resetGridState() {
         if (this.isDataGrid)
             (this.dataGrid as DxDataGridComponent).instance.state(null);
