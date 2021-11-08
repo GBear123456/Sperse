@@ -28,7 +28,7 @@ import {
     UpdateLeadStagePointInput, UpdateOrderStagePointInput, LeadServiceProxy, OrderServiceProxy,
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto,
-    GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput, CommissionTier
+    GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput, CommissionTier, UpdateAffiliateIsAdvisorInput
 } from '@shared/service-proxies/service-proxies';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
@@ -81,6 +81,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     contactXref$: Observable<string> = this.contactXref.asObservable().pipe(
         map((contactXref: string) => (contactXref || '').trim())
     );
+    private isAdvisor: ReplaySubject<boolean> = new ReplaySubject(null);
+    isAdvisor$: Observable<boolean> = this.isAdvisor.asObservable();
     affiliateValidationRules = [
         {
             type: 'pattern',
@@ -132,6 +134,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     affiliateRate2;
     CommissionTier = CommissionTier;
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
+    hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
     hasCommissionsManagePermission: boolean = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesCommissionsManage);
     affiliateManageAllowed = this.permissionCheckerService.isGranted(AppPermissions.CRMAffiliatesManage);
     formatPercentValue = formatPercent;
@@ -194,6 +197,10 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 ).subscribe((lastModificationInfo: ContactLastModificationInfoDto) => {
                     this.lastModificationInfo = lastModificationInfo;
                 });
+
+                if (this.hasBankCodeFeature) {
+                    this.isAdvisor.next(contactInfo.affiliateIsAdvisor);
+                }
             }
         }, this.ident);
 
@@ -509,6 +516,17 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         })).subscribe(() => {
             this.contactInfo.affiliateCode = value;
             this.affiliateCode.next(value);
+        });
+    }
+
+    updateIsAdvisor($event) {
+        if (!$event.event)
+            return;
+
+        this.contactProxy.updateAffiliateIsAdvisor(new UpdateAffiliateIsAdvisorInput({
+            contactId: this.contactInfo.id,
+            isAdvisor: $event.value
+        })).subscribe(() => {
         });
     }
 

@@ -10,23 +10,37 @@
     <mat-tab-group [(selectedIndex)]="selectedTabIndex">
         <mat-tab label="By product">
             <dx-validation-group #productGroup>
-                <div class="subscription" *ngIf="!selectedTabIndex">
+                <div class="subscription product" *ngIf="!selectedTabIndex">
                     <div class="field">
                         <label for="code">{{ls.l('Product')}}</label>
                         <dx-select-box [inputAttr]="{ id: 'code' }"
                                        [dataSource]="products"
                                        displayExpr="name"
                                        valueExpr="id"
+                                       fieldTemplate="field"
                                        [(value)]="subscription.productId"
                                        placeholder="Select product..."
                                        (onValueChanged)="onProductChanged($event, sub)">
+                                <span *dxTemplate="let data of 'item'" [title]="data.name">
+                                    {{data.name}}
+                                </span>
+                                <div *dxTemplate="let data of 'field'">
+                                    <dx-text-box
+                                        [readOnly]="true"
+                                        class="product-value"
+                                        accessKey="product"
+                                        placeholder="Select product..."
+                                        [hint]="data?.name"
+                                        [value]="data?.name">
+                                    </dx-text-box>
+                                </div>
                             <dx-validator>
                                 <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                             </dx-validator>
                         </dx-select-box>
                     </div>
                     <div class="field">
-                        <label for="code">{{ls.l('PaymentPeriodType')}}</label>
+                        <label for="code" [title]="ls.l('PaymentPeriodType')">{{ls.l('Type')}}</label>
                         <dx-select-box [showClearButton]="true"
                                        [dataSource]="paymentPeriodTypes"
                                        [(value)]="subscription.paymentPeriodType"
@@ -47,9 +61,22 @@
                                            [dataSource]="serviceTypes"
                                            displayExpr="name"
                                            valueExpr="code"
+                                           fieldTemplate="field"
                                            [(value)]="subscription.code"
                                            placeholder="Select service..."
                                            (onValueChanged)="onServiceTypeChanged($event, subscription)">
+                                <span *dxTemplate="let data of 'item'" [title]="data.name">
+                                    {{data.name}}
+                                </span>
+                                <div *dxTemplate="let data of 'field'">
+                                    <dx-text-box
+                                        [readOnly]="true"
+                                        style="width:99%!important"
+                                        placeholder="Select product..."
+                                        [hint]="data?.name"
+                                        [value]="data?.name">
+                                    </dx-text-box>
+                                </div>
                                 <dx-validator>
                                     <dxi-validation-rule type="required" message=""></dxi-validation-rule>
                                 </dx-validator>
@@ -74,6 +101,9 @@
                                            [(value)]="subscription.level"
                                            showClearButton="true"
                                            (onValueChanged)="onServiceLevelChanged($event, subscription)">
+                                <dx-validator>
+                                    <dxi-validation-rule type="required" message="{{ls.l('RequiredField', 'Level')}}."></dxi-validation-rule>
+                                </dx-validator>
                             </dx-select-box>
                         </div>
                         <div class="field">
@@ -104,12 +134,14 @@
             </dx-validation-group>
         </mat-tab>
     </mat-tab-group>
-    <div class="field order-field">
+    <div *ngIf="!data.length" class="field order-field">
         <label for="orderNumber">
             {{ls.l('OrderNumber')}}
             <small class="small-gray">*optional</small>
         </label>
-        <order-dropdown [(orderNumber)]="subscription.orderNumber"
+        <order-dropdown
+            [ngStyle]="{width: selectedTabIndex ? '62%' : '70%'}"
+            [(orderNumber)]="subscription.orderNumber"
                         placeholder=""
                         width="100%"
                         [contactId]="data.contactId">

@@ -14,7 +14,8 @@ import { tap } from 'rxjs/operators';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     TenantLoginInfoDto,
-    TenantCustomizationServiceProxy
+    TenantCustomizationServiceProxy,
+    TenantCustomizationInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -64,7 +65,13 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                     this.changeDetectorRef.detectChanges();
                 }
             })),
-            this.faviconsUploader.uploadFile()
+            this.faviconsUploader.uploadFile().pipe(tap((res) => {
+                if (res && res.result && res.result.faviconBaseUrl && res.result.favicons && res.result.favicons.length) {
+                    this.tenant.tenantCustomizations = <any>{ ...this.tenant.tenantCustomizations, ...res.result };
+                    this.faviconsService.updateFavicons(this.tenant.tenantCustomizations.favicons, this.tenant.tenantCustomizations.faviconBaseUrl);
+                    this.changeDetectorRef.detectChanges();
+                }
+            }))
         );
     }
 
@@ -80,6 +87,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     clearFavicons(): void {
         this.tenantCustomizationService.clearFavicons().subscribe(() => {
             this.faviconsService.resetFavicons();
+            this.tenant.tenantCustomizations.favicons = [];
             this.notify.info(this.ls.l('ClearedSuccessfully'));
             this.changeDetectorRef.detectChanges();
         });

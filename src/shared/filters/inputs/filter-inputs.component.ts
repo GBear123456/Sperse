@@ -11,7 +11,7 @@ export class FilterInputsComponent implements FilterComponent {
     items: {};
     apply: (event) => void;
     capitalize = capitalize;
-    options?: { type: 'text' | 'number' };
+    options?: { type: 'text' | 'number', max?: number, min?: number };
 
     constructor(
         public ls: AppLocalizationService

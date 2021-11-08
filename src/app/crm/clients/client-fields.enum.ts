@@ -25,6 +25,7 @@ export const ClientFields: KeysEnum<ContactDto> = {
     AffiliateContactName: 'AffiliateContactName',
     AffiliateContactEmailAddress: 'AffiliateContactEmailAddress',
     AffiliateContactAffiliateCode: 'AffiliateContactAffiliateCode',
+    AffiliateContactId: 'AffiliateContactId',
     AffiliateRate: 'AffiliateRate',
-    AffiliateContactId: 'AffiliateContactId'
+    AffiliateRateTier2: 'AffiliateRateTier2'
 };

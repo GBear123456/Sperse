@@ -12,6 +12,7 @@ import {
     SimpleChanges,
     ViewChild
 } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 /** Third party imports */
 import { Observable } from 'rxjs';
@@ -139,6 +140,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
 
     constructor(
         injector: Injector,
+        private route: ActivatedRoute,
         private elementRef: ElementRef,
         private appService: AppService,
         private authService: AppAuthService,
@@ -430,8 +432,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'delete',
                             action: this.delete.bind(this),
-                            visible: Boolean(this.leadId) &&
-                                this.permission.checkCGPermission(this.customerType)
+                            visible: Boolean(this.leadId) && this.permission.checkCGPermission(this.customerType)
+                                && this.route.snapshot.children[0].routeConfig.path == 'contact-information'                                
                         }
                     ]
                 },

@@ -25,6 +25,14 @@
                                               (itemDeleted)="deleteItem(ls.l('Affiliate'))">
                                 </inplace-edit>
                             </div>
+                            <div class="field isAdvisor" *ngIf="hasBankCodeFeature">
+                                <dx-check-box [disabled]="!affiliateManageAllowed || !contactInfo?.personContactInfo.userId"
+                                              [value]="isAdvisor$ | async"
+                                              [text]="':' + ls.l('IsAdvisor')"
+                                              rtlEnabled="true"
+                                              (onValueChanged)="updateIsAdvisor($event)">
+                                </dx-check-box>
+                            </div>
                             <div class="field tier" *ngIf="hasCommissionsFeature">
                                 <label>{{ ls.l('AffiliateRateTier1') }}:</label>
                                 <inplace-edit [id]="contactInfo?.id"

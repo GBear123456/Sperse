@@ -8,6 +8,7 @@ import { HostForgotPasswordComponent } from '../host/host-forgot-password.compon
 @Component({
     templateUrl: './bank-code-forgot-password.component.html',
     styleUrls: [
+        '../host/host-forgot-password.component.less',
         './bank-code-password.component.less'
     ],
     animations: [accountModuleAnimation()]

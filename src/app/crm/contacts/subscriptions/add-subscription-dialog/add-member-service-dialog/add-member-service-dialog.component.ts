@@ -23,9 +23,7 @@ import {
     MemberServiceDto,
     MemberServiceLevelDto,
     FlatFeatureDto,
-    SystemTypeDto,
-    NameValueDto,
-    LayoutType
+    SystemTypeDto
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { FeatureTreeEditModel, FeatureValuesDto } from '@app/shared/features/feature-tree-edit.model';
@@ -56,6 +54,8 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
     );
     systemTypes: string[];
     featuresData: FeatureTreeEditModel;
+    title: string;
+    isReadOnly = true;
 
     constructor(
         private elementRef: ElementRef,
@@ -63,7 +63,6 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
         private notify: NotifyService,
         private invoicesService: InvoicesService,
         private changeDetection: ChangeDetectorRef,
-        private userManagementService: UserManagementService,
         public dialogRef: MatDialogRef<AddMemberServiceDialogComponent>,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -73,22 +72,25 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
                 top: '75px',
                 right: '-100vw'
             });
-        });        
-
-        this.memberServiceProxy.getSystemTypes().subscribe((types: SystemTypeDto[]) => {
-            this.systemTypes = types.map(type => type.code);
-            if (data && data.service)
-                this.onSystemTypeChanged({value: data.service.systemType});
-            else {
-                this.memberService.systemType = this.systemTypes[0];
-                this.detectChanges();
-            }
         });
 
         if (data && data.service)
             this.memberService = data.service;
         else
             this.memberService = new MemberServiceDto();
+
+        this.isReadOnly = data && !!data.isReadOnly;
+        this.title = ls.l(this.isReadOnly ? 'Service' : this.memberService.id ? 'EditService' : 'AddService');
+
+        this.memberServiceProxy.getSystemTypes().subscribe((types: SystemTypeDto[]) => {
+            this.systemTypes = types.map(type => type.code);
+            if (data && data.service)
+                this.onSystemTypeChanged({ value: data.service.systemType });
+            else {
+                this.memberService.systemType = this.systemTypes[0];
+                this.detectChanges();
+            }
+        });
 
         if (!this.memberService.memberServiceLevels)
             this.memberService.memberServiceLevels = [];
@@ -108,7 +110,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
                 }))
             };
             this.detectChanges();
-        });        
+        });
     }
 
     ngOnInit() {
@@ -124,10 +126,10 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
     ngAfterViewInit() {
         this.slider.classList.remove('hide');
         this.dialogRef.updateSize(undefined, '100vh');
-            this.dialogRef.updatePosition({
-                top: '75px',
-                right: '0px'
-            });
+        this.dialogRef.updatePosition({
+            top: '75px',
+            right: '0px'
+        });
     }
 
     saveService() {
@@ -140,7 +142,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
                 level['featureValues'].forEach((feature, index) => {
                     if (feature.value == this.featuresData.featureValues[index].value || feature.value == '')
                         level.features[feature.name] = undefined;
-                    else if (feature.value != null && feature.value != undefined) 
+                    else if (feature.value != null && feature.value != undefined)
                         level.features[feature.name] = feature.value;
                 });
                 if (level.activationTime)
@@ -151,8 +153,8 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
 
             this.featuresData.featureValues.forEach((feature, index) => {
                 if (feature.value == this.featuresData.features[index].defaultValue || feature.value == '')
-                    this.memberService.features[feature.name] = undefined;                
-                else if (feature.value != null && feature.value != undefined) 
+                    this.memberService.features[feature.name] = undefined;
+                else if (feature.value != null && feature.value != undefined)
                     this.memberService.features[feature.name] = feature.value;
             });
             this.memberServiceProxy.createOrUpdate(this.memberService).subscribe(res => {
@@ -189,7 +191,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
             level['featureValues'] = features.map(
                 (feature, index) => new FeatureValuesDto({
                     name: feature.name,
-                    value: level.features[feature.name] || 
+                    value: level.features[feature.name] ||
                         this.featuresData.featureValues[index].value
                 })
             );

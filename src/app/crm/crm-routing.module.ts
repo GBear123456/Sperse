@@ -28,7 +28,7 @@ import { AppFeatures } from '@shared/AppFeatures';
                     { path: 'dashboard', component: DashboardComponent, data: { permission: AppPermissions.CRM, reuse: true } },
                     { path: 'documents', component: DocumentsComponent, data: { permission: AppPermissions.CRMFileStorageTemplates, reuse: true } },
                     { path: 'clients', component: ClientsComponent, data: { permission: AppPermissions.CRMCustomers, reuse: true } },
-                    { path: 'products', component: ProductsComponent, data: { permission: AppPermissions.CRMOrdersInvoices, reuse: true } },
+                    { path: 'products', component: ProductsComponent, data: { permission: AppPermissions.CRMProducts, reuse: true } },
                     { path: 'partners', component: PartnersComponent, data: { permission: AppPermissions.CRMPartners, reuse: true } },
                     { path: 'leads', component: LeadsComponent, data: { permission: AppPermissions.CRMCustomers, reuse: true } },
                     { path: 'orders', component: OrdersComponent, data: { permission: AppPermissions.CRMOrders, reuse: true } },

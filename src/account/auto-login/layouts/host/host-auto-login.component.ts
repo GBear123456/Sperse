@@ -41,7 +41,11 @@ export class HostAutoLoginComponent {
     accessCodeMaxTriesCount = 3;
     accessCodeIsValid: boolean;
     accessCode: string;
+    isInstantForm: boolean = false;
+    isLoggedIn: boolean = false;
+    isExtLogin: boolean = false; 
     userEmail: string;
+
 
     constructor(
         injector: Injector,
@@ -54,7 +58,18 @@ export class HostAutoLoginComponent {
         private loginService: LoginService
     ) {
         this.activatedRoute.queryParams.pipe(first())
-            .subscribe((params: Params) => this.userEmail = params.email);
+            .subscribe((params: Params) => {
+                if (this.isExtLogin = params.extlogin == 'true') {
+                    if (this.isLoggedIn = !!this.appSession.user)
+                        this.loginService.completeSourceEvent();
+                }
+
+                this.userEmail = params.email;
+                if (this.userEmail) {
+                    if (this.isInstantForm = params.hasOwnProperty('instant'))
+                        setTimeout(() => this.sendloginLink());
+                }
+            });
     }
 
     checkAccessCodeMaxTries(showInvalidMessage = true) {
@@ -85,13 +100,13 @@ export class HostAutoLoginComponent {
                     this.isLinkSent = res.detectedTenancies.length == 1;
                 } else
                     this.isLinkSent = !isNaN(tenantId);
-            });
+            }, () => this.isInstantForm = false);
         }
     }
 
     getAppRoute() {
         let path = UrlHelper.getInitialUrlRelativePath();
-        return !path || path.indexOf('auto-login') > 0 ? '' : path;
+        return !path || path.indexOf('auto-login') > 0 || path.indexOf('forgot-password') > 0 ? '' : path;
     }
 
     authenticateByCode() {
@@ -102,7 +117,12 @@ export class HostAutoLoginComponent {
         })).pipe(
             finalize(() => abp.ui.clearBusy())
         ).subscribe((res: AuthenticateResultModel) => {
-            this.loginService.processAuthenticateResult(res, AppConsts.appBaseUrl);
+            if (this.isLoggedIn = this.isExtLogin) {
+                if (!res.shouldResetPassword)
+                    this.loginService.completeSourceEvent();                
+            }
+            this.loginService.processAuthenticateResult(
+                res, AppConsts.appBaseUrl, this.isExtLogin);
         }, () => {
             this.checkAccessCodeMaxTries(false);
         });

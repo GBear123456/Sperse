@@ -2623,6 +2623,58 @@ export class BANKCodeServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getAdvisorInfo(): Observable<GetAdvisorInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetAdvisorInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAdvisorInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAdvisorInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<GetAdvisorInfoOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetAdvisorInfoOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAdvisorInfo(response: HttpResponseBase): Observable<GetAdvisorInfoOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? GetAdvisorInfoOutput.fromJS(resultData200) : new GetAdvisorInfoOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetAdvisorInfoOutput>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -9744,6 +9796,58 @@ export class ContactServiceProxy {
     }
 
     protected processUpdateAffiliateRate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateAffiliateIsAdvisor(body: UpdateAffiliateIsAdvisorInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Contact/UpdateAffiliateIsAdvisor";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateAffiliateIsAdvisor(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateAffiliateIsAdvisor(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateAffiliateIsAdvisor(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -25532,6 +25636,62 @@ export class OrganizationContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    createOrgUnitForOrganization(body: CreateOrgUnitForOrganizationInput | null | undefined): Observable<CreateOrgUnitForOrganizationOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/CreateOrgUnitForOrganization";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrgUnitForOrganization(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrgUnitForOrganization(<any>response_);
+                } catch (e) {
+                    return <Observable<CreateOrgUnitForOrganizationOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CreateOrgUnitForOrganizationOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrgUnitForOrganization(response: HttpResponseBase): Observable<CreateOrgUnitForOrganizationOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateOrgUnitForOrganizationOutput.fromJS(resultData200) : new CreateOrgUnitForOrganizationOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreateOrgUnitForOrganizationOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     updateOrganizationInfo(body: UpdateOrganizationInfoInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/UpdateOrganizationInfo";
         url_ = url_.replace(/[?&]$/, "");
@@ -27047,6 +27207,65 @@ export class PersonContactServiceProxy {
         }
         return _observableOf<CreateUserForContactOutput>(<any>null);
     }
+
+    /**
+     * @personId (optional) 
+     * @return Success
+     */
+    getPersonHistory(personId: number | null | undefined): Observable<PersonHistoryDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/PersonContact/GetPersonHistory?";
+        if (personId !== undefined)
+            url_ += "personId=" + encodeURIComponent("" + personId) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPersonHistory(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPersonHistory(<any>response_);
+                } catch (e) {
+                    return <Observable<PersonHistoryDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PersonHistoryDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPersonHistory(response: HttpResponseBase): Observable<PersonHistoryDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(PersonHistoryDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PersonHistoryDto[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -28015,6 +28234,57 @@ export class ProductServiceProxy {
     }
 
     protected processUpdateProduct(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    synchronizeSubscriptions(id: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Product/SynchronizeSubscriptions?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSynchronizeSubscriptions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSynchronizeSubscriptions(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSynchronizeSubscriptions(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -34852,10 +35122,13 @@ export class TenantPaymentSettingsServiceProxy {
     }
 
     /**
+     * @includeAdvisorDetails (optional) 
      * @return Success
      */
-    getInvoiceSettings(): Observable<InvoiceSettings> {
-        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetInvoiceSettings";
+    getInvoiceSettings(includeAdvisorDetails: boolean | null | undefined): Observable<InvoiceSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantPaymentSettings/GetInvoiceSettings?";
+        if (includeAdvisorDetails !== undefined)
+            url_ += "includeAdvisorDetails=" + encodeURIComponent("" + includeAdvisorDetails) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -34874,14 +35147,14 @@ export class TenantPaymentSettingsServiceProxy {
                 try {
                     return this.processGetInvoiceSettings(<any>response_);
                 } catch (e) {
-                    return <Observable<InvoiceSettings>><any>_observableThrow(e);
+                    return <Observable<InvoiceSettingsDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<InvoiceSettings>><any>_observableThrow(response_);
+                return <Observable<InvoiceSettingsDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetInvoiceSettings(response: HttpResponseBase): Observable<InvoiceSettings> {
+    protected processGetInvoiceSettings(response: HttpResponseBase): Observable<InvoiceSettingsDto> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -34892,7 +35165,7 @@ export class TenantPaymentSettingsServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? InvoiceSettings.fromJS(resultData200) : new InvoiceSettings();
+            result200 = resultData200 ? InvoiceSettingsDto.fromJS(resultData200) : new InvoiceSettingsDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -34900,7 +35173,7 @@ export class TenantPaymentSettingsServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<InvoiceSettings>(<any>null);
+        return _observableOf<InvoiceSettingsDto>(<any>null);
     }
 
     /**
@@ -42503,6 +42776,7 @@ export interface IApiKeyInfo {
 export class GenerateApiKeyInput implements IGenerateApiKeyInput {
     name!: string;
     expirationDate!: moment.Moment | undefined;
+    userId!: number | undefined;
 
     constructor(data?: IGenerateApiKeyInput) {
         if (data) {
@@ -42517,6 +42791,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
         if (data) {
             this.name = data["name"];
             this.expirationDate = data["expirationDate"] ? moment(data["expirationDate"].toString()) : <any>undefined;
+            this.userId = data["userId"];
         }
     }
 
@@ -42531,6 +42806,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
         return data; 
     }
 }
@@ -42538,6 +42814,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
 export interface IGenerateApiKeyInput {
     name: string;
     expirationDate: moment.Moment | undefined;
+    userId: number | undefined;
 }
 
 export enum OfferProviderType {
@@ -44603,6 +44880,110 @@ export interface IGetBankCodeOutput {
     knowledge: number | undefined;
     nurturing: number | undefined;
     value: string | undefined;
+}
+
+export class AdvisorLinkInfo implements IAdvisorLinkInfo {
+    linkTypeId!: string | undefined;
+    url!: string | undefined;
+
+    constructor(data?: IAdvisorLinkInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.linkTypeId = data["linkTypeId"];
+            this.url = data["url"];
+        }
+    }
+
+    static fromJS(data: any): AdvisorLinkInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new AdvisorLinkInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["linkTypeId"] = this.linkTypeId;
+        data["url"] = this.url;
+        return data; 
+    }
+}
+
+export interface IAdvisorLinkInfo {
+    linkTypeId: string | undefined;
+    url: string | undefined;
+}
+
+export class GetAdvisorInfoOutput implements IGetAdvisorInfoOutput {
+    fullName!: string | undefined;
+    emailAddress!: string | undefined;
+    phone!: string | undefined;
+    bankCode!: string | undefined;
+    profilePictureId!: string | undefined;
+    advisorLinks!: AdvisorLinkInfo[] | undefined;
+
+    constructor(data?: IGetAdvisorInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.fullName = data["fullName"];
+            this.emailAddress = data["emailAddress"];
+            this.phone = data["phone"];
+            this.bankCode = data["bankCode"];
+            this.profilePictureId = data["profilePictureId"];
+            if (data["advisorLinks"] && data["advisorLinks"].constructor === Array) {
+                this.advisorLinks = [];
+                for (let item of data["advisorLinks"])
+                    this.advisorLinks.push(AdvisorLinkInfo.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetAdvisorInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetAdvisorInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fullName"] = this.fullName;
+        data["emailAddress"] = this.emailAddress;
+        data["phone"] = this.phone;
+        data["bankCode"] = this.bankCode;
+        data["profilePictureId"] = this.profilePictureId;
+        if (this.advisorLinks && this.advisorLinks.constructor === Array) {
+            data["advisorLinks"] = [];
+            for (let item of this.advisorLinks)
+                data["advisorLinks"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IGetAdvisorInfoOutput {
+    fullName: string | undefined;
+    emailAddress: string | undefined;
+    phone: string | undefined;
+    bankCode: string | undefined;
+    profilePictureId: string | undefined;
+    advisorLinks: AdvisorLinkInfo[] | undefined;
 }
 
 export class CreateContactEmailInputWithoutCheck implements ICreateContactEmailInputWithoutCheck {
@@ -51957,6 +52338,7 @@ export class ContactInfoDto implements IContactInfoDto {
     personContactInfo!: PersonContactInfoDto | undefined;
     primaryOrganizationContactId!: number | undefined;
     affiliateCode!: string | undefined;
+    affiliateIsAdvisor!: boolean | undefined;
     affiliateRate!: number | undefined;
     affiliateRateTier2!: number | undefined;
     affiliateServiceStatus!: AffiliateServiceStatus | undefined;
@@ -52005,6 +52387,7 @@ export class ContactInfoDto implements IContactInfoDto {
             this.personContactInfo = data["personContactInfo"] ? PersonContactInfoDto.fromJS(data["personContactInfo"]) : <any>undefined;
             this.primaryOrganizationContactId = data["primaryOrganizationContactId"];
             this.affiliateCode = data["affiliateCode"];
+            this.affiliateIsAdvisor = data["affiliateIsAdvisor"];
             this.affiliateRate = data["affiliateRate"];
             this.affiliateRateTier2 = data["affiliateRateTier2"];
             this.affiliateServiceStatus = data["affiliateServiceStatus"];
@@ -52053,6 +52436,7 @@ export class ContactInfoDto implements IContactInfoDto {
         data["personContactInfo"] = this.personContactInfo ? this.personContactInfo.toJSON() : <any>undefined;
         data["primaryOrganizationContactId"] = this.primaryOrganizationContactId;
         data["affiliateCode"] = this.affiliateCode;
+        data["affiliateIsAdvisor"] = this.affiliateIsAdvisor;
         data["affiliateRate"] = this.affiliateRate;
         data["affiliateRateTier2"] = this.affiliateRateTier2;
         data["affiliateServiceStatus"] = this.affiliateServiceStatus;
@@ -52086,6 +52470,7 @@ export interface IContactInfoDto {
     personContactInfo: PersonContactInfoDto | undefined;
     primaryOrganizationContactId: number | undefined;
     affiliateCode: string | undefined;
+    affiliateIsAdvisor: boolean | undefined;
     affiliateRate: number | undefined;
     affiliateRateTier2: number | undefined;
     affiliateServiceStatus: AffiliateServiceStatus | undefined;
@@ -54906,6 +55291,46 @@ export interface IUpdateContactAffiliateRateInput {
     affiliateRate: number | undefined;
     updatePendingCommissions: boolean | undefined;
     commissionTier: CommissionTier | undefined;
+}
+
+export class UpdateAffiliateIsAdvisorInput implements IUpdateAffiliateIsAdvisorInput {
+    contactId!: number;
+    isAdvisor!: boolean;
+
+    constructor(data?: IUpdateAffiliateIsAdvisorInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.contactId = data["contactId"];
+            this.isAdvisor = data["isAdvisor"];
+        }
+    }
+
+    static fromJS(data: any): UpdateAffiliateIsAdvisorInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateAffiliateIsAdvisorInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["contactId"] = this.contactId;
+        data["isAdvisor"] = this.isAdvisor;
+        return data; 
+    }
+}
+
+export interface IUpdateAffiliateIsAdvisorInput {
+    contactId: number;
+    isAdvisor: boolean;
 }
 
 export class UpdateContactXrefInput implements IUpdateContactXrefInput {
@@ -72302,13 +72727,35 @@ export interface ISubscriptionServiceDto {
     levelName: string | undefined;
 }
 
+export enum SubscriptionPaymentType {
+    OriginalPayment = "OriginalPayment", 
+    Installment = "Installment", 
+    Refund = "Refund", 
+    Chargeback = "Chargeback", 
+    RecurringBilling = "RecurringBilling", 
+}
+
+export enum SubscriptionPaymentStatus {
+    Pending = "Pending", 
+    Approved = "Approved", 
+    Declined = "Declined", 
+    Active = "Active", 
+}
+
 export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     id!: number | undefined;
+    invoiceId!: number | undefined;
+    invoiceDate!: moment.Moment | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
-    status!: string | undefined;
+    type!: SubscriptionPaymentType | undefined;
+    seqNo!: number | undefined;
+    status!: SubscriptionPaymentStatus | undefined;
     fee!: number | undefined;
-    isSubscription!: boolean | undefined;
+    paymentProvider!: string | undefined;
+    paymentId!: string | undefined;
+    paymentDate!: moment.Moment | undefined;
+    authorizationCode!: string | undefined;
 
     constructor(data?: ISubscriptionPaymentDto) {
         if (data) {
@@ -72322,11 +72769,18 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.invoiceId = data["invoiceId"];
+            this.invoiceDate = data["invoiceDate"] ? moment(data["invoiceDate"].toString()) : <any>undefined;
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.type = data["type"];
+            this.seqNo = data["seqNo"];
             this.status = data["status"];
             this.fee = data["fee"];
-            this.isSubscription = data["isSubscription"];
+            this.paymentProvider = data["paymentProvider"];
+            this.paymentId = data["paymentId"];
+            this.paymentDate = data["paymentDate"] ? moment(data["paymentDate"].toString()) : <any>undefined;
+            this.authorizationCode = data["authorizationCode"];
         }
     }
 
@@ -72340,37 +72794,56 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["invoiceId"] = this.invoiceId;
+        data["invoiceDate"] = this.invoiceDate ? this.invoiceDate.toISOString() : <any>undefined;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["type"] = this.type;
+        data["seqNo"] = this.seqNo;
         data["status"] = this.status;
         data["fee"] = this.fee;
-        data["isSubscription"] = this.isSubscription;
+        data["paymentProvider"] = this.paymentProvider;
+        data["paymentId"] = this.paymentId;
+        data["paymentDate"] = this.paymentDate ? this.paymentDate.toISOString() : <any>undefined;
+        data["authorizationCode"] = this.authorizationCode;
         return data; 
     }
 }
 
 export interface ISubscriptionPaymentDto {
     id: number | undefined;
+    invoiceId: number | undefined;
+    invoiceDate: moment.Moment | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
-    status: string | undefined;
+    type: SubscriptionPaymentType | undefined;
+    seqNo: number | undefined;
+    status: SubscriptionPaymentStatus | undefined;
     fee: number | undefined;
-    isSubscription: boolean | undefined;
+    paymentProvider: string | undefined;
+    paymentId: string | undefined;
+    paymentDate: moment.Moment | undefined;
+    authorizationCode: string | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     id!: number | undefined;
+    originalStartDate!: moment.Moment | undefined;
+    originalTrialEndDate!: moment.Moment | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
-    fee!: number | undefined;
-    tenantId!: string | undefined;
+    trialEndDate!: moment.Moment | undefined;
+    gracePeriodDayCount!: number | undefined;
+    gracePeriodEndDate!: moment.Moment | undefined;
     productCode!: string | undefined;
     productName!: string | undefined;
-    orderType!: string | undefined;
-    trialEndDate!: moment.Moment | undefined;
+    fee!: number | undefined;
     statusCode!: string | undefined;
     status!: string | undefined;
     cancelationReason!: string | undefined;
+    systemType!: string | undefined;
+    systemMemberId!: string | undefined;
+    previousSubscriptionId!: number | undefined;
     services!: SubscriptionServiceDto[] | undefined;
     payments!: SubscriptionPaymentDto[] | undefined;
 
@@ -72386,17 +72859,22 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.originalStartDate = data["originalStartDate"] ? moment(data["originalStartDate"].toString()) : <any>undefined;
+            this.originalTrialEndDate = data["originalTrialEndDate"] ? moment(data["originalTrialEndDate"].toString()) : <any>undefined;
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.fee = data["fee"];
-            this.tenantId = data["tenantId"];
+            this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
+            this.gracePeriodDayCount = data["gracePeriodDayCount"];
+            this.gracePeriodEndDate = data["gracePeriodEndDate"] ? moment(data["gracePeriodEndDate"].toString()) : <any>undefined;
             this.productCode = data["productCode"];
             this.productName = data["productName"];
-            this.orderType = data["orderType"];
-            this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
+            this.fee = data["fee"];
             this.statusCode = data["statusCode"];
             this.status = data["status"];
             this.cancelationReason = data["cancelationReason"];
+            this.systemType = data["systemType"];
+            this.systemMemberId = data["systemMemberId"];
+            this.previousSubscriptionId = data["previousSubscriptionId"];
             if (data["services"] && data["services"].constructor === Array) {
                 this.services = [];
                 for (let item of data["services"])
@@ -72420,17 +72898,22 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["originalStartDate"] = this.originalStartDate ? this.originalStartDate.toISOString() : <any>undefined;
+        data["originalTrialEndDate"] = this.originalTrialEndDate ? this.originalTrialEndDate.toISOString() : <any>undefined;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["fee"] = this.fee;
-        data["tenantId"] = this.tenantId;
+        data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
+        data["gracePeriodDayCount"] = this.gracePeriodDayCount;
+        data["gracePeriodEndDate"] = this.gracePeriodEndDate ? this.gracePeriodEndDate.toISOString() : <any>undefined;
         data["productCode"] = this.productCode;
         data["productName"] = this.productName;
-        data["orderType"] = this.orderType;
-        data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
+        data["fee"] = this.fee;
         data["statusCode"] = this.statusCode;
         data["status"] = this.status;
         data["cancelationReason"] = this.cancelationReason;
+        data["systemType"] = this.systemType;
+        data["systemMemberId"] = this.systemMemberId;
+        data["previousSubscriptionId"] = this.previousSubscriptionId;
         if (this.services && this.services.constructor === Array) {
             data["services"] = [];
             for (let item of this.services)
@@ -72447,17 +72930,22 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
 
 export interface IOrderSubscriptionDto {
     id: number | undefined;
+    originalStartDate: moment.Moment | undefined;
+    originalTrialEndDate: moment.Moment | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
-    fee: number | undefined;
-    tenantId: string | undefined;
+    trialEndDate: moment.Moment | undefined;
+    gracePeriodDayCount: number | undefined;
+    gracePeriodEndDate: moment.Moment | undefined;
     productCode: string | undefined;
     productName: string | undefined;
-    orderType: string | undefined;
-    trialEndDate: moment.Moment | undefined;
+    fee: number | undefined;
     statusCode: string | undefined;
     status: string | undefined;
     cancelationReason: string | undefined;
+    systemType: string | undefined;
+    systemMemberId: string | undefined;
+    previousSubscriptionId: number | undefined;
     services: SubscriptionServiceDto[] | undefined;
     payments: SubscriptionPaymentDto[] | undefined;
 }
@@ -72528,6 +73016,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
     productCode!: string | undefined;
     paymentPeriodType!: RecurringPaymentFrequency | undefined;
     hasRecurringBilling!: boolean | undefined;
+    skipExisting!: boolean | undefined;
 
     constructor(data?: IUpdateOrderSubscriptionInput) {
         if (data) {
@@ -72553,6 +73042,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             this.productCode = data["productCode"];
             this.paymentPeriodType = data["paymentPeriodType"];
             this.hasRecurringBilling = data["hasRecurringBilling"];
+            this.skipExisting = data["skipExisting"];
         }
     }
 
@@ -72578,6 +73068,7 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
         data["productCode"] = this.productCode;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
+        data["skipExisting"] = this.skipExisting;
         return data; 
     }
 }
@@ -72592,6 +73083,7 @@ export interface IUpdateOrderSubscriptionInput {
     productCode: string | undefined;
     paymentPeriodType: RecurringPaymentFrequency | undefined;
     hasRecurringBilling: boolean | undefined;
+    skipExisting: boolean | undefined;
 }
 
 export class UpdateOrderSubscriptionPeriodInput implements IUpdateOrderSubscriptionPeriodInput {
@@ -72680,7 +73172,8 @@ export interface ICancelOrderSubscriptionInput {
 
 export class CancelAllInput implements ICancelAllInput {
     contactId!: number;
-    serviceProductCodes!: string[] | undefined;
+    productCodes!: string[] | undefined;
+    serviceCodes!: string[] | undefined;
     cancelationReason!: string | undefined;
 
     constructor(data?: ICancelAllInput) {
@@ -72695,10 +73188,15 @@ export class CancelAllInput implements ICancelAllInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            if (data["serviceProductCodes"] && data["serviceProductCodes"].constructor === Array) {
-                this.serviceProductCodes = [];
-                for (let item of data["serviceProductCodes"])
-                    this.serviceProductCodes.push(item);
+            if (data["productCodes"] && data["productCodes"].constructor === Array) {
+                this.productCodes = [];
+                for (let item of data["productCodes"])
+                    this.productCodes.push(item);
+            }
+            if (data["serviceCodes"] && data["serviceCodes"].constructor === Array) {
+                this.serviceCodes = [];
+                for (let item of data["serviceCodes"])
+                    this.serviceCodes.push(item);
             }
             this.cancelationReason = data["cancelationReason"];
         }
@@ -72714,10 +73212,15 @@ export class CancelAllInput implements ICancelAllInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        if (this.serviceProductCodes && this.serviceProductCodes.constructor === Array) {
-            data["serviceProductCodes"] = [];
-            for (let item of this.serviceProductCodes)
-                data["serviceProductCodes"].push(item);
+        if (this.productCodes && this.productCodes.constructor === Array) {
+            data["productCodes"] = [];
+            for (let item of this.productCodes)
+                data["productCodes"].push(item);
+        }
+        if (this.serviceCodes && this.serviceCodes.constructor === Array) {
+            data["serviceCodes"] = [];
+            for (let item of this.serviceCodes)
+                data["serviceCodes"].push(item);
         }
         data["cancelationReason"] = this.cancelationReason;
         return data; 
@@ -72726,7 +73229,8 @@ export class CancelAllInput implements ICancelAllInput {
 
 export interface ICancelAllInput {
     contactId: number;
-    serviceProductCodes: string[] | undefined;
+    productCodes: string[] | undefined;
+    serviceCodes: string[] | undefined;
     cancelationReason: string | undefined;
 }
 
@@ -73116,6 +73620,86 @@ export class CreateOrganizationOutput implements ICreateOrganizationOutput {
 
 export interface ICreateOrganizationOutput {
     id: number | undefined;
+}
+
+export class CreateOrgUnitForOrganizationInput implements ICreateOrgUnitForOrganizationInput {
+    organizationId!: number | undefined;
+    organizationName!: string | undefined;
+    groupId!: string | undefined;
+
+    constructor(data?: ICreateOrgUnitForOrganizationInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.organizationId = data["organizationId"];
+            this.organizationName = data["organizationName"];
+            this.groupId = data["groupId"];
+        }
+    }
+
+    static fromJS(data: any): CreateOrgUnitForOrganizationInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrgUnitForOrganizationInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["organizationId"] = this.organizationId;
+        data["organizationName"] = this.organizationName;
+        data["groupId"] = this.groupId;
+        return data; 
+    }
+}
+
+export interface ICreateOrgUnitForOrganizationInput {
+    organizationId: number | undefined;
+    organizationName: string | undefined;
+    groupId: string | undefined;
+}
+
+export class CreateOrgUnitForOrganizationOutput implements ICreateOrgUnitForOrganizationOutput {
+    organizationUnitId!: number | undefined;
+
+    constructor(data?: ICreateOrgUnitForOrganizationOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.organizationUnitId = data["organizationUnitId"];
+        }
+    }
+
+    static fromJS(data: any): CreateOrgUnitForOrganizationOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrgUnitForOrganizationOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["organizationUnitId"] = this.organizationUnitId;
+        return data; 
+    }
+}
+
+export interface ICreateOrgUnitForOrganizationOutput {
+    organizationUnitId: number | undefined;
 }
 
 export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput {
@@ -74979,6 +75563,7 @@ export interface ICreateUserForContactInput {
 }
 
 export class CreateUserForContactOutput implements ICreateUserForContactOutput {
+    userId!: number | undefined;
     autoLoginLink!: string | undefined;
 
     constructor(data?: ICreateUserForContactOutput) {
@@ -74992,6 +75577,7 @@ export class CreateUserForContactOutput implements ICreateUserForContactOutput {
 
     init(data?: any) {
         if (data) {
+            this.userId = data["userId"];
             this.autoLoginLink = data["autoLoginLink"];
         }
     }
@@ -75005,13 +75591,163 @@ export class CreateUserForContactOutput implements ICreateUserForContactOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
         data["autoLoginLink"] = this.autoLoginLink;
         return data; 
     }
 }
 
 export interface ICreateUserForContactOutput {
+    userId: number | undefined;
     autoLoginLink: string | undefined;
+}
+
+export class PersonHistoryDto implements IPersonHistoryDto {
+    id!: number | undefined;
+    creationTime!: moment.Moment | undefined;
+    creatorUserId!: number | undefined;
+    creatorUserName!: string | undefined;
+    creatorUserPhotoPublicId!: string | undefined;
+    source!: string | undefined;
+    namePrefix!: string | undefined;
+    firstName!: string | undefined;
+    middleName!: string | undefined;
+    lastName!: string | undefined;
+    nameSuffix!: string | undefined;
+    nickName!: string | undefined;
+    dob!: moment.Moment | undefined;
+    ssn!: string | undefined;
+    bankCode!: string | undefined;
+    timeZone!: string | undefined;
+    maritalStatus!: MaritalStatus | undefined;
+    marriageDate!: moment.Moment | undefined;
+    divorceDate!: moment.Moment | undefined;
+    gender!: Gender | undefined;
+    isUSCitizen!: boolean | undefined;
+    citizenship!: string | undefined;
+    experience!: string | undefined;
+    profileSummary!: string | undefined;
+    preferredToD!: TimeOfDay | undefined;
+    drivingLicense!: string | undefined;
+    drivingLicenseState!: string | undefined;
+    isActiveMilitaryDuty!: boolean | undefined;
+    monthlyGoal!: number | undefined;
+
+    constructor(data?: IPersonHistoryDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
+            this.creatorUserId = data["creatorUserId"];
+            this.creatorUserName = data["creatorUserName"];
+            this.creatorUserPhotoPublicId = data["creatorUserPhotoPublicId"];
+            this.source = data["source"];
+            this.namePrefix = data["namePrefix"];
+            this.firstName = data["firstName"];
+            this.middleName = data["middleName"];
+            this.lastName = data["lastName"];
+            this.nameSuffix = data["nameSuffix"];
+            this.nickName = data["nickName"];
+            this.dob = data["dob"] ? moment(data["dob"].toString()) : <any>undefined;
+            this.ssn = data["ssn"];
+            this.bankCode = data["bankCode"];
+            this.timeZone = data["timeZone"];
+            this.maritalStatus = data["maritalStatus"];
+            this.marriageDate = data["marriageDate"] ? moment(data["marriageDate"].toString()) : <any>undefined;
+            this.divorceDate = data["divorceDate"] ? moment(data["divorceDate"].toString()) : <any>undefined;
+            this.gender = data["gender"];
+            this.isUSCitizen = data["isUSCitizen"];
+            this.citizenship = data["citizenship"];
+            this.experience = data["experience"];
+            this.profileSummary = data["profileSummary"];
+            this.preferredToD = data["preferredToD"];
+            this.drivingLicense = data["drivingLicense"];
+            this.drivingLicenseState = data["drivingLicenseState"];
+            this.isActiveMilitaryDuty = data["isActiveMilitaryDuty"];
+            this.monthlyGoal = data["monthlyGoal"];
+        }
+    }
+
+    static fromJS(data: any): PersonHistoryDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonHistoryDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
+        data["creatorUserId"] = this.creatorUserId;
+        data["creatorUserName"] = this.creatorUserName;
+        data["creatorUserPhotoPublicId"] = this.creatorUserPhotoPublicId;
+        data["source"] = this.source;
+        data["namePrefix"] = this.namePrefix;
+        data["firstName"] = this.firstName;
+        data["middleName"] = this.middleName;
+        data["lastName"] = this.lastName;
+        data["nameSuffix"] = this.nameSuffix;
+        data["nickName"] = this.nickName;
+        data["dob"] = this.dob ? this.dob.toISOString() : <any>undefined;
+        data["ssn"] = this.ssn;
+        data["bankCode"] = this.bankCode;
+        data["timeZone"] = this.timeZone;
+        data["maritalStatus"] = this.maritalStatus;
+        data["marriageDate"] = this.marriageDate ? this.marriageDate.toISOString() : <any>undefined;
+        data["divorceDate"] = this.divorceDate ? this.divorceDate.toISOString() : <any>undefined;
+        data["gender"] = this.gender;
+        data["isUSCitizen"] = this.isUSCitizen;
+        data["citizenship"] = this.citizenship;
+        data["experience"] = this.experience;
+        data["profileSummary"] = this.profileSummary;
+        data["preferredToD"] = this.preferredToD;
+        data["drivingLicense"] = this.drivingLicense;
+        data["drivingLicenseState"] = this.drivingLicenseState;
+        data["isActiveMilitaryDuty"] = this.isActiveMilitaryDuty;
+        data["monthlyGoal"] = this.monthlyGoal;
+        return data; 
+    }
+}
+
+export interface IPersonHistoryDto {
+    id: number | undefined;
+    creationTime: moment.Moment | undefined;
+    creatorUserId: number | undefined;
+    creatorUserName: string | undefined;
+    creatorUserPhotoPublicId: string | undefined;
+    source: string | undefined;
+    namePrefix: string | undefined;
+    firstName: string | undefined;
+    middleName: string | undefined;
+    lastName: string | undefined;
+    nameSuffix: string | undefined;
+    nickName: string | undefined;
+    dob: moment.Moment | undefined;
+    ssn: string | undefined;
+    bankCode: string | undefined;
+    timeZone: string | undefined;
+    maritalStatus: MaritalStatus | undefined;
+    marriageDate: moment.Moment | undefined;
+    divorceDate: moment.Moment | undefined;
+    gender: Gender | undefined;
+    isUSCitizen: boolean | undefined;
+    citizenship: string | undefined;
+    experience: string | undefined;
+    profileSummary: string | undefined;
+    preferredToD: TimeOfDay | undefined;
+    drivingLicense: string | undefined;
+    drivingLicenseState: string | undefined;
+    isActiveMilitaryDuty: boolean | undefined;
+    monthlyGoal: number | undefined;
 }
 
 export class CreatePersonOrgRelationInput implements ICreatePersonOrgRelationInput {
@@ -82247,6 +82983,90 @@ export enum CommissionAffiliateAssignmentMode {
     Dynamic = "Dynamic", 
 }
 
+export class InvoiceSettingsDto implements IInvoiceSettingsDto {
+    advisorName!: string | undefined;
+    legalName!: string | undefined;
+    address!: string | undefined;
+    taxVatNo!: string | undefined;
+    defaultTemplateId!: number | undefined;
+    attachPDF!: boolean | undefined;
+    defaultNote!: string | undefined;
+    currency!: Currency | undefined;
+    showShippingAddress!: boolean | undefined;
+    defaultAffiliateRate!: number | undefined;
+    defaultAdvisorContactId!: number | undefined;
+    tier2CommissionSource!: Tier2CommissionSource | undefined;
+    commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode | undefined;
+
+    constructor(data?: IInvoiceSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.advisorName = data["advisorName"];
+            this.legalName = data["legalName"];
+            this.address = data["address"];
+            this.taxVatNo = data["taxVatNo"];
+            this.defaultTemplateId = data["defaultTemplateId"];
+            this.attachPDF = data["attachPDF"];
+            this.defaultNote = data["defaultNote"];
+            this.currency = data["currency"];
+            this.showShippingAddress = data["showShippingAddress"];
+            this.defaultAffiliateRate = data["defaultAffiliateRate"];
+            this.defaultAdvisorContactId = data["defaultAdvisorContactId"];
+            this.tier2CommissionSource = data["tier2CommissionSource"];
+            this.commissionAffiliateAssignmentMode = data["commissionAffiliateAssignmentMode"];
+        }
+    }
+
+    static fromJS(data: any): InvoiceSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new InvoiceSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["advisorName"] = this.advisorName;
+        data["legalName"] = this.legalName;
+        data["address"] = this.address;
+        data["taxVatNo"] = this.taxVatNo;
+        data["defaultTemplateId"] = this.defaultTemplateId;
+        data["attachPDF"] = this.attachPDF;
+        data["defaultNote"] = this.defaultNote;
+        data["currency"] = this.currency;
+        data["showShippingAddress"] = this.showShippingAddress;
+        data["defaultAffiliateRate"] = this.defaultAffiliateRate;
+        data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
+        data["tier2CommissionSource"] = this.tier2CommissionSource;
+        data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
+        return data; 
+    }
+}
+
+export interface IInvoiceSettingsDto {
+    advisorName: string | undefined;
+    legalName: string | undefined;
+    address: string | undefined;
+    taxVatNo: string | undefined;
+    defaultTemplateId: number | undefined;
+    attachPDF: boolean | undefined;
+    defaultNote: string | undefined;
+    currency: Currency | undefined;
+    showShippingAddress: boolean | undefined;
+    defaultAffiliateRate: number | undefined;
+    defaultAdvisorContactId: number | undefined;
+    tier2CommissionSource: Tier2CommissionSource | undefined;
+    commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode | undefined;
+}
+
 export class InvoiceSettings implements IInvoiceSettings {
     legalName!: string | undefined;
     address!: string | undefined;
@@ -82257,6 +83077,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     currency!: Currency | undefined;
     showShippingAddress!: boolean | undefined;
     defaultAffiliateRate!: number | undefined;
+    defaultAdvisorContactId!: number | undefined;
     tier2CommissionSource!: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode | undefined;
 
@@ -82280,6 +83101,7 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.currency = data["currency"];
             this.showShippingAddress = data["showShippingAddress"];
             this.defaultAffiliateRate = data["defaultAffiliateRate"];
+            this.defaultAdvisorContactId = data["defaultAdvisorContactId"];
             this.tier2CommissionSource = data["tier2CommissionSource"];
             this.commissionAffiliateAssignmentMode = data["commissionAffiliateAssignmentMode"];
         }
@@ -82303,6 +83125,7 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["currency"] = this.currency;
         data["showShippingAddress"] = this.showShippingAddress;
         data["defaultAffiliateRate"] = this.defaultAffiliateRate;
+        data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
         data["tier2CommissionSource"] = this.tier2CommissionSource;
         data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
         return data; 
@@ -82319,6 +83142,7 @@ export interface IInvoiceSettings {
     currency: Currency | undefined;
     showShippingAddress: boolean | undefined;
     defaultAffiliateRate: number | undefined;
+    defaultAdvisorContactId: number | undefined;
     tier2CommissionSource: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode | undefined;
 }

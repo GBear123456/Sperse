@@ -6,7 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 import DataSource from 'devextreme/data/data_source';
 import { MatDialog } from '@angular/material/dialog';
 import { map, first, filter, finalize } from 'rxjs/operators';
-import * as _ from 'underscore';
+import * as moment from 'moment-timezone';
 
 /** Application imports */
 import {
@@ -31,8 +31,8 @@ import { ContactsService } from '../contacts.service';
 import { DxDataGridComponent } from 'devextreme-angular';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
+import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
@@ -40,6 +40,8 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { AppService } from '@app/app.service';
 
 @Component({
@@ -48,6 +50,7 @@ import { AppService } from '@app/app.service';
     styleUrls: ['./subscriptions.component.less']
 })
 export class SubscriptionsComponent implements OnInit, OnDestroy {
+    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
     @ViewChild('mainGrid', { static: false }) dataGrid: DxDataGridComponent;
     public data: {
         contactInfo: ContactInfoDto,
@@ -57,7 +60,6 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
 
     currency: string;
     public dataSource: DataSource;
-    showAll = false;
     impersonateTenantId: number;
     permissions = AppPermissions;
     manageAllowed = false;
@@ -65,6 +67,26 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     userTimezone = DateHelper.getUserTimezone();
     private readonly ident = 'Subscriptions';
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
+    public actionRecordData: any;
+    public actionMenuItems: ActionMenuItem[]  = [
+        {
+            text: this.ls.l('Login'),
+            class: 'login',
+            checkVisible: () => 
+                this.actionRecordData.systemMemberId &&
+                this.actionRecordData.systemType == 'Tenant' &&
+                this.permission.isGranted(AppPermissions.TenantsImpersonation), 
+            action: () => this.showUserImpersonateLookUpModal()
+        },
+        {
+            text: this.ls.l('Cancel'),
+            class: 'delete',
+            checkVisible: () => 
+                this.actionRecordData.statusCode === 'A' && 
+                this.permission.isGranted(AppPermissions.CRMOrdersManage),
+            action: () => this.cancelSubscription(this.actionRecordData.id)
+        }
+    ];
 
     constructor(
         private invoicesService: InvoicesService,
@@ -101,29 +123,28 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         }, this.ident);
     }
 
-    setDataSource(data: OrderSubscriptionDto[]) {
-        let currentServices = [];
-        data.forEach(item => {
-            if (item.status == 'Current') {
-                item['isLastSubscription'] = true;
-                currentServices = currentServices.concat(
-                    item.services.map(service => service.serviceCode)
-                );
-            }
-        });
-        let sortedData = _.sortBy(data, (x: OrderSubscriptionDto) => x.id).reverse();
-        sortedData.forEach(item => {
-            let services = item.services.map(service => service.serviceCode);
-            if (item.status != 'Current' &&
-                _.difference(services, currentServices).length
-            ) {
-                item['isLastSubscription'] = true;
-                currentServices = currentServices.concat(services);
-            }
-        });
+    onCellClick($event) {
+        let target = $event.event.target;
+        if ($event.rowType === 'data') {
+            if (target.closest('.dx-link.dx-link-edit'))
+                this.toggleActionsMenu($event.data, target);
+        }
+    }
 
-        this.dataSource = new DataSource(data);
-        this.filterDataSource();
+    toggleActionsMenu(data, target) {
+        this.actionRecordData = data;
+        this.actionMenu.toggle(target);
+    }
+
+    onMenuItemClick($event) {
+        $event.itemData.action.call(this);
+        this.actionRecordData = null;
+        this.actionMenu.hide();
+    }
+
+    onShowingPopup(e) {
+        e.component.option('visible', false);
+        e.component.hide();
     }
 
     refreshData(forced = false) {
@@ -139,6 +160,54 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
                     map(subscriptions => subscriptions.filter(subscription => subscription.statusCode !== 'D')),
                     finalize(() => this.loadingService.finishLoading())
                 ).subscribe(result => {
+                    result.forEach(record => {
+                        if (record.productName.includes('Summit'))
+                            record['photoUri'] = 'summit';
+
+                        if (record.services) {
+                            record.services.some(service => {
+                                if (service.serviceCode == 'BANKVAULT')
+                                    return record['photoUri'] = 'explore';
+                                if (service.serviceCode == 'BANKPASS')
+                                    return record['photoUri'] = 'discover';
+                                if (service.serviceCode == 'Connect')
+                                    return record['photoUri'] = 'connect';
+                                if (service.serviceCode == 'COACHING')
+                                    return record['photoUri'] = 'coaching';
+                                if (service.serviceCode == 'Certified Coach')
+                                    return record['photoUri'] = 'coach';
+                                if (service.serviceCode == 'Certified Trainer')
+                                    return record['photoUri'] = 'trainer';
+                                if (service.serviceCode == 'WTB eBook')
+                                    return record['photoUri'] = 'wtb';
+                                if (service.serviceCode == 'BANK AUDIO')
+                                    return record['photoUri'] = 'audio';
+                                if (service.serviceCode == 'KICKSTARTER')
+                                    return record['photoUri'] = 'kickstarter';
+                                if (service.serviceCode == 'KICKSTARTERPRO')
+                                    return record['photoUri'] = 'kickstarter-pro';
+                            });
+
+                            record['isTrial'] = Boolean(record.trialEndDate && record.trialEndDate.diff(moment()) > 0);
+                            record['serviceCodeList'] = record.services.map(service => {
+                                return service.serviceCode + (service.levelCode ? '(' + service.levelCode + ')' : '');
+                            }).join(', ');
+                            record['serviceList'] = record.services.map(service => {
+                                return service.serviceName + (service.levelName ? '(' + service.levelName + ')' : '');
+                            }).join(', ');
+                        }
+
+                        if (record.payments && record.payments.length) {
+                            record['totals'] = {};
+                            record.payments.forEach(payment => {
+                                if (['Approved', 'Active'].indexOf(payment.status) >= 0) {
+                                    if (!record['totals'][payment.type])
+                                        record['totals'][payment.type] = 0;
+                                    record['totals'][payment.type] += payment.fee;
+                                }
+                            });
+                        }                        
+                    });
                     this.orderSubscriptionProxy['data'] = {
                         contactId: contactId,
                         source: result
@@ -148,9 +217,8 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         }
     }
 
-    cancelSubscription(id: number, $event) {
+    cancelSubscription(id: number) {
         this.dialog.closeAll();
-        $event.stopPropagation();
         this.dialog.open(CancelSubscriptionDialogComponent, {
             width: '400px',
             data: {
@@ -170,17 +238,16 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             }
         });
     }
-
-    showUserImpersonateLookUpModal(e, record: any): void {
-        this.impersonateTenantId = record.tenantId;
+                          
+    showUserImpersonateLookUpModal(): void {
+        this.impersonateTenantId = this.actionRecordData.systemMemberId;
         const impersonateDialog = this.dialog.open(CommonLookupModalComponent, {
             panelClass: [ 'slider' ],
-            data: { tenantId: this.impersonateTenantId }
+            data: {tenantId: this.impersonateTenantId}
         });
         impersonateDialog.componentInstance.itemSelected.subscribe((item: NameValueDto) => {
             this.impersonateUser(item);
         });
-        e.stopPropagation();
     }
 
     impersonateUser(item: NameValueDto): void {
@@ -190,59 +257,8 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
         );
     }
 
-    toggleHistory() {
-        this.showAll = !this.showAll;
-        this.filterDataSource();
-    }
-
-    filterDataSource() {
-        if (this.showAll)
-            this.dataSource.filter(null);
-        else
-            this.dataSource.filter([['isLastSubscription', '=', true]]);
-
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.clearSorting();
-        this.dataSource.sort(['productName', { getter: 'id', desc: true }]);
-        this.dataSource.load();
-    }
-
-    openSubscriptionDialog(e?: any) {
-        this.dialog.closeAll();
-
-        let leadId = this.route.parent.snapshot.paramMap.get('leadId') ?
-            this.data.leadInfo.id :
-            null;
-
-        let data: any = { contactId: this.data.contactInfo.id, leadId: leadId };
-        if (e && e.data) {
-            const subscription: OrderSubscriptionDto = e.data;
-            data = {
-                ...data,
-                endDate: subscription.endDate,
-                name: subscription.productName
-            };
-        }
-        this.dialog.open(AddSubscriptionDialogComponent, {
-            panelClass: ['slider'],
-            hasBackdrop: false,
-            closeOnNavigation: false,
-            disableClose: true,
-            data: data
-        });
-        e.stopPropagation ? e.stopPropagation() : e.event.stopPropagation();
-    }
-
-    onDateHover(event) {
-        let target = event.target.children[1];
-        if (target)
-            target.innerText = target.title;
-    }
-
-    onDateLeave(event) {
-        let target = event.target.children[1];
-        if (target)
-            target.innerText = target.title.split(' ').shift();
+    setDataSource(data: OrderSubscriptionDto[]) {
+        this.dataSource = new DataSource(data);
     }
 
     onDateChanged(event, cell) {
@@ -275,6 +291,51 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
             popup.style.transform = 'translate(' +
                 (isWidthOverflow ? -300 : 0) + 'px, ' +
                 (isHeightOverflow ? -300 : 0) + 'px)';
+    }
+
+    onRowExpandedCollapsed(event) {
+        event.key['expanded'] = event.expanded;
+    }
+
+    toogleMasterDatails(cell) {
+        if (cell.data.payments && cell.data.payments.length) {
+            let instance = this.dataGrid.instance,
+                isExpanded = instance.isRowExpanded(cell.key);
+            if (isExpanded)                
+                instance.collapseRow(cell.key);
+            else
+                instance.expandRow(cell.key);
+            setTimeout(() => {
+                let row = instance.getRowElement(cell.rowIndex)[0];
+                if (isExpanded)
+                    row.classList.remove('expanded');
+                else
+                    row.classList.add('expanded');
+            }, 100);
+        }
+    }
+
+    onPaymentClick(cell) {
+        this.dialog.open(CreateInvoiceDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                addNew: false,
+                saveAsDraft: false,
+                invoice: {InvoiceId: cell.data.invoiceId},
+                contactInfo: this.data.contactInfo,
+                refreshParent: () => {
+                    this.dataGrid.instance.refresh();
+                }
+            }
+        });        
+    }
+
+    toogleMorePayment(grid, event) {
+        let visible = grid.instance.option('paging.enabled');
+        grid.instance.option('paging.enabled', !visible);
+        event.target.innerText = this.ls.l(visible ? 'Hide' : 'ShowAll');
     }
 
     ngOnDestroy() {

@@ -28,6 +28,7 @@ import { PersonDialogComponent } from '../person-dialog/person-dialog.component'
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { RelationCompaniesDialogComponent } from '../relation-companies-dialog/relation-companies-dialog.component';
 import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dialog/create-invoice-dialog.component';
+import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import {
     ContactInfoDto,
     ContactPhotoServiceProxy,
@@ -68,6 +69,7 @@ import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/mode
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
+import { PersonHistoryDialogComponent } from '../personal-details/personal-details-dialog/person-history-dialog/person-history-dialog.component';
 
 @Component({
     selector: 'details-header',
@@ -144,6 +146,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         map((leadInfo: LeadInfoDto) => leadInfo.propertyId)
     );
     propertyId: number;
+    contextMenuInit$: Observable<any>;
     addContextMenuItems: ContextMenuItem[] = [];
     addButtonTitle = '';
     isBankCodeLayout = this.userManagementService.checkBankCodeFeature();
@@ -207,11 +210,13 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         ).subscribe((propertyId: number) => {
             this.propertyId = propertyId;
         });
-        combineLatest(
+        this.contextMenuInit$ = combineLatest(
             this.contactInfo$,
             this.propertyId$,
             this.manageAllowed$
-        ).pipe(takeUntil(this.lifeCycleService.destroy$)).subscribe(
+        ).pipe(takeUntil(this.lifeCycleService.destroy$));
+
+        this.contextMenuInit$.subscribe(
             ([contactInfo, propertyId, manageAllowed]: [ContactInfoDto, number, boolean]) => {
                 this.addContextMenuItems = this.getDefaultContextMenuItems(manageAllowed, !!propertyId)
                     .filter((menuItem: ContextMenuItem) => {
@@ -301,6 +306,15 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 icon: 'money',
                 visible: !this.data.parentId &&
                     this.permissionChecker.isGranted(AppPermissions.CRMOrdersInvoicesManage),
+                contactGroups: this.allContactGroups
+            },
+            {
+                type: ContextType.AddSubscription,
+                text: this.ls.l('AddSubscription'),
+                selected: false,
+                icon: 'product',
+                visible: abp.session.tenantId && manageAllowed &&
+                    this.permissionChecker.isGranted(AppPermissions.CRMOrdersManage),                    
                 contactGroups: this.allContactGroups
             }
         ];
@@ -469,6 +483,19 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         event.stopPropagation();
     }
 
+    showPersonHistory(event) {
+        event.stopPropagation();
+        this.dialog.open(PersonHistoryDialogComponent, {
+            panelClass: 'slider',
+            disableClose: true,
+            closeOnNavigation: false,
+            data: {
+                contactId: this.data.id
+            }
+        }).afterClosed().subscribe(() => {
+        });
+    }
+
     updateCompanyField(value, field = 'companyName') {
         let data = this.data['organizationContactInfo'];
         data.organization[field] = value;
@@ -595,6 +622,20 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                     }
                 });
             });
+        else if (selectedMenuItem.type === ContextType.AddSubscription) {
+            let leadId = this.activatedRoute.parent.snapshot.paramMap.get('leadId') ?
+                this.leadId :
+                null;
+
+            this.dialog.open(AddSubscriptionDialogComponent, {
+                panelClass: ['slider'],
+                hasBackdrop: false,
+                closeOnNavigation: false,
+                disableClose: true,
+                data: { contactId: this.data.id, leadId: leadId }
+            });
+
+        }
     }
 
     private getContextMenuItemByType(contextType: ContextType): ContextMenuItem {

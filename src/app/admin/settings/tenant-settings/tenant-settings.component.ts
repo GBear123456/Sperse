@@ -237,7 +237,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             '/api/TenantCustomization/UploadFavicons',
             (result: TenantCustomizationInfoDto) => {
                 if (result && result.faviconBaseUrl && result.favicons && result.favicons.length) {
-                    this.appSession.tenant.tenantCustomizations = <any>{ ...this.appSession.tenant.tenantCustomizations, result };
+                    this.appSession.tenant.tenantCustomizations = <any>{ ...this.appSession.tenant.tenantCustomizations, ...result };
                     this.faviconsService.updateFavicons(this.appSession.tenant.tenantCustomizations.favicons, this.appSession.tenant.tenantCustomizations.faviconBaseUrl);
                 }
             }
@@ -325,6 +325,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     clearFavicons(): void {
         this.tenantCustomizationService.clearFavicons().subscribe(() => {
             this.faviconsService.resetFavicons();
+            this.appSession.tenant.tenantCustomizations.favicons = [];
             this.notify.info(this.l('ClearedSuccessfully'));
             this.changeDetection.detectChanges();
         });

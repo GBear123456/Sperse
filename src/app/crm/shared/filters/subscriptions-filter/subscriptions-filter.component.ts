@@ -9,13 +9,28 @@ import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-
 })
 export class SubscriptionsFilterComponent implements FilterComponent {
     items: {
-        element: SubscriptionsFilterModel
+        services: SubscriptionsFilterModel,
+        products: SubscriptionsFilterModel
     };
     apply: (event) => void;
 
+    filterTabs = [
+        {
+            text: this.ls.l('Services'),
+            field: 'services'
+        },
+        {
+            text: this.ls.l('Products'),
+            field: 'products'
+        }
+    ];
+
+    selectedTabIndex = 0;
+
     constructor(
         public ls: AppLocalizationService
-    ) {}
+    ) {
+    }
 
     checkSetInitialValue(event, cell, type) {
         if (!cell.row.node.children.some(level => level.data[type])
@@ -23,30 +38,30 @@ export class SubscriptionsFilterComponent implements FilterComponent {
         ) event.component.option('value', false);
     }
 
-    onValueChanged(event, cell, type) {
+    onValueChanged(field, event, cell, type) {
         if (!event.event)
             return;
 
         let parent = cell.row.node.parent,
             children = cell.row.node.children;
         if (parent.level < 0) {
-            this.setProductValue(cell.data.id, type, event.value);
-            children.forEach(item => {
+            this.setProductValue(field, cell.data.id, type, event.value);
+            children && children.forEach(item => {
                 item.data[type] = event.value;
                 this.setLevelValue(item.data.id, cell.data.id, type, event.value);
             });
         } else if (parent.data) {
             this.setLevelValue(cell.data.id, parent.data.id, type, event.value);
-            children = cell.row.node.parent.children;
+            children = parent.children;
             let selectedCount = children.filter(item => item.data[type]).length;
             parent.data[type] = selectedCount == children.length
                 || (selectedCount ? undefined : false);
-            this.setProductValue(parent.data.id, type, parent.data[type]);
+            this.setProductValue(field, parent.data.id, type, parent.data[type]);
         }
     }
 
-    setProductValue(id: number, type: string, value: boolean) {
-        this.items.element.dataSource.some(product => {
+    setProductValue(field: string, id: number, type: string, value: boolean) {
+        this.items[field].dataSource.some(product => {
             if (product.id == id) {
                 product[type] = value;
                 return true;
@@ -55,7 +70,7 @@ export class SubscriptionsFilterComponent implements FilterComponent {
     }
 
     setLevelValue(id: number, productId: number, type: string, value: boolean) {
-        this.items.element.dataSource.some(product => {
+        this.items.services.dataSource.some(product => {
             if (product.id == productId) {
                 product.memberServiceLevels.some(level => {
                     if (level.id == id) {
@@ -66,15 +81,5 @@ export class SubscriptionsFilterComponent implements FilterComponent {
                 return true;
             }
         });
-    }
-
-    onOptionChanged(event) {
-        if (event.name == 'dataSource')
-            this.items.element.dataSource.forEach(parent => {
-                parent.uid = parent.id;
-                parent.memberServiceLevels.forEach(child => {
-                    child.uid = parent.id + ':' + child.id;
-                });
-            });
     }
 }

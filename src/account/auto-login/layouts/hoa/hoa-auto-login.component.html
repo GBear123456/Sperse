@@ -3,9 +3,9 @@
         <div class="align-self-center col-lg-8 col xs-12 text-center">
             <h1 class="title">{{tenantName}} {{ls.l("Auto Login")}}</h1>
 
-            <form #loginForm="ngForm" class="hoa-login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
+            <form *ngIf="isLinkSent || !isInstantForm || detectedTenancies?.length" #loginForm="ngForm" class="hoa-login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
                 <div class="form-group clearfix">
-                    <p [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', (isLinkSent ? '<br>' : '') + '<b>' + userEmail + '</b>' + (isLinkSent ? '<br>' : ''), tenantName)"></p>
+                    <p [innerHTML]="ls.l(isLinkSent || isInstantForm ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', (isLinkSent ? '<br>' : '') + '<b>' + userEmail + '</b>' + (isLinkSent ? '<br>' : ''), tenantName)"></p>
                     <div *ngIf="!isLinkSent && detectedTenancies.length > 1">
                         <p>{{ls.l('SelectTenant_Information')}}</p>
                         <div class="list-group">

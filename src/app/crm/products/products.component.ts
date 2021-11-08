@@ -4,8 +4,7 @@ import { Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filter, takeUntil, finalize } from 'rxjs/operators';
+import { filter, finalize } from 'rxjs/operators';
 import DataSource from '@root/node_modules/devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 
@@ -17,29 +16,23 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
-import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
-import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { ContactsService } from '@app/crm/contacts/contacts.service';
-import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
-import { AppSessionService } from '@shared/common/session/app-session.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
 import { AddProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
-import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
+import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import { ProductServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ProductDto } from '@app/crm/products/products-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ProductFields } from '@app/crm/products/products-fields.enum';
-import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 
 @Component({
     templateUrl: './products.component.html',
@@ -61,46 +54,37 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     private rootComponent: any;
     private subRouteParams: any;
     private dependencyChanged = false;
-    public headlineButtons: HeadlineButton[] = [
-        {
-            enabled: true,
-            action: () => this.showProductDialog(),
-            label: this.l('AddProduct')
-        }
-    ];
+    isReadOnly = true;
+    permissions = AppPermissions;
+    public headlineButtons: HeadlineButton[] = [];
 
     actionEvent: any;
-    actionMenuGroups: ActionMenuGroup[] = [
+    actionMenuGroups: ActionMenuItem[] = [
         {
-            key: '',
-            visible: true,
-            items: [
-                {
-                    text: this.l('Edit'),
-                    class: 'edit',
-                    action: () => {
-                        this.editProduct(this.actionEvent.Id);
-                    }
-                }
-            ]
+            text: this.l('Edit'),
+            class: 'edit',
+            action: () => {
+                this.editProduct(this.actionEvent.Id);
+            }
         },
         {
-            key: '',
-            visible: true,
-            items: [
-                {
-                    text: this.l('Delete'),
-                    class: 'delete',
-                    action: () => {
-                        this.deteleProduct(this.actionEvent.Id);
-                    }
-                }
-            ]
+            text: this.l('SyncSubscriptionsWithProduct'),
+            class: 'sync',
+            visible: this.permission.isGranted(AppPermissions.CRMOrdersManage),
+            action: () => {
+                this.syncSubscriptionsWithProduct(this.actionEvent.Id);
+            }
+        },
+        {
+            text: this.l('Delete'),
+            class: 'delete',
+            action: () => {
+                this.deteleProduct(this.actionEvent.Id);
+            }
         }
     ];
 
     currency: string;
-    permissions = AppPermissions;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
     totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
@@ -125,7 +109,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
-        private invoicesService: InvoicesService,
+        invoicesService: InvoicesService,
         private filtersService: FiltersService,
         private productProxy: ProductServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
@@ -133,6 +117,12 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         public dialog: MatDialog
     ) {
         super(injector);
+        this.isReadOnly = !this.permission.isGranted(this.permissions.CRMProductsManage);
+        this.headlineButtons.push({
+            enabled: !this.isReadOnly,
+            action: () => this.showProductDialog(),
+            label: this.l('AddProduct')
+        });
         this.dataSource = new DataSource({store: new ODataStore(this.dataStore)});
         invoicesService.settings$.pipe(filter(Boolean)).subscribe(
             (res: InvoiceSettings) => this.currency = res.currency
@@ -178,6 +168,15 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
+    syncSubscriptionsWithProduct(id: number) {
+        this.startLoading();
+        this.productProxy.synchronizeSubscriptions(id).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe(() => {
+            this.message.success(this.l('SuccessfullyUpdated'));
+        });
+    }
+
     deteleProduct(id: number) {
         this.message.confirm('',
             this.l('DeleteConfiramtion'),
@@ -197,7 +196,8 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     showProductDialog(product?) {
         const dialogData = {
             fullHeigth: true,
-            product: product
+            product: product,
+            isReadOnly: this.isReadOnly
         };
         this.dialog.open(AddProductDialogComponent, {
             panelClass: 'slider',
@@ -412,8 +412,10 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     toggleActionsMenu(event) {
+        if (this.isReadOnly)
+            return;
+
         ActionMenuService.toggleActionMenu(event, this.actionEvent).subscribe((actionRecord) => {
-            ActionMenuService.prepareActionMenuGroups(this.actionMenuGroups, event.data);
             this.actionEvent = actionRecord;
         });
     }

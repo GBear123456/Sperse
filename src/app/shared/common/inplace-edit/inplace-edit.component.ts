@@ -74,6 +74,7 @@ export class InplaceEditComponent extends AppComponentBase {
     @Input() showInlineEditButton = false;
     @Input() isDeleteEnabled = false;
     @Input() isCopyEnabled = true;
+    @Input() isHistoryEnabled = false;
     @Input() lEntityName: string;
     @Input() editPlaceholder: string;
     @Input() lDeleteConfirmTitle: string;
@@ -90,6 +91,7 @@ export class InplaceEditComponent extends AppComponentBase {
     @Output() valueChanged: EventEmitter<any> = new EventEmitter();
     @Output() itemDeleted: EventEmitter<any> = new EventEmitter();
     @Output() openDialog: EventEmitter<any> = new EventEmitter();
+    @Output() onHistoryClick: EventEmitter<any> = new EventEmitter();
 
     get hasValue(): boolean {
         return !!this.value || this.value == 0;
@@ -177,6 +179,11 @@ export class InplaceEditComponent extends AppComponentBase {
             this.showInput(true);
         }
         this.openDialog.emit(event);
+    }
+
+    historyClick(event) {
+        if (this.isHistoryEnabled)
+            this.onHistoryClick.emit(event);
     }
 
     onEnterKey() {
