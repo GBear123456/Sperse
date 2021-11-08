@@ -66,11 +66,17 @@ export class ExportService {
                 initialStore = initialDataSource.store(),
                 initialBeforeSend = initialStore._beforeSend;
 
+            let loadedEvent = initialStore._eventsStrategy._events['loaded'];
+            let initialOnLoadedList = [];
+            if (loadedEvent && initialDataSource['exportIgnoreOnLoaded']) {
+                initialOnLoadedList = initialStore._eventsStrategy._events['loaded']._list;
+                initialStore._eventsStrategy._events['loaded']._list = [];
+            }
+
             initialStore._beforeSend = (request) => {
                 initialBeforeSend.call(initialStore, request);
                 request.timeout = this.EXPORT_REQUEST_TIMEOUT;
             };
-
             (new DataSource({
                 paginate: false,
                 filter: initialDataSource.filter(),
@@ -78,9 +84,13 @@ export class ExportService {
                 store: initialStore
             })).load().done(res => {
                 initialStore._beforeSend = initialBeforeSend;
+                if (initialOnLoadedList.length)
+                    initialStore._eventsStrategy._events['loaded']._list = initialOnLoadedList;
                 callback(this.checkJustifyData(res));
             }).fail(error => {
                 initialStore._beforeSend = initialBeforeSend;
+                if (initialOnLoadedList.length)
+                    initialStore._eventsStrategy._events['loaded']._list = initialOnLoadedList;
                 this.handleExportError(error);
             });
         } else {
