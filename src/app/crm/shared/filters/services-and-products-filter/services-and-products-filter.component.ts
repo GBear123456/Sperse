@@ -44,8 +44,12 @@ export class FilterServicesAndProductsComponent implements FilterComponent {
         setTimeout(() => {
             if (this.activated) {
                 let field = this.filterTabs[this.selectedTabIndex].field;
-                this.items[field].value = event.selectedRowKeys;
-                this.items[field].selectedItems = event.selectedRowsData;
+                this.items[field].value = event.component.getSelectedRowKeys('all').filter(
+                    (item, index, list) => isNaN(item) && list.indexOf(item, index + 1) == -1
+                );
+                this.items[field].selectedItems = event.component.getSelectedRowsData('all').filter(
+                    (item, index, list) => list.indexOf(item, index + 1) == -1
+                );
             }
         });
     }
