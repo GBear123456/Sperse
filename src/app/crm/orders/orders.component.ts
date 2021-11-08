@@ -933,7 +933,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         ).pipe(
             filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues),
             distinctUntilChanged((prev: ODataRequestValues, curr: ODataRequestValues) => {
-                return prev.filter === curr.filter && !ArrayHelper.dataChanged(prev.params, curr.params);
+                return !!prev.filter && prev.filter === curr.filter && !ArrayHelper.dataChanged(prev.params, curr.params);
             })
         );
     }
