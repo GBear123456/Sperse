@@ -31,9 +31,8 @@
                       [allowColumnResizing]="true"
                       [hoverStateEnabled]="true"
                       [loadPanel]="{ enabled: false }"
-                      [remoteOperations]="{ filtering: false }"
                       [pager]="defaultGridPagerConfig"
-                      (onContentReady)="onContentReady()"
+                      (onContentReady)="onContentReady(true)"
                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-selection selectAllMode="page"
                            showCheckBoxesMode="always"
@@ -43,42 +42,42 @@
             <dxo-group-panel [visible]="true"></dxo-group-panel>
             <dxo-paging [pageSize]="20"></dxo-paging>
 
-            <dxi-column dataField="name" [caption]="ls.l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="email" [caption]="ls.l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="Name" [caption]="ls.l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="Email" [caption]="ls.l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column [caption]="ls.l('Contact.Phone')" [calculateDisplayValue]="customizePhoneCell" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="city" [caption]="ls.l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column dataField="status" [caption]="ls.l('Status')" [calculateDisplayValue]="customizeStatusCell" cellTemplate="statusCell"></dxi-column>
-            <dxi-column dataField="bankCode"
+            <dxi-column dataField="City" [caption]="ls.l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="Status" [caption]="ls.l('Status')" [calculateDisplayValue]="customizeStatusCell" cellTemplate="statusCell"></dxi-column>
+            <dxi-column dataField="BankCode"
                         [renderAsync]="true"
                         cellTemplate="bankCodeCell"
                         [caption]="ls.l('BankCode')">
             </dxi-column>
-            <dxi-column dataField="created"
+            <dxi-column dataField="Date"
                         sortOrder="desc"
                         [caption]="ls.l('Created')"
-                        [calculateDisplayValue]="customizeCreatedCell"
-                        calculateSortValue="created"
+                        [calculateDisplayValue]="customizeCreatedDateCell"
+                        calculateSortValue="Date"
                         cssClass="clipboard-holder">
             </dxi-column>
-            <dxi-column dataField="bankPassFee"
+            <dxi-column dataField="BankPassFee"
                         [caption]="ls.l('BankPassFee')"
                         cssClass="clipboard-holder"
                         calculateSortValue="bankPassFee"
                         [calculateDisplayValue]="customizeBankPassFeeCell">
             </dxi-column>
-            <dxi-column dataField="bankVaultFee"
+            <dxi-column dataField="BankVaultFee"
                         [caption]="ls.l('BankVaultFee')"
                         cssClass="clipboard-holder"
                         calculateSortValue="bankVaultFee"
                         [calculateDisplayValue]="customizeBankVaultFeeCell">
             </dxi-column>
-            <dxi-column dataField="wtbFee"
+            <dxi-column dataField="WtbFee"
                         [caption]="ls.l('WtbFee')"
                         cssClass="clipboard-holder"
                         calculateSortValue="wtbFee"
                         [calculateDisplayValue]="customizeWtbFeeCell">
             </dxi-column>
-            <dxi-column dataField="totalFee"
+            <dxi-column dataField="TotalFee"
                         [caption]="ls.l('TotalFee')"
                         cssClass="clipboard-holder"
                         calculateSortValue="totalFee"
@@ -96,29 +95,29 @@
                 </div>
             </div>
             <dxo-summary>
-                <dxi-group-item column="name"
+                <dxi-group-item column="Name"
                                 summaryType="count"
                                 [displayFormat]="'{0} ' + ls.l('Subscribers')">
                 </dxi-group-item>
-                <dxi-group-item column="bankPassFee"
+                <dxi-group-item column="BankPassFee"
                                 summaryType="sum"
                                 [alignByColumn]="true"
                                 [customizeText]="customizeGroupAmountCell"
                                 displayFormat="Total: {0}">
                 </dxi-group-item>
-                <dxi-group-item column="bankVaultFee"
+                <dxi-group-item column="BankVaultFee"
                                 summaryType="sum"
                                 [customizeText]="customizeGroupAmountCell"
                                 [alignByColumn]="true"
                                 displayFormat="Total: {0}">
                 </dxi-group-item>
-                <dxi-group-item column="wtbFee"
+                <dxi-group-item column="WtbFee"
                                 summaryType="sum"
                                 [customizeText]="customizeGroupAmountCell"
                                 [alignByColumn]="true"
                                 displayFormat="Total: {0}">
                 </dxi-group-item>
-                <dxi-group-item column="totalFee"
+                <dxi-group-item column="TotalFee"
                                 summaryType="sum"
                                 [customizeText]="customizeGroupAmountCell"
                                 [alignByColumn]="true"
