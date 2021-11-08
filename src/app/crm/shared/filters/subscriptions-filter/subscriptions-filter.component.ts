@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { FilterComponent } from '@shared/filters/models/filter-component';
 import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.model';
@@ -7,7 +7,7 @@ import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-
     templateUrl: './subscriptions-filter.component.html',
     styleUrls: ['./subscriptions-filter.component.less']
 })
-export class SubscriptionsFilterComponent implements FilterComponent {
+export class SubscriptionsFilterComponent implements FilterComponent, AfterViewInit {
     items: {
         services: SubscriptionsFilterModel,
         products: SubscriptionsFilterModel
@@ -25,11 +25,24 @@ export class SubscriptionsFilterComponent implements FilterComponent {
         }
     ];
 
-    selectedTabIndex = 0;
+    private readonly SERVICES_TAB_INDEX = 0;
+    private readonly PRODUCTS_TAB_INDEX = 1;
+
+    selectedTabIndex = this.PRODUCTS_TAB_INDEX;
 
     constructor(
         public ls: AppLocalizationService
-    ) {
+    ) {}
+
+    ngAfterViewInit() {
+        if (this.items) {        
+            let services = this.items.services && this.items.services['getObjectValue'](), 
+                products = this.items.products && this.items.products['getObjectValue']();
+            if (products && Object.keys(products).length > 1)
+                this.selectedTabIndex = this.PRODUCTS_TAB_INDEX;
+            else if (services && Object.keys(services).length > 0)
+                this.selectedTabIndex = this.SERVICES_TAB_INDEX;
+        }
     }
 
     checkSetInitialValue(event, cell, type) {
