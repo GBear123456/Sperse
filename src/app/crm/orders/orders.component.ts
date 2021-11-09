@@ -767,6 +767,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         public dialog: MatDialog,
     ) {
         super(injector);
+        this.subscriptionsDataSource['exportIgnoreOnLoaded'] = true;
+        this.ordersDataSource['exportIgnoreOnLoaded'] = true;
         invoicesService.settings$.pipe(
             filter(Boolean)
         ).subscribe((res: InvoiceSettings) => this.currency = res.currency);
