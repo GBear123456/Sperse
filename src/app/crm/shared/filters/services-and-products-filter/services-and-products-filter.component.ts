@@ -61,7 +61,13 @@ export class FilterServicesAndProductsComponent implements FilterComponent, Afte
                 this.items[field].value = event.component.getSelectedRowKeys('all').filter(
                     (item, index, list) => {
                         let isDuplicate = list.indexOf(item, index + 1) == -1;
-                        return field == 'products' ? isDuplicate : isNaN(item) && isDuplicate;
+                        if (isNaN(item) || !this.items[field].itemsExpr)
+                            return isDuplicate;
+                        else {  
+                            let node = event.component.getNodeByKey(item),
+                                children = node[this.items[field].itemsExpr];
+                            return (!children || !children.length) && isDuplicate;
+                        }
                     }
                 );
                 this.items[field].selectedItems = event.component.getSelectedRowsData('all').filter(
