@@ -91,8 +91,10 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             url: this.oDataService.getODataUrl(this.subscribersReportURI),
             version: AppConsts.ODataVersion,
             beforeSend: (request) => {
-                this.isDataLoaded = false;
-                this.changeDetectorRef.detectChanges();
+                if (!request['isExport']) {
+                    this.isDataLoaded = false;
+                    this.changeDetectorRef.detectChanges();
+                }
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             },
             deserializeDates: false
@@ -206,8 +208,10 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             version: AppConsts.ODataVersion,
             deserializeDates: false,
             beforeSend: (request) => {
-                this.isDataLoaded = false;
-                this.changeDetectorRef.detectChanges();
+                if (!request['isExport']) {
+                    this.isDataLoaded = false;
+                    this.changeDetectorRef.detectChanges();
+                }
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             },
             onLoaded: (contacts: SubscriptionTrackerDto[]) => {
