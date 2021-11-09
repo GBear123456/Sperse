@@ -437,9 +437,9 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         saveButton.disabled = true;
         const createModel = this.data.createModel || CreateOrUpdateContactInput;
         let createContactInput = createModel.fromJS(dataObj);
-        createContactInput.statusId = this.data.isInLeadMode && !this.data.parentId
-            ? ContactStatus.Prospective
-            : ContactStatus.Active;
+        createContactInput.isProspective = this.data.isInLeadMode && !this.data.parentId;
+        createContactInput.isActive = !createContactInput.isProspective;
+
         const createMethod = this.data.createMethod || this.contactProxy.createOrUpdateContact.bind(this.contactProxy);
         createMethod(createContactInput).pipe(
             finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); })
@@ -928,7 +928,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
         clearTimeout(this.lookupTimeout);
         this.lookupTimeout = setTimeout(() => {
-            this.orgServiceProxy.getOrganizations(search, this.data.customerType.toString() || ContactGroup.Client, 10)
+            this.orgServiceProxy.getOrganizations(search, 10)
                 .subscribe((res: OrganizationShortInfo[]) => {
                     if (search == this.company)
                         this.companies = res;

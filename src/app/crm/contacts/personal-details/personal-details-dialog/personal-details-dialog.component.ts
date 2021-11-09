@@ -402,7 +402,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             items: []
         }, dataSource = [rootItem];
         this.pipelineService.getPipelineDefinitionObservable(
-            purposeId //, AppConsts.PipelinePurposeIds.lead == purposeId ? this.contactInfo.groups : undefined
+            purposeId, this.leadInfo && this.leadInfo.contactGroupId || ContactGroup.Client
         ).pipe(takeUntil(this.dialogRef.beforeClosed())).subscribe((pipeline: PipelineDto) => {
             rootItem.items = [];
             pipeline.stages.forEach((stage: StageDto) => {

@@ -31,6 +31,7 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
 import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import {
     ContactInfoDto,
+    ContactGroupInfo,
     ContactPhotoServiceProxy,
     ContactServiceProxy,
     CreateContactPhotoInput,
@@ -130,7 +131,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     private readonly CACHE_KEY_PREFIX = 'DetailsHeader';
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
-    private contactGroups: ContactGroup[];
+    private contactGroups: ContactGroupInfo[];
     showRemovingOrgRelationProgress = false;
 
     private readonly allContactGroups = _.values(ContactGroup);
@@ -521,7 +522,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     }
 
     get addOptionCacheKey() {
-        return this.ADD_OPTION_CACHE_KEY + '_' + this.contactGroups.map(group => group.id).join('_');
+        return this.ADD_OPTION_CACHE_KEY + '_' + this.data.groups.map(group => group.groupId).join('_');
     }
 
     addOptionsInit() {

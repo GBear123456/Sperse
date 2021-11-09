@@ -1163,6 +1163,6 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     getUserAssignmentPermissionKey() {
-        return this.permission.getCGPermissionKey(this.contactGroupId, 'ManageAssignments');
+        return this.permission.getCGPermissionKey([this.contactGroupId], 'ManageAssignments');
     }
 }

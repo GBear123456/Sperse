@@ -180,7 +180,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
 
     ngOnChanges(changes: SimpleChanges) {
         /** Load users instance (or get from cache) for user id to find out whether to show cfo or verify button */
-        if (changes.contactInfo && this.contactInfo.groups.some(group => group.id == ContactGroup.Client) && this.appService.isCfoLinkOrVerifyEnabled) {
+        if (changes.contactInfo && this.contactInfo.groups.some(group => group.groupId == ContactGroup.Client) && this.appService.isCfoLinkOrVerifyEnabled) {
             const contactInfo: ContactInfoDto = changes.contactInfo.currentValue;
             if (contactInfo.id && contactInfo.personContactInfo) {
                 this.crmService.isCfoAvailable(contactInfo.personContactInfo.userId)
@@ -394,7 +394,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             name: 'status',
                             action: this.toggleStatus.bind(this),
                             disabled: !this.permission.checkCGPermission(this.contactInfo.groups)
-                                || this.contactInfo.statusId == ContactStatus.Prospective
+                                || this.contactInfo.groups.every(group => !group.isActive)
                         },
                         {
                             name: 'partnerType',
@@ -576,7 +576,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         return !!(this.isCfoAvailable && this.appService.checkCFOClientAccessPermission()
                || (
                    this.isCfoAvailable === false && this.appService.canSendVerificationRequest()
-                   && this.contactInfo.statusId === ContactStatus.Active
+                   && this.contactInfo.groups.some(group => group.groupId == ContactGroup.Client && group.isActive)
                ));
     }
 }

@@ -196,7 +196,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                 this.initToolbarInfo();
                 this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groups);
                 this.showApplicationAllowed = this.permissionCheckerService.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
-                    contactInfo.personContactInfo.userId && contactInfo.groups.some(group => group.id == ContactGroup.Client);
+                    contactInfo.personContactInfo.userId && contactInfo.groups.some(group => group.groupId == ContactGroup.Client);
                 this.loadOrganizationUnits();
             }
         }, this.ident);

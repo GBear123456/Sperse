@@ -1255,7 +1255,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     disabled: this.selectedClientKeys.length != 2 || !this.isMergeAllowed,
                                     action: () => {
                                         this.selectedClients.subscribe((clients: ContactDto[]) => {
-                                            this.contactService.mergeContact(clients[0], clients[1], true, true, () => {
+                                            this.contactService.mergeContact(clients[0], clients[1], ContactGroup.Client, true, true, () => {
                                                 this.refresh();
                                                 this.dataGrid.instance.deselectAll();
                                             });
@@ -1723,7 +1723,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 from (e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
                 from (e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [ContactDto, ContactDto]) => {
-                this.contactService.mergeContact(source, target, true, true, () => this.refresh());
+                this.contactService.mergeContact(source, target, ContactGroup.Client, true, true, () => this.refresh());
             });
         }
     }

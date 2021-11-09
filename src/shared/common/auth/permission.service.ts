@@ -33,6 +33,6 @@ export class AppPermissionService {
     }
 
     checkCGPermission(contactGroups: ContactGroup[], permission = 'Manage') {
-        return this.permissionChecker.isGranted(this.getCGPermissionKey(contactGroupKey, permission) as AppPermissions);
+        return this.permissionChecker.isGranted(this.getCGPermissionKey(contactGroups, permission) as AppPermissions);
     }
 }

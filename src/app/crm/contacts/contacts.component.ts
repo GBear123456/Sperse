@@ -99,9 +99,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     public contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);
     public contactGroupId$: Observable<string> = this.contactGroupId.asObservable().pipe(filter(Boolean)) as Observable<string>;
-    isCommunicationHistoryAllowed$: Observable<boolean> = this.contactGroupId$.pipe(
-        map((contactGroupId: string) => this.permission.checkCGPermission(
-            [contactGroupId],
+    isCommunicationHistoryAllowed$: Observable<boolean> = this.contactsService.contactInfo$.pipe(
+        map((contactInfo: ContactInfoDto) => this.permission.checkCGPermission(
+            contactInfo.groups,
             'ViewCommunicationHistory'
         ))
     );
@@ -116,26 +116,25 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         filter(Boolean),
         map((contactInfo: ContactInfoDto) => !contactInfo.parentId)
     );
-    contactStatusId: Observable<string> = this.contactsService.contactInfo$.pipe(
+    isContactProspective$: Observable<boolean> = this.contactsService.contactInfo$.pipe(
         filter(Boolean),
-        map((contactInfo: ContactInfoDto) => contactInfo.groups[0].isActive ? ContactStatus.Active)
+        map((contactInfo: ContactInfoDto) => contactInfo.groups.every(group => group.isProspective))
     );
     showSubscriptionsSection$: Observable<boolean> = combineLatest(
         this.contactIsParent$,
         this.userId$,
-        this.contactStatusId
+        this.isContactProspective$
     ).pipe(
-        map(([contactIsParent, userId, contactStatusId]:
-                    [boolean, number, string]) => {
-            return contactIsParent || (!userId && !this.isClientDetailPage(contactStatusId));
+        map(([contactIsParent, userId, isProspective]: [boolean, number, boolean]) => {
+            return contactIsParent || (!userId && isProspective);
         })
     );
     showPaymentInformationSection$: Observable<boolean> = combineLatest(
         this.contactIsParent$,
-        this.contactStatusId
+        this.isContactProspective$
     ).pipe(
-        map(([contactIsParent, contactStatusId]: [boolean, string]) => {
-            return contactIsParent || !this.isClientDetailPage(contactStatusId);
+        map(([contactIsParent, isProspective]: boolean[]) => {
+            return contactIsParent || isProspective;
         })
     );
 
@@ -171,10 +170,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             label$: this.userId$.pipe(map((userId: number) => userId
                 ? this.l('UserInformation')
                 : this.l('InviteUser'))),
-            visible$: combineLatest(this.userId$, this.contactGroupId$).pipe(
-                map(([userId, contactGroupId] : [number, string]) => {
+            visible$: combineLatest(this.userId$, this.contactsService.contactInfo$).pipe(
+                map(([userId, contactInfo] : [number, ContactInfoDto]) => {
                     return userId ? this.permission.isGranted(AppPermissions.AdministrationUsersEdit)
-                        || this.permission.checkCGPermission([contactGroupId], 'UserInformation')
+                        || this.permission.checkCGPermission(contactInfo.groups, 'UserInformation')
                     : this.permission.isGranted(AppPermissions.AdministrationUsersCreate);
                 })
             ),
@@ -337,10 +336,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             map((events: ActivationEnd[]) => events[0])
         );
 
-        combineLatest(
-            routeData$,
-            this.contactGroupId$
-        ).subscribe(([event, contactGroupId]: [ActivationEnd, string]) => {
+        combineLatest(routeData$).subscribe(([event]: [ActivationEnd]) => {
             this.showToolbar = this.getCheckPropertyValue(event.snapshot.data, 'showToolbar', true);
         });
     }
@@ -439,10 +435,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         }
     }
 
-    isClientDetailPage(status: ContactStatus): boolean {
-        return status != ContactStatus.Prospective;
-    }
-
     private storeInitialData() {
         this.initialData = JSON.stringify(this.contactService['data']);
     }
@@ -454,11 +446,15 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.contactsService.toolbarUpdate();
     }
 
+    private getContactGroupIdByInfo(contactInfo: ContactInfoDto) {
+        return contactInfo.groups[0].groupId; //!!VP should be considered
+    }
+
     private fillContactDetails(result: ContactInfoDto, contactId = null) {
         this.checkUpdateToolbar();
         this.contactService['data'].contactInfo = result;
         this.contactsService.contactInfoUpdate(result);
-        this.contactGroups.next(result.groups);
+        this.contactGroupId.next(this.getContactGroupIdByInfo(result));
         this.manageAllowed = this.permission.checkCGPermission(result.groups);
         this.assignedUsersSelector = select(
             ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers
@@ -471,11 +467,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         }
 
         this.isCommunicationHistoryAllowed = this.permission.checkCGPermission(
-            [this.contactGroupId.value],
+            result.groups,
             'ViewCommunicationHistory'
         );
         this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(
-            [this.contactGroupId.value],
+            result.groups,
             'ViewCommunicationHistory.SendSMSAndEmail'
         );
 
@@ -643,9 +639,11 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         if ((contactInfo && (!leadInfo || !this.leadInfo || this.leadInfo.id != leadInfo.id)) || lastLeadCallback) {
             !lastLeadCallback && this.startLoading(true);
             let leadId = leadInfo && leadInfo.id,
-                leadInfo$ = leadId && !lastLeadCallback
-                    ? this.leadService.getLeadInfo(leadId)
-                    : this.leadService.getLastLeadInfo(contactInfo.id);
+                leadInfo$ = leadId && !lastLeadCallback ? 
+                    this.leadService.getLeadInfo(leadId) :
+                    this.leadService.getLastLeadInfo(
+                        this.contactGroupId.value, contactInfo.id
+                    );
 
             let successCallback = (result: LeadInfoDto) => {
                 this.fillLeadDetails(result);
@@ -659,7 +657,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             })).subscribe(successCallback, error => {
                 this.appHttpConfiguration.avoidErrorHandling = false;
                 if (error.code == 404)
-                    this.leadService.getLastLeadInfo(contactInfo.id).subscribe(successCallback);
+                    this.leadService.getLastLeadInfo(
+                        this.contactGroupId.value, contactInfo.id
+                    ).subscribe(successCallback);
                 else
                     this.notify.error(error.message);
             });
@@ -722,9 +722,13 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private showConfirmationDialog(status: Status) {
-        this.contactsService.updateStatus(this.contactInfo.id, status).subscribe((confirm: boolean) => {
+        this.contactsService.updateStatus(
+            this.contactInfo.id, 
+            this.contactGroupId.value, 
+            status
+        ).subscribe((confirm: boolean) => {
             if (confirm) {
-                this.contactInfo.statusId = String(status.id);
+                //this.contactInfo.statusId = String(status.id);
                 let userData = this.userService['data'];
                 if (userData && userData.user) {
                     userData.user.isActive = status.id == ContactStatus.Active;
@@ -732,7 +736,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [status.id]);
                 this.notify.success(this.l('StatusSuccessfullyUpdated'));
             } else {
-                this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [this.contactInfo.statusId]);
+                // this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [this.contactInfo.statusId]);
             }
         });
     }
@@ -823,7 +827,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     deleteContact() {
-        let id = this.contactInfo.statusId == ContactStatus.Prospective || this._router.url.split('?').shift().includes('lead') ? this.leadId : this.contactInfo.id,
+        let id = this.contactInfo.groups.every(group => group.isProspective) || this._router.url.split('?').shift().includes('lead') ? this.leadId : this.contactInfo.id,
             isLead = this._router.url.split('?').shift().includes('lead');
         this.contactsService.deleteContact(this.getCustomerName(), this.contactGroupId.value, id, () => this.close(), isLead);
     }
@@ -923,7 +927,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     getAssignmentsPermissionKey = () => {
-        return this.permission.getCGPermissionKey(this.contactGroupId.value, 'ManageAssignments');
+        return this.permission.getCGPermissionKey([this.contactGroupId.value], 'ManageAssignments');
     }
 
     getProxyService = () => {
@@ -939,7 +943,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.dialog.closeAll();
         const dialogData: CreateEntityDialogData = {
             parentId: isSubContact ? this.contactInfo.id : undefined,
-            isInLeadMode: this.contactInfo.statusId == ContactStatus.Prospective,
+            isInLeadMode: this.contactInfo.groups.every(group => group.isProspective),
             company: isSubContact ? undefined : companyInfo && companyInfo.fullName,
             customerType: this.contactGroupId.value || ContactGroup.Client
         };

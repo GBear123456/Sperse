@@ -283,7 +283,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
 
     isPartner() {
         return this.contactInfoData && this.contactInfoData.contactInfo &&
-            this.contactInfoData.contactInfo.groups.some(group =>  groupId == ContactGroup.Partner);
+            this.contactInfoData.contactInfo.groups.some(group => group.groupId == ContactGroup.Partner);
     }
 
     fillUserData(data) {
@@ -417,6 +417,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
             const initialValue = !this.data.user.isActive;
             this.contactsService.updateStatus(
                 this.data.user.id,
+                ContactGroup.UserProfile,
                 { id: this.data.user.isActive ? ContactStatus.Active : ContactStatus.Inactive },
                 'user'
             ).subscribe(

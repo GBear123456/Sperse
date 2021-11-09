@@ -601,13 +601,15 @@ export class ContactsService {
     showMergeContactDialog(
         sourceInfo,
         targetInfo,
+        contactGroupId: ContactGroup,
         loadFinalize = () => {},
         keepSource = true,
         keepTarget = true
     ) {
         return this.contactProxy.getContactInfoForMerge(
             sourceInfo.id, sourceInfo.leadId,
-            targetInfo.id, targetInfo.leadId
+            targetInfo.id, targetInfo.leadId,
+            String(contactGroupId)
         ).pipe(finalize(
             () => loadFinalize()
         ), switchMap((response: GetContactInfoForMergeOutput) => {
@@ -618,7 +620,8 @@ export class ContactsService {
                 data: {
                     mergeInfo: response,
                     keepSource: keepSource,
-                    keepTarget: keepTarget
+                    keepTarget: keepTarget,
+                    contactGroupId: contactGroupId
                 }
             }).afterClosed();
         }));
@@ -705,7 +708,7 @@ export class ContactsService {
         }
     }
 
-    mergeContact(source, target, keepSource?: boolean, keepTarget?: boolean, callback?, isLead = false) {
+    mergeContact(source, target, contactGroupId: ContactGroup, keepSource?: boolean, keepTarget?: boolean, callback?, isLead = false) {
         abp.ui.setBusy();
         this.showMergeContactDialog(
             {
@@ -716,6 +719,7 @@ export class ContactsService {
                 id: isLead ? target.CustomerId : target.Id,
                 leadId: isLead ? target.Id : ''
             },
+            contactGroupId,
             () => abp.ui.clearBusy(),
             keepSource,
             keepTarget
@@ -762,13 +766,13 @@ export class ContactsService {
         return dataSourceURI;
     }
 
-    updateStatus(entityId: number, status: Status, entity: 'contact' | 'user' = 'contact'): Observable<any> {
+    updateStatus(entityId: number, groupId: ContactGroup, status: Status, entity: 'contact' | 'user' = 'contact'): Observable<any> {
         return new Observable<any>((observer: Subscriber<any>) => {
             ContactsHelper.showConfirmMessage(
                 this.ls.l('ClientUpdateStatusWarningMessage'),
                 (isConfirmed: boolean, [ notifyUser ]: boolean[]) => {
                     if (isConfirmed) {
-                        this.updateStatusInternal(entityId, status.id, notifyUser, entity).subscribe(
+                        this.updateStatusInternal(entityId, groupId, status.id == ContactStatus.Active, notifyUser, entity).subscribe(
                             () => observer.next(true),
                             (error) => observer.error(error)
                         );
@@ -786,16 +790,17 @@ export class ContactsService {
         });
     }
 
-    private updateStatusInternal(entityId: number, statusId: ContactStatus, notifyUser: boolean, entityType: 'contact' | 'user' = 'contact') {
+    private updateStatusInternal(entityId: number, groupId: ContactGroup, isActive: boolean, notifyUser: boolean, entityType: 'contact' | 'user' = 'contact') {
         return entityType === 'contact'
             ? this.contactProxy.updateContactStatus(new UpdateContactStatusInput({
                 contactId: entityId,
-                statusId: String(statusId),
+                groupId: String(groupId),
+                isActive: isActive,
                 notifyUser: notifyUser
             }))
-            : this.userService.updateOptions(new UpdateUserOptionsDto ({
+            : this.userService.updateOptions(new UpdateUserOptionsDto({
                 id: entityId,
-                isActive: statusId === ContactStatus.Active,
+                isActive: isActive,
                 notifyUser: notifyUser,
                 isLockoutEnabled: null,
                 isTwoFactorEnabled: null

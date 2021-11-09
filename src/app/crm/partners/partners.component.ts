@@ -39,7 +39,7 @@ import {
     TagsStoreSelectors
 } from '@app/store';
 import { AppConsts } from '@shared/AppConsts';
-import { ContactGroup } from '@shared/AppEnums';
+import { ContactStatus, ContactGroup } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { TagsListComponent } from '@app/shared/common/lists/tags-list/tags-list.component';
@@ -63,7 +63,6 @@ import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import {
     BulkUpdatePartnerTypeInput,
     ContactServiceProxy,
-    ContactStatusDto,
     LayoutType,
     PartnerServiceProxy,
     PartnerTypeServiceProxy
@@ -1247,6 +1246,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                         this.contactService.mergeContact(
                                             this.selectedPartners[0],
                                             this.selectedPartners[1],
+                                            this.partnerContactGroup,
                                             true,
                                             true,
                                             () => { this.invalidate(); this.dataGrid.instance.deselectAll(); }
@@ -1586,7 +1586,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         this.clientService.updateContactStatuses(
             selectedIds,
             this.partnerContactGroup,
-            status.id,
+            status.id == ContactStatus.Active,
             () => {
                 this.invalidate();
                 this.dataGrid.instance.clearSelection();
@@ -1700,7 +1700,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [PartnerDto, PartnerDto]) => {
-                this.contactService.mergeContact(source, target, true, true, () => this.invalidate());
+                this.contactService.mergeContact(source, target, this.partnerContactGroup, true, true, () => this.invalidate());
             });
         }
     }

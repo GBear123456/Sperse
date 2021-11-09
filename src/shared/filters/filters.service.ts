@@ -255,13 +255,9 @@ export class FiltersService {
 
     static getCustomerFilters(): any[] {
         return [
-            {
-                'or': [
-                    { 'StatusId': { 'eq': ContactStatus.Active }},
-                    { 'StatusId': { 'eq': ContactStatus.Prospective }}
-                ]
-            },
-            { 'ParentId': { 'eq': null }}
+            { 'isProspective': { 'eq': 'true' } },
+            { 'isActive': { 'eq': 'true' } },
+            { 'ParentId': { 'eq': null } }
         ];
     }
 
