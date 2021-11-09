@@ -681,6 +681,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 dataField: 'BankCode'
             });
         }
+
         this.dataSource = new DataSource({
             store: new ODataStore({
                 key: this.clientFields.Id,
@@ -721,6 +722,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 }
             })
         });
+        this.dataSource['exportIgnoreOnLoaded'] = true;
         this.totalDataSource = new DataSource({
             paginate: false,
             store: new ODataStore({
