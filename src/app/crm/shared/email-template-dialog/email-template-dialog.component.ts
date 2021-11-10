@@ -313,6 +313,10 @@ export class EmailTemplateDialogComponent implements OnInit {
             if (!this.data.to || !this.data.to.length)
                 return this.notifyService.error(
                     this.ls.l('RequiredField', this.ls.l('To')));
+
+            if (!this.data.subject)
+                return this.notifyService.error(
+                    this.ls.l('RequiredField', this.ls.l('Subject')));
         }
 
         if (!this.data.body)
