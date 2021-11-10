@@ -269,7 +269,10 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     totalErrorMsg: string;
     totalCount: number;
     isDataLoaded = false;
-    defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
+    defaultGridPagerConfig = {
+        ...DataGridService.defaultGridPagerConfig,
+        showPageSizeSelector: false
+    };
     formatting = AppConsts.formatting;
     userTimezone = DateHelper.getUserTimezone();
     currency = 'USD';
