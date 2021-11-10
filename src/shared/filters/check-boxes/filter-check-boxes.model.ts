@@ -71,7 +71,8 @@ export class FilterCheckBoxesModel extends FilterItemModel {
             if (args) {
                 remove(this.value, (val: any, index: number) => {
                     if (val == args) {
-                        this.selectedItems.splice(index, 1);
+                        if (this.selectedItems)    
+                            this.selectedItems.splice(index, 1);
                         return true;
                     }
                     return false;
