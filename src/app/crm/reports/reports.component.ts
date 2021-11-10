@@ -572,7 +572,10 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
 
     customizeWtbFeeCell = (data) => this.customizeAmountCell(data.WtbFee);
 
-    customizeTotalFeeCell = (data) => this.customizeAmountCell(data.TotalFee);
+    customizeTotalFeeCell = (data) => {
+        let total = (data.WtbFee || 0) + (data.BankVaultFee || 0) + (data.BankPassFee || 0);
+        return total > 0 ? this.customizeAmountCell(total) : undefined;
+    };
 
     customizeBankConnectAmountCell = (data: SubscriberDailyStatsReportInfo) => this.customizeAmountCell(data.bankConnectAmount);
 
