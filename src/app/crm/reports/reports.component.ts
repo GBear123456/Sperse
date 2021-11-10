@@ -6,6 +6,7 @@ import {
     Component,
     Inject,
     OnInit,
+    OnDestroy,
     ViewChild
 } from '@angular/core';
 import { CurrencyPipe, DatePipe, DOCUMENT } from '@angular/common';
@@ -31,6 +32,7 @@ import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-gr
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import {
     Currency,
     InvoiceSettings,
@@ -67,10 +69,16 @@ import { Param } from '@shared/common/odata/param.model';
         '../shared/styles/client-status.less',
         './reports.component.less'
     ],
-    providers: [CurrencyPipe, DatePipe, PhoneFormatPipe, ReportServiceProxy],
+    providers: [
+        CurrencyPipe, 
+        DatePipe, 
+        PhoneFormatPipe, 
+        ReportServiceProxy,
+        LifecycleSubjectsService
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ReportsComponent implements OnInit, AfterViewInit {
+export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('subscribersDataGrid', { static: false }) subscribersDataGrid: DxDataGridComponent;
     @ViewChild('statsDataGrid', { static: false }) statsDataGrid: DxDataGridComponent;
     @ViewChild('subscriptionTrackerGrid', { static: false }) subscriptionTrackerGrid: DxDataGridComponent;
@@ -86,18 +94,36 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     };
     private readonly subscribersReportURI = 'SubscribersReport';
     subscribersDataSource = new DataSource({
-        requireTotalCount: true,
+        requireTotalCount: false,
         store: new ODataStore({
             url: this.oDataService.getODataUrl(this.subscribersReportURI),
             version: AppConsts.ODataVersion,
             beforeSend: (request) => {
-                if (!request['isExport']) {
-                    this.isDataLoaded = false;
-                    this.changeDetectorRef.detectChanges();
-                }
+                request.params.$select = DataGridService.getSelectFields(this.subscribersDataGrid);
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             },
             deserializeDates: false
+        })
+    });
+    totalDataSource = new DataSource({
+        paginate: false,
+        store: new ODataStore({
+            url: this.oDataService.getODataUrl(this.subscribersReportURI + '/$count'),
+            version: AppConsts.ODataVersion,
+            beforeSend: (request) => {
+                this.totalCount = this.totalErrorMsg = undefined;
+                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+            },
+            onLoaded: (count: any) => {
+                if (!isNaN(count))
+                    this.dataSource['total'] = this.totalCount = count;
+                this.changeDetectorRef.detectChanges();
+            },
+            errorHandler: (e: any) => {
+                this.totalErrorMsg = this.ls.l('AnHttpErrorOccured');
+                this.changeDetectorRef.detectChanges();
+            }                
         })
     });
     statsDataSource = new DataSource({
@@ -240,7 +266,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             }
         }
     };
-    deactivate$: Subject<null> = new Subject<null>();
+    totalErrorMsg: string;
     totalCount: number;
     isDataLoaded = false;
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
@@ -294,6 +320,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         public appService: AppService,
         public crmService: CrmService,
         public httpInterceptor: AppHttpInterceptor,
+        private lifeCycleSubjectsService: LifecycleSubjectsService,
         @Inject(DOCUMENT) private document
     ) { }
 
@@ -301,11 +328,12 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.activate();
         this.invoiceService.settings$.pipe(
             filter(Boolean),
-            takeUntil(this.deactivate$),
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
             map((settings: InvoiceSettings) => settings.currency)
         ).subscribe((currency: Currency) => {
             this.currency = currency.toString();
         });
+        this.totalDataSource.load();
     }
 
     activate() {
@@ -314,7 +342,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.document.body.classList.add('overflow-hidden');
         this.filtersService.checkIfAnySelected();
         this.filtersService.filtersValues$.pipe(
-            takeUntil(this.deactivate$)
+            takeUntil(this.lifeCycleSubjectsService.destroy$)
         ).subscribe((filtersValues) => {
             this.filtersValues = filtersValues;
             this.refresh();
@@ -327,6 +355,18 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 () => this.dataGrid.instance.repaint()
             );
         else if (this.selectedReportType == ReportType.Subscribers) {
+            this.isDataLoaded = false;
+            this.changeDetectorRef.detectChanges();
+            let url = this.oDataService.getODataUrl(
+                this.subscribersReportURI + '/$count',
+                this.oDataService.processFilters(this.filters, null), 
+                null, this.getSourceOrgUnitsFilter()
+            );
+            if (url && this.oDataService.requestLengthIsValid(url)) {
+                this.totalDataSource['_store']['_url'] = url;
+                this.totalDataSource.load();
+            }
+
             this.oDataService.processODataFilter(this.dataGrid.instance, this.subscribersReportURI, this.filters, null, [], null, null, this.getSourceOrgUnitsFilter());
         } else
             (this.dataGrid as DxDataGridComponent).instance.refresh();
@@ -510,7 +550,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             let gridInstance = this.dataGrid && this.dataGrid.instance;
             if (gridInstance && saveCount) {
                 let dataSource: any = gridInstance.getDataSource && gridInstance.getDataSource();
-                if (dataSource) {
+                if (dataSource && dataSource.totalCount() > 0) {
                     this.totalCount = dataSource.totalCount();
                 }
             }
@@ -606,6 +646,10 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     deactivate() {
         this.filtersService.unsubscribe();
-        this.deactivate$.next(null);
+    }
+
+    ngOnDestroy() {
+        this.lifeCycleSubjectsService.destroy.next();
+        this.deactivate();
     }
 }

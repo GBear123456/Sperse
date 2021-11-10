@@ -11,6 +11,7 @@
               (onToggleColumnSelector)="toggleColumnChooser()">
     <types-dropdown [items]="reportTypes"
                     [showTotalCount]="true"
+                    [totalErrorMsg]="totalErrorMsg"
                     [totalCount]="totalCount"
                     [(value)]="selectedReportType"
                     (onValueChanged)="onReportTypeChanged($event)">
@@ -20,7 +21,7 @@
 <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
 <div class="main-wrapper" [ngStyle]="{ height: 'calc(100% - ' + (appService.toolbarIsHidden.value ? '75px' : '136px' ) + ')' }">
     <ghost-list *ngIf="!isDataLoaded"></ghost-list>
-    <div [hidden]="totalCount <= 0 || selectedReportType !== reportTypesEnum.Subscribers">
+    <div [hidden]="selectedReportType !== reportTypesEnum.Subscribers">
         <dx-data-grid #subscribersDataGrid
                       id="gridContainer"
                       class="main-component-view"
@@ -40,6 +41,7 @@
             </dxo-selection>
             <dxo-sorting mode="multiple"></dxo-sorting>
             <dxo-group-panel [visible]="true"></dxo-group-panel>
+            <dxo-scrolling mode="infinite"></dxo-scrolling>
             <dxo-paging [pageSize]="20"></dxo-paging>
 
             <dxi-column dataField="Name" [caption]="ls.l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
@@ -77,8 +79,7 @@
                         calculateSortValue="wtbFee"
                         [calculateDisplayValue]="customizeWtbFeeCell">
             </dxi-column>
-            <dxi-column dataField="TotalFee"
-                        [caption]="ls.l('TotalFee')"
+            <dxi-column [caption]="ls.l('TotalFee')"
                         cssClass="clipboard-holder"
                         calculateSortValue="totalFee"
                         [calculateDisplayValue]="customizeTotalFeeCell">
