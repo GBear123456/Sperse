@@ -46,7 +46,7 @@
 
             <dxi-column dataField="Name" [caption]="ls.l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="Email" [caption]="ls.l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
-            <dxi-column [caption]="ls.l('Contact.Phone')" [calculateDisplayValue]="customizePhoneCell" cssClass="clipboard-holder"></dxi-column>
+            <dxi-column dataField="Phone" [caption]="ls.l('Contact.Phone')" [calculateDisplayValue]="customizePhoneCell" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="City" [caption]="ls.l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
             <dxi-column dataField="Status" [caption]="ls.l('Status')" [calculateDisplayValue]="customizeStatusCell" cellTemplate="statusCell"></dxi-column>
             <dxi-column dataField="BankCode"
