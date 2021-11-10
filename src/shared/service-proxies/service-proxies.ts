@@ -20347,7 +20347,7 @@ export class LeadServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    cancelLead(body: CancelLeadInfo | null | undefined): Observable<void> {
+    cancelLead(body: CancelLeadInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/CancelLead";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -20671,7 +20671,7 @@ export class LeadServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updateLeadStage(body: UpdateLeadStageInfo | null | undefined): Observable<void> {
+    updateLeadStage(body: UpdateLeadStageInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/UpdateLeadStage";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -54771,57 +54771,12 @@ export interface IEntityAddressInfo {
     zip: string | undefined;
 }
 
-export class EntityContactGroupInfo implements IEntityContactGroupInfo {
-    groupId!: string | undefined;
-    isActive!: boolean | undefined;
-    isProspective!: boolean | undefined;
-
-    constructor(data?: IEntityContactGroupInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.groupId = data["groupId"];
-            this.isActive = data["isActive"];
-            this.isProspective = data["isProspective"];
-        }
-    }
-
-    static fromJS(data: any): EntityContactGroupInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new EntityContactGroupInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["groupId"] = this.groupId;
-        data["isActive"] = this.isActive;
-        data["isProspective"] = this.isProspective;
-        return data; 
-    }
-}
-
-export interface IEntityContactGroupInfo {
-    groupId: string | undefined;
-    isActive: boolean | undefined;
-    isProspective: boolean | undefined;
-}
-
 export class EntityContactInfo implements IEntityContactInfo {
     id!: number | undefined;
     name!: string | undefined;
     email!: string | undefined;
     userId!: number | undefined;
     address!: EntityAddressInfo | undefined;
-    groups!: EntityContactGroupInfo[] | undefined;
     photoPublicId!: string | undefined;
 
     constructor(data?: IEntityContactInfo) {
@@ -54840,11 +54795,6 @@ export class EntityContactInfo implements IEntityContactInfo {
             this.email = data["email"];
             this.userId = data["userId"];
             this.address = data["address"] ? EntityAddressInfo.fromJS(data["address"]) : <any>undefined;
-            if (data["groups"] && data["groups"].constructor === Array) {
-                this.groups = [];
-                for (let item of data["groups"])
-                    this.groups.push(EntityContactGroupInfo.fromJS(item));
-            }
             this.photoPublicId = data["photoPublicId"];
         }
     }
@@ -54863,11 +54813,6 @@ export class EntityContactInfo implements IEntityContactInfo {
         data["email"] = this.email;
         data["userId"] = this.userId;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
-        if (this.groups && this.groups.constructor === Array) {
-            data["groups"] = [];
-            for (let item of this.groups)
-                data["groups"].push(item.toJSON());
-        }
         data["photoPublicId"] = this.photoPublicId;
         return data; 
     }
@@ -54879,7 +54824,6 @@ export interface IEntityContactInfo {
     email: string | undefined;
     userId: number | undefined;
     address: EntityAddressInfo | undefined;
-    groups: EntityContactGroupInfo[] | undefined;
     photoPublicId: string | undefined;
 }
 
@@ -66896,14 +66840,13 @@ export interface IUpdateLanguageTextInput {
     value: string;
 }
 
-export class CancelLeadInfo implements ICancelLeadInfo {
+export class CancelLeadInput implements ICancelLeadInput {
     leadId!: number;
     cancellationReasonId!: string;
     comment!: string | undefined;
     sortOrder!: number | undefined;
-    stageId!: number | undefined;
 
-    constructor(data?: ICancelLeadInfo) {
+    constructor(data?: ICancelLeadInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -66918,13 +66861,12 @@ export class CancelLeadInfo implements ICancelLeadInfo {
             this.cancellationReasonId = data["cancellationReasonId"];
             this.comment = data["comment"];
             this.sortOrder = data["sortOrder"];
-            this.stageId = data["stageId"];
         }
     }
 
-    static fromJS(data: any): CancelLeadInfo {
+    static fromJS(data: any): CancelLeadInput {
         data = typeof data === 'object' ? data : {};
-        let result = new CancelLeadInfo();
+        let result = new CancelLeadInput();
         result.init(data);
         return result;
     }
@@ -66935,17 +66877,15 @@ export class CancelLeadInfo implements ICancelLeadInfo {
         data["cancellationReasonId"] = this.cancellationReasonId;
         data["comment"] = this.comment;
         data["sortOrder"] = this.sortOrder;
-        data["stageId"] = this.stageId;
         return data; 
     }
 }
 
-export interface ICancelLeadInfo {
+export interface ICancelLeadInput {
     leadId: number;
     cancellationReasonId: string;
     comment: string | undefined;
     sortOrder: number | undefined;
-    stageId: number | undefined;
 }
 
 export class LeadCancellationReasonDto implements ILeadCancellationReasonDto {
@@ -67758,14 +67698,14 @@ export interface ISubmitClientRequestInput {
     isHelpNeeded: boolean | undefined;
 }
 
-export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
+export class UpdateLeadStageInput implements IUpdateLeadStageInput {
     leadId!: number;
     stageId!: number;
     sortOrder!: number | undefined;
     ignoreChecklist!: boolean | undefined;
     allowPipelineChange!: boolean | undefined;
 
-    constructor(data?: IUpdateLeadStageInfo) {
+    constructor(data?: IUpdateLeadStageInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -67784,9 +67724,9 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
         }
     }
 
-    static fromJS(data: any): UpdateLeadStageInfo {
+    static fromJS(data: any): UpdateLeadStageInput {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdateLeadStageInfo();
+        let result = new UpdateLeadStageInput();
         result.init(data);
         return result;
     }
@@ -67802,7 +67742,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
     }
 }
 
-export interface IUpdateLeadStageInfo {
+export interface IUpdateLeadStageInput {
     leadId: number;
     stageId: number;
     sortOrder: number | undefined;
