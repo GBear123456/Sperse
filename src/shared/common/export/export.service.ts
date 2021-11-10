@@ -66,12 +66,7 @@ export class ExportService {
                 initialStore = initialDataSource.store(),
                 initialBeforeSend = initialStore._beforeSend;
 
-            let loadedEvent = initialStore._eventsStrategy._events['loaded'];
-            let initialOnLoadedList = [];
-            if (loadedEvent && initialDataSource['exportIgnoreOnLoaded']) {
-                initialOnLoadedList = initialStore._eventsStrategy._events['loaded']._list;
-                initialStore._eventsStrategy._events['loaded']._list = [];
-            }
+            let initialOnLoadedList = this.handleExportIgnoreOnLoaded(initialDataSource, initialStore);
 
             initialStore._beforeSend = (request) => {
                 request.isExport = true;
@@ -85,13 +80,11 @@ export class ExportService {
                 store: initialStore
             })).load().done(res => {
                 initialStore._beforeSend = initialBeforeSend;
-                if (initialOnLoadedList.length)
-                    initialStore._eventsStrategy._events['loaded']._list = initialOnLoadedList;
+                this.restoreInitialOnLoadedList(initialStore, initialOnLoadedList);
                 callback(this.checkJustifyData(res));
             }).fail(error => {
                 initialStore._beforeSend = initialBeforeSend;
-                if (initialOnLoadedList.length)
-                    initialStore._eventsStrategy._events['loaded']._list = initialOnLoadedList;
+                this.restoreInitialOnLoadedList(initialStore, initialOnLoadedList);
                 this.handleExportError(error);
             });
         } else {
@@ -193,7 +186,8 @@ export class ExportService {
     private exportToExcelInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string, showItemsInName?: boolean) {
         return new Promise(resolve => {
             let instance = dataGrid.instance,
-                dataStore = instance.getDataSource().store(),
+                dataSource = instance.getDataSource(),
+                dataStore = dataSource.store(),
                 initialBeforeSend = dataStore._beforeSend,
                 isLoadPanel = instance.option('loadPanel.enabled'),
                 initialFileName = dataGrid.export.fileName,
@@ -210,6 +204,8 @@ export class ExportService {
             if (isLoadPanel)
                 instance.option('loadPanel.enabled', false);
 
+            let initialOnLoadedList = this.handleExportIgnoreOnLoaded(dataSource, dataStore);
+
             dataStore._beforeSend = (request) => {
                 request.timeout = this.EXPORT_REQUEST_TIMEOUT;
                 request.isExport = true;
@@ -225,6 +221,7 @@ export class ExportService {
                 dataStore._beforeSend = initialBeforeSend;
                 dataStore.off('loaded', onLoadInternal);
                 dataStore.off('exported');
+                this.restoreInitialOnLoadedList(dataStore, initialOnLoadedList);
                 resolve();
             });
             let onDataError = (error) => {
@@ -266,6 +263,21 @@ export class ExportService {
                 exportAllData
             );
         });
+    }
+
+    handleExportIgnoreOnLoaded(dataSource, store): any[] {
+        let loadedEvent = store._eventsStrategy._events['loaded'];
+        let initialOnLoadedList = [];
+        if (loadedEvent && dataSource['exportIgnoreOnLoaded']) {
+            initialOnLoadedList = store._eventsStrategy._events['loaded']._list;
+            store._eventsStrategy._events['loaded']._list = [];
+        }
+        return initialOnLoadedList;
+    }
+
+    restoreInitialOnLoadedList(store, list: any[]): void {
+        if (list.length)
+            store._eventsStrategy._events['loaded']._list = list;
     }
 
     /**
