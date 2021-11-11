@@ -983,7 +983,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             setTimeout(() => {
                 this._router.navigate(
                     CrmService.getEntityDetailsLink(clientId, section, null, orgId),
-                    { queryParams: { referrer: 'app/crm/clients', ...queryParams }}
+                    { 
+                        queryParams: {
+                            contactGroupId: ContactGroup.Client, 
+                            referrer: 'app/crm/clients', 
+                            ...queryParams 
+                        }
+                    }
                 );
             });
         }

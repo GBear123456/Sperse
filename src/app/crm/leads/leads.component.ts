@@ -1996,6 +1996,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     CrmService.getEntityDetailsLink(clientId, section, leadId, orgId),
                     { queryParams: {
                             referrer: 'app/crm/leads',
+                            contactGroupId: this.selectedContactGroup,
                             dataLayoutType: this.dataLayoutType.value,
                             ...queryParams
                         }}

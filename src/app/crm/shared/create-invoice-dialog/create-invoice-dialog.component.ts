@@ -749,7 +749,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.contactId = contact.id;
             this.selectedContact = contact;
             this.isSendEmailAllowed = this.permission.checkCGPermission(
-                contact.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
+                [ContactGroup.Client], 'ViewCommunicationHistory.SendSMSAndEmail');
             if (this.orderId && !this.data.invoice) {
                 this.orderId = undefined;
                 this.orderNumber = undefined;

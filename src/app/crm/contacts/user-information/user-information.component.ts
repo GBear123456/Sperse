@@ -418,7 +418,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
             this.contactsService.updateStatus(
                 this.data.user.id,
                 ContactGroup.UserProfile,
-                { id: this.data.user.isActive ? ContactStatus.Active : ContactStatus.Inactive },
+                this.data.user.isActive,
                 'user'
             ).subscribe(
                 (confirm: boolean) => {

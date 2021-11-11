@@ -877,7 +877,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             setTimeout(() => {
                 this._router.navigate(
                     CrmService.getEntityDetailsLink(partnerId, section, null, orgId),
-                    { queryParams: { referrer: 'app/crm/partners', ...queryParams } }
+                    { 
+                        queryParams: {
+                            contactGroupId: ContactGroup.Partner, 
+                            referrer: 'app/crm/partners', 
+                            ...queryParams 
+                        }
+                    }
                 );
             });
         }

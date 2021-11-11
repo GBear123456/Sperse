@@ -63,7 +63,7 @@ import { NavLink } from '@app/crm/contacts/nav-link.model';
 import { ContextType } from '@app/crm/contacts/details-header/context-type.enum';
 import { DetailsHeaderComponent } from '@app/crm/contacts/details-header/details-header.component';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
-import { Status } from '@app/crm/contacts/operations-widget/status.interface';
+import { GroupStatus } from '@app/crm/contacts/operations-widget/status.interface';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
@@ -346,13 +346,13 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     initNavigatorProperties() {
-        this.dataSourceURI = this.contactsService.getCurrentItemType(this.queryParams, this.contactGroupId.value);
+        this.dataSourceURI = this.contactsService.getCurrentItemType(this.queryParams);
         this.currentItemId = this.getCurrentItemId();
     }
 
     private getCurrentItemId(): string {
         let currentItemId: string;
-        switch (this.contactsService.getSection(this.queryParams, this.contactGroupId.value)) {
+        switch (this.contactsService.getSection(this.queryParams)) {
             case 'leads': currentItemId = this.params.leadId; break;
             case 'clients': currentItemId = this.params.contactId; break;
             case 'partners': currentItemId = this.params.contactId; break;
@@ -446,15 +446,22 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.contactsService.toolbarUpdate();
     }
 
-    private getContactGroupIdByInfo(contactInfo: ContactInfoDto) {
-        return contactInfo.groups[0].groupId; //!!VP should be considered
+    private getContactGroupId(contactInfo: ContactInfoDto): string {
+        let contactGroupId = this.contactsService.getContactGroupId(this.queryParams);
+        if (contactGroupId)
+            return contactGroupId;
+
+        let group = contactInfo.groups.filter(group => group.isActive).shift() || 
+            contactInfo.groups.filter(group => group.isProspective).shift();
+
+        return (group && group.groupId) || contactInfo.groups[0].groupId || ContactGroup.Client;
     }
 
     private fillContactDetails(result: ContactInfoDto, contactId = null) {
         this.checkUpdateToolbar();
         this.contactService['data'].contactInfo = result;
         this.contactsService.contactInfoUpdate(result);
-        this.contactGroupId.next(this.getContactGroupIdByInfo(result));
+        this.contactGroupId.next(this.getContactGroupId(result));
         this.manageAllowed = this.permission.checkCGPermission(result.groups);
         this.assignedUsersSelector = select(
             ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers
@@ -721,22 +728,22 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         return this.contactInfo.personContactInfo.fullName;
     }
 
-    private showConfirmationDialog(status: Status) {
+    private showConfirmationDialog(status: GroupStatus) {
         this.contactsService.updateStatus(
-            this.contactInfo.id, 
-            this.contactGroupId.value, 
-            status
+            this.contactInfo.id, status.groupId, status.isActive
         ).subscribe((confirm: boolean) => {
             if (confirm) {
-                //this.contactInfo.statusId = String(status.id);
+                this.contactInfo.groups.some(group => {
+                    if (group.groupId == status.groupId) {                        
+                        group.isActive = status.isActive;
+                        return true;
+                    }
+                });
                 let userData = this.userService['data'];
                 if (userData && userData.user) {
-                    userData.user.isActive = status.id == ContactStatus.Active;
+                    userData.user.isActive = status.isActive;
                 }
-                this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [status.id]);
                 this.notify.success(this.l('StatusSuccessfullyUpdated'));
-            } else {
-                // this.toolbarComponent.statusComponent.listComponent.option('selectedItemKeys', [this.contactInfo.statusId]);
             }
         });
     }
@@ -832,7 +839,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         this.contactsService.deleteContact(this.getCustomerName(), this.contactGroupId.value, id, () => this.close(), isLead);
     }
 
-    updateStatus(status: Status) {
+    updateStatus(status: GroupStatus) {
         this.showConfirmationDialog(status);
     }
 

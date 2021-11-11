@@ -1609,6 +1609,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     queryParams: {
                         ...(isOrder ? {orderId: entity.Id} : {subId: entity.Id}),
                         referrer: 'app/crm/orders',
+                        contactGroupId: ContactGroup.Client,                        
                         dataLayoutType: DataLayoutType.Pipeline,
                         ...queryParams
                     }

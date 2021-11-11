@@ -729,19 +729,43 @@ export class ContactsService {
         });
     }
 
-    getSection(queryParams: Params, contactGroupId?: string): string {
+    getSection(queryParams: Params): string {
         if (queryParams) {
             if (queryParams.subId)
-                return 'subscriptions';
+                return 'subscriptions';            
             else if (queryParams.referrer)
                 return queryParams.referrer.split('/').pop();
         }
-        return contactGroupId && contactGroupId === ContactGroup.Partner ? 'partners' : 'clients';
+        return 'clients';
     }
 
-    getCurrentItemType(queryParams: Params, contactGroupId?: string): ItemTypeEnum {
+    getContactGroupId(queryParams: Params): string {
+        if (queryParams) {
+            if (queryParams.contactGroupId) {
+                let contactGroupId = queryParams.contactGroupId.toUpperCase();
+                if (Object.keys(ContactGroup).some(group => ContactGroup[group] == contactGroupId))
+                    return contactGroupId;
+            }
+
+            if (queryParams.referrer) {
+                let section = queryParams.referrer.split('/').pop();
+                switch (section) {
+                    case 'orders':
+                    case 'clients':
+                    case 'subscriptions':
+                        return ContactGroup.Client;
+                    case 'partners':
+                        return ContactGroup.Partner;
+                    case 'users':
+                        return ContactGroup.UserProfile;
+                }
+            }
+        }
+    }
+
+    getCurrentItemType(queryParams: Params): ItemTypeEnum {
         let dataSourceURI: ItemTypeEnum;
-        switch (this.getSection(queryParams, contactGroupId)) {
+        switch (this.getSection(queryParams)) {
             case 'leads':
                 dataSourceURI = ItemTypeEnum.Lead;
                 break;
@@ -766,13 +790,13 @@ export class ContactsService {
         return dataSourceURI;
     }
 
-    updateStatus(entityId: number, groupId: ContactGroup, status: Status, entity: 'contact' | 'user' = 'contact'): Observable<any> {
+    updateStatus(entityId: number, groupId: ContactGroup, isActive: boolean, entity: 'contact' | 'user' = 'contact'): Observable<any> {
         return new Observable<any>((observer: Subscriber<any>) => {
             ContactsHelper.showConfirmMessage(
                 this.ls.l('ClientUpdateStatusWarningMessage'),
                 (isConfirmed: boolean, [ notifyUser ]: boolean[]) => {
                     if (isConfirmed) {
-                        this.updateStatusInternal(entityId, groupId, status.id == ContactStatus.Active, notifyUser, entity).subscribe(
+                        this.updateStatusInternal(entityId, groupId, isActive, notifyUser, entity).subscribe(
                             () => observer.next(true),
                             (error) => observer.error(error)
                         );
@@ -782,7 +806,7 @@ export class ContactsService {
                 },
                 [ {
                     text: this.ls.l('SendCancellationEmail'),
-                    visible: this.userId.value && status.id === ContactStatus.Inactive,
+                    visible: this.userId.value && !isActive,
                     checked: false
                 } ],
                 this.ls.l('ClientStatusUpdateConfirmationTitle')

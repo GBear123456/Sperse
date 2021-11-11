@@ -27,7 +27,7 @@
             [highlightSelected]="true"
             [showSelectionControls]="true"
             [selectionMode]="'multiple'"
-            [selectedKeys]="[contactInfo?.statusId]"
+            [selectedKeys]="[activeGroupIds]"
             targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
             [list]="statuses"
             (onItemSelected)="updateStatus($event)">

@@ -1,5 +1,6 @@
 /** Core imports */
 import {
+    OnInit,
     AfterViewInit,
     Component,
     ElementRef,
@@ -17,6 +18,7 @@ import { ActivatedRoute } from '@angular/router';
 /** Third party imports */
 import { Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import invert from 'lodash/invert';
 
 /** Application imports */
 import { TagsListComponent } from '@app/shared/common/lists/tags-list/tags-list.component';
@@ -37,7 +39,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { CrmService } from '@app/crm/crm.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { AppConsts } from '@shared/AppConsts';
-import { Status } from '@app/crm/contacts/operations-widget/status.interface';
+import { GroupStatus } from '@app/crm/contacts/operations-widget/status.interface';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Component({
@@ -45,7 +47,7 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
     templateUrl: './operations-widget.component.html',
     styleUrls: ['./operations-widget.component.less']
 })
-export class OperationsWidgetComponent extends AppComponentBase implements AfterViewInit, OnChanges {
+export class OperationsWidgetComponent extends AppComponentBase implements OnInit, AfterViewInit, OnChanges {
     @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
     @ViewChild(TypesListComponent, { static: false }) partnerTypesComponent: TypesListComponent;
@@ -104,7 +106,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStage: EventEmitter<any> = new EventEmitter();
     @Output() onUpdatePartnerType: EventEmitter<any> = new EventEmitter();
-    @Output() onUpdateStatus: EventEmitter<Status> = new EventEmitter();
+    @Output() onUpdateStatus: EventEmitter<GroupStatus> = new EventEmitter();
     @Output() print: EventEmitter<any> = new EventEmitter();
 
     private initTimeout;
@@ -133,11 +135,10 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     isPfmAvailable = false;
     isApiAvailable = false;
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
-    statuses: Status[] = [
-        { id: 'A', name: this.l('Active') },
-        { id: 'I', name: this.l('Inactive') }
-    ];
-
+    statuses: GroupStatus[];
+    activeGroupIds: string[];
+    contactGroupKeys = invert(ContactGroup);
+    
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
@@ -163,6 +164,22 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
 
             this.initToolbarConfig();
         });
+    }
+
+    ngOnInit() {
+        this.statuses = this.contactInfo.groups.map(group => {
+            if (this.permission.getCGPermissionKey([group.groupId], 'Manage'))
+                return {
+                    id: group.groupId,
+                    groupId: group.groupId,
+                    name: this.contactGroupKeys[group.groupId],
+                    displayName: this.l(this.contactGroupKeys[group.groupId]),
+                    isActive: group.isActive
+                };
+        }).filter(Boolean);
+        this.activeGroupIds = this.statuses.filter(
+            status => status.isActive
+        ).map(status => status.id);
     }
 
     ngAfterViewInit() {
@@ -518,6 +535,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     }
 
     updateStatus(event) {
+        event.isActive = !event.isActive;
         this.onUpdateStatus.emit(event);
     }
 
