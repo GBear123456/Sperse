@@ -935,7 +935,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         ).pipe(
             filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues),
             distinctUntilChanged((prev: ODataRequestValues, curr: ODataRequestValues) => {
-                return prev.filter === curr.filter && !ArrayHelper.dataChanged(prev.params, curr.params);
+                return !!prev.filter && prev.filter === curr.filter && !ArrayHelper.dataChanged(prev.params, curr.params);
             })
         );
     }
@@ -1362,8 +1362,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     toggleColumnChooser() {
-        if (this.selectedOrderType.value === OrderType.Subscription
-            && this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid) {
+        if (this.selectedOrderType.value === OrderType.Subscription &&
+            this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid
+        ) {
             this.pivotGridComponent.toggleFieldPanel();
         } else {
             DataGridService.showColumnChooser(this.dataGrid);
@@ -1424,8 +1425,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.exportCallback();
         else {
             this.setGridDataLoaded();
-            if (!this.rowsViewHeight)
-                this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
+            this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight(event.component);
             event.component.columnOption('command:edit', {
                 visibleIndex: -1,
                 width: 40
@@ -1441,6 +1441,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     toggleOrdersDataLayout(dataLayoutType: DataLayoutType) {
+        if (this.dataGrid)
+            DataGridService.hideColumnChooser(this.dataGrid);
         this.showOrdersPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType.next(this.ordersDataLayoutType = dataLayoutType);
         this.initDataSource();
@@ -1461,6 +1463,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.subscriptionsDataLayoutType = dataLayouType;
         this.initDataSource();
         this.initSubscriptionsToolbarConfig();
+        if (this.dataGrid)
+            DataGridService.hideColumnChooser(this.dataGrid);
         if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid)
             this.dataGrid.instance.deselectAll();
 
@@ -1740,6 +1744,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onOrderTypeChanged(event) {
+        if (this.dataGrid)
+            DataGridService.hideColumnChooser(this.dataGrid);
+
         if (event.value != this.selectedOrderType.value) {
             this.searchClear = true;
             this.selectedOrderType.next(event.value);
@@ -1747,6 +1754,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onContactGroupChanged(event) {
+        if (this.dataGrid)
+            DataGridService.hideColumnChooser(this.dataGrid);
+
         if (event.itemData.value != this.selectedContactGroup.value) {
             this.selectedContactGroup.next(event.itemData.value);
             this.filtersService.change([this.contactGroupFilter]);

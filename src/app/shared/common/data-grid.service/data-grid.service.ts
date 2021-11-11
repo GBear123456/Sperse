@@ -35,6 +35,10 @@ export class DataGridService {
         grid.instance.showColumnChooser();
     }
 
+    static hideColumnChooser(grid) {
+        grid.instance.hideColumnChooser();
+    }
+
     static toggleCompactRowsHeight(dataGrid, updateDimensions = false) {
         dataGrid.instance.element().classList.toggle('grid-compact-view');
         if (updateDimensions) {
@@ -50,8 +54,11 @@ export class DataGridService {
         return dataGrid && dataGrid.instance && dataGrid.instance.option(option);
     }
 
-    static getDataGridRowsViewHeight() {
-        return document.querySelector('.dx-datagrid-rowsview').clientHeight;
+    static getDataGridRowsViewHeight(dataGridInstance?) {
+        return (dataGridInstance ? 
+            dataGridInstance.element().getElementsByClassName('dx-datagrid-rowsview')[0] :
+            document.querySelector('.dx-datagrid-rowsview') 
+        ).clientHeight;
     }
 
     static getOrganizationUnitName(organizationUnitId: number, organizationUnits: OrganizationUnitDto[]): string {

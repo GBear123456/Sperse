@@ -2,6 +2,12 @@
     .wrapper {
         padding-bottom: 90px;
 
+        ::ng-deep .dx-tabs {
+            .dx-tab-selected:after {
+                border: 1px solid #337ab7!important;
+            }
+        }
+
         ::ng-deep .dx-treelist {
             .dx-select-checkbox {
                 position: static;
