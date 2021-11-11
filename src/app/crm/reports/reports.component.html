@@ -19,6 +19,17 @@
     <import-progress-bar></import-progress-bar>
 </app-headline>
 <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
+<app-static-tree-view #sourceOrganizationUnits
+                      [width]="'265px'"
+                      [title]="ls.l('Owner')"
+                      [targetSelector]="'[accessKey=SourceOrganizationUnits]'"
+                      [list]="staticListOrganizationUnits$ | async"
+                      [hideButtons]="false"
+                      [hideApplyForEmpty]="false"
+                      [showCheckBoxesMode]="normal"
+                      [filterModel]="salesOrgUnitFilter"
+                      (onApply)="onSourceOrganizationUnitsApply($event)">
+</app-static-tree-view>
 <app-static-list #transactionTypes
                  [width]="'265px'"
                  [title]="ls.l('TransactionTypes')"

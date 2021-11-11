@@ -1,0 +1,35 @@
+<dx-tooltip [width]="width"
+            [height]="height"
+            [target]="targetSelector"
+            [(visible)]="tooltipVisible">
+    <div *dxTemplate="let data of 'content'">
+        <div class="lists-tooltip-container">
+            <div class="actions clearfix">
+                <ng-content select="[custom-title]"></ng-content>
+                <span class="title" [hidden]="!showTitle">{{title}}</span>
+                <span class="filter-clear" [hidden]="!filterModel || !filterModel.isSelected" (click)="clearSelection()">{{ls.l('ClearFilter')}}</span>
+                <div [hidden]="hideButtons" class="apply">
+                    <span class="filter-apply" [hidden]="hideApplyForEmpty && !selectedItemKeys?.length" (click)="apply()">{{ls.l('Apply')}}</span>
+                </div>
+            </div>
+            <ng-content select="[custom-content]"></ng-content>
+            <dx-tree-view #staticTreeView
+                     [focusStateEnabled]="false"
+                     [searchEnabled]="searchEnabled"
+                     [searchExpr]="searchExprType"
+                     [searchTimeout]="1000"
+                     [showCheckBoxesMode]="showCheckBoxesMode"
+                     [selectionMode]="selectionMode"
+                     [dataSource]="list"
+                     dataStructure="plain"
+                     keyExpr="id"
+                     displayExpr="displayName"
+                     [accessKey]="accessKey"
+                     [height]="listHeight"
+                     [disabled]="disabled"
+                     (onSelectionChanged)="onSelectionChanged($event)"
+                     (onInitialized)="onInitialized()">
+            </dx-tree-view>
+        </div>
+    </div>
+</dx-tooltip>

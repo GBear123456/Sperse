@@ -18,9 +18,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
-import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
 import * as _ from 'underscore';
 
@@ -46,14 +44,12 @@ import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-ch
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ExportService } from '@shared/common/export/export.service';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { AppConsts } from '@shared/AppConsts';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { ReportType } from '@app/crm/reports/report-type.enum';
-import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
@@ -73,9 +69,9 @@ import { Param } from '@shared/common/odata/param.model';
         './reports.component.less'
     ],
     providers: [
-        CurrencyPipe, 
-        DatePipe, 
-        PhoneFormatPipe, 
+        CurrencyPipe,
+        DatePipe,
+        PhoneFormatPipe,
         ReportServiceProxy,
         LifecycleSubjectsService
     ],
@@ -86,6 +82,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('statsDataGrid', { static: false }) statsDataGrid: DxDataGridComponent;
     @ViewChild('subscriptionTrackerGrid', { static: false }) subscriptionTrackerGrid: DxDataGridComponent;
     @ViewChild(PivotGridComponent, { static: false }) salesReportComponent: PivotGridComponent;
+    @ViewChild('sourceOrganizationUnits', { static: false }) sourceOrganizationUnits: StaticListComponent;
     @ViewChild('transactionTypes', { static: false }) transactionTypes: StaticListComponent;
     @ViewChild('paymentProviders', { static: false }) paymentProviders: StaticListComponent;
     toolbarConfig: ToolbarGroupModel[];
@@ -128,7 +125,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             errorHandler: (e: any) => {
                 this.totalErrorMsg = this.ls.l('AnHttpErrorOccured');
                 this.changeDetectorRef.detectChanges();
-            }                
+            }
         })
     });
     statsDataSource = new DataSource({
@@ -294,6 +291,25 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     };
     totalErrorMsg: string;
+    organizationUnits$ = this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits));
+    staticListOrganizationUnits$ = this.organizationUnits$.pipe(
+        filter(x => !!x),
+        map(orgUnits => orgUnits.map(v => ({ id: v.id, name: v.displayName, parentId: v.parentId, expanded: true })))
+    );
+    salesOrgUnitFilter = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'SourceOrganizationUnitId',
+        hidden: this.appSessionService.userIsMember,
+        field: 'sourceOrganizationUnitId',
+        items: {
+            element: new FilterCheckBoxesModel(
+                {
+                    dataSource$: this.organizationUnits$,
+                    nameField: 'displayName',
+                    keyExpr: 'id'
+                })
+        }
+    })
     totalCount: number;
     isDataLoaded = false;
     defaultGridPagerConfig = {
@@ -335,14 +351,11 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         private reportService: ReportServiceProxy,
         private paymentService: PaymentServiceProxy,
         private store$: Store<CrmStore.State>,
-        private loadingService: LoadingService,
         private exportService: ExportService,
         private changeDetectorRef: ChangeDetectorRef,
         private phonePipe: PhoneFormatPipe,
         private datePipe: DatePipe,
         private currencyPipe: CurrencyPipe,
-        private cacheService: CacheService,
-        private cacheHelper: CacheHelper,
         private invoiceService: InvoicesService,
         private appSessionService: AppSessionService,
         private oDataService: ODataService,
@@ -364,6 +377,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         ).subscribe((currency: Currency) => {
             this.currency = currency.toString();
         });
+        this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
         this.totalDataSource.load();
     }
 
@@ -377,6 +391,8 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         ).subscribe((filtersValues) => {
             this.filtersValues = filtersValues;
             this.refresh();
+            this.initToolbarConfig();
+            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -390,7 +406,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             this.changeDetectorRef.detectChanges();
             let url = this.oDataService.getODataUrl(
                 this.subscribersReportURI + '/$count',
-                this.oDataService.processFilters(this.filters, null), 
+                this.oDataService.processFilters(this.filters, null),
                 null, this.getSourceOrgUnitsFilter()
             );
             if (url && this.oDataService.requestLengthIsValid(url)) {
@@ -424,8 +440,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 items: {
                     element: new FilterCheckBoxesModel(
                         {
-                            dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
-                            dispatch: () => this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false)),
+                            dataSource$: this.organizationUnits$,
                             nameField: 'displayName',
                             keyExpr: 'id'
                         })
@@ -439,6 +454,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
                 options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
             })] : [
+                this.salesOrgUnitFilter,
                 new FilterModel({
                     component: FilterCalendarComponent,
                     caption: this.ls.l('Date'),
@@ -457,7 +473,6 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 location: 'before', items: [
                     {
                         name: 'filters',
-                        disabled: this.selectedReportType == ReportType.SalesReport,
                         action: () => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
@@ -486,6 +501,19 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 location: 'before',
                 locateInMenu: 'auto',
                 items: [
+                    {
+                        name: 'owner',
+                        action: this.toggleSourceOrganizationUnits.bind(this),
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Owner'),
+                            icon: './assets/common/icons/folder.svg',
+                            accessKey: 'SourceOrganizationUnits'
+                        },
+                        attr: {
+                            'filter-selected': this.salesOrgUnitFilter && this.salesOrgUnitFilter.isSelected
+                        }
+                    },
                     {
                         name: 'transactionTypes',
                         action: this.toggleTransactionTypes.bind(this),
@@ -703,6 +731,11 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             this.subscriptionTrackerColumnsVisibility[cell.column.name] = !this.subscriptionTrackerColumnsVisibility[cell.column.name];
             cell.event.stopPropagation();
         }
+    }
+
+    toggleSourceOrganizationUnits() {
+        this.sourceOrganizationUnits.toggle();
+        this.changeDetectorRef.detectChanges();
     }
 
     toggleTransactionTypes() {
