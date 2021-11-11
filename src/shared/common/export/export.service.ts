@@ -69,6 +69,7 @@ export class ExportService {
             let initialOnLoadedList = this.handleExportIgnoreOnLoaded(initialDataSource, initialStore);
 
             initialStore._beforeSend = (request) => {
+                request.isExport = true;
                 initialBeforeSend.call(initialStore, request);
                 request.timeout = this.EXPORT_REQUEST_TIMEOUT;
             };
@@ -207,6 +208,7 @@ export class ExportService {
 
             dataStore._beforeSend = (request) => {
                 request.timeout = this.EXPORT_REQUEST_TIMEOUT;
+                request.isExport = true;
                 initialBeforeSend.call(dataStore, request);
             };
 

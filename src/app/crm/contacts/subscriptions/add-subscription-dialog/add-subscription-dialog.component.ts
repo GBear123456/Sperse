@@ -85,6 +85,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         ],
         productId: undefined,
         paymentPeriodType: undefined,
+        products: undefined,
         hasRecurringBilling: false,
         skipExisting: false
     });
