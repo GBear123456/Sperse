@@ -25688,6 +25688,62 @@ export class OrganizationContactServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    createOrgUnitForOrganization(body: CreateOrgUnitForOrganizationInput | null | undefined): Observable<CreateOrgUnitForOrganizationOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/CreateOrgUnitForOrganization";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateOrgUnitForOrganization(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateOrgUnitForOrganization(<any>response_);
+                } catch (e) {
+                    return <Observable<CreateOrgUnitForOrganizationOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CreateOrgUnitForOrganizationOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateOrgUnitForOrganization(response: HttpResponseBase): Observable<CreateOrgUnitForOrganizationOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateOrgUnitForOrganizationOutput.fromJS(resultData200) : new CreateOrgUnitForOrganizationOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreateOrgUnitForOrganizationOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     updateOrganizationInfo(body: UpdateOrganizationInfoInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/UpdateOrganizationInfo";
         url_ = url_.replace(/[?&]$/, "");
@@ -30642,71 +30698,6 @@ export class ReportServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @sourceOrganizationUnitIds (optional) 
-     * @startDate (optional) 
-     * @endDate (optional) 
-     * @return Success
-     */
-    getSubscribersReport(sourceOrganizationUnitIds: number[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<SubscribersReportInfo[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Report/GetSubscribersReport?";
-        if (sourceOrganizationUnitIds !== undefined)
-            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
-        if (startDate !== undefined)
-            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
-        if (endDate !== undefined)
-            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSubscribersReport(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetSubscribersReport(<any>response_);
-                } catch (e) {
-                    return <Observable<SubscribersReportInfo[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<SubscribersReportInfo[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetSubscribersReport(response: HttpResponseBase): Observable<SubscribersReportInfo[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(SubscribersReportInfo.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<SubscribersReportInfo[]>(<any>null);
     }
 
     /**
@@ -42884,6 +42875,7 @@ export interface IApiKeyInfo {
 export class GenerateApiKeyInput implements IGenerateApiKeyInput {
     name!: string;
     expirationDate!: moment.Moment | undefined;
+    userId!: number | undefined;
 
     constructor(data?: IGenerateApiKeyInput) {
         if (data) {
@@ -42898,6 +42890,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
         if (data) {
             this.name = data["name"];
             this.expirationDate = data["expirationDate"] ? moment(data["expirationDate"].toString()) : <any>undefined;
+            this.userId = data["userId"];
         }
     }
 
@@ -42912,6 +42905,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
         return data; 
     }
 }
@@ -42919,6 +42913,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
 export interface IGenerateApiKeyInput {
     name: string;
     expirationDate: moment.Moment | undefined;
+    userId: number | undefined;
 }
 
 export enum OfferProviderType {
@@ -72896,13 +72891,35 @@ export interface ISubscriptionServiceDto {
     levelName: string | undefined;
 }
 
+export enum SubscriptionPaymentType {
+    OriginalPayment = "OriginalPayment", 
+    Installment = "Installment", 
+    Refund = "Refund", 
+    Chargeback = "Chargeback", 
+    RecurringBilling = "RecurringBilling", 
+}
+
+export enum SubscriptionPaymentStatus {
+    Pending = "Pending", 
+    Approved = "Approved", 
+    Declined = "Declined", 
+    Active = "Active", 
+}
+
 export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     id!: number | undefined;
+    invoiceId!: number | undefined;
+    invoiceDate!: moment.Moment | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
-    status!: string | undefined;
+    type!: SubscriptionPaymentType | undefined;
+    seqNo!: number | undefined;
+    status!: SubscriptionPaymentStatus | undefined;
     fee!: number | undefined;
-    isSubscription!: boolean | undefined;
+    paymentProvider!: string | undefined;
+    paymentId!: string | undefined;
+    paymentDate!: moment.Moment | undefined;
+    authorizationCode!: string | undefined;
 
     constructor(data?: ISubscriptionPaymentDto) {
         if (data) {
@@ -72916,11 +72933,18 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.invoiceId = data["invoiceId"];
+            this.invoiceDate = data["invoiceDate"] ? moment(data["invoiceDate"].toString()) : <any>undefined;
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.type = data["type"];
+            this.seqNo = data["seqNo"];
             this.status = data["status"];
             this.fee = data["fee"];
-            this.isSubscription = data["isSubscription"];
+            this.paymentProvider = data["paymentProvider"];
+            this.paymentId = data["paymentId"];
+            this.paymentDate = data["paymentDate"] ? moment(data["paymentDate"].toString()) : <any>undefined;
+            this.authorizationCode = data["authorizationCode"];
         }
     }
 
@@ -72934,37 +72958,56 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["invoiceId"] = this.invoiceId;
+        data["invoiceDate"] = this.invoiceDate ? this.invoiceDate.toISOString() : <any>undefined;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["type"] = this.type;
+        data["seqNo"] = this.seqNo;
         data["status"] = this.status;
         data["fee"] = this.fee;
-        data["isSubscription"] = this.isSubscription;
+        data["paymentProvider"] = this.paymentProvider;
+        data["paymentId"] = this.paymentId;
+        data["paymentDate"] = this.paymentDate ? this.paymentDate.toISOString() : <any>undefined;
+        data["authorizationCode"] = this.authorizationCode;
         return data; 
     }
 }
 
 export interface ISubscriptionPaymentDto {
     id: number | undefined;
+    invoiceId: number | undefined;
+    invoiceDate: moment.Moment | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
-    status: string | undefined;
+    type: SubscriptionPaymentType | undefined;
+    seqNo: number | undefined;
+    status: SubscriptionPaymentStatus | undefined;
     fee: number | undefined;
-    isSubscription: boolean | undefined;
+    paymentProvider: string | undefined;
+    paymentId: string | undefined;
+    paymentDate: moment.Moment | undefined;
+    authorizationCode: string | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     id!: number | undefined;
+    originalStartDate!: moment.Moment | undefined;
+    originalTrialEndDate!: moment.Moment | undefined;
     startDate!: moment.Moment | undefined;
     endDate!: moment.Moment | undefined;
-    fee!: number | undefined;
-    tenantId!: string | undefined;
+    trialEndDate!: moment.Moment | undefined;
+    gracePeriodDayCount!: number | undefined;
+    gracePeriodEndDate!: moment.Moment | undefined;
     productCode!: string | undefined;
     productName!: string | undefined;
-    orderType!: string | undefined;
-    trialEndDate!: moment.Moment | undefined;
+    fee!: number | undefined;
     statusCode!: string | undefined;
     status!: string | undefined;
     cancelationReason!: string | undefined;
+    systemType!: string | undefined;
+    systemMemberId!: string | undefined;
+    previousSubscriptionId!: number | undefined;
     services!: SubscriptionServiceDto[] | undefined;
     payments!: SubscriptionPaymentDto[] | undefined;
 
@@ -72980,17 +73023,22 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
+            this.originalStartDate = data["originalStartDate"] ? moment(data["originalStartDate"].toString()) : <any>undefined;
+            this.originalTrialEndDate = data["originalTrialEndDate"] ? moment(data["originalTrialEndDate"].toString()) : <any>undefined;
             this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.fee = data["fee"];
-            this.tenantId = data["tenantId"];
+            this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
+            this.gracePeriodDayCount = data["gracePeriodDayCount"];
+            this.gracePeriodEndDate = data["gracePeriodEndDate"] ? moment(data["gracePeriodEndDate"].toString()) : <any>undefined;
             this.productCode = data["productCode"];
             this.productName = data["productName"];
-            this.orderType = data["orderType"];
-            this.trialEndDate = data["trialEndDate"] ? moment(data["trialEndDate"].toString()) : <any>undefined;
+            this.fee = data["fee"];
             this.statusCode = data["statusCode"];
             this.status = data["status"];
             this.cancelationReason = data["cancelationReason"];
+            this.systemType = data["systemType"];
+            this.systemMemberId = data["systemMemberId"];
+            this.previousSubscriptionId = data["previousSubscriptionId"];
             if (data["services"] && data["services"].constructor === Array) {
                 this.services = [];
                 for (let item of data["services"])
@@ -73014,17 +73062,22 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["originalStartDate"] = this.originalStartDate ? this.originalStartDate.toISOString() : <any>undefined;
+        data["originalTrialEndDate"] = this.originalTrialEndDate ? this.originalTrialEndDate.toISOString() : <any>undefined;
         data["startDate"] = this.startDate ? this.startDate.toISOString() : <any>undefined;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
-        data["fee"] = this.fee;
-        data["tenantId"] = this.tenantId;
+        data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
+        data["gracePeriodDayCount"] = this.gracePeriodDayCount;
+        data["gracePeriodEndDate"] = this.gracePeriodEndDate ? this.gracePeriodEndDate.toISOString() : <any>undefined;
         data["productCode"] = this.productCode;
         data["productName"] = this.productName;
-        data["orderType"] = this.orderType;
-        data["trialEndDate"] = this.trialEndDate ? this.trialEndDate.toISOString() : <any>undefined;
+        data["fee"] = this.fee;
         data["statusCode"] = this.statusCode;
         data["status"] = this.status;
         data["cancelationReason"] = this.cancelationReason;
+        data["systemType"] = this.systemType;
+        data["systemMemberId"] = this.systemMemberId;
+        data["previousSubscriptionId"] = this.previousSubscriptionId;
         if (this.services && this.services.constructor === Array) {
             data["services"] = [];
             for (let item of this.services)
@@ -73041,17 +73094,22 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
 
 export interface IOrderSubscriptionDto {
     id: number | undefined;
+    originalStartDate: moment.Moment | undefined;
+    originalTrialEndDate: moment.Moment | undefined;
     startDate: moment.Moment | undefined;
     endDate: moment.Moment | undefined;
-    fee: number | undefined;
-    tenantId: string | undefined;
+    trialEndDate: moment.Moment | undefined;
+    gracePeriodDayCount: number | undefined;
+    gracePeriodEndDate: moment.Moment | undefined;
     productCode: string | undefined;
     productName: string | undefined;
-    orderType: string | undefined;
-    trialEndDate: moment.Moment | undefined;
+    fee: number | undefined;
     statusCode: string | undefined;
     status: string | undefined;
     cancelationReason: string | undefined;
+    systemType: string | undefined;
+    systemMemberId: string | undefined;
+    previousSubscriptionId: number | undefined;
     services: SubscriptionServiceDto[] | undefined;
     payments: SubscriptionPaymentDto[] | undefined;
 }
@@ -73112,16 +73170,70 @@ export interface ISubscriptionInput {
     amount: number | undefined;
 }
 
+export class UpdateOrderSubscriptionProductInfo implements IUpdateOrderSubscriptionProductInfo {
+    productId!: number | undefined;
+    productCode!: string | undefined;
+    paymentPeriodType!: RecurringPaymentFrequency | undefined;
+    hasRecurringBilling!: boolean | undefined;
+    endDate!: moment.Moment | undefined;
+
+    constructor(data?: IUpdateOrderSubscriptionProductInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.productId = data["productId"];
+            this.productCode = data["productCode"];
+            this.paymentPeriodType = data["paymentPeriodType"];
+            this.hasRecurringBilling = data["hasRecurringBilling"];
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UpdateOrderSubscriptionProductInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateOrderSubscriptionProductInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
+        data["productCode"] = this.productCode;
+        data["paymentPeriodType"] = this.paymentPeriodType;
+        data["hasRecurringBilling"] = this.hasRecurringBilling;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IUpdateOrderSubscriptionProductInfo {
+    productId: number | undefined;
+    productCode: string | undefined;
+    paymentPeriodType: RecurringPaymentFrequency | undefined;
+    hasRecurringBilling: boolean | undefined;
+    endDate: moment.Moment | undefined;
+}
+
 export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInput {
     contactId!: number | undefined;
     contactXref!: string | undefined;
     leadId!: number | undefined;
     orderNumber!: string | undefined;
     subscriptions!: SubscriptionInput[] | undefined;
+    products!: UpdateOrderSubscriptionProductInfo[] | undefined;
     productId!: number | undefined;
     productCode!: string | undefined;
     paymentPeriodType!: RecurringPaymentFrequency | undefined;
     hasRecurringBilling!: boolean | undefined;
+    skipExisting!: boolean | undefined;
 
     constructor(data?: IUpdateOrderSubscriptionInput) {
         if (data) {
@@ -73143,10 +73255,16 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
                 for (let item of data["subscriptions"])
                     this.subscriptions.push(SubscriptionInput.fromJS(item));
             }
+            if (data["products"] && data["products"].constructor === Array) {
+                this.products = [];
+                for (let item of data["products"])
+                    this.products.push(UpdateOrderSubscriptionProductInfo.fromJS(item));
+            }
             this.productId = data["productId"];
             this.productCode = data["productCode"];
             this.paymentPeriodType = data["paymentPeriodType"];
             this.hasRecurringBilling = data["hasRecurringBilling"];
+            this.skipExisting = data["skipExisting"];
         }
     }
 
@@ -73168,10 +73286,16 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             for (let item of this.subscriptions)
                 data["subscriptions"].push(item.toJSON());
         }
+        if (this.products && this.products.constructor === Array) {
+            data["products"] = [];
+            for (let item of this.products)
+                data["products"].push(item.toJSON());
+        }
         data["productId"] = this.productId;
         data["productCode"] = this.productCode;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
+        data["skipExisting"] = this.skipExisting;
         return data; 
     }
 }
@@ -73182,10 +73306,12 @@ export interface IUpdateOrderSubscriptionInput {
     leadId: number | undefined;
     orderNumber: string | undefined;
     subscriptions: SubscriptionInput[] | undefined;
+    products: UpdateOrderSubscriptionProductInfo[] | undefined;
     productId: number | undefined;
     productCode: string | undefined;
     paymentPeriodType: RecurringPaymentFrequency | undefined;
     hasRecurringBilling: boolean | undefined;
+    skipExisting: boolean | undefined;
 }
 
 export class UpdateOrderSubscriptionPeriodInput implements IUpdateOrderSubscriptionPeriodInput {
@@ -73722,6 +73848,86 @@ export class CreateOrganizationOutput implements ICreateOrganizationOutput {
 
 export interface ICreateOrganizationOutput {
     id: number | undefined;
+}
+
+export class CreateOrgUnitForOrganizationInput implements ICreateOrgUnitForOrganizationInput {
+    organizationId!: number | undefined;
+    organizationName!: string | undefined;
+    groupId!: string | undefined;
+
+    constructor(data?: ICreateOrgUnitForOrganizationInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.organizationId = data["organizationId"];
+            this.organizationName = data["organizationName"];
+            this.groupId = data["groupId"];
+        }
+    }
+
+    static fromJS(data: any): CreateOrgUnitForOrganizationInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrgUnitForOrganizationInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["organizationId"] = this.organizationId;
+        data["organizationName"] = this.organizationName;
+        data["groupId"] = this.groupId;
+        return data; 
+    }
+}
+
+export interface ICreateOrgUnitForOrganizationInput {
+    organizationId: number | undefined;
+    organizationName: string | undefined;
+    groupId: string | undefined;
+}
+
+export class CreateOrgUnitForOrganizationOutput implements ICreateOrgUnitForOrganizationOutput {
+    organizationUnitId!: number | undefined;
+
+    constructor(data?: ICreateOrgUnitForOrganizationOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.organizationUnitId = data["organizationUnitId"];
+        }
+    }
+
+    static fromJS(data: any): CreateOrgUnitForOrganizationOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateOrgUnitForOrganizationOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["organizationUnitId"] = this.organizationUnitId;
+        return data; 
+    }
+}
+
+export interface ICreateOrgUnitForOrganizationOutput {
+    organizationUnitId: number | undefined;
 }
 
 export class UpdateOrganizationInfoInput implements IUpdateOrganizationInfoInput {
@@ -75585,6 +75791,7 @@ export interface ICreateUserForContactInput {
 }
 
 export class CreateUserForContactOutput implements ICreateUserForContactOutput {
+    userId!: number | undefined;
     autoLoginLink!: string | undefined;
 
     constructor(data?: ICreateUserForContactOutput) {
@@ -75598,6 +75805,7 @@ export class CreateUserForContactOutput implements ICreateUserForContactOutput {
 
     init(data?: any) {
         if (data) {
+            this.userId = data["userId"];
             this.autoLoginLink = data["autoLoginLink"];
         }
     }
@@ -75611,12 +75819,14 @@ export class CreateUserForContactOutput implements ICreateUserForContactOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["userId"] = this.userId;
         data["autoLoginLink"] = this.autoLoginLink;
         return data; 
     }
 }
 
 export interface ICreateUserForContactOutput {
+    userId: number | undefined;
     autoLoginLink: string | undefined;
 }
 
@@ -79583,90 +79793,6 @@ export interface ICreateContactAgentsInput {
     contactId: number;
     source: AgentDataSource | undefined;
     contactAgents: ContactAgentInput[];
-}
-
-export class SubscribersReportInfo implements ISubscribersReportInfo {
-    bankPassFee!: number | undefined;
-    bankVaultFee!: number | undefined;
-    wtbFee!: number | undefined;
-    totalFee!: number | undefined;
-    contactId!: number | undefined;
-    name!: string | undefined;
-    email!: string | undefined;
-    phone!: string | undefined;
-    city!: string | undefined;
-    statusId!: string | undefined;
-    status!: string | undefined;
-    bankCode!: string | undefined;
-    created!: moment.Moment | undefined;
-
-    constructor(data?: ISubscribersReportInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.bankPassFee = data["bankPassFee"];
-            this.bankVaultFee = data["bankVaultFee"];
-            this.wtbFee = data["wtbFee"];
-            this.totalFee = data["totalFee"];
-            this.contactId = data["contactId"];
-            this.name = data["name"];
-            this.email = data["email"];
-            this.phone = data["phone"];
-            this.city = data["city"];
-            this.statusId = data["statusId"];
-            this.status = data["status"];
-            this.bankCode = data["bankCode"];
-            this.created = data["created"] ? moment(data["created"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): SubscribersReportInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new SubscribersReportInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["bankPassFee"] = this.bankPassFee;
-        data["bankVaultFee"] = this.bankVaultFee;
-        data["wtbFee"] = this.wtbFee;
-        data["totalFee"] = this.totalFee;
-        data["contactId"] = this.contactId;
-        data["name"] = this.name;
-        data["email"] = this.email;
-        data["phone"] = this.phone;
-        data["city"] = this.city;
-        data["statusId"] = this.statusId;
-        data["status"] = this.status;
-        data["bankCode"] = this.bankCode;
-        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
-        return data; 
-    }
-}
-
-export interface ISubscribersReportInfo {
-    bankPassFee: number | undefined;
-    bankVaultFee: number | undefined;
-    wtbFee: number | undefined;
-    totalFee: number | undefined;
-    contactId: number | undefined;
-    name: string | undefined;
-    email: string | undefined;
-    phone: string | undefined;
-    city: string | undefined;
-    statusId: string | undefined;
-    status: string | undefined;
-    bankCode: string | undefined;
-    created: moment.Moment | undefined;
 }
 
 export class SubscriberDailyStatsReportInfo implements ISubscriberDailyStatsReportInfo {

@@ -2,6 +2,8 @@
     <ng-template ngFor let-item [ngForOf]="getItems()" let-i="index">
         <ng-container *ngIf="options && options.type === 'number'; else textBox">
             <dx-number-box name="item"
+                           [max]="options.max"
+                           [min]="options.min"
                            [(value)]="items[item].value"
                            (onEnterKey)="apply($event)"
                            [placeholder]="ls.l(capitalize(item))">

@@ -52,7 +52,10 @@ export class HostLoginComponent implements OnInit {
             if (this.isExtLogin = paramsMap.get('extlogin') == 'true') {
                 if (this.isLoggedIn = !!this.appSession.user)
                     this.loginService.completeSourceEvent();
-            }            
+            }
+            let email = paramsMap.get('email');
+            if (email)
+                this.loginService.authenticateModel.userNameOrEmailAddress = email;
         });
     }
 

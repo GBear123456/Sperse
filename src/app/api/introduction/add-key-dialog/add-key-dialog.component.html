@@ -24,6 +24,23 @@
                 </dx-date-box>
             </div>
         </div>
+        <div *ngIf="hasAccessAll" class="dx-field d-flex align-items-center">
+            <div class="dx-field-label">{{l('User')}}</div>
+            <div class="dx-field-value">
+                <dx-select-box
+                    name="user"
+                    displayExpr="name"
+                    valueExpr="userId"
+                    [acceptCustomValue]="true"
+                    [(value)]="model.userId"
+                    [dataSource]="contacts"
+                    [searchEnabled]="true"
+                    [searchTimeout]="0"
+                    (onInput)="contactLookupItems($event)"
+                    (onFocusIn)="lookupFocusIn($event)">
+                </dx-select-box>
+            </div>
+        </div>
     </dx-validation-group>
 </mat-dialog-content>
 <mat-dialog-actions>

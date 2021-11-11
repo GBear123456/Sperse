@@ -4,6 +4,7 @@ import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 /** Third party imports */
+import { DxTabsModule } from 'devextreme-angular/ui/tabs';
 import { DxTreeListModule } from 'devextreme-angular/ui/tree-list';
 import { DxTreeViewModule } from 'devextreme-angular/ui/tree-view';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
@@ -35,6 +36,7 @@ import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/b
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.component';
 import { FilterSourceComponent } from '@app/crm/shared/filters/source-filter/source-filter.component';
+import { FilterServicesAndProductsComponent } from '@app/crm/shared/filters/services-and-products-filter/services-and-products-filter.component';
 import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
 import { FilterStatesService } from './states/filter-states.service';
 import { FilterMultilineInputComponent } from './multiline-input/filter-multiline-input.component';
@@ -48,6 +50,7 @@ import { DocumentServiceProxy } from '@shared/service-proxies/service-proxies';
         FormsModule,
         BankAccountsCommonModule.forRoot(),
 
+        DxTabsModule,
         DxCheckBoxModule,
         DxSelectBoxModule,
         DxTextBoxModule,
@@ -77,6 +80,7 @@ import { DocumentServiceProxy } from '@shared/service-proxies/service-proxies';
         FilterRadioGroupComponent,
         FilterTreeListComponent,
         FilterMultilineInputComponent,
+        FilterServicesAndProductsComponent,
         BankAccountFilterComponent,
         AdDirective
     ],
@@ -94,6 +98,7 @@ import { DocumentServiceProxy } from '@shared/service-proxies/service-proxies';
         FilterRadioGroupComponent,
         FilterTreeListComponent,
         FilterMultilineInputComponent,
+        FilterServicesAndProductsComponent,
         BankAccountFilterComponent
     ],
     exports: [

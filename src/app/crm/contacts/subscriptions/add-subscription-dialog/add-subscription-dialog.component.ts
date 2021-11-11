@@ -10,6 +10,7 @@ import {
 import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
+import { MessageService } from '@abp/message/message.service';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -34,11 +35,11 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dropdown.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { BankCodeServiceType } from '@root/bank-code/products/bank-code-service-type.enum';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AddProductDialogComponent } from './add-product-dialog/add-product-dialog.component';
 import { AddMemberServiceDialogComponent } from './add-member-service-dialog/add-member-service-dialog.component';
+import { BulkProgressDialogComponent } from '@shared/common/dialogs/bulk-progress/bulk-progress-dialog.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 
@@ -55,7 +56,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     @ViewChild('productGroup', { static: false }) validationProductGroup: DxValidationGroupComponent;
     @ViewChild('serviceGroup', { static: false }) validationServiceGroup: DxValidationGroupComponent;
-    @ViewChild(OrderDropdownComponent, { static: true }) orderDropdownComponent: OrderDropdownComponent;
+    @ViewChild(OrderDropdownComponent, { static: false }) orderDropdownComponent: OrderDropdownComponent;
     today = new Date();
     private slider: any;
     selectedTabIndex: number;
@@ -64,6 +65,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     products: ProductDto[];
     paymentPeriodTypes: RecurringPaymentFrequency[] = [];
     serviceTypes: MemberServiceDto[] = null;
+    hasProductManage = this.permission.isGranted(AppPermissions.CRMProductsManage);
 
     subscription: UpdateOrderSubscriptionInput = new UpdateOrderSubscriptionInput({
         productCode: undefined,
@@ -83,7 +85,9 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         ],
         productId: undefined,
         paymentPeriodType: undefined,
-        hasRecurringBilling: false
+        products: undefined,
+        hasRecurringBilling: false,
+        skipExisting: false
     });
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => getCurrencySymbol(settings.currency, 'narrow') + ' #,##0.##')
@@ -103,6 +107,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         private userManagementService: UserManagementService,
         private invoicesService: InvoicesService,
         private permission: AppPermissionService,
+        private message: MessageService,
         public dialogRef: MatDialogRef<AddSubscriptionDialogComponent>,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
@@ -124,7 +129,6 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             top: '75px',
             right: '-100vw'
         });
-        this.orderDropdownComponent.initOrderDataSource();
 
         this.productProxy.getProducts(ProductType.Subscription).subscribe((products: ProductDto[]) => {
             this.products = products;
@@ -137,6 +141,9 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     }
 
     ngAfterViewInit() {
+        if (this.orderDropdownComponent)
+            this.orderDropdownComponent.initOrderDataSource();
+
         this.slider.classList.remove('hide');
         this.dialogRef.updateSize(undefined, '100vh');
         this.dialogRef.updatePosition({
@@ -146,7 +153,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
     }
 
     checkAddManageOption(options) {
-        if (this.permission.isGranted(AppPermissions.CRMOrdersManage)) {
+        if (this.hasProductManage) {
             let addNewItemElement: any = {
                 id: this.addNewItemId
             };
@@ -171,11 +178,33 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                 });
             } else
                 subscriptionInput.subscriptions = undefined;
-            this.orderSubscriptionProxy.update(subscriptionInput).subscribe(() => {
-                this.notify.info(this.ls.l('SavedSuccessfully'));
-                this.contactsService.invalidate('subscriptions');
-                this.dialogRef.close();
-            });
+
+            if (this.data.length) {
+                this.message.confirm(
+                    this.ls.l('AddMultipleSubscriptions', this.data.length, this.ls.l('Customers')),
+                    this.ls.l('AreYouSure'),
+                    isConfirmed => {
+                        if (isConfirmed) {
+                            this.dialogRef.close();
+                            this.dialog.open(BulkProgressDialogComponent, {
+                                minWidth: 420,
+                                disableClose: true,
+                                closeOnNavigation: false,
+                                data: this.data.map((entity, i) => {
+                                    subscriptionInput.skipExisting = true;
+                                    subscriptionInput.contactId = entity.Id;
+                                    return this.orderSubscriptionProxy.update(subscriptionInput);
+                                })
+                            });
+                        }
+                    }
+                );
+            } else
+                this.orderSubscriptionProxy.update(subscriptionInput).subscribe(() => {
+                    this.notify.info(this.ls.l('SavedSuccessfully'));
+                    this.contactsService.invalidate('subscriptions');
+                    this.dialogRef.close();
+                });
         }
     }
 
@@ -269,7 +298,8 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             data: {
                 title: this.ls.l('EditTemplate'),
                 templateType: 'Contact',
-                saveTitle: this.ls.l('Save')
+                saveTitle: this.ls.l('Save'),
+                isReadOnly: !this.hasProductManage
             }
         }).afterClosed().subscribe((product: ProductDto) => {
             if (product)

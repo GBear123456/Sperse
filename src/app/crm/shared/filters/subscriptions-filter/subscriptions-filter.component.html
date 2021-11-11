@@ -1,35 +1,44 @@
 <div class="wrapper">
+    <dx-tabs width="200px"
+             [dataSource]="filterTabs"
+             [(selectedIndex)]="selectedTabIndex">
+    </dx-tabs>
+    <div class="mode">
+        <dx-radio-group [(value)]="items.products.filterMode"
+                        valueExpr="value"
+                        layout="horizontal"
+                        [dataSource]="[{text: ls.l('All'), value: 'All'}, {text: ls.l('Any'), value: 'Any'}]">
+        </dx-radio-group>
+    </div>
     <div class="labels">
         <div>{{ ls.l('Current') }}</div>
         <div>{{ ls.l('Past') }}</div>
         <div>{{ ls.l('Never') }}</div>
     </div>
-    <dx-tree-list [dataSource]="items.element.dataSource"
-                  dataStructure="tree"
-                  keyExpr="uid"
-                  itemsExpr="memberServiceLevels"
+    <dx-tree-list *ngIf="filterTabs[selectedTabIndex].field as field"
+                  [dataSource]="items[field].dataSource"
+                  [dataStructure]="items[field].dataStructure"
+                  [keyExpr]="items[field].keyExpr"
+                  [itemsExpr]="items[field].itemsExpr"
                   [showColumnHeaders]="false"
                   height="calc(100vh - 193px)"
                   [scrolling]="{ preloadEnabled: true }"
-                  [autoExpandAll]="items.element.autoExpandAll"
-                  (onOptionChanged)="onOptionChanged($event)">
-        <dxi-column [dataField]="items.element.nameField" cellTemplate="checkBoxTemplate"></dxi-column>
+                  [autoExpandAll]="items[field].autoExpandAll">
+        <dxo-search-panel [visible]="true" width="100%"></dxo-search-panel>
+        <dxi-column [dataField]="items[field].nameField" cellTemplate="checkBoxTemplate"></dxi-column>
         <div *dxTemplate="let cell of 'checkBoxTemplate'">
-            <div class="name" [title]="cell.data[items.element.nameField]">{{ cell.data[items.element.nameField] }}</div>
-            <dx-check-box 
-                [(value)]="cell.data.current" 
-                (onContentReady)="checkSetInitialValue($event, cell, 'current')"
-                (onValueChanged)="onValueChanged($event, cell, 'current')">
+            <div class="name" [title]="cell.data[items[field].nameField]">{{ cell.data[items[field].nameField] }}</div>
+            <dx-check-box [(value)]="cell.data.current"
+                          (onContentReady)="checkSetInitialValue($event, cell, 'current')"
+                          (onValueChanged)="onValueChanged(field, $event, cell, 'current')">
             </dx-check-box>
-            <dx-check-box 
-                [(value)]="cell.data.past" 
-                (onContentReady)="checkSetInitialValue($event, cell, 'past')"
-                (onValueChanged)="onValueChanged($event, cell, 'past')">
+            <dx-check-box [(value)]="cell.data.past"
+                          (onContentReady)="checkSetInitialValue($event, cell, 'past')"
+                          (onValueChanged)="onValueChanged(field, $event, cell, 'past')">
             </dx-check-box>
-            <dx-check-box 
-                [(value)]="cell.data.never" 
-                (onContentReady)="checkSetInitialValue($event, cell, 'never')"
-                (onValueChanged)="onValueChanged($event, cell, 'never')">
+            <dx-check-box [(value)]="cell.data.never"
+                          (onContentReady)="checkSetInitialValue($event, cell, 'never')"
+                          (onValueChanged)="onValueChanged(field, $event, cell, 'never')">
             </dx-check-box>
         </div>
     </dx-tree-list>

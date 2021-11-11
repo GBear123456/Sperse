@@ -134,7 +134,9 @@ export class AppPreBootstrap {
                 });
             } else
                 AppPreBootstrap.processRegularBootstrap(queryStringObj, () => {
-                    callback(() => router.navigate([location.pathname]));
+                    callback(() => router.navigate([
+                        location.pathname.indexOf('account/login') >= 0 ? '/' : location.pathname
+                    ]));
                 });
         }).fail(() => {
             abp.multiTenancy.setTenantIdCookie();

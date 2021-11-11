@@ -325,7 +325,14 @@
 
     function loginPageAfterInit() {
         var tenantName = tenant && (tenant.name || tenant.tenancyName) || 'Sperse';
-        document.getElementById('forget-password').href = location.origin + '/account/forgot-password';
+        var forgetPasswordButton = document.getElementById('forget-password');
+        forgetPasswordButton.href = location.origin + '/account/forgot-password';
+        forgetPasswordButton.addEventListener('click', function(e) {
+            var email = window['loginForm'].elements['userNameOrEmailAddress'].value;
+            if (email)
+                forgetPasswordButton.href = forgetPasswordButton.href + '?email=' + encodeURIComponent(email);
+        });
+
         Array.prototype.forEach.call(document.getElementsByClassName('tenantName'), function(elm) {
             elm.innerHTML = tenantName;
         });

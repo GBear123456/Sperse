@@ -1,8 +1,8 @@
 <div [@routerTransition]>
     <i class="name"></i>
     <h1 class="sign-in">{{ls.l("Auto Login")}}</h1>
-    <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
-        <div class="form-group clearfix options row" [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', (isLinkSent ? '<br>' : '') + '<b>' + userEmail + '</b>' + (isLinkSent ? '<br>' : ''), tenantName)"></div>
+    <form *ngIf="isLinkSent || !isInstantForm || detectedTenancies?.length"  #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
+        <div class="form-group clearfix options row" [innerHTML]="ls.l(isLinkSent || isInstantForm ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', (isLinkSent ? '<br>' : '') + '<b>' + userEmail + '</b>' + (isLinkSent ? '<br>' : ''), tenantName)"></div>
         <div class="form-actions">
             <ng-container *ngIf="isLinkSent && accessCodeMaxTriesCount">
                 <dx-text-box

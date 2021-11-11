@@ -751,6 +751,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 }
             };
             this.dataSource = new DataSource(this.dataSourceConfig);
+            this.dataSource.exportIgnoreOnLoaded = true;
             this.totalDataSource = new DataSource({
                 paginate: false,
                 store: new ODataStore({
@@ -1800,9 +1801,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 callback(importOption).then(
                     () => dataSource.filter(null));
             } else {
-                instance.option('dataSource',
-                    dataSource = new DataSource(this.dataSourceConfig)
-                );
+                dataSource = new DataSource(this.dataSourceConfig);
+                dataSource['exportIgnoreOnLoaded'] = true;
+                instance.option('dataSource', dataSource);
                 checkExportOption(dataSource);
                 this.exportCallback = () => {
                     this.exportCallback = null;
@@ -1866,7 +1867,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     initLayoutDataSource() {
         if (this.showPipeline) {
             if (!this.pipelineDataSource)
-                setTimeout(() => this.pipelineDataSource = cloneDeep(this.dataSourceConfig));
+                setTimeout(() => {
+                    this.pipelineDataSource = cloneDeep(this.dataSourceConfig);
+                    this.pipelineDataSource['exportIgnoreOnLoaded'] = true;
+                });
         } else if (this.showDataGrid) {
             this.setDataGridInstance();
         } else if (this.showPivotGrid) {

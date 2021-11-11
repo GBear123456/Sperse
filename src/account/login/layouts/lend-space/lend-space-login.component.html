@@ -25,7 +25,7 @@
                 </div>
             </div>
             <div class="col">
-                <a routerLink="/account/forgot-password" id="forget-password" class="forget-password pull-right">
+                <a routerLink="/account/forgot-password" [queryParams]="{'email': loginService.authenticateModel.userNameOrEmailAddress}" id="forget-password" class="forget-password pull-right">
                     {{ls.l("ForgotPassword")}}
                 </a>
             </div>

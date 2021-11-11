@@ -93,6 +93,11 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
         this.toggleTooltip = true;
     }
 
+    getMaskedKey(key: string) {
+        let parts = key.split('-'), last = parts.pop();
+        return parts.map(part => part.replace(/.?/igm, 'X')).join('-') + '-' + last;
+    }
+
     ngOnDestroy() {
         this.getRootComponent().overflowHidden();
     }
