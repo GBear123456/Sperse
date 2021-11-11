@@ -448,6 +448,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
             })
         });
+        this.dataSource['exportIgnoreOnLoaded'] = true;
 
         this.countDataSource = new DataSource({
             paginate: false,
