@@ -62,6 +62,7 @@ import { StaticListComponent } from '../../shared/common/static-list/static-list
 import { Param } from '@shared/common/odata/param.model';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
+import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 
 @Component({
     selector: 'reports-component',
@@ -312,6 +313,15 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 })
         }
     });
+    salesAmountFilter = new FilterModel({
+        component: FilterInputsComponent,
+        options: { type: 'number' },
+        operator: { from: 'ge', to: 'le' },
+        caption: 'Amount',
+        field: 'Amount',
+        items: { from: new FilterItemModel(), to: new FilterItemModel() },
+        filterMethod: () => 'cancelled'
+    });
     totalCount: number;
     isDataLoaded = false;
     defaultGridPagerConfig = {
@@ -392,6 +402,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             takeUntil(this.lifeCycleSubjectsService.destroy$)
         ).subscribe((filtersValues) => {
             this.filtersValues = filtersValues;
+            this.updateSalesAmountFilter();
             this.refresh();
             this.initToolbarConfig();
             this.changeDetectorRef.detectChanges();
@@ -474,7 +485,8 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                             ls: this.ls
                         })
                     }
-                })
+                }),
+                this.salesAmountFilter
             ];
         this.filtersService.setup(this.filters);
     }
@@ -775,6 +787,20 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             this.refresh();
         }
         this.initToolbarConfig();
+    }
+
+    updateSalesAmountFilter() {
+        if (this.selectedReportType != ReportType.SalesReport)
+            return;
+
+        let filter = [];
+        if (this.salesAmountFilter.items.from.value || this.salesAmountFilter.items.from.value === 0)
+            filter.push(["Amount", ">", this.salesAmountFilter.items.from.value]);
+        if (this.salesAmountFilter.items.to.value || this.salesAmountFilter.items.to.value === 0)
+            filter.push(["Amount", "<", this.salesAmountFilter.items.to.value]);
+        let dataSource: any = this.salesReportComponent.dataGrid.instance.getDataSource();
+        if (dataSource.store())
+            this.salesReportComponent.dataGrid.instance.getDataSource().filter(filter);
     }
 
     resetGridState() {
