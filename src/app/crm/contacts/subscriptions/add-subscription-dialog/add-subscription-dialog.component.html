@@ -50,7 +50,7 @@
                 </div>
             </dx-validation-group>
         </mat-tab>
-        <mat-tab label="By service">
+        <mat-tab label="By service" *ngIf="isBankCodeLayout">
             <dx-validation-group #serviceGroup>
                 <div class="subscription-wrapper" *ngIf="selectedTabIndex">
                     <div class="subscription" *ngFor="let subscription of subscription.subscriptions; let i = index">

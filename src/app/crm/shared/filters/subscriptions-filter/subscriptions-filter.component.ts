@@ -2,6 +2,8 @@ import { Component, AfterViewInit } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { FilterComponent } from '@shared/filters/models/filter-component';
 import { SubscriptionsFilterModel } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.model';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './subscriptions-filter.component.html',
@@ -29,9 +31,11 @@ export class SubscriptionsFilterComponent implements FilterComponent, AfterViewI
     private readonly PRODUCTS_TAB_INDEX = 1;
 
     selectedTabIndex = this.PRODUCTS_TAB_INDEX;
+    showFilterTabs = this.userManagementService.isLayout(LayoutType.BankCode);
 
     constructor(
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        public userManagementService: UserManagementService
     ) {}
 
     ngAfterViewInit() {

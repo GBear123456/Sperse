@@ -50,7 +50,15 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
     paymentMethodsTypes = PaymentInfoType;
     paymentsDisplayLimit$: BehaviorSubject<number | null> = new BehaviorSubject<number>(9);
     private _refresh: BehaviorSubject<boolean> = new BehaviorSubject(false);
-    refresh: Observable<boolean> = this._refresh.asObservable();
+    refresh: Observable<boolean> = this._refresh.asObservable().pipe(
+        filter(() => {
+            if (!this.contactService['data'].contactInfo.id) {
+                this.paymentServiceProxy['data'] = null;
+                return false;
+            }
+            return true;
+        })
+    );
     contactInfoSubscription: Subscription;
     private readonly ident = 'PaymentInformation';
     constructor(
@@ -68,14 +76,13 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.contactInfoSubscription = this.contactsService.contactInfo$.pipe(
-            map(contactInfo => contactInfo.id),
-            distinctUntilChanged()
+            map(contactInfo => contactInfo.id)
         ).subscribe(groupId => {
             /** Create data prop if not exists */
             this.paymentServiceProxy['data'] = this.paymentServiceProxy['data'] && this.paymentServiceProxy['data'][groupId]
                 ? this.paymentServiceProxy['data']
                 : { [groupId]: { payments: null, paymentMethods: null } };
-            this._refresh.next(true);
+            this._refresh.next(false);
         });
         this.payments$ = this.refresh.pipe(
             tap(() => this.loadingService.startLoading(this.paymentsContainer.nativeElement)),
