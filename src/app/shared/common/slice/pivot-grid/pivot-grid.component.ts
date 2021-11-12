@@ -50,7 +50,7 @@ export class PivotGridComponent implements OnInit {
     ];
     private contentShown: BehaviorSubject<boolean> = new BehaviorSubject(false);
     contentShown$: Observable<boolean> = this.contentShown.asObservable();
-    fixedCells = [];
+    grandTotalCells = [];
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
@@ -89,19 +89,28 @@ export class PivotGridComponent implements OnInit {
         this.updateTotalCellsSizes();
     }
 
+    onCellPrepared(event) {
+        if (event.area == 'column' && event.rowIndex && !event.cellElement.title) {            
+            let checkInterval = setInterval(() => {
+                if (this.grandTotalCells.length) {
+                    let cellValue = this.grandTotalCells[event.columnIndex + 1];
+                    if (cellValue)
+                        event.cellElement.title = cellValue;
+                    clearInterval(checkInterval);
+                }
+            }, 600);
+        }
+    }
+
     updateTotalCellsSizes() {
         setTimeout(() => {
-            this.fixedCells = [];
+            this.grandTotalCells = [];
             this.dataGrid.instance.element().querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal')
                 .forEach((grandTotalCell: HTMLTableCellElement, index: number) => {
                     if (grandTotalCell.parentElement.previousSibling &&
                         grandTotalCell.getBoundingClientRect().bottom > window.innerHeight
                     ) {
-                        const cellWidth = grandTotalCell.getBoundingClientRect().width + (index === 0 ? 1 : 0) + 'px';
-                        this.fixedCells.push({
-                            value: grandTotalCell.innerText,
-                            width: cellWidth
-                        });
+                        this.grandTotalCells.push(grandTotalCell.innerText);
                     }
                 });
             this.changeDetectorRef.detectChanges();

@@ -1,42 +1,46 @@
-.total {
-    text-align: center;
-}
+:host {
+    display: block;
 
-::ng-deep dx-data-grid.main-component-view.subscribers-stats-grid {
-    .dx-datagrid-rowsview .dx-column-lines td,
-    .dx-datagrid-headers .dx-column-lines td {
-        border-left: 1px solid #ddd !important;
-        border-right: 1px solid #ddd !important;
+    .total {
+        text-align: center;
     }
-    .dx-datagrid-headers {
-        border-bottom: 0;
-        .dx-column-lines td {
-            border-bottom: 1px solid #ddd !important;
+
+    ::ng-deep dx-data-grid.main-component-view.subscribers-stats-grid {
+        .dx-datagrid-rowsview .dx-column-lines td,
+        .dx-datagrid-headers .dx-column-lines td {
+            border-left: 1px solid #ddd !important;
+            border-right: 1px solid #ddd !important;
         }
-    }
-    .dx-datagrid-rowsview .dx-datagrid-content table:first-child {
-        font-family: Lato, sans-serif;
-        @media (min-width: 1500px) {
-            .clipboard-holder {
-                padding-right: 0 !important;
+        .dx-datagrid-headers {
+            border-bottom: 0;
+            .dx-column-lines td {
+                border-bottom: 1px solid #ddd !important;
+            }
+        }
+        .dx-datagrid-rowsview .dx-datagrid-content table:first-child {
+            font-family: Lato, sans-serif;
+            @media (min-width: 1500px) {
+                .clipboard-holder {
+                    padding-right: 0 !important;
+                }
             }
         }
     }
-}
 
-::ng-deep dx-data-grid.main-component-view.subscription-tracker-grid {
-    .dx-datagrid-headers {
-        tr {
-            &:first-child td {
-                text-align: center !important;
-                border: 1px solid #ddd;
-                position: relative;
-                .toggle-button {
-                    margin-left: 7px;
-                    right: 5px;
-                    border-radius: 5px;
-                    padding: 3px;
-                    border: 1px solid #686f76;
+    ::ng-deep dx-data-grid.main-component-view.subscription-tracker-grid {
+        .dx-datagrid-headers {
+            tr {
+                &:first-child td {
+                    text-align: center !important;
+                    border: 1px solid #ddd;
+                    position: relative;
+                    .toggle-button {
+                        margin-left: 7px;
+                        right: 5px;
+                        border-radius: 5px;
+                        padding: 3px;
+                        border: 1px solid #686f76;
+                    }
                 }
             }
         }
