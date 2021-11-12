@@ -27,8 +27,8 @@
                      [accessKey]="accessKey"
                      [height]="listHeight"
                      [disabled]="disabled"
-                     (onSelectionChanged)="onSelectionChanged($event)"
-                     (onInitialized)="onInitialized()">
+                     (onInitialized)="onInitialized($event)"
+                     (onSelectionChanged)="onSelectionChanged($event)">
             </dx-tree-view>
         </div>
     </div>

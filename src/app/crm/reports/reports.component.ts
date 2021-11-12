@@ -60,6 +60,8 @@ import { ODataService } from '@shared/common/odata/odata.service';
 import { TransactionDto } from '@app/crm/reports/transction-dto';
 import { StaticListComponent } from '../../shared/common/static-list/static-list.component';
 import { Param } from '@shared/common/odata/param.model';
+import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
+import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
 
 @Component({
     selector: 'reports-component',
@@ -309,7 +311,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                     keyExpr: 'id'
                 })
         }
-    })
+    });
     totalCount: number;
     isDataLoaded = false;
     defaultGridPagerConfig = {
@@ -462,6 +464,16 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                     operator: { from: 'ge', to: 'le' },
                     items: { from: new FilterItemModel(), to: new FilterItemModel() },
                     options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
+                }),
+                new FilterModel({
+                    component: FilterSourceComponent,
+                    caption: 'Source',
+                    hidden: this.appSessionService.userIsMember,
+                    items: {
+                        element: new SourceFilterModel({
+                            ls: this.ls
+                        })
+                    }
                 })
             ];
         this.filtersService.setup(this.filters);

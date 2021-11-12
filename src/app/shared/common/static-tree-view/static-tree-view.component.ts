@@ -1,10 +1,9 @@
 /** Core imports */
-import { Component, Input, EventEmitter, Output, HostBinding, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, EventEmitter, Output, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
 import { DxTreeViewComponent } from 'devextreme-angular/ui/tree-view';
 import { DxTooltipComponent } from 'devextreme-angular/ui/tooltip';
-import { DxTabsComponent } from 'devextreme-angular/ui/tabs';
 import startCase from 'lodash/startCase';
 import * as _ from 'underscore';
 
@@ -79,23 +78,24 @@ export class StaticTreeViewComponent {
         this.changeDetectorRef.detectChanges();
     }
 
-    onInitialized() {
-        this.setSelectedItems();
+    onInitialized(event) {
+        this.setSelectedItems(event.component);
     }
 
     onSelectionChanged(event) {
         this.selectedItemKeys = event.component.getSelectedNodesKeys();
     }
 
-    setSelectedItems() {
+    setSelectedItems(component?) {
         if (!this.filterModel)
             return;
 
+        let treeView = component || (this.dxTreeView && this.dxTreeView.instance);
         let filterSelectedIds: any[] = this.filterModel.items.element.value;
-        if (this.dxTreeView && filterSelectedIds) {
-            this.dxTreeView.instance.unselectAll();
+        if (treeView && filterSelectedIds) {
+            treeView.unselectAll();
             this.selectedItemKeys = filterSelectedIds;
-            filterSelectedIds.forEach(id => this.dxTreeView.instance.selectItem(id));
+            filterSelectedIds.forEach(id => treeView.selectItem(id));
         }
     }
 
