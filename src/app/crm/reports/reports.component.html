@@ -17,6 +17,9 @@
                     (onValueChanged)="onReportTypeChanged($event)">
     </types-dropdown>
     <import-progress-bar></import-progress-bar>
+    <calendar-button *ngIf="selectedReportType == reportTypesEnum.SalesReport"
+                     [showAllDatesIfEmpty]="true">
+    </calendar-button>
 </app-headline>
 <app-toolbar [config]="toolbarConfig" [hidden]="appService.toolbarIsHidden$ | async"></app-toolbar>
 <app-static-tree-view #sourceOrganizationUnits

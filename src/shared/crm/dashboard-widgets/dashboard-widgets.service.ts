@@ -26,8 +26,8 @@ export class DashboardWidgetsService  {
     public period$: Observable<PeriodModel> = this.calendarService.dateRange$.pipe(
         map((dateRange: CalendarValuesModel) => {
             return {
-                from: DateHelper.removeTimezoneOffset(new Date(dateRange.from.value.getTime()), true, 'from'),
-                to: DateHelper.removeTimezoneOffset(new Date(dateRange.to.value.getTime()), true, 'to'),
+                from: dateRange.from.value && DateHelper.removeTimezoneOffset(new Date(dateRange.from.value.getTime()), true, 'from'),
+                to: dateRange.to.value && DateHelper.removeTimezoneOffset(new Date(dateRange.to.value.getTime()), true, 'to'),
                 period: dateRange.period,
                 name: dateRange.period
             };

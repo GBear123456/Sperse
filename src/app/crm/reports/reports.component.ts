@@ -63,6 +63,8 @@ import { Param } from '@shared/common/odata/param.model';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
+import { CalendarService } from '../../shared/common/calendar-button/calendar.service';
+import { CalendarValuesModel } from '../../../shared/common/widgets/calendar/calendar-values.model';
 
 @Component({
     selector: 'reports-component',
@@ -76,7 +78,8 @@ import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.comp
         DatePipe,
         PhoneFormatPipe,
         ReportServiceProxy,
-        LifecycleSubjectsService
+        LifecycleSubjectsService,
+        CalendarService
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
@@ -165,7 +168,8 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                     this.salesReportDataSourceURI
                 ),
                 this.filters,
-                loadOptions
+                loadOptions,
+                this.getSalesDatesFilter()
             );
         },
         onChanged: (event) => {
@@ -313,6 +317,15 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 })
         }
     });
+    salesDateFilter = new FilterModel({
+        component: FilterCalendarComponent,
+        caption: this.ls.l('Date'),
+        field: 'SalesTransactionDate',
+        operator: { from: 'ge', to: 'le' },
+        items: { from: new FilterItemModel(), to: new FilterItemModel() },
+        options: { method: 'getFilterByDate', params: { useUserTimezone: false }, allowFutureDates: true },
+        filterMethod: () => 'cancelled'
+    })
     salesAmountFilter = new FilterModel({
         component: FilterInputsComponent,
         options: { type: 'number' },
@@ -377,6 +390,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         public crmService: CrmService,
         public httpInterceptor: AppHttpInterceptor,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
+        private calendarService: CalendarService,
         @Inject(DOCUMENT) private document
     ) { }
 
@@ -403,10 +417,14 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         ).subscribe((filtersValues) => {
             this.filtersValues = filtersValues;
             this.updateSalesAmountFilter();
+            this.updateSalesDateCalendar(filtersValues);
             this.refresh();
             this.initToolbarConfig();
             this.changeDetectorRef.detectChanges();
         });
+        this.calendarService.dateRange$.pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$)
+        ).subscribe(value => this.updateSalesDatesFilter(value));
     }
 
     refresh() {
@@ -468,14 +486,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
             })] : [
                 this.salesOrgUnitFilter,
-                new FilterModel({
-                    component: FilterCalendarComponent,
-                    caption: this.ls.l('Date'),
-                    field: 'TransactionDate',
-                    operator: { from: 'ge', to: 'le' },
-                    items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                    options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
-                }),
+                this.salesDateFilter,
                 new FilterModel({
                     component: FilterSourceComponent,
                     caption: 'Source',
@@ -801,6 +812,50 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         let dataSource: any = this.salesReportComponent.dataGrid.instance.getDataSource();
         if (dataSource.store())
             this.salesReportComponent.dataGrid.instance.getDataSource().filter(filter);
+    }
+
+    updateSalesDatesFilter(value: CalendarValuesModel) {
+        let toolbarFrom = value.from && value.from.value ? moment(value.from.value) : moment();
+        let toolbarTo = value.to && value.to.value ? moment(value.to.value) : moment();
+        let filterFrom = this.salesDateFilter.items.from && this.salesDateFilter.items.from.value ? moment(this.salesDateFilter.items.from.value) : moment();
+        let filterTo = this.salesDateFilter.items.to && this.salesDateFilter.items.to.value ? moment(this.salesDateFilter.items.to.value) : moment();
+        if (!toolbarFrom.isSame(filterFrom, 'day') || !toolbarTo.isSame(filterTo, 'day')) {
+            this.salesDateFilter.items.from.value = value.from.value;
+            this.salesDateFilter.items.to.value = value.to.value;
+            this.salesDateFilter.items.period = <any>value.period;
+            this.filtersService.change([this.salesDateFilter]);
+            this.salesDateFilter.updateCaptions();
+            this.changeDetectorRef.detectChanges();
+        }
+    }
+
+    updateSalesDateCalendar(filtersValues) {
+        if (filtersValues && filtersValues.SalesTransactionDate) {
+            let model = new CalendarValuesModel();
+            model.period = <any>this.salesDateFilter.items.period;
+            let from = this.salesDateFilter.items.from ? this.salesDateFilter.items.from.value : null;
+            let to = this.salesDateFilter.items.to ? this.salesDateFilter.items.to.value : null;
+            model.from = { value: from };
+            model.to = { value: to };
+            model.period = from && to ? <any>this.salesDateFilter.items.period : null;
+            this.calendarService.dateRange.next(model);
+        }
+    }
+
+    getSalesDatesFilter() {
+        let filter = {};
+        console.log('test');
+        if (this.salesDateFilter.items.from.value) {
+            let date = new Date(this.salesDateFilter.items.from.value.getTime());
+            date.setHours(0, 0, 0, 0);
+            filter['utcStartDate'] = date.toJSON();
+        }
+        if (this.salesDateFilter.items.to.value) {
+            let date = new Date(this.salesDateFilter.items.to.value.getTime());
+            date.setHours(23, 59, 59, 999);
+            filter['utcEndDate'] = date.toJSON();
+        }
+        return filter;
     }
 
     resetGridState() {

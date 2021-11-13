@@ -31,12 +31,9 @@ export class CalendarService {
     periodLabel$: Observable<string> = this.dateRange$.pipe(
         map((dateRange: CalendarValuesModel) => {
             return dateRange && dateRange.period ? this.ls.l('Periods_' + dateRange.period) : (
-                dateRange && dateRange.from.value
-                    ? (dateRange.to.value
-                        ? this.formatDate(dateRange.from.value) + ' - ' + this.formatDate(dateRange.to.value)
-                        : this.formatDate(dateRange.from.value)
-                    )
-                    : (this.defaultPeriod === Period.LastQuarter
+                dateRange && dateRange.from.value || dateRange.to.value ?
+                    [this.formatDate(dateRange.from.value), '-', this.formatDate(dateRange.to.value)].filter(Boolean).join(' ') :
+                    (this.defaultPeriod === Period.LastQuarter
                         ? this.ls.l('Periods_LastQuarter')
                         : this.ls.l('Periods_ThisYear')
                     )
@@ -46,13 +43,13 @@ export class CalendarService {
     constructor(
         private ls: AppLocalizationService,
         @Inject('defaultPeriod') @Optional() private defaultPeriod?: Period
-    ) {}
+    ) { }
 
     private formatDate(date: Date): string {
-        return date.toLocaleDateString('en-US', {
+        return date ? date.toLocaleDateString('en-US', {
             month: '2-digit',
             day: '2-digit',
             year: 'numeric'
-        });
+        }) : null;
     }
 }

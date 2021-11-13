@@ -12,6 +12,8 @@ import * as moment from 'moment';
 import { CalendarDialogComponent } from '@app/shared/common/dialogs/calendar/calendar-dialog.component';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
+import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { Period } from '@app/shared/common/period/period.enum';
 
 @Component({
     selector: 'calendar-button',
@@ -19,16 +21,17 @@ import { CalendarService } from '@app/shared/common/calendar-button/calendar.ser
     styleUrls: ['./calendar-button.component.less']
 })
 export class CalendarButtonComponent {
-    @Input() emptyEndDateIsAvailable = false;
+    @Input() showAllDatesIfEmpty = false;
     periodLabel$: Observable<string> = this.calendarService.periodLabel$.pipe(
         withLatestFrom(this.calendarService.dateRange$),
         map(([label, dateRange]: [string, CalendarValuesModel]) => {
-            return this.emptyEndDateIsAvailable && dateRange.from.value && !dateRange.to.value ? label + ' -' : label;
+            return this.showAllDatesIfEmpty && !dateRange.from.value && !dateRange.to.value ? this.ls.l(`Periods_${Period.AllPeriods}`) : label;
         })
     );
     constructor(
         private dialog: MatDialog,
-        private calendarService: CalendarService
+        private calendarService: CalendarService,
+        private ls: AppLocalizationService
     ) {}
 
     openCalendarDialog() {
@@ -40,8 +43,8 @@ export class CalendarButtonComponent {
                 hasBackdrop: false,
                 closeOnNavigation: true,
                 data: {
-                    to: { value: this.calendarService.dateRange.value && new Date(this.calendarService.dateRange.value.to.value) },
-                    from: { value: this.calendarService.dateRange.value && new Date(this.calendarService.dateRange.value.from.value) },
+                    to: { value: this.calendarService.dateRange.value && this.calendarService.dateRange.value.to.value && new Date(this.calendarService.dateRange.value.to.value) },
+                    from: { value: this.calendarService.dateRange.value && this.calendarService.dateRange.value.from.value && new Date(this.calendarService.dateRange.value.from.value) },
                     options: {
                         allowFutureDates: true,
                         endDate: moment(new Date()).add(10, 'years').toDate(),
