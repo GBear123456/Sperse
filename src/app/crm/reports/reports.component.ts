@@ -187,6 +187,14 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             this.totalCount = 0;
             this.isDataLoaded = true;
         },
+        onFieldsPrepared: (fields: any[]) => {
+            let transactionType = fields.find(x => x.dataField == 'TransactionType');
+            if (transactionType)
+                transactionType.filterValues = undefined;
+            let paymentProvider = fields.find(x => x.dataField == 'PaymentProvider');
+            if (paymentProvider)
+                paymentProvider.filterValues = undefined;
+        },
         fields: [
             {
                 area: 'column',
