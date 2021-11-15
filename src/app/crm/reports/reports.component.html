@@ -422,8 +422,9 @@
     <div [hidden]="selectedReportType !== reportTypesEnum.SalesReport">
         <slice-pivot-grid [storageKey]="sliceStorageKey"
                           [isLoading]="!isDataLoaded"
+                          showTotalsPrior="columns"
                           [height]="crmService.contentHeight$ | async"
-                          showTotalsPrior="columns">
+                          (onCellPrepared)="onSalesReportCellPrepared($event)">
         </slice-pivot-grid>
     </div>
     <app-no-data [hidden]="!isDataLoaded || totalCount || selectedReportType == reportTypesEnum.SalesReport"

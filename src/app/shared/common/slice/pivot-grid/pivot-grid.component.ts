@@ -5,8 +5,10 @@ import {
     Component,
     HostBinding,
     Input,
+    Output,
     OnInit,
-    ViewChild
+    ViewChild,
+    EventEmitter
 } from '@angular/core';
 
 /** Third party imports */
@@ -32,6 +34,7 @@ export class PivotGridComponent implements OnInit {
     @Input() isLoading = true;
     @Input() height: number | string = 'auto';
     @Input() showTotalsPrior: string = 'none';
+    @Output() onCellPrepared: EventEmitter<any> = new EventEmitter<any>();
     @HostBinding('style.height')
     public get  componentHeight(): string {
         return this.height + 'px';
@@ -89,17 +92,9 @@ export class PivotGridComponent implements OnInit {
         this.updateTotalCellsSizes();
     }
 
-    onCellPrepared(event) {
-        if (event.area == 'column' && event.rowIndex && !event.cellElement.title) {            
-            let checkInterval = setInterval(() => {
-                if (this.grandTotalCells.length) {
-                    let cellValue = this.grandTotalCells[event.columnIndex + 1];
-                    if (cellValue)
-                        event.cellElement.title = cellValue;
-                    clearInterval(checkInterval);
-                }
-            }, 600);
-        }
+    onGridCellPrepared(event) {
+        if (this.onCellPrepared.observers.length)
+            this.onCellPrepared.emit(event);
     }
 
     updateTotalCellsSizes() {

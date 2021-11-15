@@ -9,7 +9,7 @@
                [ngClass]="{ 'field-panel-hidden': !showFieldPanel }"
                [showBorders]="true"
                [scrolling]="{useNative:true}" 
-               (onCellPrepared)="onCellPrepared($event)"
+               (onCellPrepared)="onGridCellPrepared($event)"
                (onContentReady)="onContentReady()"
                (onContextMenuPreparing)="prepareContextMenu($event)">
     <dxo-field-chooser [enabled]="false"></dxo-field-chooser>

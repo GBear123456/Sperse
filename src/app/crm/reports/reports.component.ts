@@ -150,6 +150,8 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             });
         }
     });
+    showAmount = true;
+    showRatio = false;    
     salesReportDataSourceURI = 'SalesSlice';
     sliceStorageKey = [
         'CRM',
@@ -216,17 +218,29 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             {
                 area: 'data',
                 dataType: 'number',
-                name: 'count',
                 isMeasure: true,
-                summaryType: 'count'
+                summaryType: 'count',
+                visible: !this.showRatio && !this.showAmount                
             },
             {
                 area: 'data',
+                caption: '',
                 dataType: 'number',
                 dataField: 'Amount',
                 format: 'currency',
-                summaryType: 'sum'
-            },
+                summaryType: 'sum',
+                visible: !this.showRatio && this.showAmount
+            },               
+            {
+                area: 'data',
+                name: 'Ratio',
+                dataType: 'number',
+                dataField: 'Amount',
+                caption: '',
+                summaryType: this.showAmount ? 'sum' : 'count',
+                summaryDisplayMode: 'percentOfColumnTotal',
+                visible: this.showRatio
+            },                 
             {
                 area: 'filter',
                 dataType: 'string',
@@ -567,6 +581,80 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 ]
             },
             {
+                location: 'before',
+                areItemsDependent: true,
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'Amount',
+                        widget: 'dxButton',
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Amount'),
+                            checkPressed: () => {
+                                return this.showAmount;
+                            }
+                        },
+                        action: () => {
+                            this.showAmount = true;
+                            this.updatePivotGridView();
+                        }
+                    },
+                    {
+                        name: 'Count',
+                        widget: 'dxButton',
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Count'),
+                            checkPressed: () => {
+                                return !this.showAmount;
+                            }
+                        },
+                        action: () => {
+                            this.showAmount = false;                            
+                            this.updatePivotGridView();
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                areItemsDependent: true,
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'Value',
+                        widget: 'dxButton',
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Value'),
+                            checkPressed: () => {
+                                return !this.showRatio;
+                            }
+                        },
+                        action: () => {
+                            this.showRatio = false;
+                            this.updatePivotGridView();
+                        }
+                    },
+                    {
+                        name: 'Ratio',
+                        widget: 'dxButton',
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Ratio'),
+                            checkPressed: () => {
+                                return this.showRatio;
+                            }
+                        },
+                        action: () => {
+                            this.showRatio = true;
+                            this.updatePivotGridView();
+                        }
+                    }
+                ]
+            },
+            {
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
@@ -616,6 +704,19 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 ]
             }
         ];
+    }
+
+    updatePivotGridView() {
+        let instance = this.salesReportComponent.dataGrid.instance,
+            dataSource = instance.getDataSource();
+        dataSource.field('Ratio', {
+            visible: this.showRatio,
+            summaryType: this.showAmount ? 'sum' : 'count' 
+        });
+        dataSource.field('Amount', { visible: !this.showRatio && this.showAmount});
+        dataSource.field('Count', { visible: !this.showRatio && !this.showAmount});
+        this.initToolbarConfig();
+        this.refresh();
     }
 
     get dataSource() {
@@ -712,6 +813,16 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
 
     initDataSource() {
         this.setDataGridInstance(this.dataGrid);
+
+        if (this.selectedReportType == ReportType.SalesReport) {
+            this.salesReportComponent.dataGrid.instance.option('fieldPanel', {
+                allowFieldDragging: false,
+                showColumnFields: false,
+                showDataFields: false,
+                showFilterFields: false,
+                showRowFields: false
+            });
+        }
     }
 
     private setDataGridInstance(dataGrid: DxComponent) {
@@ -752,7 +863,8 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     trackerGridCellClick(cell) {
         /** Expand/collapse parent columns */
         if (cell.event.target.classList.contains('toggle-button')) {
-            this.subscriptionTrackerColumnsVisibility[cell.column.name] = !this.subscriptionTrackerColumnsVisibility[cell.column.name];
+            this.subscriptionTrackerColumnsVisibility[cell.column.name] = 
+                !this.subscriptionTrackerColumnsVisibility[cell.column.name];
             cell.event.stopPropagation();
         }
     }
@@ -801,6 +913,19 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         let dataSource: any = this.salesReportComponent.dataGrid.instance.getDataSource();
         if (dataSource.store())
             this.salesReportComponent.dataGrid.instance.getDataSource().filter(filter);
+    }
+
+    onSalesReportCellPrepared(event) {
+        if (event.area == 'column' && event.rowIndex) {            
+            let checkInterval = setInterval(() => {
+                let grandTotalCells = this.salesReportComponent.grandTotalCells;
+                if (grandTotalCells.length) {
+                    let cellValue = grandTotalCells[event.columnIndex + 1];
+                    event.cellElement.innerHTML = cellValue || '';
+                    clearInterval(checkInterval);
+                }
+            }, 300);
+        }
     }
 
     resetGridState() {
