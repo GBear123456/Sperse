@@ -89,7 +89,7 @@ export class PivotGridComponent implements OnInit {
 
     onContentReady() {
         this.contentShown.next(this.isLoading !== undefined);
-        this.updateTotalCellsSizes();
+        this.defineTotalCellValues();
     }
 
     onGridCellPrepared(event) {
@@ -97,18 +97,17 @@ export class PivotGridComponent implements OnInit {
             this.onCellPrepared.emit(event);
     }
 
-    updateTotalCellsSizes() {
+    defineTotalCellValues() {
         setTimeout(() => {
-            this.grandTotalCells = [];
-            this.dataGrid.instance.element().querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal')
-                .forEach((grandTotalCell: HTMLTableCellElement, index: number) => {
-                    if (grandTotalCell.parentElement.previousSibling &&
-                        grandTotalCell.getBoundingClientRect().bottom > window.innerHeight
-                    ) {
-                        this.grandTotalCells.push(grandTotalCell.innerText);
-                    }
+            let grandtotals = this.dataGrid.instance.element().querySelectorAll(
+                '.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal'
+            );
+            if (grandtotals && grandtotals.length) {
+                this.grandTotalCells = [];
+                grandtotals.forEach((grandTotalCell: HTMLTableCellElement, index: number) => {
+                    this.grandTotalCells.push(grandTotalCell.innerText);
                 });
-            this.changeDetectorRef.detectChanges();
+            }
          });
     }
 

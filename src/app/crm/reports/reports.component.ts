@@ -969,7 +969,6 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
 
     getSalesDatesFilter() {
         let filter = {};
-        console.log('test');
         if (this.salesDateFilter.items.from.value) {
             let date = new Date(this.salesDateFilter.items.from.value.getTime());
             date.setHours(0, 0, 0, 0);

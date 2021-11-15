@@ -669,7 +669,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             if (this.pivotGridComponent) {
                 setTimeout(() => {
                     this.pivotGridComponent.dataGrid.instance.updateDimensions();
-                    this.pivotGridComponent.updateTotalCellsSizes();
                 }, 1001);
             }
         });
