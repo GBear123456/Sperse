@@ -10,7 +10,8 @@
               (onStateReset)="resetGridState()"
               (onToggleColumnSelector)="toggleColumnChooser()">
     <types-dropdown [items]="reportTypes"
-                    [showTotalCount]="true"
+                    [showTotalCount]="selectedReportType != reportTypesEnum.SalesReport"
+                    [showLoading]="true"
                     [totalErrorMsg]="totalErrorMsg"
                     [totalCount]="totalCount"
                     [(value)]="selectedReportType"

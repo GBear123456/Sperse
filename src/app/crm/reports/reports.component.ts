@@ -124,8 +124,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             },
             onLoaded: (count: any) => {
-                if (!isNaN(count))
-                    this.dataSource['total'] = this.totalCount = count;
+                this.dataSource['total'] = this.totalCount = isNaN(count) ? 0 : count;
                 this.changeDetectorRef.detectChanges();
             },
             errorHandler: (e: any) => {
@@ -165,6 +164,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     salesReportDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
+            this.totalCount = undefined;
             return this.crmService.loadSlicePivotGridData(
                 this.oDataService.getODataUrl(
                     this.salesReportDataSourceURI
@@ -175,13 +175,14 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             );
         },
         onChanged: (event) => {
+            this.totalCount = 0;
             this.isDataLoaded = true;
-            this.totalCount = undefined;
         },
         onLoadingChanged: (loading) => {
             this.isDataLoaded = !loading;
         },
         onLoadError: () => {
+            this.totalCount = 0;
             this.isDataLoaded = true;
         },
         fields: [
@@ -358,15 +359,15 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     formatting = AppConsts.formatting;
     userTimezone = DateHelper.getUserTimezone();
     currency = 'USD';
-    selectedReportType = ReportType.Subscribers;
+    selectedReportType = ReportType.SalesReport;
     reportTypes = [
-        {
-            text: this.ls.l('Subscribers'),
-            value: ReportType.Subscribers
-        },
         {
             text: this.ls.l('SalesReport'),
             value: ReportType.SalesReport
+        },
+        {
+            text: this.ls.l('Subscribers'),
+            value: ReportType.Subscribers
         },
         {
             text: this.ls.l('SubscriberDailyStats'),
@@ -418,7 +419,6 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             this.currency = currency.toString();
         });
         this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
-        this.totalDataSource.load();
     }
 
     activate() {
@@ -442,6 +442,9 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     refresh() {
+        if (!this.dataGrid)
+            return;
+
         if (this.selectedReportType == ReportType.SalesReport)
             this.dataGrid.instance.getDataSource().reload().then(
                 () => this.dataGrid.instance.repaint()
@@ -913,7 +916,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     updateSalesAmountFilter() {
-        if (this.selectedReportType != ReportType.SalesReport)
+        if (this.selectedReportType != ReportType.SalesReport || !this.salesReportComponent)
             return;
 
         let filter = [];
@@ -969,7 +972,6 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
 
     getSalesDatesFilter() {
         let filter = {};
-        console.log('test');
         if (this.salesDateFilter.items.from.value) {
             let date = new Date(this.salesDateFilter.items.from.value.getTime());
             date.setHours(0, 0, 0, 0);
