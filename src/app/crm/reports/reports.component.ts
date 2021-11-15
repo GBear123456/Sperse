@@ -139,10 +139,11 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.isDataLoaded = false;
                 this.changeDetectorRef.detectChanges();
             }
+            let dateFilterIsSet = !!this.filtersValues.date;
             return this.reportService.getSubscriberDailyStatsReport(
                 this.filtersValues.sourceOrganizationUnits,
-                this.filtersValues.date.ge,
-                this.filtersValues.date.le
+                dateFilterIsSet ? this.filtersValues.date.ge : undefined,
+                dateFilterIsSet ? this.filtersValues.date.le : undefined
             ).toPromise().then((response: SubscriberDailyStatsReportInfo[]) => {
                 this.totalCount = response.length;
                 return {
