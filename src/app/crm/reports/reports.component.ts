@@ -21,6 +21,7 @@ import ODataStore from 'devextreme/data/odata/store';
 import { filter, map, takeUntil } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore';
+import Chart from 'chart.js';
 
 /** Application imports */
 import { CrmService } from '@app/crm/crm.service';
@@ -202,7 +203,6 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 groupInterval: 'year',
                 name: 'year',
                 expanded: true,
-                showTotals: false
             },
             {
                 area: 'row',
@@ -210,7 +210,6 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 dataField: 'TransactionDate',
                 dataType: 'date',
                 groupInterval: 'month',
-                showTotals: false
             },
             {
                 area: 'row',
@@ -385,6 +384,8 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         refunds: false,
         netCollected: false
     };
+    sparkLineCharts: any = {};
+    sliceRepaintTimeout: any;
 
     constructor(
         private filtersService: FiltersService,
@@ -930,15 +931,110 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     onSalesReportCellPrepared(event) {
+        let data = event.component.getDataSource().getData();
+        if (!data.rows.length)
+            return ;
+
+        let dataIndex = this.showAmount ? 1 : 0,
+            columnIndex = event.columnIndex ? 
+            data.columns[event.columnIndex - 1].index : 
+            data.grandTotalColumnIndex;
+
         if (event.area == 'column' && event.rowIndex) {            
-            let checkInterval = setInterval(() => {
-                let grandTotalCells = this.salesReportComponent.grandTotalCells;
-                if (grandTotalCells.length) {
-                    let cellValue = grandTotalCells[event.columnIndex + 1];
-                    event.cellElement.innerHTML = cellValue || '';
-                    clearInterval(checkInterval);
-                }
-            }, 300);
+            this.appendSparkLineChart(event, data.rows.map(row => {
+                return data.values[row.index][columnIndex][dataIndex] || 0;
+            }));
+        }
+
+        if (event.area == 'data' && event.rowIndex && event.cell.rowType == 'T') {
+            let row = {children: data.rows};                
+            event.cell.rowPath.forEach(path => {
+                row = row.children.find(entity => entity.value == path);
+            });
+
+            this.appendSparkLineChart(event, row.children.map(row => {
+                return data.values[row.index][columnIndex][dataIndex] || 0;
+            }), event.cell.rowPath);
+        }        
+    }
+
+    appendSparkLineChart(event, data, path?) {
+        if (data.length) {
+            let chartKey = 'chartGrandTotal' + event.columnIndex + (path ? path.join('_') : '');
+            setTimeout(() => {
+                this.initSparkLineChart(chartKey, data, event.columnIndex);
+                event.cellElement.appendChild(this.sparkLineCharts[chartKey].element);
+            }, 100);
+
+            clearTimeout(this.sliceRepaintTimeout);
+            this.sliceRepaintTimeout = setTimeout(
+                () => event.component.updateDimensions(), 1000
+            );
+        }
+    }
+
+    initSparkLineChart(chartKey, data, index) {
+        if (this.sparkLineCharts[chartKey]) {
+            let chart = this.sparkLineCharts[chartKey].handler;
+            chart.data.labels = chart.data.datasets[0].data = data;
+            chart.update();
+        } else {
+            let divWrapper: any = document.createElement('div'),
+                canvasElement: any = document.createElement('canvas'),
+                colors = ['purple', 'fuchsia', 'green', 'red', 'yellow', 'blue', 'aqua', 'olive', 'navy', 'maroon', 'gray', 'brown', 'blueviolet', 'silver'];
+            canvasElement.id = chartKey;
+            divWrapper.style.maxWidth = '80px';
+            divWrapper.style.height = '40px';
+            divWrapper.style.margin = 'auto';
+            divWrapper.appendChild(canvasElement);
+            if (index > colors.length - 1)
+                index = index % colors.length;
+            this.sparkLineCharts[chartKey] = {
+                element: divWrapper,
+                handler: new Chart(canvasElement, {
+                    type: 'bar',
+                    data: {
+                        labels: data,
+                        datasets: [{
+                            borderColor: '#def9f3',
+                            backgroundColor: colors[index],
+                            data: data,
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        title: {
+                            display: false,
+                        },
+                        tooltips: {
+                            enabled: false
+                        },
+                        legend: {
+                            display: false
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            xAxes: [{
+                                display: false,
+                                stacked: true
+                            }],
+                            yAxes: [{
+                                display: false,
+                                stacked: true
+                            }]
+                        },
+                        layout: {
+                            padding: {
+                                left: 0,
+                                right: 0,
+                                top: 0,
+                                bottom: 0
+                            }
+                        }
+                    }
+                })
+            };
         }
     }
 

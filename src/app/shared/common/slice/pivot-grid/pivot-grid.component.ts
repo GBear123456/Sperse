@@ -34,6 +34,7 @@ export class PivotGridComponent implements OnInit {
     @Input() isLoading = true;
     @Input() height: number | string = 'auto';
     @Input() showTotalsPrior: string = 'none';
+    @Input() showColumnTotals: boolean = true;
     @Output() onCellPrepared: EventEmitter<any> = new EventEmitter<any>();
     @HostBinding('style.height')
     public get  componentHeight(): string {

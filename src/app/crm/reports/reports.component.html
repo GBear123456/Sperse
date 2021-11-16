@@ -426,7 +426,8 @@
     <div [hidden]="selectedReportType !== reportTypesEnum.SalesReport">
         <slice-pivot-grid [storageKey]="sliceStorageKey"
                           [isLoading]="!isDataLoaded"
-                          showTotalsPrior="columns"
+                          showTotalsPrior="both"
+                          [showColumnTotals]="false"
                           [height]="crmService.contentHeight$ | async"
                           (onCellPrepared)="onSalesReportCellPrepared($event)">
         </slice-pivot-grid>

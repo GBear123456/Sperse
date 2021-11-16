@@ -4,11 +4,12 @@
                [allowSorting]="true"
                [height]="height?.toPrecision ? (height + 7) : height"
                [showTotalsPrior]="showTotalsPrior"
+               [showColumnTotals]="showColumnTotals"
                [visible]="contentShown$ | async"
                [allowSortingBySummary]="true"
                [ngClass]="{ 'field-panel-hidden': !showFieldPanel }"
                [showBorders]="true"
-               [scrolling]="{useNative:true}" 
+               [scrolling]="{useNative:true}"
                (onCellPrepared)="onGridCellPrepared($event)"
                (onContentReady)="onContentReady()"
                (onContextMenuPreparing)="prepareContextMenu($event)">
