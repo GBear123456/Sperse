@@ -76,6 +76,7 @@
                       [hoverStateEnabled]="true"
                       [loadPanel]="{ enabled: false }"
                       [pager]="defaultGridPagerConfig"
+                      [height]="crmService.contentHeight$ | async"
                       (onContentReady)="onContentReady(true)"
                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-selection selectAllMode="page"
@@ -183,6 +184,7 @@
                       [loadPanel]="{ enabled: false }"
                       [remoteOperations]="{ filtering: false }"
                       [pager]="defaultGridPagerConfig"
+                      [height]="crmService.contentHeight$ | async"
                       (onContentReady)="onContentReady()"
                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
             <dxo-selection selectAllMode="page"
@@ -326,6 +328,7 @@
                       [showBorders]="true"
                       [loadPanel]="{ enabled: false }"
                       [pager]="defaultGridPagerConfig"
+                      [height]="crmService.contentHeight$ | async"
                       (onCellClick)="trackerGridCellClick($event)"
                       (onContentReady)="onContentReady(true)"
                       (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">

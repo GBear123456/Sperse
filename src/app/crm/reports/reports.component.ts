@@ -64,8 +64,9 @@ import { Param } from '@shared/common/odata/param.model';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
-import { CalendarService } from '../../shared/common/calendar-button/calendar.service';
-import { CalendarValuesModel } from '../../../shared/common/widgets/calendar/calendar-values.model';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
+import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 
 @Component({
     selector: 'reports-component',
@@ -140,10 +141,11 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 this.isDataLoaded = false;
                 this.changeDetectorRef.detectChanges();
             }
+            let dateFilterIsSet = !!this.filtersValues.date;
             return this.reportService.getSubscriberDailyStatsReport(
                 this.filtersValues.sourceOrganizationUnits,
-                this.filtersValues.date.ge,
-                this.filtersValues.date.le
+                dateFilterIsSet ? this.filtersValues.date.ge : undefined,
+                dateFilterIsSet ? this.filtersValues.date.le : undefined
             ).toPromise().then((response: SubscriberDailyStatsReportInfo[]) => {
                 this.totalCount = response.length;
                 return {
@@ -154,7 +156,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     });
     showAmount = true;
-    showRatio = false;    
+    showRatio = false;
     salesReportDataSourceURI = 'SalesSlice';
     sliceStorageKey = [
         'CRM',
@@ -185,6 +187,14 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         onLoadError: () => {
             this.totalCount = 0;
             this.isDataLoaded = true;
+        },
+        onFieldsPrepared: (fields: any[]) => {
+            let transactionType = fields.find(x => x.dataField == 'TransactionType');
+            if (transactionType)
+                transactionType.filterValues = undefined;
+            let paymentProvider = fields.find(x => x.dataField == 'PaymentProvider');
+            if (paymentProvider)
+                paymentProvider.filterValues = undefined;
         },
         fields: [
             {
@@ -224,7 +234,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 dataType: 'number',
                 isMeasure: true,
                 summaryType: 'count',
-                visible: !this.showRatio && !this.showAmount                
+                visible: !this.showRatio && !this.showAmount
             },
             {
                 area: 'data',
@@ -234,7 +244,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 format: 'currency',
                 summaryType: 'sum',
                 visible: !this.showRatio && this.showAmount
-            },               
+            },
             {
                 area: 'data',
                 name: 'Ratio',
@@ -244,7 +254,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 summaryType: this.showAmount ? 'sum' : 'count',
                 summaryDisplayMode: 'percentOfColumnTotal',
                 visible: this.showRatio
-            },                 
+            },
             {
                 area: 'filter',
                 dataType: 'string',
@@ -407,6 +417,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         public httpInterceptor: AppHttpInterceptor,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         private calendarService: CalendarService,
+        private fullScreenService: FullScreenService,
         @Inject(DOCUMENT) private document
     ) { }
 
@@ -503,20 +514,20 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
                 options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
             })] : [
-                this.salesOrgUnitFilter,
-                this.salesDateFilter,
-                new FilterModel({
-                    component: FilterSourceComponent,
-                    caption: 'Source',
-                    hidden: this.appSessionService.userIsMember,
-                    items: {
-                        element: new SourceFilterModel({
-                            ls: this.ls
-                        })
-                    }
-                }),
-                this.salesAmountFilter
-            ];
+            this.salesOrgUnitFilter,
+            this.salesDateFilter,
+            new FilterModel({
+                component: FilterSourceComponent,
+                caption: 'Source',
+                hidden: this.appSessionService.userIsMember,
+                items: {
+                    element: new SourceFilterModel({
+                        ls: this.ls
+                    })
+                }
+            }),
+            this.salesAmountFilter
+        ];
         this.filtersService.setup(this.filters);
     }
 
@@ -626,7 +637,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                             }
                         },
                         action: () => {
-                            this.showAmount = false;                            
+                            this.showAmount = false;
                             this.updatePivotGridView();
                         }
                     }
@@ -717,6 +728,16 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                         }
                     }
                 ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'fullscreen',
+                        action: () => this.fullScreenService.toggleFullscreen(this.document.documentElement)
+                    }
+                ]
             }
         ];
     }
@@ -726,10 +747,10 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             dataSource = instance.getDataSource();
         dataSource.field('Ratio', {
             visible: this.showRatio,
-            summaryType: this.showAmount ? 'sum' : 'count' 
+            summaryType: this.showAmount ? 'sum' : 'count'
         });
-        dataSource.field('Amount', { visible: !this.showRatio && this.showAmount});
-        dataSource.field('Count', { visible: !this.showRatio && !this.showAmount});
+        dataSource.field('Amount', { visible: !this.showRatio && this.showAmount });
+        dataSource.field('Count', { visible: !this.showRatio && !this.showAmount });
         this.initToolbarConfig();
         this.refresh();
     }
@@ -878,7 +899,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     trackerGridCellClick(cell) {
         /** Expand/collapse parent columns */
         if (cell.event.target.classList.contains('toggle-button')) {
-            this.subscriptionTrackerColumnsVisibility[cell.column.name] = 
+            this.subscriptionTrackerColumnsVisibility[cell.column.name] =
                 !this.subscriptionTrackerColumnsVisibility[cell.column.name];
             cell.event.stopPropagation();
         }
