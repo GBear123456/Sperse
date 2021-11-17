@@ -41,6 +41,10 @@
                          [disabled]="isReadOnly">
             </dx-text-box>
         </div>
+        <div class="field photo">
+            <label for="name">{{ls.l('Image')}}</label>
+            <img (click)="openImageSelector()" [src]="getProductImage()" />
+        </div>
         <div class="field">
             <label for="deactivationTime">{{ls.l('Group')}}</label>
             <dx-select-box [dataSource]="productGroups"

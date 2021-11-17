@@ -27,36 +27,45 @@
             <div class="portlet-body">
                 <ghost-list [hidden]="isDataLoaded"></ghost-list>
                 <dx-data-grid class="main-component-view"
-                    accesskey="narrowHeaderPanel"
-                    [renderAsync]="true"
-                    [dataSource]="dataSource"
-                    [hoverStateEnabled]="true"
-                    [allowColumnReordering]="true"
-                    [columnAutoWidth]="true"
-                    [allowColumnResizing]="true"
-                    [columnChooser]="{
-                        height: rowsViewHeight
-                    }"
-                    [remoteOperations]="{ filtering: false }"
-                    [loadPanel]="{ enabled: false }"
-                    [pager]="defaultGridPagerConfig"
-                    (onOptionChanged)="onGridOptionChanged($event)"
-                    (onContentReady)="onContentReady($event)"
-                    (onCellClick)="onCellClick($event)"
-                    (onEditingStart)="toggleActionsMenu($event)"
-                    (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
+                              accesskey="narrowHeaderPanel"
+                              [renderAsync]="true"
+                              [dataSource]="dataSource"
+                              [hoverStateEnabled]="true"
+                              [allowColumnReordering]="true"
+                              [columnAutoWidth]="true"
+                              [allowColumnResizing]="true"
+                              [columnChooser]="{
+                                    height: rowsViewHeight
+                                }"
+                              [remoteOperations]="{ filtering: false }"
+                              [loadPanel]="{ enabled: false }"
+                              [pager]="defaultGridPagerConfig"
+                              (onOptionChanged)="onGridOptionChanged($event)"
+                              (onContentReady)="onContentReady($event)"
+                              (onCellClick)="onCellClick($event)"
+                              (onEditingStart)="toggleActionsMenu($event)"
+                              (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                     <dxo-selection selectAllMode="page"
-                        showCheckBoxesMode="none"
-                        mode="none">
+                                   showCheckBoxesMode="none"
+                                   mode="none">
                     </dxo-selection>
                     <dxo-scrolling rowRenderingMode="virtual"></dxo-scrolling>
                     <dxo-editing mode="popup"
-                        [texts]="{ editRow: '' }"
-                        [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
-                        [allowUpdating]="!isReadOnly">
+                                 [texts]="{ editRow: '' }"
+                                 [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
+                                 [allowUpdating]="!isReadOnly">
                     </dxo-editing>
-
                     <dxi-column [dataField]="productFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
+                    <dxi-column [dataField]="productFields.ImageUrl"
+                                cellTemplate="imageTemplate"
+                                caption=""
+                                [width]="50"
+                                [showInColumnChooser]="false"
+                                [allowReordering]="false"
+                                [allowExporting]="false"
+                                [allowGrouping]="false"
+                                [allowSorting]="false">
+                    </dxi-column>
                     <dxi-column [dataField]="productFields.Name" [caption]="l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="productFields.Code" [caption]="l('Code')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="productFields.Description" [caption]="l('Description')" cssClass="clipboard-holder"></dxi-column>
@@ -65,6 +74,9 @@
                     <dxi-column [dataField]="productFields.Price" [caption]="l('Price')" cellTemplate="amountTemplate"></dxi-column>
                     <dxi-column [dataField]="productFields.Unit" [caption]="l('Unit')"></dxi-column>
 
+                    <div *dxTemplate="let cell of 'imageTemplate'" class="image-column">
+                        <img *ngIf="cell.data.ImageUrl" [src]="cell.data.ImageUrl" />
+                    </div>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
                         <span> {{ cell.data.Price | currency:currency:'symbol':'1.2-2' }} </span>
                     </div>
@@ -73,10 +85,9 @@
                     <dxo-paging [pageSize]="20"></dxo-paging>
                     <dxo-group-panel [visible]="true"></dxo-group-panel>
                     <dxo-summary>
-                        <dxi-group-item 
-                            [column]="productFields.Id"
-                            summaryType="count"
-                            [displayFormat]="'{0} ' + l('Products').toLocaleLowerCase()">
+                        <dxi-group-item [column]="productFields.Id"
+                                        summaryType="count"
+                                        [displayFormat]="'{0} ' + l('Products').toLocaleLowerCase()">
                         </dxi-group-item>
                     </dxo-summary>
                 </dx-data-grid>

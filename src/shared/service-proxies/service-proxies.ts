@@ -27896,12 +27896,15 @@ export class ProductServiceProxy {
 
     /**
      * @id (optional) 
+     * @includeImage (optional) 
      * @return Success
      */
-    getProductInfo(id: number | null | undefined): Observable<ProductInfo> {
+    getProductInfo(id: number | null | undefined, includeImage: boolean | null | undefined): Observable<ProductInfo> {
         let url_ = this.baseUrl + "/api/services/CRM/Product/GetProductInfo?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        if (includeImage !== undefined)
+            url_ += "includeImage=" + encodeURIComponent("" + includeImage) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -72772,6 +72775,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     gracePeriodEndDate!: moment.Moment | undefined;
     productCode!: string | undefined;
     productName!: string | undefined;
+    productImageUrl!: string | undefined;
     fee!: number | undefined;
     statusCode!: string | undefined;
     status!: string | undefined;
@@ -72803,6 +72807,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.gracePeriodEndDate = data["gracePeriodEndDate"] ? moment(data["gracePeriodEndDate"].toString()) : <any>undefined;
             this.productCode = data["productCode"];
             this.productName = data["productName"];
+            this.productImageUrl = data["productImageUrl"];
             this.fee = data["fee"];
             this.statusCode = data["statusCode"];
             this.status = data["status"];
@@ -72842,6 +72847,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["gracePeriodEndDate"] = this.gracePeriodEndDate ? this.gracePeriodEndDate.toISOString() : <any>undefined;
         data["productCode"] = this.productCode;
         data["productName"] = this.productName;
+        data["productImageUrl"] = this.productImageUrl;
         data["fee"] = this.fee;
         data["statusCode"] = this.statusCode;
         data["status"] = this.status;
@@ -72874,6 +72880,7 @@ export interface IOrderSubscriptionDto {
     gracePeriodEndDate: moment.Moment | undefined;
     productCode: string | undefined;
     productName: string | undefined;
+    productImageUrl: string | undefined;
     fee: number | undefined;
     statusCode: string | undefined;
     status: string | undefined;
@@ -76364,6 +76371,7 @@ export class ProductInfo implements IProductInfo {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    image!: string | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
 
@@ -76388,6 +76396,7 @@ export class ProductInfo implements IProductInfo {
             this.maxCommissionRate = data["maxCommissionRate"];
             this.maxCommissionRateTier2 = data["maxCommissionRateTier2"];
             this.unit = data["unit"];
+            this.image = data["image"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
                 for (let item of data["productServices"])
@@ -76420,6 +76429,7 @@ export class ProductInfo implements IProductInfo {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["image"] = this.image;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -76445,6 +76455,7 @@ export interface IProductInfo {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    image: string | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
 }
@@ -76669,6 +76680,7 @@ export class CreateProductInput implements ICreateProductInput {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    image!: string | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
 
@@ -76694,6 +76706,7 @@ export class CreateProductInput implements ICreateProductInput {
             this.maxCommissionRate = data["maxCommissionRate"];
             this.maxCommissionRateTier2 = data["maxCommissionRateTier2"];
             this.unit = data["unit"];
+            this.image = data["image"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
                 for (let item of data["productServices"])
@@ -76727,6 +76740,7 @@ export class CreateProductInput implements ICreateProductInput {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["image"] = this.image;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -76753,6 +76767,7 @@ export interface ICreateProductInput {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    image: string | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
 }
@@ -76806,6 +76821,7 @@ export class UpdateProductInput implements IUpdateProductInput {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    image!: string | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
 
@@ -76832,6 +76848,7 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.maxCommissionRate = data["maxCommissionRate"];
             this.maxCommissionRateTier2 = data["maxCommissionRateTier2"];
             this.unit = data["unit"];
+            this.image = data["image"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
                 for (let item of data["productServices"])
@@ -76866,6 +76883,7 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["image"] = this.image;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -76893,6 +76911,7 @@ export interface IUpdateProductInput {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    image: string | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
 }

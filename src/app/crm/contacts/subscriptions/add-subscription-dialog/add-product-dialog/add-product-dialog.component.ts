@@ -41,6 +41,10 @@ import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/ad
 import { AppFeatures } from '@shared/AppFeatures';
 import { SettingService } from 'abp-ng2-module/dist/src/settings/setting.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
+import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
+import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     selector: 'add-product-dialog',
@@ -179,12 +183,13 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                         item.trialDayCount = 0;
                 });
 
-            if (this.product instanceof UpdateProductInput)
+            if (this.product instanceof UpdateProductInput) {
                 this.productProxy.updateProduct(this.product).subscribe(() => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
                     this.dialogRef.close();
                 });
-            else
+            }
+            else {
                 this.productProxy.createProduct(this.product).subscribe(res => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
                     this.dialogRef.close(new ProductDto({
@@ -195,6 +200,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                             this.product.productSubscriptionOptions.map(item => item.frequency)
                     }));
                 });
+            }
         }
     }
 
@@ -326,6 +332,30 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             return option.frequency == RecurringPaymentFrequency.LifeTime
                 || event.value && event.value > 0;
         };
+    }
+
+    getProductImage() {
+        return this.product.image ? 'data:image/jpeg;base64,' + this.product.image : './assets/common/images/product.png';
+    }
+
+    openImageSelector() {
+        if (this.isReadOnly)
+            return;
+
+        const uploadPhotoData: UploadPhotoData = {
+            source: this.product.image ? 'data:image/jpeg;base64,' + this.product.image : null,
+            maxSizeBytes: 1048576,
+            title: this.ls.l('AddProductImage')
+        };
+        this.dialog.open(UploadPhotoDialogComponent, {
+            data: uploadPhotoData,
+            hasBackdrop: true
+        }).afterClosed().subscribe((result: UploadPhotoResult) => {
+            if (result) {
+                this.product.image = StringHelper.getBase64(result.origImage);
+                this.detectChanges();
+            }
+        });
     }
 
     detectChanges() {
