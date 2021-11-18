@@ -119,7 +119,7 @@
                                      [value]="orgUnitName">
                         </dx-text-box>
                         <ng-template #createButton>
-                            <button *ngIf="manageAllowed" (click)="createOrgUnit()" class="button-layout button-primary create-org-unit">Create</button>
+                            <button *ngIf="manageOrgUnits && manageAllowed" (click)="createOrgUnit()" class="button-layout button-primary create-org-unit">Create</button>
                         </ng-template>
                     </div>
                     <div *ngIf="company.rootOrganizationUnitId && company.departmentCode" class="field">
