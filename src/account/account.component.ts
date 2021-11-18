@@ -9,6 +9,7 @@ import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { RapidLayoutComponent } from "@root/account/layouts/rapid/rapid-layout.component";
 import { HoaLayoutComponent } from "@root/account/layouts/hoa/hoa-layout.component";
 import { SperserLayoutComponent } from "@root/account/layouts/sperser/sperser-layout.component";
+import { GHostLayoutComponent } from "@root/account/layouts/ghost/ghost-layout.component";
 
 @Directive({
     selector: '[ad-account-host]'
@@ -51,6 +52,8 @@ export class AccountComponent implements OnInit {
                 return HoaLayoutComponent;
             case LayoutType.Sperser:
                 return SperserLayoutComponent;
+            case LayoutType.GhostDrive:
+                return GHostLayoutComponent;
             default:
                 return HostLayoutComponent;
         }
