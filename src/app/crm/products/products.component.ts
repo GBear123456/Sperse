@@ -158,7 +158,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
     editProduct(id: number) {
         this.startLoading();
-        this.productProxy.getProductInfo(id, true).pipe(
+        this.productProxy.getProductInfo(id).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(product => {
             this.showProductDialog({

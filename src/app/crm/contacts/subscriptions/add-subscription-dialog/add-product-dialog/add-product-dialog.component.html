@@ -43,7 +43,7 @@
         </div>
         <div class="field photo">
             <label for="name">{{ls.l('Image')}}</label>
-            <img (click)="openImageSelector()" [src]="getProductImage()" />
+            <img (click)="openImageSelector()" [src]="getProductImage(true)" />
         </div>
         <div class="field">
             <label for="deactivationTime">{{ls.l('Group')}}</label>

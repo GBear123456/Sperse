@@ -111,7 +111,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.isReadOnly = !!data.isReadOnly;
         this.title = ls.l(this.isReadOnly ? 'Product' : data.product ? 'EditProduct' : 'AddProduct');
         if (data.product && data.product.id) {
-            this.image = data.product.image;
+            this.image = data.product.imageUrl;
             this.product = new UpdateProductInput(data.product);
         } else {
             this.product = new CreateProductInput(data.product);
@@ -349,8 +349,14 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         };
     }
 
-    getProductImage() {
-        return this.image ? 'data:image/jpeg;base64,' + this.image : './assets/common/images/product.png';
+    getProductImage(showDefault: boolean) {
+        if (this.image) {
+            if (this.imageChanged)
+                return 'data:image/jpeg;base64,' + this.image;
+            else
+                return this.image;
+        }
+        return showDefault ?  './assets/common/images/product.png' : null;
     }
 
     openImageSelector() {
@@ -358,7 +364,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             return;
 
         const uploadPhotoData: UploadPhotoData = {
-            source: this.image ? 'data:image/jpeg;base64,' + this.image : null,
+            source: this.getProductImage(false),
             maxSizeBytes: 1048576,
             title: this.ls.l('AddProductImage')
         };

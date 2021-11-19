@@ -27896,15 +27896,12 @@ export class ProductServiceProxy {
 
     /**
      * @id (optional) 
-     * @includeImage (optional) 
      * @return Success
      */
-    getProductInfo(id: number | null | undefined, includeImage: boolean | null | undefined): Observable<ProductInfo> {
+    getProductInfo(id: number | null | undefined): Observable<ProductInfo> {
         let url_ = this.baseUrl + "/api/services/CRM/Product/GetProductInfo?";
         if (id !== undefined)
             url_ += "id=" + encodeURIComponent("" + id) + "&"; 
-        if (includeImage !== undefined)
-            url_ += "includeImage=" + encodeURIComponent("" + includeImage) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -76423,7 +76420,7 @@ export class ProductInfo implements IProductInfo {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
-    image!: string | undefined;
+    imageUrl!: string | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
 
@@ -76448,7 +76445,7 @@ export class ProductInfo implements IProductInfo {
             this.maxCommissionRate = data["maxCommissionRate"];
             this.maxCommissionRateTier2 = data["maxCommissionRateTier2"];
             this.unit = data["unit"];
-            this.image = data["image"];
+            this.imageUrl = data["imageUrl"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
                 for (let item of data["productServices"])
@@ -76481,7 +76478,7 @@ export class ProductInfo implements IProductInfo {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
-        data["image"] = this.image;
+        data["imageUrl"] = this.imageUrl;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -76507,7 +76504,7 @@ export interface IProductInfo {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
-    image: string | undefined;
+    imageUrl: string | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
 }
