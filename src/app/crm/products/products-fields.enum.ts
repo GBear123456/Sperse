@@ -10,5 +10,5 @@ export const ProductFields: KeysEnum<ProductDto> = {
     Type: 'Type',
     Price: 'Price',
     Unit: 'Unit',
-    ImageUrl: 'ImageUrl'
+    ThumbnailUrl: 'ThumbnailUrl'
 };

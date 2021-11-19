@@ -56,7 +56,7 @@
                                  [allowUpdating]="!isReadOnly">
                     </dxo-editing>
                     <dxi-column [dataField]="productFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
-                    <dxi-column [dataField]="productFields.ImageUrl"
+                    <dxi-column [dataField]="productFields.ThumbnailUrl"
                                 cellTemplate="imageTemplate"
                                 caption=""
                                 [width]="50"
@@ -75,7 +75,7 @@
                     <dxi-column [dataField]="productFields.Unit" [caption]="l('Unit')"></dxi-column>
 
                     <div *dxTemplate="let cell of 'imageTemplate'" class="image-column">
-                        <img *ngIf="cell.data.ImageUrl" [src]="cell.data.ImageUrl" />
+                        <img *ngIf="cell.data.ThumbnailUrl" [src]="cell.data.ThumbnailUrl" />
                     </div>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
                         <span> {{ cell.data.Price | currency:currency:'symbol':'1.2-2' }} </span>

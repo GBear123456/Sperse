@@ -13,8 +13,8 @@ import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
+import { Observable, of, zip } from 'rxjs';
+import { map, filter, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -31,7 +31,8 @@ import {
     UpdateProductInput,
     RecurringPaymentFrequency,
     ProductSubscriptionOptionInfo,
-    ProductMeasurementUnit
+    ProductMeasurementUnit,
+    SetProductImageInput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -82,6 +83,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
     title: string;
     isReadOnly = true;
+    image: string = null;
+    imageChanged: boolean = false;
 
     constructor(
         private elementRef: ElementRef,
@@ -108,6 +111,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.isReadOnly = !!data.isReadOnly;
         this.title = ls.l(this.isReadOnly ? 'Product' : data.product ? 'EditProduct' : 'AddProduct');
         if (data.product && data.product.id) {
+            this.image = data.product.image;
             this.product = new UpdateProductInput(data.product);
         } else {
             this.product = new CreateProductInput(data.product);
@@ -184,13 +188,17 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 });
 
             if (this.product instanceof UpdateProductInput) {
-                this.productProxy.updateProduct(this.product).subscribe(() => {
+                this.productProxy.updateProduct(this.product).pipe(
+                    switchMap(() => this.getUpdateProductImageObservable((<any>this.product).id))
+                ).subscribe(() => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
                     this.dialogRef.close();
                 });
             }
             else {
-                this.productProxy.createProduct(this.product).subscribe(res => {
+                this.productProxy.createProduct(this.product).pipe(
+                    switchMap((res) => zip(of(res), this.getUpdateProductImageObservable(res.productId)))
+                ).subscribe(([res,]) => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
                     this.dialogRef.close(new ProductDto({
                         id: res.productId,
@@ -202,6 +210,13 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 });
             }
         }
+    }
+
+    getUpdateProductImageObservable(productId: number) {
+        return this.imageChanged ? this.productProxy.setProductImage(new SetProductImageInput({
+            image: this.image,
+            productId: productId
+        })) : of(null);
     }
 
     close() {
@@ -335,7 +350,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     getProductImage() {
-        return this.product.image ? 'data:image/jpeg;base64,' + this.product.image : './assets/common/images/product.png';
+        return this.image ? 'data:image/jpeg;base64,' + this.image : './assets/common/images/product.png';
     }
 
     openImageSelector() {
@@ -343,7 +358,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             return;
 
         const uploadPhotoData: UploadPhotoData = {
-            source: this.product.image ? 'data:image/jpeg;base64,' + this.product.image : null,
+            source: this.image ? 'data:image/jpeg;base64,' + this.image : null,
             maxSizeBytes: 1048576,
             title: this.ls.l('AddProductImage')
         };
@@ -352,7 +367,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             hasBackdrop: true
         }).afterClosed().subscribe((result: UploadPhotoResult) => {
             if (result) {
-                this.product.image = StringHelper.getBase64(result.origImage);
+                this.imageChanged = true;
+                this.image = result.origImage ? StringHelper.getBase64(result.origImage) : null;
                 this.detectChanges();
             }
         });

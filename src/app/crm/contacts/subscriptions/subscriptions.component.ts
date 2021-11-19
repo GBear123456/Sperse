@@ -218,7 +218,7 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     }
 
     getProductImageUrl(data) {
-        return data.productImageUrl || 'assets/common/images/' + ((data.photoUri ? 'bank-code/products/' + data.photoUri : '') || (data.productCode ? 'product' : 'service')) + '.png';
+        return data.productThumbnailUrl || 'assets/common/images/' + ((data.photoUri ? 'bank-code/products/' + data.photoUri : '') || (data.productCode ? 'product' : 'service')) + '.png';
     }
 
     cancelSubscription(id: number) {
