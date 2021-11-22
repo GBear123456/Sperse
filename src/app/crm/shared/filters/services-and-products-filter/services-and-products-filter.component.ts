@@ -2,6 +2,8 @@ import { Component, AfterViewInit } from '@angular/core';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterComponent } from '@shared/filters/models/filter-component';
+import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 
 @Component({
     templateUrl: './services-and-products-filter.component.html',
@@ -30,9 +32,11 @@ export class FilterServicesAndProductsComponent implements FilterComponent, Afte
     private readonly PRODUCTS_TAB_INDEX = 1;
 
     selectedTabIndex = this.PRODUCTS_TAB_INDEX;
+    showFilterTabs = this.userManagementService.isLayout(LayoutType.BankCode);
 
     constructor(
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        public userManagementService: UserManagementService
     ) {}
 
     ngAfterViewInit() {
