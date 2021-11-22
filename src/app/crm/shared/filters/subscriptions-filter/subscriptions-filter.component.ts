@@ -36,6 +36,7 @@ export class SubscriptionsFilterComponent implements FilterComponent, AfterViewI
     constructor(
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService
+
     ) {}
 
     ngAfterViewInit() {
