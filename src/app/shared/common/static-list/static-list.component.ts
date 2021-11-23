@@ -45,6 +45,7 @@ export class StaticListComponent {
     @Input() updateConfirmationMessage: string;
     @Input() showSelectionControls = false;
     @Input() hideButtons = true;
+    @Input() hideApplyForEmpty = true;
     @Input() searchEnabled = false;
     @Input() customSearchEnabled = false;
     @Input() pageLoadMode = 'nextButton';
@@ -103,7 +104,7 @@ export class StaticListComponent {
     }
 
     apply() {
-        if (this.selectedItems && this.selectedItems.length)
+        if (!this.hideApplyForEmpty || this.selectedItems && this.selectedItems.length)
             this.onApply.emit(this.selectedItems);
         this.tooltipVisible = false;
     }
@@ -131,8 +132,7 @@ export class StaticListComponent {
     }
 
     highlightSelectedFilters() {
-        let filterValue = this.filterModel &&
-            this.filterModel.items.element.value;
+        let filterValue = this.filterModel && this.filterModel.items.element.value;
         this.clearFiltersHighlight();
         if (this.listComponent && filterValue) {
             let items = this.listComponent.element()

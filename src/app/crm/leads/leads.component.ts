@@ -881,7 +881,6 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             if (this.pivotGridComponent) {
                 setTimeout(() => {
                     this.pivotGridComponent.dataGrid.instance.updateDimensions();
-                    this.pivotGridComponent.updateTotalCellsSizes();
                 }, 1001);
             }
         });

@@ -951,7 +951,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             if (this.pivotGridComponent) {
                 setTimeout(() => {
                     this.pivotGridComponent.dataGrid.instance.updateDimensions();
-                    this.pivotGridComponent.updateTotalCellsSizes();
                 }, 1001);
             }
         });

@@ -2,18 +2,26 @@
     display: block;
     padding: 10px;
 
+    .mat-dialog-title {
+        font-size: 28px;
+    }
+
     mat-dialog-actions {
-      justify-content: flex-end;
+        justify-content: flex-end;
     }
 
     mat-dialog-content {
-      width: 400px;
-      min-height: 160px;
+        width: 410px;
+        min-height: 160px;
+    }
+
+    .element-row {
+        display: flex;
     }
 
     label {
         right: -4px;
-        width: 90px;
+        width: 100px;
         height: 48px;
         position: relative;
         color: #BDC6C7;
@@ -26,16 +34,14 @@
     }
 
     .recurring {
-        width: 341px;
-        display: inline-block;
         border-bottom: 1px solid #dfdfdf;
+
         label {
             border-bottom: none;
         }
+
         dx-check-box {
-            display: inline-block;
-            position: relative;
-            top: 10px;
+            align-self: center;
         }
     }
 
@@ -43,7 +49,6 @@
     dx-select-box,
     dx-date-box,
     dx-text-box {
-        display: inline-block;
         ::ng-deep input {
             height: 48px;
         }

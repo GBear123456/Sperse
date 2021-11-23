@@ -783,7 +783,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             if (this.pivotGridComponent) {
                 setTimeout(() => {
                     this.pivotGridComponent.dataGrid.instance.updateDimensions();
-                    this.pivotGridComponent.updateTotalCellsSizes();
                 }, 1001);
             }
         });

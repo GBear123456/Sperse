@@ -5,8 +5,10 @@ import {
     Component,
     HostBinding,
     Input,
+    Output,
     OnInit,
-    ViewChild
+    ViewChild,
+    EventEmitter
 } from '@angular/core';
 
 /** Third party imports */
@@ -31,6 +33,9 @@ export class PivotGridComponent implements OnInit {
     @Input() storageKey: string;
     @Input() isLoading = true;
     @Input() height: number | string = 'auto';
+    @Input() showTotalsPrior: string = 'none';
+    @Input() showColumnTotals: boolean = true;
+    @Output() onCellPrepared: EventEmitter<any> = new EventEmitter<any>();
     @HostBinding('style.height')
     public get  componentHeight(): string {
         return this.height + 'px';
@@ -49,7 +54,7 @@ export class PivotGridComponent implements OnInit {
     ];
     private contentShown: BehaviorSubject<boolean> = new BehaviorSubject(false);
     contentShown$: Observable<boolean> = this.contentShown.asObservable();
-    fixedCells = [];
+    grandTotalCells = [];
 
     constructor(
         private changeDetectorRef: ChangeDetectorRef,
@@ -85,25 +90,25 @@ export class PivotGridComponent implements OnInit {
 
     onContentReady() {
         this.contentShown.next(this.isLoading !== undefined);
-        this.updateTotalCellsSizes();
+        this.defineTotalCellValues();
     }
 
-    updateTotalCellsSizes() {
+    onGridCellPrepared(event) {
+        if (this.onCellPrepared.observers.length)
+            this.onCellPrepared.emit(event);
+    }
+
+    defineTotalCellValues() {
         setTimeout(() => {
-            this.fixedCells = [];
-            this.dataGrid.instance.element().querySelectorAll('.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal')
-                .forEach((grandTotalCell: HTMLTableCellElement, index: number) => {
-                    if (grandTotalCell.parentElement.previousSibling &&
-                        grandTotalCell.getBoundingClientRect().bottom > window.innerHeight
-                    ) {
-                        const cellWidth = grandTotalCell.getBoundingClientRect().width + (index === 0 ? 1 : 0) + 'px';
-                        this.fixedCells.push({
-                            value: grandTotalCell.innerText,
-                            width: cellWidth
-                        });
-                    }
+            let grandtotals = this.dataGrid.instance.element().querySelectorAll(
+                '.dx-scrollable-content > table tbody tr:last-of-type .dx-grandtotal'
+            );
+            if (grandtotals && grandtotals.length) {
+                this.grandTotalCells = [];
+                grandtotals.forEach((grandTotalCell: HTMLTableCellElement, index: number) => {
+                    this.grandTotalCells.push(grandTotalCell.innerText);
                 });
-            this.changeDetectorRef.detectChanges();
+            }
          });
     }
 
