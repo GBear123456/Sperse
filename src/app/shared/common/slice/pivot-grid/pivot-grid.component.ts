@@ -32,7 +32,7 @@ export class PivotGridComponent implements OnInit {
     @Input() dataSource: any;
     @Input() storageKey: string;
     @Input() isLoading = true;
-    @Input() height: number | string = 'auto';
+    @Input() height: any = 'auto';
     @Input() showTotalsPrior: string = 'none';
     @Input() showColumnTotals: boolean = true;
     @Output() onCellPrepared: EventEmitter<any> = new EventEmitter<any>();
