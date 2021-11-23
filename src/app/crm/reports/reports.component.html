@@ -30,9 +30,8 @@
                       [list]="staticListOrganizationUnits$ | async"
                       [hideButtons]="false"
                       [hideApplyForEmpty]="false"
-                      [showCheckBoxesMode]="normal"
-                      [filterModel]="salesOrgUnitFilter"
-                      (onApply)="onSourceOrganizationUnitsApply($event)">
+                      showCheckBoxesMode="normal"
+                      [filterModel]="salesOrgUnitFilter">
 </app-static-tree-view>
 <app-static-list #transactionTypes
                  [width]="'265px'"
