@@ -20,6 +20,7 @@ import { TitleService } from '@shared/common/title/title.service';
 import { RapidLoginComponent } from '@root/account/login/layouts/rapid/rapid-login.component';
 import { HoaLoginComponent } from '@root/account/login/layouts/hoa/hoa-login.component';
 import { SperserLoginComponent } from "@root/account/login/layouts/sperser/sperser-login.component";
+import { GHostLoginComponent } from '@root/account/login/layouts/ghost/ghost-login.component';
 
 @Directive({
     selector: '[ad-login-host]'
@@ -60,6 +61,8 @@ export class LoginComponent implements OnInit {
                 return HoaLoginComponent;
             case LayoutType.Sperser:
                 return SperserLoginComponent;
+            case LayoutType.GhostDrive:
+                return GHostLoginComponent;
             default:
                 return HostLoginComponent;
         }

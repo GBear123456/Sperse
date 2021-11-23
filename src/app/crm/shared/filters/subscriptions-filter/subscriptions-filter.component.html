@@ -1,9 +1,10 @@
 <div class="wrapper">
-    <dx-tabs width="200px"
-             [dataSource]="filterTabs"
-             [(selectedIndex)]="selectedTabIndex">
+    <dx-tabs *ngIf="showFilterTabs"
+        width="200px"
+        [dataSource]="filterTabs"
+        [(selectedIndex)]="selectedTabIndex">
     </dx-tabs>
-    <div class="mode">
+    <div class="mode" [ngClass]="{single: !showFilterTabs}">
         <dx-radio-group [(value)]="items.products.filterMode"
                         valueExpr="value"
                         layout="horizontal"

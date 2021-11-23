@@ -59,6 +59,8 @@ import { HoaResetPasswordComponent } from "@root/account/password/layouts/hoa/ho
 import { HoaForgotPasswordComponent } from "@root/account/password/layouts/hoa/hoa-forgot-password.component";
 import { SperserLayoutComponent } from '@root/account/layouts/sperser/sperser-layout.component';
 import { SperserLoginComponent } from '@root/account/login/layouts/sperser/sperser-login.component';
+import { GHostLayoutComponent } from '@root/account/layouts/ghost/ghost-layout.component';
+import { GHostLoginComponent } from "@root/account/login/layouts/ghost/ghost-login.component";
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
 
@@ -66,8 +68,6 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
 // import { HoaAutoLoginComponent } from "@root/account/auto-login/layouts/hoa/hoa-auto-login.component";
 // import { HoaResetPasswordComponent } from "@root/account/password/layouts/hoa/hoa-reset-password.component";
 // import { HoaForgotPasswordComponent } from "@root/account/password/layouts/hoa/hoa-forgot-password.component";
-
-
 
 @NgModule({
     imports: [
@@ -142,7 +142,10 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
         SperserLoginComponent,
         SperserForgotPasswordComponent,
         SperserResetPasswordComponent,
-        SperserAutoLoginComponent
+        SperserAutoLoginComponent,
+
+        GHostLayoutComponent,
+        GHostLoginComponent
     ],
     entryComponents: [
         HostLayoutComponent,
@@ -182,7 +185,10 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
         SperserLoginComponent,
         SperserForgotPasswordComponent,
         SperserResetPasswordComponent,
-        SperserAutoLoginComponent
+        SperserAutoLoginComponent,
+
+        GHostLayoutComponent,
+        GHostLoginComponent
     ],
     providers: [
         LoginService,

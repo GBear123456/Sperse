@@ -1,5 +1,6 @@
 <div class="wrapper">
-    <dx-tabs width="310px"
+    <dx-tabs *ngIf="showFilterTabs"
+        width="310px"
         [dataSource]="filterTabs"
         [(selectedIndex)]="selectedTabIndex">
     </dx-tabs>

@@ -80622,6 +80622,7 @@ export enum LayoutType {
     Rapid = "Rapid", 
     HOA = "HOA", 
     Sperser = "Sperser", 
+    GhostDrive = "GhostDrive", 
 }
 
 export class FaviconDto implements IFaviconDto {
