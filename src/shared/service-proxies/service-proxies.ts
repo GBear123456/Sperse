@@ -29384,6 +29384,769 @@ export class ProfileServiceProxy {
 }
 
 @Injectable()
+export class ProfileContactServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getContactBase(): Observable<ProfileContactBaseDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfileContact/GetContactBase";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactBase(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactBase(<any>response_);
+                } catch (e) {
+                    return <Observable<ProfileContactBaseDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ProfileContactBaseDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactBase(response: HttpResponseBase): Observable<ProfileContactBaseDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ProfileContactBaseDto.fromJS(resultData200) : new ProfileContactBaseDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ProfileContactBaseDto>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateContactBase(body: ProfileContactBaseDto | null | undefined): Observable<ProfileContactBaseDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfileContact/UpdateContactBase";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateContactBase(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateContactBase(<any>response_);
+                } catch (e) {
+                    return <Observable<ProfileContactBaseDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ProfileContactBaseDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateContactBase(response: HttpResponseBase): Observable<ProfileContactBaseDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ProfileContactBaseDto.fromJS(resultData200) : new ProfileContactBaseDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ProfileContactBaseDto>(<any>null);
+    }
+}
+
+@Injectable()
+export class ProfileLinkServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getLinks(): Observable<LinkDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfileLink/GetLinks";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLinks(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLinks(<any>response_);
+                } catch (e) {
+                    return <Observable<LinkDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<LinkDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetLinks(response: HttpResponseBase): Observable<LinkDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(LinkDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<LinkDto[]>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    createLink(body: CreateLinkInput | null | undefined): Observable<CreateLinkOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfileLink/CreateLink";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateLink(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateLink(<any>response_);
+                } catch (e) {
+                    return <Observable<CreateLinkOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CreateLinkOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateLink(response: HttpResponseBase): Observable<CreateLinkOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateLinkOutput.fromJS(resultData200) : new CreateLinkOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreateLinkOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateLink(body: UpdateLinkInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfileLink/UpdateLink";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateLink(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateLink(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateLink(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    deleteLink(id: number): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfileLink/DeleteLink?";
+        if (id === undefined || id === null)
+            throw new Error("The parameter 'id' must be defined and cannot be null.");
+        else
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteLink(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteLink(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteLink(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateLinks(body: UpdateLinksInput | null | undefined): Observable<LinkDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfileLink/UpdateLinks";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateLinks(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateLinks(<any>response_);
+                } catch (e) {
+                    return <Observable<LinkDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<LinkDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateLinks(response: HttpResponseBase): Observable<LinkDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(LinkDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<LinkDto[]>(<any>null);
+    }
+}
+
+@Injectable()
+export class ProfilePhotoServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getPhotos(): Observable<ProfilePhotoDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePhoto/GetPhotos";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPhotos(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPhotos(<any>response_);
+                } catch (e) {
+                    return <Observable<ProfilePhotoDto[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ProfilePhotoDto[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPhotos(response: HttpResponseBase): Observable<ProfilePhotoDto[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ProfilePhotoDto.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ProfilePhotoDto[]>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    createPhoto(body: ContactPhotoInput | null | undefined): Observable<ProfilePhotoDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePhoto/CreatePhoto";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreatePhoto(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreatePhoto(<any>response_);
+                } catch (e) {
+                    return <Observable<ProfilePhotoDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ProfilePhotoDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreatePhoto(response: HttpResponseBase): Observable<ProfilePhotoDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? ProfilePhotoDto.fromJS(resultData200) : new ProfilePhotoDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ProfilePhotoDto>(<any>null);
+    }
+}
+
+@Injectable()
+export class ProfilePublishServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @name (optional) 
+     * @return Success
+     */
+    getPublicProfileInfo(name: string | null | undefined): Observable<PublishedProfileDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePublish/GetPublicProfileInfo?";
+        if (name !== undefined)
+            url_ += "name=" + encodeURIComponent("" + name) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPublicProfileInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPublicProfileInfo(<any>response_);
+                } catch (e) {
+                    return <Observable<PublishedProfileDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PublishedProfileDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPublicProfileInfo(response: HttpResponseBase): Observable<PublishedProfileDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PublishedProfileDto.fromJS(resultData200) : new PublishedProfileDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PublishedProfileDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getCurrentPublishedProfile(): Observable<PublishedProfileBaseDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePublish/GetCurrentPublishedProfile";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCurrentPublishedProfile(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCurrentPublishedProfile(<any>response_);
+                } catch (e) {
+                    return <Observable<PublishedProfileBaseDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PublishedProfileBaseDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetCurrentPublishedProfile(response: HttpResponseBase): Observable<PublishedProfileBaseDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PublishedProfileBaseDto.fromJS(resultData200) : new PublishedProfileBaseDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PublishedProfileBaseDto>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    checkNameIsAvailable(body: NameInput | null | undefined): Observable<NameIsAvailableDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePublish/CheckNameIsAvailable";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCheckNameIsAvailable(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCheckNameIsAvailable(<any>response_);
+                } catch (e) {
+                    return <Observable<NameIsAvailableDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<NameIsAvailableDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCheckNameIsAvailable(response: HttpResponseBase): Observable<NameIsAvailableDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? NameIsAvailableDto.fromJS(resultData200) : new NameIsAvailableDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<NameIsAvailableDto>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    publishProfile(body: PublishProfileInput | null | undefined): Observable<PublishedProfileBaseDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePublish/PublishProfile";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processPublishProfile(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processPublishProfile(<any>response_);
+                } catch (e) {
+                    return <Observable<PublishedProfileBaseDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<PublishedProfileBaseDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processPublishProfile(response: HttpResponseBase): Observable<PublishedProfileBaseDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? PublishedProfileBaseDto.fromJS(resultData200) : new PublishedProfileBaseDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PublishedProfileBaseDto>(<any>null);
+    }
+}
+
+@Injectable()
 export class PropertyServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -45039,6 +45802,12 @@ export interface ICreateContactPhoneInputWithoutCheck {
 
 export class CreateContactAddressInputWithoutCheck implements ICreateContactAddressInputWithoutCheck {
     contactId!: number | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
+    usageTypeId!: string | undefined;
+    ownershipTypeId!: string | undefined;
     streetAddress!: string | undefined;
     neighborhood!: string | undefined;
     city!: string | undefined;
@@ -45047,13 +45816,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
     zip!: string | undefined;
     countryId!: string | undefined;
     countryName!: string | undefined;
-    startDate!: moment.Moment | undefined;
-    endDate!: moment.Moment | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
-    usageTypeId!: string | undefined;
-    ownershipTypeId!: string | undefined;
 
     constructor(data?: ICreateContactAddressInputWithoutCheck) {
         if (data) {
@@ -45067,6 +45830,12 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.usageTypeId = data["usageTypeId"];
+            this.ownershipTypeId = data["ownershipTypeId"];
             this.streetAddress = data["streetAddress"];
             this.neighborhood = data["neighborhood"];
             this.city = data["city"];
@@ -45075,13 +45844,7 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
             this.zip = data["zip"];
             this.countryId = data["countryId"];
             this.countryName = data["countryName"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
-            this.usageTypeId = data["usageTypeId"];
-            this.ownershipTypeId = data["ownershipTypeId"];
         }
     }
 
@@ -45095,6 +45858,12 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["usageTypeId"] = this.usageTypeId;
+        data["ownershipTypeId"] = this.ownershipTypeId;
         data["streetAddress"] = this.streetAddress;
         data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
@@ -45103,19 +45872,19 @@ export class CreateContactAddressInputWithoutCheck implements ICreateContactAddr
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
         data["countryName"] = this.countryName;
-        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
-        data["usageTypeId"] = this.usageTypeId;
-        data["ownershipTypeId"] = this.ownershipTypeId;
         return data; 
     }
 }
 
 export interface ICreateContactAddressInputWithoutCheck {
     contactId: number | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
+    usageTypeId: string | undefined;
+    ownershipTypeId: string | undefined;
     streetAddress: string | undefined;
     neighborhood: string | undefined;
     city: string | undefined;
@@ -45124,13 +45893,7 @@ export interface ICreateContactAddressInputWithoutCheck {
     zip: string | undefined;
     countryId: string | undefined;
     countryName: string | undefined;
-    startDate: moment.Moment | undefined;
-    endDate: moment.Moment | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
     comment: string | undefined;
-    usageTypeId: string | undefined;
-    ownershipTypeId: string | undefined;
 }
 
 export class CreateOrEditLeadInput implements ICreateOrEditLeadInput {
@@ -52049,6 +52812,7 @@ export interface IContactLinkDto {
 
 export class ContactInfoDetailsDto implements IContactInfoDetailsDto {
     contactId!: number | undefined;
+    publicPersonProfileUrl!: string | undefined;
     emails!: ContactEmailDto[] | undefined;
     phones!: ContactPhoneDto[] | undefined;
     addresses!: ContactAddressDto[] | undefined;
@@ -52066,6 +52830,7 @@ export class ContactInfoDetailsDto implements IContactInfoDetailsDto {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
+            this.publicPersonProfileUrl = data["publicPersonProfileUrl"];
             if (data["emails"] && data["emails"].constructor === Array) {
                 this.emails = [];
                 for (let item of data["emails"])
@@ -52099,6 +52864,7 @@ export class ContactInfoDetailsDto implements IContactInfoDetailsDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["publicPersonProfileUrl"] = this.publicPersonProfileUrl;
         if (this.emails && this.emails.constructor === Array) {
             data["emails"] = [];
             for (let item of this.emails)
@@ -52125,6 +52891,7 @@ export class ContactInfoDetailsDto implements IContactInfoDetailsDto {
 
 export interface IContactInfoDetailsDto {
     contactId: number | undefined;
+    publicPersonProfileUrl: string | undefined;
     emails: ContactEmailDto[] | undefined;
     phones: ContactPhoneDto[] | undefined;
     addresses: ContactAddressDto[] | undefined;
@@ -53543,12 +54310,12 @@ export interface ISubmitQuestionsAndAnswersDtoWithoutCheck {
 
 export class CreateContactLinkInputWithoutCheck implements ICreateContactLinkInputWithoutCheck {
     contactId!: number | undefined;
+    isConfirmed!: boolean | undefined;
+    isCompany!: boolean | undefined;
     url!: string | undefined;
     isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     linkTypeId!: string | undefined;
-    isCompany!: boolean | undefined;
 
     constructor(data?: ICreateContactLinkInputWithoutCheck) {
         if (data) {
@@ -53557,17 +54324,20 @@ export class CreateContactLinkInputWithoutCheck implements ICreateContactLinkInp
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.isActive = true;
+        }
     }
 
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            this.url = data["url"];
-            this.isActive = data["isActive"];
             this.isConfirmed = data["isConfirmed"];
+            this.isCompany = data["isCompany"];
+            this.url = data["url"];
+            this.isActive = data["isActive"] !== undefined ? data["isActive"] : true;
             this.comment = data["comment"];
             this.linkTypeId = data["linkTypeId"];
-            this.isCompany = data["isCompany"];
         }
     }
 
@@ -53581,24 +54351,24 @@ export class CreateContactLinkInputWithoutCheck implements ICreateContactLinkInp
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["isConfirmed"] = this.isConfirmed;
+        data["isCompany"] = this.isCompany;
         data["url"] = this.url;
         data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["linkTypeId"] = this.linkTypeId;
-        data["isCompany"] = this.isCompany;
         return data; 
     }
 }
 
 export interface ICreateContactLinkInputWithoutCheck {
     contactId: number | undefined;
+    isConfirmed: boolean | undefined;
+    isCompany: boolean | undefined;
     url: string | undefined;
     isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
     comment: string | undefined;
     linkTypeId: string | undefined;
-    isCompany: boolean | undefined;
 }
 
 export class ContactPhotoInput implements IContactPhotoInput {
@@ -53783,6 +54553,12 @@ export interface ITrackingInfo {
 
 export class CreateContactAddressInput implements ICreateContactAddressInput {
     contactId!: number | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
+    usageTypeId!: string | undefined;
+    ownershipTypeId!: string | undefined;
     streetAddress!: string | undefined;
     neighborhood!: string | undefined;
     city!: string | undefined;
@@ -53791,13 +54567,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     zip!: string | undefined;
     countryId!: string | undefined;
     countryName!: string | undefined;
-    startDate!: moment.Moment | undefined;
-    endDate!: moment.Moment | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
-    usageTypeId!: string | undefined;
-    ownershipTypeId!: string | undefined;
 
     constructor(data?: ICreateContactAddressInput) {
         if (data) {
@@ -53811,6 +54581,12 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.usageTypeId = data["usageTypeId"];
+            this.ownershipTypeId = data["ownershipTypeId"];
             this.streetAddress = data["streetAddress"];
             this.neighborhood = data["neighborhood"];
             this.city = data["city"];
@@ -53819,13 +54595,7 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
             this.zip = data["zip"];
             this.countryId = data["countryId"];
             this.countryName = data["countryName"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
-            this.usageTypeId = data["usageTypeId"];
-            this.ownershipTypeId = data["ownershipTypeId"];
         }
     }
 
@@ -53839,6 +54609,12 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["usageTypeId"] = this.usageTypeId;
+        data["ownershipTypeId"] = this.ownershipTypeId;
         data["streetAddress"] = this.streetAddress;
         data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
@@ -53847,19 +54623,19 @@ export class CreateContactAddressInput implements ICreateContactAddressInput {
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
         data["countryName"] = this.countryName;
-        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
-        data["usageTypeId"] = this.usageTypeId;
-        data["ownershipTypeId"] = this.ownershipTypeId;
         return data; 
     }
 }
 
 export interface ICreateContactAddressInput {
     contactId: number | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
+    usageTypeId: string | undefined;
+    ownershipTypeId: string | undefined;
     streetAddress: string | undefined;
     neighborhood: string | undefined;
     city: string | undefined;
@@ -53868,13 +54644,7 @@ export interface ICreateContactAddressInput {
     zip: string | undefined;
     countryId: string | undefined;
     countryName: string | undefined;
-    startDate: moment.Moment | undefined;
-    endDate: moment.Moment | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
     comment: string | undefined;
-    usageTypeId: string | undefined;
-    ownershipTypeId: string | undefined;
 }
 
 export class PropertyInput implements IPropertyInput {
@@ -55447,6 +56217,12 @@ export interface ICreateContactAddressOutput {
 export class UpdateContactAddressInput implements IUpdateContactAddressInput {
     id!: number;
     contactId!: number | undefined;
+    startDate!: moment.Moment | undefined;
+    endDate!: moment.Moment | undefined;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
+    usageTypeId!: string | undefined;
+    ownershipTypeId!: string | undefined;
     streetAddress!: string | undefined;
     neighborhood!: string | undefined;
     city!: string | undefined;
@@ -55455,13 +56231,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
     zip!: string | undefined;
     countryId!: string | undefined;
     countryName!: string | undefined;
-    startDate!: moment.Moment | undefined;
-    endDate!: moment.Moment | undefined;
-    isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
-    usageTypeId!: string | undefined;
-    ownershipTypeId!: string | undefined;
 
     constructor(data?: IUpdateContactAddressInput) {
         if (data) {
@@ -55476,6 +56246,12 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
         if (data) {
             this.id = data["id"];
             this.contactId = data["contactId"];
+            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+            this.isActive = data["isActive"];
+            this.isConfirmed = data["isConfirmed"];
+            this.usageTypeId = data["usageTypeId"];
+            this.ownershipTypeId = data["ownershipTypeId"];
             this.streetAddress = data["streetAddress"];
             this.neighborhood = data["neighborhood"];
             this.city = data["city"];
@@ -55484,13 +56260,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
             this.zip = data["zip"];
             this.countryId = data["countryId"];
             this.countryName = data["countryName"];
-            this.startDate = data["startDate"] ? moment(data["startDate"].toString()) : <any>undefined;
-            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
-            this.isActive = data["isActive"];
-            this.isConfirmed = data["isConfirmed"];
             this.comment = data["comment"];
-            this.usageTypeId = data["usageTypeId"];
-            this.ownershipTypeId = data["ownershipTypeId"];
         }
     }
 
@@ -55505,6 +56275,12 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["contactId"] = this.contactId;
+        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
+        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["usageTypeId"] = this.usageTypeId;
+        data["ownershipTypeId"] = this.ownershipTypeId;
         data["streetAddress"] = this.streetAddress;
         data["neighborhood"] = this.neighborhood;
         data["city"] = this.city;
@@ -55513,13 +56289,7 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
         data["zip"] = this.zip;
         data["countryId"] = this.countryId;
         data["countryName"] = this.countryName;
-        data["startDate"] = this.startDate ? this.startDate.format('YYYY-MM-DD') : <any>undefined;
-        data["endDate"] = this.endDate ? this.endDate.format('YYYY-MM-DD') : <any>undefined;
-        data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
-        data["usageTypeId"] = this.usageTypeId;
-        data["ownershipTypeId"] = this.ownershipTypeId;
         return data; 
     }
 }
@@ -55527,6 +56297,12 @@ export class UpdateContactAddressInput implements IUpdateContactAddressInput {
 export interface IUpdateContactAddressInput {
     id: number;
     contactId: number | undefined;
+    startDate: moment.Moment | undefined;
+    endDate: moment.Moment | undefined;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
+    usageTypeId: string | undefined;
+    ownershipTypeId: string | undefined;
     streetAddress: string | undefined;
     neighborhood: string | undefined;
     city: string | undefined;
@@ -55535,13 +56311,7 @@ export interface IUpdateContactAddressInput {
     zip: string | undefined;
     countryId: string | undefined;
     countryName: string | undefined;
-    startDate: moment.Moment | undefined;
-    endDate: moment.Moment | undefined;
-    isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
     comment: string | undefined;
-    usageTypeId: string | undefined;
-    ownershipTypeId: string | undefined;
 }
 
 export class AddressUsageTypeDto implements IAddressUsageTypeDto {
@@ -56770,12 +57540,12 @@ export interface IEmailUsageTypeDtoListResultDto {
 
 export class CreateContactLinkInput implements ICreateContactLinkInput {
     contactId!: number | undefined;
+    isConfirmed!: boolean | undefined;
+    isCompany!: boolean | undefined;
     url!: string | undefined;
     isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     linkTypeId!: string | undefined;
-    isCompany!: boolean | undefined;
 
     constructor(data?: ICreateContactLinkInput) {
         if (data) {
@@ -56784,17 +57554,20 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.isActive = true;
+        }
     }
 
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            this.url = data["url"];
-            this.isActive = data["isActive"];
             this.isConfirmed = data["isConfirmed"];
+            this.isCompany = data["isCompany"];
+            this.url = data["url"];
+            this.isActive = data["isActive"] !== undefined ? data["isActive"] : true;
             this.comment = data["comment"];
             this.linkTypeId = data["linkTypeId"];
-            this.isCompany = data["isCompany"];
         }
     }
 
@@ -56808,24 +57581,24 @@ export class CreateContactLinkInput implements ICreateContactLinkInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["isConfirmed"] = this.isConfirmed;
+        data["isCompany"] = this.isCompany;
         data["url"] = this.url;
         data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["linkTypeId"] = this.linkTypeId;
-        data["isCompany"] = this.isCompany;
         return data; 
     }
 }
 
 export interface ICreateContactLinkInput {
     contactId: number | undefined;
+    isConfirmed: boolean | undefined;
+    isCompany: boolean | undefined;
     url: string | undefined;
     isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
     comment: string | undefined;
     linkTypeId: string | undefined;
-    isCompany: boolean | undefined;
 }
 
 export class CreateContactLinkOutput implements ICreateContactLinkOutput {
@@ -56867,12 +57640,12 @@ export interface ICreateContactLinkOutput {
 export class UpdateContactLinkInput implements IUpdateContactLinkInput {
     id!: number;
     contactId!: number | undefined;
+    isConfirmed!: boolean | undefined;
+    isCompany!: boolean | undefined;
     url!: string | undefined;
     isActive!: boolean | undefined;
-    isConfirmed!: boolean | undefined;
     comment!: string | undefined;
     linkTypeId!: string | undefined;
-    isCompany!: boolean | undefined;
 
     constructor(data?: IUpdateContactLinkInput) {
         if (data) {
@@ -56881,18 +57654,21 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
                     (<any>this)[property] = (<any>data)[property];
             }
         }
+        if (!data) {
+            this.isActive = true;
+        }
     }
 
     init(data?: any) {
         if (data) {
             this.id = data["id"];
             this.contactId = data["contactId"];
-            this.url = data["url"];
-            this.isActive = data["isActive"];
             this.isConfirmed = data["isConfirmed"];
+            this.isCompany = data["isCompany"];
+            this.url = data["url"];
+            this.isActive = data["isActive"] !== undefined ? data["isActive"] : true;
             this.comment = data["comment"];
             this.linkTypeId = data["linkTypeId"];
-            this.isCompany = data["isCompany"];
         }
     }
 
@@ -56907,12 +57683,12 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["contactId"] = this.contactId;
+        data["isConfirmed"] = this.isConfirmed;
+        data["isCompany"] = this.isCompany;
         data["url"] = this.url;
         data["isActive"] = this.isActive;
-        data["isConfirmed"] = this.isConfirmed;
         data["comment"] = this.comment;
         data["linkTypeId"] = this.linkTypeId;
-        data["isCompany"] = this.isCompany;
         return data; 
     }
 }
@@ -56920,12 +57696,12 @@ export class UpdateContactLinkInput implements IUpdateContactLinkInput {
 export interface IUpdateContactLinkInput {
     id: number;
     contactId: number | undefined;
+    isConfirmed: boolean | undefined;
+    isCompany: boolean | undefined;
     url: string | undefined;
     isActive: boolean | undefined;
-    isConfirmed: boolean | undefined;
     comment: string | undefined;
     linkTypeId: string | undefined;
-    isCompany: boolean | undefined;
 }
 
 export class ContactLinkTypeDto implements IContactLinkTypeDto {
@@ -72691,6 +73467,7 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     paymentId!: string | undefined;
     paymentDate!: moment.Moment | undefined;
     authorizationCode!: string | undefined;
+    uniqueId!: number | undefined;
 
     constructor(data?: ISubscriptionPaymentDto) {
         if (data) {
@@ -72716,6 +73493,7 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
             this.paymentId = data["paymentId"];
             this.paymentDate = data["paymentDate"] ? moment(data["paymentDate"].toString()) : <any>undefined;
             this.authorizationCode = data["authorizationCode"];
+            this.uniqueId = data["uniqueId"];
         }
     }
 
@@ -72741,6 +73519,7 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
         data["paymentId"] = this.paymentId;
         data["paymentDate"] = this.paymentDate ? this.paymentDate.toISOString() : <any>undefined;
         data["authorizationCode"] = this.authorizationCode;
+        data["uniqueId"] = this.uniqueId;
         return data; 
     }
 }
@@ -72759,6 +73538,7 @@ export interface ISubscriptionPaymentDto {
     paymentId: string | undefined;
     paymentDate: moment.Moment | undefined;
     authorizationCode: string | undefined;
+    uniqueId: number | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
@@ -77495,6 +78275,1000 @@ export interface IUserEmailSettings {
     signatureHtml: string | undefined;
     from: EmailFromSettings | undefined;
     smtp: EmailSmtpSettings | undefined;
+}
+
+export class ProfileAddressDto implements IProfileAddressDto {
+    id!: number | undefined;
+    countryId!: string | undefined;
+    stateId!: string | undefined;
+    stateName!: string | undefined;
+    city!: string | undefined;
+    streetAddress!: string | undefined;
+    zip!: string | undefined;
+
+    constructor(data?: IProfileAddressDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.countryId = data["countryId"];
+            this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
+            this.city = data["city"];
+            this.streetAddress = data["streetAddress"];
+            this.zip = data["zip"];
+        }
+    }
+
+    static fromJS(data: any): ProfileAddressDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfileAddressDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["countryId"] = this.countryId;
+        data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
+        data["city"] = this.city;
+        data["streetAddress"] = this.streetAddress;
+        data["zip"] = this.zip;
+        return data; 
+    }
+}
+
+export interface IProfileAddressDto {
+    id: number | undefined;
+    countryId: string | undefined;
+    stateId: string | undefined;
+    stateName: string | undefined;
+    city: string | undefined;
+    streetAddress: string | undefined;
+    zip: string | undefined;
+}
+
+export class ProfilePhoneDto implements IProfilePhoneDto {
+    id!: number | undefined;
+    isActive!: boolean | undefined;
+    isConfirmed!: boolean | undefined;
+    phoneNumber!: string | undefined;
+    phoneExtension!: string | undefined;
+    comment!: string | undefined;
+    usageTypeId!: string | undefined;
+
+    constructor(data?: IProfilePhoneDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.isActive = true;
+            this.isConfirmed = true;
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.isActive = data["isActive"] !== undefined ? data["isActive"] : true;
+            this.isConfirmed = data["isConfirmed"] !== undefined ? data["isConfirmed"] : true;
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.comment = data["comment"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): ProfilePhoneDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfilePhoneDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["isActive"] = this.isActive;
+        data["isConfirmed"] = this.isConfirmed;
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["comment"] = this.comment;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface IProfilePhoneDto {
+    id: number | undefined;
+    isActive: boolean | undefined;
+    isConfirmed: boolean | undefined;
+    phoneNumber: string | undefined;
+    phoneExtension: string | undefined;
+    comment: string | undefined;
+    usageTypeId: string | undefined;
+}
+
+export class ProfileContactBaseDto implements IProfileContactBaseDto {
+    address!: ProfileAddressDto | undefined;
+    primaryPhone!: ProfilePhoneDto | undefined;
+    mobilePhone!: ProfilePhoneDto | undefined;
+
+    constructor(data?: IProfileContactBaseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.address = data["address"] ? ProfileAddressDto.fromJS(data["address"]) : <any>undefined;
+            this.primaryPhone = data["primaryPhone"] ? ProfilePhoneDto.fromJS(data["primaryPhone"]) : <any>undefined;
+            this.mobilePhone = data["mobilePhone"] ? ProfilePhoneDto.fromJS(data["mobilePhone"]) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): ProfileContactBaseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfileContactBaseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["address"] = this.address ? this.address.toJSON() : <any>undefined;
+        data["primaryPhone"] = this.primaryPhone ? this.primaryPhone.toJSON() : <any>undefined;
+        data["mobilePhone"] = this.mobilePhone ? this.mobilePhone.toJSON() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IProfileContactBaseDto {
+    address: ProfileAddressDto | undefined;
+    primaryPhone: ProfilePhoneDto | undefined;
+    mobilePhone: ProfilePhoneDto | undefined;
+}
+
+export class LinkDto implements ILinkDto {
+    id!: number | undefined;
+    linkTypeId!: string | undefined;
+    url!: string | undefined;
+    isActive!: boolean | undefined;
+    comment!: string | undefined;
+
+    constructor(data?: ILinkDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.linkTypeId = data["linkTypeId"];
+            this.url = data["url"];
+            this.isActive = data["isActive"];
+            this.comment = data["comment"];
+        }
+    }
+
+    static fromJS(data: any): LinkDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new LinkDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["linkTypeId"] = this.linkTypeId;
+        data["url"] = this.url;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        return data; 
+    }
+}
+
+export interface ILinkDto {
+    id: number | undefined;
+    linkTypeId: string | undefined;
+    url: string | undefined;
+    isActive: boolean | undefined;
+    comment: string | undefined;
+}
+
+export class CreateLinkInput implements ICreateLinkInput {
+    url!: string | undefined;
+    isActive!: boolean | undefined;
+    comment!: string | undefined;
+    linkTypeId!: string | undefined;
+
+    constructor(data?: ICreateLinkInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.isActive = true;
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.url = data["url"];
+            this.isActive = data["isActive"] !== undefined ? data["isActive"] : true;
+            this.comment = data["comment"];
+            this.linkTypeId = data["linkTypeId"];
+        }
+    }
+
+    static fromJS(data: any): CreateLinkInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateLinkInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["url"] = this.url;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["linkTypeId"] = this.linkTypeId;
+        return data; 
+    }
+}
+
+export interface ICreateLinkInput {
+    url: string | undefined;
+    isActive: boolean | undefined;
+    comment: string | undefined;
+    linkTypeId: string | undefined;
+}
+
+export class CreateLinkOutput implements ICreateLinkOutput {
+    id!: number | undefined;
+
+    constructor(data?: ICreateLinkOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+        }
+    }
+
+    static fromJS(data: any): CreateLinkOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateLinkOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        return data; 
+    }
+}
+
+export interface ICreateLinkOutput {
+    id: number | undefined;
+}
+
+export class UpdateLinkInput implements IUpdateLinkInput {
+    id!: number;
+    url!: string | undefined;
+    isActive!: boolean | undefined;
+    comment!: string | undefined;
+    linkTypeId!: string | undefined;
+
+    constructor(data?: IUpdateLinkInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.isActive = true;
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.url = data["url"];
+            this.isActive = data["isActive"] !== undefined ? data["isActive"] : true;
+            this.comment = data["comment"];
+            this.linkTypeId = data["linkTypeId"];
+        }
+    }
+
+    static fromJS(data: any): UpdateLinkInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLinkInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["url"] = this.url;
+        data["isActive"] = this.isActive;
+        data["comment"] = this.comment;
+        data["linkTypeId"] = this.linkTypeId;
+        return data; 
+    }
+}
+
+export interface IUpdateLinkInput {
+    id: number;
+    url: string | undefined;
+    isActive: boolean | undefined;
+    comment: string | undefined;
+    linkTypeId: string | undefined;
+}
+
+export class UpdateLinksInput implements IUpdateLinksInput {
+    createLinks!: CreateLinkInput[] | undefined;
+    updateLinks!: UpdateLinkInput[] | undefined;
+    deleteLinks!: number[] | undefined;
+
+    constructor(data?: IUpdateLinksInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["createLinks"] && data["createLinks"].constructor === Array) {
+                this.createLinks = [];
+                for (let item of data["createLinks"])
+                    this.createLinks.push(CreateLinkInput.fromJS(item));
+            }
+            if (data["updateLinks"] && data["updateLinks"].constructor === Array) {
+                this.updateLinks = [];
+                for (let item of data["updateLinks"])
+                    this.updateLinks.push(UpdateLinkInput.fromJS(item));
+            }
+            if (data["deleteLinks"] && data["deleteLinks"].constructor === Array) {
+                this.deleteLinks = [];
+                for (let item of data["deleteLinks"])
+                    this.deleteLinks.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateLinksInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLinksInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.createLinks && this.createLinks.constructor === Array) {
+            data["createLinks"] = [];
+            for (let item of this.createLinks)
+                data["createLinks"].push(item.toJSON());
+        }
+        if (this.updateLinks && this.updateLinks.constructor === Array) {
+            data["updateLinks"] = [];
+            for (let item of this.updateLinks)
+                data["updateLinks"].push(item.toJSON());
+        }
+        if (this.deleteLinks && this.deleteLinks.constructor === Array) {
+            data["deleteLinks"] = [];
+            for (let item of this.deleteLinks)
+                data["deleteLinks"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IUpdateLinksInput {
+    createLinks: CreateLinkInput[] | undefined;
+    updateLinks: UpdateLinkInput[] | undefined;
+    deleteLinks: number[] | undefined;
+}
+
+export class ProfilePhotoDto implements IProfilePhotoDto {
+    id!: number | undefined;
+    publicId!: string | undefined;
+    isPublished!: boolean | undefined;
+
+    constructor(data?: IProfilePhotoDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.publicId = data["publicId"];
+            this.isPublished = data["isPublished"];
+        }
+    }
+
+    static fromJS(data: any): ProfilePhotoDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfilePhotoDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["publicId"] = this.publicId;
+        data["isPublished"] = this.isPublished;
+        return data; 
+    }
+}
+
+export interface IProfilePhotoDto {
+    id: number | undefined;
+    publicId: string | undefined;
+    isPublished: boolean | undefined;
+}
+
+export class ProfileEmail implements IProfileEmail {
+    emailAddress!: string | undefined;
+    usageTypeId!: string | undefined;
+
+    constructor(data?: IProfileEmail) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.emailAddress = data["emailAddress"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): ProfileEmail {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfileEmail();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailAddress"] = this.emailAddress;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface IProfileEmail {
+    emailAddress: string | undefined;
+    usageTypeId: string | undefined;
+}
+
+export class ProfileAddress implements IProfileAddress {
+    streetAddress!: string | undefined;
+    city!: string | undefined;
+    stateId!: string | undefined;
+    stateName!: string | undefined;
+    zip!: string | undefined;
+    countryId!: string | undefined;
+
+    constructor(data?: IProfileAddress) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.streetAddress = data["streetAddress"];
+            this.city = data["city"];
+            this.stateId = data["stateId"];
+            this.stateName = data["stateName"];
+            this.zip = data["zip"];
+            this.countryId = data["countryId"];
+        }
+    }
+
+    static fromJS(data: any): ProfileAddress {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfileAddress();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["streetAddress"] = this.streetAddress;
+        data["city"] = this.city;
+        data["stateId"] = this.stateId;
+        data["stateName"] = this.stateName;
+        data["zip"] = this.zip;
+        data["countryId"] = this.countryId;
+        return data; 
+    }
+}
+
+export interface IProfileAddress {
+    streetAddress: string | undefined;
+    city: string | undefined;
+    stateId: string | undefined;
+    stateName: string | undefined;
+    zip: string | undefined;
+    countryId: string | undefined;
+}
+
+export class ProfilePhone implements IProfilePhone {
+    phoneNumber!: string | undefined;
+    phoneExtension!: string | undefined;
+    usageTypeId!: string | undefined;
+
+    constructor(data?: IProfilePhone) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.phoneNumber = data["phoneNumber"];
+            this.phoneExtension = data["phoneExtension"];
+            this.usageTypeId = data["usageTypeId"];
+        }
+    }
+
+    static fromJS(data: any): ProfilePhone {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfilePhone();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["phoneNumber"] = this.phoneNumber;
+        data["phoneExtension"] = this.phoneExtension;
+        data["usageTypeId"] = this.usageTypeId;
+        return data; 
+    }
+}
+
+export interface IProfilePhone {
+    phoneNumber: string | undefined;
+    phoneExtension: string | undefined;
+    usageTypeId: string | undefined;
+}
+
+export class ProfileLink implements IProfileLink {
+    linkTypeId!: string | undefined;
+    url!: string | undefined;
+
+    constructor(data?: IProfileLink) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.linkTypeId = data["linkTypeId"];
+            this.url = data["url"];
+        }
+    }
+
+    static fromJS(data: any): ProfileLink {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfileLink();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["linkTypeId"] = this.linkTypeId;
+        data["url"] = this.url;
+        return data; 
+    }
+}
+
+export interface IProfileLink {
+    linkTypeId: string | undefined;
+    url: string | undefined;
+}
+
+export class ProfilePhoto implements IProfilePhoto {
+    publicId!: string | undefined;
+
+    constructor(data?: IProfilePhoto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.publicId = data["publicId"];
+        }
+    }
+
+    static fromJS(data: any): ProfilePhoto {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProfilePhoto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["publicId"] = this.publicId;
+        return data; 
+    }
+}
+
+export interface IProfilePhoto {
+    publicId: string | undefined;
+}
+
+export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
+    fullName!: string | undefined;
+    email!: string | undefined;
+    emails!: ProfileEmail[] | undefined;
+    addresses!: ProfileAddress[] | undefined;
+    phones!: ProfilePhone[] | undefined;
+    links!: ProfileLink[] | undefined;
+    photos!: ProfilePhoto[] | undefined;
+
+    constructor(data?: IPublishedPersonProfileInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.fullName = data["fullName"];
+            this.email = data["email"];
+            if (data["emails"] && data["emails"].constructor === Array) {
+                this.emails = [];
+                for (let item of data["emails"])
+                    this.emails.push(ProfileEmail.fromJS(item));
+            }
+            if (data["addresses"] && data["addresses"].constructor === Array) {
+                this.addresses = [];
+                for (let item of data["addresses"])
+                    this.addresses.push(ProfileAddress.fromJS(item));
+            }
+            if (data["phones"] && data["phones"].constructor === Array) {
+                this.phones = [];
+                for (let item of data["phones"])
+                    this.phones.push(ProfilePhone.fromJS(item));
+            }
+            if (data["links"] && data["links"].constructor === Array) {
+                this.links = [];
+                for (let item of data["links"])
+                    this.links.push(ProfileLink.fromJS(item));
+            }
+            if (data["photos"] && data["photos"].constructor === Array) {
+                this.photos = [];
+                for (let item of data["photos"])
+                    this.photos.push(ProfilePhoto.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): PublishedPersonProfileInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublishedPersonProfileInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fullName"] = this.fullName;
+        data["email"] = this.email;
+        if (this.emails && this.emails.constructor === Array) {
+            data["emails"] = [];
+            for (let item of this.emails)
+                data["emails"].push(item.toJSON());
+        }
+        if (this.addresses && this.addresses.constructor === Array) {
+            data["addresses"] = [];
+            for (let item of this.addresses)
+                data["addresses"].push(item.toJSON());
+        }
+        if (this.phones && this.phones.constructor === Array) {
+            data["phones"] = [];
+            for (let item of this.phones)
+                data["phones"].push(item.toJSON());
+        }
+        if (this.links && this.links.constructor === Array) {
+            data["links"] = [];
+            for (let item of this.links)
+                data["links"].push(item.toJSON());
+        }
+        if (this.photos && this.photos.constructor === Array) {
+            data["photos"] = [];
+            for (let item of this.photos)
+                data["photos"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IPublishedPersonProfileInfo {
+    fullName: string | undefined;
+    email: string | undefined;
+    emails: ProfileEmail[] | undefined;
+    addresses: ProfileAddress[] | undefined;
+    phones: ProfilePhone[] | undefined;
+    links: ProfileLink[] | undefined;
+    photos: ProfilePhoto[] | undefined;
+}
+
+export class PublishedProfileDto implements IPublishedProfileDto {
+    data!: PublishedPersonProfileInfo | undefined;
+    name!: string | undefined;
+
+    constructor(data?: IPublishedProfileDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.data = data["data"] ? PublishedPersonProfileInfo.fromJS(data["data"]) : <any>undefined;
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): PublishedProfileDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublishedProfileDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["data"] = this.data ? this.data.toJSON() : <any>undefined;
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IPublishedProfileDto {
+    data: PublishedPersonProfileInfo | undefined;
+    name: string | undefined;
+}
+
+export class PublishedProfileBaseDto implements IPublishedProfileBaseDto {
+    name!: string | undefined;
+
+    constructor(data?: IPublishedProfileBaseDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): PublishedProfileBaseDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublishedProfileBaseDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IPublishedProfileBaseDto {
+    name: string | undefined;
+}
+
+export class NameInput implements INameInput {
+    name!: string;
+
+    constructor(data?: INameInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): NameInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new NameInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface INameInput {
+    name: string;
+}
+
+export class NameIsAvailableDto implements INameIsAvailableDto {
+    name!: string | undefined;
+    isAvailable!: boolean | undefined;
+
+    constructor(data?: INameIsAvailableDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.isAvailable = data["isAvailable"];
+        }
+    }
+
+    static fromJS(data: any): NameIsAvailableDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new NameIsAvailableDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["isAvailable"] = this.isAvailable;
+        return data; 
+    }
+}
+
+export interface INameIsAvailableDto {
+    name: string | undefined;
+    isAvailable: boolean | undefined;
+}
+
+export class PublishProfileInput implements IPublishProfileInput {
+    fullUrl!: string | undefined;
+    photoIds!: number[] | undefined;
+    name!: string;
+
+    constructor(data?: IPublishProfileInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.fullUrl = data["fullUrl"];
+            if (data["photoIds"] && data["photoIds"].constructor === Array) {
+                this.photoIds = [];
+                for (let item of data["photoIds"])
+                    this.photoIds.push(item);
+            }
+            this.name = data["name"];
+        }
+    }
+
+    static fromJS(data: any): PublishProfileInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new PublishProfileInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fullUrl"] = this.fullUrl;
+        if (this.photoIds && this.photoIds.constructor === Array) {
+            data["photoIds"] = [];
+            for (let item of this.photoIds)
+                data["photoIds"].push(item);
+        }
+        data["name"] = this.name;
+        return data; 
+    }
+}
+
+export interface IPublishProfileInput {
+    fullUrl: string | undefined;
+    photoIds: number[] | undefined;
+    name: string;
 }
 
 export class PropertyLinkDto implements IPropertyLinkDto {
