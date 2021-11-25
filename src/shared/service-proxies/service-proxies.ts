@@ -72691,6 +72691,7 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     paymentId!: string | undefined;
     paymentDate!: moment.Moment | undefined;
     authorizationCode!: string | undefined;
+    uniqueId!: number | undefined;
 
     constructor(data?: ISubscriptionPaymentDto) {
         if (data) {
@@ -72716,6 +72717,7 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
             this.paymentId = data["paymentId"];
             this.paymentDate = data["paymentDate"] ? moment(data["paymentDate"].toString()) : <any>undefined;
             this.authorizationCode = data["authorizationCode"];
+            this.uniqueId = data["uniqueId"];
         }
     }
 
@@ -72741,6 +72743,7 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
         data["paymentId"] = this.paymentId;
         data["paymentDate"] = this.paymentDate ? this.paymentDate.toISOString() : <any>undefined;
         data["authorizationCode"] = this.authorizationCode;
+        data["uniqueId"] = this.uniqueId;
         return data; 
     }
 }
@@ -72759,6 +72762,7 @@ export interface ISubscriptionPaymentDto {
     paymentId: string | undefined;
     paymentDate: moment.Moment | undefined;
     authorizationCode: string | undefined;
+    uniqueId: number | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
@@ -80393,6 +80397,7 @@ export enum LayoutType {
     Rapid = "Rapid", 
     HOA = "HOA", 
     Sperser = "Sperser", 
+    GhostDrive = "GhostDrive", 
 }
 
 export class FaviconDto implements IFaviconDto {
