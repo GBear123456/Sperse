@@ -80393,7 +80393,6 @@ export enum LayoutType {
     Rapid = "Rapid", 
     HOA = "HOA", 
     Sperser = "Sperser", 
-    GhostDrive = "GhostDrive", 
 }
 
 export class FaviconDto implements IFaviconDto {
@@ -84103,6 +84102,7 @@ export interface IRequestPaymentResult {
 
 export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     module!: ModuleType | undefined;
+    statusId!: string | undefined;
     endDate!: moment.Moment | undefined;
     editionName!: string | undefined;
     isTrial!: boolean | undefined;
@@ -84123,6 +84123,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     init(data?: any) {
         if (data) {
             this.module = data["module"];
+            this.statusId = data["statusId"];
             this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
             this.editionName = data["editionName"];
             this.isTrial = data["isTrial"];
@@ -84143,6 +84144,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["module"] = this.module;
+        data["statusId"] = this.statusId;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["editionName"] = this.editionName;
         data["isTrial"] = this.isTrial;
@@ -84156,6 +84158,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
 
 export interface IModuleSubscriptionInfoDto {
     module: ModuleType | undefined;
+    statusId: string | undefined;
     endDate: moment.Moment | undefined;
     editionName: string | undefined;
     isTrial: boolean | undefined;
