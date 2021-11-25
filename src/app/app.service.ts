@@ -4,7 +4,7 @@ import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
 import { Subject, Observable } from 'rxjs';
-import { publishReplay, refCount, map } from 'rxjs/operators';
+import { publishReplay, refCount, map, first } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore' ;
 
@@ -207,7 +207,12 @@ export class AppService extends AppServiceBase {
 
     loadModuleSubscriptions() {
         this.moduleSubscriptions$ = this.tenantSubscriptionProxy.getModuleSubscriptions()
-            .pipe(publishReplay(), refCount());
+            .pipe(map(subs => {
+                if (subs.every(sub => sub.statusId == 'C'))
+                    return subs.filter(sub => sub.isUpgradable);
+                else
+                    return subs.filter(sub => sub.statusId != 'C');
+            }), publishReplay(), refCount());
         this.moduleSubscriptions$.subscribe((res: ModuleSubscriptionInfoDto[]) => {
             this.moduleSubscriptions = res.sort((left: ModuleSubscriptionInfoDto, right: ModuleSubscriptionInfoDto) => {
                 return left.endDate > right.endDate ? -1 : 1;
@@ -217,6 +222,19 @@ export class AppService extends AppServiceBase {
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
             map(subscriptions => this.checkSubscriptionIsFree(null, subscriptions))
         );
+    }
+
+    checkAllSubscriptionsExpired() {
+        this.moduleSubscriptions$.pipe(first()).subscribe((subs: ModuleSubscriptionInfoDto[]) => {
+            if (!subs.filter(sub => sub.isUpgradable).some(sub => this.hasModuleSubscription(sub.module))) {
+                if (!subs.length || subs.some(sub => sub.module == ModuleType.CFO_CRM))
+                    this.expiredModule.next(ModuleType.CFO_CRM);
+                else if (subs.some(sub => sub.module.includes(ModuleType.CRM)))
+                    this.expiredModule.next(ModuleType.CRM);
+                else if (subs.some(sub => sub.module.includes(ModuleType.CFO)))
+                    this.expiredModule.next(ModuleType.CFO);
+            }
+        });
     }
 
     getModuleSubscription(name?: string, moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions): ModuleSubscriptionInfoDto {
@@ -321,6 +339,10 @@ export class AppService extends AppServiceBase {
     hasModuleSubscription(name?: string) {
         name = (name || this.getModule()).toUpperCase();
         let module = this.getModuleSubscription(name);
+
+        if (module && module.statusId == 'C')
+            return false;
+
         return this.isHostTenant || !module || !module.endDate ||
             this.hasRecurringBilling(module) || (module.endDate > moment().utc());
     }
