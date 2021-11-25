@@ -13,8 +13,8 @@ import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { Observable } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
+import { Observable, of, zip } from 'rxjs';
+import { map, filter, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -31,7 +31,8 @@ import {
     UpdateProductInput,
     RecurringPaymentFrequency,
     ProductSubscriptionOptionInfo,
-    ProductMeasurementUnit
+    ProductMeasurementUnit,
+    SetProductImageInput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from '@abp/notify/notify.service';
@@ -41,6 +42,10 @@ import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/ad
 import { AppFeatures } from '@shared/AppFeatures';
 import { SettingService } from 'abp-ng2-module/dist/src/settings/setting.service';
 import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
+import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
+import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
+import { StringHelper } from '@shared/helpers/StringHelper';
 
 @Component({
     selector: 'add-product-dialog',
@@ -78,6 +83,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     isCommissionsEnabled = this.feature.isEnabled(AppFeatures.CRMCommissions);
     title: string;
     isReadOnly = true;
+    image: string = null;
+    imageChanged: boolean = false;
 
     constructor(
         private elementRef: ElementRef,
@@ -104,6 +111,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         this.isReadOnly = !!data.isReadOnly;
         this.title = ls.l(this.isReadOnly ? 'Product' : data.product ? 'EditProduct' : 'AddProduct');
         if (data.product && data.product.id) {
+            this.image = data.product.imageUrl;
             this.product = new UpdateProductInput(data.product);
         } else {
             this.product = new CreateProductInput(data.product);
@@ -179,13 +187,18 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                         item.trialDayCount = 0;
                 });
 
-            if (this.product instanceof UpdateProductInput)
-                this.productProxy.updateProduct(this.product).subscribe(() => {
+            if (this.product instanceof UpdateProductInput) {
+                this.productProxy.updateProduct(this.product).pipe(
+                    switchMap(() => this.getUpdateProductImageObservable((<any>this.product).id))
+                ).subscribe(() => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
                     this.dialogRef.close();
                 });
-            else
-                this.productProxy.createProduct(this.product).subscribe(res => {
+            }
+            else {
+                this.productProxy.createProduct(this.product).pipe(
+                    switchMap((res) => zip(of(res), this.getUpdateProductImageObservable(res.productId)))
+                ).subscribe(([res,]) => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
                     this.dialogRef.close(new ProductDto({
                         id: res.productId,
@@ -195,7 +208,15 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                             this.product.productSubscriptionOptions.map(item => item.frequency)
                     }));
                 });
+            }
         }
+    }
+
+    getUpdateProductImageObservable(productId: number) {
+        return this.imageChanged ? this.productProxy.setProductImage(new SetProductImageInput({
+            image: this.image,
+            productId: productId
+        })) : of(null);
     }
 
     close() {
@@ -326,6 +347,37 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             return option.frequency == RecurringPaymentFrequency.LifeTime
                 || event.value && event.value > 0;
         };
+    }
+
+    getProductImage(showDefault: boolean) {
+        if (this.image) {
+            if (this.imageChanged)
+                return 'data:image/jpeg;base64,' + this.image;
+            else
+                return this.image;
+        }
+        return showDefault ?  './assets/common/images/product.png' : null;
+    }
+
+    openImageSelector() {
+        if (this.isReadOnly)
+            return;
+
+        const uploadPhotoData: UploadPhotoData = {
+            source: this.getProductImage(false),
+            maxSizeBytes: 1048576,
+            title: this.ls.l('AddProductImage')
+        };
+        this.dialog.open(UploadPhotoDialogComponent, {
+            data: uploadPhotoData,
+            hasBackdrop: true
+        }).afterClosed().subscribe((result: UploadPhotoResult) => {
+            if (result) {
+                this.imageChanged = true;
+                this.image = result.origImage ? StringHelper.getBase64(result.origImage) : null;
+                this.detectChanges();
+            }
+        });
     }
 
     detectChanges() {

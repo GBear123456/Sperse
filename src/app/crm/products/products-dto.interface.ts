@@ -7,4 +7,5 @@ export interface ProductDto {
     Type: string;
     Price: number;
     Unit: string;
+    ThumbnailUrl: string;
 }
