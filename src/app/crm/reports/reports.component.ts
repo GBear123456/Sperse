@@ -953,13 +953,13 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
 
     onSalesReportCellPrepared(event) {
         let data = event.component.getDataSource().getData();
-        if (!data.rows.length)
+        if (!data.rows.length || (event.columnIndex && !data.columns[event.columnIndex - 1]))
             return ;
 
         let dataIndex = this.showAmount ? 1 : 0,
             columnIndex = event.columnIndex ? 
-            data.columns[event.columnIndex - 1].index : 
-            data.grandTotalColumnIndex;
+                data.columns[event.columnIndex - 1].index : 
+                data.grandTotalColumnIndex;
 
         if (event.area == 'column' && event.rowIndex) {            
             this.appendSparkLineChart(event, data.rows.map(row => {
