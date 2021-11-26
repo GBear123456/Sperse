@@ -226,6 +226,7 @@
                 }*/
 
                 dx-text-box,
+                dx-number-box,
                 dx-select-box {
                     padding: 0 7px;
                 }
@@ -429,7 +430,8 @@
             }
 
             dx-text-box[name="description"],
-            dx-date-box, dx-drop-down-box {
+            dx-date-box, dx-number-box, 
+            dx-drop-down-box {
                 height: 34px !important;
 
                 input {
@@ -458,14 +460,16 @@
                 padding-right: 10px;
                 vertical-align: top;
             }
-            dx-text-box, dx-text-area, .dx-selectbox {
+            dx-text-box, dx-number-box, 
+            dx-text-area, .dx-selectbox {
                 &.dx-state-focused {
                     .dx-placeholder {
                         top: -30px;
                     }
                 }
             }
-            dx-text-box, dx-text-area, dx-select-box,
+            dx-text-box, dx-number-box, 
+            dx-text-area, dx-select-box,
             dx-drop-down-box, dx-date-box {
                 display: inline-block;
 
@@ -591,7 +595,9 @@
             }
             tr:nth-child(odd) td {
                 background: rgba(243, 247, 250, 0.7);
-                ::ng-deep dx-text-box, ::ng-deep .dx-selectbox {
+                ::ng-deep dx-text-box, 
+                ::ng-deep dx-number-box,
+                ::ng-deep .dx-selectbox {
                     &, input {
                         background: transparent;
                     }
