@@ -66,6 +66,8 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
                 });
             poolRequest.httpSubscriber.unsubscribe();
             poolRequest.subject.complete();
+
+            this._poolRequests[key] = poolRequest;
         }
 
         return poolRequest.subject = this.interceptInternal(request, next);
@@ -76,11 +78,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
             interceptObservable = new Subject<HttpEvent<any>>(),
             modifiedRequest = this.normalizeRequestHeaders(request);
 
-        let poolRequest = this._poolRequests[key];
-        if (!poolRequest)
-            poolRequest = this._poolRequests[key] = { request };
-
-        poolRequest.httpSubscriber = next.handle(modifiedRequest)
+        this._poolRequests[key].httpSubscriber = next.handle(modifiedRequest)
             .pipe(finalize(() => delete this._poolRequests[key]))
             .subscribe(
                 (event: HttpEvent<any>) => this.handleSuccessResponse(event, interceptObservable),
