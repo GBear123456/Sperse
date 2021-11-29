@@ -11,7 +11,7 @@
                [showBorders]="true"
                [scrolling]="{useNative:true}"
                (onCellPrepared)="onGridCellPrepared($event)"
-               (onContentReady)="onContentReady()"
+               (onContentReady)="onGridContentReady($event)"
                (onContextMenuPreparing)="prepareContextMenu($event)">
     <dxo-field-chooser [enabled]="false"></dxo-field-chooser>
     <dxo-field-panel [visible]="true"></dxo-field-panel>

@@ -164,10 +164,12 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.appSessionService.tenantId,
         this.appSessionService.userId
     ].join('_');
+    salesReportGrandTotal = 0;
     salesReportDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
             this.totalCount = undefined;
+            this.salesReportGrandTotal = 0;
             return this.crmService.loadSlicePivotGridData(
                 this.oDataService.getODataUrl(
                     this.salesReportDataSourceURI
@@ -267,7 +269,13 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             }
         ]
     };
-    transactionTypes$ = this.paymentService.getTransactionTypes().pipe(map(types => types.map(v => ({ id: v, name: v }))));
+    transactionTypes$ = this.paymentService.getTransactionTypes().pipe(
+        map(types => {
+            return types.sort((prev, next) => {
+                return prev == 'Sale' ? -1 : prev.localeCompare(next);
+            }).map(v => ({ id: v, name: v }))
+        })
+    );
     selectedTransactionTypes: string[] = [];
     paymentProviders$ = this.paymentService.getPaymentProviders().pipe(
         map(providers => {
@@ -570,7 +578,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                         action: this.toggleSourceOrganizationUnits.bind(this),
                         visible: this.selectedReportType == ReportType.SalesReport,
                         options: {
-                            text: this.ls.l('Owner'),
+                            text: this.ls.l('Organization'),
                             icon: './assets/common/icons/folder.svg',
                             accessKey: 'SourceOrganizationUnits'
                         },
@@ -583,7 +591,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                         action: this.toggleTransactionTypes.bind(this),
                         visible: this.selectedReportType == ReportType.SalesReport,
                         options: {
-                            text: this.ls.l('Types'),
+                            text: this.ls.l('Type'),
                             icon: './assets/common/icons/folder.svg',
                             accessKey: 'TransactionTypes'
                         },
@@ -951,6 +959,15 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             this.salesReportComponent.dataGrid.instance.getDataSource().filter(filter);
     }
 
+    onSalesReportContentReady(event) {
+        let element = event.component.element().getElementsByClassName('dx-pivotgrid-toolbar')[0],
+            header = event.component.element().getElementsByClassName('dx-pivotgrid-horizontal-headers')[0];
+        element.addEventListener('click', () => {
+            element.classList.toggle('collapsed');
+            header.classList.toggle('collapsed');
+        });
+    }
+
     onSalesReportCellPrepared(event) {
         let data = event.component.getDataSource().getData();
         if (!data.rows.length || (event.columnIndex && !data.columns[event.columnIndex - 1]))
@@ -980,10 +997,12 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
 
     appendSparkLineChart(event, data, path?) {
-        if (data.length) {
-            let chartKey = 'chartGrandTotal' + event.columnIndex + (path ? path.join('_') : '');
+        if (data.length) {            
+            let chartKey = 'chartTotal' + event.columnIndex + (path ? path.join('_') : '');
             setTimeout(() => {
-                this.initSparkLineChart(chartKey, data, event.columnIndex);
+                if (!path && !this.salesReportGrandTotal)
+                    this.salesReportGrandTotal = Math.max.apply(Math.max, data);
+                this.initSparkLineChart(chartKey, data, event.columnIndex, !path);
                 event.cellElement.appendChild(this.sparkLineCharts[chartKey].element);
             }, 100);
 
@@ -994,7 +1013,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         }
     }
 
-    initSparkLineChart(chartKey, data, index) {
+    initSparkLineChart(chartKey, data, index, isGrandTotal) {
         if (this.sparkLineCharts[chartKey]) {
             let chart = this.sparkLineCharts[chartKey].handler;
             chart.data.labels = chart.data.datasets[0].data = data;
@@ -1002,7 +1021,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         } else {
             let divWrapper: any = document.createElement('div'),
                 canvasElement: any = document.createElement('canvas'),
-                colors = ['purple', 'fuchsia', 'green', 'red', 'yellow', 'blue', 'aqua', 'olive', 'navy', 'maroon', 'gray', 'brown', 'blueviolet', 'silver'];
+                colors = ['#402bb2', '#ac5fcf', '#ba2d31', '#267343', '#135387', '#00aeef', '#fa9224', '#d91b5f', '#3bb26c', '#b29d2b', '#b24f2b', '#83b22b', '#b22b9d', '#c1bcd9', '#1855c7'];
             canvasElement.id = chartKey;
             divWrapper.style.maxWidth = '80px';
             divWrapper.style.height = '40px';
@@ -1020,7 +1039,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                             borderColor: '#def9f3',
                             backgroundColor: colors[index],
                             data: data,
-                            borderWidth: 1
+                            borderWidth: 0
                         }]
                     },
                     options: {
@@ -1042,7 +1061,13 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                             }],
                             yAxes: [{
                                 display: false,
-                                stacked: true
+                                stacked: true,
+                                ticks: {
+                                    beginAtZero: true,
+                                    suggestedMin: 0,
+                                    suggestedMax: isGrandTotal && data.length == 1
+                                        ? this.salesReportGrandTotal : Math.max.apply(Math.max, data)
+                                }
                             }]
                         },
                         layout: {
