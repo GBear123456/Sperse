@@ -10,6 +10,7 @@
 <dx-data-grid #mainGrid
     class="main-component-view"
     keyExpr="id"
+    [hint]="ls.l('Subscriptions')"
     [pager]="{visible: false}"
     [paging]="{enabled: false}"
     [dataSource]="dataSource"
