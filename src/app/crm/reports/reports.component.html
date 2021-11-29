@@ -431,6 +431,7 @@
                           showTotalsPrior="both"
                           [showColumnTotals]="false"
                           [height]="crmService.contentHeight$ | async"
+                          (onContentReady)="onSalesReportContentReady($event)"
                           (onCellPrepared)="onSalesReportCellPrepared($event)">
         </slice-pivot-grid>
     </div>

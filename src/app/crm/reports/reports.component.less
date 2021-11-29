@@ -52,14 +52,88 @@
 
     ::ng-deep slice-pivot-grid {
         .dx-pivotgrid-horizontal-headers {
+            &.collapsed {
+                tr:nth-child(2) {
+                    display: none;
+                }
+            }
+
             tr:last-child td span {
                 display: none;
+            }
+
+            td {
+                background-color: #F5FBFE!important;
+                &.dx-grandtotal {
+                    background-color: #F0FAF2!important;
+                }
+            }
+        }
+
+        .dx-pivotgrid-vertical-headers {
+            td[rowspan] {
+                background-color: #EFF9FD;
+            }
+
+            td[colspan] {
+                background-color: #F0FAF2;
+            }
+
+            td.dx-pivotgrid-collapsed {
+                background-color: #F5FBFE;
+            }
+
+            tr:nth-child(2) {
+                td.dx-row-total {
+                    background-color: #E5F7E8;
+                }
             }
         }
 
         .dx-area-description-cell {
             min-width: 110px;
-            background-color: #def9f3;
+            background-color: #F0FAF2;
+        }
+
+        .dx-area-data-cell {
+            tr:nth-child(2) {
+                td.dx-row-total, td.dx-grandtotal {
+                    background-color: #E5F7E8;
+                }
+            }
+
+            tr:not(:first-child):not(:nth-child(2)) {
+                td.dx-row-total, td.dx-grandtotal {
+                    background-color: #F0FAF2;
+                }
+            }
+        }
+
+        .dx-area-data-cell table tr:first-child td,
+        .dx-pivotgrid-vertical-headers tr:first-child td {
+            background-color: #dbf2de!important;  //horizont grand total
+        }
+
+        td.dx-row-total {
+            background-color: #e5f7e8;
+        }
+
+        .dx-pivotgrid-toolbar {       
+              position: absolute;
+              cursor: pointer;
+              right: 10px;
+              top: 15px;        
+              height: 0;
+              width: 0; 
+
+              border-left: 5px solid transparent;
+              border-right: 5px solid transparent;              
+              border-bottom: 5px solid #000;
+
+              &.collapsed {
+                  border-top: 5px solid #000;
+                  border-bottom: none;
+              }
         }
     }
 }

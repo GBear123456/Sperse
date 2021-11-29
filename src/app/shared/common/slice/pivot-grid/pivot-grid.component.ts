@@ -36,6 +36,7 @@ export class PivotGridComponent implements OnInit {
     @Input() showTotalsPrior: string = 'none';
     @Input() showColumnTotals: boolean = true;
     @Output() onCellPrepared: EventEmitter<any> = new EventEmitter<any>();
+    @Output() onContentReady: EventEmitter<any> = new EventEmitter<any>();
     @HostBinding('style.height')
     public get  componentHeight(): string {
         return this.height + 'px';
@@ -88,7 +89,8 @@ export class PivotGridComponent implements OnInit {
         }
     }
 
-    onContentReady() {
+    onGridContentReady(event) {
+        this.onContentReady.emit(event);
         this.contentShown.next(this.isLoading !== undefined);
         this.defineTotalCellValues();
     }
