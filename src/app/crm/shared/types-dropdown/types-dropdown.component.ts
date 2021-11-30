@@ -22,6 +22,7 @@ export class TypesDropdownComponent {
     @Input() totalCount: number;
     @Input() totalErrorMsg: string = '';
     @Input() showTotalCount: Boolean;
+    @Input() showLoading: Boolean;
     @Input() value;
     @Input() allowEdit = false;
     @Output() valueChange: EventEmitter<any> = new EventEmitter<any>();

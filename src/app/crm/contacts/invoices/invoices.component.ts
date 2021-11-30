@@ -66,7 +66,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     invoiceStatus = InvoiceStatus;
     startCase = startCase;
 
-    markAsPaidDisabled = true;
+    addPaymentDisabled = true;
     markAsDraftDisabled = false;
     resendInvoiceDisabled = false;
     markAsCancelledDisabled = false;
@@ -257,9 +257,9 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                     this.downloadPdfDisabled =
                     this.duplicateInvoiceDisabled =
                     this.previewDisabled = isOrder;
-                    this.markAsPaidDisabled = isOrder || [
-                        InvoiceStatus.Final, InvoiceStatus.Sent, InvoiceStatus.PartiallyPaid, InvoiceStatus.Refunded
-                    ].indexOf(invoice.InvoiceStatus) < 0;
+                    this.addPaymentDisabled = isOrder || [
+                        InvoiceStatus.Draft, InvoiceStatus.Canceled
+                    ].indexOf(invoice.InvoiceStatus) >= 0;
                     this.markAsDraftDisabled = isOrder || [
                         InvoiceStatus.Final, InvoiceStatus.Canceled
                     ].indexOf(invoice.InvoiceStatus) < 0;
@@ -422,7 +422,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
         });
     }
 
-    markAsPaidDialog() {
+    addPaymentDialog() {
         this.dialog.open(MarkAsPaidDialogComponent, {
             closeOnNavigation: false,
             data: {

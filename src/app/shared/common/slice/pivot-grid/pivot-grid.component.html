@@ -2,12 +2,16 @@
                [allowExpandAll]="true"
                [allowFiltering]="true"
                [allowSorting]="true"
-               [height]="height"
+               [height]="height?.toPrecision ? (height + 7) : height"
+               [showTotalsPrior]="showTotalsPrior"
+               [showColumnTotals]="showColumnTotals"
                [visible]="contentShown$ | async"
                [allowSortingBySummary]="true"
                [ngClass]="{ 'field-panel-hidden': !showFieldPanel }"
                [showBorders]="true"
-               (onContentReady)="onContentReady()"
+               [scrolling]="{useNative:true}"
+               (onCellPrepared)="onGridCellPrepared($event)"
+               (onContentReady)="onGridContentReady($event)"
                (onContextMenuPreparing)="prepareContextMenu($event)">
     <dxo-field-chooser [enabled]="false"></dxo-field-chooser>
     <dxo-field-panel [visible]="true"></dxo-field-panel>
@@ -17,6 +21,3 @@
 </dx-pivot-grid>
 <button class="close-button" *ngIf="showFieldPanel" (click)="toggleFieldPanel()"></button>
 <loading-spinner *ngIf="isLoading"></loading-spinner>
-<div class="fixed-total-row" *ngIf="fixedCells.length">
-    <div *ngFor="let cell of fixedCells" [ngStyle]="{ width: cell.width }">{{ cell.value }}</div>
-</div>
