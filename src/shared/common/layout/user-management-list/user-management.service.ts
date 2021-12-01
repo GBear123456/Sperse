@@ -3,8 +3,8 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { first, filter, pluck } from 'rxjs/operators';
 import { of } from 'rxjs';
-import { filter, pluck } from 'rxjs/operators';
 
 /** Application imports */
 import { MySettingsModalComponent } from 'app/shared/layout/profile/my-settings-modal.component';
@@ -291,12 +291,17 @@ export class UserManagementService {
     }
 
     changeMySettings(e): void {
-        this.dialog.open(MySettingsModalComponent, {
+        let dialog = this.dialog.open(MySettingsModalComponent, {
             panelClass: ['slider', 'user-info'],
             disableClose: true,
             closeOnNavigation: false,
             data: {}
         });
+
+        dialog.componentInstance.modalSave.pipe(first()).subscribe(() => {
+            dialog.close();
+        });
+
         if (e.stopPropagation) {
             e.stopPropagation();
         }
