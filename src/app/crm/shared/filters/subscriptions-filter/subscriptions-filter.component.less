@@ -2,6 +2,15 @@
     .wrapper {
         padding-bottom: 90px;
 
+        .mode {
+            position: absolute;
+            top: 10px;
+            right: 30px;
+            &.single {
+                position: static;
+            }
+        }
+        
         .labels {
             display: flex;
             justify-content: flex-end;
@@ -13,6 +22,12 @@
 
             div:last-child {
                 width: 67px;
+            }
+        }
+
+        ::ng-deep .dx-tabs {
+            .dx-tab-selected:after {
+                border: 1px solid #337ab7!important;
             }
         }
 
@@ -43,11 +58,11 @@
             .dx-treelist-rowsview {
                 border-top: none;
             }
-            .star-item {
-                display: flex;
-                align-items: center;
-                .star {
-                    margin: 0 5px;
+            .dx-toolbar-after {
+                width: 100%;
+                padding: 0;
+                .dx-treelist-search-panel {
+                    margin: 0;
                 }
             }
         }

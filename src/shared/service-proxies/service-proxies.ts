@@ -19749,6 +19749,58 @@ export class InvoiceServiceProxy {
     }
 
     /**
+     * @body (optional) 
+     * @return Success
+     */
+    voidBankCardPayment(body: VoidBankCardPaymentInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Invoice/VoidBankCardPayment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processVoidBankCardPayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processVoidBankCardPayment(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processVoidBankCardPayment(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @contactId (optional) 
      * @return Success
      */
@@ -26861,6 +26913,118 @@ export class PaymentServiceProxy {
         }
         return _observableOf<PaymentMethodInfo[]>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getTransactionTypes(): Observable<string[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Payment/GetTransactionTypes";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetTransactionTypes(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetTransactionTypes(<any>response_);
+                } catch (e) {
+                    return <Observable<string[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetTransactionTypes(response: HttpResponseBase): Observable<string[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getPaymentProviders(): Observable<string[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Payment/GetPaymentProviders";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPaymentProviders(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPaymentProviders(<any>response_);
+                } catch (e) {
+                    return <Observable<string[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetPaymentProviders(response: HttpResponseBase): Observable<string[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(item);
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string[]>(<any>null);
+    }
 }
 
 @Injectable()
@@ -30483,71 +30647,6 @@ export class ReportServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl ? baseUrl : "";
-    }
-
-    /**
-     * @sourceOrganizationUnitIds (optional) 
-     * @startDate (optional) 
-     * @endDate (optional) 
-     * @return Success
-     */
-    getSubscribersReport(sourceOrganizationUnitIds: number[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined): Observable<SubscribersReportInfo[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Report/GetSubscribersReport?";
-        if (sourceOrganizationUnitIds !== undefined)
-            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
-        if (startDate !== undefined)
-            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
-        if (endDate !== undefined)
-            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSubscribersReport(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetSubscribersReport(<any>response_);
-                } catch (e) {
-                    return <Observable<SubscribersReportInfo[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<SubscribersReportInfo[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetSubscribersReport(response: HttpResponseBase): Observable<SubscribersReportInfo[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(SubscribersReportInfo.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<SubscribersReportInfo[]>(<any>null);
     }
 
     /**
@@ -66073,6 +66172,15 @@ export interface IGetNewInvoiceInfoOutput {
     nextInvoiceNumber: string | undefined;
 }
 
+export enum PaymentTransactionType {
+    Authorize = "Authorize", 
+    Capture = "Capture", 
+    Refund = "Refund", 
+    Chargeback = "Chargeback", 
+    Sale = "Sale", 
+    Manual = "Manual", 
+}
+
 export class BankCardInput implements IBankCardInput {
     holderName!: string | undefined;
     cardNumber!: string;
@@ -66150,7 +66258,9 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
     amount!: number | undefined;
     gatewayName!: string | undefined;
     gatewayTransactionId!: string | undefined;
+    gatewayOriginTransactionId!: string | undefined;
     authorizationCode!: string | undefined;
+    transactionType!: PaymentTransactionType | undefined;
     bankCardInfo!: BankCardInput | undefined;
     hasRecurringBilling!: boolean | undefined;
 
@@ -66173,7 +66283,9 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
             this.amount = data["amount"];
             this.gatewayName = data["gatewayName"];
             this.gatewayTransactionId = data["gatewayTransactionId"];
+            this.gatewayOriginTransactionId = data["gatewayOriginTransactionId"];
             this.authorizationCode = data["authorizationCode"];
+            this.transactionType = data["transactionType"];
             this.bankCardInfo = data["bankCardInfo"] ? BankCardInput.fromJS(data["bankCardInfo"]) : <any>undefined;
             this.hasRecurringBilling = data["hasRecurringBilling"];
         }
@@ -66196,7 +66308,9 @@ export class AddBankCardPaymentInput implements IAddBankCardPaymentInput {
         data["amount"] = this.amount;
         data["gatewayName"] = this.gatewayName;
         data["gatewayTransactionId"] = this.gatewayTransactionId;
+        data["gatewayOriginTransactionId"] = this.gatewayOriginTransactionId;
         data["authorizationCode"] = this.authorizationCode;
+        data["transactionType"] = this.transactionType;
         data["bankCardInfo"] = this.bankCardInfo ? this.bankCardInfo.toJSON() : <any>undefined;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         return data; 
@@ -66212,9 +66326,59 @@ export interface IAddBankCardPaymentInput {
     amount: number | undefined;
     gatewayName: string | undefined;
     gatewayTransactionId: string | undefined;
+    gatewayOriginTransactionId: string | undefined;
     authorizationCode: string | undefined;
+    transactionType: PaymentTransactionType | undefined;
     bankCardInfo: BankCardInput | undefined;
     hasRecurringBilling: boolean | undefined;
+}
+
+export class VoidBankCardPaymentInput implements IVoidBankCardPaymentInput {
+    invoiceId!: number | undefined;
+    invoiceNumber!: string | undefined;
+    gatewayName!: string | undefined;
+    gatewayTransactionId!: string;
+
+    constructor(data?: IVoidBankCardPaymentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.invoiceId = data["invoiceId"];
+            this.invoiceNumber = data["invoiceNumber"];
+            this.gatewayName = data["gatewayName"];
+            this.gatewayTransactionId = data["gatewayTransactionId"];
+        }
+    }
+
+    static fromJS(data: any): VoidBankCardPaymentInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new VoidBankCardPaymentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["invoiceId"] = this.invoiceId;
+        data["invoiceNumber"] = this.invoiceNumber;
+        data["gatewayName"] = this.gatewayName;
+        data["gatewayTransactionId"] = this.gatewayTransactionId;
+        return data; 
+    }
+}
+
+export interface IVoidBankCardPaymentInput {
+    invoiceId: number | undefined;
+    invoiceNumber: string | undefined;
+    gatewayName: string | undefined;
+    gatewayTransactionId: string;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
@@ -72942,12 +73106,65 @@ export interface ISubscriptionInput {
     amount: number | undefined;
 }
 
+export class UpdateOrderSubscriptionProductInfo implements IUpdateOrderSubscriptionProductInfo {
+    productId!: number | undefined;
+    productCode!: string | undefined;
+    paymentPeriodType!: RecurringPaymentFrequency | undefined;
+    hasRecurringBilling!: boolean | undefined;
+    endDate!: moment.Moment | undefined;
+
+    constructor(data?: IUpdateOrderSubscriptionProductInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.productId = data["productId"];
+            this.productCode = data["productCode"];
+            this.paymentPeriodType = data["paymentPeriodType"];
+            this.hasRecurringBilling = data["hasRecurringBilling"];
+            this.endDate = data["endDate"] ? moment(data["endDate"].toString()) : <any>undefined;
+        }
+    }
+
+    static fromJS(data: any): UpdateOrderSubscriptionProductInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateOrderSubscriptionProductInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
+        data["productCode"] = this.productCode;
+        data["paymentPeriodType"] = this.paymentPeriodType;
+        data["hasRecurringBilling"] = this.hasRecurringBilling;
+        data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        return data; 
+    }
+}
+
+export interface IUpdateOrderSubscriptionProductInfo {
+    productId: number | undefined;
+    productCode: string | undefined;
+    paymentPeriodType: RecurringPaymentFrequency | undefined;
+    hasRecurringBilling: boolean | undefined;
+    endDate: moment.Moment | undefined;
+}
+
 export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInput {
     contactId!: number | undefined;
     contactXref!: string | undefined;
     leadId!: number | undefined;
     orderNumber!: string | undefined;
     subscriptions!: SubscriptionInput[] | undefined;
+    products!: UpdateOrderSubscriptionProductInfo[] | undefined;
     productId!: number | undefined;
     productCode!: string | undefined;
     paymentPeriodType!: RecurringPaymentFrequency | undefined;
@@ -72973,6 +73190,11 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
                 this.subscriptions = [];
                 for (let item of data["subscriptions"])
                     this.subscriptions.push(SubscriptionInput.fromJS(item));
+            }
+            if (data["products"] && data["products"].constructor === Array) {
+                this.products = [];
+                for (let item of data["products"])
+                    this.products.push(UpdateOrderSubscriptionProductInfo.fromJS(item));
             }
             this.productId = data["productId"];
             this.productCode = data["productCode"];
@@ -73000,6 +73222,11 @@ export class UpdateOrderSubscriptionInput implements IUpdateOrderSubscriptionInp
             for (let item of this.subscriptions)
                 data["subscriptions"].push(item.toJSON());
         }
+        if (this.products && this.products.constructor === Array) {
+            data["products"] = [];
+            for (let item of this.products)
+                data["products"].push(item.toJSON());
+        }
         data["productId"] = this.productId;
         data["productCode"] = this.productCode;
         data["paymentPeriodType"] = this.paymentPeriodType;
@@ -73015,6 +73242,7 @@ export interface IUpdateOrderSubscriptionInput {
     leadId: number | undefined;
     orderNumber: string | undefined;
     subscriptions: SubscriptionInput[] | undefined;
+    products: UpdateOrderSubscriptionProductInfo[] | undefined;
     productId: number | undefined;
     productCode: string | undefined;
     paymentPeriodType: RecurringPaymentFrequency | undefined;
@@ -80415,6 +80643,7 @@ export enum LayoutType {
     Rapid = "Rapid", 
     HOA = "HOA", 
     Sperser = "Sperser", 
+    GhostDrive = "GhostDrive", 
 }
 
 export class FaviconDto implements IFaviconDto {

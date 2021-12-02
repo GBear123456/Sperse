@@ -79,7 +79,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
         else
             this.memberService = new MemberServiceDto();
 
-        this.isReadOnly = !!data.isReadOnly;
+        this.isReadOnly = data && !!data.isReadOnly;
         this.title = ls.l(this.isReadOnly ? 'Service' : this.memberService.id ? 'EditService' : 'AddService');
 
         this.memberServiceProxy.getSystemTypes().subscribe((types: SystemTypeDto[]) => {

@@ -150,6 +150,12 @@ export class SubscriptionsComponent implements OnInit, OnDestroy {
     refreshData(forced = false) {
         let subData = this.orderSubscriptionProxy['data'],
             contactId = this.data.contactInfo.id;
+
+        if (!contactId) {
+            this.orderSubscriptionProxy['data'] = null;
+            return;
+        }
+
         if (!forced && subData && subData.contactId == contactId)
             this.setDataSource(subData.source);
         else {

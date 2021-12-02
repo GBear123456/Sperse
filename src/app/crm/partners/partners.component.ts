@@ -605,7 +605,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         public contactProxy: ContactServiceProxy
     ) {
         super(injector);
-        this.dataSource = new DataSource({store: new ODataStore(this.dataStore)});
+        this.dataSource = new DataSource({ store: new ODataStore(this.dataStore) });
+        this.dataSource.exportIgnoreOnLoaded = true;
         this.pipelineService.stageChange$.subscribe((lead) => {
             this.dependencyChanged = (lead.Stage == _.last(this.pipelineService.getStages(this.pipelinePurposeId, ContactGroup.Client)).name);
         });
@@ -672,7 +673,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             if (this.pivotGridComponent) {
                 setTimeout(() => {
                     this.pivotGridComponent.dataGrid.instance.updateDimensions();
-                    this.pivotGridComponent.updateTotalCellsSizes();
                 }, 1001);
             }
         });
@@ -1559,6 +1559,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                         requireTotalCount: true,
                         store: new ODataStore(this.dataStore)
                     };
+                    this.pipelineDataSource.exportIgnoreOnLoaded = true;
                 });
         } else if (this.showDataGrid) {
             this.setDataGridInstance();

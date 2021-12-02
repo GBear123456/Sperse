@@ -6,6 +6,7 @@ import {
     Component,
     Inject,
     OnInit,
+    OnDestroy,
     ViewChild
 } from '@angular/core';
 import { CurrencyPipe, DatePipe, DOCUMENT } from '@angular/common';
@@ -17,10 +18,10 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DxPivotGridComponent } from 'devextreme-angular/ui/pivot-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { Subject } from 'rxjs';
 import { filter, map, takeUntil } from 'rxjs/operators';
-import { CacheService } from 'ng2-cache-service';
 import * as moment from 'moment';
+import * as _ from 'underscore';
+import Chart from 'chart.js';
 
 /** Application imports */
 import { CrmService } from '@app/crm/crm.service';
@@ -31,26 +32,25 @@ import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-gr
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import {
     Currency,
     InvoiceSettings,
     ReportServiceProxy,
     SubscriberDailyStatsReportInfo,
-    SubscribersReportInfo
+    PaymentServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { CrmStore, OrganizationUnitsStoreActions, OrganizationUnitsStoreSelectors } from '@app/crm/store';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
-import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ExportService } from '@shared/common/export/export.service';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { AppConsts } from '@shared/AppConsts';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { ReportType } from '@app/crm/reports/report-type.enum';
-import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
@@ -59,6 +59,14 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { SubscriptionTrackerFields } from '@app/crm/reports/subscription-tracker-fields.enum';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { TransactionDto } from '@app/crm/reports/transction-dto';
+import { StaticListComponent } from '../../shared/common/static-list/static-list.component';
+import { Param } from '@shared/common/odata/param.model';
+import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
+import { SourceFilterModel } from '../shared/filters/source-filter/source-filter.model';
+import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
+import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
+import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
+import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
 
 @Component({
     selector: 'reports-component',
@@ -67,41 +75,65 @@ import { TransactionDto } from '@app/crm/reports/transction-dto';
         '../shared/styles/client-status.less',
         './reports.component.less'
     ],
-    providers: [ CurrencyPipe, DatePipe, PhoneFormatPipe, ReportServiceProxy ],
+    providers: [
+        CurrencyPipe,
+        DatePipe,
+        PhoneFormatPipe,
+        ReportServiceProxy,
+        LifecycleSubjectsService,
+        CalendarService
+    ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ReportsComponent implements OnInit, AfterViewInit {
+export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('subscribersDataGrid', { static: false }) subscribersDataGrid: DxDataGridComponent;
     @ViewChild('statsDataGrid', { static: false }) statsDataGrid: DxDataGridComponent;
     @ViewChild('subscriptionTrackerGrid', { static: false }) subscriptionTrackerGrid: DxDataGridComponent;
     @ViewChild(PivotGridComponent, { static: false }) salesReportComponent: PivotGridComponent;
+    @ViewChild('sourceOrganizationUnits', { static: false }) sourceOrganizationUnits: StaticListComponent;
+    @ViewChild('transactionTypes', { static: false }) transactionTypes: StaticListComponent;
+    @ViewChild('paymentProviders', { static: false }) paymentProviders: StaticListComponent;
     toolbarConfig: ToolbarGroupModel[];
     filters = [];
     filtersValues = {
-        sourceOrganizationUnits: undefined,
+        sourceOrganizationUnits: [],
         date: {
-            startDate: undefined,
-            endDate: undefined
+            ge: undefined,
+            le: undefined
         }
     };
+    private readonly subscribersReportURI = 'SubscribersReport';
     subscribersDataSource = new DataSource({
-        load: (options) => {
-            if (!options.requireTotalCount) {
-                this.isDataLoaded = false;
+        requireTotalCount: false,
+        store: new ODataStore({
+            url: this.oDataService.getODataUrl(this.subscribersReportURI),
+            version: AppConsts.ODataVersion,
+            beforeSend: (request) => {
+                request.params.$select = DataGridService.getSelectFields(this.subscribersDataGrid);
+                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+            },
+            deserializeDates: false
+        })
+    });
+    totalDataSource = new DataSource({
+        paginate: false,
+        store: new ODataStore({
+            url: this.oDataService.getODataUrl(this.subscribersReportURI + '/$count'),
+            version: AppConsts.ODataVersion,
+            beforeSend: (request) => {
+                this.totalCount = this.totalErrorMsg = undefined;
+                request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+            },
+            onLoaded: (count: any) => {
+                this.dataSource['total'] = this.totalCount = isNaN(count) ? 0 : count;
+                this.changeDetectorRef.detectChanges();
+            },
+            errorHandler: (e: any) => {
+                this.totalErrorMsg = this.ls.l('AnHttpErrorOccured');
                 this.changeDetectorRef.detectChanges();
             }
-            return this.reportService.getSubscribersReport(
-                this.filtersValues.sourceOrganizationUnits,
-                this.filtersValues.date.startDate,
-                this.filtersValues.date.endDate
-            ).toPromise().then((response: SubscribersReportInfo[]) => {
-                this.totalCount = response.length;
-                return {
-                    data: response,
-                    totalCount: this.totalCount
-                };
-            });
-        }
+        })
     });
     statsDataSource = new DataSource({
         load: (options) => {
@@ -109,10 +141,11 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 this.isDataLoaded = false;
                 this.changeDetectorRef.detectChanges();
             }
+            let dateFilterIsSet = !!this.filtersValues.date;
             return this.reportService.getSubscriberDailyStatsReport(
                 this.filtersValues.sourceOrganizationUnits,
-                this.filtersValues.date.startDate,
-                this.filtersValues.date.endDate
+                dateFilterIsSet ? this.filtersValues.date.ge : undefined,
+                dateFilterIsSet ? this.filtersValues.date.le : undefined
             ).toPromise().then((response: SubscriberDailyStatsReportInfo[]) => {
                 this.totalCount = response.length;
                 return {
@@ -122,6 +155,8 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             });
         }
     });
+    showAmount = true;
+    showRatio = false;
     salesReportDataSourceURI = 'SalesSlice';
     sliceStorageKey = [
         'CRM',
@@ -129,33 +164,48 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.appSessionService.tenantId,
         this.appSessionService.userId
     ].join('_');
+    salesReportGrandTotal = 0;
     salesReportDataSource = {
         remoteOperations: true,
         load: (loadOptions) => {
+            this.totalCount = undefined;
+            this.salesReportGrandTotal = 0;
             return this.crmService.loadSlicePivotGridData(
                 this.oDataService.getODataUrl(
                     this.salesReportDataSourceURI
                 ),
                 this.filters,
-                loadOptions
+                loadOptions,
+                this.getSalesDatesFilter()
             );
         },
         onChanged: (event) => {
+            this.totalCount = 0;
             this.isDataLoaded = true;
-            this.totalCount = undefined;
         },
         onLoadingChanged: (loading) => {
             this.isDataLoaded = !loading;
         },
         onLoadError: () => {
+            this.totalCount = 0;
             this.isDataLoaded = true;
+        },
+        onFieldsPrepared: (fields: any[]) => {
+            let transactionType = fields.find(x => x.dataField == 'TransactionType');
+            if (transactionType)
+                transactionType.filterValues = undefined;
+            let paymentProvider = fields.find(x => x.dataField == 'PaymentProvider');
+            if (paymentProvider)
+                paymentProvider.filterValues = undefined;
         },
         fields: [
             {
                 area: 'column',
                 caption: 'Group',
                 dataType: 'string',
-                dataField: 'ProductGroup'
+                dataField: 'ProductGroup',
+                sortingMethod: (a, b) => !b.value || a.value < b.value ? -1 : 1,
+                customizeText: (cellInfo) => cellInfo.valueText || 'Other'
             },
             {
                 area: 'row',
@@ -165,7 +215,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 groupInterval: 'year',
                 name: 'year',
                 expanded: true,
-                showTotals: false
             },
             {
                 area: 'row',
@@ -173,7 +222,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 dataField: 'TransactionDate',
                 dataType: 'date',
                 groupInterval: 'month',
-                showTotals: false
             },
             {
                 area: 'row',
@@ -186,19 +234,57 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             {
                 area: 'data',
                 dataType: 'number',
-                name: 'count',
                 isMeasure: true,
-                summaryType: 'count'
+                summaryType: 'count',
+                visible: !this.showRatio && !this.showAmount
             },
             {
                 area: 'data',
+                caption: '',
                 dataType: 'number',
                 dataField: 'Amount',
                 format: 'currency',
-                summaryType: 'sum'
+                summaryType: 'sum',
+                visible: !this.showRatio && this.showAmount
+            },
+            {
+                area: 'data',
+                name: 'Ratio',
+                dataType: 'number',
+                dataField: 'Amount',
+                caption: '',
+                summaryType: this.showAmount ? 'sum' : 'count',
+                summaryDisplayMode: 'percentOfColumnTotal',
+                visible: this.showRatio
+            },
+            {
+                area: 'filter',
+                dataType: 'string',
+                dataField: 'TransactionType'
+            },
+            {
+                area: 'filter',
+                dataType: 'string',
+                dataField: 'PaymentProvider'
             }
         ]
     };
+    transactionTypes$ = this.paymentService.getTransactionTypes().pipe(
+        map(types => {
+            return types.sort((prev, next) => {
+                return prev == 'Sale' ? -1 : prev.localeCompare(next);
+            }).map(v => ({ id: v, name: v }))
+        })
+    );
+    selectedTransactionTypes: string[] = [];
+    paymentProviders$ = this.paymentService.getPaymentProviders().pipe(
+        map(providers => {
+            let providerObjects = providers.map(v => ({ id: v, name: v }));
+            providerObjects.push({ id: null, name: this.ls.l('Other') });
+            return providerObjects;
+        }));
+    selectedPaymentProviders: string[] = [];
+
     readonly subscriptionTrackerFields: KeysEnum<SubscriptionTrackerDto> = SubscriptionTrackerFields;
     transactionMonthsObj = {};
     transactionMonths: string[];
@@ -211,8 +297,10 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             version: AppConsts.ODataVersion,
             deserializeDates: false,
             beforeSend: (request) => {
-                this.isDataLoaded = false;
-                this.changeDetectorRef.detectChanges();
+                if (!request['isExport']) {
+                    this.isDataLoaded = false;
+                    this.changeDetectorRef.detectChanges();
+                }
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             },
             onLoaded: (contacts: SubscriptionTrackerDto[]) => {
@@ -241,22 +329,62 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             }
         }
     };
-    deactivate$: Subject<null> = new Subject<null>();
+    totalErrorMsg: string;
+    organizationUnits$ = this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits));
+    staticListOrganizationUnits$ = this.organizationUnits$.pipe(
+        filter(x => !!x),
+        map(orgUnits => orgUnits.map(v => ({ id: v.id, name: v.displayName, parentId: v.parentId, expanded: true })))
+    );
+    salesOrgUnitFilter = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'SourceOrganizationUnitId',
+        hidden: this.appSessionService.userIsMember,
+        field: 'sourceOrganizationUnitId',
+        items: {
+            element: new FilterCheckBoxesModel(
+                {
+                    dataSource$: this.organizationUnits$,
+                    nameField: 'displayName',
+                    keyExpr: 'id'
+                })
+        }
+    });
+    salesDateFilter = new FilterModel({
+        component: FilterCalendarComponent,
+        caption: this.ls.l('Date'),
+        field: 'SalesTransactionDate',
+        operator: { from: 'ge', to: 'le' },
+        items: { from: new FilterItemModel(), to: new FilterItemModel() },
+        options: { method: 'getFilterByDate', params: { useUserTimezone: false }, allowFutureDates: true },
+        filterMethod: () => 'cancelled'
+    })
+    salesAmountFilter = new FilterModel({
+        component: FilterInputsComponent,
+        options: { type: 'number' },
+        operator: { from: 'ge', to: 'le' },
+        caption: 'Amount',
+        field: 'Amount',
+        items: { from: new FilterItemModel(), to: new FilterItemModel() },
+        filterMethod: () => 'cancelled'
+    });
     totalCount: number;
     isDataLoaded = false;
-    defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
+    defaultGridPagerConfig = {
+        ...DataGridService.defaultGridPagerConfig,
+        showPageSizeSelector: false
+    };
     formatting = AppConsts.formatting;
     userTimezone = DateHelper.getUserTimezone();
     currency = 'USD';
-    selectedReportType = ReportType.Subscribers;
+    selectedReportType = ReportType.SalesReport;
     reportTypes = [
-        {
-            text: this.ls.l('Subscribers'),
-            value: ReportType.Subscribers
-        },
         {
             text: this.ls.l('SalesReport'),
             value: ReportType.SalesReport
+        },
+        {
+            text: this.ls.l('Subscribers'),
+            value: ReportType.Subscribers
         },
         {
             text: this.ls.l('SubscriberDailyStats'),
@@ -274,19 +402,19 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         refunds: false,
         netCollected: false
     };
+    sparkLineCharts: any = {};
+    sliceRepaintTimeout: any;
 
     constructor(
         private filtersService: FiltersService,
         private reportService: ReportServiceProxy,
+        private paymentService: PaymentServiceProxy,
         private store$: Store<CrmStore.State>,
-        private loadingService: LoadingService,
         private exportService: ExportService,
         private changeDetectorRef: ChangeDetectorRef,
         private phonePipe: PhoneFormatPipe,
         private datePipe: DatePipe,
         private currencyPipe: CurrencyPipe,
-        private cacheService: CacheService,
-        private cacheHelper: CacheHelper,
         private invoiceService: InvoicesService,
         private appSessionService: AppSessionService,
         private oDataService: ODataService,
@@ -295,18 +423,22 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         public appService: AppService,
         public crmService: CrmService,
         public httpInterceptor: AppHttpInterceptor,
+        private lifeCycleSubjectsService: LifecycleSubjectsService,
+        private calendarService: CalendarService,
+        private fullScreenService: FullScreenService,
         @Inject(DOCUMENT) private document
-    ) {}
+    ) { }
 
     ngOnInit(): void {
         this.activate();
         this.invoiceService.settings$.pipe(
             filter(Boolean),
-            takeUntil(this.deactivate$),
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
             map((settings: InvoiceSettings) => settings.currency)
         ).subscribe((currency: Currency) => {
             this.currency = currency.toString();
         });
+        this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false));
     }
 
     activate() {
@@ -315,20 +447,51 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.document.body.classList.add('overflow-hidden');
         this.filtersService.checkIfAnySelected();
         this.filtersService.filtersValues$.pipe(
-            takeUntil(this.deactivate$)
+            takeUntil(this.lifeCycleSubjectsService.destroy$)
         ).subscribe((filtersValues) => {
             this.filtersValues = filtersValues;
+            this.updateSalesAmountFilter();
+            this.updateSalesDateCalendar(filtersValues);
             this.refresh();
+            this.initToolbarConfig();
+            this.changeDetectorRef.detectChanges();
         });
+        this.calendarService.dateRange$.pipe(
+            takeUntil(this.lifeCycleSubjectsService.destroy$)
+        ).subscribe(value => this.updateSalesDatesFilter(value));
     }
 
     refresh() {
+        if (!this.dataGrid)
+            return;
+
         if (this.selectedReportType == ReportType.SalesReport)
             this.dataGrid.instance.getDataSource().reload().then(
                 () => this.dataGrid.instance.repaint()
-            ); 
-        else
+            );
+        else if (this.selectedReportType == ReportType.Subscribers) {
+            this.isDataLoaded = false;
+            this.changeDetectorRef.detectChanges();
+            let url = this.oDataService.getODataUrl(
+                this.subscribersReportURI + '/$count',
+                this.oDataService.processFilters(this.filters, null),
+                null, this.getSourceOrgUnitsFilter()
+            );
+            if (url && this.oDataService.requestLengthIsValid(url)) {
+                this.totalDataSource['_store']['_url'] = url;
+                this.totalDataSource.load();
+            }
+
+            this.oDataService.processODataFilter(this.dataGrid.instance, this.subscribersReportURI, this.filters, null, [], null, null, this.getSourceOrgUnitsFilter());
+        } else
             (this.dataGrid as DxDataGridComponent).instance.refresh();
+    }
+
+    getSourceOrgUnitsFilter(): Param[] {
+        if (this.filtersValues.sourceOrganizationUnits && this.filtersValues.sourceOrganizationUnits.length) {
+            return this.filtersValues.sourceOrganizationUnits.map((v, i) => { return { name: `sourceOrgUnitIds[${i}]`, value: v }; });
+        }
+        return null;
     }
 
     ngAfterViewInit() {
@@ -345,8 +508,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 items: {
                     element: new FilterCheckBoxesModel(
                         {
-                            dataSource$: this.store$.pipe(select(OrganizationUnitsStoreSelectors.getOrganizationUnits)),
-                            dispatch: () => this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(false)),
+                            dataSource$: this.organizationUnits$,
                             nameField: 'displayName',
                             keyExpr: 'id'
                         })
@@ -355,19 +517,24 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             new FilterModel({
                 component: FilterCalendarComponent,
                 caption: this.ls.l('Date'),
-                operator: { from: 'startDate', to: 'endDate' },
+                operator: { from: 'ge', to: 'le' },
                 field: 'date',
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
                 options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
             })] : [
+            this.salesOrgUnitFilter,
+            this.salesDateFilter,
             new FilterModel({
-                component: FilterCalendarComponent,
-                caption: this.ls.l('Date'),
-                field: 'TransactionDate',
-                operator: {from: 'ge', to: 'le'},
-                items: { from: new FilterItemModel(), to: new FilterItemModel() },
-                options: { method: 'getFilterByDate', params: { useUserTimezone: true } }
-            })
+                component: FilterSourceComponent,
+                caption: 'Source',
+                hidden: this.appSessionService.userIsMember,
+                items: {
+                    element: new SourceFilterModel({
+                        ls: this.ls
+                    })
+                }
+            }),
+            this.salesAmountFilter
         ];
         this.filtersService.setup(this.filters);
     }
@@ -378,7 +545,6 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                 location: 'before', items: [
                     {
                         name: 'filters',
-                        disabled: this.selectedReportType == ReportType.SalesReport,
                         action: () => {
                             setTimeout(() => {
                                 this.dataGrid.instance.repaint();
@@ -399,6 +565,125 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                         },
                         attr: {
                             'filter-selected': this.filtersService.hasFilterSelected
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'owner',
+                        action: this.toggleSourceOrganizationUnits.bind(this),
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Organization'),
+                            icon: './assets/common/icons/folder.svg',
+                            accessKey: 'SourceOrganizationUnits'
+                        },
+                        attr: {
+                            'filter-selected': this.salesOrgUnitFilter && this.salesOrgUnitFilter.isSelected
+                        }
+                    },
+                    {
+                        name: 'transactionTypes',
+                        action: this.toggleTransactionTypes.bind(this),
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Type'),
+                            icon: './assets/common/icons/folder.svg',
+                            accessKey: 'TransactionTypes'
+                        },
+                        attr: {
+                            'filter-selected': !!this.selectedTransactionTypes.length
+                        }
+                    },
+                    {
+                        name: 'paymentProviders',
+                        action: this.togglePaymentProviders.bind(this),
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Providers'),
+                            icon: './assets/common/icons/folder.svg',
+                            accessKey: 'PaymentProviders'
+                        },
+                        attr: {
+                            'filter-selected': !!this.selectedPaymentProviders.length
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                areItemsDependent: true,
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'Amount',
+                        widget: 'dxButton',
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Amount'),
+                            checkPressed: () => {
+                                return this.showAmount;
+                            }
+                        },
+                        action: () => {
+                            this.showAmount = true;
+                            this.updatePivotGridView();
+                        }
+                    },
+                    {
+                        name: 'Count',
+                        widget: 'dxButton',
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Count'),
+                            checkPressed: () => {
+                                return !this.showAmount;
+                            }
+                        },
+                        action: () => {
+                            this.showAmount = false;
+                            this.updatePivotGridView();
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                areItemsDependent: true,
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'Value',
+                        widget: 'dxButton',
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Value'),
+                            checkPressed: () => {
+                                return !this.showRatio;
+                            }
+                        },
+                        action: () => {
+                            this.showRatio = false;
+                            this.updatePivotGridView();
+                        }
+                    },
+                    {
+                        name: 'Ratio',
+                        widget: 'dxButton',
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        options: {
+                            text: this.ls.l('Ratio'),
+                            checkPressed: () => {
+                                return this.showRatio;
+                            }
+                        },
+                        action: () => {
+                            this.showRatio = true;
+                            this.updatePivotGridView();
                         }
                     }
                 ]
@@ -451,8 +736,31 @@ export class ReportsComponent implements OnInit, AfterViewInit {
                         }
                     }
                 ]
+            },
+            {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'fullscreen',
+                        action: () => this.fullScreenService.toggleFullscreen(this.document.documentElement)
+                    }
+                ]
             }
         ];
+    }
+
+    updatePivotGridView() {
+        let instance = this.salesReportComponent.dataGrid.instance,
+            dataSource = instance.getDataSource();
+        dataSource.field('Ratio', {
+            visible: this.showRatio,
+            summaryType: this.showAmount ? 'sum' : 'count'
+        });
+        dataSource.field('Amount', { visible: !this.showRatio && this.showAmount });
+        dataSource.field('Count', { visible: !this.showRatio && !this.showAmount });
+        this.initToolbarConfig();
+        this.refresh();
     }
 
     get dataSource() {
@@ -472,9 +780,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             [ReportType.SalesReport]: this.salesReportComponent && this.salesReportComponent.dataGrid
         }[this.selectedReportType];
     }
-    
+
     get isDataGrid() {
-        return  this.dataGrid instanceof DxDataGridComponent;
+        return this.dataGrid instanceof DxDataGridComponent;
     }
 
     toggleColumnChooser() {
@@ -502,7 +810,7 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             let gridInstance = this.dataGrid && this.dataGrid.instance;
             if (gridInstance && saveCount) {
                 let dataSource: any = gridInstance.getDataSource && gridInstance.getDataSource();
-                if (dataSource) {
+                if (dataSource && dataSource.totalCount() > 0) {
                     this.totalCount = dataSource.totalCount();
                 }
             }
@@ -510,21 +818,24 @@ export class ReportsComponent implements OnInit, AfterViewInit {
         this.changeDetectorRef.detectChanges();
     }
 
-    customizePhoneCell = (data) => this.phonePipe.transform(data.phone);
+    customizePhoneCell = (data) => this.phonePipe.transform(data.Phone);
 
-    customizeStatusCell = (data) => this.ls.l('Status' + data.status);
+    customizeStatusCell = (data) => this.ls.l('Status' + data.Status);
 
-    customizeCreatedCell = (data) => this.datePipe.transform(data.created, this.formatting.dateTime, this.userTimezone);
+    customizeCreatedDateCell = (data) => this.datePipe.transform(data.Date, this.formatting.dateTime, this.userTimezone);
 
-    customizeDateCell = (data) => DateHelper.getDateWithoutTime(data.date).format('YYYY-MM-DD');
+    customizeDateCell = (data) => DateHelper.getDateWithoutTime(data.Date).format('YYYY-MM-DD');
 
-    customizeBankPassFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data.bankPassFee);
+    customizeBankPassFeeCell = (data) => this.customizeAmountCell(data.BankPassFee);
 
-    customizeBankVaultFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data.bankVaultFee);
+    customizeBankVaultFeeCell = (data) => this.customizeAmountCell(data.BankVaultFee);
 
-    customizeWtbFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data.wtbFee);
+    customizeWtbFeeCell = (data) => this.customizeAmountCell(data.WtbFee);
 
-    customizeTotalFeeCell = (data: SubscribersReportInfo) => this.customizeAmountCell(data.totalFee);
+    customizeTotalFeeCell = (data) => {
+        let total = (data.WtbFee || 0) + (data.BankVaultFee || 0) + (data.BankPassFee || 0);
+        return total > 0 ? this.customizeAmountCell(total) : undefined;
+    };
 
     customizeBankConnectAmountCell = (data: SubscriberDailyStatsReportInfo) => this.customizeAmountCell(data.bankConnectAmount);
 
@@ -546,6 +857,16 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     initDataSource() {
         this.setDataGridInstance(this.dataGrid);
+
+        if (this.selectedReportType == ReportType.SalesReport) {
+            this.salesReportComponent.dataGrid.instance.option('fieldPanel', {
+                allowFieldDragging: false,
+                showColumnFields: false,
+                showDataFields: false,
+                showFilterFields: false,
+                showRowFields: false
+            });
+        }
     }
 
     private setDataGridInstance(dataGrid: DxComponent) {
@@ -562,9 +883,9 @@ export class ReportsComponent implements OnInit, AfterViewInit {
             this.initFilterConfig();
             this.initToolbarConfig();
             this.changeDetectorRef.detectChanges();
-             setTimeout(() => {
-                 this.initDataSource();
-                 this.refresh();
+            setTimeout(() => {
+                this.initDataSource();
+                this.refresh();
             });
         }
     }
@@ -586,11 +907,226 @@ export class ReportsComponent implements OnInit, AfterViewInit {
     trackerGridCellClick(cell) {
         /** Expand/collapse parent columns */
         if (cell.event.target.classList.contains('toggle-button')) {
-            this.subscriptionTrackerColumnsVisibility[cell.column.name] = !this.subscriptionTrackerColumnsVisibility[cell.column.name];
+            this.subscriptionTrackerColumnsVisibility[cell.column.name] =
+                !this.subscriptionTrackerColumnsVisibility[cell.column.name];
             cell.event.stopPropagation();
         }
     }
-    
+
+    toggleSourceOrganizationUnits() {
+        this.sourceOrganizationUnits.toggle();
+        this.changeDetectorRef.detectChanges();
+    }
+
+    toggleTransactionTypes() {
+        this.transactionTypes.toggle();
+        this.changeDetectorRef.detectChanges();
+    }
+
+    togglePaymentProviders() {
+        this.paymentProviders.toggle();
+        this.changeDetectorRef.detectChanges();
+    }
+
+    onSaleReportFilterApply(fieldName: string, newValues: any[]) {
+        let currentlySelectedItems = fieldName == 'PaymentProvider' ? this.selectedPaymentProviders :
+            fieldName == 'TransactionType' ? this.selectedTransactionTypes : null;
+
+        let ids = newValues.map(v => v.id);
+        if (currentlySelectedItems.length == ids.length && _.intersection(currentlySelectedItems, ids).length == currentlySelectedItems.length)
+            return;
+
+        currentlySelectedItems.splice(0, currentlySelectedItems.length);
+        ids.forEach(v => currentlySelectedItems.push(v));
+        this.salesReportComponent.dataGrid.instance.getDataSource().field(fieldName, { filterValues: currentlySelectedItems });
+        if (this.selectedReportType == ReportType.SalesReport) {
+            this.refresh();
+        }
+        this.initToolbarConfig();
+    }
+
+    updateSalesAmountFilter() {
+        if (this.selectedReportType != ReportType.SalesReport || !this.salesReportComponent)
+            return;
+
+        let filter = [];
+        if (this.salesAmountFilter.items.from.value || this.salesAmountFilter.items.from.value === 0)
+            filter.push(["Amount", ">", this.salesAmountFilter.items.from.value]);
+        if (this.salesAmountFilter.items.to.value || this.salesAmountFilter.items.to.value === 0)
+            filter.push(["Amount", "<", this.salesAmountFilter.items.to.value]);
+        let dataSource: any = this.salesReportComponent.dataGrid.instance.getDataSource();
+        if (dataSource.store())
+            this.salesReportComponent.dataGrid.instance.getDataSource().filter(filter);
+    }
+
+    onSalesReportContentReady(event) {
+        let element = event.component.element().getElementsByClassName('dx-pivotgrid-toolbar')[0],
+            header = event.component.element().getElementsByClassName('dx-pivotgrid-horizontal-headers')[0];
+        element.addEventListener('click', () => {
+            element.classList.toggle('collapsed');
+            header.classList.toggle('collapsed');
+        });
+    }
+
+    onSalesReportCellPrepared(event) {
+        let data = event.component.getDataSource().getData();
+        if (!data.rows.length || (event.columnIndex && !data.columns[event.columnIndex - 1]))
+            return ;
+
+        let dataIndex = this.showAmount ? 1 : 0,
+            columnIndex = event.columnIndex ? 
+                data.columns[event.columnIndex - 1].index : 
+                data.grandTotalColumnIndex;
+
+        if (event.area == 'column' && event.rowIndex) {            
+            this.appendSparkLineChart(event, data.rows.map(row => {
+                return data.values[row.index][columnIndex][dataIndex] || 0;
+            }));
+        }
+
+        if (event.area == 'data' && event.rowIndex && event.cell.rowType == 'T') {
+            let row = {children: data.rows};                
+            event.cell.rowPath.forEach(path => {
+                row = row.children.find(entity => entity.value == path);
+            });
+
+            this.appendSparkLineChart(event, row.children.map(row => {
+                return data.values[row.index][columnIndex][dataIndex] || 0;
+            }), event.cell.rowPath);
+        }        
+    }
+
+    appendSparkLineChart(event, data, path?) {
+        if (data.length) {            
+            let chartKey = 'chartTotal' + event.columnIndex + (path ? path.join('_') : '');
+            setTimeout(() => {
+                if (!path && !this.salesReportGrandTotal)
+                    this.salesReportGrandTotal = Math.max.apply(Math.max, data);
+                this.initSparkLineChart(chartKey, data, event.columnIndex, !path);
+                event.cellElement.appendChild(this.sparkLineCharts[chartKey].element);
+            }, 100);
+
+            clearTimeout(this.sliceRepaintTimeout);
+            this.sliceRepaintTimeout = setTimeout(
+                () => event.component.updateDimensions(), 1000
+            );
+        }
+    }
+
+    initSparkLineChart(chartKey, data, index, isGrandTotal) {
+        if (this.sparkLineCharts[chartKey]) {
+            let chart = this.sparkLineCharts[chartKey].handler;
+            chart.data.labels = chart.data.datasets[0].data = data;
+            chart.update();
+        } else {
+            let divWrapper: any = document.createElement('div'),
+                canvasElement: any = document.createElement('canvas'),
+                colors = ['#402bb2', '#ac5fcf', '#ba2d31', '#267343', '#135387', '#00aeef', '#fa9224', '#d91b5f', '#3bb26c', '#b29d2b', '#b24f2b', '#83b22b', '#b22b9d', '#c1bcd9', '#1855c7'];
+            canvasElement.id = chartKey;
+            divWrapper.style.maxWidth = '80px';
+            divWrapper.style.height = '40px';
+            divWrapper.style.margin = 'auto';
+            divWrapper.appendChild(canvasElement);
+            if (index > colors.length - 1)
+                index = index % colors.length;
+            this.sparkLineCharts[chartKey] = {
+                element: divWrapper,
+                handler: new Chart(canvasElement, {
+                    type: 'bar',
+                    data: {
+                        labels: data,
+                        datasets: [{
+                            borderColor: '#def9f3',
+                            backgroundColor: colors[index],
+                            data: data,
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        title: {
+                            display: false,
+                        },
+                        tooltips: {
+                            enabled: false
+                        },
+                        legend: {
+                            display: false
+                        },
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            xAxes: [{
+                                display: false,
+                                stacked: true
+                            }],
+                            yAxes: [{
+                                display: false,
+                                stacked: true,
+                                ticks: {
+                                    beginAtZero: true,
+                                    suggestedMin: 0,
+                                    suggestedMax: isGrandTotal && data.length == 1
+                                        ? this.salesReportGrandTotal : Math.max.apply(Math.max, data)
+                                }
+                            }]
+                        },
+                        layout: {
+                            padding: {
+                                left: 0,
+                                right: 0,
+                                top: 0,
+                                bottom: 0
+                            }
+                        }
+                    }
+                })
+            };
+        }
+    }
+
+    updateSalesDatesFilter(value: CalendarValuesModel) {
+        let toolbarFrom = value.from && value.from.value ? moment(value.from.value) : moment();
+        let toolbarTo = value.to && value.to.value ? moment(value.to.value) : moment();
+        let filterFrom = this.salesDateFilter.items.from && this.salesDateFilter.items.from.value ? moment(this.salesDateFilter.items.from.value) : moment();
+        let filterTo = this.salesDateFilter.items.to && this.salesDateFilter.items.to.value ? moment(this.salesDateFilter.items.to.value) : moment();
+        if (!toolbarFrom.isSame(filterFrom, 'day') || !toolbarTo.isSame(filterTo, 'day')) {
+            this.salesDateFilter.items.from.value = value.from.value;
+            this.salesDateFilter.items.to.value = value.to.value;
+            this.salesDateFilter.items.period = <any>value.period;
+            this.filtersService.change([this.salesDateFilter]);
+            this.salesDateFilter.updateCaptions();
+            this.changeDetectorRef.detectChanges();
+        }
+    }
+
+    updateSalesDateCalendar(filtersValues) {
+        if (filtersValues && filtersValues.SalesTransactionDate) {
+            let model = new CalendarValuesModel();
+            model.period = <any>this.salesDateFilter.items.period;
+            let from = this.salesDateFilter.items.from ? this.salesDateFilter.items.from.value : null;
+            let to = this.salesDateFilter.items.to ? this.salesDateFilter.items.to.value : null;
+            model.from = { value: from };
+            model.to = { value: to };
+            model.period = from && to ? <any>this.salesDateFilter.items.period : null;
+            this.calendarService.dateRange.next(model);
+        }
+    }
+
+    getSalesDatesFilter() {
+        let filter = {};
+        if (this.salesDateFilter.items.from.value) {
+            let date = new Date(this.salesDateFilter.items.from.value.getTime());
+            date.setHours(0, 0, 0, 0);
+            filter['utcStartDate'] = date.toJSON();
+        }
+        if (this.salesDateFilter.items.to.value) {
+            let date = new Date(this.salesDateFilter.items.to.value.getTime());
+            date.setHours(23, 59, 59, 999);
+            filter['utcEndDate'] = date.toJSON();
+        }
+        return filter;
+    }
+
     resetGridState() {
         if (this.isDataGrid)
             (this.dataGrid as DxDataGridComponent).instance.state(null);
@@ -598,6 +1134,10 @@ export class ReportsComponent implements OnInit, AfterViewInit {
 
     deactivate() {
         this.filtersService.unsubscribe();
-        this.deactivate$.next(null);
+    }
+
+    ngOnDestroy() {
+        this.lifeCycleSubjectsService.destroy.next();
+        this.deactivate();
     }
 }

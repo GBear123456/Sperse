@@ -68,7 +68,8 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { InvoiceSettings, OrderServiceProxy } from '@shared/service-proxies/service-proxies';
+import { InvoiceSettings, OrderServiceProxy, 
+    ProductServiceProxy, ProductType, ProductDto } from '@shared/service-proxies/service-proxies';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
@@ -76,6 +77,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { CrmService } from '../crm.service';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { FilterSourceComponent } from '@app/crm/shared/filters/source-filter/source-filter.component';
+import { FilterServicesAndProductsComponent } from '@app/crm/shared/filters/services-and-products-filter/services-and-products-filter.component';
 import { SourceFilterModel } from '@app/crm/shared/filters/source-filter/source-filter.model';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
 import { OrderDto } from '@app/crm/orders/order-dto';
@@ -99,7 +101,7 @@ import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dia
         '../shared/styles/grouped-action-menu.less',
         './orders.component.less'
     ],
-    providers: [ OrderServiceProxy, CurrencyPipe ]
+    providers: [ OrderServiceProxy, CurrencyPipe, ProductServiceProxy ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('ordersGrid', { static: false }) ordersGrid: DxDataGridComponent;
@@ -748,6 +750,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ];
 
     constructor(injector: Injector,
+        private productProxy: ProductServiceProxy,
         private orderProxy: OrderServiceProxy,
         private invoicesService: InvoicesService,
         private contactsService: ContactsService,
@@ -764,6 +767,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         public dialog: MatDialog,
     ) {
         super(injector);
+        this.subscriptionsDataSource['exportIgnoreOnLoaded'] = true;
+        this.ordersDataSource['exportIgnoreOnLoaded'] = true;
         invoicesService.settings$.pipe(
             filter(Boolean)
         ).subscribe((res: InvoiceSettings) => this.currency = res.currency);
@@ -930,7 +935,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         ).pipe(
             filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues),
             distinctUntilChanged((prev: ODataRequestValues, curr: ODataRequestValues) => {
-                return prev.filter === curr.filter && !ArrayHelper.dataChanged(prev.params, curr.params);
+                return !!prev.filter && prev.filter === curr.filter && !ArrayHelper.dataChanged(prev.params, curr.params);
             })
         );
     }
@@ -943,7 +948,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             if (this.pivotGridComponent) {
                 setTimeout(() => {
                     this.pivotGridComponent.dataGrid.instance.updateDimensions();
-                    this.pivotGridComponent.updateTotalCellsSizes();
                 }, 1001);
             }
         });
@@ -951,10 +955,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     private getSubscriptionsFilter() {
         return new FilterModel({
-            component: FilterCheckBoxesComponent,
+            component: FilterServicesAndProductsComponent,
             caption: 'SubscriptionStatus',
             items: {
-                element: new FilterCheckBoxesModel(
+                services: new FilterCheckBoxesModel(
                     {
                         dataSource$: this.store$.pipe(
                             select(SubscriptionsStoreSelectors.getSubscriptions),
@@ -974,7 +978,20 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         keyExpr: 'uid',
                         dataStructure: 'tree',
                         itemsExpr: 'memberServiceLevels'
-                    })
+                    }
+                ),
+                products: new FilterCheckBoxesModel(
+                    {
+                        dataSource$: this.productProxy.getProducts(
+                            ProductType.Subscription
+                        ).pipe(map((products: ProductDto[]) => {
+                            return products.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
+                        })),
+                        nameField: 'name',
+                        keyExpr: 'id',
+                        dataStructure: 'plain'
+                    }
+                )
             }
         });
     }
@@ -1344,8 +1361,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     toggleColumnChooser() {
-        if (this.selectedOrderType.value === OrderType.Subscription
-            && this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid) {
+        if (this.selectedOrderType.value === OrderType.Subscription &&
+            this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid
+        ) {
             this.pivotGridComponent.toggleFieldPanel();
         } else {
             DataGridService.showColumnChooser(this.dataGrid);
@@ -1406,8 +1424,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.exportCallback();
         else {
             this.setGridDataLoaded();
-            if (!this.rowsViewHeight)
-                this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
+            this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight(event.component);
             event.component.columnOption('command:edit', {
                 visibleIndex: -1,
                 width: 40
@@ -1423,6 +1440,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     toggleOrdersDataLayout(dataLayoutType: DataLayoutType) {
+        if (this.dataGrid)
+            DataGridService.hideColumnChooser(this.dataGrid);
         this.showOrdersPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType.next(this.ordersDataLayoutType = dataLayoutType);
         this.initDataSource();
@@ -1443,6 +1462,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.subscriptionsDataLayoutType = dataLayouType;
         this.initDataSource();
         this.initSubscriptionsToolbarConfig();
+        if (this.dataGrid)
+            DataGridService.hideColumnChooser(this.dataGrid);
         if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid)
             this.dataGrid.instance.deselectAll();
 
@@ -1525,23 +1546,32 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     private getSubscriptionsParams() {
-        let productIndex, levelIndex, productId = null, result = [],
-            selectedItems = this.selectedOrderType.value === OrderType.Order ?
-                this.orderSubscriptionStatusFilter.items.element['selectedItems'] :
-                this.subscriptionStatusFilter.items.element['selectedItems'];
-        selectedItems && selectedItems.forEach(item => {
-            if (productId != item.parentId) {
+        let serviceIndex, levelIndex, serviceId = null, result = [],
+            selectedFilter = this.selectedOrderType.value === OrderType.Order ?
+                this.orderSubscriptionStatusFilter : this.subscriptionStatusFilter,
+            selectedServices = selectedFilter.items.services['selectedItems'],
+            selectedProducts = selectedFilter.items.products['selectedItems'];
+
+        selectedProducts && selectedProducts.forEach((item, i) => {
+            result.push({
+                name: 'subscriptionsFilter.ProductIds[' + i + ']',
+                value: item.id
+            });            
+        });
+
+        selectedServices && selectedServices.forEach(item => {
+            if (serviceId != item.parentId) {
                 levelIndex = 0;
-                isNaN(productIndex) ? productIndex = 0 : productIndex++;
-                productId = item.parentId || item.id;
+                isNaN(serviceIndex) ? serviceIndex = 0 : serviceIndex++;
+                serviceId = item.parentId || item.id;
                 result.push({
-                    name: 'subscriptionFilters[' + productIndex + '].ServiceId',
-                    value: productId
+                    name: 'subscriptionsFilter.Services[' + serviceIndex + '].ServiceId',
+                    value: serviceId
                 });
             }
             if (item.parentId) {
                 result.push({
-                    name: 'subscriptionFilters[' + productIndex + '].LevelIds[' + levelIndex + ']',
+                    name: 'subscriptionsFilter.Services[' + serviceIndex + '].LevelIds[' + levelIndex + ']',
                     value: item.id
                 });
                 levelIndex++;
@@ -1714,6 +1744,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onOrderTypeChanged(event) {
+        if (this.dataGrid)
+            DataGridService.hideColumnChooser(this.dataGrid);
+
         if (event.value != this.selectedOrderType.value) {
             this.searchClear = true;
             this.selectedOrderType.next(event.value);
@@ -1721,6 +1754,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onContactGroupChanged(event) {
+        if (this.dataGrid)
+            DataGridService.hideColumnChooser(this.dataGrid);
+
         if (event.itemData.value != this.selectedContactGroup.value) {
             this.selectedContactGroup.next(event.itemData.value);
             this.filtersService.change([this.contactGroupFilter]);

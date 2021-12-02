@@ -36,6 +36,7 @@ import { NotifyService } from '@abp/notify/notify.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 import { CompanyDialogData } from '@app/crm/contacts/company-dialog/company-dialog-data.interface';
 import { Company } from '@app/crm/contacts/company-dialog/company.interface';
 import { CompanySize } from '@app/crm/contacts/company-dialog/company-size.interface';
@@ -91,6 +92,7 @@ export class CompanyDialogComponent implements OnInit {
         departmentCode: null
     };
     manageAllowed = this.permissionService.checkCGPermission(this.data.contactInfo.groups);
+    manageOrgUnits = this.permissionService.isGranted(AppPermissions.AdministrationOrganizationUnitsManageOrganizationTree);
     dunsRegex = AppConsts.regexPatterns.duns;
     einRegex = AppConsts.regexPatterns.ein;
     affiliateRegex = AppConsts.regexPatterns.affiliateCode;
@@ -290,17 +292,25 @@ export class CompanyDialogComponent implements OnInit {
     }
 
     createOrgUnit() {
-        if (this.company && this.company.id)
-            this.organizationContactServiceProxy.createOrgUnitForOrganization(
-                new CreateOrgUnitForOrganizationInput({
-                    organizationId: this.company.id,
-                    organizationName: undefined
-                })
-            ).subscribe((res) => {
-                this.company.rootOrganizationUnitId = res.organizationUnitId;                
-                this.notifyService.success(this.ls.l('SuccessfullyRegistered'));
-                this.loadOrganizationUnits(true);
-            });
+        if (this.manageOrgUnits && this.company && this.company.id)
+            abp.message.confirm(
+                this.ls.l('CreateOrgUnitConfirmation'),
+                this.ls.l('AreYouSure'),
+                isConfirmed => {
+                    if (isConfirmed) {
+                        this.organizationContactServiceProxy.createOrgUnitForOrganization(
+                            new CreateOrgUnitForOrganizationInput({
+                                organizationId: this.company.id,
+                                organizationName: undefined
+                            })
+                        ).subscribe((res) => {
+                            this.company.rootOrganizationUnitId = res.organizationUnitId;                
+                            this.notifyService.success(this.ls.l('SuccessfullyRegistered'));
+                            this.loadOrganizationUnits(true);
+                        });
+                    }
+                }
+            );
     }
 
     calendarOnKeyDown($event) {

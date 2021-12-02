@@ -13,7 +13,14 @@
         <div *dxTemplate="let data of 'selectTemplate'">
             <div class="select-header">
                 <span>{{data.text}}</span>
-                <span *ngIf="showTotalCount" class="total-count {{totalErrorMsg ? 'error' : ''}}" [title]="totalErrorMsg || ''">({{ isTotalCountValid() ? (totalCount | number) : '?'}})</span>
+                <ng-container *ngIf="showLoading && !totalErrorMsg && !isTotalCountValid(); else elseBlock">
+                    <i class="fa fa-spinner fa-spin"></i>
+                </ng-container>
+                <ng-template #elseBlock>
+                    <ng-container *ngIf="showTotalCount">
+                        <span class="total-count {{totalErrorMsg ? 'error' : ''}}" [title]="totalErrorMsg || ''">({{ isTotalCountValid() ? (totalCount | number) : '?'}})</span>
+                    </ng-container>
+                </ng-template>
                 <dx-text-box style="display: none" [readOnly]="true"></dx-text-box>
             </div>
         </div>

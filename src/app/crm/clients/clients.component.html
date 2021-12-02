@@ -164,6 +164,7 @@
                         </ng-container>
                         <dxi-column [dataField]="clientFields.AssignedUserName" [caption]="l('Contact.AssignedUserName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.Status" [caption]="l('Status')" cellTemplate="statusCell"></dxi-column>
+
                         <div *dxTemplate="let cellData of 'statusCell'">
                             <div [class]="'client-status ' + cellData.value | lowercase">
                                 {{cellData.value}}
@@ -203,6 +204,12 @@
                         <dxi-column [dataField]="clientFields.AffiliateRate"
                                     [caption]="l('AffiliateRate')"
                                     format="percent"
+                                    [visible]="false"
+                                    cssClass="clipboard-holder">
+                        </dxi-column>
+                        <dxi-column [dataField]="clientFields.AffiliateRateTier2" 
+                                    [caption]="l('AffiliateRateTier2')"
+                                    format="percent" 
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>

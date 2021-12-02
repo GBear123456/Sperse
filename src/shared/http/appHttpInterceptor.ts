@@ -49,7 +49,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
 
         let poolRequest = this._poolRequests[key];
         if (!poolRequest) {
-            poolRequest = this._poolRequests[key] = {request};
+            poolRequest = this._poolRequests[key] = { request };
             return poolRequest.subject = this.interceptInternal(request, next);
         }
 
@@ -66,6 +66,8 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
                 });
             poolRequest.httpSubscriber.unsubscribe();
             poolRequest.subject.complete();
+
+            this._poolRequests[key] = poolRequest;
         }
 
         return poolRequest.subject = this.interceptInternal(request, next);
@@ -110,6 +112,10 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
             error.name = error.url ? error.name : '';
             error.message = error.url ? this.configuration.defaultError.message : '';
             error.url = '';
+        } else if (error.requestOptions && error.requestOptions.url.indexOf('odata') > 0) {
+            error.url = '';
+            error.name = error.name;
+            error.message = this.configuration.defaultError.message;
         } else {
             if (!error.error)
                 error.error = new Blob([JSON.stringify(error.errorDetails || error)]);
