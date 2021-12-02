@@ -32,16 +32,16 @@ export class SubscriptionsFilterComponent implements FilterComponent, AfterViewI
 
     selectedTabIndex = this.PRODUCTS_TAB_INDEX;
     showFilterTabs = this.userManagementService.isLayout(LayoutType.BankCode);
+    isLoaded = false;
 
     constructor(
         public ls: AppLocalizationService,
         public userManagementService: UserManagementService
-
-    ) {}
+    ) { }
 
     ngAfterViewInit() {
-        if (this.items) {        
-            let services = this.items.services && this.items.services['getObjectValue'](), 
+        if (this.items) {
+            let services = this.items.services && this.items.services['getObjectValue'](),
                 products = this.items.products && this.items.products['getObjectValue']();
             if (products && Object.keys(products).length > 1)
                 this.selectedTabIndex = this.PRODUCTS_TAB_INDEX;
@@ -56,6 +56,15 @@ export class SubscriptionsFilterComponent implements FilterComponent, AfterViewI
         ) event.component.option('value', false);
     }
 
+    onTabClick(event) {
+        this.isLoaded = false;
+        this.selectedTabIndex = event.itemIndex;
+    }
+
+    onContentReady() {
+        this.isLoaded = true;
+    }
+
     onValueChanged(field, event, cell, type) {
         if (!event.event)
             return;
@@ -66,10 +75,10 @@ export class SubscriptionsFilterComponent implements FilterComponent, AfterViewI
             this.setProductValue(field, cell.data.id, type, event.value);
             children && children.forEach(item => {
                 item.data[type] = event.value;
-                this.setLevelValue(item.data.id, cell.data.id, type, event.value);
+                this.setLevelValue(field, item.data.id, cell.data.id, type, event.value);
             });
         } else if (parent.data) {
-            this.setLevelValue(cell.data.id, parent.data.id, type, event.value);
+            this.setLevelValue(field, cell.data.id, parent.data.id, type, event.value);
             children = parent.children;
             let selectedCount = children.filter(item => item.data[type]).length;
             parent.data[type] = selectedCount == children.length
@@ -87,10 +96,10 @@ export class SubscriptionsFilterComponent implements FilterComponent, AfterViewI
         });
     }
 
-    setLevelValue(id: number, productId: number, type: string, value: boolean) {
-        this.items.services.dataSource.some(product => {
+    setLevelValue(field: string, id: number, productId: number, type: string, value: boolean) {
+        this.items[field].dataSource.some(product => {
             if (product.id == productId) {
-                product.memberServiceLevels.some(level => {
+                product[this.items[field].itemsExpr].some(level => {
                     if (level.id == id) {
                         level[type] = value;
                         return true;

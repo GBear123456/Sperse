@@ -21596,6 +21596,54 @@ export class LeadServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    processLeadsWithSubscriptions(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/ProcessLeadsWithSubscriptions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processProcessLeadsWithSubscriptions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processProcessLeadsWithSubscriptions(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processProcessLeadsWithSubscriptions(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -66404,8 +66452,9 @@ export interface IAddBankCardPaymentInput {
 export class VoidBankCardPaymentInput implements IVoidBankCardPaymentInput {
     invoiceId!: number | undefined;
     invoiceNumber!: string | undefined;
+    transactionId!: number | undefined;
     gatewayName!: string | undefined;
-    gatewayTransactionId!: string;
+    gatewayTransactionId!: string | undefined;
 
     constructor(data?: IVoidBankCardPaymentInput) {
         if (data) {
@@ -66420,6 +66469,7 @@ export class VoidBankCardPaymentInput implements IVoidBankCardPaymentInput {
         if (data) {
             this.invoiceId = data["invoiceId"];
             this.invoiceNumber = data["invoiceNumber"];
+            this.transactionId = data["transactionId"];
             this.gatewayName = data["gatewayName"];
             this.gatewayTransactionId = data["gatewayTransactionId"];
         }
@@ -66436,6 +66486,7 @@ export class VoidBankCardPaymentInput implements IVoidBankCardPaymentInput {
         data = typeof data === 'object' ? data : {};
         data["invoiceId"] = this.invoiceId;
         data["invoiceNumber"] = this.invoiceNumber;
+        data["transactionId"] = this.transactionId;
         data["gatewayName"] = this.gatewayName;
         data["gatewayTransactionId"] = this.gatewayTransactionId;
         return data; 
@@ -66445,8 +66496,9 @@ export class VoidBankCardPaymentInput implements IVoidBankCardPaymentInput {
 export interface IVoidBankCardPaymentInput {
     invoiceId: number | undefined;
     invoiceNumber: string | undefined;
+    transactionId: number | undefined;
     gatewayName: string | undefined;
-    gatewayTransactionId: string;
+    gatewayTransactionId: string | undefined;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
@@ -72920,6 +72972,7 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     paymentId!: string | undefined;
     paymentDate!: moment.Moment | undefined;
     authorizationCode!: string | undefined;
+    uniqueId!: number | undefined;
 
     constructor(data?: ISubscriptionPaymentDto) {
         if (data) {
@@ -72945,6 +72998,7 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
             this.paymentId = data["paymentId"];
             this.paymentDate = data["paymentDate"] ? moment(data["paymentDate"].toString()) : <any>undefined;
             this.authorizationCode = data["authorizationCode"];
+            this.uniqueId = data["uniqueId"];
         }
     }
 
@@ -72970,6 +73024,7 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
         data["paymentId"] = this.paymentId;
         data["paymentDate"] = this.paymentDate ? this.paymentDate.toISOString() : <any>undefined;
         data["authorizationCode"] = this.authorizationCode;
+        data["uniqueId"] = this.uniqueId;
         return data; 
     }
 }
@@ -72988,6 +73043,7 @@ export interface ISubscriptionPaymentDto {
     paymentId: string | undefined;
     paymentDate: moment.Moment | undefined;
     authorizationCode: string | undefined;
+    uniqueId: number | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
@@ -76682,6 +76738,7 @@ export class ProductDto implements IProductDto {
     id!: number | undefined;
     code!: string | undefined;
     name!: string | undefined;
+    group!: string | undefined;
     paymentPeriodTypes!: RecurringPaymentFrequency[] | undefined;
 
     constructor(data?: IProductDto) {
@@ -76698,6 +76755,7 @@ export class ProductDto implements IProductDto {
             this.id = data["id"];
             this.code = data["code"];
             this.name = data["name"];
+            this.group = data["group"];
             if (data["paymentPeriodTypes"] && data["paymentPeriodTypes"].constructor === Array) {
                 this.paymentPeriodTypes = [];
                 for (let item of data["paymentPeriodTypes"])
@@ -76718,6 +76776,7 @@ export class ProductDto implements IProductDto {
         data["id"] = this.id;
         data["code"] = this.code;
         data["name"] = this.name;
+        data["group"] = this.group;
         if (this.paymentPeriodTypes && this.paymentPeriodTypes.constructor === Array) {
             data["paymentPeriodTypes"] = [];
             for (let item of this.paymentPeriodTypes)
@@ -76731,6 +76790,7 @@ export interface IProductDto {
     id: number | undefined;
     code: string | undefined;
     name: string | undefined;
+    group: string | undefined;
     paymentPeriodTypes: RecurringPaymentFrequency[] | undefined;
 }
 
