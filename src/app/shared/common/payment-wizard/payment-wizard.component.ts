@@ -97,13 +97,17 @@ export class PaymentWizardComponent implements OnInit {
     setRefreshAfterClose() {
         this.refreshAfterClose = true;
         this.dialogRef.afterClosed().subscribe(() => {
-            window.location.reload();
+            this.reloadAfterClosed();
         });
+    }
+
+    reloadAfterClosed() {
+        window.location.href = window.location.origin;
     }
 
     close() {
         this.refreshAfterClose
-            ? window.location.reload()
+            ? this.reloadAfterClosed()
             : this.dialogRef.close();
     }
 }
