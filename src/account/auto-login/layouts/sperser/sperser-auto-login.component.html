@@ -17,9 +17,30 @@
                 </div>
 
                 <div class="form-actions">
+                    <ng-container *ngIf="isLinkSent && accessCodeMaxTriesCount">
+                        <dx-text-box
+                            width="115px"
+                            height="40px"
+                            mask="000-000"
+                            [(value)]="accessCode"
+                            accessKey="AccessCode"
+                            validationMessageMode="always"
+                            [placeholder]="ls.l('EnterCode')"
+                            (onFocusOut)="onAutoLoginCodeFocusOut($event)"
+                            (onKeyUp)="onAutoLoginCodeChanged($event)">
+                        </dx-text-box>
+                        <dx-button icon="check" 
+                            height="40px"
+                            accessKey="AccessCode"
+                            (onClick)="onAccessCodeProcess()">
+                        </dx-button>
+                    </ng-container>
+                    <ng-container *ngIf="accessCodeMaxTriesCount <= 0">
+                        <div class="auto-login-error">{{ ls.l('AutoLoginMaxTriesMessage') }}</div>
+                    </ng-container>
                     <button type="submit" class="submit" [hidden]="isLinkSent || detectedTenancies.length > 1">
                         {{ls.l("Auto Login")}}
-                        <img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">
+                        <!--<img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">-->
                     </button>
                 </div>
 
