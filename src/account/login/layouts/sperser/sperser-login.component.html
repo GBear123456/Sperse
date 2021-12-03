@@ -1,111 +1,9 @@
-<!-- div class="container-fluid">
-    <div class="row">
-        <div class="col-md-12 col-sm-12 col-xs-12 form-wrapper">
-            <h1>Login as Sperser</h1>
-            <h3>Nam dapibus nisl vitae elit fringilla rutrum. Aenea.</h3>
-            <ul class="social-btns">
-                <li>
-                    <button class="btn btn-social btn-facebook">
-                        <i class="fa fa-facebook"></i>
-                    </button>
-                </li>
-                <li>
-                    <button class="btn btn-social btn-linkedin">
-                        <i class="fa fa-linkedin"></i>
-                    </button>
-                </li>
-                <li>
-                    <button class="btn btn-social btn-twitter">
-                        <i class="fa fa-twitter"></i>
-                    </button>
-                </li>
-            </ul>
-
-            <div class="separator">
-                <p>or log in with email address</p>
-            </div>
-
-            <form
-                #loginForm="ngForm"
-                class="login-form"
-                method="post"
-                novalidate
-                (ngSubmit)="login()">
-                <div class="form-group input first clearfix">
-                    <input
-                        [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress"
-                        autoFocus
-                        #userNameOrEmailAddress="ngModel"
-                        class="form-control form-control-solid placeholder-no-fix input-ltr"
-                        type="email"
-                        autocomplete="off"
-                        placeholder="{{ getLoginPlaceholder() }}"
-                        name="userNameOrEmailAddress"
-                        required
-                        tabindex="1"/>
-                </div>
-
-                <div class="form-group input password last clearfix">
-                    <input
-                        [(ngModel)]="loginService.authenticateModel.password"
-                        #password="ngModel"
-                        class="form-control form-control-solid placeholder-no-fix input-ltr"
-                        [type]="showPassword ? 'text' : 'password'"
-                        autocomplete="off"
-                        placeholder="{{ ls.l('Password') }}"
-                        name="password"
-                        required
-                        maxlength="32"
-                        tabindex="2"/>
-                    <a class="show-password" (click)="showHidePass()">
-                        <img src="./assets/common/images/rapid/icons/trailing-icon.svg" alt="Show">
-                    </a>
-                </div>
-
-                <div class="form-group options">
-                    <div class="form-group clearfix">
-                        <div class="mt-checkbox-list">
-                            <label class="mt-checkbox mt-checkbox-outline">
-                                <input
-                                    class="form-control"
-                                    [(ngModel)]="loginService.authenticateModel.rememberClient"
-                                    type="checkbox"
-                                    name="rememberMe"
-                                    value="true"/>
-                                {{ ls.l("RememberMe") }}
-                                <span></span>
-                            </label>
-                        </div>
-                    </div>
-                    <div class="form-group clearfix">
-                        <a routerLink="/account/forgot-password"
-                            [queryParams]="{'email': loginService.authenticateModel.userNameOrEmailAddress}"
-                            id="forget-password"
-                            class="forget-password pull-right">
-                            {{ ls.l("ForgotPassword") }}
-                        </a>
-                    </div>
-                </div>
-
-                <div class="form-actions">
-                    <button
-                        type="submit"
-                        class="btn btn-submit"
-                        [disabled]="loginInProgress || !loginForm.form.valid">
-                        {{ ls.l("LoginBtn") }}
-                    </button>
-                </div>
-            </form>
-        </div>
-    </div>
-</div -->
-
 <div class="entrance-page__content entrance-page__content--login entrance-details df-column">
     <h1 class="entrance-page__title">
-        {{ls.l('Sign In')}}
+        {{ls.l('Account.SignIn')}}
     </h1>
     <p class="entrance-page__subtitle">
-        {{ls.l('Sign in Sperser to create your Influencer card!')}}
+        {{ls.l('Account.CreateYourInfluencerCard')}}
     </p>
     <div class="entrance-page__form entrance-page__form--login">
         <form #loginForm="ngForm" method="post" novalidate (ngSubmit)="login()">
@@ -114,16 +12,17 @@
                 <input class="entrance-page__form-input entrance-page__form-input--email" type="text"
                     [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus
                     placeholder="Enter Your Email" autocomplete="off" name="userNameOrEmailAddress" required tabindex="1">
-                <label>{{ls.l('Enter your email or phone number')}}</label>
+                <label>{{ls.l('Account.EnterYourEmailOrPhone')}}</label>
             </div>
 
             <div class="entrance-page__form-password">
                 <div class="input-wrap">
+                    <a class="show-password" (click)="showHidePassword()"></a>
                     <input class="entrance-page__form-input entrance-page__form-input--password"
-                        type="password" id="pswLogin" name="psw" placeholder="Enter Your Password"
+                        [type]="showPassword ? 'text' : 'password'" id="pswLogin" name="psw" placeholder="Enter Your Password"
                         [(ngModel)]="loginService.authenticateModel.password"
                         name="password" required maxlength="32" tabindex="2">
-                    <label>{{ls.l('Enter Your Password')}}</label>
+                    <label>{{ls.l('Account.EnterYourPassword')}}</label>
                 </div>
                 <span class="show-password show-password--login is-hidden"></span>
             </div>
@@ -143,7 +42,7 @@
     </div>
     <div class="entrance-page__separator">
         <span>
-            {{ls.l('or log in with socials')}}
+            {{ls.l('Account.LoginWithSocials')}}
         </span>
     </div>
     <div class="entrance-page__social">
@@ -161,7 +60,7 @@
     </div>
     <div class="entrance-page__privacy">
         <p>
-            {{ls.l('By proceeding you agree to our Privacy Policy and')}} <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Terms)">{{ls.l('Terms of Service')}}</a>
+            {{ls.l('Account.AgreePrivacyPolicy')}} <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Terms)">{{ls.l('Account.TermsOfService')}}</a>
         </p>
     </div>
 </div>

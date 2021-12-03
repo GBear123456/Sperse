@@ -189,24 +189,30 @@ a:hover {
   transition: top 0.2s, opacity 0.2s;
   pointer-events: none;
 }
+
+.input-wrap input:not(:-moz-placeholder-shown)+label {
+  position: absolute;
+  font-size: 12px;
+  opacity: 0.5;
+  top: 10px;
+}
+.input-wrap input:not(:-ms-input-placeholder)+label {
+  pointer-events: none;
+  font-size: 12px;
+  opacity: 0.5;
+  top: 10px;
+}
+
 .input-wrap label.is-hidden {
   opacity: 0 !important;
 }
-.input-wrap input:not(:-moz-placeholder-shown) + label {
-  top: 10px;
+
+.input-wrap input:focus+label,
+.input-wrap input:not(:placeholder-shown)+label {
+  display: inline-block;
   font-size: 12px;
   opacity: 0.5;
-}
-.input-wrap input:not(:-ms-input-placeholder) + label {
   top: 10px;
-  font-size: 12px;
-  opacity: 0.5;
-}
-.input-wrap input:focus + label,
-.input-wrap input:not(:placeholder-shown) + label {
-  top: 10px;
-  font-size: 12px;
-  opacity: 0.5;
 }
 
 .container {
@@ -275,9 +281,11 @@ a:hover {
 }
 .entrance-page__powered {
   display: flex;
+  position: relative;
   justify-content: center;
   height: clamp(30px, 3vw, 40px);
-  margin-top: clamp(15px, 3vw, 40px);
+  margin-bottom: 20px;
+  margin-top: auto;
 }
 .entrance-page__powered a {
   position: absolute;
@@ -302,6 +310,7 @@ a:hover {
   display: flex;
   z-index: 2;
   padding: clamp(10px, 3vw, 50px) clamp(10px, 4vw, 60px);
+  padding-bottom: 0;
 }
 .entrance-page__left {
   background-color: #fff;
