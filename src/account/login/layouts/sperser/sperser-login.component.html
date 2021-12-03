@@ -1,9 +1,9 @@
 <div class="entrance-page__content entrance-page__content--login entrance-details df-column">
     <h1 class="entrance-page__title">
-        {{ls.l('Account.SignIn')}}
+        {{ls.l('Sign In')}}
     </h1>
     <p class="entrance-page__subtitle">
-        {{ls.l('Account.CreateYourInfluencerCard')}}
+        {{ls.l('Sign in Sperser to create your Influencer card!')}}
     </p>
     <div class="entrance-page__form entrance-page__form--login">
         <form #loginForm="ngForm" method="post" novalidate (ngSubmit)="login()">
@@ -12,7 +12,7 @@
                 <input class="entrance-page__form-input entrance-page__form-input--email" type="text"
                     [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus
                     placeholder="Enter Your Email" autocomplete="off" name="userNameOrEmailAddress" required tabindex="1">
-                <label>{{ls.l('Account.EnterYourEmailOrPhone')}}</label>
+                <label>{{ls.l('Enter your email or phone number')}}</label>
             </div>
 
             <div class="entrance-page__form-password">
@@ -22,7 +22,7 @@
                         [type]="showPassword ? 'text' : 'password'" id="pswLogin" name="psw" placeholder="Enter Your Password"
                         [(ngModel)]="loginService.authenticateModel.password"
                         name="password" required maxlength="32" tabindex="2">
-                    <label>{{ls.l('Account.EnterYourPassword')}}</label>
+                    <label>{{ls.l('Enter Your Password')}}</label>
                 </div>
                 <span class="show-password show-password--login is-hidden"></span>
             </div>
@@ -42,7 +42,7 @@
     </div>
     <div class="entrance-page__separator">
         <span>
-            {{ls.l('Account.LoginWithSocials')}}
+            {{ls.l('or log in with socials')}}
         </span>
     </div>
     <div class="entrance-page__social">
@@ -60,7 +60,7 @@
     </div>
     <div class="entrance-page__privacy">
         <p>
-            {{ls.l('Account.AgreePrivacyPolicy')}} <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Terms)">{{ls.l('Account.TermsOfService')}}</a>
+            {{ls.l('By proceeding you agree to our Privacy Policy and')}} <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Terms)">{{ls.l('Terms of Service')}}</a>
         </p>
     </div>
 </div>
