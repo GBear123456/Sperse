@@ -28417,6 +28417,58 @@ export class ProductServiceProxy {
     }
 
     /**
+     * @body (optional) 
+     * @return Success
+     */
+    setProductImage(body: SetProductImageInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Product/SetProductImage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetProductImage(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetProductImage(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSetProductImage(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
      * @id (optional) 
      * @return Success
      */
@@ -73001,6 +73053,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
     gracePeriodEndDate!: moment.Moment | undefined;
     productCode!: string | undefined;
     productName!: string | undefined;
+    productThumbnailUrl!: string | undefined;
     fee!: number | undefined;
     statusCode!: string | undefined;
     status!: string | undefined;
@@ -73032,6 +73085,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
             this.gracePeriodEndDate = data["gracePeriodEndDate"] ? moment(data["gracePeriodEndDate"].toString()) : <any>undefined;
             this.productCode = data["productCode"];
             this.productName = data["productName"];
+            this.productThumbnailUrl = data["productThumbnailUrl"];
             this.fee = data["fee"];
             this.statusCode = data["statusCode"];
             this.status = data["status"];
@@ -73071,6 +73125,7 @@ export class OrderSubscriptionDto implements IOrderSubscriptionDto {
         data["gracePeriodEndDate"] = this.gracePeriodEndDate ? this.gracePeriodEndDate.toISOString() : <any>undefined;
         data["productCode"] = this.productCode;
         data["productName"] = this.productName;
+        data["productThumbnailUrl"] = this.productThumbnailUrl;
         data["fee"] = this.fee;
         data["statusCode"] = this.statusCode;
         data["status"] = this.status;
@@ -73103,6 +73158,7 @@ export interface IOrderSubscriptionDto {
     gracePeriodEndDate: moment.Moment | undefined;
     productCode: string | undefined;
     productName: string | undefined;
+    productThumbnailUrl: string | undefined;
     fee: number | undefined;
     statusCode: string | undefined;
     status: string | undefined;
@@ -76593,6 +76649,7 @@ export class ProductInfo implements IProductInfo {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    imageUrl!: string | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
 
@@ -76617,6 +76674,7 @@ export class ProductInfo implements IProductInfo {
             this.maxCommissionRate = data["maxCommissionRate"];
             this.maxCommissionRateTier2 = data["maxCommissionRateTier2"];
             this.unit = data["unit"];
+            this.imageUrl = data["imageUrl"];
             if (data["productServices"] && data["productServices"].constructor === Array) {
                 this.productServices = [];
                 for (let item of data["productServices"])
@@ -76649,6 +76707,7 @@ export class ProductInfo implements IProductInfo {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["imageUrl"] = this.imageUrl;
         if (this.productServices && this.productServices.constructor === Array) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -76674,6 +76733,7 @@ export interface IProductInfo {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    imageUrl: string | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
 }
@@ -77124,6 +77184,46 @@ export interface IUpdateProductInput {
     unit: ProductMeasurementUnit | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+}
+
+export class SetProductImageInput implements ISetProductImageInput {
+    productId!: number;
+    image!: string | undefined;
+
+    constructor(data?: ISetProductImageInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.productId = data["productId"];
+            this.image = data["image"];
+        }
+    }
+
+    static fromJS(data: any): SetProductImageInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetProductImageInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
+        data["image"] = this.image;
+        return data; 
+    }
+}
+
+export interface ISetProductImageInput {
+    productId: number;
+    image: string | undefined;
 }
 
 export class UpdateProductGroupInput implements IUpdateProductGroupInput {
