@@ -38,8 +38,8 @@ import {
     LayoutType,
     RapidSettingsDto,
     EmailTemplateType,
-
-    StripeSettings
+    StripeSettings,
+    CustomCssType
 } from '@shared/service-proxies/service-proxies';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -225,7 +225,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         );
 
         this.customCssUploader = this.createUploader(
-            '/api/TenantCustomization/UploadCustomCss',
+            `/api/TenantCustomization/UploadCustomCss?cssType=${CustomCssType.Platform}`,
             result => {
                 this.appSession.tenant.customCssId = result.id;
                 $('#TenantCustomCss').remove();
@@ -332,7 +332,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     clearCustomCss(): void {
-        this.tenantCustomizationService.clearCustomCss().subscribe(() => {
+        this.tenantCustomizationService.clearCustomCss(CustomCssType.Platform).subscribe(() => {
             this.appSession.tenant.customCssId = null;
             $('#TenantCustomCss').remove();
             this.notify.info(this.l('ClearedSuccessfully'));

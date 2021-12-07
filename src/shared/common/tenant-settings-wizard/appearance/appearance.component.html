@@ -22,7 +22,7 @@
                           [documentLink]="tenant.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id : undefined"
                           [uploadInfoText]="ls.l('UploadCSS_Info')"
                           [uploadButtonText]="ls.l('FileUpload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss'"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Platform'"
                           acceptFileExt=".css"
                           [maxFileSize]="maxCssFileSize"
                           (onDocumentClear)="clearCustomCss()">

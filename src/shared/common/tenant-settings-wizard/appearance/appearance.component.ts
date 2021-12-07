@@ -15,7 +15,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import {
     TenantLoginInfoDto,
     TenantCustomizationServiceProxy,
-    TenantCustomizationInfoDto
+    TenantCustomizationInfoDto,
+    CustomCssType
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -94,7 +95,7 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
     }
 
     clearCustomCss(): void {
-        this.tenantCustomizationService.clearCustomCss().subscribe(() => {
+        this.tenantCustomizationService.clearCustomCss(CustomCssType.Platform).subscribe(() => {
             this.tenant.customCssId = null;
             this.notify.info(this.ls.l('ClearedSuccessfully'));
             this.changeDetectorRef.detectChanges();
