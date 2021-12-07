@@ -21596,6 +21596,54 @@ export class LeadServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    processLeadsWithSubscriptions(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/ProcessLeadsWithSubscriptions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processProcessLeadsWithSubscriptions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processProcessLeadsWithSubscriptions(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processProcessLeadsWithSubscriptions(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -21663,6 +21711,229 @@ export class LeadTypeServiceProxy {
             }));
         }
         return _observableOf<LeadTypeDto[]>(<any>null);
+    }
+}
+
+@Injectable()
+export class LearningResourceServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    create(body: CreateLearningResourceInput | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    update(body: UpdateLearningResourceInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    setImage(body: SetLearningResourceImageInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/SetImage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetImage(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetImage(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSetImage(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    delete(id: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/Delete?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -66456,8 +66727,9 @@ export interface IAddBankCardPaymentInput {
 export class VoidBankCardPaymentInput implements IVoidBankCardPaymentInput {
     invoiceId!: number | undefined;
     invoiceNumber!: string | undefined;
+    transactionId!: number | undefined;
     gatewayName!: string | undefined;
-    gatewayTransactionId!: string;
+    gatewayTransactionId!: string | undefined;
 
     constructor(data?: IVoidBankCardPaymentInput) {
         if (data) {
@@ -66472,6 +66744,7 @@ export class VoidBankCardPaymentInput implements IVoidBankCardPaymentInput {
         if (data) {
             this.invoiceId = data["invoiceId"];
             this.invoiceNumber = data["invoiceNumber"];
+            this.transactionId = data["transactionId"];
             this.gatewayName = data["gatewayName"];
             this.gatewayTransactionId = data["gatewayTransactionId"];
         }
@@ -66488,6 +66761,7 @@ export class VoidBankCardPaymentInput implements IVoidBankCardPaymentInput {
         data = typeof data === 'object' ? data : {};
         data["invoiceId"] = this.invoiceId;
         data["invoiceNumber"] = this.invoiceNumber;
+        data["transactionId"] = this.transactionId;
         data["gatewayName"] = this.gatewayName;
         data["gatewayTransactionId"] = this.gatewayTransactionId;
         return data; 
@@ -66497,8 +66771,9 @@ export class VoidBankCardPaymentInput implements IVoidBankCardPaymentInput {
 export interface IVoidBankCardPaymentInput {
     invoiceId: number | undefined;
     invoiceNumber: string | undefined;
+    transactionId: number | undefined;
     gatewayName: string | undefined;
-    gatewayTransactionId: string;
+    gatewayTransactionId: string | undefined;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
@@ -68742,6 +69017,182 @@ export class LeadTypeDto implements ILeadTypeDto {
 export interface ILeadTypeDto {
     id: number | undefined;
     name: string | undefined;
+}
+
+export enum LearningResourceType {
+    Link = "Link", 
+    Video = "Video", 
+    Audio = "Audio", 
+    Image = "Image", 
+    File = "File", 
+}
+
+export class CreateLearningResourceInput implements ICreateLearningResourceInput {
+    groupId!: number;
+    isParent!: boolean | undefined;
+    parentId!: number | undefined;
+    type!: LearningResourceType | undefined;
+    name!: string;
+    url!: string | undefined;
+    memberServiceIds!: number[] | undefined;
+
+    constructor(data?: ICreateLearningResourceInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.groupId = data["groupId"];
+            this.isParent = data["isParent"];
+            this.parentId = data["parentId"];
+            this.type = data["type"];
+            this.name = data["name"];
+            this.url = data["url"];
+            if (data["memberServiceIds"] && data["memberServiceIds"].constructor === Array) {
+                this.memberServiceIds = [];
+                for (let item of data["memberServiceIds"])
+                    this.memberServiceIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateLearningResourceInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateLearningResourceInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["groupId"] = this.groupId;
+        data["isParent"] = this.isParent;
+        data["parentId"] = this.parentId;
+        data["type"] = this.type;
+        data["name"] = this.name;
+        data["url"] = this.url;
+        if (this.memberServiceIds && this.memberServiceIds.constructor === Array) {
+            data["memberServiceIds"] = [];
+            for (let item of this.memberServiceIds)
+                data["memberServiceIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface ICreateLearningResourceInput {
+    groupId: number;
+    isParent: boolean | undefined;
+    parentId: number | undefined;
+    type: LearningResourceType | undefined;
+    name: string;
+    url: string | undefined;
+    memberServiceIds: number[] | undefined;
+}
+
+export class UpdateLearningResourceInput implements IUpdateLearningResourceInput {
+    id!: number;
+    type!: LearningResourceType | undefined;
+    name!: string;
+    url!: string | undefined;
+    memberServiceIds!: number[] | undefined;
+
+    constructor(data?: IUpdateLearningResourceInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.type = data["type"];
+            this.name = data["name"];
+            this.url = data["url"];
+            if (data["memberServiceIds"] && data["memberServiceIds"].constructor === Array) {
+                this.memberServiceIds = [];
+                for (let item of data["memberServiceIds"])
+                    this.memberServiceIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateLearningResourceInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLearningResourceInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["name"] = this.name;
+        data["url"] = this.url;
+        if (this.memberServiceIds && this.memberServiceIds.constructor === Array) {
+            data["memberServiceIds"] = [];
+            for (let item of this.memberServiceIds)
+                data["memberServiceIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface IUpdateLearningResourceInput {
+    id: number;
+    type: LearningResourceType | undefined;
+    name: string;
+    url: string | undefined;
+    memberServiceIds: number[] | undefined;
+}
+
+export class SetLearningResourceImageInput implements ISetLearningResourceImageInput {
+    id!: number;
+    image!: string | undefined;
+
+    constructor(data?: ISetLearningResourceImageInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.image = data["image"];
+        }
+    }
+
+    static fromJS(data: any): SetLearningResourceImageInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetLearningResourceImageInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["image"] = this.image;
+        return data; 
+    }
+}
+
+export interface ISetLearningResourceImageInput {
+    id: number;
+    image: string | undefined;
 }
 
 export class LinkTrackingOutput implements ILinkTrackingOutput {
@@ -72972,6 +73423,7 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
     paymentId!: string | undefined;
     paymentDate!: moment.Moment | undefined;
     authorizationCode!: string | undefined;
+    uniqueId!: number | undefined;
 
     constructor(data?: ISubscriptionPaymentDto) {
         if (data) {
@@ -72997,6 +73449,7 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
             this.paymentId = data["paymentId"];
             this.paymentDate = data["paymentDate"] ? moment(data["paymentDate"].toString()) : <any>undefined;
             this.authorizationCode = data["authorizationCode"];
+            this.uniqueId = data["uniqueId"];
         }
     }
 
@@ -73022,6 +73475,7 @@ export class SubscriptionPaymentDto implements ISubscriptionPaymentDto {
         data["paymentId"] = this.paymentId;
         data["paymentDate"] = this.paymentDate ? this.paymentDate.toISOString() : <any>undefined;
         data["authorizationCode"] = this.authorizationCode;
+        data["uniqueId"] = this.uniqueId;
         return data; 
     }
 }
@@ -73040,6 +73494,7 @@ export interface ISubscriptionPaymentDto {
     paymentId: string | undefined;
     paymentDate: moment.Moment | undefined;
     authorizationCode: string | undefined;
+    uniqueId: number | undefined;
 }
 
 export class OrderSubscriptionDto implements IOrderSubscriptionDto {
