@@ -80892,6 +80892,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     logoId!: string | undefined;
     logoFileType!: string | undefined;
     customCssId!: string | undefined;
+    loginCustomCssId!: string | undefined;
+    portalCustomCssId!: string | undefined;
     customToSDocumentId!: string | undefined;
     customPrivacyPolicyDocumentId!: string | undefined;
     customLayoutType!: LayoutType | undefined;
@@ -80918,6 +80920,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
             this.logoId = data["logoId"];
             this.logoFileType = data["logoFileType"];
             this.customCssId = data["customCssId"];
+            this.loginCustomCssId = data["loginCustomCssId"];
+            this.portalCustomCssId = data["portalCustomCssId"];
             this.customToSDocumentId = data["customToSDocumentId"];
             this.customPrivacyPolicyDocumentId = data["customPrivacyPolicyDocumentId"];
             this.customLayoutType = data["customLayoutType"];
@@ -80944,6 +80948,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data["logoId"] = this.logoId;
         data["logoFileType"] = this.logoFileType;
         data["customCssId"] = this.customCssId;
+        data["loginCustomCssId"] = this.loginCustomCssId;
+        data["portalCustomCssId"] = this.portalCustomCssId;
         data["customToSDocumentId"] = this.customToSDocumentId;
         data["customPrivacyPolicyDocumentId"] = this.customPrivacyPolicyDocumentId;
         data["customLayoutType"] = this.customLayoutType;
@@ -80963,6 +80969,8 @@ export interface ITenantLoginInfoDto {
     logoId: string | undefined;
     logoFileType: string | undefined;
     customCssId: string | undefined;
+    loginCustomCssId: string | undefined;
+    portalCustomCssId: string | undefined;
     customToSDocumentId: string | undefined;
     customPrivacyPolicyDocumentId: string | undefined;
     customLayoutType: LayoutType | undefined;

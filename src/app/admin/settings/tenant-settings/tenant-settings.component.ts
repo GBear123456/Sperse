@@ -65,7 +65,6 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     @ViewChild('privacyInput', { static: false }) privacyInput: ElementRef;
     @ViewChild('tosInput', { static: false }) tosInput: ElementRef;
     @ViewChild('logoInput', { static: false }) logoInput: ElementRef;
-    @ViewChild('cssInput', { static: false }) cssInput: ElementRef;
     @ViewChild('faviconInput', { static: false }) faviconInput: ElementRef;
     usingDefaultTimeZone = false;
     initialTimeZone: string;
@@ -94,7 +93,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     rapidSettings: RapidSettingsDto = new RapidSettingsDto();
     logoUploader: FileUploader;
     faviconsUploader: FileUploader;
-    customCssUploader: FileUploader;
+    customCssUploaders: { [cssType: string]: FileUploader } = {};
     customToSUploader: FileUploader;
     customPrivacyPolicyUploader: FileUploader;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
@@ -118,6 +117,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         }
     ];
     EmailTemplateType = EmailTemplateType;
+    CustomCssType = CustomCssType;
     tabIndex: Observable<number>;
 
     constructor(
@@ -150,16 +150,16 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
     ngAfterViewInit() {
         this.tabIndex = this.route.queryParams.pipe(
-            first(), delay(100), 
+            first(), delay(100),
             map((params: Params) => {
-                return (params['tab'] == 'smtp' ? 
+                return (params['tab'] == 'smtp' ?
                     DomHelper.getElementIndexByInnerText(
-                        this.tabGroup.nativeElement.getElementsByClassName('mat-tab-label'), 
+                        this.tabGroup.nativeElement.getElementsByClassName('mat-tab-label'),
                         this.l('EmailSmtp')
                     ) : 0
                 );
             })
-        );        
+        );
     }
 
     ngOnDestroy() {
@@ -224,14 +224,22 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             }
         );
 
-        this.customCssUploader = this.createUploader(
-            `/api/TenantCustomization/UploadCustomCss?cssType=${CustomCssType.Platform}`,
-            result => {
-                this.appSession.tenant.customCssId = result.id;
-                $('#TenantCustomCss').remove();
-                $('head').append('<link id="TenantCustomCss" href="' + AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + this.appSession.tenant.customCssId + '/' + this.appSession.tenant.id + '" rel="stylesheet"/>');
-            }
-        );
+        for (var type in CustomCssType) {
+            let cssType = type;
+            let uploader = this.createUploader(
+                `/api/TenantCustomization/UploadCustomCss?cssType=${cssType}`,
+                result => {
+                    this.setCustomCssTenantProperty(cssType as CustomCssType, result.id);
+                    if (cssType == CustomCssType.Platform) {
+                        let linkId = `${cssType}CustomCss`;
+                        $(`#${linkId}`).remove();
+                        $('head').append(`<link id="${linkId}" href="` + AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + result.id + '/' + this.appSession.tenant.id + '" rel="stylesheet"/>');
+                    }
+                    this.changeDetection.detectChanges();
+                }
+            );
+            this.customCssUploaders[type] = uploader;
+        }
 
         this.faviconsUploader = this.createUploader(
             '/api/TenantCustomization/UploadFavicons',
@@ -256,6 +264,20 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this.appSession.tenant.customPrivacyPolicyDocumentId = result.id;
             }
         );
+    }
+
+    setCustomCssTenantProperty(cssType: CustomCssType, value: string) {
+        switch (cssType) {
+            case CustomCssType.Platform:
+                this.appSession.tenant.customCssId = value;
+                break;
+            case CustomCssType.Login:
+                this.appSession.tenant.loginCustomCssId = value;
+                break;
+            case CustomCssType.Portal:
+                this.appSession.tenant.portalCustomCssId = value;
+                break;
+        }
     }
 
     resetInput(input: ElementRef) {
@@ -298,9 +320,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this.resetInput(this.faviconInput);
     }
 
-    uploadCustomCss(): void {
-        this.customCssUploader.uploadAll();
-        this.resetInput(this.cssInput);
+    uploadCustomCss(cssType: CustomCssType, input): void {
+        this.customCssUploaders[cssType].uploadAll();
+        input.value = null;
     }
 
     uploadCustomPrivacyPolicy(): void {
@@ -331,10 +353,12 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         });
     }
 
-    clearCustomCss(): void {
-        this.tenantCustomizationService.clearCustomCss(CustomCssType.Platform).subscribe(() => {
-            this.appSession.tenant.customCssId = null;
-            $('#TenantCustomCss').remove();
+    clearCustomCss(cssType: CustomCssType): void {
+        this.tenantCustomizationService.clearCustomCss(cssType).subscribe(() => {
+            this.setCustomCssTenantProperty(cssType, null);
+            if (cssType == CustomCssType.Platform) {
+                $(`#${cssType}CustomCss`).remove();
+            }
             this.notify.info(this.l('ClearedSuccessfully'));
             this.changeDetection.detectChanges();
         });
