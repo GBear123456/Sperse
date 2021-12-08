@@ -21726,6 +21726,62 @@ export class LearningResourceServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getAll(): Observable<LearningResourceGroupedInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<LearningResourceGroupedInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<LearningResourceGroupedInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<LearningResourceGroupedInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(LearningResourceGroupedInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<LearningResourceGroupedInfo[]>(<any>null);
+    }
+
+    /**
      * @body (optional) 
      * @return Success
      */
@@ -69025,6 +69081,150 @@ export enum LearningResourceType {
     Audio = "Audio", 
     Image = "Image", 
     File = "File", 
+}
+
+export class LearningResourceInfo implements ILearningResourceInfo {
+    id!: number | undefined;
+    imageUrl!: string | undefined;
+    isParent!: boolean | undefined;
+    parentId!: number | undefined;
+    children!: LearningResourceInfo[] | undefined;
+    type!: LearningResourceType | undefined;
+    name!: string | undefined;
+    url!: string | undefined;
+    memberServiceIds!: number[] | undefined;
+
+    constructor(data?: ILearningResourceInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.imageUrl = data["imageUrl"];
+            this.isParent = data["isParent"];
+            this.parentId = data["parentId"];
+            if (data["children"] && data["children"].constructor === Array) {
+                this.children = [];
+                for (let item of data["children"])
+                    this.children.push(LearningResourceInfo.fromJS(item));
+            }
+            this.type = data["type"];
+            this.name = data["name"];
+            this.url = data["url"];
+            if (data["memberServiceIds"] && data["memberServiceIds"].constructor === Array) {
+                this.memberServiceIds = [];
+                for (let item of data["memberServiceIds"])
+                    this.memberServiceIds.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): LearningResourceInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new LearningResourceInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["imageUrl"] = this.imageUrl;
+        data["isParent"] = this.isParent;
+        data["parentId"] = this.parentId;
+        if (this.children && this.children.constructor === Array) {
+            data["children"] = [];
+            for (let item of this.children)
+                data["children"].push(item.toJSON());
+        }
+        data["type"] = this.type;
+        data["name"] = this.name;
+        data["url"] = this.url;
+        if (this.memberServiceIds && this.memberServiceIds.constructor === Array) {
+            data["memberServiceIds"] = [];
+            for (let item of this.memberServiceIds)
+                data["memberServiceIds"].push(item);
+        }
+        return data; 
+    }
+}
+
+export interface ILearningResourceInfo {
+    id: number | undefined;
+    imageUrl: string | undefined;
+    isParent: boolean | undefined;
+    parentId: number | undefined;
+    children: LearningResourceInfo[] | undefined;
+    type: LearningResourceType | undefined;
+    name: string | undefined;
+    url: string | undefined;
+    memberServiceIds: number[] | undefined;
+}
+
+export class LearningResourceGroupedInfo implements ILearningResourceGroupedInfo {
+    groupId!: number | undefined;
+    groupName!: string | undefined;
+    groupImageUrl!: string | undefined;
+    groupHtmlColor!: string | undefined;
+    resources!: LearningResourceInfo[] | undefined;
+
+    constructor(data?: ILearningResourceGroupedInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.groupId = data["groupId"];
+            this.groupName = data["groupName"];
+            this.groupImageUrl = data["groupImageUrl"];
+            this.groupHtmlColor = data["groupHtmlColor"];
+            if (data["resources"] && data["resources"].constructor === Array) {
+                this.resources = [];
+                for (let item of data["resources"])
+                    this.resources.push(LearningResourceInfo.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): LearningResourceGroupedInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new LearningResourceGroupedInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["groupId"] = this.groupId;
+        data["groupName"] = this.groupName;
+        data["groupImageUrl"] = this.groupImageUrl;
+        data["groupHtmlColor"] = this.groupHtmlColor;
+        if (this.resources && this.resources.constructor === Array) {
+            data["resources"] = [];
+            for (let item of this.resources)
+                data["resources"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ILearningResourceGroupedInfo {
+    groupId: number | undefined;
+    groupName: string | undefined;
+    groupImageUrl: string | undefined;
+    groupHtmlColor: string | undefined;
+    resources: LearningResourceInfo[] | undefined;
 }
 
 export class CreateLearningResourceInput implements ICreateLearningResourceInput {
