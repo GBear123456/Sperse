@@ -52,9 +52,9 @@ import { AppFeatures } from '@shared/AppFeatures';
     providers: [ InvoiceServiceProxy ]
 })
 export class InvoicesComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxTooltipComponent, { static: false }) actionsTooltip: DxTooltipComponent;
-    @ViewChild('invoicesDataGrid', { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild('generatedCommissionDataGrid', {static: false}) generatedCommissionDataGrid: DxDataGridComponent;
+    @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
+    @ViewChild('invoicesDataGrid') dataGrid: DxDataGridComponent;
+    @ViewChild('generatedCommissionDataGrid') generatedCommissionDataGrid: DxDataGridComponent;
 
     private actionRecordData: InvoiceDto;
     private settings = new InvoiceSettings();

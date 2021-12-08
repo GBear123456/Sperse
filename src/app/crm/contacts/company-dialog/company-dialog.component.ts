@@ -50,7 +50,7 @@ import { CompanySize } from '@app/crm/contacts/company-dialog/company-size.inter
 })
 export class CompanyDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxDateBoxComponent, { static: false }) calendarComponent: DxDateBoxComponent;
+    @ViewChild(DxDateBoxComponent) calendarComponent: DxDateBoxComponent;
     @ViewChildren(DxValidatorComponent) validators: QueryList<DxValidatorComponent>;
     states$: Observable<CountryStateDto[]>;
     countries$: Observable<CountryDto[]> = this.store$.pipe(select(CountriesStoreSelectors.getCountries));

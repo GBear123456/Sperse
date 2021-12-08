@@ -49,14 +49,14 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
     providers: [ ZipCodeFormatterPipe, PartnerServiceProxy ]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    @ViewChild(ImportWizardComponent, { static: false }) wizard: ImportWizardComponent;
-    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
-    @ViewChild(TypesListComponent, { static: false }) partnerTypesComponent: TypesListComponent;
-    @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
-    @ViewChild('stagesList', { static: false }) stagesComponent: StaticListComponent;
+    @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild('stagesList') stagesComponent: StaticListComponent;
 
     private readonly MAX_REQUEST_SIZE = 55;
 

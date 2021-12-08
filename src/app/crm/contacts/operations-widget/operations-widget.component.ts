@@ -48,15 +48,15 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
     styleUrls: ['./operations-widget.component.less']
 })
 export class OperationsWidgetComponent extends AppComponentBase implements OnInit, AfterViewInit, OnChanges {
-    @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
-    @ViewChild(TypesListComponent, { static: false }) partnerTypesComponent: TypesListComponent;
-    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
-    @ViewChild('stagesList', { static: false }) stagesComponent: StaticListComponent;
-    @ViewChild('statusesList', { static: false }) statusComponent: StaticListComponent;
-    @ViewChild(ToolBarComponent, { static: false }) toolbarComponent: ToolBarComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild('stagesList') stagesComponent: StaticListComponent;
+    @ViewChild('statusesList') statusComponent: StaticListComponent;
+    @ViewChild(ToolBarComponent) toolbarComponent: ToolBarComponent;
 
     /*** @todo add localization service */
 

@@ -27,7 +27,7 @@ import { AppService } from '@app/app.service';
     animations: [appModuleAnimation()]
 })
 export class LanguageTextsComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private rootComponent: any;
     dataSource: DataSource;

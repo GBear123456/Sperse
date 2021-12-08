@@ -41,10 +41,10 @@ class EmailAttachment extends AttachmentDto {
     styleUrls: ['./user-inbox.component.less']
 })
 export class UserInboxComponent implements OnDestroy {
-    @ViewChild(DxListComponent, { static: false }) listComponent: DxListComponent;
-    @ViewChild(DxButtonGroupComponent, { static: false }) buttonGroupComponent: DxButtonGroupComponent;
-    @ViewChild('emailContent', { static: false }) emailContent: ElementRef;
-    @ViewChild('contentView', { static: false }) contentView: ElementRef;
+    @ViewChild(DxListComponent) listComponent: DxListComponent;
+    @ViewChild(DxButtonGroupComponent) buttonGroupComponent: DxButtonGroupComponent;
+    @ViewChild('emailContent') emailContent: ElementRef;
+    @ViewChild('contentView') contentView: ElementRef;
 
     contactId: number;
     contentToolbar = [];

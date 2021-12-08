@@ -27,7 +27,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     animations: [accountModuleAnimation()]
 })
 export class HostLoginComponent implements OnInit {
-    @ViewChild('loginForm', { static: false }) loginForm;
+    @ViewChild('loginForm') loginForm;
     currentYear: number = moment().year();
     tenantName = AppConsts.defaultTenantName;
     conditions = ConditionsType;

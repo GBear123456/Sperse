@@ -49,10 +49,10 @@ import { ReportPeriod } from '../enums/reportPeriod.enum';
     providers: [DepartmentsServiceProxy, ReportsServiceProxy, BudgetServiceProxy]
 })
 export class GenerateReportDialogComponent implements OnInit {
-    @ViewChild('beTreeList', { static: false }) beTreeList: DxTreeListComponent;
-    @ViewChild('templatesTreeList', { static: false }) templatesTreeList: DxTreeListComponent;
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
-    @ViewChild('notificationToEmailTextBox', { static: false }) notificationToEmailTextBox: DxTextBoxComponent;
+    @ViewChild('beTreeList') beTreeList: DxTreeListComponent;
+    @ViewChild('templatesTreeList') templatesTreeList: DxTreeListComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild('notificationToEmailTextBox') notificationToEmailTextBox: DxTextBoxComponent;
 
     title = this.ls.l('SelectReportTemplate');
     initButtons: IDialogButton[] = [

@@ -21,7 +21,7 @@ import { EntityCheckListData } from '@app/crm/shared/entity-check-list-dialog/en
     styleUrls: ['./entity-check-list-dialog.component.less']
 })
 export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private slider: any;
     private isUpdated = false;

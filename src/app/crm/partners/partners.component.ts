@@ -128,20 +128,20 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
     ]
 })
 export class PartnersComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(PipelineComponent, {static: false}) pipelineComponent: PipelineComponent;
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
-    @ViewChild(TypesListComponent, { static: false }) typesComponent: TypesListComponent;
-    @ViewChild('sourceList', { static: false }) sourceComponent: SourceContactListComponent;
-    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
-    @ViewChild('statusesList', { static: false }) statusComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent, { static: false }) pivotGridComponent: PivotGridComponent;
+    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(TypesListComponent) typesComponent: TypesListComponent;
+    @ViewChild('sourceList') sourceComponent: SourceContactListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild('statusesList') statusComponent: StaticListComponent;
+    @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
-    @ViewChild(MapComponent, { static: false }) mapComponent: MapComponent;
-    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
+    @ViewChild(MapComponent) mapComponent: MapComponent;
+    @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
 
     private isSlice = this.appService.getModule() === 'slice';
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(

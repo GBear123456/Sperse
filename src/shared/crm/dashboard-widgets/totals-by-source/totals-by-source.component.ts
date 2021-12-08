@@ -49,7 +49,7 @@ import { AppConsts } from '@shared/AppConsts';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TotalsBySourceComponent implements OnInit, OnDestroy {
-    @ViewChild(DxPieChartComponent, { static: false }) chartComponent: DxPieChartComponent;
+    @ViewChild(DxPieChartComponent) chartComponent: DxPieChartComponent;
     data$: Observable<any[]>;
     totalCount$: Observable<number>;
     totalCount: string;

@@ -93,12 +93,12 @@ import { InvoiceSettingsDialogComponent } from '../../contacts/invoice-settings-
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateInvoiceDialogComponent implements OnInit {
-    @ViewChild(DxValidationGroupComponent, { static: false }) linesValidationGroup: DxValidationGroupComponent;
+    @ViewChild(DxValidationGroupComponent) linesValidationGroup: DxValidationGroupComponent;
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxContextMenuComponent, { static: false }) saveContextComponent: DxContextMenuComponent;
-    @ViewChild('dueDateComponent', { static: false }) dueDateComponent: DxDateBoxComponent;
-    @ViewChild('dateComponent', { static: false }) dateComponent: DxDateBoxComponent;
-    @ViewChild('invoice', { static: false }) invoiceNoComponent: DxTextBoxComponent;
+    @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
+    @ViewChild('dueDateComponent') dueDateComponent: DxDateBoxComponent;
+    @ViewChild('dateComponent') dateComponent: DxDateBoxComponent;
+    @ViewChild('invoice') invoiceNoComponent: DxTextBoxComponent;
     @ViewChild(OrderDropdownComponent, { static: true }) orderDropdown: OrderDropdownComponent;
 
     private lookupTimeout;

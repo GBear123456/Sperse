@@ -104,12 +104,12 @@ import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dia
     providers: [ OrderServiceProxy, CurrencyPipe, ProductServiceProxy ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('ordersGrid', { static: false }) ordersGrid: DxDataGridComponent;
-    @ViewChild('subscriptionsGrid', { static: false }) subscriptionsGrid: DxDataGridComponent;
-    @ViewChild(PipelineComponent, { static: false }) pipelineComponent: PipelineComponent;
-    @ViewChild(StaticListComponent, { static: false }) stagesComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent, { static: false }) pivotGridComponent: PivotGridComponent;
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
+    @ViewChild('ordersGrid') ordersGrid: DxDataGridComponent;
+    @ViewChild('subscriptionsGrid') subscriptionsGrid: DxDataGridComponent;
+    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
+    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
+    @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
 
     items: any;
     showOrdersPipeline = true;

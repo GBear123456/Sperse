@@ -86,13 +86,13 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('subscribersDataGrid', { static: false }) subscribersDataGrid: DxDataGridComponent;
-    @ViewChild('statsDataGrid', { static: false }) statsDataGrid: DxDataGridComponent;
-    @ViewChild('subscriptionTrackerGrid', { static: false }) subscriptionTrackerGrid: DxDataGridComponent;
-    @ViewChild(PivotGridComponent, { static: false }) salesReportComponent: PivotGridComponent;
-    @ViewChild('sourceOrganizationUnits', { static: false }) sourceOrganizationUnits: StaticListComponent;
-    @ViewChild('transactionTypes', { static: false }) transactionTypes: StaticListComponent;
-    @ViewChild('paymentProviders', { static: false }) paymentProviders: StaticListComponent;
+    @ViewChild('subscribersDataGrid') subscribersDataGrid: DxDataGridComponent;
+    @ViewChild('statsDataGrid') statsDataGrid: DxDataGridComponent;
+    @ViewChild('subscriptionTrackerGrid') subscriptionTrackerGrid: DxDataGridComponent;
+    @ViewChild(PivotGridComponent) salesReportComponent: PivotGridComponent;
+    @ViewChild('sourceOrganizationUnits') sourceOrganizationUnits: StaticListComponent;
+    @ViewChild('transactionTypes') transactionTypes: StaticListComponent;
+    @ViewChild('paymentProviders') paymentProviders: StaticListComponent;
     toolbarConfig: ToolbarGroupModel[];
     filters = [];
     filtersValues = {

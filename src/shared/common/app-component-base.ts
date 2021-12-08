@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injector, ApplicationRef, ElementRef, HostBinding, OnDestroy } from '@angular/core';
+import { Injector, ApplicationRef, ElementRef, HostBinding, OnDestroy, Directive } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
@@ -36,6 +36,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { InstanceModel } from '@shared/cfo/instance.model';
 import { Param } from '@shared/common/odata/param.model';
 
+@Directive()
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode;
     private destroySubject: Subject<boolean> = new Subject<boolean>();

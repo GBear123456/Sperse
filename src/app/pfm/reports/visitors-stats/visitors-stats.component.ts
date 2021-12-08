@@ -23,7 +23,7 @@ import { FieldDependencies } from '@app/shared/common/data-grid.service/field-de
     providers: [ DatePipe ]
 })
 export class VisitorsStatsComponent extends AppComponentBase {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     readonly visitorStatsFields: KeysEnum<VisitorStatsDto> = VisitorStatsFields;
     private fieldsDependencies: FieldDependencies = {
         name: [

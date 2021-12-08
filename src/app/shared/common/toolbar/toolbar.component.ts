@@ -25,7 +25,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ToolBarComponent implements OnDestroy, OnInit {
-    @ViewChild(DxToolbarComponent, { static: false }) toolbarComponent: DxToolbarComponent;
+    @ViewChild(DxToolbarComponent) toolbarComponent: DxToolbarComponent;
     @Input() width = '100%';
     _config: ToolbarGroupModel[];
     @Input()

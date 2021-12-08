@@ -49,13 +49,13 @@ import { ActivityDto as InternalActivityDto } from '@app/crm/activity/activity-d
 })
 export class CreateActivityDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('stagesList', { static: false }) stagesComponent: StaticListComponent;
-    @ViewChild('contactsList', { static: false }) contactsList: StaticListComponent;
-    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(DxContextMenuComponent, { static: false }) saveContextComponent: DxContextMenuComponent;
-    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
-    @ViewChild('startDateRef', { static: false }) startDateComponent: DxDateBoxComponent;
-    @ViewChild('endDateRef', { static: false }) endDateComponent: DxDateBoxComponent;
+    @ViewChild('stagesList') stagesComponent: StaticListComponent;
+    @ViewChild('contactsList') contactsList: StaticListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild('startDateRef') startDateComponent: DxDateBoxComponent;
+    @ViewChild('endDateRef') endDateComponent: DxDateBoxComponent;
 
     private readonly LOOKUP_RECORDS_COUNT = 20;
     private lookupTimeout: any;

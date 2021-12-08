@@ -33,7 +33,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
     }
 })
 export class EditContactDialog {
-    @ViewChild('countryPhoneNumber', { static: false }) countryPhoneNumber;
+    @ViewChild('countryPhoneNumber') countryPhoneNumber;
     isValid = false;
     action: string = this.data.value ? 'Edit' : 'Create';
     types: any[] = [];

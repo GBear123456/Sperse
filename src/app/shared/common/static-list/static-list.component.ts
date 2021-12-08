@@ -21,8 +21,8 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
   styleUrls: ['./static-list.component.less']
 })
 export class StaticListComponent {
-    @ViewChild('staticList', { static: false }) dxList: DxListComponent;
-    @ViewChild(DxTabsComponent, { static: false }) dxTabs: DxTabsComponent;
+    @ViewChild('staticList') dxList: DxListComponent;
+    @ViewChild(DxTabsComponent) dxTabs: DxTabsComponent;
     @ViewChild(DxTooltipComponent, { static: true }) dxTooltip: DxTooltipComponent;
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     @Output() onItemSelected: EventEmitter<any> = new EventEmitter();

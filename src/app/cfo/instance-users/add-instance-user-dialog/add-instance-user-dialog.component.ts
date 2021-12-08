@@ -15,7 +15,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['add-instance-user-dialog.less']
 })
 export class AddInstanceUserDialogComponent {
-    @ViewChild(DxSelectBoxComponent, { static: false }) userComponent: DxSelectBoxComponent;
+    @ViewChild(DxSelectBoxComponent) userComponent: DxSelectBoxComponent;
     userId: number;
     contacts: any = [];
     sendInvitationEmail = false;

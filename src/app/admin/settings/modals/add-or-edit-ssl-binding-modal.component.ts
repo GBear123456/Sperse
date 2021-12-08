@@ -37,9 +37,9 @@ import { environment } from '@root/environments/environment';
     providers: [TenantHostServiceProxy, TenantSslCertificateServiceProxy ]
 })
 export class AddOrEditSSLBindingModalComponent {
-    @ViewChild('createOrEditModal', { static: false }) modal: ModalDirective;
-    @ViewChild('DomainName', { static: false }) domainComponent: DxTextBoxComponent;
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild('createOrEditModal') modal: ModalDirective;
+    @ViewChild('DomainName') domainComponent: DxTextBoxComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
 
     public readonly HostType_PlatformApp = TenantHostType.PlatformApp;
 

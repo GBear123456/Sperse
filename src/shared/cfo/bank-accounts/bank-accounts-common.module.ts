@@ -119,7 +119,7 @@ import { AutoSyncDialogComponent } from '@shared/cfo/bank-accounts/synch-progres
     ]
 })
 export class BankAccountsCommonModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<BankAccountsCommonModule> {
         return {
             ngModule: BankAccountsCommonModule,
             providers: [

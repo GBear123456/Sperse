@@ -30,8 +30,8 @@ import { AppConsts } from '@shared/AppConsts';
     providers: [ TenantSslCertificateServiceProxy, TenantHostServiceProxy ]
 })
 export class SystemSettingsComponent implements OnInit {
-    @ViewChild('customDomainsGrid', { static: false }) customDomainsGrid: DxDataGridComponent;
-    @ViewChild('sslGrid', { static: false }) sslGrid: DxDataGridComponent;
+    @ViewChild('customDomainsGrid') customDomainsGrid: DxDataGridComponent;
+    @ViewChild('sslGrid') sslGrid: DxDataGridComponent;
     public sslGridDataSource: TenantSslCertificateInfo[];
     public sslBindingsDataSource: TenantSslBindingInfo[];
 

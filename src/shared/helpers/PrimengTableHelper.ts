@@ -1,7 +1,9 @@
 import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
 import { Paginator } from 'primeng/components/paginator/paginator';
 import { Table } from 'primeng/components/table/table';
+import { Injectable } from "@angular/core";
 
+@Injectable()
 export class PrimengTableHelper {
     predefinedRecordsCountPerPage = [5, 10, 25, 50, 100, 250, 500];
 

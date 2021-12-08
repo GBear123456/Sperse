@@ -55,8 +55,8 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
     animations: [appModuleAnimation()]
 })
 export class UsersComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
 
     //Filters
     invalidateTimeout: any;

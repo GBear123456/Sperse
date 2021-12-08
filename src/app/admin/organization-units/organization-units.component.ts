@@ -11,8 +11,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     animations: [appModuleAnimation()]
 })
 export class OrganizationUnitsComponent implements OnInit, OnDestroy {
-    @ViewChild('ouMembers', { static: false }) ouMembers: OrganizationUnitMembersComponent;
-    @ViewChild('ouTree', { static: false }) ouTree: OrganizationTreeComponent;
+    @ViewChild('ouMembers') ouMembers: OrganizationUnitMembersComponent;
+    @ViewChild('ouTree') ouTree: OrganizationTreeComponent;
 
     constructor(
         public ls: AppLocalizationService,

@@ -26,7 +26,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     styleUrls: ['./organization-units-tree.component.less']
 })
 export class OrganizationUnitsTreeComponent implements OnDestroy {
-    @ViewChild(DxTreeViewComponent, { static: false }) organizationUnitsTree: DxTreeViewComponent;
+    @ViewChild(DxTreeViewComponent) organizationUnitsTree: DxTreeViewComponent;
     @Output() onFilterApplied: EventEmitter<any> = new EventEmitter();
     @Input() selectionMode = 'multiple';
     @Input() showFilterButton = false;

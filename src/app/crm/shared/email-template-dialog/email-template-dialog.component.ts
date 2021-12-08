@@ -57,12 +57,12 @@ import { AppPermissions } from '@shared/AppPermissions';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailTemplateDialogComponent implements OnInit {
-    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxSelectBoxComponent, { static: false }) templateComponent: DxSelectBoxComponent;
-    @ViewChild(DxValidatorComponent, { static: false }) validator: DxValidatorComponent;
-    @ViewChild('scrollView', { static: false }) scrollView: DxScrollViewComponent;
-    @ViewChild('tagsButton', { static: false }) tagsButton: ElementRef;
+    @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
+    @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
+    @ViewChild('scrollView') scrollView: DxScrollViewComponent;
+    @ViewChild('tagsButton') tagsButton: ElementRef;
 
     ckEditor: any;
     templateLoaded: boolean;

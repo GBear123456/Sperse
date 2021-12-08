@@ -32,7 +32,7 @@ export class AdHeaderHostDirective {
     providers: [ LifecycleSubjectsService ]
 })
 export class BankCodeHeaderComponent implements OnInit, OnDestroy {
-    @ViewChild(AdHeaderHostDirective, { static: false }) adHeaderHost: AdHeaderHostDirective;
+    @ViewChild(AdHeaderHostDirective) adHeaderHost: AdHeaderHostDirective;
 
     loggedUserId = abp.session.userId;
     remoteServiceBaseUrl: string = AppConsts.remoteServiceBaseUrl;

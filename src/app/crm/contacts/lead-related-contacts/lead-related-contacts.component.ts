@@ -45,10 +45,10 @@ import { LeadFields } from '@app/crm/leads/lead-fields.enum';
     providers: [ LifecycleSubjectsService ]
 })
 export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
-    @ViewChild('leadDataGrid', {static: false}) leadDataGrid: DxDataGridComponent;
-    @ViewChild('contactDataGrid', {static: false}) contactDataGrid: DxDataGridComponent;
-    @ViewChild('subContactDataGrid', {static: false}) subContactDataGrid: DxDataGridComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
+    @ViewChild('leadDataGrid') leadDataGrid: DxDataGridComponent;
+    @ViewChild('contactDataGrid') contactDataGrid: DxDataGridComponent;
+    @ViewChild('subContactDataGrid') subContactDataGrid: DxDataGridComponent;
 
     data = {
         contactInfo: new ContactInfoDto(),

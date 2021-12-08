@@ -1,4 +1,8 @@
 {
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts"
+  ],
   "target": "es2015",
   "extends": "../../src/tsconfig.json",
   "compilerOptions": {

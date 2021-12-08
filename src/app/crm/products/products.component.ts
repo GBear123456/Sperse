@@ -47,8 +47,8 @@ import { ProductFields } from '@app/crm/products/products-fields.enum';
     ]
 })
 export class ProductsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
 
     private readonly dataSourceURI = 'Product';
     private rootComponent: any;

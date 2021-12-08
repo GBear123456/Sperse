@@ -34,8 +34,8 @@ export interface IOrganizationUnitOnTree extends IBasicOrganizationUnitInfo {
     styleUrls: ['./organization-tree.component.less']
 })
 export class OrganizationTreeComponent implements AfterViewInit {
-    @ViewChild('tree', { static: false }) tree: ElementRef;
-    @ViewChild('createOrEditOrganizationUnitModal', { static: false }) createOrEditOrganizationUnitModal: CreateOrEditUnitModalComponent;
+    @ViewChild('tree') tree: ElementRef;
+    @ViewChild('createOrEditOrganizationUnitModal') createOrEditOrganizationUnitModal: CreateOrEditUnitModalComponent;
     @Output() ouSelected = new EventEmitter<IBasicOrganizationUnitInfo>();
 
     private $tree: JQuery;

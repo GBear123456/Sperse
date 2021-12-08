@@ -19,7 +19,7 @@ import { ContactGroupTemplatesComponent } from '@app/crm/shared/email-template-d
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UserManagementComponent implements ITenantSettingsStepComponent {
-    @ViewChild(ContactGroupTemplatesComponent, { static: false }) contactGroupTemplates: ContactGroupTemplatesComponent;
+    @ViewChild(ContactGroupTemplatesComponent) contactGroupTemplates: ContactGroupTemplatesComponent;
 
     @Input() tenantSettings: TenantUserManagementSettingsEditDto;
     @Input() hostSettings: HostUserManagementSettingsEditDto;

@@ -30,7 +30,7 @@ import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UploadPhotoDialogComponent implements AfterViewInit {
-    @ViewChild('cropper', { static: false }) cropper: ImageCropperComponent;
+    @ViewChild('cropper') cropper: ImageCropperComponent;
 
     imageData: any = {};
     cropperSettings: CropperSettings = this.getCropperSetting();

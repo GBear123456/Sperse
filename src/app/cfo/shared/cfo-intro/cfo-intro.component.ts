@@ -28,8 +28,8 @@ import { AppFeatures } from '@shared/AppFeatures';
 })
 export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
-    @ViewChild(QuestionnaireComponent, { static: false }) questionnaire: QuestionnaireComponent;
-    @ViewChild(ImportUsersStepComponent, { static: false }) importUsersStepComponent: ImportUsersStepComponent;
+    @ViewChild(QuestionnaireComponent) questionnaire: QuestionnaireComponent;
+    @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
     dialogRef: MatDialogRef<CfoIntroComponent, any>;
     readonly identifier = 'CFO-Instance-Setup';
     readonly moduleType = ModuleType.CFO;

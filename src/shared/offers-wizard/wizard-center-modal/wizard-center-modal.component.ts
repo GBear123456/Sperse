@@ -24,8 +24,8 @@ import { OffersWizardService } from '@shared/offers-wizard/offers-wizard.service
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WizardCenterModalComponent {
-    @ViewChild('stepper', { static: false }) stepper: MatHorizontalStepper;
-    @ViewChild('lastValidationGroup', { static: false }) lastValidationGroup: DxValidationGroupComponent;
+    @ViewChild('stepper') stepper: MatHorizontalStepper;
+    @ViewChild('lastValidationGroup') lastValidationGroup: DxValidationGroupComponent;
     dialogRef: MatDialogRef<WizardCenterModalComponent, any>;
 
     constructor(

@@ -26,7 +26,7 @@ import { AppStoreService } from '@app/store/app-store.service';
     styleUrls: ['./permission-tree.component.less']
 })
 export class PermissionTreeComponent implements OnInit, OnDestroy {
-    @ViewChild(DxTreeViewComponent, { static: false }) permissionsTree: DxTreeViewComponent;
+    @ViewChild(DxTreeViewComponent) permissionsTree: DxTreeViewComponent;
 
     public data: any;
     public permissionsDataSource: DataSource;

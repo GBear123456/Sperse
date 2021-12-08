@@ -41,10 +41,10 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     public static readonly NameSeparator = ' > ';
     public static readonly FieldLocalizationPrefix = 'Import';
 
-    @ViewChild(MatHorizontalStepper, { static: false }) stepper: MatHorizontalStepper;
-    @ViewChild('mapGrid', { static: false }) mapGrid: DxDataGridComponent;
-    @ViewChild('reviewGrid', { static: false }) reviewGrid: DxDataGridComponent;
-    @ViewChild(DxProgressBarComponent, { static: false }) reviewProgress: DxProgressBarComponent;
+    @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
+    @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
+    @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
+    @ViewChild(DxProgressBarComponent) reviewProgress: DxProgressBarComponent;
 
     @Input() title: string;
     @Input() icon: string;

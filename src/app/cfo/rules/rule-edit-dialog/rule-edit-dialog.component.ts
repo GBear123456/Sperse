@@ -40,9 +40,9 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {}
-    @ViewChild(DxTreeViewComponent, { static: false }) transactionTypesList: DxTreeViewComponent;
-    @ViewChild('attributesComponent', { static: false }) attributeList: DxDataGridComponent;
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild(DxTreeViewComponent) transactionTypesList: DxTreeViewComponent;
+    @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     showSelectedTransactions = false;
     minAmount: number;
     maxAmount: number;

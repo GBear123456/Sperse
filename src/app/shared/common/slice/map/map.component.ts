@@ -53,7 +53,7 @@ export class MapComponent implements OnChanges {
     @Input() contactGroupText = '';
     @Input() areaClickLink = 'app/crm/leads';
     @Output() onMapItemClick: EventEmitter<Params> = new EventEmitter<Params>();
-    @ViewChild(DxVectorMapComponent, { static: false }) vectorMapComponent: DxVectorMapComponent;
+    @ViewChild(DxVectorMapComponent) vectorMapComponent: DxVectorMapComponent;
     @HostBinding('style.height') get componentHeight() {
         return this.height + 'px';
     }

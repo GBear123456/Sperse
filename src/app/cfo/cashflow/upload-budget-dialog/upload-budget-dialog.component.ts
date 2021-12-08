@@ -33,8 +33,8 @@ import { AppConsts } from '@shared/AppConsts';
     providers: [ BudgetServiceProxy ]
 })
 export class UploadBudgetDialogComponent implements OnInit {
-    @ViewChild(DxTreeListComponent, { static: false }) treeList: DxTreeListComponent;
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild(DxTreeListComponent) treeList: DxTreeListComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
 
     files = [];
     file: string;

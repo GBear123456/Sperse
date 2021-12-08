@@ -28,7 +28,7 @@ import { ImportListFields } from '@app/crm/import-leads/import-list/import-list.
     providers: [ FileSizePipe ]
 })
 export class ImportListComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private rootComponent: any;
     private readonly dataSourceURI = 'Import';

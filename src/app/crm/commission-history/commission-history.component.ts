@@ -80,11 +80,11 @@ import { CrmService } from '@app/crm/crm.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommissionHistoryComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild('commissionDataGrid', { static: false }) commissionDataGrid: DxDataGridComponent;
-    @ViewChild('resellersDataGrid', { static: false }) resellersDataGrid: DxDataGridComponent;
-    @ViewChild('sourceList', { static: false }) sourceComponent: SourceContactListComponent;
-    @ViewChild('ledgerDataGrid', { static: false }) ledgerDataGrid: DxDataGridComponent;
-    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
+    @ViewChild('commissionDataGrid') commissionDataGrid: DxDataGridComponent;
+    @ViewChild('resellersDataGrid') resellersDataGrid: DxDataGridComponent;
+    @ViewChild('sourceList') sourceComponent: SourceContactListComponent;
+    @ViewChild('ledgerDataGrid') ledgerDataGrid: DxDataGridComponent;
+    @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
 
     private readonly commissionDataSourceURI: string = 'Commission';
     private readonly ledgerDataSourceURI: string = 'CommissionLedgerEntry';

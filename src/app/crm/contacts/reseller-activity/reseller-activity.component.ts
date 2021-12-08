@@ -46,11 +46,11 @@ import { AppFeatures } from '@shared/AppFeatures';
     providers: [ LifecycleSubjectsService ]
 })
 export class ResellerActivityComponent implements OnInit, OnDestroy {
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
-    @ViewChild('commissionDataGrid', {static: false}) commissionDataGrid: DxDataGridComponent;
-    @ViewChild('generatedCommissionDataGrid', {static: false}) generatedCommissionDataGrid: DxDataGridComponent;
-    @ViewChild('contactDataGrid', {static: false}) contactDataGrid: DxDataGridComponent;
-    @ViewChild('ledgerDataGrid', {static: false}) ledgerDataGrid: DxDataGridComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
+    @ViewChild('commissionDataGrid') commissionDataGrid: DxDataGridComponent;
+    @ViewChild('generatedCommissionDataGrid') generatedCommissionDataGrid: DxDataGridComponent;
+    @ViewChild('contactDataGrid') contactDataGrid: DxDataGridComponent;
+    @ViewChild('ledgerDataGrid') ledgerDataGrid: DxDataGridComponent;
 
     data = {
         contactInfo: new ContactInfoDto()

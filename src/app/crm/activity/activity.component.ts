@@ -49,8 +49,8 @@ import { ActivityFields } from '@app/crm/activity/activity-fields.enum';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActivityComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    @ViewChild(DxSchedulerComponent, { static: false }) schedulerComponent: DxSchedulerComponent;
-    @ViewChild(PipelineComponent, { static: false }) pipelineComponent: PipelineComponent;
+    @ViewChild(DxSchedulerComponent) schedulerComponent: DxSchedulerComponent;
+    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
     schedulerHeight$: Observable<number> = combineLatest(
         this.appService.toolbarIsHidden$,
         this.fullScreenService.isFullScreenMode$

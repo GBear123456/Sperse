@@ -17,7 +17,7 @@ import { AppPermissions } from '@shared/AppPermissions';
     styleUrls: ['add-key-dialog.component.less']
 })
 export class EditKeyDialog extends AppComponentBase {
-    @ViewChild(DxSelectBoxComponent, { static: false }) userComponent: DxSelectBoxComponent;
+    @ViewChild(DxSelectBoxComponent) userComponent: DxSelectBoxComponent;
 
     isValid = false;
     validator: any;

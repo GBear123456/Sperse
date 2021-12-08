@@ -60,8 +60,8 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements AfterViewInit, OnInit {
-    @ViewChild(ClientsByRegionComponent, { static: false }) clientsByRegion: ClientsByRegionComponent;
-    @ViewChild(TotalsBySourceComponent, { static: false }) totalsBySource: TotalsBySourceComponent;
+    @ViewChild(ClientsByRegionComponent) clientsByRegion: ClientsByRegionComponent;
+    @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
 
     private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable();

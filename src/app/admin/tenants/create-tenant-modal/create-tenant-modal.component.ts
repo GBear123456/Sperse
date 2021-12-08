@@ -45,7 +45,7 @@ import { ModulesEditionsSelectComponent } from '../modules-edtions-select.compon
 })
 export class CreateTenantModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(ModulesEditionsSelectComponent, { static: false }) editionsSelect: ModulesEditionsSelectComponent;
+    @ViewChild(ModulesEditionsSelectComponent) editionsSelect: ModulesEditionsSelectComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     setRandomPassword = true;

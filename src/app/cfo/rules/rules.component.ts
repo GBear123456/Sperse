@@ -33,7 +33,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
     providers: [ ClassificationServiceProxy ]
 })
 export class RulesComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxTreeListComponent, { static: false }) treeList: DxTreeListComponent;
+    @ViewChild(DxTreeListComponent) treeList: DxTreeListComponent;
 
     private lastRemovedItemID: number;
     private rootComponent: any;

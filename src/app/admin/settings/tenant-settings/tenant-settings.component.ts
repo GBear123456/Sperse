@@ -61,12 +61,12 @@ import { DomHelper } from '@shared/helpers/DomHelper';
     ]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild('tabGroup', { static: false }) tabGroup: ElementRef;
-    @ViewChild('privacyInput', { static: false }) privacyInput: ElementRef;
-    @ViewChild('tosInput', { static: false }) tosInput: ElementRef;
-    @ViewChild('logoInput', { static: false }) logoInput: ElementRef;
-    @ViewChild('cssInput', { static: false }) cssInput: ElementRef;
-    @ViewChild('faviconInput', { static: false }) faviconInput: ElementRef;
+    @ViewChild('tabGroup') tabGroup: ElementRef;
+    @ViewChild('privacyInput') privacyInput: ElementRef;
+    @ViewChild('tosInput') tosInput: ElementRef;
+    @ViewChild('logoInput') logoInput: ElementRef;
+    @ViewChild('cssInput') cssInput: ElementRef;
+    @ViewChild('faviconInput') faviconInput: ElementRef;
     usingDefaultTimeZone = false;
     initialTimeZone: string;
     initialDefaultCountry: string;

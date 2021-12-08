@@ -31,7 +31,7 @@ import { StatesService } from '@root/store/states-store/states.service';
     }
 })
 export class InvoiceAddressDialog {
-    @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
+    @ViewChild('addressInput') addressInput: ElementRef;
     validator: any;
     address: any;
     movePos: any;

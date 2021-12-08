@@ -137,17 +137,17 @@ import { Country } from '@shared/AppEnums';
 })
 export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('stagesList', { static: false }) stagesComponent: StaticListComponent;
-    @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
-    @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
-    @ViewChild(TypesListComponent, { static: false }) partnerTypesComponent: TypesListComponent;
-    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
-    @ViewChild('propertyValidationGroup', { static: false }) propertyValidationGroup: DxValidationGroupComponent;
-    @ViewChild('propertyAddressComponent', { static: false }) propertyAddressComponent: AddressFieldsComponent;
+    @ViewChild('stagesList') stagesComponent: StaticListComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
+    @ViewChild('propertyValidationGroup') propertyValidationGroup: DxValidationGroupComponent;
+    @ViewChild('propertyAddressComponent') propertyAddressComponent: AddressFieldsComponent;
     @ViewChildren('linksComponent') linkComponents: QueryList<DxTextBoxComponent>;
-    @ViewChild('dialogScroll', { static: false }) dialogScroll: DxScrollViewComponent;
+    @ViewChild('dialogScroll') dialogScroll: DxScrollViewComponent;
 
     showPropertyFields: boolean = this.data.entityTypeSysId === EntityTypeSys.PropertyAcquisition;
     showPropertiesDropdown: boolean = this.data.entityTypeSysId && this.data.entityTypeSysId.startsWith(EntityTypeSys.PropertyRentAndSale);

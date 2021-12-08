@@ -36,7 +36,7 @@ import { MessageService } from '@abp/message/message.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DocumentsComponent {
-    @ViewChild(DxFileManagerComponent, { static: false }) fileManager: DxFileManagerComponent;
+    @ViewChild(DxFileManagerComponent) fileManager: DxFileManagerComponent;
 
     private readonly VIEW_MODE_DETAILS    = 'details';
     private readonly VIEW_MODE_THUMBNAILS = 'thumbnails';

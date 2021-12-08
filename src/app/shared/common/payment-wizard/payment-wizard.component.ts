@@ -37,8 +37,8 @@ import { MessageService } from 'abp-ng2-module/dist/src/message/message.service'
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentWizardComponent implements OnInit {
-    @ViewChild('stepper', { static: false }) stepper: MatStepper;
-    @ViewChild('wizard', { static: false }) wizardRef: ElementRef;
+    @ViewChild('stepper') stepper: MatStepper;
+    @ViewChild('wizard') wizardRef: ElementRef;
     plan$: Observable<PackageOptions> = this.paymentService.plan$;
     paymentStatus: PaymentStatusEnum;
     paymentStatusData: StatusInfo;

@@ -36,7 +36,7 @@ import { DomHelper } from '@shared/helpers/DomHelper';
     providers: [TenantPaymentSettingsServiceProxy]
 })
 export class HostSettingsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('tabGroup', { static: false }) tabGroup: ElementRef;
+    @ViewChild('tabGroup') tabGroup: ElementRef;
 
     loading = false;
     hostSettings: HostSettingsEditDto;

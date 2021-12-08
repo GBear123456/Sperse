@@ -21,8 +21,8 @@ export interface IOrganizationUnitOnEdit {
     templateUrl: './create-or-edit-unit-modal.component.html'
 })
 export class CreateOrEditUnitModalComponent {
-    @ViewChild('createOrEditModal', { static: false }) modal: ModalDirective;
-    @ViewChild('organizationUnitDisplayName', { static: false }) organizationUnitDisplayNameInput: ElementRef;
+    @ViewChild('createOrEditModal') modal: ModalDirective;
+    @ViewChild('organizationUnitDisplayName') organizationUnitDisplayNameInput: ElementRef;
     @Output() unitCreated: EventEmitter<OrganizationUnitDto> = new EventEmitter<OrganizationUnitDto>();
     @Output() unitUpdated: EventEmitter<OrganizationUnitDto> = new EventEmitter<OrganizationUnitDto>();
 

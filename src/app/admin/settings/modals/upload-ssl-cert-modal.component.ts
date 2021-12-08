@@ -20,7 +20,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
     providers: [ TenantSslCertificateServiceProxy ]
 })
 export class UploadSSLCertificateModalComponent {
-    @ViewChild('uploader', { static: false }) uploader: DxFileUploaderComponent;
+    @ViewChild('uploader') uploader: DxFileUploaderComponent;
 
     saving = false;
     model: AddTenantSslCertificateInput = new AddTenantSslCertificateInput();

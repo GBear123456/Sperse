@@ -191,9 +191,9 @@ export class CellOptions {
     ]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxPivotGridComponent, { static: false }) pivotGrid: DxPivotGridComponent;
-    @ViewChild(DxDataGridComponent, { static: false }) cashFlowGrid: DxDataGridComponent;
-    @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
+    @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
+    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
     @HostBinding('class.toolbar-is-shown') toolbarIsShown;
     transactionId: any;
     selectedBankAccountsIds;

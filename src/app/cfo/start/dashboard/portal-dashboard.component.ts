@@ -24,11 +24,11 @@ import { TopSpendingCategoriesComponent } from '@shared/cfo/dashboard-widgets/to
     animations: [appModuleAnimation()]
 })
 export class PortalDashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(AccountsComponent, { static: false }) accountsComponent: AccountsComponent;
-    @ViewChild(TotalsByPeriodComponent, { static: false }) totalsByPeriodComponent: TotalsByPeriodComponent;
-    @ViewChild(TrendByPeriodComponent, { static: false }) trendByPeriodComponent: TrendByPeriodComponent;
-    @ViewChild(TopSpendingCategoriesComponent, { static: false }) topSpendingCategoriesComponent: TopSpendingCategoriesComponent;
-    @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(AccountsComponent) accountsComponent: AccountsComponent;
+    @ViewChild(TotalsByPeriodComponent) totalsByPeriodComponent: TotalsByPeriodComponent;
+    @ViewChild(TrendByPeriodComponent) trendByPeriodComponent: TrendByPeriodComponent;
+    @ViewChild(TopSpendingCategoriesComponent) topSpendingCategoriesComponent: TopSpendingCategoriesComponent;
+    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
 
     private rootComponent: any;
     linksTo: any = [

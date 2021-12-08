@@ -9,7 +9,7 @@ import { AppLocalizationService } from '../../common/localization/app-localizati
     templateUrl: './sms-verification-modal.component.html'
 })
 export class SmsVerificationModalComponent {
-    @ViewChild('smsVerificationModal', { static: false }) modal: ModalDirective;
+    @ViewChild('smsVerificationModal') modal: ModalDirective;
 
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 

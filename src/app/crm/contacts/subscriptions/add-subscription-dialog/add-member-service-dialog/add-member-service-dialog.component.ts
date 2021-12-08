@@ -45,7 +45,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
-    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
+    @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     today = new Date();
     private slider: any;
     memberService: MemberServiceDto;

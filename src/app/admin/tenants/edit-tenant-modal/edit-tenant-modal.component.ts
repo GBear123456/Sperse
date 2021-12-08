@@ -47,10 +47,10 @@ import { StorageChangeDialog } from './storage-change-dialog/storage-change-dial
 })
 export class EditTenantModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('nameInput', { static: false }) nameInput: ElementRef;
-    @ViewChild('SubscriptionEndDateUtc', { static: false }) subscriptionEndDateUtc: ElementRef;
-    @ViewChild(ModulesEditionsSelectComponent, { static: false }) editionsSelect: ModulesEditionsSelectComponent;
-    @ViewChild(FeatureTreeComponent, { static: false }) featureTree: FeatureTreeComponent;
+    @ViewChild('nameInput') nameInput: ElementRef;
+    @ViewChild('SubscriptionEndDateUtc') subscriptionEndDateUtc: ElementRef;
+    @ViewChild(ModulesEditionsSelectComponent) editionsSelect: ModulesEditionsSelectComponent;
+    @ViewChild(FeatureTreeComponent) featureTree: FeatureTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     tenant: TenantEditDto;

@@ -226,7 +226,7 @@ import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.mo
     ]
 })
 export class AppCommonModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<AppCommonModule> {
         return {
             ngModule: AppCommonModule,
             providers: []

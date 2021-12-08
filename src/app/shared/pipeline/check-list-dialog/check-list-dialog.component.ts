@@ -24,7 +24,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     providers: [StageChecklistServiceProxy]
 })
 export class CheckListDialogComponent implements OnInit, AfterViewInit {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private slider: any;
     dataSource: any[] = [];

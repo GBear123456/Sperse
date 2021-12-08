@@ -54,7 +54,7 @@ import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload
 })
 export class CreateUserDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxContextMenuComponent, { static: false }) saveContextComponent: DxContextMenuComponent;
+    @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
     @ViewChild('phoneNumber', { static: true }) phoneNumber: DxTextBoxComponent;
 
     user = new UserEditDto();

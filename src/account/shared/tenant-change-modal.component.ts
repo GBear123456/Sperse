@@ -11,8 +11,8 @@ import { AppLocalizationService } from '../../app/shared/common/localization/app
     templateUrl: './tenant-change-modal.component.html'
 })
 export class TenantChangeModalComponent {
-    @ViewChild('tenantChangeModal', { static: false }) modal: ModalDirective;
-    @ViewChild('tenancyNameInput', { static: false }) tenancyNameInput: ElementRef;
+    @ViewChild('tenantChangeModal') modal: ModalDirective;
+    @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
 
     tenancyName = '';
     active = false;

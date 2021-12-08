@@ -32,7 +32,7 @@ import { AppPermissions } from '@shared/AppPermissions';
     providers: [ BankAccountsServiceProxy, SecurityManagementServiceProxy, UserServiceProxy ]
 })
 export class PermissionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     private rootComponent: any;
     users: UserListDto[] = [];
     showenUsersIds: number[] = [];

@@ -34,8 +34,8 @@ import { SourceContactListComponent } from '@shared/common/source-contact-list/s
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InvoiceSettingsDialogComponent implements AfterViewInit {
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
-    @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
 
     settings = new InvoiceSettingsDto();
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);

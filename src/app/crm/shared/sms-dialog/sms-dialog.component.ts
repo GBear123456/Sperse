@@ -32,8 +32,8 @@ import { SmsDialogData } from '@app/crm/shared/sms-dialog/sms-dialog-data.interf
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SMSDialogComponent {
-    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
-    @ViewChild(CountryPhoneNumberComponent, { static: false }) countryPhoneNumber: CountryPhoneNumberComponent;
+    @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
+    @ViewChild(CountryPhoneNumberComponent) countryPhoneNumber: CountryPhoneNumberComponent;
     phoneNumber: string;
     phones: string[];
     smsText = '';

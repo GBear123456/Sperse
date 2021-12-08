@@ -51,8 +51,8 @@ import { AppConsts } from '@shared/AppConsts';
     providers: [ CommonUserInfoServiceProxy, MemberSettingsServiceProxy, ImpersonationService, ]
 })
 export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
-    @ViewChild('topBarUserProfile', { static: false }) topBarUserProfile: ElementRef;
-    @ViewChild(BankCodeLettersComponent, { static: false }) bankCodeLetters: BankCodeLettersComponent;
+    @ViewChild('topBarUserProfile') topBarUserProfile: ElementRef;
+    @ViewChild(BankCodeLettersComponent) bankCodeLetters: BankCodeLettersComponent;
     @Input() subtitle: string;
     @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = this.getDropDownItems();
     private impersonationService: ImpersonationService;

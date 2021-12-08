@@ -48,13 +48,13 @@ import { OfferFields } from '@app/pfm/offers/offer-fields.enum';
     providers: [ OfferServiceProxy, OfferManagementServiceProxy ]
 })
 export class OffersComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(DxContextMenuComponent, { static: false }) pullContextComponent: DxContextMenuComponent;
-    @ViewChild('categoriesComponent', { static: false }) categoriesComponent: StaticListComponent;
-    @ViewChild('flagsComponent', { static: false }) flagsComponent: StaticListComponent;
-    @ViewChild('attributesComponent', { static: false }) attributesComponent: StaticListComponent;
-    @ViewChild('statusesComponent', { static: false }) statusesComponent: StaticListComponent;
-    @ViewChild(AppRatingComponent, { static: false }) ratingComponent: AppRatingComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(DxContextMenuComponent) pullContextComponent: DxContextMenuComponent;
+    @ViewChild('categoriesComponent') categoriesComponent: StaticListComponent;
+    @ViewChild('flagsComponent') flagsComponent: StaticListComponent;
+    @ViewChild('attributesComponent') attributesComponent: StaticListComponent;
+    @ViewChild('statusesComponent') statusesComponent: StaticListComponent;
+    @ViewChild(AppRatingComponent) ratingComponent: AppRatingComponent;
 
     private readonly dataSourceURI = 'Offer';
     private rootComponent: any;

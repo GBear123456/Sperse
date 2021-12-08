@@ -11,7 +11,7 @@ import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
   styleUrls: ['category-delete-dialog.component.less']
 })
 export class CategoryDeleteDialogComponent extends ConfirmDialogComponent implements OnInit {
-    @ViewChild(DxTreeListComponent, { static: false }) categoryList: DxTreeListComponent;
+    @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
 
     constructor(
         injector: Injector,

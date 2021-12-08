@@ -41,7 +41,7 @@ export class PivotGridComponent implements OnInit {
     public get  componentHeight(): string {
         return this.height + 'px';
     }
-    @ViewChild(DxPivotGridComponent, { static: false }) dataGrid: DxPivotGridComponent;
+    @ViewChild(DxPivotGridComponent) dataGrid: DxPivotGridComponent;
     showFieldPanel = false;
     summaryDisplayModes: any[] = [
         { text: 'None', value: 'none' },

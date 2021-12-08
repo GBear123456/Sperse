@@ -150,17 +150,17 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
             (this.isFullscreenMode ? 0 : (AppConsts.isMobile ? 160 : 150)) -
             (this.appService.toolbarIsHidden.value ? 0 : 62) + 'px';
     }
-    @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild('categoriesPanel', { static: false }) categorizationComponent: CategorizationComponent;
-    @ViewChild('accountFilterContainer', { static: false }) accountFilterContainer: ElementRef;
-    @ViewChild('accountFilter', { static: false }) accountFilter: DxDropDownBoxComponent;
-    @ViewChild('counterpartyFilterContainer', { static: false }) counterpartyFilterContainer: ElementRef;
-    @ViewChild('counterpartyFilter', { static: false }) counterpartyFilter: DxDropDownBoxComponent;
-    @ViewChild('becFilterContainer', { static: false }) businessEntitiesFilterContainer: ElementRef;
-    @ViewChild(BusinessEntitiesChooserComponent, { static: false }) businessEntitiesChooser: BusinessEntitiesChooserComponent;
-    @ViewChild('categoryFilterContainer', { static: false }) categoryChooserContainer: ElementRef;
-    @ViewChild('categoryFilter', { static: false }) categoryChooser: DxDropDownBoxComponent;
+    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild('categoriesPanel') categorizationComponent: CategorizationComponent;
+    @ViewChild('accountFilterContainer') accountFilterContainer: ElementRef;
+    @ViewChild('accountFilter') accountFilter: DxDropDownBoxComponent;
+    @ViewChild('counterpartyFilterContainer') counterpartyFilterContainer: ElementRef;
+    @ViewChild('counterpartyFilter') counterpartyFilter: DxDropDownBoxComponent;
+    @ViewChild('becFilterContainer') businessEntitiesFilterContainer: ElementRef;
+    @ViewChild(BusinessEntitiesChooserComponent) businessEntitiesChooser: BusinessEntitiesChooserComponent;
+    @ViewChild('categoryFilterContainer') categoryChooserContainer: ElementRef;
+    @ViewChild('categoryFilter') categoryChooser: DxDropDownBoxComponent;
 
     resetRules = new ResetClassificationDto();
     private autoClassifyData = new AutoClassifyDto();

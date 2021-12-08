@@ -19,9 +19,9 @@ import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
     templateUrl: './organization-unit-members.component.html'
 })
 export class OrganizationUnitMembersComponent {
-    @ViewChild('addMemberModal', { static: false }) addMemberModal: AddMemberModalComponent;
-    @ViewChild('dataTable', { static: false }) dataTable: Table;
-    @ViewChild('paginator', { static: false }) paginator: Paginator;
+    @ViewChild('addMemberModal') addMemberModal: AddMemberModalComponent;
+    @ViewChild('dataTable') dataTable: Table;
+    @ViewChild('paginator') paginator: Paginator;
     @Output() memberRemoved = new EventEmitter<IUserWithOrganizationUnit>();
     @Output() membersAdded = new EventEmitter<IUsersWithOrganizationUnit>();
 

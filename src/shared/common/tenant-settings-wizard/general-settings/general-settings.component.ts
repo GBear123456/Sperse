@@ -43,11 +43,11 @@ import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wiz
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
-    @ViewChild('privacyInput', { static: false }) privacyInput: ElementRef;
-    @ViewChild('tosInput', { static: false }) tosInput: ElementRef;
-    @ViewChild('privacyPolicyUploader', { static: false }) privacyPolicyUploader: UploaderComponent;
-    @ViewChild('tosUploader', { static: false }) tosUploader: UploaderComponent;
-    @ViewChild('publicSiteUrl', { static: false }) publicSiteUrl: AbstractControlDirective;
+    @ViewChild('privacyInput') privacyInput: ElementRef;
+    @ViewChild('tosInput') tosInput: ElementRef;
+    @ViewChild('privacyPolicyUploader') privacyPolicyUploader: UploaderComponent;
+    @ViewChild('tosUploader') tosUploader: UploaderComponent;
+    @ViewChild('publicSiteUrl') publicSiteUrl: AbstractControlDirective;
     @Output() onOptionChanged: EventEmitter<string> = new EventEmitter<string>();
     @Input() set settings(value: GeneralSettingsEditDto) {
         if (value) {

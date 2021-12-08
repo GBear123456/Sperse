@@ -27,7 +27,7 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditionsComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     public actionMenuItems: ActionMenuItem[] = [
         {
             text: this.l('Edit'),

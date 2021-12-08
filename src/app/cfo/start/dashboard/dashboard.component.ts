@@ -25,12 +25,12 @@ import { LeftMenuComponent } from '../../shared/common/left-menu/left-menu.compo
     animations: [appModuleAnimation()]
 })
 export class DashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(AccountsComponent, { static: false }) accountsComponent: AccountsComponent;
-    @ViewChild(CategorizationStatusComponent, { static: false }) categorizationStatusComponent: CategorizationStatusComponent;
-    @ViewChild(TotalsByPeriodComponent, { static: false }) totalsByPeriodComponent: TotalsByPeriodComponent;
-    @ViewChild(TrendByPeriodComponent, { static: false }) trendByPeriodComponent: TrendByPeriodComponent;
-    @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
-    @ViewChild('leftMenu', { static: false }) leftMenu: LeftMenuComponent;
+    @ViewChild(AccountsComponent) accountsComponent: AccountsComponent;
+    @ViewChild(CategorizationStatusComponent) categorizationStatusComponent: CategorizationStatusComponent;
+    @ViewChild(TotalsByPeriodComponent) totalsByPeriodComponent: TotalsByPeriodComponent;
+    @ViewChild(TrendByPeriodComponent) trendByPeriodComponent: TrendByPeriodComponent;
+    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
+    @ViewChild('leftMenu') leftMenu: LeftMenuComponent;
 
     private rootComponent: any;
     accessAllDepartments = this._cfoService.accessAllDepartments;

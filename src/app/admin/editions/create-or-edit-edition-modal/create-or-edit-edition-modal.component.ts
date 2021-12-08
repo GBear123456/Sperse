@@ -44,11 +44,11 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnInit {
-    @ViewChild('editionNameInput', { static: false }) editionNameInput: ElementRef;
-    @ViewChild('monthlyPriceInput', { static: false }) monthlyPriceInput: DxNumberBoxComponent;
-    @ViewChild('annualPriceInput', { static: false }) annualPriceInput: DxNumberBoxComponent;
+    @ViewChild('editionNameInput') editionNameInput: ElementRef;
+    @ViewChild('monthlyPriceInput') monthlyPriceInput: DxNumberBoxComponent;
+    @ViewChild('annualPriceInput') annualPriceInput: DxNumberBoxComponent;
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(FeatureTreeComponent, { static: false }) featureTree: FeatureTreeComponent;
+    @ViewChild(FeatureTreeComponent) featureTree: FeatureTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     saving = false;

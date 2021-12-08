@@ -43,7 +43,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditAddressDialog {
-    @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
+    @ViewChild('addressInput') addressInput: ElementRef;
     types: AddressUsageTypeDto[] = [];
     validator: any;
     action: string;

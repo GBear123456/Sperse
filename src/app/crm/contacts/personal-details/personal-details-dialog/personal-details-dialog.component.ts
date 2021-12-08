@@ -55,8 +55,8 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
     styleUrls: ['personal-details-dialog.less']
 })
 export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
-    @ViewChild('checklistScroll', {static: false}) checklistScroll: DxScrollViewComponent;
+    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
+    @ViewChild('checklistScroll') checklistScroll: DxScrollViewComponent;
     showOverviewTab = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     verificationChecklist: VerificationChecklistItem[];
     contactInfo: ContactInfoDto;

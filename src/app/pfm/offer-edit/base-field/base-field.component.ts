@@ -1,6 +1,7 @@
-import { Input, OnInit } from '@angular/core';
+import { Input, OnInit, Directive } from '@angular/core';
 import startCase from 'lodash/startCase';
 
+@Directive()
 export class BaseFieldComponent implements OnInit {
     @Input() name: string;
     @Input() label: string;

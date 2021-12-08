@@ -20,7 +20,7 @@ import { CommonModule } from '@shared/common/common.module';
     ]
 })
 export class AppCommonModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<AppCommonModule> {
         return {
             ngModule: AppCommonModule,
             providers: []

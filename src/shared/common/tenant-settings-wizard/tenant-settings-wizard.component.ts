@@ -56,13 +56,13 @@ import { AppFeatures } from '@shared/AppFeatures';
 })
 export class TenantSettingsWizardComponent implements AfterViewInit {
     @ViewChild(MatVerticalStepper, { static: true }) stepper: MatVerticalStepper;
-    @ViewChild(AppearanceComponent, { static: false }) appearanceComponent: AppearanceComponent;
-    @ViewChild(GeneralSettingsComponent, { static: false }) generalSettingsComponent: GeneralSettingsComponent;
-    @ViewChild(TenantManagementComponent, { static: false }) tenantManagementComponent: TenantManagementComponent;
-    @ViewChild(UserManagementComponent, { static: false }) userManagementComponent: UserManagementComponent;
-    @ViewChild(SecurityComponent, { static: false }) securityComponent: SecurityComponent;
-    @ViewChild(EmailComponent, { static: false }) emailComponent: EmailComponent;
-    @ViewChild(MemberPortalComponent, { static: false }) memberPortalComponent: MemberPortalComponent;
+    @ViewChild(AppearanceComponent) appearanceComponent: AppearanceComponent;
+    @ViewChild(GeneralSettingsComponent) generalSettingsComponent: GeneralSettingsComponent;
+    @ViewChild(TenantManagementComponent) tenantManagementComponent: TenantManagementComponent;
+    @ViewChild(UserManagementComponent) userManagementComponent: UserManagementComponent;
+    @ViewChild(SecurityComponent) securityComponent: SecurityComponent;
+    @ViewChild(EmailComponent) emailComponent: EmailComponent;
+    @ViewChild(MemberPortalComponent) memberPortalComponent: MemberPortalComponent;
     hasCustomizationsFeture = this.featureCheckerService.isEnabled(AppFeatures.AdminCustomizations);
     hasHostPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings);
     hasTenantPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings);

@@ -58,8 +58,8 @@ type Contact = OrganizationShortInfo | PersonShortInfoDto | PropertyDto;
     providers: [ PhoneFormatPipe ]
 })
 export class NoteAddDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
-    @ViewChild('followUpDateBox', { static: false }) followUpDateBox: DxDateBoxComponent;
-    @ViewChild('currentDateBox', { static: false }) currentDateBox: DxDateBoxComponent;
+    @ViewChild('followUpDateBox') followUpDateBox: DxDateBoxComponent;
+    @ViewChild('currentDateBox') currentDateBox: DxDateBoxComponent;
     @Output() onSaved: EventEmitter<any> = new EventEmitter<any>();
 
     private slider: any;

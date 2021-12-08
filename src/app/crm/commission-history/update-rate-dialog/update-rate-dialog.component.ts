@@ -20,7 +20,7 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
     styleUrls: ['update-rate-dialog.component.less']
 })
 export class UpdateCommissionRateDialogComponent extends ConfirmDialogComponent {
-    @ViewChild(DxNumberBoxComponent, { static: false }) rateComponent: DxNumberBoxComponent;
+    @ViewChild(DxNumberBoxComponent) rateComponent: DxNumberBoxComponent;
 
     affiliateRate: number = 0;
     affiliateRateValidationRules = [

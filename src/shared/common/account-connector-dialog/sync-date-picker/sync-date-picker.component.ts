@@ -17,7 +17,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
   styleUrls: ['./sync-date-picker.component.less']
 })
 export class SyncDatePickerComponent implements AfterViewInit {
-    @ViewChild(DxDateBoxComponent, { static: false }) dateBox: DxDateBoxComponent;
+    @ViewChild(DxDateBoxComponent) dateBox: DxDateBoxComponent;
     maxDate = moment();
 
     @HostListener('click') onClick() {

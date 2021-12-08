@@ -48,7 +48,7 @@ import { UrlHelper } from '@shared/helpers/UrlHelper';
     animations: [appModuleAnimation()]
 })
 export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     private rootComponent: any;
     private filtersValues = {
         date: {

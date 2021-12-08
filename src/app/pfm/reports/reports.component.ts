@@ -27,8 +27,8 @@ import { OfferStatsDto } from '@app/pfm/reports/offer-stats/offer-stats-dto.type
     styleUrls: ['./reports.component.less']
 })
 export class ReportsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(LeftMenuComponent, { static: false }) leftMenuComponent: LeftMenuComponent;
-    @ViewChild('rightSection', { static: false }) rightSection: ElementRef;
+    @ViewChild(LeftMenuComponent) leftMenuComponent: LeftMenuComponent;
+    @ViewChild('rightSection') rightSection: ElementRef;
     @ViewChild(OfferStatsComponent, { static: true }) offerStatsComponent: OfferStatsComponent;
     @ViewChild(VisitorsStatsComponent, { static: true }) visitorsStatsComponent: VisitorsStatsComponent;
 

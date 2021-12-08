@@ -20,8 +20,8 @@ import { NotifyService } from '@abp/notify/notify.service';
 })
 export class AddMemberModalComponent {
     @ViewChild('modal', { static: true }) modal: ModalDirective;
-    @ViewChild('dataTable', { static: false }) dataTable: Table;
-    @ViewChild('paginator', { static: false }) paginator: Paginator;
+    @ViewChild('dataTable') dataTable: Table;
+    @ViewChild('paginator') paginator: Paginator;
     @Output() membersAdded: EventEmitter<IUsersWithOrganizationUnit> = new EventEmitter<IUsersWithOrganizationUnit>();
 
     organizationUnitId: number;

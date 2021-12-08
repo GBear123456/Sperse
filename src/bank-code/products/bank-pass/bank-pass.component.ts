@@ -60,7 +60,7 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
-import { ContactDto } from '@root/bank-code/products/bank-pass/contact-dto.type';
+import { BankPassContactDto } from '@root/bank-code/products/bank-pass/contact-dto.type';
 import { BankPassFields } from '@root/bank-code/products/bank-pass/bank-pass-fields.enum';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { FieldDependencies } from '@app/shared/common/data-grid.service/field-dependencies.interface';
@@ -74,9 +74,9 @@ import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/mode
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankPassComponent implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(MatTabGroup, { static: false }) matTabGroup: MatTabGroup;
-    @ViewChild(DxoPagerComponent, { static: false }) pager: DxoPagerComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(MatTabGroup) matTabGroup: MatTabGroup;
+    @ViewChild(DxoPagerComponent) pager: DxoPagerComponent;
     dataIsLoading = true;
     gridInitialized = false;
     totalCount: number;
@@ -84,7 +84,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
     searchValue: '';
     private readonly dataSourceURI = 'Contact';
     private readonly totalDataSourceURI = 'Contact/$count';
-    readonly bankPassFields: KeysEnum<ContactDto> = BankPassFields;
+    readonly bankPassFields: KeysEnum<BankPassContactDto> = BankPassFields;
     private fieldsDependencies: FieldDependencies = {
         location: [
             this.bankPassFields.CountryId,
@@ -364,7 +364,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
         this.changeDetectorRef.detectChanges();
     }
 
-    deleteContact(contact: ContactDto) {
+    deleteContact(contact: BankPassContactDto) {
         ContactsHelper.showConfirmMessage(
             this.ls.l('BankCodeLeadDeleteWarningMessage'),
             (isConfirmed: boolean, [ forceDelete ]: boolean[]) => {
@@ -386,7 +386,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
         );
     }
 
-    getContactPhotoUrl(contact: ContactDto) {
+    getContactPhotoUrl(contact: BankPassContactDto) {
         return this.profileService.getContactPhotoUrl(contact.PhotoPublicId);
     }
 

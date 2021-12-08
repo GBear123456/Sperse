@@ -26,7 +26,7 @@ import { DxDataGridComponent } from 'devextreme-angular';
 })
 export class NotificationsComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     totalCount: number;
     readStateFilter: UserNotificationState;

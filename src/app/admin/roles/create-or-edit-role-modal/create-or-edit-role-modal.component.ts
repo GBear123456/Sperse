@@ -33,7 +33,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 })
 export class CreateOrEditRoleModalComponent implements AfterViewChecked, OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('permissionTree', { static: false }) permissionTree: PermissionTreeComponent;
+    @ViewChild('permissionTree') permissionTree: PermissionTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     active = false;

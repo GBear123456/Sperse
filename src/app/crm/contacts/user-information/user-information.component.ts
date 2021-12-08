@@ -57,9 +57,9 @@ import { OrganizationUnitsDialogData } from '@shared/common/organization-units-t
     providers: [ PhoneFormatPipe, LifecycleSubjectsService ]
 })
 export class UserInformationComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('emailAddress', { static: false }) emailAddressComponent: DxSelectBoxComponent;
-    @ViewChild('phoneNumber', { static: false }) phoneNumberComponent: DxSelectBoxComponent;
-    @ViewChild('inviteValidationGroup', { static: false }) inviteValidationComponent: DxValidationGroupComponent;
+    @ViewChild('emailAddress') emailAddressComponent: DxSelectBoxComponent;
+    @ViewChild('phoneNumber') phoneNumberComponent: DxSelectBoxComponent;
+    @ViewChild('inviteValidationGroup') inviteValidationComponent: DxValidationGroupComponent;
     data: any;
 
     readonly GENERAL_TAB_INDEX        = 0;

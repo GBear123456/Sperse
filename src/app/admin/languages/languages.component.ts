@@ -27,7 +27,7 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
     animations: [appModuleAnimation()]
 })
 export class LanguagesComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     dataSource: DataSource = new DataSource({
         key: 'id',
         load: () => {

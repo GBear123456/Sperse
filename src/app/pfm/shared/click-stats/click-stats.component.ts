@@ -26,7 +26,7 @@ import { OfferServiceProxy, GroupByPeriod } from 'shared/service-proxies/service
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClickStatsComponent extends AppComponentBase implements OnInit {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @Output() onStatsClick: EventEmitter<any> = new EventEmitter<any>();
     @Input() refresh$: Observable<null>;
     @Input() campaignId;

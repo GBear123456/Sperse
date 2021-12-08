@@ -54,9 +54,9 @@ import { AppPermissions } from '@shared/AppPermissions';
     providers: [MemberServiceServiceProxy, ProductServiceProxy]
 })
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
-    @ViewChild('productGroup', { static: false }) validationProductGroup: DxValidationGroupComponent;
-    @ViewChild('serviceGroup', { static: false }) validationServiceGroup: DxValidationGroupComponent;
-    @ViewChild(OrderDropdownComponent, { static: false }) orderDropdownComponent: OrderDropdownComponent;
+    @ViewChild('productGroup') validationProductGroup: DxValidationGroupComponent;
+    @ViewChild('serviceGroup') validationServiceGroup: DxValidationGroupComponent;
+    @ViewChild(OrderDropdownComponent) orderDropdownComponent: OrderDropdownComponent;
     today = new Date();
     private slider: any;
     selectedTabIndex: number;

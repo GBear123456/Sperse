@@ -35,7 +35,7 @@ import { OfferServiceProxy } from '@shared/service-proxies/service-proxies';
     ]
 })
 export class PersonalFinanceCommonModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<PersonalFinanceCommonModule> {
         return {
             ngModule: PersonalFinanceCommonModule,
             providers: [

@@ -31,9 +31,9 @@ import { NotifyService } from '@abp/notify/notify.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InplaceEditComponent extends AppComponentBase {
-    @ViewChild(DxTextBoxComponent, { static: false }) textBox: DxTextBoxComponent;
-    @ViewChild(DxTextAreaComponent, { static: false }) textArea: DxTextAreaComponent;
-    @ViewChild(DxNumberBoxComponent, { static: false }) numberBox: DxNumberBoxComponent;
+    @ViewChild(DxTextBoxComponent) textBox: DxTextBoxComponent;
+    @ViewChild(DxTextAreaComponent) textArea: DxTextAreaComponent;
+    @ViewChild(DxNumberBoxComponent) numberBox: DxNumberBoxComponent;
 
     @Input() set data(model: InplaceEditModel) {
         if (model && (!this._data || this._data.value != model.value)) {

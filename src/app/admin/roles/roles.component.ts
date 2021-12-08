@@ -36,7 +36,7 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
     animations: [appModuleAnimation()]
 })
 export class RolesComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private filters: FilterModel[];
     private selectedPermission: string;

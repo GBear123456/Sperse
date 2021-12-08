@@ -25,8 +25,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LendSpaceSignupComponent {
-    @ViewChild('agreeWithTermsCheckBox', { static: false}) agreeWithTermsCheckBox: DxCheckBoxComponent;
-    @ViewChild('agreeToReceiveCallsCheckBox', { static: false }) agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
+    @ViewChild('agreeWithTermsCheckBox') agreeWithTermsCheckBox: DxCheckBoxComponent;
+    @ViewChild('agreeToReceiveCallsCheckBox') agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
 
     patterns = {
         namePattern: AppConsts.regexPatterns.name,

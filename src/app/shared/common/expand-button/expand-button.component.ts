@@ -10,7 +10,7 @@ import { DxSelectBoxComponent } from 'devextreme-angular';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ExpandButtonComponent {
-    @ViewChild(DxSelectBoxComponent, { static: false }) selectBox: DxSelectBoxComponent;
+    @ViewChild(DxSelectBoxComponent) selectBox: DxSelectBoxComponent;
     @Input() items: IExpandItem[];
     @Output() onExpand: EventEmitter<string> = new EventEmitter<string>();
     constructor(

@@ -54,9 +54,9 @@ import { CalendarService } from '@app/shared/common/calendar-button/calendar.ser
     'styleUrls': ['./stats.component.less']
 })
 export class StatsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('linearChart', { static: false }) private linearChart: DxChartComponent;
-    @ViewChild('barChart', { static: false }) private barChart: DxChartComponent;
-    @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild('linearChart') private linearChart: DxChartComponent;
+    @ViewChild('barChart') private barChart: DxChartComponent;
+    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
     @ViewChild(LeftMenuComponent, { static: true }) leftMenuComponent: LeftMenuComponent;
     @HostBinding('class.toolbar-is-hidden') toolbarIsHidden = false;
     statsData: Array<BankAccountDailyStatDto>;

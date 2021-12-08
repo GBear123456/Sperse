@@ -74,8 +74,8 @@ import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
     providers: [ AppStoreService, DialogService ]
 })
 export class ContactsComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(OperationsWidgetComponent, { static: false }) toolbarComponent: OperationsWidgetComponent;
-    @ViewChild(DetailsHeaderComponent, { static: false }) detailsHeaderComponent: DetailsHeaderComponent;
+    @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
+    @ViewChild(DetailsHeaderComponent) detailsHeaderComponent: DetailsHeaderComponent;
 
     readonly RP_DEFAULT_ID   = RP_DEFAULT_ID;
     readonly RP_USER_INFO_ID = RP_USER_INFO_ID;

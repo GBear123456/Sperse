@@ -29,9 +29,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SignupFormComponent implements OnInit, OnDestroy {
-    @ViewChild('agreeWithTermsCheckBox', { static: false }) agreeWithTermsCheckBox: DxCheckBoxComponent;
-    @ViewChild('agreeToReceiveCallsCheckBox', { static: false }) agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
-    @ViewChild('zipValidator', { static: false }) zipValidator: DxValidatorComponent;
+    @ViewChild('agreeWithTermsCheckBox') agreeWithTermsCheckBox: DxCheckBoxComponent;
+    @ViewChild('agreeToReceiveCallsCheckBox') agreeToReceiveCallsCheckBox: DxCheckBoxComponent;
+    @ViewChild('zipValidator') zipValidator: DxValidatorComponent;
     showZipMask = true;
     defaultCountryCode: string;
     selectedCountryCode: string;

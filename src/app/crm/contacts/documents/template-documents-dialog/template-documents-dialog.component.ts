@@ -25,7 +25,7 @@ import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/templat
     styleUrls: ['template-documents-dialog.component.less']
 })
 export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
-    @ViewChild(DxFileManagerComponent, { static: false }) fileManager: DxFileManagerComponent;
+    @ViewChild(DxFileManagerComponent) fileManager: DxFileManagerComponent;
 
     files         = [];
     uploadedCount = 0;

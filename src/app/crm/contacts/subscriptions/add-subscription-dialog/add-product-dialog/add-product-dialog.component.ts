@@ -59,7 +59,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddProductDialogComponent implements AfterViewInit, OnInit {
-    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
+    @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     private slider: any;
     product: CreateProductInput | UpdateProductInput;
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(filter(Boolean),

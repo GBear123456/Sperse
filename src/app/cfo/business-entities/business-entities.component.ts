@@ -35,7 +35,7 @@ import { FieldDependencies } from '@app/shared/common/data-grid.service/field-de
     providers: [ BusinessEntityServiceProxy ]
 })
 export class BusinessEntitiesComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     private rootComponent: any;
     private readonly dataSourceURI = 'BusinessEntity';
     private isAddButtonDisabled = !this.isInstanceAdmin;

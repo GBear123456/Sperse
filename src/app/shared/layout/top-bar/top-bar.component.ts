@@ -33,7 +33,7 @@ import { ImpersonationService } from '@app/admin/users/impersonation.service';
     providers: [ LifecycleSubjectsService ]
 })
 export class TopBarComponent implements OnInit, OnDestroy {
-    @ViewChild(DxNavBarComponent, { static: false }) navBar: DxNavBarComponent;
+    @ViewChild(DxNavBarComponent) navBar: DxNavBarComponent;
 
     config: ConfigInterface;
     selectedIndex: number;

@@ -79,7 +79,7 @@ import { PersonHistoryDialogComponent } from '../personal-details/personal-detai
     providers: [ ContactPhotoServiceProxy, LifecycleSubjectsService ]
 })
 export class DetailsHeaderComponent implements OnInit, OnDestroy {
-    @ViewChild(DxContextMenuComponent, { static: false }) addContextComponent: DxContextMenuComponent;
+    @ViewChild(DxContextMenuComponent) addContextComponent: DxContextMenuComponent;
 
     @Input()
     public set data(data: ContactInfoDto) {

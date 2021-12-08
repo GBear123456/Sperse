@@ -48,7 +48,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 })
 export class BusinessEntityEditDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
+    @ViewChild('addressInput') addressInput: ElementRef;
     businessEntities$: Observable<BusinessEntityDto[]> = this.businessEntityService.getBusinessEntities(this.cfoService.instanceType as any, this.cfoService.instanceId).pipe(
         map((businessEntities: BusinessEntityDto[]) => {
             if (!this.isNew)

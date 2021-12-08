@@ -33,7 +33,7 @@ export class AdDashboardHostDirective {
     animations: [appModuleAnimation()]
 })
 export class StartComponent extends CFOComponentBase implements AfterViewInit, OnDestroy, OnInit {
-    @ViewChild(AdDashboardHostDirective, { static: false }) adHostDirective: AdDashboardHostDirective;
+    @ViewChild(AdDashboardHostDirective) adHostDirective: AdDashboardHostDirective;
     private hostComponent: any;
     private hostClass: any = this._cfoService.hasStaticInstance || this.instanceId
         ? PortalDashboardComponent

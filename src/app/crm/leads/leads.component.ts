@@ -148,19 +148,19 @@ import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
     animations: [appModuleAnimation()]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, {static: false}) dataGrid: DxDataGridComponent;
-    @ViewChild(PipelineComponent, {static: false}) pipelineComponent: PipelineComponent;
-    @ViewChild(TagsListComponent, {static: false}) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, {static: false}) listsComponent: ListsListComponent;
-    @ViewChild(UserAssignmentComponent, {static: false}) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(RatingComponent, {static: false}) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent, {static: false}) starsListComponent: StarsListComponent;
-    @ViewChild('stageList', {static: false}) stagesComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent, {static: false}) pivotGridComponent: PivotGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild('stageList') stagesComponent: StaticListComponent;
+    @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent, {static: true}) chartComponent: ChartComponent;
-    @ViewChild(MapComponent, {static: false}) mapComponent: MapComponent;
-    @ViewChild(ToolBarComponent, {static: false}) toolbar: ToolBarComponent;
-    @ViewChild('sourceList', { static: false }) sourceComponent: SourceContactListComponent;
+    @ViewChild(MapComponent) mapComponent: MapComponent;
+    @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
+    @ViewChild('sourceList') sourceComponent: SourceContactListComponent;
 
     private readonly dataSourceURI = 'Lead';
     private readonly totalDataSourceURI = 'Lead/$count';

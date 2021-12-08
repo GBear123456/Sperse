@@ -29,7 +29,7 @@ import { AccountConnectorDialogComponent } from '@shared/common/account-connecto
     animations: [appModuleAnimation()]
 })
 export class SetupComponent extends CFOComponentBase implements AfterViewInit, OnInit, OnDestroy {
-    @ViewChild('cashflowSetup', { static: false }) cashflowSetup: ElementRef;
+    @ViewChild('cashflowSetup') cashflowSetup: ElementRef;
     @Output() onOpenIntro: EventEmitter<boolean> = new EventEmitter<boolean>();
     private rootComponent: any;
     isDisabled = !this.isInstanceAdmin;

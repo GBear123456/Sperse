@@ -17,7 +17,7 @@ import { DialogService } from '@app/shared/common/dialogs/dialog.service';
     styleUrls: ['./types-dropdown.component.less']
 })
 export class TypesDropdownComponent {
-    @ViewChild(DxSelectBoxComponent, { static: false }) selectBox: DxSelectBoxComponent;
+    @ViewChild(DxSelectBoxComponent) selectBox: DxSelectBoxComponent;
     @Input() items: TypeItem[];
     @Input() totalCount: number;
     @Input() totalErrorMsg: string = '';

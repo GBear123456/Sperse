@@ -48,8 +48,8 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
     animations: [ appModuleAnimation() ]
 })
 export class TenantsComponent extends AppComponentBase implements OnDestroy, OnInit {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(ToolBarComponent, { static: false }) toolbarComponent: ToolBarComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(ToolBarComponent) toolbarComponent: ToolBarComponent;
 
     private editions: SubscribableEditionComboboxItemDto[] = [];
     private filters: FilterModel[];

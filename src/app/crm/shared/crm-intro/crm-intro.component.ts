@@ -31,8 +31,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class CrmIntroComponent implements OnInit {
     @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
-    @ViewChild(QuestionnaireComponent, { static: false }) questionnaire: QuestionnaireComponent;
-    @ViewChild(ImportUsersStepComponent, { static: false }) importUsersStepComponent: ImportUsersStepComponent;
+    @ViewChild(QuestionnaireComponent) questionnaire: QuestionnaireComponent;
+    @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
     dialogRef: MatDialogRef<CrmIntroComponent, any>;
     readonly identifier = 'CRM-Setup';
     readonly moduleType = ModuleType.CRM;

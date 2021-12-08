@@ -45,9 +45,9 @@ import { OrganizationUnitsDialogData } from '@shared/common/organization-units-t
     providers: [ ApplicationServiceProxy, LifecycleSubjectsService, CurrencyPipe ]
 })
 export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
-    @ViewChild('loaderWrapper', { static: false }) loaderWrapper: ElementRef;
+    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
+    @ViewChild('loaderWrapper') loaderWrapper: ElementRef;
 
     data = {
         contactInfo: new ContactInfoDto(),

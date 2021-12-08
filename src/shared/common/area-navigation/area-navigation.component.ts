@@ -32,7 +32,7 @@ export class AreaNavigationComponent implements AfterViewInit, OnChanges, OnDest
     @Input() memberAreaLinks: MemberAreaLink[];
     @Input() actionsButtons: any[];
     @ViewChildren('sublinks') sublinksRefs: QueryList<ElementRef>;
-    @ViewChild('linksList', { static: false }) linksList: ElementRef;
+    @ViewChild('linksList') linksList: ElementRef;
     responsiveMemberAreaLinks = [];
     inlineMemberAreaLinks: MemberAreaLink[] = [];
     resizeTimeout: any;

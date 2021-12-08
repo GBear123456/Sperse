@@ -20,7 +20,7 @@ import { TenantPaymentSettingsServiceProxy, BankTransferSettings, BeneficiaryInf
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankSettingsDialogComponent {
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
 
     settings = new BankTransferSettings({
         bankAccountNumber: undefined,

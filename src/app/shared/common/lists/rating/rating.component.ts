@@ -18,7 +18,7 @@ import { AppPermissions } from '@shared/AppPermissions';
   providers: [ContactRatingsServiceProxy]
 })
 export class RatingComponent {
-    @ViewChild(AppRatingComponent, { static: false }) ratingComponent: AppRatingComponent;
+    @ViewChild(AppRatingComponent) ratingComponent: AppRatingComponent;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() ratingValue: number;

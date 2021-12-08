@@ -41,8 +41,8 @@ import { finalize } from '@node_modules/rxjs/internal/operators';
 })
 export class MySettingsModalComponent implements OnInit, AfterViewInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('smsVerificationModal', { static: false }) smsVerificationModal: SmsVerificationModalComponent;
-    @ViewChild(MatTabGroup, { static: false }) tabs: MatTabGroup;
+    @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
+    @ViewChild(MatTabGroup) tabs: MatTabGroup;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     ckConfig: any = {
