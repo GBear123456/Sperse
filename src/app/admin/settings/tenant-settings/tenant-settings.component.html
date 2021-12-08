@@ -117,8 +117,17 @@
                     <div class="row m-form">
                         <div class="col-lg-4 col-md-6">
                             <h5>{{l("CustomCSS")}}</h5>
-                            <p *ngIf="appSession.tenant.customCssId">
-                                <a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.customCssId + '/' + appSession.tenant.id" target="_blank">{{l('Download')}}</a>
+                            <p>
+                                <a *ngIf="appSession.tenant.customCssId; else customPlatformTemplate"
+                                   [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.customCssId + '/' + appSession.tenant.id"
+                                   target="_blank">
+                                    {{l('Download')}}
+                                </a>
+                                <ng-template #customPlatformTemplate>
+                                    <a href="assets/common/styles/custom/platform-custom-style.css" download>
+                                        {{l('DownloadTemplate')}}
+                                    </a>
+                                </ng-template>
                             </p>
                             <form #cssUploadForm>
                                 <div class="form-group row">
@@ -131,8 +140,17 @@
                         </div>
                         <div class="col-lg-4 col-md-6">
                             <h5>{{l("CustomLoginCSS")}}</h5>
-                            <p *ngIf="appSession.tenant.loginCustomCssId">
-                                <a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.loginCustomCssId + '/' + appSession.tenant.id" target="_blank">{{l('Download')}}</a>
+                            <p>
+                                <a *ngIf="appSession.tenant.loginCustomCssId; else customLoginTemplate"
+                                   [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.loginCustomCssId + '/' + appSession.tenant.id"
+                                   target="_blank">
+                                    {{l('Download')}}
+                                </a>
+                                <ng-template #customLoginTemplate>
+                                    <a href="assets/common/styles/custom/login-custom-style.css" download>
+                                        {{l('DownloadTemplate')}}
+                                    </a>
+                                </ng-template>
                             </p>
                             <form #loginCssUploadForm>
                                 <div class="form-group row">
@@ -145,8 +163,17 @@
                         </div>
                         <div class="col-lg-4 col-md-6">
                             <h5>{{l("CustomPortalCSS")}}</h5>
-                            <p *ngIf="appSession.tenant.portalCustomCssId">
-                                <a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.portalCustomCssId + '/' + appSession.tenant.id" target="_blank">{{l('Download')}}</a>
+                            <p>
+                                <a *ngIf="appSession.tenant.portalCustomCssId; else customPortalTemplate"
+                                   [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.portalCustomCssId + '/' + appSession.tenant.id"
+                                   target="_blank">
+                                    {{l('Download')}}
+                                </a>
+                                <ng-template #customPortalTemplate>
+                                    <a href="assets/common/styles/custom/portal-custom-style.css" download>
+                                        {{l('DownloadTemplate')}}
+                                    </a>
+                                </ng-template>
                             </p>
                             <form #portalCssUploadForm>
                                 <div class="form-group row">
@@ -429,7 +456,7 @@
                             {{l("ImapUseSsl")}}
                             <span></span>
                         </label>
-                    </div>         
+                    </div>
                 </dx-scroll-view>
             </mat-tab>
             <mat-tab [label]="l('SendGrid')">
@@ -454,7 +481,7 @@
                     </div>
                     <p>
                         <span [innerHtml]="l('SendGridWebhookHint', 'https://app.sendgrid.com/settings/mail_settings')"></span>
-                        <br /><b>{{getSendGridWebhookUrl()}}</b><br/><br />
+                        <br /><b>{{getSendGridWebhookUrl()}}</b><br /><br />
                     </p>
                     <ng-container *ngIf="isPerformancePartner">
                         <div class="form-group">

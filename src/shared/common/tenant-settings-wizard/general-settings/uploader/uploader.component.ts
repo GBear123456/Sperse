@@ -22,6 +22,7 @@ export class UploaderComponent {
     @Input() title: string;
     @Input() documentId: string;
     @Input() documentLink: string;
+    @Input() documentTemplateLink: string;
     @Input() uploadButtonText: string;
     @Input() uploadInfoText: string;
     @Input() uploadUrl: string;
