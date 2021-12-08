@@ -2,7 +2,7 @@
 <ng-container>
     <ng-container *ngIf="tenant">
         <div class="row m-form file-uploads">
-            <div class="col-md-6">
+            <div class="col-md-6 app-logo-upload">
                 <uploader #logoUploader
                           [title]="ls.l('ApplicationLogo')"
                           [documentId]="tenant.logoId"
@@ -16,21 +16,6 @@
                 </uploader>
             </div>
             <div class="col-md-6">
-                <uploader #cssUploader
-                          [title]="ls.l('CustomCSS')"
-                          [documentId]="tenant.customCssId"
-                          [documentLink]="tenant.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id : undefined"
-                          [uploadInfoText]="ls.l('UploadCSS_Info')"
-                          [uploadButtonText]="ls.l('FileUpload')"
-                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Platform'"
-                          acceptFileExt=".css"
-                          [maxFileSize]="maxCssFileSize"
-                          (onDocumentClear)="clearCustomCss()">
-                </uploader>
-            </div>
-        </div>
-        <div class="row m-form file-uploads">
-            <div class="col-md-12">
                 <uploader #faviconsUploader
                           [title]="ls.l('CustomFavicons')"
                           [documentId]="tenant.tenantCustomizations.favicons?.length"
@@ -40,6 +25,47 @@
                           [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadFavicons'"
                           acceptFileExt=".zip"
                           (onDocumentClear)="clearFavicons()">
+                </uploader>
+            </div>
+        </div>
+        <div class="row m-form file-uploads">
+            <div class="col-md-6">
+                <uploader #cssUploader
+                          [title]="ls.l('CustomCSS')"
+                          [documentId]="tenant.customCssId"
+                          [documentLink]="tenant.customCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id : undefined"
+                          [uploadInfoText]="ls.l('UploadCSS_Info')"
+                          [uploadButtonText]="ls.l('FileUpload')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Platform'"
+                          acceptFileExt=".css"
+                          [maxFileSize]="maxCssFileSize"
+                          (onDocumentClear)="clearCustomCss(CustomCssType.Platform)">
+                </uploader>
+            </div>
+            <div class="col-md-6">
+                <uploader #loginCssUploader
+                          [title]="ls.l('CustomLoginCSS')"
+                          [documentId]="tenant.loginCustomCssId"
+                          [documentLink]="tenant.loginCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.loginCustomCssId + '/' + tenant.id : undefined"
+                          [uploadInfoText]="ls.l('UploadCSS_Info')"
+                          [uploadButtonText]="ls.l('FileUpload')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Login'"
+                          acceptFileExt=".css"
+                          [maxFileSize]="maxCssFileSize"
+                          (onDocumentClear)="clearCustomCss(CustomCssType.Login)">
+                </uploader>
+            </div>
+            <div class="col-md-6">
+                <uploader #portalCssUploader
+                          [title]="ls.l('CustomPortalCSS')"
+                          [documentId]="tenant.portalCustomCssId"
+                          [documentLink]="tenant.portalCustomCssId ? remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.portalCustomCssId + '/' + tenant.id : undefined"
+                          [uploadInfoText]="ls.l('UploadCSS_Info')"
+                          [uploadButtonText]="ls.l('FileUpload')"
+                          [uploadUrl]="remoteServiceBaseUrl + '/api/TenantCustomization/UploadCustomCss?cssType=Portal'"
+                          acceptFileExt=".css"
+                          [maxFileSize]="maxCssFileSize"
+                          (onDocumentClear)="clearCustomCss(CustomCssType.Portal)">
                 </uploader>
             </div>
         </div>

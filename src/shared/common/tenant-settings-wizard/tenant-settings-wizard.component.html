@@ -22,7 +22,9 @@
             </ng-container>
         </mat-step>
         <mat-step *ngIf="!appService.isHostTenant && hasCustomizationsFeture" #appearanceStep>
-            <appearance></appearance>
+            <dx-scroll-view [height]="529">
+                <appearance></appearance>
+            </dx-scroll-view>
         </mat-step>
         <mat-step *ngIf="hasHostPermission" #tenantManagementStep>
             <ng-container *ngIf="stepper.selected === tenantManagementStep">

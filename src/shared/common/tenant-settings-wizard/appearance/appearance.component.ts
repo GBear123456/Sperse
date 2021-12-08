@@ -37,11 +37,14 @@ import { NotifyService } from '@abp/notify/notify.service';
 export class AppearanceComponent implements ITenantSettingsStepComponent {
     @ViewChild('logoUploader', { static: false }) logoUploader: UploaderComponent;
     @ViewChild('cssUploader', { static: false }) cssUploader: UploaderComponent;
+    @ViewChild('loginCssUploader', { static: false }) loginCssUploader: UploaderComponent;
+    @ViewChild('portalCssUploader', { static: false }) portalCssUploader: UploaderComponent;
     @ViewChild('faviconsUploader', { static: false }) faviconsUploader: UploaderComponent;
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     maxCssFileSize = 1024 * 1024 /* 1MB */;
     maxLogoFileSize = 1024 * 30 /* 30KB */;
+    CustomCssType = CustomCssType;
 
     constructor(
         private notify: NotifyService,
@@ -60,12 +63,9 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                     this.changeDetectorRef.detectChanges();
                 }
             })),
-            this.cssUploader.uploadFile().pipe(tap((res: any) => {
-                if (res.result && res.result.id) {
-                    this.tenant.customCssId = res.result.id;
-                    this.changeDetectorRef.detectChanges();
-                }
-            })),
+            this.cssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Platform, res))),
+            this.loginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Login, res))),
+            this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))),
             this.faviconsUploader.uploadFile().pipe(tap((res) => {
                 if (res && res.result && res.result.faviconBaseUrl && res.result.favicons && res.result.favicons.length) {
                     this.tenant.tenantCustomizations = <any>{ ...this.tenant.tenantCustomizations, ...res.result };
@@ -74,6 +74,13 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                 }
             }))
         );
+    }
+
+    handleCssUpload(cssType: CustomCssType, res: any) {
+        if (res.result && res.result.id) {
+            this.setCustomCssTenantProperty(cssType, res.result.id);
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     clearLogo(): void {
@@ -94,11 +101,25 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
         });
     }
 
-    clearCustomCss(): void {
-        this.tenantCustomizationService.clearCustomCss(CustomCssType.Platform).subscribe(() => {
-            this.tenant.customCssId = null;
+    clearCustomCss(cssType: CustomCssType): void {
+        this.tenantCustomizationService.clearCustomCss(cssType).subscribe(() => {
+            this.setCustomCssTenantProperty(cssType, null);
             this.notify.info(this.ls.l('ClearedSuccessfully'));
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+    setCustomCssTenantProperty(cssType: CustomCssType, value: string) {
+        switch (cssType) {
+            case CustomCssType.Platform:
+                this.tenant.customCssId = value;
+                break;
+            case CustomCssType.Login:
+                this.tenant.loginCustomCssId = value;
+                break;
+            case CustomCssType.Portal:
+                this.tenant.portalCustomCssId = value;
+                break;
+        }
     }
 }
