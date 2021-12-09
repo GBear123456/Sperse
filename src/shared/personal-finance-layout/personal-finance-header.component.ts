@@ -32,7 +32,7 @@ export class AdHeaderHostDirective {
     selector: 'personal-finance-header'
 })
 export class PersonalFinanceHeaderComponent {
-    @ViewChild(AdHeaderHostDirective) adHeaderHost: AdHeaderHostDirective;
+    @ViewChild(AdHeaderHostDirective, { static: false }) adHeaderHost: AdHeaderHostDirective;
     @HostBinding('class.pfm-app') hasPfmAppFeature = false;
     @HostBinding('class.yellow') yellowTheme =
         environment.LENDSPACE_HEADER_THEME == 'yellow';

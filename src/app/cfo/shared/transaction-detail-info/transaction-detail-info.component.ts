@@ -23,7 +23,7 @@ import {
 import { NotifyService } from '@abp/notify/notify.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { finalize } from '@node_modules/rxjs/internal/operators';
+import { finalize } from 'rxjs/operators';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({

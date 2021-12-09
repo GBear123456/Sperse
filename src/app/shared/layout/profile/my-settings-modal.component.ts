@@ -14,6 +14,7 @@ import {
 import startCase from 'lodash/startCase';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
+import { finalize } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
@@ -30,7 +31,6 @@ import { SettingService } from '@abp/settings/setting.service';
 import { MessageService } from '@abp/message/message.service';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { finalize } from '@node_modules/rxjs/internal/operators';
 
 @Component({
     templateUrl: './my-settings-modal.component.html',

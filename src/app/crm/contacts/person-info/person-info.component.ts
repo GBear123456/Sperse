@@ -18,14 +18,20 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 export class PersonInfoComponent {
     @Input() data;
     @Input() groups;
+
     capitalize = capitalize;
-    isEditAllowed = this.permissionService.checkCGPermission(this.groups);
+    isEditAllowed = false;
+
     constructor(
         private contactsService: ContactsService,
         private personContactService: PersonContactServiceProxy,
         private permissionService: AppPermissionService,
         public ls: AppLocalizationService
     ) {}
+
+    ngOnInit() {
+        this.isEditAllowed = this.permissionService.checkCGPermission(this.groups);
+    }
 
     getFullName(person) {
         return [person.namePrefix, person.firstName, person.middleName, person.lastName,

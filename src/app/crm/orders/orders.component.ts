@@ -130,7 +130,23 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
-    filterModelStages: FilterModel;
+    filterModelStages: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'orderStages',
+        items: {
+            element: new FilterCheckBoxesModel(
+                {
+                    dataSource$: this.store$.pipe(
+                        select(PipelinesStoreSelectors.getPipelineTreeSource(
+                            { purpose: AppConsts.PipelinePurposeIds.order })
+                        )
+                    ),
+                    nameField: 'name',
+                    parentExpr: 'parentId',
+                    keyExpr: 'id'
+                }),
+        }
+    });
     layoutTypes = DataLayoutType;
     private ordersDataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     public subscriptionsDataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
@@ -200,23 +216,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
             options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
-        this.filterModelStages = new FilterModel({
-            component: FilterCheckBoxesComponent,
-            caption: 'orderStages',
-            items: {
-                element: new FilterCheckBoxesModel(
-                    {
-                        dataSource$: this.store$.pipe(
-                            select(PipelinesStoreSelectors.getPipelineTreeSource(
-                                { purpose: AppConsts.PipelinePurposeIds.order })
-                            )
-                        ),
-                        nameField: 'name',
-                        parentExpr: 'parentId',
-                        keyExpr: 'id'
-                    }),
-            }
-        }),
+        this.filterModelStages,
         new FilterModel({
             component: FilterInputsComponent,
             options: { type: 'number'},

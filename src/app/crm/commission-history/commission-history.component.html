@@ -11,7 +11,7 @@
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleFullScreen)="repaintDataGrid(100)"
                   (onReload)="refresh()"
-                  (onStateReset)="dataGrid.instance.state(null)"
+                  (onStateReset)="dxDataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <types-dropdown [items]="viewTypes"
                         [showTotalCount]="true"

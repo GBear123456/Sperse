@@ -4,7 +4,7 @@
   "newProjectRoot": "projects",
   "projects": {
     "abp-zero-template": {
-      "root": "",
+      "root": "./",
       "sourceRoot": "src",
       "projectType": "application",
       "architect": {
@@ -17,6 +17,13 @@
             "tsConfig": "src/tsconfig.json",
             "polyfills": "src/polyfills.ts",
             "showCircularDependencies": true,
+            "allowedCommonJsDependencies": [
+                "underscore", "underscore.string", "lodash", "jspdf", "devextreme", "color",
+                "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
+                "ngx-google-places-autocomplete", "ng-inline-svg", "angular-cc-library",
+                "angular-svg-round-progressbar", "uuid", "hammerjs", "moment-timezone",
+                "ng2-cashe-service", "jquery-calendar"
+            ],
             "assets": [
               "src/assets",
               "src/favicon.ico",
@@ -29,8 +36,8 @@
               "src/safari-pinned-tab.svg",
               {
                 "glob": "web.config",
-                "input": "",
-                "output": ""
+                "input": "./",
+                "output": "./"
               },
               {
                 "glob": "abp.signalr-client.js",
@@ -91,7 +98,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "900kb"
                 }
               ],
               "optimization": false,
@@ -106,7 +113,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "900kb"
                 }
               ],
               "optimization": false,
@@ -131,7 +138,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "900kb"
                 }
               ],
               "optimization": false,
@@ -156,7 +163,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "900kb"
                 }
               ],
               "optimization": true,
@@ -184,7 +191,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "900kb"
                 }
               ],
               "optimization": true,
@@ -212,7 +219,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "900kb"
                 }
               ],
               "optimization": true,
@@ -402,7 +409,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "900kb"
                 }
               ],
               "optimization": false,
@@ -417,7 +424,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "900kb"
                 }
               ],
               "optimization": false,
@@ -443,7 +450,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "900kb"
                 }
               ],
               "optimization": false,
@@ -469,7 +476,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "900kb"
                 }
               ],
               "optimization": true,
@@ -496,7 +503,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "900kb"
                 }
               ],
               "optimization": true,
@@ -523,7 +530,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "900kb"
                 }
               ],
               "optimization": true,
@@ -626,7 +633,7 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "6kb"
+                  "maximumWarning": "900kb"
                 }
               ],
               "optimization": true,

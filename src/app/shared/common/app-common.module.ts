@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 /** Third party imports */
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
@@ -91,7 +92,6 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { AppRatingModule } from './rating/app-rating.module';
 import { CalendarButtonComponent } from '@app/shared/common/calendar-button/calendar-button.component';
-import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.module';
 
 @NgModule({

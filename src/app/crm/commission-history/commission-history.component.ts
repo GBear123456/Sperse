@@ -225,7 +225,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         })
     });
 
-    get dataSource() {
+    get gridDataSource() {
         return [
             this.commissionDataSource,
             this.ledgerDataSource,
@@ -258,7 +258,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         })
     );
 
-    get dataGrid(): DxDataGridComponent {
+    get dxDataGrid(): DxDataGridComponent {
         return [
             this.commissionDataGrid,
             this.ledgerDataGrid,
@@ -494,7 +494,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     private handleDataGridUpdate(): void {
         this.listenForUpdate().pipe(skip(1)).subscribe(() => {
             this.selectedRecords = [];
-            this.dataGrid.instance.clearSelection();
+            this.dxDataGrid.instance.clearSelection();
             this.initToolbarConfig();
             this.processFilterInternal();
         });
@@ -815,21 +815,21 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             items: [
                                 {
                                     action: (options) => {
-                                        this.exportToXLS(options, this.dataGrid, this.viewTypes[this.selectedViewType].text, false);
+                                        this.exportToXLS(options, this.dxDataGrid, this.viewTypes[this.selectedViewType].text, false);
                                     },
                                     text: this.l('Export to Excel'),
                                     icon: 'xls'
                                 },
                                 {
                                     action: (options) => {
-                                        this.exportToCSV(options, this.dataGrid, this.viewTypes[this.selectedViewType].text, false);
+                                        this.exportToCSV(options, this.dxDataGrid, this.viewTypes[this.selectedViewType].text, false);
                                     },
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet'
                                 },
                                 {
                                     action: (options) => {
-                                        this.exportToGoogleSheet(options, this.dataGrid, this.viewTypes[this.selectedViewType].text, false);
+                                        this.exportToGoogleSheet(options, this.dxDataGrid, this.viewTypes[this.selectedViewType].text, false);
                                     },
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet'
@@ -943,23 +943,23 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     toggleColumnChooser() {
-        DataGridService.showColumnChooser(this.dataGrid);
+        DataGridService.showColumnChooser(this.dxDataGrid);
     }
 
     repaintDataGrid(delay = 0) {
-        if (this.dataGrid) {
-            setTimeout(() => this.dataGrid.instance.repaint(), delay);
+        if (this.dxDataGrid) {
+            setTimeout(() => this.dxDataGrid.instance.repaint(), delay);
         }
     }
 
     toggleCompactView() {
-        DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
+        DataGridService.toggleCompactRowsHeight(this.dxDataGrid, true);
     }
 
     setDataGridInstance() {
-        let instance = this.dataGrid && this.dataGrid.instance;
+        let instance = this.dxDataGrid && this.dxDataGrid.instance;
         if (instance && !instance.option('dataSource')) {
-            instance.option('dataSource', this.dataSource);
+            instance.option('dataSource', this.gridDataSource);
             this.processFilterInternal();
             this.startLoading();
         } else if (this.searchValueChanged) {
@@ -980,12 +980,12 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     processFilterInternal() {
-        if (this.dataGrid && this.dataGrid.instance) {
+        if (this.dxDataGrid && this.dxDataGrid.instance) {
             this.selectedRecords = [];
-            this.dataGrid.instance.clearSelection();
+            this.dxDataGrid.instance.clearSelection();
 
             this.processODataFilter(
-                this.dataGrid.instance,
+                this.dxDataGrid.instance,
                 this.dataSourceURI,
                 this.filters.concat(this.reconciliationFilter),
                 this.filtersService.getCheckCustom
@@ -1043,7 +1043,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     onViewTypeChanged(event) {
         if (this.selectedViewType != event.value) {
             this.selectedRecords = [];
-            this.dataGrid.instance.clearSelection();
+            this.dxDataGrid.instance.clearSelection();
             this.selectedViewType = event.value;
             this.initFilterConfig(true);
             this.setDataGridInstance();

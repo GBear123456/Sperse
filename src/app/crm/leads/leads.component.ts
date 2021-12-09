@@ -188,147 +188,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     );
     actionEvent: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
-    actionMenuGroups: ActionMenuGroup[] = [
-        {
-            key: '',
-            visible: true,
-            items: [
-                {
-                    text: this.l('SMS'),
-                    class: 'sms fa fa-commenting-o',
-                    action: (data?) => {
-                        this.contactService.showSMSDialog({
-                            phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
-                        });
-                    },
-                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
-                },
-                {
-                    text: this.l('SendEmail'),
-                    class: 'email',
-                    action: (data?) => {
-                        this.contactService.showEmailDialog({
-                            contactId: (data || this.actionEvent.data || this.actionEvent).CustomerId
-                        }).subscribe();
-                    },
-                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
-                },
-            ]
-        },
-        {
-            key: '',
-            visible: true,
-            items: [
-                {
-                    text: this.l('LoginAsThisUser'),
-                    class: 'login',
-                    checkVisible: (lead: LeadDto) => {
-                        return !!lead.UserId && (
-                            this.impersonationIsGranted ||
-                            this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
-                        );
-                    },
-                    action: (data?) => {
-                        const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
-                        this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId);
-                    }
-                },
-                {
-                    text: this.l('LoginToPortal'),
-                    class: 'login',
-                    checkVisible: (lead: LeadDto) => !!lead.UserId && !!AppConsts.appMemberPortalUrl
-                        && (
-                            this.impersonationIsGranted ||
-                            this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
-                        ),
-                    action: (data?) => {
-                        const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
-                        this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl);
-                    }
-                },
-                {
-                    text: this.l('NotesAndCallLog'),
-                    class: 'notes',
-                    action: (data?) => {
-                        this.showLeadDetails({ data: data || this.actionEvent }, 'notes');
-                    },
-                    button: {
-                        text: '+' + this.l('Add'),
-                        action: (data?) => {
-                            this.showLeadDetails({ data: data || this.actionEvent }, 'notes', {
-                                addNew: true
-                            });
-                        },
-                        checkVisible: () => this.permission.checkCGPermission([this.selectedContactGroup])
-                    }
-                },
-                {
-                    text: this.l('Appointment'),
-                    class: 'appointment',
-                    disabled: true,
-                    action: () => {}
-                },
-                {
-                    text: this.l('Orders'),
-                    class: 'orders',
-                    action: (data?) => {
-                        this.showLeadDetails({ data: data || this.actionEvent }, 'invoices');
-                    }
-                },
-                {
-                    text: this.l('Notifications'),
-                    class: 'notifications',
-                    disabled: true,
-                    action: () => {}
-                },
-                {
-                    getText: (lead: LeadDto) => {
-                        const stage: StageDto = this.pipelineService.getStageByName(
-                            this.pipelinePurposeId,
-                            lead.Stage,
-                            this.selectedContactGroup,
-                            this.selectedPipelineId
-                        );
-                        return this.l('Checklist') + ' (' + lead.StageChecklistPointDoneCount + '/' + stage.checklistPoints.length + ')';
-                    },
-                    class: 'checklist',
-                    checkVisible: (lead: LeadDto) => {
-                        const stage = this.pipelineService.getStageByName(
-                            this.pipelinePurposeId,
-                            lead.Stage,
-                            this.selectedContactGroup,
-                            this.selectedPipelineId
-                        );
-                        return !!(!stage.isFinal && stage.checklistPoints && stage.checklistPoints.length);
-                    },
-                    action: (data?) => {
-                        this.openEntityChecklistDialog(data);
-                    }
-                }
-            ]
-        },
-        {
-            key: '',
-            visible: true,
-            items: [
-                {
-                    text: this.l('Delete'),
-                    class: 'delete',
-                    disabled: false,
-                    action: (data?) => {
-                        this.deleteLeads([(data || this.actionEvent.data || this.actionEvent).Id]);
-                    },
-                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup])
-                },
-                {
-                    text: this.l('EditRow'),
-                    class: 'edit',
-                    action: (data?) => this.showLeadDetails({ data: data || this.actionEvent }),
-                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup])
-                }
-            ]
-        }
-    ];
+    actionMenuGroups: ActionMenuGroup[];
     /** Get all leads pipelines */
     pipelines$: Observable<PipelineDto[]> = this.store$.pipe(
         select(PipelinesStoreSelectors.getPipelines({
@@ -643,10 +503,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
-    isSmsAndEmailSendingAllowed: boolean = this.permission.checkCGPermission(
-        [this.selectedContactGroup],
-        'ViewCommunicationHistory.SendSMSAndEmail'
-    );
+    isSmsAndEmailSendingAllowed: boolean = false;
     readonly leadFields: KeysEnum<LeadDto> = LeadFields;
     pipelineSelectFields: string[] = [
         this.leadFields.Id,
@@ -660,9 +517,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.leadFields.Email,
         this.leadFields.Phone,
         this.leadFields.Amount
-    ].concat(
-        this.isSmsAndEmailSendingAllowed ? [ this.leadFields.Phone ] : []
-    );
+    ]; 
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
@@ -807,6 +662,158 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
+    private initContactGroupRelatedProperties() {
+        this.isSmsAndEmailSendingAllowed = this.permission.checkCGPermission(
+            [this.selectedContactGroup],
+            'ViewCommunicationHistory.SendSMSAndEmail'
+        );
+
+        if (this.isSmsAndEmailSendingAllowed)
+            this.pipelineSelectFields.push(this.leadFields.Phone);
+
+        this.actionMenuGroups = [
+            {
+                key: '',
+                visible: true,
+                items: [
+                    {
+                        text: this.l('SMS'),
+                        class: 'sms fa fa-commenting-o',
+                        action: (data?) => {
+                            this.contactService.showSMSDialog({
+                                phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
+                            });
+                        },
+                        checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
+                    },
+                    {
+                        text: this.l('SendEmail'),
+                        class: 'email',
+                        action: (data?) => {
+                            this.contactService.showEmailDialog({
+                                contactId: (data || this.actionEvent.data || this.actionEvent).CustomerId
+                            }).subscribe();
+                        },
+                        checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
+                    },
+                ]
+            },
+            {
+                key: '',
+                visible: true,
+                items: [
+                    {
+                        text: this.l('LoginAsThisUser'),
+                        class: 'login',
+                        checkVisible: (lead: LeadDto) => {
+                            return !!lead.UserId && (
+                                this.impersonationIsGranted ||
+                                this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
+                            );
+                        },
+                        action: (data?) => {
+                            const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
+                            this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId);
+                        }
+                    },
+                    {
+                        text: this.l('LoginToPortal'),
+                        class: 'login',
+                        checkVisible: (lead: LeadDto) => !!lead.UserId && !!AppConsts.appMemberPortalUrl
+                            && (
+                                this.impersonationIsGranted ||
+                                this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
+                            ),
+                        action: (data?) => {
+                            const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
+                            this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl);
+                        }
+                    },
+                    {
+                        text: this.l('NotesAndCallLog'),
+                        class: 'notes',
+                        action: (data?) => {
+                            this.showLeadDetails({ data: data || this.actionEvent }, 'notes');
+                        },
+                        button: {
+                            text: '+' + this.l('Add'),
+                            action: (data?) => {
+                                this.showLeadDetails({ data: data || this.actionEvent }, 'notes', {
+                                    addNew: true
+                                });
+                            },
+                            checkVisible: () => this.permission.checkCGPermission([this.selectedContactGroup])
+                        }
+                    },
+                    {
+                        text: this.l('Appointment'),
+                        class: 'appointment',
+                        disabled: true,
+                        action: () => {}
+                    },
+                    {
+                        text: this.l('Orders'),
+                        class: 'orders',
+                        action: (data?) => {
+                            this.showLeadDetails({ data: data || this.actionEvent }, 'invoices');
+                        }
+                    },
+                    {
+                        text: this.l('Notifications'),
+                        class: 'notifications',
+                        disabled: true,
+                        action: () => {}
+                    },
+                    {
+                        getText: (lead: LeadDto) => {
+                            const stage: StageDto = this.pipelineService.getStageByName(
+                                this.pipelinePurposeId,
+                                lead.Stage,
+                                this.selectedContactGroup,
+                                this.selectedPipelineId
+                            );
+                            return this.l('Checklist') + ' (' + lead.StageChecklistPointDoneCount + '/' + stage.checklistPoints.length + ')';
+                        },
+                        class: 'checklist',
+                        checkVisible: (lead: LeadDto) => {
+                            const stage = this.pipelineService.getStageByName(
+                                this.pipelinePurposeId,
+                                lead.Stage,
+                                this.selectedContactGroup,
+                                this.selectedPipelineId
+                            );
+                            return !!(!stage.isFinal && stage.checklistPoints && stage.checklistPoints.length);
+                        },
+                        action: (data?) => {
+                            this.openEntityChecklistDialog(data);
+                        }
+                    }
+                ]
+            },
+            {
+                key: '',
+                visible: true,
+                items: [
+                    {
+                        text: this.l('Delete'),
+                        class: 'delete',
+                        disabled: false,
+                        action: (data?) => {
+                            this.deleteLeads([(data || this.actionEvent.data || this.actionEvent).Id]);
+                        },
+                        checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup])
+                    },
+                    {
+                        text: this.l('EditRow'),
+                        class: 'edit',
+                        action: (data?) => this.showLeadDetails({ data: data || this.actionEvent }),
+                        checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup])
+                    }
+                ]
+            }
+        ];
+    }
+
     private handleUserGroupTextUpdate() {
         this.userGroupText$.pipe(takeUntil(this.lifeCycleSubjectsService.destroy$))
             .subscribe((userGroupText: string) => {
@@ -842,6 +849,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             takeUntil(this.lifeCycleSubjectsService.destroy$),
         ).subscribe((selectedContactGroup: ContactGroup) => {
             this.selectedContactGroup = selectedContactGroup;
+            this.initContactGroupRelatedProperties();
         });
     }
 
