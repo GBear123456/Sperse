@@ -1,13 +1,13 @@
 <div class="container-fluid" [@routerTransition]>
     <div class="row">
         <div class="col-md-12 col-sm-12 col-xs-12 text-center form-wrapper">
-            <h1 class="d-none d-md-block">{{tenantName}} {{ls.l("Auto Login")}}</h1>
+            <form *ngIf="!isLinkSent; else verification" #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
+                <h1 class="entrance-page__title">{{tenantName}} {{ls.l("Auto Login")}}</h1>
 
-            <form #loginForm="ngForm" class="login-form" method="post" novalidate (ngSubmit)="sendloginLink()">
                 <div class="form-group clearfix">
-                    <p [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', '<b>' + userEmail + '</b>', tenantName)"></p>
+                    <p class="entrance-page__subtitle" [innerHTML]="ls.l(isLinkSent ? 'AutoLoginMailSentMessage' : 'AutoLoginMessage', '<b>' + userEmail + '</b>', tenantName)"></p>
                     <div *ngIf="!isLinkSent && detectedTenancies.length > 1">
-                        <p>{{ls.l('SelectTenant_Information')}}</p>
+                        <p class="entrance-page__subtitle">{{ls.l('SelectTenant_Information')}}</p>
                         <div class="list-group">
                             <a class="list-group-item list-group-item-action" *ngFor="let tenant of detectedTenancies" (click)="sendloginLink(tenant.id)">
                                 <h5 class="mb-1">{{tenant.name}}</h5>
@@ -38,16 +38,20 @@
                     <ng-container *ngIf="accessCodeMaxTriesCount <= 0">
                         <div class="auto-login-error">{{ ls.l('AutoLoginMaxTriesMessage') }}</div>
                     </ng-container>
-                    <button type="submit" class="submit" [hidden]="isLinkSent || detectedTenancies.length > 1">
-                        {{ls.l("Auto Login")}}
-                        <!--<img src="./assets/common/icons/arrow-right-long-icon.svg" alt="right arrow" class="pull-right">-->
-                    </button>
+                    <input [hidden]="isLinkSent || detectedTenancies.length > 1" class="entrance-page__form-button entrance-page__form-button--forgot" type="submit" [value]="ls.l('Auto Login')">
                 </div>
 
                 <p class="agree-rights">By continuing I agree to
                     <a (click)="openConditionsDialog(conditions.Terms)">Terms</a> &
                     <a (click)="openConditionsDialog(conditions.Policies)">Policies</a></p>
             </form>
+
+            <ng-template #verification>
+                <sperser-login-verification 
+                    [emailAddress]="userEmail"
+                    (onCodeRefresh)="sendloginLink()"
+                ></sperser-login-verification>
+            </ng-template>
         </div>
     </div>
 </div>
