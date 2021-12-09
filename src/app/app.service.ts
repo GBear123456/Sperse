@@ -313,7 +313,7 @@ export class AppService extends AppServiceBase {
         if (this.hasRecurringBilling(sub))
             return false;
 
-        if (!this.isHostTenant && sub && sub.endDate) {
+        if (!this.isHostTenant && sub && !sub.isLocked && sub.endDate) {
             let diff = moment().utc().diff(sub.endDate, 'days', true);
             return (diff > 0) && (diff <= this.getGracePeriod(sub));
         }
@@ -321,10 +321,11 @@ export class AppService extends AppServiceBase {
     }
 
     getGracePeriod(subscription: ModuleSubscriptionInfoDto) {
-        return (subscription && subscription.hasRecurringBilling
-                  ? AppConsts.subscriptionRecurringBillingPeriod
-                  : 0
-                ) + AppConsts.subscriptionGracePeriod;
+        return subscription.isLocked ? 0 :
+            (subscription && subscription.hasRecurringBilling
+              ? AppConsts.subscriptionRecurringBillingPeriod
+              : 0
+            ) + AppConsts.subscriptionGracePeriod;
     }
 
     getSubscriptionExpiringDayCount(name?: string): number {
@@ -335,7 +336,7 @@ export class AppService extends AppServiceBase {
 
     getGracePeriodDayCount(name?: string) {
         let sub = this.getModuleSubscription(name);
-        return sub && sub.endDate && Math.round(moment(sub.endDate)
+        return sub && !sub.isLocked && sub.endDate && Math.round(moment(sub.endDate)
             .add(AppConsts.subscriptionGracePeriod, 'days').diff(moment().utc(), 'days', true));
     }
 
@@ -351,7 +352,7 @@ export class AppService extends AppServiceBase {
     }
 
     hasRecurringBilling(module: ModuleSubscriptionInfoDto): boolean {
-        return module && module.hasRecurringBilling && (moment(module.endDate).add(
+        return module && module.hasRecurringBilling && !module.isLocked && (moment(module.endDate).add(
             AppConsts.subscriptionRecurringBillingPeriod, 'days') > moment().utc());
     }
 
