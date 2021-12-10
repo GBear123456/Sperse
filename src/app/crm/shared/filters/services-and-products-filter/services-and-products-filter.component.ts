@@ -16,6 +16,7 @@ export class FilterServicesAndProductsComponent implements FilterComponent, Afte
     };
     apply: (event) => void;
     activated: boolean;
+    isLoaded: boolean = false;
 
     filterTabs = [
         {
@@ -50,12 +51,29 @@ export class FilterServicesAndProductsComponent implements FilterComponent, Afte
         }
     }
 
-    onInitialized(event) {
+    onInitialized() {
         this.activated = true;
     }
 
-    onDisposing(event) {
+    onContentReady() {
+        this.isLoaded = true;
+    }
+
+    onTabClick(event) {
+        this.isLoaded = false;
+        this.selectedTabIndex = event.itemIndex;
+    }
+
+    onDisposing() {
         this.activated = false;
+    }
+
+    getTitle(data) {
+        let field = this.filterTabs[this.selectedTabIndex].field;
+        let title = data[this.items[field].nameField];
+        if (this.isLoaded && this.items[field].codeField && data[this.items[field].codeField])
+            title = `${title} (${data[this.items[field].codeField]})`;
+        return title;
     }
 
     onSelectionChanged(event) {

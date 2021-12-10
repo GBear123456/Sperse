@@ -30,7 +30,7 @@
         <dxo-search-panel [visible]="true" width="100%"></dxo-search-panel>
         <dxi-column [dataField]="items[field].nameField" cellTemplate="checkBoxTemplate"></dxi-column>
         <div *dxTemplate="let cell of 'checkBoxTemplate'">
-            <div class="name" [title]="cell.data[items[field].nameField]">
+            <div class="name" [title]="getTitle(cell.data)">
                 {{ cell.data[items[field].nameField] }}
                 <small *ngIf="isLoaded && items[field].codeField && cell.data[items[field].codeField]">({{ cell.data[items[field].codeField] }})</small>
             </div>

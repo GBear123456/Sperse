@@ -2,6 +2,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
 import each from 'lodash/each';
 import remove from 'lodash/remove';
+import sortBy from 'lodash/sortBy';
 
 export class FilterCheckBoxesModel extends FilterItemModel {
     keyExpr: any;
@@ -50,7 +51,7 @@ export class FilterCheckBoxesModel extends FilterItemModel {
 
     private generateParents(arr: DisplayElement[]): DisplayElement[] {
         let result: DisplayElement[] = [];
-        each(arr, x => {
+        each(sortBy(arr, x => !!x.parentCode, x => x.displayValue), x => {
             if (x.parentCode) {
                 let parent = result.find(y => y.args == x.parentCode);
                 if (!parent) {
@@ -71,8 +72,9 @@ export class FilterCheckBoxesModel extends FilterItemModel {
             if (args) {
                 remove(this.value, (val: any, index: number) => {
                     if (val == args) {
-                        if (this.selectedItems)    
-                            this.selectedItems.splice(index, 1);
+                        let selectedItemsIndex = this.selectedItems.findIndex(x => x[this.keyExpr] == val);
+                        if (selectedItemsIndex != -1)
+                            this.selectedItems.splice(selectedItemsIndex, 1);
                         return true;
                     }
                     return false;
