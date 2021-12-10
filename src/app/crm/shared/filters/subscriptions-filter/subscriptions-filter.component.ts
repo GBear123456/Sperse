@@ -65,6 +65,14 @@ export class SubscriptionsFilterComponent implements FilterComponent, AfterViewI
         this.isLoaded = true;
     }
 
+    getTitle(data) {
+        let field = this.filterTabs[this.selectedTabIndex].field;
+        let title = data[this.items[field].nameField];
+        if (this.isLoaded && this.items[field].codeField && data[this.items[field].codeField])
+            title = `${title} (${data[this.items[field].codeField]})`;
+        return title;
+    }
+
     onValueChanged(field, event, cell, type) {
         if (!event.event)
             return;
