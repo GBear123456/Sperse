@@ -5,7 +5,7 @@
 
 <search-tooltip
     target="app-header" 
-    [disabled]="appService.isClientSearchDisabled"
+    [disabled]="true"
     (onDisplay)="appService.clientSearchToggle.next($event)"
     (onSearch)="onClientSearch($event)">
 </search-tooltip>
