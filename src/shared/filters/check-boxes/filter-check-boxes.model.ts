@@ -1,7 +1,6 @@
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel, DisplayElement } from '@shared/filters/models/filter-item.model';
 import each from 'lodash/each';
-import remove from 'lodash/remove';
 import sortBy from 'lodash/sortBy';
 
 export class FilterCheckBoxesModel extends FilterItemModel {
@@ -58,6 +57,9 @@ export class FilterCheckBoxesModel extends FilterItemModel {
                     let parentName = this.dataSource.find((val: any) => val[this.keyExpr] == x.parentCode).name;
                     result.push(<DisplayElement>{ displayValue: parentName, readonly: true, args: x.parentCode });
                 }
+                else if (this.recursive) {
+                    parent.readonly = true;
+                }
                 result.push(x);
             } else {
                 result.push(x);
@@ -70,15 +72,18 @@ export class FilterCheckBoxesModel extends FilterItemModel {
     removeFilterItem(filter: FilterModel, args: any) {
         if (this.isClearAllowed) {
             if (args) {
-                remove(this.value, (val: any, index: number) => {
-                    if (val == args) {
-                        let selectedItemsIndex = this.selectedItems.findIndex(x => x[this.keyExpr] == val);
-                        if (selectedItemsIndex != -1)
-                            this.selectedItems.splice(selectedItemsIndex, 1);
-                        return true;
+                let valuesIndex = this.value.indexOf(args);
+                if (valuesIndex != -1)
+                    this.value.splice(valuesIndex, 1);
+
+                let selectedItemsIndex = this.selectedItems.findIndex(x => x[this.keyExpr] == args);
+                if (selectedItemsIndex != -1) {
+                    if (this.recursive && this.selectedItems[selectedItemsIndex][this.parentExpr]) { //Remove parents
+                        this.removeFilterItem(filter, this.selectedItems[selectedItemsIndex][this.parentExpr]);
                     }
-                    return false;
-                });
+
+                    this.selectedItems.splice(selectedItemsIndex, 1);
+                }
             } else {
                 this.value = [];
                 this.selectedItems = [];
