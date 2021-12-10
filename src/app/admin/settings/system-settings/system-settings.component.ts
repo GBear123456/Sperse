@@ -20,6 +20,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { AddOrEditSSLBindingModalComponent } from '../modals/add-or-edit-ssl-binding-modal.component';
 import { UploadSSLCertificateModalComponent } from '../modals/upload-ssl-cert-modal.component';
 import { AppConsts } from '@shared/AppConsts';
+import { AppService } from '@app/app.service';
 
 @Component({
     selector: 'system-settings',
@@ -51,6 +52,7 @@ export class SystemSettingsComponent implements OnInit {
         private changeDetection: ChangeDetectorRef,
         private notifyService: NotifyService,
         private permission: AppPermissionService,
+        private appService: AppService,
         private dialog: MatDialog,
         public httpInterceptor: AppHttpInterceptor,
         public ls: AppLocalizationService
@@ -61,6 +63,7 @@ export class SystemSettingsComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        this.appService.isClientSearchDisabled = true;
         if (this.tenantHostsEnabled) {
             this.refreshSSLGrid();
             this.refreshSSLBindingGrid();

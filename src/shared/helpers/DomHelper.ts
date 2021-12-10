@@ -7,6 +7,18 @@ export class DomHelper {
         return 0;
     }
 
+    static isDomElementVisible(element: any): boolean {
+        while(element.tagName.toLowerCase() != 'body') {
+            if (element.style.display == 'none')
+              return false;
+
+            element = element.parentNode;
+            if (!element)
+                return false;
+        }
+        return true;
+    }
+
     static waitUntilElementIsReady(selector: string, callback: any, checkPeriod?: number): void {
         if (!$) {
             return;

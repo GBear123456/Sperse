@@ -12,6 +12,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ApiKeyServiceProxy, ApiKeyInfo, GenerateApiKeyInput } from '@shared/service-proxies/service-proxies';
 import { EditKeyDialog } from '@app/api/introduction/add-key-dialog/add-key-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
+import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './introduction.component.html',
@@ -30,7 +31,8 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
         injector: Injector,
         public dialog: MatDialog,
         private apiKeyService: ApiKeyServiceProxy,
-        private clipboardService: ClipboardService
+        private clipboardService: ClipboardService,
+        private appService: AppService
     ) {
         super(injector);
     }
@@ -50,6 +52,7 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
     }
 
     ngOnInit(): void {
+        this.appService.isClientSearchDisabled = true;
         this.getRootComponent().overflowHidden(true);
 
         this.elementForBlocking = document.querySelector('.api-into');

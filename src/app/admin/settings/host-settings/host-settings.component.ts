@@ -25,6 +25,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { AppConsts } from '@root/shared/AppConsts';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { AppService } from '@app/app.service';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 import { DomHelper } from '@shared/helpers/DomHelper';
 
@@ -85,6 +86,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
         private changeDetection: ChangeDetectorRef,
         private clipboardService: ClipboardService,
         private contactService: ContactsService,
+        private appService: AppService,
         private emailSmtpSettingsService: EmailSmtpSettingsService,
         public dialog: MatDialog
     ) {
@@ -138,6 +140,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
     }
 
     ngOnInit(): void {
+        this.appService.isClientSearchDisabled = true;
         const self = this;
         self.init();
     }
