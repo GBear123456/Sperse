@@ -741,6 +741,62 @@ export class AccountServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    sendAutoLoginWithReset(body: SendAutoLoginLinkInput | null | undefined): Observable<SendAutoLoginLinkOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/Account/SendAutoLoginWithReset";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSendAutoLoginWithReset(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSendAutoLoginWithReset(<any>response_);
+                } catch (e) {
+                    return <Observable<SendAutoLoginLinkOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SendAutoLoginLinkOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSendAutoLoginWithReset(response: HttpResponseBase): Observable<SendAutoLoginLinkOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SendAutoLoginLinkOutput.fromJS(resultData200) : new SendAutoLoginLinkOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SendAutoLoginLinkOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     sendAutoLoginLink(body: SendAutoLoginLinkInput | null | undefined): Observable<SendAutoLoginLinkOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Account/SendAutoLoginLink";
         url_ = url_.replace(/[?&]$/, "");
@@ -21579,6 +21635,54 @@ export class LeadServiceProxy {
     }
 
     protected processUpdateDealInfo(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    processLeadsWithSubscriptions(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Lead/ProcessLeadsWithSubscriptions";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processProcessLeadsWithSubscriptions(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processProcessLeadsWithSubscriptions(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processProcessLeadsWithSubscriptions(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -66456,8 +66560,9 @@ export interface IAddBankCardPaymentInput {
 export class VoidBankCardPaymentInput implements IVoidBankCardPaymentInput {
     invoiceId!: number | undefined;
     invoiceNumber!: string | undefined;
+    transactionId!: number | undefined;
     gatewayName!: string | undefined;
-    gatewayTransactionId!: string;
+    gatewayTransactionId!: string | undefined;
 
     constructor(data?: IVoidBankCardPaymentInput) {
         if (data) {
@@ -66472,6 +66577,7 @@ export class VoidBankCardPaymentInput implements IVoidBankCardPaymentInput {
         if (data) {
             this.invoiceId = data["invoiceId"];
             this.invoiceNumber = data["invoiceNumber"];
+            this.transactionId = data["transactionId"];
             this.gatewayName = data["gatewayName"];
             this.gatewayTransactionId = data["gatewayTransactionId"];
         }
@@ -66488,6 +66594,7 @@ export class VoidBankCardPaymentInput implements IVoidBankCardPaymentInput {
         data = typeof data === 'object' ? data : {};
         data["invoiceId"] = this.invoiceId;
         data["invoiceNumber"] = this.invoiceNumber;
+        data["transactionId"] = this.transactionId;
         data["gatewayName"] = this.gatewayName;
         data["gatewayTransactionId"] = this.gatewayTransactionId;
         return data; 
@@ -66497,8 +66604,9 @@ export class VoidBankCardPaymentInput implements IVoidBankCardPaymentInput {
 export interface IVoidBankCardPaymentInput {
     invoiceId: number | undefined;
     invoiceNumber: string | undefined;
+    transactionId: number | undefined;
     gatewayName: string | undefined;
-    gatewayTransactionId: string;
+    gatewayTransactionId: string | undefined;
 }
 
 export class RequestKBAInput implements IRequestKBAInput {
