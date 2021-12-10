@@ -6,11 +6,12 @@
             position: absolute;
             top: 10px;
             right: 30px;
+
             &.single {
                 position: static;
             }
         }
-        
+
         .labels {
             display: flex;
             justify-content: flex-end;
@@ -27,7 +28,7 @@
 
         ::ng-deep .dx-tabs {
             .dx-tab-selected:after {
-                border: 1px solid #337ab7!important;
+                border: 1px solid #337ab7 !important;
             }
         }
 
@@ -36,8 +37,10 @@
                 position: static;
                 display: inline-block;
             }
+
             .dx-template-wrapper {
                 display: flex;
+
                 .name {
                     margin-right: auto;
                     max-width: 220px;
@@ -45,25 +48,35 @@
                     text-overflow: ellipsis;
                 }
             }
+
             .dx-checkbox {
                 position: relative;
+
                 &:nth-child(3) {
                     margin-left: 25px;
                 }
+
                 &:last-child {
                     margin-left: 26px;
                     margin-right: 29px;
                 }
             }
+
             .dx-treelist-rowsview {
                 border-top: none;
             }
+
             .dx-toolbar-after {
                 width: 100%;
                 padding: 0;
+
                 .dx-treelist-search-panel {
                     margin: 0;
                 }
+            }
+
+            .dx-treelist-focus-overlay {
+                border: 0 !important;
             }
         }
     }

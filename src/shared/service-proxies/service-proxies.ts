@@ -76854,6 +76854,7 @@ export class ProductDto implements IProductDto {
     id!: number | undefined;
     code!: string | undefined;
     name!: string | undefined;
+    group!: string | undefined;
     paymentPeriodTypes!: RecurringPaymentFrequency[] | undefined;
 
     constructor(data?: IProductDto) {
@@ -76870,6 +76871,7 @@ export class ProductDto implements IProductDto {
             this.id = data["id"];
             this.code = data["code"];
             this.name = data["name"];
+            this.group = data["group"];
             if (data["paymentPeriodTypes"] && data["paymentPeriodTypes"].constructor === Array) {
                 this.paymentPeriodTypes = [];
                 for (let item of data["paymentPeriodTypes"])
@@ -76890,6 +76892,7 @@ export class ProductDto implements IProductDto {
         data["id"] = this.id;
         data["code"] = this.code;
         data["name"] = this.name;
+        data["group"] = this.group;
         if (this.paymentPeriodTypes && this.paymentPeriodTypes.constructor === Array) {
             data["paymentPeriodTypes"] = [];
             for (let item of this.paymentPeriodTypes)
@@ -76903,6 +76906,7 @@ export interface IProductDto {
     id: number | undefined;
     code: string | undefined;
     name: string | undefined;
+    group: string | undefined;
     paymentPeriodTypes: RecurringPaymentFrequency[] | undefined;
 }
 
