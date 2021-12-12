@@ -6,39 +6,65 @@
         {{ls.l('Sign in Sperser to create your Influencer card!')}}
     </p>
     <div class="entrance-page__form entrance-page__form--login">
-        <form #loginForm="ngForm" method="post" novalidate (ngSubmit)="login()">
+        <form #loginForm="ngForm"
+              (ngSubmit)="login()"
+              method="post"
+              novalidate>
 
             <div class="input-wrap">
-                <input class="entrance-page__form-input entrance-page__form-input--email" type="text"
-                    [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus
-                    placeholder="Enter Your Email" autocomplete="off" name="userNameOrEmailAddress" required tabindex="1">
-                <label>{{ls.l('Enter your email or phone number')}}</label>
+                <input [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress"
+                       autoFocus
+                       autocomplete="off"
+                       class="entrance-page__form-input entrance-page__form-input--email"
+                       name="userNameOrEmailAddress"
+                       placeholder="Enter Your Email"
+                       required
+                       tabindex="1"
+                       type="text">
+                <label>{{ls.l('Enter your email')}}</label>
+                <!-- TODO: add it into localization and same for other -->
             </div>
 
             <div class="entrance-page__form-password">
                 <div class="input-wrap">
-                    <a class="show-password" (click)="showHidePassword()"></a>
-                    <input class="entrance-page__form-input entrance-page__form-input--password"
-                        [type]="showPassword ? 'text' : 'password'" id="pswLogin" name="psw" placeholder="Enter Your Password"
-                        [(ngModel)]="loginService.authenticateModel.password"
-                        name="password" required maxlength="32" tabindex="2">
+                    <a (click)="showHidePassword()"
+                       [class.visible]="showPassword"
+                       class="show-password"></a>
+                    <input [(ngModel)]="loginService.authenticateModel.password"
+                           [type]="showPassword ? 'text' : 'password'"
+                           class="entrance-page__form-input entrance-page__form-input--password"
+                           id="pswLogin"
+                           maxlength="32"
+                           name="psw"
+                           name="password"
+                           placeholder="Enter Your Password"
+                           required
+                           tabindex="2">
                     <label>{{ls.l('Enter Your Password')}}</label>
                 </div>
-                <span class="show-password show-password--login is-hidden"></span>
             </div>
             <div class="entrance-page__form-remember--wrap">
                 <div class="entrance-page__form-remember entrance-page__form-remember--login">
                     <div class="remember-inner">
                         <label class="check-wrap">
-                            <input class="check-box" [(ngModel)]="loginService.authenticateModel.rememberClient" type="checkbox" name="rememberMe" value="true" />{{ls.l("RememberMe")}}
+                            <input [(ngModel)]="loginService.authenticateModel.rememberClient"
+                                   class="check-box"
+                                   name="rememberMe"
+                                   type="checkbox"
+                                   value="true"/>{{ls.l("RememberMe")}}
                             <span class="check-style"></span>
                         </label>
                     </div>
                 </div>
-                <a routerLink="/account/forgot-password" id="forget-password" class="entrance-page__forgot-btn">{{ls.l("ForgotPassword")}}</a>
+                <a class="entrance-page__forgot-btn"
+                   id="forget-password"
+                   routerLink="/account/forgot-password">{{ls.l("ForgotPassword")}}</a>
             </div>
-            <input class="entrance-page__form-button" type="submit" value="Access your account" [disabled]="loginInProgress || !loginForm.form.valid">
-        </form>                                       
+            <input [disabled]="loginInProgress || !loginForm.form.valid"
+                   class="entrance-page__form-button"
+                   type="submit"
+                   value="Access your account">
+        </form>
     </div>
     <div class="entrance-page__separator">
         <span>
@@ -48,19 +74,23 @@
     <div class="entrance-page__social">
         <ul>
             <li>
-                <a class="entrance-page__social-link entrance-page__social-link--facebook" href="javascript:void(0);"></a>
+                <a class="entrance-page__social-link entrance-page__social-link--facebook"
+                   href="javascript:void(0);"></a>
             </li>
             <li>
-                <a class="entrance-page__social-link entrance-page__social-link--twitter" href="javascript:void(0);"></a>
+                <a class="entrance-page__social-link entrance-page__social-link--twitter"
+                   href="javascript:void(0);"></a>
             </li>
             <li>
-                <a class="entrance-page__social-link entrance-page__social-link--linkedin" href="javascript:void(0);"></a>
+                <a class="entrance-page__social-link entrance-page__social-link--linkedin"
+                   href="javascript:void(0);"></a>
             </li>
         </ul>
     </div>
     <div class="entrance-page__privacy">
         <p>
-            {{ls.l('By proceeding you agree to our Privacy Policy and')}} <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Terms)">{{ls.l('Terms of Service')}}</a>
+            {{ls.l('By proceeding you agree to our Privacy Policy and')}} <a (click)="openConditionsDialog(conditions.Terms)"
+                                                                             href="javascript:void(0);">{{ls.l('Terms of Service')}}</a>
         </p>
     </div>
 </div>
