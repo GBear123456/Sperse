@@ -22,7 +22,8 @@
                 "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
                 "ngx-google-places-autocomplete", "ng-inline-svg", "angular-cc-library",
                 "angular-svg-round-progressbar", "uuid", "hammerjs", "moment-timezone",
-                "ng2-cashe-service", "jquery-calendar"
+                "ng2-cashe-service", "jquery-calendar", "ng2-image-viewer", "videogular2",
+                "@bugsnag/js"
             ],
             "assets": [
               "src/assets",
@@ -98,12 +99,11 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "900kb"
+                  "maximumWarning": "2048kb"
                 }
               ],
               "optimization": false,
               "sourceMap": false,
-              "extractCss": true,
               "aot": false,
               "showCircularDependencies": true,
               "vendorChunk": true,
@@ -113,12 +113,11 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "900kb"
+                  "maximumWarning": "2048kb"
                 }
               ],
               "optimization": false,
               "sourceMap": false,
-              "extractCss": true,
               "aot": false,
               "showCircularDependencies": true,
               "vendorChunk": true,
@@ -138,12 +137,11 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "900kb"
+                  "maximumWarning": "2048kb"
                 }
               ],
               "optimization": false,
               "sourceMap": false,
-              "extractCss": true,
               "aot": false,
               "showCircularDependencies": true,
               "vendorChunk": true,
@@ -163,13 +161,12 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "900kb"
+                  "maximumWarning": "2048kb"
                 }
               ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "showCircularDependencies": true,
@@ -191,13 +188,12 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "900kb"
+                  "maximumWarning": "2048kb"
                 }
               ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "showCircularDependencies": true,
@@ -219,13 +215,12 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "900kb"
+                  "maximumWarning": "2048kb"
                 }
               ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "showCircularDependencies": true,
@@ -253,21 +248,15 @@
           "configurations": {
             "dev": {
               "browserTarget": "abp-zero-template:build:dev",
-              "optimization": false,
-              "sourceMap": false,
-              "aot": false
+              "optimization": false
             },
             "devstaging": {
               "browserTarget": "abp-zero-template:build:devstaging",
-              "optimization": false,
-              "sourceMap": false,
-              "aot": false
+              "optimization": false
             },
             "devbeta": {
               "browserTarget": "abp-zero-template:build:devbeta",
-              "optimization": false,
-              "sourceMap": false,
-              "aot": false
+              "optimization": false
             }
           }
         },
@@ -390,6 +379,14 @@
             "main": "projects/package-chooser-widget/src/main.ts",
             "polyfills": "projects/package-chooser-widget/src/polyfills.ts",
             "tsConfig": "projects/package-chooser-widget/tsconfig.app.json",
+            "allowedCommonJsDependencies": [
+                "underscore", "underscore.string", "lodash", "jspdf", "devextreme", "color",
+                "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
+                "ngx-google-places-autocomplete", "ng-inline-svg", "angular-cc-library",
+                "angular-svg-round-progressbar", "uuid", "hammerjs", "moment-timezone",
+                "ng2-cashe-service", "jquery-calendar", "ng2-image-viewer", "videogular2",
+                "@bugsnag/js"
+            ],
             "assets": [
               "projects/package-chooser-widget/src/favicon.ico"
             ],
@@ -409,12 +406,11 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "900kb"
+                  "maximumWarning": "2048kb"
                 }
               ],
               "optimization": false,
               "sourceMap": false,
-              "extractCss": false,
               "aot": false,
               "showCircularDependencies": true,
               "buildOptimizer": false,
@@ -424,12 +420,11 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "900kb"
+                  "maximumWarning": "2048kb"
                 }
               ],
               "optimization": false,
               "sourceMap": false,
-              "extractCss": false,
               "aot": false,
               "showCircularDependencies": true,
               "buildOptimizer": false,
@@ -450,12 +445,11 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "900kb"
+                  "maximumWarning": "2048kb"
                 }
               ],
               "optimization": false,
               "sourceMap": false,
-              "extractCss": false,
               "aot": false,
               "showCircularDependencies": true,
               "buildOptimizer": false,
@@ -476,12 +470,11 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "900kb"
+                  "maximumWarning": "2048kb"
                 }
               ],
               "optimization": true,
               "sourceMap": false,
-              "extractCss": false,
               "namedChunks": false,
               "aot": true,
               "showCircularDependencies": true,
@@ -503,12 +496,11 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "900kb"
+                  "maximumWarning": "2048kb"
                 }
               ],
               "optimization": true,
               "sourceMap": false,
-              "extractCss": false,
               "namedChunks": false,
               "aot": true,
               "showCircularDependencies": true,
@@ -530,12 +522,11 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "900kb"
+                  "maximumWarning": "2048kb"
                 }
               ],
               "optimization": true,
               "sourceMap": false,
-              "extractCss": false,
               "namedChunks": false,
               "aot": true,
               "showCircularDependencies": true,
@@ -633,13 +624,12 @@
               "budgets": [
                 {
                   "type": "anyComponentStyle",
-                  "maximumWarning": "900kb"
+                  "maximumWarning": "2048kb"
                 }
               ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
               "showCircularDependencies": true,

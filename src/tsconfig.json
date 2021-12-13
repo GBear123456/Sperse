@@ -1,45 +1,45 @@
 {
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "declaration": false,
-    "downlevelIteration": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "lib": [ "es6", "dom" ],
-    "mapRoot": "./",
-    "module": "es2020",
-    "importHelpers": true,
-    "skipLibCheck": true,
-    "moduleResolution": "node",
-    "outDir": "../dist/out-tsc",
-    "sourceMap": true,
-    "target": "es5",
-    "typeRoots": [
-      "../node_modules/@types"
+    "compilerOptions": {
+        "allowSyntheticDefaultImports": true,
+        "declaration": false,
+        "downlevelIteration": true,
+        "emitDecoratorMetadata": true,
+        "experimentalDecorators": true,
+        "lib": [ "es6", "dom" ],
+        "mapRoot": "./",
+        "module": "es2020",
+        "importHelpers": true,
+        "skipLibCheck": true,
+        "moduleResolution": "node",
+        "outDir": "../dist/out-tsc",
+        "sourceMap": true,
+        "target": "es5",
+        "typeRoots": [
+            "../node_modules/@types"
+        ],
+        "baseUrl": "./",
+        "paths": {
+            "@abp/*": [ "../node_modules/abp-ng2-module/dist/src/*" ],
+            "@app/*": [ "./app/*" ],
+            "@admin/*": [ "./app/admin/*" ],
+            "@root/*": [ "./*" ],
+            "@shared/*": [ "./shared/*" ],
+            "@node_modules/*": [ "../node_modules/*" ],
+            "@angular/*": [ "../node_modules/@angular/*" ],
+            "moment": [ "../node_modules/moment/moment.js" ],
+            "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" ],
+            "sax": [ "./node_modules/sax/lib/sax.js" ]
+        }
+    },
+    "angularCompilerOptions": {
+        "enableIvy": false
+    },
+    "files": [
+        "main.ts",
+        "polyfills.ts"
     ],
-    "baseUrl": "./",
-    "paths": {
-      "@abp/*": [ "../node_modules/abp-ng2-module/dist/src/*" ],
-      "@app/*": [ "./app/*" ],
-      "@admin/*": [ "./app/admin/*" ],
-      "@root/*": [ "./*" ],
-      "@shared/*": [ "./shared/*" ],
-      "@node_modules/*": [ "../node_modules/*" ],
-      "@angular/*": [ "../node_modules/@angular/*" ],
-      "moment": [ "../node_modules/moment/moment.js" ],
-      "moment-timezone": [ "../node_modules/moment-timezone/builds/moment-timezone-with-data.min.js" ],
-      "sax": [ "./node_modules/sax/lib/sax.js" ]
-    }
-  },
-  "angularCompilerOptions": {
-    "enableIvy": false
-  },
-  "files": [
-    "main.ts",
-    "polyfills.ts"
-  ],
-  "include": [
-      "./**/*",
-      "./node_modules/ngx-international-phone-number/src/"
-  ]
+    "include": [
+        "./**/*",
+        "./node_modules/ngx-international-phone-number/src/"
+    ]
 }

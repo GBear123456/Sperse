@@ -1,13 +1,13 @@
 {
-  "files": [
-    "src/main.ts",
-    "src/polyfills.ts"
-  ],
   "target": "es2015",
   "extends": "../../src/tsconfig.json",
   "compilerOptions": {
     "outDir": "../../out-tsc/app"
   },
+  "files": [
+    "src/main.ts",
+    "src/polyfills.ts"
+  ],
   "include": [
     "./**/*",
     "./src/node_modules/ngx-international-phone-number/src/",

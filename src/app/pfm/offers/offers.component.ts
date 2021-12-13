@@ -70,11 +70,6 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
             label: this.l('Offers_PullChanges')
         }
     ];
-    filterModelCategories: FilterModel;
-    filterModelFlags: FilterModel;
-    filterModelAttributes: FilterModel;
-    filterModelStatuses: FilterModel;
-    filterModelRank: FilterModel;
     pullContextMenuItems = [
         { text: this.l('Offers_PullAll'), icon: 'arrowdown', selected: false }
     ];
@@ -87,63 +82,68 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
     );
     statuses = Object.keys(CampaignStatus).map(key => ({ id: CampaignStatus[key], name: startCase(key) }));
     displayedRatingValue: number;
+    filterModelCategories: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'Category',
+        items: {
+            element: new FilterCheckBoxesModel({
+                dataSource: this.categories,
+                nameField: 'name',
+                keyExpr: 'id'
+            })
+        }
+    });
+    filterModelFlags: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'Flag',
+        field: 'Flags',
+        items: {
+            element: new FilterCheckBoxesModel({
+                dataSource: this.flags,
+                nameField: 'name',
+                keyExpr: 'id'
+            })
+        }
+    });
+    filterModelAttributes: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'Attribute',
+        field: 'Attributes',
+        items: {
+            element: new FilterCheckBoxesModel({
+                dataSource: this.attributes,
+                nameField: 'name',
+                keyExpr: 'id'
+            })
+        }
+    });
+    filterModelStatuses: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'Status',
+        field: 'Status',
+        isSelected: true,
+        items: {
+            element: new FilterCheckBoxesModel({
+                dataSource: this.statuses,
+                nameField: 'name',
+                keyExpr: 'id',
+                value: [CampaignStatus.Active]
+            })
+        }
+    });
+    filterModelRank: FilterModel = new FilterModel({
+        component: FilterRangeComponent,
+        operator: {from: 'ge', to: 'le'},
+        caption: 'Rank',
+        field: 'Rank',
+        items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
+    });
     private filters: FilterModel[] = [
-        this.filterModelCategories = new FilterModel({
-            component: FilterCheckBoxesComponent,
-            caption: 'Category',
-            items: {
-                element: new FilterCheckBoxesModel({
-                    dataSource: this.categories,
-                    nameField: 'name',
-                    keyExpr: 'id'
-                })
-            }
-        }),
-        this.filterModelFlags = new FilterModel({
-            component: FilterCheckBoxesComponent,
-            caption: 'Flag',
-            field: 'Flags',
-            items: {
-                element: new FilterCheckBoxesModel({
-                    dataSource: this.flags,
-                    nameField: 'name',
-                    keyExpr: 'id'
-                })
-            }
-        }),
-        this.filterModelAttributes = new FilterModel({
-            component: FilterCheckBoxesComponent,
-            caption: 'Attribute',
-            field: 'Attributes',
-            items: {
-                element: new FilterCheckBoxesModel({
-                    dataSource: this.attributes,
-                    nameField: 'name',
-                    keyExpr: 'id'
-                })
-            }
-        }),
-        this.filterModelStatuses = new FilterModel({
-            component: FilterCheckBoxesComponent,
-            caption: 'Status',
-            field: 'Status',
-            isSelected: true,
-            items: {
-                element: new FilterCheckBoxesModel({
-                    dataSource: this.statuses,
-                    nameField: 'name',
-                    keyExpr: 'id',
-                    value: [CampaignStatus.Active]
-                })
-            }
-        }),
-        this.filterModelRank = new FilterModel({
-            component: FilterRangeComponent,
-            operator: {from: 'ge', to: 'le'},
-            caption: 'Rank',
-            field: 'Rank',
-            items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
-        }),
+        this.filterModelCategories,
+        this.filterModelFlags,
+        this.filterModelAttributes,
+        this.filterModelStatuses,
+        this.filterModelRank,
         new FilterModel({
             caption: 'TrafficSource',
             hidden: true

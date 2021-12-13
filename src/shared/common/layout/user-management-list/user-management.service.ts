@@ -66,7 +66,7 @@ export class UserManagementService {
             id: 'ManageLinkedAccountsLink',
             onClick: (e) => this.showLinkedAccounts(e),
             submenuItems: {
-                items: this.recentlyLinkedUsers,
+                items: [],
                 id: 'RecentlyUsedLinkedUsers',
                 onItemClick: (linkedUser) => this.switchToLinkedUser(linkedUser),
                 onItemDisplay: (linkedUser) => this.getShownUserName(linkedUser)
@@ -141,7 +141,7 @@ export class UserManagementService {
             id: 'ManageLinkedAccountsLink',
             onClick: (e) => this.showLinkedAccounts(e),
             submenuItems: {
-                items: this.recentlyLinkedUsers,
+                items: [],
                 id: 'RecentlyUsedLinkedUsers',
                 onItemClick: (linkedUser) => this.switchToLinkedUser(linkedUser),
                 onItemDisplay: (linkedUser) => this.getShownUserName(linkedUser)

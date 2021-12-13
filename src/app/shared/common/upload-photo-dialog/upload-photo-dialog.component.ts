@@ -98,8 +98,8 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
             this.fileDropped({ files: $event.target.files });
     }
 
-    imgResize(): Promise<any> {
-        return new Promise((resolve) => {
+    imgResize(): Promise<void> {
+        return new Promise<void>((resolve) => {
             let image = new Image(),
                 canvas = document.createElement('canvas'),
                 ctx = canvas.getContext('2d');

@@ -167,19 +167,22 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnIni
     }
 
     ngOnInit() {
-        this.statuses = this.contactInfo.groups.map(group => {
-            if (this.permission.getCGPermissionKey([group.groupId], 'Manage'))
-                return {
-                    id: group.groupId,
-                    groupId: group.groupId,
-                    name: this.contactGroupKeys[group.groupId],
-                    displayName: this.l(this.contactGroupKeys[group.groupId]),
-                    isActive: group.isActive
-                };
-        }).filter(Boolean);
-        this.activeGroupIds = this.statuses.filter(
-            status => status.isActive
-        ).map(status => status.id);
+        if (this.contactInfo && this.contactInfo.groups) {
+            this.statuses = this.contactInfo.groups.map(group => {
+                if (this.permission.getCGPermissionKey([group.groupId], 'Manage'))
+                    return {
+                        id: group.groupId,
+                        groupId: group.groupId,
+                        name: this.contactGroupKeys[group.groupId],
+                        displayName: this.l(this.contactGroupKeys[group.groupId]),
+                        isActive: group.isActive
+                    };
+            }).filter(Boolean);
+
+            this.activeGroupIds = this.statuses.filter(
+                status => status.isActive
+            ).map(status => status.id);
+        }
     }
 
     ngAfterViewInit() {
@@ -197,7 +200,10 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnIni
 
     ngOnChanges(changes: SimpleChanges) {
         /** Load users instance (or get from cache) for user id to find out whether to show cfo or verify button */
-        if (changes.contactInfo && this.contactInfo.groups.some(group => group.groupId == ContactGroup.Client) && this.appService.isCfoLinkOrVerifyEnabled) {
+        if (changes.contactInfo && this.contactInfo.groups &&
+            this.contactInfo.groups.some(group => group.groupId == ContactGroup.Client) && 
+            this.appService.isCfoLinkOrVerifyEnabled
+        ) {
             const contactInfo: ContactInfoDto = changes.contactInfo.currentValue;
             if (contactInfo.id && contactInfo.personContactInfo) {
                 this.crmService.isCfoAvailable(contactInfo.personContactInfo.userId)

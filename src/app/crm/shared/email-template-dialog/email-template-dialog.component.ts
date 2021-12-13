@@ -81,7 +81,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @Output() onSave: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
     @Output() onTemplateCreate: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
     @Output() onTemplateChange: EventEmitter<number> = new EventEmitter<number>();
-    @Output() onTagItemClick: EventEmitter<number> = new EventEmitter<number>();
+    @Output() onTagItemClick: EventEmitter<string> = new EventEmitter<string>();
     @Output() onTemplateDelete: EventEmitter<number> = new EventEmitter<number>();
 
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);

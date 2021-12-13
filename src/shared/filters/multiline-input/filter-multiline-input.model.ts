@@ -8,10 +8,12 @@ export class FilterMultilineInputModel extends FilterItemModel {
     public name: string;
     public normalize: (value: string) => string;
     private _valuesArray: string[];
-    tip = this.ls.l('BatchFilterTip', this.ls.l(capitalize(this.name + 's')).toLocaleLowerCase());
+    tip: string = '';
 
     public constructor(init?: Partial<FilterMultilineInputModel>) {
         super(init, true);
+
+        this.tip = this.ls.l('BatchFilterTip', this.ls.l(capitalize(this.name + 's')).toLocaleLowerCase());
     }
 
     get valuesArray(): string[] {

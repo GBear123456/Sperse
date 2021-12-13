@@ -103,10 +103,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @Input() totalsURI: string;
     @Input() selectFields: string[];
     @Input() filterModelStages: any;
-    @Input('dataSource')
-    set dataSource(dataSource: DataSource) {
-        if (this._dataSource = dataSource)
-            this.dataSource$.next(dataSource);
+    @Input('source')
+    set source(source: DataSource) {
+        if (this._dataSource = source)
+            this.dataSource$.next(source);
     }
     @Input() pipelinePurposeId: string;
     @Input() pipelineId: number;

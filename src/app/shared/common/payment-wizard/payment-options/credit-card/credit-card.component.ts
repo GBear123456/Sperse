@@ -39,7 +39,7 @@ export class CreditCardComponent implements OnInit {
     cvvMaxLength = 3;
     lastYearRegexItem: any;
     patterns = {
-        yearPattern: `^(201[8-9]|202[0-9]|${this.lastYearRegexItem})$`
+        yearPattern: `^(201[8-9]|202[0-9])$`
     };
 
     creditCardData = this.formBuilder.group({
@@ -71,6 +71,7 @@ export class CreditCardComponent implements OnInit {
         let maxExpYear = (new Date()).getFullYear() + 15;
         let stringMaxExpYear = maxExpYear.toString();
         this.lastYearRegexItem = stringMaxExpYear.slice(0, -1) + '[0-' + stringMaxExpYear[stringMaxExpYear.length - 1] + ']';
+        this.patterns.yearPattern = `^(201[8-9]|202[0-9]|${this.lastYearRegexItem})$`;
     }
 
     private filterCountry(name: string): Country[] {

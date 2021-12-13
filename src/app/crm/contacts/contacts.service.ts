@@ -517,7 +517,7 @@ export class ContactsService {
         });
 
         if (templateType == EmailTemplateType.Invoice) {
-            dialogComponent.onTagItemClick.subscribe(tag => {
+            dialogComponent.onTagItemClick.subscribe((tag: string) => {
                 if (tag == 'InvoiceAnchor')
                     dialogComponent.addLinkTag('InvoiceLink', this.ls.l('Invoice'));
                 else

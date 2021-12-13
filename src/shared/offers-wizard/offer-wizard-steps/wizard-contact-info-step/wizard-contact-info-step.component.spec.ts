@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { WizardContactInfoStepComponent } from './wizard-contact-info-step.component';
 
@@ -6,7 +6,7 @@ describe('WizardContactInfoStepComponent', () => {
   let component: WizardContactInfoStepComponent;
   let fixture: ComponentFixture<WizardContactInfoStepComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ WizardContactInfoStepComponent ]
     })

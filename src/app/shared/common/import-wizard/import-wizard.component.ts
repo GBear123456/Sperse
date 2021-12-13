@@ -499,7 +499,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     buildMappingDataSource() {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve, reject) => {
             if (this.fileData && this.fileData.data && this.fileData.data.length) {
                 this.checkFileHeaderAvailability();
                 let createDataSourceInternal = (mappingSuggestions = []) => {

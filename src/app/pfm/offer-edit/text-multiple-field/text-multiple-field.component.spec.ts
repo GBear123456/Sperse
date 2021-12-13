@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { TextMultipleFieldComponent } from './text-multiple-field.component';
 
@@ -6,7 +6,7 @@ describe('TextMultipleFieldComponent', () => {
   let component: TextMultipleFieldComponent;
   let fixture: ComponentFixture<TextMultipleFieldComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ TextMultipleFieldComponent ]
     })
