@@ -21728,7 +21728,7 @@ export class LearningResourceServiceProxy {
     /**
      * @return Success
      */
-    getAll(): Observable<LearningResourceGroupedInfo[]> {
+    getAll(): Observable<LearningResourceGroupInfoOutput[]> {
         let url_ = this.baseUrl + "/api/services/CRM/LearningResource/GetAll";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -21748,14 +21748,14 @@ export class LearningResourceServiceProxy {
                 try {
                     return this.processGetAll(<any>response_);
                 } catch (e) {
-                    return <Observable<LearningResourceGroupedInfo[]>><any>_observableThrow(e);
+                    return <Observable<LearningResourceGroupInfoOutput[]>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<LearningResourceGroupedInfo[]>><any>_observableThrow(response_);
+                return <Observable<LearningResourceGroupInfoOutput[]>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetAll(response: HttpResponseBase): Observable<LearningResourceGroupedInfo[]> {
+    protected processGetAll(response: HttpResponseBase): Observable<LearningResourceGroupInfoOutput[]> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -21769,7 +21769,7 @@ export class LearningResourceServiceProxy {
             if (resultData200 && resultData200.constructor === Array) {
                 result200 = [];
                 for (let item of resultData200)
-                    result200.push(LearningResourceGroupedInfo.fromJS(item));
+                    result200.push(LearningResourceGroupInfoOutput.fromJS(item));
             }
             return _observableOf(result200);
             }));
@@ -21778,7 +21778,7 @@ export class LearningResourceServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<LearningResourceGroupedInfo[]>(<any>null);
+        return _observableOf<LearningResourceGroupInfoOutput[]>(<any>null);
     }
 
     /**
@@ -69075,6 +69075,54 @@ export interface ILeadTypeDto {
     name: string | undefined;
 }
 
+export class MemberServiceAssignmentInfoOutput implements IMemberServiceAssignmentInfoOutput {
+    memberServiceLevelIds!: number[] | undefined;
+    memberServiceId!: number | undefined;
+
+    constructor(data?: IMemberServiceAssignmentInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["memberServiceLevelIds"] && data["memberServiceLevelIds"].constructor === Array) {
+                this.memberServiceLevelIds = [];
+                for (let item of data["memberServiceLevelIds"])
+                    this.memberServiceLevelIds.push(item);
+            }
+            this.memberServiceId = data["memberServiceId"];
+        }
+    }
+
+    static fromJS(data: any): MemberServiceAssignmentInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new MemberServiceAssignmentInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.memberServiceLevelIds && this.memberServiceLevelIds.constructor === Array) {
+            data["memberServiceLevelIds"] = [];
+            for (let item of this.memberServiceLevelIds)
+                data["memberServiceLevelIds"].push(item);
+        }
+        data["memberServiceId"] = this.memberServiceId;
+        return data; 
+    }
+}
+
+export interface IMemberServiceAssignmentInfoOutput {
+    memberServiceLevelIds: number[] | undefined;
+    memberServiceId: number | undefined;
+}
+
 export enum LearningResourceType {
     Link = "Link", 
     Video = "Video", 
@@ -69083,18 +69131,18 @@ export enum LearningResourceType {
     File = "File", 
 }
 
-export class LearningResourceInfo implements ILearningResourceInfo {
+export class LearningResourceInfoOutput implements ILearningResourceInfoOutput {
     id!: number | undefined;
     imageUrl!: string | undefined;
     isParent!: boolean | undefined;
     parentId!: number | undefined;
-    children!: LearningResourceInfo[] | undefined;
+    memberServiceAssignments!: MemberServiceAssignmentInfoOutput[] | undefined;
+    children!: LearningResourceInfoOutput[] | undefined;
     type!: LearningResourceType | undefined;
     name!: string | undefined;
     url!: string | undefined;
-    memberServiceIds!: number[] | undefined;
 
-    constructor(data?: ILearningResourceInfo) {
+    constructor(data?: ILearningResourceInfoOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -69109,25 +69157,25 @@ export class LearningResourceInfo implements ILearningResourceInfo {
             this.imageUrl = data["imageUrl"];
             this.isParent = data["isParent"];
             this.parentId = data["parentId"];
+            if (data["memberServiceAssignments"] && data["memberServiceAssignments"].constructor === Array) {
+                this.memberServiceAssignments = [];
+                for (let item of data["memberServiceAssignments"])
+                    this.memberServiceAssignments.push(MemberServiceAssignmentInfoOutput.fromJS(item));
+            }
             if (data["children"] && data["children"].constructor === Array) {
                 this.children = [];
                 for (let item of data["children"])
-                    this.children.push(LearningResourceInfo.fromJS(item));
+                    this.children.push(LearningResourceInfoOutput.fromJS(item));
             }
             this.type = data["type"];
             this.name = data["name"];
             this.url = data["url"];
-            if (data["memberServiceIds"] && data["memberServiceIds"].constructor === Array) {
-                this.memberServiceIds = [];
-                for (let item of data["memberServiceIds"])
-                    this.memberServiceIds.push(item);
-            }
         }
     }
 
-    static fromJS(data: any): LearningResourceInfo {
+    static fromJS(data: any): LearningResourceInfoOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new LearningResourceInfo();
+        let result = new LearningResourceInfoOutput();
         result.init(data);
         return result;
     }
@@ -69138,6 +69186,11 @@ export class LearningResourceInfo implements ILearningResourceInfo {
         data["imageUrl"] = this.imageUrl;
         data["isParent"] = this.isParent;
         data["parentId"] = this.parentId;
+        if (this.memberServiceAssignments && this.memberServiceAssignments.constructor === Array) {
+            data["memberServiceAssignments"] = [];
+            for (let item of this.memberServiceAssignments)
+                data["memberServiceAssignments"].push(item.toJSON());
+        }
         if (this.children && this.children.constructor === Array) {
             data["children"] = [];
             for (let item of this.children)
@@ -69146,35 +69199,30 @@ export class LearningResourceInfo implements ILearningResourceInfo {
         data["type"] = this.type;
         data["name"] = this.name;
         data["url"] = this.url;
-        if (this.memberServiceIds && this.memberServiceIds.constructor === Array) {
-            data["memberServiceIds"] = [];
-            for (let item of this.memberServiceIds)
-                data["memberServiceIds"].push(item);
-        }
         return data; 
     }
 }
 
-export interface ILearningResourceInfo {
+export interface ILearningResourceInfoOutput {
     id: number | undefined;
     imageUrl: string | undefined;
     isParent: boolean | undefined;
     parentId: number | undefined;
-    children: LearningResourceInfo[] | undefined;
+    memberServiceAssignments: MemberServiceAssignmentInfoOutput[] | undefined;
+    children: LearningResourceInfoOutput[] | undefined;
     type: LearningResourceType | undefined;
     name: string | undefined;
     url: string | undefined;
-    memberServiceIds: number[] | undefined;
 }
 
-export class LearningResourceGroupedInfo implements ILearningResourceGroupedInfo {
+export class LearningResourceGroupInfoOutput implements ILearningResourceGroupInfoOutput {
     groupId!: number | undefined;
     groupName!: string | undefined;
     groupImageUrl!: string | undefined;
     groupHtmlColor!: string | undefined;
-    resources!: LearningResourceInfo[] | undefined;
+    resources!: LearningResourceInfoOutput[] | undefined;
 
-    constructor(data?: ILearningResourceGroupedInfo) {
+    constructor(data?: ILearningResourceGroupInfoOutput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -69192,14 +69240,14 @@ export class LearningResourceGroupedInfo implements ILearningResourceGroupedInfo
             if (data["resources"] && data["resources"].constructor === Array) {
                 this.resources = [];
                 for (let item of data["resources"])
-                    this.resources.push(LearningResourceInfo.fromJS(item));
+                    this.resources.push(LearningResourceInfoOutput.fromJS(item));
             }
         }
     }
 
-    static fromJS(data: any): LearningResourceGroupedInfo {
+    static fromJS(data: any): LearningResourceGroupInfoOutput {
         data = typeof data === 'object' ? data : {};
-        let result = new LearningResourceGroupedInfo();
+        let result = new LearningResourceGroupInfoOutput();
         result.init(data);
         return result;
     }
@@ -69219,12 +69267,52 @@ export class LearningResourceGroupedInfo implements ILearningResourceGroupedInfo
     }
 }
 
-export interface ILearningResourceGroupedInfo {
+export interface ILearningResourceGroupInfoOutput {
     groupId: number | undefined;
     groupName: string | undefined;
     groupImageUrl: string | undefined;
     groupHtmlColor: string | undefined;
-    resources: LearningResourceInfo[] | undefined;
+    resources: LearningResourceInfoOutput[] | undefined;
+}
+
+export class MemberServiceAssignmentInput implements IMemberServiceAssignmentInput {
+    memberServiceId!: number;
+    memberServiceLevelId!: number | undefined;
+
+    constructor(data?: IMemberServiceAssignmentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.memberServiceId = data["memberServiceId"];
+            this.memberServiceLevelId = data["memberServiceLevelId"];
+        }
+    }
+
+    static fromJS(data: any): MemberServiceAssignmentInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new MemberServiceAssignmentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["memberServiceId"] = this.memberServiceId;
+        data["memberServiceLevelId"] = this.memberServiceLevelId;
+        return data; 
+    }
+}
+
+export interface IMemberServiceAssignmentInput {
+    memberServiceId: number;
+    memberServiceLevelId: number | undefined;
 }
 
 export class CreateLearningResourceInput implements ICreateLearningResourceInput {
@@ -69234,7 +69322,7 @@ export class CreateLearningResourceInput implements ICreateLearningResourceInput
     type!: LearningResourceType | undefined;
     name!: string;
     url!: string | undefined;
-    memberServiceIds!: number[] | undefined;
+    memberServiceAssignments!: MemberServiceAssignmentInput[] | undefined;
 
     constructor(data?: ICreateLearningResourceInput) {
         if (data) {
@@ -69253,10 +69341,10 @@ export class CreateLearningResourceInput implements ICreateLearningResourceInput
             this.type = data["type"];
             this.name = data["name"];
             this.url = data["url"];
-            if (data["memberServiceIds"] && data["memberServiceIds"].constructor === Array) {
-                this.memberServiceIds = [];
-                for (let item of data["memberServiceIds"])
-                    this.memberServiceIds.push(item);
+            if (data["memberServiceAssignments"] && data["memberServiceAssignments"].constructor === Array) {
+                this.memberServiceAssignments = [];
+                for (let item of data["memberServiceAssignments"])
+                    this.memberServiceAssignments.push(MemberServiceAssignmentInput.fromJS(item));
             }
         }
     }
@@ -69276,10 +69364,10 @@ export class CreateLearningResourceInput implements ICreateLearningResourceInput
         data["type"] = this.type;
         data["name"] = this.name;
         data["url"] = this.url;
-        if (this.memberServiceIds && this.memberServiceIds.constructor === Array) {
-            data["memberServiceIds"] = [];
-            for (let item of this.memberServiceIds)
-                data["memberServiceIds"].push(item);
+        if (this.memberServiceAssignments && this.memberServiceAssignments.constructor === Array) {
+            data["memberServiceAssignments"] = [];
+            for (let item of this.memberServiceAssignments)
+                data["memberServiceAssignments"].push(item.toJSON());
         }
         return data; 
     }
@@ -69292,7 +69380,7 @@ export interface ICreateLearningResourceInput {
     type: LearningResourceType | undefined;
     name: string;
     url: string | undefined;
-    memberServiceIds: number[] | undefined;
+    memberServiceAssignments: MemberServiceAssignmentInput[] | undefined;
 }
 
 export class UpdateLearningResourceInput implements IUpdateLearningResourceInput {
@@ -69300,7 +69388,7 @@ export class UpdateLearningResourceInput implements IUpdateLearningResourceInput
     type!: LearningResourceType | undefined;
     name!: string;
     url!: string | undefined;
-    memberServiceIds!: number[] | undefined;
+    memberServiceAssignments!: MemberServiceAssignmentInput[] | undefined;
 
     constructor(data?: IUpdateLearningResourceInput) {
         if (data) {
@@ -69317,10 +69405,10 @@ export class UpdateLearningResourceInput implements IUpdateLearningResourceInput
             this.type = data["type"];
             this.name = data["name"];
             this.url = data["url"];
-            if (data["memberServiceIds"] && data["memberServiceIds"].constructor === Array) {
-                this.memberServiceIds = [];
-                for (let item of data["memberServiceIds"])
-                    this.memberServiceIds.push(item);
+            if (data["memberServiceAssignments"] && data["memberServiceAssignments"].constructor === Array) {
+                this.memberServiceAssignments = [];
+                for (let item of data["memberServiceAssignments"])
+                    this.memberServiceAssignments.push(MemberServiceAssignmentInput.fromJS(item));
             }
         }
     }
@@ -69338,10 +69426,10 @@ export class UpdateLearningResourceInput implements IUpdateLearningResourceInput
         data["type"] = this.type;
         data["name"] = this.name;
         data["url"] = this.url;
-        if (this.memberServiceIds && this.memberServiceIds.constructor === Array) {
-            data["memberServiceIds"] = [];
-            for (let item of this.memberServiceIds)
-                data["memberServiceIds"].push(item);
+        if (this.memberServiceAssignments && this.memberServiceAssignments.constructor === Array) {
+            data["memberServiceAssignments"] = [];
+            for (let item of this.memberServiceAssignments)
+                data["memberServiceAssignments"].push(item.toJSON());
         }
         return data; 
     }
@@ -69352,7 +69440,7 @@ export interface IUpdateLearningResourceInput {
     type: LearningResourceType | undefined;
     name: string;
     url: string | undefined;
-    memberServiceIds: number[] | undefined;
+    memberServiceAssignments: MemberServiceAssignmentInput[] | undefined;
 }
 
 export class SetLearningResourceImageInput implements ISetLearningResourceImageInput {
