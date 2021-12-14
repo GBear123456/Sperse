@@ -15,7 +15,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { BehaviorSubject, combineLatest, forkJoin, concat, Observable } from 'rxjs';
+import { BehaviorSubject, combineLatest, concat, Observable } from 'rxjs';
 import { filter, finalize, first, map, skip, switchMap, takeUntil } from 'rxjs/operators';
 import startCase from 'lodash/startCase';
 import DevExpress from 'devextreme/bundles/dx.all';
@@ -40,7 +40,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import {
     CommissionServiceProxy, InvoiceSettings, ProductServiceProxy,
-    CommissionTier, UpdateCommissionAffiliateInput, Tier2CommissionSource
+    CommissionTier, UpdateCommissionAffiliateInput
 } from '@shared/service-proxies/service-proxies';
 import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history/update-rate-dialog/update-rate-dialog.component';
 import { UpdateCommissionableDialogComponent } from '@app/crm/commission-history/update-commissionable-dialog/update-commissionable-dialog.component';
@@ -808,6 +808,18 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                 locateInMenu: 'auto',
                 items: [
                     {
+                        widget: 'dxButton',
+                        options: {
+                            text: this.l('DownloadEarningReport'),
+                            onClick: this.downloadEarningReport.bind(this)
+                        }
+                    },
+                ]
+            }, {
+                location: 'after',
+                locateInMenu: 'auto',
+                items: [
+                    {
                         name: 'download',
                         widget: 'dxDropDownMenu',
                         options: {
@@ -858,6 +870,10 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         target.value = target.value && target.value == source ? null : source;
         this.processFilterInternal();
         this.initToolbarConfig();
+    }
+
+    downloadEarningReport() {
+        document.location.href = AppConsts.remoteServiceBaseUrl + "/CommissionResellersReport/get";
     }
 
     requestWithdrawal() {
