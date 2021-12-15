@@ -15,6 +15,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
 import { AppFeatures } from '@shared/AppFeatures';
 import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -35,6 +36,7 @@ export class LeftMenuComponent implements OnInit {
     constructor(
         private appSessionService: AppSessionService,
         private permission: PermissionCheckerService,
+        private permissionChecker: AppPermissionService,
         private feature: FeatureCheckerService,
         private dialog: MatDialog,
         public appService: AppService,
@@ -54,7 +56,7 @@ export class LeftMenuComponent implements OnInit {
                 caption: this.ls.l('CRMDashboardMenu_ManageLeads'),
                 component: '/leads',
                 showPlus: true,
-                visible: this.permission.isGranted(AppPermissions.CRMCustomers),
+                visible: !!this.permissionChecker.getFirstAvailableCG(),
                 iconSrc: 'assets/common/icons/setup-chart.svg'
             },
             {

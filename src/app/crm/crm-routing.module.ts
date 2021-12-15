@@ -17,6 +17,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { ReportsComponent } from '@app/crm/reports/reports.component';
 import { CommissionHistoryComponent } from './commission-history/commission-history.component';
 import { AppFeatures } from '@shared/AppFeatures';
+import { CrmContactGroupGuard } from '@app/crm/crm-contact-group-guard'
 
 @NgModule({
     imports: [
@@ -30,20 +31,20 @@ import { AppFeatures } from '@shared/AppFeatures';
                     { path: 'clients', component: ClientsComponent, data: { permission: AppPermissions.CRMCustomers, reuse: true } },
                     { path: 'products', component: ProductsComponent, data: { permission: AppPermissions.CRMProducts, reuse: true } },
                     { path: 'partners', component: PartnersComponent, data: { permission: AppPermissions.CRMPartners, reuse: true } },
-                    { path: 'leads', component: LeadsComponent, data: { permission: AppPermissions.CRMCustomers, reuse: true } },
+                    { path: 'leads', component: LeadsComponent, data: { reuse: true }, canActivate: [CrmContactGroupGuard] },
                     { path: 'orders', component: OrdersComponent, data: { permission: AppPermissions.CRMOrders, reuse: true } },
                     { path: 'import-leads', component: ImportLeadsComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'import-list', component: ImportListComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'activity', component: ActivityComponent, data: { permission: AppPermissions.CRM, reuse: true } },
                     { path: 'reports', component: ReportsComponent, data: { permission: AppPermissions.CRM, reuse: true } },
-                    { 
-                        path: 'commission-history', 
-                        component: CommissionHistoryComponent, 
-                        data: { 
-                            feature: AppFeatures.CRMCommissions, 
-                            permission: AppPermissions.CRMAffiliatesCommissions, 
-                            reuse: true 
-                        } 
+                    {
+                        path: 'commission-history',
+                        component: CommissionHistoryComponent,
+                        data: {
+                            feature: AppFeatures.CRMCommissions,
+                            permission: AppPermissions.CRMAffiliatesCommissions,
+                            reuse: true
+                        }
                     }
                 ]
             }
