@@ -15,7 +15,7 @@ import {
     UserServiceProxy, UserListDto, Int64EntityDto, RoleServiceProxy,
     PermissionServiceProxy, UserGroup
 } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ContactGroup } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';

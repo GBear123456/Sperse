@@ -17,7 +17,7 @@ import { tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppPermissions } from '@shared/AppPermissions';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     GeneralSettingsEditDto,

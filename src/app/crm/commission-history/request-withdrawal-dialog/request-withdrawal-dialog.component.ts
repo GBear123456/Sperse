@@ -9,7 +9,7 @@ import ODataStore from 'devextreme/data/odata/store';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ResellersFields } from '@app/crm/commission-history/resellers-fields.enum';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';

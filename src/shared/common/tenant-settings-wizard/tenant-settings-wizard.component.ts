@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { MatVerticalStepper } from '@angular/material/stepper';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
@@ -32,7 +32,7 @@ import {
     TwoFactorLoginSettingsEditDto,
     UserLockOutSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppearanceComponent } from '@shared/common/tenant-settings-wizard/appearance/appearance.component';
 import { GeneralSettingsComponent } from '@shared/common/tenant-settings-wizard/general-settings/general-settings.component';
@@ -45,7 +45,7 @@ import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/u
 import { SecurityComponent } from '@shared/common/tenant-settings-wizard/security/security.component';
 import { EmailComponent } from '@shared/common/tenant-settings-wizard/email/email.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({

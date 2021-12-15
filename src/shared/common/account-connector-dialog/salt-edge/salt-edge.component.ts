@@ -21,7 +21,7 @@ import {
     SyncServiceProxy,
     ConnectionMode
 } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { SynchProgressService } from '@shared/cfo/bank-accounts/helpers/synch-progress.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 

@@ -673,8 +673,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         let uri = (this.importType + 's').toLowerCase();
         this.totalCount = data.records.length;
         this.message.confirm(
-            this.l('LeadsImportComfirmation', this.totalCount, uri),
-            isConfirmed => {
+            this.l('LeadsImportComfirmation', this.totalCount, uri), '',
+            (isConfirmed) => {
                 if (isConfirmed) {
                     this.startLoading(true);
                     let leadsInput = this.createLeadsInput(data),

@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { CashflowComponent } from './cashflow.component';
-import 'zone.js/dist/zone-testing';
+import 'zone.js/testing';
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
 import { HeadLineComponent } from '@app/shared/common/headline/headline.component';
 import { SelectionFilterComponent } from '@shared/cfo/bank-accounts/selection-filter/selection-filter.component';
@@ -26,8 +26,8 @@ import { CalculatorComponent } from '@app/cfo/shared/calculator-widget/calculato
 import { RoundProgressComponent } from 'angular-svg-round-progressbar';
 import { RouterModule } from '@angular/router';
 import { HttpClient, HttpHandler } from '@angular/common/http';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
+import { AbpMultiTenancyService } from 'abp-ng2-module';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import {
     BankAccountsServiceProxy, BusinessEntityServiceProxy,
@@ -38,21 +38,21 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { AppService } from '@app/app.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CashflowService } from '@app/cfo/cashflow/cashflow.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { CacheService } from '@node_modules/ng2-cache-service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { FiltersService } from '@shared/filters/filters.service';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CalculatorService } from '@app/cfo/shared/calculator-widget/calculator-widget.service';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 import { RootStoreModule } from '@root/store';
-import { AbpModule } from '@abp/abp.module';
+import { AbpModule } from 'abp-ng2-module';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';

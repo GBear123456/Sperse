@@ -51,7 +51,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { AppConsts } from '@shared/AppConsts';
 import { ChartTypeModel } from '@shared/cfo/dashboard-widgets/trend-by-period/chart-type.model';
 import { ChartType } from '@shared/cfo/dashboard-widgets/trend-by-period/chart-type.enum';
-import { AbpSessionService } from '@abp/session/abp-session.service';
+import { AbpSessionService } from 'abp-ng2-module';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CalendarValuesModel } from '../../../common/widgets/calendar/calendar-values.model';
 import { Period } from '../../../../app/shared/common/period/period.enum';

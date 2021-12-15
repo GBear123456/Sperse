@@ -315,10 +315,10 @@ body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-cont
 body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span {
   color: #ffcc00 !important;
 }
-body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
-body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
-body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
-body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper {
+body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content ::ng-deep country-phone-number .wrapper,
+body.lend-space .cdk-overlay-pane.user-info modal-dialog mat-dialog-content ::ng-deep country-phone-number .wrapper,
+body.lend-space .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content ::ng-deep country-phone-number .wrapper,
+body.lend-space .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content ::ng-deep country-phone-number .wrapper {
   background: #fff;
 }
 body.lend-space .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content #content *,

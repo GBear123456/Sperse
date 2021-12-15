@@ -536,7 +536,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     deleteReport() {
         this.message.confirm(
-            this.l('ReportDeleteWarningMessage', this.currentReportInfo.FileName),
+            this.l('ReportDeleteWarningMessage', this.currentReportInfo.FileName), '',
             isConfirmed => {
                 if (isConfirmed) {
                     super.startLoading(true);

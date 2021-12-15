@@ -3,12 +3,10 @@
         "allowSyntheticDefaultImports": true,
         "declaration": false,
         "downlevelIteration": true,
-        "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "lib": [ "es6", "dom" ],
         "mapRoot": "./",
-        "module": "es2020",
-        "importHelpers": true,
+        "module": "esnext",
         "skipLibCheck": true,
         "moduleResolution": "node",
         "outDir": "../dist/out-tsc",
@@ -19,7 +17,8 @@
         ],
         "baseUrl": "./",
         "paths": {
-            "@abp/*": [ "../node_modules/abp-ng2-module/dist/src/*" ],
+            "@abp/*": [ "../node_modules/abp-ng2-module/lib/services/*" ],
+            "@abp_http/*": [ "../node_modules/abp-ng2-module/lib/interceptors/*" ],
             "@app/*": [ "./app/*" ],
             "@admin/*": [ "./app/admin/*" ],
             "@root/*": [ "./*" ],
@@ -32,14 +31,26 @@
         }
     },
     "angularCompilerOptions": {
-        "enableIvy": false
+        "fullTemplateTypeCheck": true,
+        "strictTemplates": true,
+        "strictInputTypes": false,
+        "strictAttributeTypes": false,
+        "strictOutputEventTypes": false,
+        "strictDomEventTypes": false,
+        "strictLiteralTypes": false,
+        "strictInjectionParameters": false,
+        "enableIvy": true
     },
     "files": [
         "main.ts",
         "polyfills.ts"
     ],
+    "exclude": [
+        "./**/*.spec.ts",
+        "./test.ts"
+    ],
     "include": [
-        "./**/*",
+        "./typings.d.ts",
         "./node_modules/ngx-international-phone-number/src/"
     ]
 }

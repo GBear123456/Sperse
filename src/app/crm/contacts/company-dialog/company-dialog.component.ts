@@ -32,7 +32,7 @@ import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationCo
     NoteType, OrganizationUnitShortDto, CreateOrgUnitForOrganizationInput } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -212,7 +212,7 @@ export class CompanyDialogComponent implements OnInit {
 
     delete() {
         abp.message.confirm(
-            this.ls.l('CompanyRemovalConfirmationMessage', this.company.fullName),
+            this.ls.l('CompanyRemovalConfirmationMessage', this.company.fullName), '',
             (result) => {
                 if (result) {
                     let personOrgRelationId = this.data.contactInfo.personContactInfo.orgRelationId;

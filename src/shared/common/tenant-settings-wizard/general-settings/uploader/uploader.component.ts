@@ -4,7 +4,7 @@ import { ChangeDetectionStrategy, EventEmitter, Component, Input, Output } from 
 /** Third party imports */
 import { NgxFileDropEntry } from 'ngx-file-drop';
 import { Observable, Subscriber, of } from 'rxjs';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 
 /** Application import s*/
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';

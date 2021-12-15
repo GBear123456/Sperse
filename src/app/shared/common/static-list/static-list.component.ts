@@ -12,8 +12,8 @@ import * as _ from 'underscore';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { MessageService } from '@abp/message/message.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { MessageService } from 'abp-ng2-module';
+import { PermissionCheckerService } from 'abp-ng2-module';
 
 @Component({
   selector: 'app-static-list',

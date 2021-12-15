@@ -279,7 +279,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     deleteInvoice() {
         this.message.confirm(
-            this.l('InvoiceDeleteWarningMessage', this.actionRecordData.InvoiceNumber),
+            this.l('InvoiceDeleteWarningMessage', this.actionRecordData.InvoiceNumber), '',
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);

@@ -35,7 +35,7 @@ import { CreateActivityDialogComponent } from './create-activity-dialog/create-a
 import { FiltersService } from '@shared/filters/filters.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ActivityDto } from '@app/crm/activity/activity-dto.interface';
@@ -480,7 +480,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     deleteTasks() {
         this.message.confirm(
-            this.l('TasksDeleteWarningMessage'),
+            this.l('TasksDeleteWarningMessage'), '',
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading();

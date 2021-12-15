@@ -2,7 +2,7 @@
 import { Component, Input } from '@angular/core';
 
 /** Third party imports  */
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
 import capitalize from 'underscore.string/capitalize';

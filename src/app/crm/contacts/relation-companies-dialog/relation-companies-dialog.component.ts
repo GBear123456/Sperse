@@ -14,7 +14,7 @@ import {
 import { ContactListDialogComponent } from '../contact-list-dialog/contact-list-dialog.component';
 import { ContactsService } from '../contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({

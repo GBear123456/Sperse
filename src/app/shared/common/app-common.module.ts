@@ -48,7 +48,7 @@ import { DxChartModule } from 'devextreme-angular/ui/chart';
 
 import { TableModule } from 'primeng/table';
 import { PaginatorModule } from 'primeng/primeng';
-import { ModalModule } from 'ngx-bootstrap';
+import { ModalModule } from 'ngx-bootstrap/modal';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { PapaParseModule } from 'ngx-papaparse';
 import { ImageCropperModule } from 'ng2-img-cropper';
@@ -56,7 +56,7 @@ import { CreditCardDirectivesModule } from 'angular-cc-library';
 import { TimeAgoPipe } from 'time-ago-pipe';
 
 /** Application imports */
-import { AbpModule } from '@abp/abp.module';
+import { AbpModule } from 'abp-ng2-module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';

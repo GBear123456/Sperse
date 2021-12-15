@@ -17,9 +17,9 @@ import startCase from 'lodash/startCase';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -717,7 +717,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     deleteTemplate(event, template, component) {
         component.instance.option('opened', false);
-        abp.message.confirm(this.ls.l('DeleteItemConfirmation', template.name), (isConfimed) => {
+        abp.message.confirm(this.ls.l('DeleteItemConfirmation', template.name), '', (isConfimed) => {
             if (isConfimed) {
                 this.startLoading();
                 this.emailTemplateProxy.delete(template.id)

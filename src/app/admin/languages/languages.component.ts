@@ -9,7 +9,7 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
-import { AbpSessionService } from '@abp/session/abp-session.service';
+import { AbpSessionService } from 'abp-ng2-module';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ApplicationLanguageListDto, LanguageServiceProxy, SetDefaultLanguageInput } from '@shared/service-proxies/service-proxies';
 import { CreateOrEditLanguageModalComponent } from './create-or-edit-language-modal/create-or-edit-language-modal.component';

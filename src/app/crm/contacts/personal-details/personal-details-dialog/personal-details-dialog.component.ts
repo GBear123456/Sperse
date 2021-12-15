@@ -17,7 +17,7 @@ import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { ODataService } from '@shared/common/odata/odata.service';
@@ -46,8 +46,8 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { AffiliateHistoryDialogComponent } from './affiliate-history-dialog/affiliate-history-dialog.component';
 import { CrmService } from '@app/crm/crm.service';
 import { ContactGroup } from '@shared/AppEnums';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Component({

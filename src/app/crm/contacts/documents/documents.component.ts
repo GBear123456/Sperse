@@ -645,7 +645,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     deleteDocument() {
         this.message.confirm(
-            this.l('DocumentDeleteWarningMessage', this.currentDocumentInfo.fileName),
+            this.l('DocumentDeleteWarningMessage', this.currentDocumentInfo.fileName), '',
             isConfirmed => {
                 if (isConfirmed) {
                     super.startLoading(true);

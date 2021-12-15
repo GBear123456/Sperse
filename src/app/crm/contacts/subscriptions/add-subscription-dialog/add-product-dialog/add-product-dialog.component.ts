@@ -35,13 +35,13 @@ import {
     SetProductImageInput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
-import { SettingService } from 'abp-ng2-module/dist/src/settings/setting.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { SettingService } from 'abp-ng2-module';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';

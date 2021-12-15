@@ -1,7 +1,7 @@
 import { Injectable, Injector  } from '@angular/core';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { NotifyService } from '@abp/notify/notify.service';
-import { MessageService } from '@abp/message/message.service';
+import { NotifyService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
 import { ContactGroup, ContactStatus } from '@root/shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';

@@ -9,7 +9,7 @@ import {
 
 /** Application imports */
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { AppFeatures } from '@shared/AppFeatures';

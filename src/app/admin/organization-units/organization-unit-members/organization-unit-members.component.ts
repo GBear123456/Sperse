@@ -9,10 +9,10 @@ import { IUserWithOrganizationUnit } from '../user-with-organization-unit';
 import { IUsersWithOrganizationUnit } from '../users-with-organization-unit';
 import { AppPermissions } from '@shared/AppPermissions';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { NotifyService } from 'abp-ng2-module';
+import { PermissionCheckerService } from 'abp-ng2-module';
 
 @Component({
     selector: 'organization-unit-members',

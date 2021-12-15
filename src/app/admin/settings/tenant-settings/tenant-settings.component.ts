@@ -4,14 +4,14 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Third party imports */
-import { IAjaxResponse } from '@abp/abpHttpInterceptor';
+import { IAjaxResponse } from 'abp-ng2-module';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of } from 'rxjs';
 import { finalize, tap, first, map, delay } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
-import { TokenService } from '@abp/auth/token.service';
+import { TokenService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';

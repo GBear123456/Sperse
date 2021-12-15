@@ -18,12 +18,12 @@ import {
 import { AppStoreService } from '@app/store/app-store.service';
 import { ContactGroup } from '@shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
-import { MessageService } from '@abp/message/message.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { MessageService } from 'abp-ng2-module';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 
 @Component({
     selector: 'user-assignment-list',
@@ -120,7 +120,7 @@ export class UserAssignmentComponent implements OnDestroy {
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.messageService.confirm(
-                        this.ls.l('BulkUpdateConfirmation', this.selectedKeys.length),
+                        this.ls.l('BulkUpdateConfirmation', this.selectedKeys.length), '',
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process();

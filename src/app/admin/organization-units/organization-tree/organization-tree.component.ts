@@ -13,10 +13,10 @@ import { CreateOrEditUnitModalComponent } from '../create-or-edit-unit-modal/cre
 import { IUserWithOrganizationUnit } from '../user-with-organization-unit';
 import { IUsersWithOrganizationUnit } from '../users-with-organization-unit';
 import { AppPermissions } from '@shared/AppPermissions';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { MessageService } from '@abp/message/message.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { MessageService } from 'abp-ng2-module';
+import { NotifyService } from 'abp-ng2-module';
 
 export interface IOrganizationUnitOnTree extends IBasicOrganizationUnitInfo {
     id: number;

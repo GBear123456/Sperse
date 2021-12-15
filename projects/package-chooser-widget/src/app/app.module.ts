@@ -13,7 +13,7 @@ import { CountryService } from '@root/node_modules/ngx-international-phone-numbe
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PackageChooserComponent } from '@app/shared/common/payment-wizard/package-chooser/package-chooser.component';
 import { PackageCardComponent } from '@app/shared/common/payment-wizard/package-chooser/package-card/package-card.component';
-import { AbpModule } from '@abp/abp.module';
+import { AbpModule } from 'abp-ng2-module';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import {
     API_BASE_URL,
@@ -29,7 +29,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { WidgetsService } from '../../../widgets.service';
 import { CustomNumberPipe } from '@shared/common/pipes/custom-number/custom-number.pipe';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { AbpMultiTenancyService } from 'abp-ng2-module';
 import { StatesService } from '@root/store/states-store/states.service';
 import { createCustomElement } from '@angular/elements';
 import { RootStoreModule } from '@root/store';

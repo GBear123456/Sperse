@@ -27,13 +27,13 @@ import { ActivityAssignedUsersStoreSelectors } from '@app/store';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
-import { NotifyService } from '@abp/notify/notify.service';
-import { MessageService } from '@abp/message/message.service';
+import { NotifyService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ActivityDto as InternalActivityDto } from '@app/crm/activity/activity-dto.interface';
 

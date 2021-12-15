@@ -60,20 +60,18 @@ const routes: Routes = [
     }
 ];
 
-@Directive()
 @NgModule({
     imports: [
         RouterModule.forRoot(routes, {
-    preloadingStrategy: AppPreloadingStrategy,
-    relativeLinkResolution: 'legacy'
-})
+            preloadingStrategy: AppPreloadingStrategy,
+            relativeLinkResolution: 'legacy'
+        })
     ],
     exports: [
         RouterModule
     ],
     providers: [LocalizationResolver]
 })
-
 export class RootRoutingModule implements AfterViewInit {
     constructor(
         private injector: Injector,

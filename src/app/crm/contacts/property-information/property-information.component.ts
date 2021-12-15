@@ -14,7 +14,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, Subscription, merge, forkJoin, of } from 'rxjs';
 import { filter, map, switchMap, pluck, finalize, skip, first } from 'rxjs/operators';
-import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import cloneDeep from 'lodash/cloneDeep';
 import * as moment from 'moment';

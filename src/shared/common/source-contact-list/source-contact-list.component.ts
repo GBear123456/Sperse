@@ -19,11 +19,11 @@ import {
     UpdateLeadSourceOrganizationUnitsInput, OrganizationUnitDto
 } from '@shared/service-proxies/service-proxies';
 import { SourceContact } from './source-contact.interface';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { OrganizationUnitsTreeComponent } from '@shared/common/organization-units-tree/organization-units-tree.component';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ContactTypes } from '../../AppEnums';
 
 @Component({

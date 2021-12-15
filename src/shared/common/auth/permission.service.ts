@@ -5,7 +5,7 @@ import { Injectable } from '@angular/core';
 import invert from 'lodash/invert';
 
 /** Application imports */
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 

@@ -32,7 +32,7 @@ import {
     CountryDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';

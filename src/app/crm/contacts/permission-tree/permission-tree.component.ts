@@ -15,8 +15,8 @@ import { UserServiceProxy, GrantPermissionInput, ProhibitPermissionInput } from 
 import { ContactsService } from '../contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
+import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppStoreService } from '@app/store/app-store.service';
 

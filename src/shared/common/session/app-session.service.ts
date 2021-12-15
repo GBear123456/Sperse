@@ -21,8 +21,8 @@ import { Country } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppFeatures } from '@shared/AppFeatures';
 import { CountriesStoreActions, CountriesStoreSelectors, RootStore } from '@root/store';
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { AbpMultiTenancyService } from 'abp-ng2-module';
+import { FeatureCheckerService } from 'abp-ng2-module';
 
 @Injectable()
 export class AppSessionService {

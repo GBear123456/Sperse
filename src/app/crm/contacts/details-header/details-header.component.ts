@@ -61,9 +61,9 @@ import { ContextMenuItem } from '@app/crm/contacts/details-header/context-menu-i
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
@@ -351,7 +351,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     removePersonOrgRelation(event) {
         let companyName = this.data['organizationContactInfo'].fullName;
         this.messageService.confirm(
-            this.ls.l('ContactRelationRemovalConfirmationMessage', companyName),
+            this.ls.l('ContactRelationRemovalConfirmationMessage', companyName), '',
             (result: boolean) => {
                 if (result) {
                     let orgRelationId = this.personContactInfo['personOrgRelationInfo'].id;

@@ -30,8 +30,14 @@ import { DxValidationGroupModule } from 'devextreme-angular/ui/validation-group'
 import { DxNumberBoxModule } from 'devextreme-angular/ui/number-box';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { FileUploadModule } from 'ng2-file-upload';
-import { ModalModule, PopoverModule, TabsModule, TooltipModule } from 'ngx-bootstrap';
-import { AutoCompleteModule, EditorModule, FileUploadModule as PrimeNgFileUploadModule, InputMaskModule, PaginatorModule } from 'primeng/primeng';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { PopoverModule } from 'ngx-bootstrap/popover';
+import { TabsModule } from 'ngx-bootstrap/tabs';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { AutoCompleteModule, EditorModule, 
+    FileUploadModule as PrimeNgFileUploadModule, 
+    InputMaskModule, PaginatorModule
+} from 'primeng/primeng';
 import { TableModule } from 'primeng/table';
 
 /** Application imports */

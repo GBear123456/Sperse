@@ -154,7 +154,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     deleteImport() {
         this.message.confirm(
-            this.l('LeadsDeleteComfirmation', [this.selectedRowIds.length]),
+            this.l('LeadsDeleteComfirmation', [this.selectedRowIds.length]), '',
             isConfirmed => {
                 if (isConfirmed)
                     forkJoin(
@@ -169,7 +169,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     cancelImport() {
         this.message.confirm(
-            this.l('LeadsCancelComfirmation', [this.selectedRowIds.length]),
+            this.l('LeadsCancelComfirmation', [this.selectedRowIds.length]), '',
             isConfirmed => {
                 if (isConfirmed)
                   forkJoin(

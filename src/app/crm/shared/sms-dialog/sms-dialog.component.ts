@@ -18,7 +18,7 @@ import {
     PersonContactInfoDto
 } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/country-phone-number.component';
 import { Tags } from './sms-tags.enums';
 import { AppSessionService } from '@root/shared/common/session/app-session.service';

@@ -23,7 +23,7 @@ import * as moment from 'moment';
 
 /** Application imports */
 import { ContactStatus } from '@shared/AppEnums';
-import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import Inputmask from 'inputmask/dist/inputmask/inputmask.date.extensions';
 import { ODataService } from '@shared/common/odata/odata.service';
@@ -58,10 +58,10 @@ import {
     ProductShortInfo,
     ProductDto
 } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
@@ -786,7 +786,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
     deleteInvoice() {
         if (this.invoiceId)
             this.messageService.confirm(
-                this.ls.l('InvoiceDeleteWarningMessage', this.invoiceNo),
+                this.ls.l('InvoiceDeleteWarningMessage', this.invoiceNo), '',
                 isConfirmed => {
                     if (isConfirmed) {
                         this.modalDialog.startLoading();

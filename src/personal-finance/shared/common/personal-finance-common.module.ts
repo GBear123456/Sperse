@@ -7,7 +7,7 @@ import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 /** Application imports */
-import { AbpModule } from '@abp/abp.module';
+import { AbpModule } from 'abp-ng2-module';
 import { CommonModule } from '@shared/common/common.module';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { CreditReportsRouteGuard } from './auth/auth-route-guard';

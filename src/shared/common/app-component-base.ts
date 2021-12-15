@@ -11,12 +11,12 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { LocalizationService } from '@abp/localization/localization.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { NotifyService } from '@abp/notify/notify.service';
-import { SettingService } from '@abp/settings/setting.service';
-import { MessageService } from '@abp/message/message.service';
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { LocalizationService } from 'abp-ng2-module';
+import { FeatureCheckerService } from 'abp-ng2-module';
+import { NotifyService } from 'abp-ng2-module';
+import { SettingService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
+import { AbpMultiTenancyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ExportService } from '@shared/common/export/export.service';

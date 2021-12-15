@@ -18,7 +18,7 @@ import { CacheService } from 'ng2-cache-service';
 import { AppComponent } from './app.component';
 import { AccessDeniedComponent } from '@app/main/access-denied/access-denied.component';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';

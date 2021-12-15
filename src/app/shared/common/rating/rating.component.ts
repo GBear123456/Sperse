@@ -6,7 +6,7 @@ import { Store, select } from '@ngrx/store';
 import { first } from 'rxjs/operators';
 
 /** Application imports */
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppStore, RatingsStoreSelectors } from '@app/store';
 import { FiltersService } from '@shared/filters/filters.service';
@@ -74,7 +74,7 @@ export class AppRatingComponent implements OnInit, AfterViewInit {
         if (this.sliderComponent && this.selectedKeys && this.selectedKeys.length) {
             if (this.bulkUpdateMode) {
                 this.message.confirm(
-                    this.ls.l('BulkUpdateConfirmation', this.selectedKeys.length),
+                    this.ls.l('BulkUpdateConfirmation', this.selectedKeys.length), '',
                     isConfirmed => {
                         if (isConfirmed)
                             this.process(processValue);

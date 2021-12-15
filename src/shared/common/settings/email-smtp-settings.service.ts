@@ -5,7 +5,7 @@ import { Injectable, Injector  } from '@angular/core';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { EmailSmtpSettingsServiceProxy, SendTestEmailInput, EmailFromSettings, 
     EmailSmtpSettings, EmailSettingsEditDto } from '@shared/service-proxies/service-proxies';

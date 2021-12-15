@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { UtilsService } from '@abp/utils/utils.service';
+import { UtilsService } from 'abp-ng2-module';
 import { CompilerOptions, NgModuleRef, Type } from '@angular/core';
 import { platformBrowserDynamic } from '@angular/platform-browser-dynamic';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';

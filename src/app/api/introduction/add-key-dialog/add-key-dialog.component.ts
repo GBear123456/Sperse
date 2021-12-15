@@ -8,7 +8,7 @@ import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { GenerateApiKeyInput, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppPermissions } from '@shared/AppPermissions';
 

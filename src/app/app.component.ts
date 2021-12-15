@@ -18,7 +18,7 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
 import { CacheService } from '@node_modules/ng2-cache-service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 

@@ -28,8 +28,8 @@ import { SourceContactListComponent } from '@shared/common/source-contact-list/s
 import { OrganizationUnitsDialogComponent } from '@shared/common/organization-units-tree/organization-units-dialog/organization-units-dialog.component';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { NotifyService } from 'abp-ng2-module';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';

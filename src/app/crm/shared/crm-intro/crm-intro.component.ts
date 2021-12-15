@@ -14,8 +14,8 @@ import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-user
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 

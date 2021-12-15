@@ -14,8 +14,8 @@ import { LinkedUserDto, UnlinkUserInput, UserLinkServiceProxy } from '@shared/se
 import { LinkAccountModalComponent } from '../link-account-modal/link-account-modal.component';
 import { UserHelper } from '../../helpers/UserHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { MessageService } from '@abp/message/message.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { MessageService } from 'abp-ng2-module';
+import { NotifyService } from 'abp-ng2-module';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
@@ -66,7 +66,7 @@ export class LinkedAccountsModalComponent {
 
     deleteLinkedUser(linkedUser: LinkedUserDto): void {
         this.messageService.confirm(
-            this.ls.l('LinkedUserDeleteWarningMessage', linkedUser.username),
+            this.ls.l('LinkedUserDeleteWarningMessage', linkedUser.username), '',
             isConfirmed => {
                 if (isConfirmed) {
                     this.modalDialog.startLoading();

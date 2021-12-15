@@ -8,9 +8,10 @@
     "src/main.ts",
     "src/polyfills.ts"
   ],
+  "exclude": [
+      "./**/*.spec.ts",
+  ],
   "include": [
-    "./**/*",
-    "./src/node_modules/ngx-international-phone-number/src/",
-    "../../src/node_modules/ngx-international-phone-number/src/"
+    "./typings.d.ts"
   ]
 }

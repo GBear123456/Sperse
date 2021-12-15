@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { TenantEditEditionDto, SubscribableEditionComboboxItemDto } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppConsts } from '@root/shared/AppConsts';
 

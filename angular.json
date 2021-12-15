@@ -16,14 +16,13 @@
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.json",
             "polyfills": "src/polyfills.ts",
-            "showCircularDependencies": true,
             "allowedCommonJsDependencies": [
                 "underscore", "underscore.string", "lodash", "jspdf", "devextreme", "color",
                 "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
                 "ngx-google-places-autocomplete", "ng-inline-svg", "angular-cc-library",
                 "angular-svg-round-progressbar", "uuid", "hammerjs", "moment-timezone",
-                "ng2-cashe-service", "jquery-calendar", "ng2-image-viewer", "videogular2",
-                "@bugsnag/js"
+                "ng2-cache-service", "jquery-calendar", "ng2-image-viewer", "videogular2",
+                "@bugsnag/js", "buffer", "@angularclass/hmr"
             ],
             "assets": [
               "src/assets",
@@ -92,7 +91,14 @@
               "node_modules/ngx-extended-pdf-viewer/assets/viewer-es5.js",
               "node_modules/ngx-extended-pdf-viewer/assets/pdf.worker-es5.js",
               "node_modules/jspdf/dist/jspdf.min.js"
-            ]
+            ],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "dev": {
@@ -102,12 +108,7 @@
                   "maximumWarning": "2048kb"
                 }
               ],
-              "optimization": false,
-              "sourceMap": false,
-              "aot": false,
-              "showCircularDependencies": true,
-              "vendorChunk": true,
-              "buildOptimizer": false
+              "sourceMap": false
             },
             "devstaging": {
               "budgets": [
@@ -116,12 +117,7 @@
                   "maximumWarning": "2048kb"
                 }
               ],
-              "optimization": false,
               "sourceMap": false,
-              "aot": false,
-              "showCircularDependencies": true,
-              "vendorChunk": true,
-              "buildOptimizer": false,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -140,12 +136,7 @@
                   "maximumWarning": "2048kb"
                 }
               ],
-              "optimization": false,
               "sourceMap": false,
-              "aot": false,
-              "showCircularDependencies": true,
-              "vendorChunk": true,
-              "buildOptimizer": false,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -168,11 +159,7 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -195,11 +182,7 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -222,11 +205,7 @@
               "outputHashing": "all",
               "sourceMap": false,
               "namedChunks": false,
-              "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -238,7 +217,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -247,16 +227,13 @@
           },
           "configurations": {
             "dev": {
-              "browserTarget": "abp-zero-template:build:dev",
-              "optimization": false
+              "browserTarget": "abp-zero-template:build:dev"
             },
             "devstaging": {
-              "browserTarget": "abp-zero-template:build:devstaging",
-              "optimization": false
+              "browserTarget": "abp-zero-template:build:devstaging"
             },
             "devbeta": {
-              "browserTarget": "abp-zero-template:build:devbeta",
-              "optimization": false
+              "browserTarget": "abp-zero-template:build:devbeta"
             }
           }
         },
@@ -384,8 +361,8 @@
                 "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
                 "ngx-google-places-autocomplete", "ng-inline-svg", "angular-cc-library",
                 "angular-svg-round-progressbar", "uuid", "hammerjs", "moment-timezone",
-                "ng2-cashe-service", "jquery-calendar", "ng2-image-viewer", "videogular2",
-                "@bugsnag/js"
+                "ng2-cache-service", "jquery-calendar", "ng2-image-viewer", "videogular2",
+                "@bugsnag/js", "buffer", "@angularclass/hmr"
             ],
             "assets": [
               "projects/package-chooser-widget/src/favicon.ico"
@@ -399,7 +376,14 @@
               "node_modules/jquery/dist/jquery.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/abp.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.jquery.js"
-            ]
+            ],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "dev": {
@@ -409,12 +393,7 @@
                   "maximumWarning": "2048kb"
                 }
               ],
-              "optimization": false,
-              "sourceMap": false,
-              "aot": false,
-              "showCircularDependencies": true,
-              "buildOptimizer": false,
-              "vendorChunk": true
+              "sourceMap": false
             },
             "devstaging": {
               "budgets": [
@@ -423,13 +402,8 @@
                   "maximumWarning": "2048kb"
                 }
               ],
-              "optimization": false,
               "sourceMap": false,
-              "aot": false,
-              "showCircularDependencies": true,
-              "buildOptimizer": false,
               "extractLicenses": true,
-              "vendorChunk": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -448,13 +422,8 @@
                   "maximumWarning": "2048kb"
                 }
               ],
-              "optimization": false,
               "sourceMap": false,
-              "aot": false,
-              "showCircularDependencies": true,
-              "buildOptimizer": false,
               "extractLicenses": true,
-              "vendorChunk": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -477,10 +446,8 @@
               "sourceMap": false,
               "namedChunks": false,
               "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
               "buildOptimizer": true,
-              "vendorChunk": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -503,10 +470,8 @@
               "sourceMap": false,
               "namedChunks": false,
               "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
               "buildOptimizer": true,
-              "vendorChunk": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -529,10 +494,8 @@
               "sourceMap": false,
               "namedChunks": false,
               "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
               "buildOptimizer": true,
-              "vendorChunk": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -544,7 +507,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -604,7 +568,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "sourceMap": false,
             "outputPath": "dist/bank-code",
             "index": "projects/bank-code/src/index.html",
             "main": "projects/bank-code/src/main.ts",
@@ -617,7 +580,13 @@
             "styles": [
               "projects/bank-code/src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "prod": {
@@ -629,15 +598,13 @@
               ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
               "namedChunks": false,
               "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": true,
               "buildOptimizer": true
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",

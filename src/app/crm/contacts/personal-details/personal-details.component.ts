@@ -13,7 +13,7 @@ import { ClipboardService } from 'ngx-clipboard';
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { CountriesStoreActions, CountriesStoreSelectors, RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';

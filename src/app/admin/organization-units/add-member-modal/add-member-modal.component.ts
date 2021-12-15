@@ -2,7 +2,7 @@
 import { Component, EventEmitter, Output, ViewChild } from '@angular/core';
 
 /** Third party imports */
-import { ModalDirective } from 'ngx-bootstrap';
+import { ModalDirective } from 'ngx-bootstrap/modal';
 import { Table } from 'primeng/components/table/table';
 
 /** Application imports */
@@ -12,7 +12,7 @@ import { Paginator } from 'primeng/components/paginator/paginator';
 import { IUsersWithOrganizationUnit } from '../users-with-organization-unit';
 import { PrimengTableHelper } from '@shared/helpers/PrimengTableHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 
 @Component({
     selector: 'addMemberModal',

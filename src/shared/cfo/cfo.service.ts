@@ -24,7 +24,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { InstanceModel } from '@shared/cfo/instance.model';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
 import { ConfigInterface } from '@app/shared/common/config.interface';
 

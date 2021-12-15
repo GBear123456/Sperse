@@ -1,13 +1,11 @@
 import * as ngCommon from '@angular/common';
 import { NgModule, ModuleWithProviders } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ModalModule } from 'ngx-bootstrap';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { UtilsModule } from '@shared/utils/utils.module';
-import { AbpModule } from '@abp/abp.module';
+import { AbpModule } from 'abp-ng2-module';
 import { CommonModule } from '@shared/common/common.module';
-
-
 
 @NgModule({
     imports: [

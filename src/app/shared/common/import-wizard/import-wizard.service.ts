@@ -9,7 +9,7 @@ import { ImportStatus } from '@shared/AppEnums';
 import { ImportServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
-import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { RouteReuseStrategy } from '@angular/router';
 
 @Injectable()

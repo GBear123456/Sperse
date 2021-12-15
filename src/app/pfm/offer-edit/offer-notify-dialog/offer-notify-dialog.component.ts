@@ -17,7 +17,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppStore, ListsStoreSelectors, ListsStoreActions } from '@app/store';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 
 @Component({
     templateUrl: './offer-notify-dialog.component.html',
