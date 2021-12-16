@@ -4,7 +4,7 @@ import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
 import { Subject, Observable } from 'rxjs';
-import { publishReplay, refCount, map } from 'rxjs/operators';
+import { publishReplay, refCount, map, first } from 'rxjs/operators';
 import * as moment from 'moment';
 import * as _ from 'underscore' ;
 
@@ -47,6 +47,8 @@ export class AppService extends AppServiceBase {
     public hideSubscriptionCallback: Function;
     private showContactInfoPanel: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public showContactInfoPanel$: Observable<boolean> = this.showContactInfoPanel.asObservable();
+    public clientSearchPhrase: BehaviorSubject<string> = new BehaviorSubject<string>('');
+    public clientSearchToggle: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     public contactInfo: any;
 
     private toolbarSubject: Subject<undefined>;
@@ -63,7 +65,8 @@ export class AppService extends AppServiceBase {
     private tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
     private subscriptionBarsClosed = {};
     private subscriptionBarVisible: Boolean;
-    isCfoLinkOrVerifyEnabled: boolean;
+    public isCfoLinkOrVerifyEnabled: boolean;
+    public isClientSearchDisabled = true;
 
     constructor(
         injector: Injector,
@@ -207,7 +210,12 @@ export class AppService extends AppServiceBase {
 
     loadModuleSubscriptions() {
         this.moduleSubscriptions$ = this.tenantSubscriptionProxy.getModuleSubscriptions()
-            .pipe(publishReplay(), refCount());
+            .pipe(map(subs => {
+                if (subs.every(sub => sub.statusId == 'C'))
+                    return subs.filter(sub => sub.isUpgradable);
+                else
+                    return subs.filter(sub => sub.statusId != 'C');
+            }), publishReplay(), refCount());
         this.moduleSubscriptions$.subscribe((res: ModuleSubscriptionInfoDto[]) => {
             this.moduleSubscriptions = res.sort((left: ModuleSubscriptionInfoDto, right: ModuleSubscriptionInfoDto) => {
                 return left.endDate > right.endDate ? -1 : 1;
@@ -217,6 +225,19 @@ export class AppService extends AppServiceBase {
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
             map(subscriptions => this.checkSubscriptionIsFree(null, subscriptions))
         );
+    }
+
+    checkAllSubscriptionsExpired() {
+        this.moduleSubscriptions$.pipe(first()).subscribe((subs: ModuleSubscriptionInfoDto[]) => {
+            if (!subs.filter(sub => sub.isUpgradable).some(sub => this.hasModuleSubscription(sub.module))) {
+                if (!subs.length || subs.some(sub => sub.module == ModuleType.CFO_CRM))
+                    this.expiredModule.next(ModuleType.CFO_CRM);
+                else if (subs.some(sub => sub.module.includes(ModuleType.CRM)))
+                    this.expiredModule.next(ModuleType.CRM);
+                else if (subs.some(sub => sub.module.includes(ModuleType.CFO)))
+                    this.expiredModule.next(ModuleType.CFO);
+            }
+        });
     }
 
     getModuleSubscription(name?: string, moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions): ModuleSubscriptionInfoDto {
@@ -292,7 +313,7 @@ export class AppService extends AppServiceBase {
         if (this.hasRecurringBilling(sub))
             return false;
 
-        if (!this.isHostTenant && sub && sub.endDate) {
+        if (!this.isHostTenant && sub && !sub.isLocked && sub.endDate) {
             let diff = moment().utc().diff(sub.endDate, 'days', true);
             return (diff > 0) && (diff <= this.getGracePeriod(sub));
         }
@@ -300,10 +321,11 @@ export class AppService extends AppServiceBase {
     }
 
     getGracePeriod(subscription: ModuleSubscriptionInfoDto) {
-        return (subscription && subscription.hasRecurringBilling
-                  ? AppConsts.subscriptionRecurringBillingPeriod
-                  : 0
-                ) + AppConsts.subscriptionGracePeriod;
+        return subscription.isLocked ? 0 :
+            (subscription && subscription.hasRecurringBilling
+              ? AppConsts.subscriptionRecurringBillingPeriod
+              : 0
+            ) + AppConsts.subscriptionGracePeriod;
     }
 
     getSubscriptionExpiringDayCount(name?: string): number {
@@ -314,19 +336,23 @@ export class AppService extends AppServiceBase {
 
     getGracePeriodDayCount(name?: string) {
         let sub = this.getModuleSubscription(name);
-        return sub && sub.endDate && Math.round(moment(sub.endDate)
+        return sub && !sub.isLocked && sub.endDate && Math.round(moment(sub.endDate)
             .add(AppConsts.subscriptionGracePeriod, 'days').diff(moment().utc(), 'days', true));
     }
 
     hasModuleSubscription(name?: string) {
         name = (name || this.getModule()).toUpperCase();
         let module = this.getModuleSubscription(name);
+
+        if (module && module.statusId == 'C')
+            return false;
+
         return this.isHostTenant || !module || !module.endDate ||
             this.hasRecurringBilling(module) || (module.endDate > moment().utc());
     }
 
     hasRecurringBilling(module: ModuleSubscriptionInfoDto): boolean {
-        return module && module.hasRecurringBilling && (moment(module.endDate).add(
+        return module && module.hasRecurringBilling && !module.isLocked && (moment(module.endDate).add(
             AppConsts.subscriptionRecurringBillingPeriod, 'days') > moment().utc());
     }
 

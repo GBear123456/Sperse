@@ -188,7 +188,11 @@ export class SocialsComponent {
     updateLink(link, newValue) {
         this.updateDataField(link, _.extend(_.clone(link), {
             contactId: this.contactInfoData.contactId,
-            url: newValue
+            url: newValue,
+            usageTypeId: link.linkTypeId,
+            isConfirmed: link.isConfirmed,
+            isActive: link.isActive,
+            comment: link.comment
         }));
     }
 

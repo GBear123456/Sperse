@@ -10,9 +10,4 @@ import { HostLoginComponent } from '../host/host-login.component';
     styleUrls: [ './sperser-login.component.less' ],
     animations: [accountModuleAnimation()]
 })
-export class SperserLoginComponent extends HostLoginComponent {
-
-    showHidePass() {
-        this.showPassword = !this.showPassword;
-    }
-}
+export class SperserLoginComponent extends HostLoginComponent {}

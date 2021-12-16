@@ -5000,6 +5000,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             this.updateCashflowPositionsAfterActivation = false;
         }
 
+        this.appService.isClientSearchDisabled = true;
         this.synchProgressComponent.activate();
         this.rootComponent.overflowHidden(true);
     }

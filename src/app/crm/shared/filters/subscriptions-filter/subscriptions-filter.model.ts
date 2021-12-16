@@ -6,11 +6,13 @@ export class SubscriptionsFilterModel extends FilterItemModel {
     filterBy: string;
     filterKey: string;
     nameField: string;
+    codeField: string;
     itemsExpr: string;
     filterMode: string;
     autoExpandAll = false;
     dataStructure = 'tree';
     keyExpr = 'uid';
+    ignoreParent: boolean;
 
     public constructor(init?: Partial<SubscriptionsFilterModel>) {
         super(init, true);
@@ -18,48 +20,51 @@ export class SubscriptionsFilterModel extends FilterItemModel {
 
     get value() {
         let result = [], filterIndex = 0;
+
         this.dataSource && this.dataSource
             .filter(item => item.current || item.past || item.never ||
                 item.current == undefined || item.past == undefined ||
                 item.never == undefined
             ).forEach(item => {
                 if (item.current || item.past || item.never) {
-                    result.push(
-                        {
-                            name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].' + this.filterKey],
-                            value: item.id
-                        },
-                        {
-                            name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].Availability'],
-                            value: (item.current ? SubscriptionAvailability.Current : 0) |
-                                (item.past ? SubscriptionAvailability.Past : 0) |
-                                (item.never ? SubscriptionAvailability.Never : 0)
-                        }
-                    );
-                    filterIndex++;
+                    if (!this.ignoreParent || !item[this.itemsExpr]) {
+                        result.push(
+                            {
+                                name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].' + this.filterKey],
+                                value: item.id
+                            },
+                            {
+                                name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].Availability'],
+                                value: (item.current ? SubscriptionAvailability.Current : 0) |
+                                    (item.past ? SubscriptionAvailability.Past : 0) |
+                                    (item.never ? SubscriptionAvailability.Never : 0)
+                            }
+                        );
+                        filterIndex++;
+                    }
                 }
 
-                if (item.memberServiceLevels && (item.current || item.past || item.never ||
+                if (item[this.itemsExpr] && (item.current || item.past || item.never ||
                     item.current == undefined || item.past == undefined || item.never == undefined)
                 ) {
-                    item.memberServiceLevels.forEach(level => {
+                    item[this.itemsExpr].forEach(level => {
                         if (level.current || level.past || level.never) {
-                            result.push(
-                                {
-                                    name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].' + this.filterKey],
-                                    value: item.id
-                                },
-                                {
+                            result.push({
+                                name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].' + this.filterKey],
+                                value: this.ignoreParent ? level.id : item.id
+                            });
+                            if (!this.ignoreParent)
+                                result.push({
                                     name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].LevelId'],
                                     value: level.id
-                                },
-                                {
-                                    name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].Availability'],
-                                    value: (level.current ? SubscriptionAvailability.Current : 0) |
-                                        (level.past ? SubscriptionAvailability.Past : 0) |
-                                        (level.never ? SubscriptionAvailability.Never : 0)
-                                }
-                            );
+                                });
+                            result.push({
+                                name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].Availability'],
+                                value: (level.current ? SubscriptionAvailability.Current : 0) |
+                                    (level.past ? SubscriptionAvailability.Past : 0) |
+                                    (level.never ? SubscriptionAvailability.Never : 0)
+                            });
+
                             filterIndex++;
                         }
                     });
@@ -86,8 +91,8 @@ export class SubscriptionsFilterModel extends FilterItemModel {
     onDataSourceLoaded() {
         this.dataSource.forEach(parent => {
             parent.uid = parent.id;
-            if (parent.memberServiceLevels)
-                parent.memberServiceLevels.forEach(child => {
+            if (parent[this.itemsExpr])
+                parent[this.itemsExpr].forEach(child => {
                     child.uid = parent.id + ':' + child.id;
                 });
         });
@@ -98,8 +103,8 @@ export class SubscriptionsFilterModel extends FilterItemModel {
         if (this.dataSource) {
             this.dataSource.forEach((item) => {
                 let initialCount = result.length;
-                if (item.memberServiceLevels && item.memberServiceLevels.length)
-                    item.memberServiceLevels.forEach(level => {
+                if (item[this.itemsExpr] && item[this.itemsExpr].length)
+                    item[this.itemsExpr].forEach(level => {
                         if (level.current && !item.current ||
                             level.past && !item.past ||
                             level.never && !item.never

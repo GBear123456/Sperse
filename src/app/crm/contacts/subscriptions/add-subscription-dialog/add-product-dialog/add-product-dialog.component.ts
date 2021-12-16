@@ -31,7 +31,8 @@ import {
     UpdateProductInput,
     RecurringPaymentFrequency,
     ProductSubscriptionOptionInfo,
-    ProductMeasurementUnit,
+    ProductMeasurementUnit,
+
     SetProductImageInput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
