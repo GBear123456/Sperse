@@ -34,7 +34,7 @@ export class ContactsAreaComponent {
     @Input() showContactType: string;
     @Input()
     set contactInfo(val: ContactInfoDto) {
-        if (this._contactInfo = val)
+        if ((this._contactInfo = val) && val.groups)
             this.isEditAllowed = this.permissionService.checkCGPermission(val.groups);
     }
     get contactInfo(): ContactInfoDto {

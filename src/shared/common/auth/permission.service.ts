@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 import invert from 'lodash/invert';
 
 /** Application imports */
+import { ContactGroupInfo } from '@shared/service-proxies/service-proxies';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
@@ -32,7 +33,15 @@ export class AppPermissionService {
         );
     }
 
-    checkCGPermission(contactGroups: ContactGroup[], permission = 'Manage') {
-        return this.permissionChecker.isGranted(this.getCGPermissionKey(contactGroups, permission) as AppPermissions);
+    checkCGPermission(contactGroups: ContactGroup[] | ContactGroupInfo[], permission = 'Manage') {
+        if (contactGroups && contactGroups.length) {
+            let groups: ContactGroup[] = [];
+            contactGroups.filter(Boolean).forEach(group => {
+                groups.push(<ContactGroup>(group['groupId'] || group));
+            });
+            return this.permissionChecker.isGranted(
+                this.getCGPermissionKey(groups , permission) as AppPermissions);
+        }
+        return false;
     }
 }

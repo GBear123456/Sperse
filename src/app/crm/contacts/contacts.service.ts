@@ -86,6 +86,7 @@ export class ContactsService {
     contactId$: Observable<number> = this.contactId.asObservable().pipe(
         filter((contactId: number) => !!contactId)
     );
+    contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);
     private organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>(1);
     organizationContactInfo$: Observable<OrganizationContactInfoDto> = this.organizationContactInfo.asObservable();
     private subscribers: any = {

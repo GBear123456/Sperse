@@ -57,8 +57,8 @@ export class AddressesComponent implements OnInit, OnDestroy {
     @Input() isCompany = false;
     @Input()
     set contactInfo(val: ContactInfoDto) {
-        if (this._contactInfo = val)
-            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groups);
+        if ((this._contactInfo = val) && val.groups)
+            this.isEditAllowed = this.permissionService.checkCGPermission(val.groups);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;

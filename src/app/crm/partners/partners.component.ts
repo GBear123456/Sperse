@@ -553,13 +553,14 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         url: this.getODataUrl(
             this.dataSourceURI,
             [
-                this.filterModelStatus.filterMethod(this.filterModelStatus),
                 FiltersService.filterByParentId()
             ]
         ),
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+            request.params.isActive = true;
+            request.params.isProspective = false;
             request.params.contactGroupId = ContactGroup.Partner;
             request.params.$select =
             this.pipelineSelectFields = DataGridService.getSelectFields(
@@ -623,12 +624,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 url: this.getODataUrl(
                     this.totalDataSourceURI,
                     [
-                        this.filterModelStatus.filterMethod(this.filterModelStatus),
                         FiltersService.filterByParentId()
                     ]
                 ),
                 beforeSend: (request) => {
                     this.totalCount = this.totalErrorMsg = undefined;
+                    request.params.isActive = true;
+                    request.params.isProspective = false;
                     request.params.contactGroupId = ContactGroup.Partner;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -645,7 +647,6 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     ngOnInit() {
-        this.filterModelStatus.updateCaptions();
         this.getPartnerTypes();
         this.activate();
         this.handleModuleChange();
@@ -975,7 +976,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
                 options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
             }),
-            this.filterModelStatus,
+//            this.filterModelStatus,
             this.filterModelTypes = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'type',
@@ -1171,7 +1172,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     },
                     {
                         name: 'status',
-                        disabled: this.selectedPartners.some(partner => partner.Status == 'Prospective'),
+                        disabled: this.selectedPartners.some(partner => partner.IsProspective),
                         action: this.toggleStatus.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStatus && this.filterModelStatus.isSelected

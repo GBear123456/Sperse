@@ -167,19 +167,21 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnIni
     }
 
     ngOnInit() {
-        this.statuses = this.contactInfo.groups.map(group => {
-            if (this.permission.getCGPermissionKey([group.groupId], 'Manage'))
-                return {
-                    id: group.groupId,
-                    groupId: group.groupId,
-                    name: this.contactGroupKeys[group.groupId],
-                    displayName: this.l(this.contactGroupKeys[group.groupId]),
-                    isActive: group.isActive
-                };
-        }).filter(Boolean);
-        this.activeGroupIds = this.statuses.filter(
-            status => status.isActive
-        ).map(status => status.id);
+        if (this.contactInfo && this.contactInfo.groups) {
+            this.statuses = this.contactInfo.groups.map(group => {
+                if (this.permission.getCGPermissionKey([group.groupId], 'Manage'))
+                    return {
+                        id: group.groupId,
+                        groupId: group.groupId,
+                        name: this.contactGroupKeys[group.groupId],
+                        displayName: this.l(this.contactGroupKeys[group.groupId]),
+                        isActive: group.isActive
+                    };
+            }).filter(Boolean);
+            this.activeGroupIds = this.statuses.filter(
+                status => status.isActive
+            ).map(status => status.id);
+        }
     }
 
     ngAfterViewInit() {
@@ -197,7 +199,10 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnIni
 
     ngOnChanges(changes: SimpleChanges) {
         /** Load users instance (or get from cache) for user id to find out whether to show cfo or verify button */
-        if (changes.contactInfo && this.contactInfo.groups.some(group => group.groupId == ContactGroup.Client) && this.appService.isCfoLinkOrVerifyEnabled) {
+        if (changes.contactInfo && this.contactInfo.groups && 
+            this.contactInfo.groups.some(group => group.groupId == ContactGroup.Client) && 
+            this.appService.isCfoLinkOrVerifyEnabled
+        ) {
             const contactInfo: ContactInfoDto = changes.contactInfo.currentValue;
             if (contactInfo.id && contactInfo.personContactInfo) {
                 this.crmService.isCfoAvailable(contactInfo.personContactInfo.userId)
@@ -224,6 +229,9 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnIni
         this.toolbarConfig = [];
         clearTimeout(this.initTimeout);
         this.initTimeout = setTimeout(() => {
+            if (!this.contactInfo || !this.contactInfo.groups)
+                return ;
+
             this.manageCGPermision = this.permission.getCGPermissionKey(this.contactInfo.groups, 'Manage');
             if (this.customToolbarConfig)
                 return (this.toolbarConfig = this.customToolbarConfig);
@@ -476,7 +484,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnIni
     }
 
     get autoLoginAllowed(): Boolean {
-        return this.isUserAvailable() && this.permission.checkCGPermission(this.contactInfo.groups, 'UserInformation.AutoLogin');
+        return this.isUserAvailable() && this.contactInfo && 
+            this.permission.checkCGPermission(this.contactInfo.groups, 'UserInformation.AutoLogin');
     }
 
     getNavigationConfig() {
@@ -592,9 +601,9 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnIni
      */
     get cfoLinkOrVerifyEnabled(): boolean {
         return !!(this.isCfoAvailable && this.appService.checkCFOClientAccessPermission()
-               || (
-                   this.isCfoAvailable === false && this.appService.canSendVerificationRequest()
-                   && this.contactInfo.groups.some(group => group.groupId == ContactGroup.Client && group.isActive)
-               ));
+            || (
+                this.isCfoAvailable === false && this.appService.canSendVerificationRequest()
+                && ((this.contactInfo && this.contactInfo.groups) || []).some(group => group.groupId == ContactGroup.Client && group.isActive)
+            ));
     }
 }

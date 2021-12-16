@@ -690,7 +690,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 url: this.getODataUrl(
                     this.dataSourceURI,
                     [
-                        this.filterModelStatus.filterMethod(this.filterModelStatus),
                         FiltersService.filterByParentId()
                     ]
                 ),
@@ -703,11 +702,12 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.clientFields.Id,
                             this.clientFields.OrganizationId,
                             this.clientFields.UserId,
-                            this.clientFields.StatusId,
                             this.clientFields.Email,
                             this.clientFields.Phone
                         ]
                     );
+                    request.params.isActive = true;
+                    request.params.isProspective = false;
                     request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -729,12 +729,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             paginate: false,
             store: new ODataStore({
                 url: this.getODataUrl(this.totalDataSourceURI, [
-                    this.filterModelStatus.filterMethod(this.filterModelStatus),
                     FiltersService.filterByParentId()
                 ]),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     this.totalCount = this.totalErrorMsg = undefined;
+                    request.params.isActive = true;
+                    request.params.isProspective = false;
                     request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -751,7 +752,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     ngOnInit() {
-        this.filterModelStatus.updateCaptions();
         this.handleTotalCountUpdate();
         this.handleDataGridUpdate();
         this.handlePivotGridUpdate();
@@ -1129,7 +1129,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
                 options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
             }),
-            this.filterModelStatus,
+            //this.filterModelStatus,
             new FilterModel({
                 component: FilterMultilineInputComponent,
                 caption: 'phone',
@@ -1249,7 +1249,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'status',
                         disabled: this.dataGrid && this.dataGrid.instance.getVisibleRows().some(row => {
-                            return this.selectedClientKeys.includes(row.data.Id) && row.data.Status == 'Prospective';
+                            return this.selectedClientKeys.includes(row.data.Id) && row.data.isProspecive;
                         }),
                         action: this.toggleStatus.bind(this),
                         attr: {

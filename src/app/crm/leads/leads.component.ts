@@ -1417,8 +1417,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this.manageDisabled = !this.permission.checkCGPermission([this.selectedContactGroup]);
-        this.manageCGPermission = this.permission.getCGPermissionKey([this.selectedContactGroup], 'Manage');
+        if (this.selectedContactGroup) {
+            this.manageDisabled = !this.permission.checkCGPermission([this.selectedContactGroup]);
+            this.manageCGPermission = this.permission.getCGPermissionKey([this.selectedContactGroup], 'Manage');
+        }
         this.toolbarConfig = [
             {
                 location: 'before', items: [
@@ -1849,8 +1851,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         ? this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
                         : context.dataGrid && context.dataGrid.instance;
                     if (this.showPipeline || dataGridInstance) {
-                        this.pipelineDataSource['total'] = this.pipelineDataSource['entities'] = 
-                        this.dataSource['total'] = this.dataSource['entities'] = undefined;
+                        if (this.pipelineDataSource)
+                            this.pipelineDataSource['total'] = this.pipelineDataSource['entities'] = undefined;
+                        if (this.dataSource)
+                            this.dataSource['total'] = this.dataSource['entities'] = undefined;
                         const filterQuery$: Observable<string> = context.processODataFilter.call(
                             context,
                             dataGridInstance,
@@ -2002,7 +2006,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             contactGroupId: this.selectedContactGroup,
                             dataLayoutType: this.dataLayoutType.value,
                             ...queryParams
-                        }}
+                        }
+                    }
                 );
             });
         });

@@ -97,10 +97,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     private initialData: string;
 
-    public contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+    public contactGroupId: BehaviorSubject<string> = this.contactsService.contactGroupId;
     public contactGroupId$: Observable<string> = this.contactGroupId.asObservable().pipe(filter(Boolean)) as Observable<string>;
     isCommunicationHistoryAllowed$: Observable<boolean> = this.contactsService.contactInfo$.pipe(
-        map((contactInfo: ContactInfoDto) => this.permission.checkCGPermission(
+        map((contactInfo: ContactInfoDto) => contactInfo && this.permission.checkCGPermission(
             contactInfo.groups,
             'ViewCommunicationHistory'
         ))
@@ -173,7 +173,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             visible$: combineLatest(this.userId$, this.contactsService.contactInfo$).pipe(
                 map(([userId, contactInfo] : [number, ContactInfoDto]) => {
                     return userId ? this.permission.isGranted(AppPermissions.AdministrationUsersEdit)
-                        || this.permission.checkCGPermission(contactInfo.groups, 'UserInformation')
+                        || contactInfo && this.permission.checkCGPermission(contactInfo.groups, 'UserInformation')
                     : this.permission.isGranted(AppPermissions.AdministrationUsersCreate);
                 })
             ),
@@ -450,7 +450,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         let contactGroupId = this.contactsService.getContactGroupId(this.queryParams);
         if (contactGroupId)
             return contactGroupId;
-
         let group = contactInfo.groups.filter(group => group.isActive).shift() || 
             contactInfo.groups.filter(group => group.isProspective).shift();
 
@@ -458,13 +457,13 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private fillContactDetails(result: ContactInfoDto, contactId = null) {
-        this.checkUpdateToolbar();
         this.contactService['data'].contactInfo = result;
         this.contactsService.contactInfoUpdate(result);
         this.contactGroupId.next(this.getContactGroupId(result));
         this.manageAllowed = this.permission.checkCGPermission(result.groups);
         this.assignedUsersSelector = select(
-            ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers
+            ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
+            { contactGroup: this.contactGroupId.value }
         );
         contactId = contactId || result.personContactInfo.id;
         if (result['organizationContactInfo'] && result['organizationContactInfo'].contactPersons) {
@@ -490,6 +489,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.userService['data'].userId = this.primaryContact.userId
         );
         this.initContextTypeByRoute();
+        this.checkUpdateToolbar();
         this.storeInitialData();
     }
 
@@ -619,8 +619,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     this.finishLoading(true);
                 }),
                 switchMap((result: ContactInfoDto) => {
-                    this.loadLeadData(result.personContactInfo);
                     this.fillContactDetails(result);
+                    this.loadLeadData(result.personContactInfo);
                     if (leadId)
                         this.loadLeadsStages();
                     if (this.contactGroupId.value == ContactGroup.Partner)
@@ -934,7 +934,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     getAssignmentsPermissionKey = () => {
-        return this.permission.getCGPermissionKey([this.contactGroupId.value], 'ManageAssignments');
+        return this.contactGroupId.value ? this.permission.getCGPermissionKey(
+            [this.contactGroupId.value], 'ManageAssignments') : '';
     }
 
     getProxyService = () => {

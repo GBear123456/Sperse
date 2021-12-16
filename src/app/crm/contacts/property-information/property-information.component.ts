@@ -472,7 +472,6 @@ export class PropertyInformationComponent implements OnInit {
     }
 
     dealInfoChanged($event) {
-        console.log($event);
         this.loadingService.startLoading(this.elementRef.nativeElement);
         this.leadServiceProxy.updateDealInfo(new UpdateLeadDealInfoInput({
             leadId: this.acquisitionLeadDealInfo.leadId,

@@ -1001,8 +1001,9 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     private initToolbarConfig() {
-        this.manageCGPermission = this.permission.getCGPermissionKey([this.contactGroupId], 'Manage');
-        let disabledManage = !this.permission.checkCGPermission([this.contactGroupId]);
+        if (this.contactGroupId)
+            this.manageCGPermission = this.permission.getCGPermissionKey([this.contactGroupId], 'Manage');
+        let disabledManage = !this.contactGroupId || !this.permission.checkCGPermission([this.contactGroupId]);
         this.toolbarConfig = [
             {
                 location: 'before',
@@ -1163,6 +1164,7 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
     }
 
     getUserAssignmentPermissionKey() {
-        return this.permission.getCGPermissionKey([this.contactGroupId], 'ManageAssignments');
+        return this.contactGroupId ? this.permission.getCGPermissionKey(
+            [this.contactGroupId], 'ManageAssignments') : '';
     }
 }
