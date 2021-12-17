@@ -744,7 +744,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     userData.user.isActive = status.isActive;
                 }
                 this.notify.success(this.l('StatusSuccessfullyUpdated'));
+            } else {
+                status.isActive = !status.isActive;
             }
+            this.toolbarComponent.updateActiveGroup();
         });
     }
 

@@ -27,10 +27,10 @@
             [highlightSelected]="true"
             [showSelectionControls]="true"
             [selectionMode]="'multiple'"
-            [selectedKeys]="[activeGroupIds]"
+            [selectedKeys]="activeGroupIds"
             targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
             [list]="statuses"
-            (onItemSelected)="updateStatus($event)">
+            (onSelectionChanged)="updateStatus($event)">
         </app-static-list>
         <!--<app-static-list-->
             <!--#partnerTypesList-->

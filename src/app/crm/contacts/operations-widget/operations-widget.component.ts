@@ -1,6 +1,5 @@
 /** Core imports */
 import {
-    OnInit,
     AfterViewInit,
     Component,
     ElementRef,
@@ -47,7 +46,7 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
     templateUrl: './operations-widget.component.html',
     styleUrls: ['./operations-widget.component.less']
 })
-export class OperationsWidgetComponent extends AppComponentBase implements OnInit, AfterViewInit, OnChanges {
+export class OperationsWidgetComponent extends AppComponentBase implements AfterViewInit, OnChanges {
     @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
     @ViewChild(TypesListComponent, { static: false }) partnerTypesComponent: TypesListComponent;
@@ -166,24 +165,6 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnIni
         });
     }
 
-    ngOnInit() {
-        if (this.contactInfo && this.contactInfo.groups) {
-            this.statuses = this.contactInfo.groups.map(group => {
-                if (this.permission.getCGPermissionKey([group.groupId], 'Manage'))
-                    return {
-                        id: group.groupId,
-                        groupId: group.groupId,
-                        name: this.contactGroupKeys[group.groupId],
-                        displayName: this.l(this.contactGroupKeys[group.groupId]),
-                        isActive: group.isActive
-                    };
-            }).filter(Boolean);
-            this.activeGroupIds = this.statuses.filter(
-                status => status.isActive
-            ).map(status => status.id);
-        }
-    }
-
     ngAfterViewInit() {
         this.contactService.settingsDialogOpened$.subscribe((opened: boolean) => {
             const settingsButton = this.elementRef.nativeElement.querySelector('[accesskey="settings"]');
@@ -199,28 +180,42 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnIni
 
     ngOnChanges(changes: SimpleChanges) {
         /** Load users instance (or get from cache) for user id to find out whether to show cfo or verify button */
-        if (changes.contactInfo && this.contactInfo.groups && 
-            this.contactInfo.groups.some(group => group.groupId == ContactGroup.Client) && 
-            this.appService.isCfoLinkOrVerifyEnabled
-        ) {
-            const contactInfo: ContactInfoDto = changes.contactInfo.currentValue;
-            if (contactInfo.id && contactInfo.personContactInfo) {
-                this.crmService.isCfoAvailable(contactInfo.personContactInfo.userId)
-                    .subscribe((isCfoAvailable: boolean) => {
-                        this.isCfoAvailable = isCfoAvailable;
-                    });
-                this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.CRM)
-                    .subscribe((isCrmAvailable: boolean) => {
-                        this.isCrmAvailable = isCrmAvailable;
-                    });
-                this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.PFM)
-                    .subscribe((isPfmAvailable: boolean) => {
-                        this.isPfmAvailable = isPfmAvailable;
-                    });
-                this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.API)
-                    .subscribe((isApiAvailable: boolean) => {
-                        this.isApiAvailable = isApiAvailable;
-                    });
+        if (changes.contactInfo && this.contactInfo.groups) {
+            this.statuses = this.contactInfo.groups.map(group => {
+                if (this.permission.getCGPermissionKey([group.groupId], 'Manage'))
+                    return {
+                        id: group.groupId,
+                        groupId: group.groupId,
+                        name: this.contactGroupKeys[group.groupId],
+                        displayName: this.l(this.contactGroupKeys[group.groupId]),
+                        isActive: group.isActive
+                    };
+            }).filter(Boolean);
+
+            this.updateActiveGroup();
+
+            if (this.contactInfo.groups.some(group => group.groupId == ContactGroup.Client) && 
+                this.appService.isCfoLinkOrVerifyEnabled
+            ) {
+                const contactInfo: ContactInfoDto = changes.contactInfo.currentValue;
+                if (contactInfo.id && contactInfo.personContactInfo) {
+                    this.crmService.isCfoAvailable(contactInfo.personContactInfo.userId)
+                        .subscribe((isCfoAvailable: boolean) => {
+                            this.isCfoAvailable = isCfoAvailable;
+                        });
+                    this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.CRM)
+                        .subscribe((isCrmAvailable: boolean) => {
+                            this.isCrmAvailable = isCrmAvailable;
+                        });
+                    this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.PFM)
+                        .subscribe((isPfmAvailable: boolean) => {
+                            this.isPfmAvailable = isPfmAvailable;
+                        });
+                    this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.API)
+                        .subscribe((isApiAvailable: boolean) => {
+                            this.isApiAvailable = isApiAvailable;
+                        });
+                }
             }
         }
     }
@@ -418,8 +413,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnIni
                         {
                             name: 'status',
                             action: this.toggleStatus.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups)
-                                || this.contactInfo.groups.every(group => !group.isActive)
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups)                                
                         },
                         {
                             name: 'partnerType',
@@ -544,8 +538,27 @@ export class OperationsWidgetComponent extends AppComponentBase implements OnIni
     }
 
     updateStatus(event) {
-        event.isActive = !event.isActive;
-        this.onUpdateStatus.emit(event);
+        if (event.addedItems.length) {
+            let elm = event.addedItems[0];
+            if (this.activeGroupIds.some(id => id == elm.id))
+                return;
+            elm.isActive = true;
+            this.onUpdateStatus.emit(elm);
+        }
+
+        if (event.removedItems.length) {
+            let elm = event.removedItems[0];
+            if (this.activeGroupIds.some(id => id == elm.id)) {
+                elm.isActive = false;
+                this.onUpdateStatus.emit(elm);
+            }
+        }
+    }
+
+    updateActiveGroup() {
+        this.activeGroupIds = this.statuses.filter(
+            status => status.isActive
+        ).map(status => status.id);
     }
 
     updateStage(event) {
