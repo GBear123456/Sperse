@@ -59,6 +59,8 @@ import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calenda
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
+import { FilterContactStatusComponent } from '@app/crm/shared/filters/contact-status-filter/contact-status-filter.component';
+import { FilterContactStatusModel } from '@app/crm/shared/filters/contact-status-filter/contact-status-filter.model';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import {
     BulkUpdatePartnerTypeInput,
@@ -341,20 +343,14 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         }
     });
     filterModelStatus: FilterModel = new FilterModel({
-        component: FilterCheckBoxesComponent,
+        component: FilterContactStatusComponent,
         caption: 'status',
-        filterMethod: FilterHelpers.filterByCustomerStatus,
-        field: 'StatusId',
+        filterMethod: () => {return {}},
         isSelected: true,
         items: {
-            element: new FilterCheckBoxesModel(
-                {
-                    dataSource: this.statuses,
-                    nameField: 'name',
-                    keyExpr: 'id',
-                    selectedKeys$: of(['A'])
-                }
-            )
+            element: new FilterContactStatusModel({
+                ls: this.localizationService
+            })
         }
     });
     filterModelRating: FilterModel;
@@ -391,11 +387,13 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         remoteOperations: true,
         load: (loadOptions) => {
             this.pivotGridDataIsLoading = true;
+            let params = {contactGroupId: ContactGroup.Partner};
+            (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({params: params});
             return this.crmService.loadSlicePivotGridData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
                 loadOptions,
-                {contactGroupId: ContactGroup.Partner}
+                params
             );
         },
         onChanged: () => {
@@ -491,12 +489,14 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             return this.odataRequestValues$.pipe(
                 first(),
                 switchMap((odataRequestValues: ODataRequestValues) => {
+                    let params = {contactGroupId: ContactGroup.Partner};
+                    (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({params: params});
                     const chartDataUrl = this.chartDataUrl || this.crmService.getChartDataUrl(
                         this.getODataUrl(this.groupDataSourceURI),
                         odataRequestValues,
                         this.chartComponent.summaryBy.value,
                         this.dateField, 
-                        {contactGroupId: ContactGroup.Partner}
+                        params
                     );
                     return this.oDataService.requestLengthIsValid(chartDataUrl)
                         ? this.httpClient.get(chartDataUrl)
@@ -561,8 +561,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         version: AppConsts.ODataVersion,
         beforeSend: (request) => {
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
-            request.params.isActive = true;
-            request.params.isProspective = false;
+            
+            (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams(request);
+
             request.params.contactGroupId = ContactGroup.Partner;
             request.params.$select =
             this.pipelineSelectFields = DataGridService.getSelectFields(
@@ -631,8 +632,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 ),
                 beforeSend: (request) => {
                     this.totalCount = this.totalErrorMsg = undefined;
-                    request.params.isActive = true;
-                    request.params.isProspective = false;
+
+                    (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams(request);
+
                     request.params.contactGroupId = ContactGroup.Partner;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -751,12 +753,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
         ).subscribe(([summaryBy, [odataRequestValues, ]]: [SummaryBy, [ODataRequestValues, ]]) => {
+            let params = {contactGroupId: ContactGroup.Partner};
+            (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({params: params});
+
             const chartDataUrl = this.crmService.getChartDataUrl(
                 this.getODataUrl(this.groupDataSourceURI),
                 odataRequestValues,
                 summaryBy,
                 this.dateField,
-                {contactGroupId: ContactGroup.Partner}
+                params
             );
             if (!this.oDataService.requestLengthIsValid(chartDataUrl)) {
                 this.message.error(this.l('QueryStringIsTooLong'));
@@ -773,12 +778,15 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.selectedMapArea$
         ).pipe(
             map(([[odataRequestValues, ], mapArea]: [[ODataRequestValues, null], MapArea]) => {
+                let params = {contactGroupId: ContactGroup.Partner};
+                (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({params: params});
+
                 return this.mapService.getSliceMapUrl(
                     this.getODataUrl(this.groupDataSourceURI),
                     odataRequestValues,
                     mapArea,
                     this.dateField,
-                    {contactGroupId: ContactGroup.Partner}
+                    params
                 );
             }),
             filter((mapUrl: string) => {
@@ -978,7 +986,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 items: { from: new FilterItemModel(), to: new FilterItemModel() },
                 options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
             }),
-//            this.filterModelStatus,
+            this.filterModelStatus,
             this.filterModelTypes = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'type',
