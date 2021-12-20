@@ -24,12 +24,13 @@
               <p class="second-line big-gray-text">{{ls.ls(localization, 'CRM_Long')}}</p>
               <p class="welcome-crm">{{ls.ls(localization, 'CRMDashboard_WelcomeText')}}</p>
               <p class="text-crm">{{ls.ls(localization, 'CRMDashboard_StartText')}}</p>
-              <p class="manage-crm" *ngIf="hasCustomersPermission || hasOrdersPermission">
+              <p class="manage-crm" *ngIf="hasAnyCGPermission || hasOrdersPermission">
                   {{ls.ls(localization, 'CRMDashboard_ManageText')}}
+                  <a *ngIf="hasAnyCGPermission" [routerLink]="['/app/crm/leads']">{{ls.ls(localization, 'Leads')}}</a>
                   <ng-container *ngIf="hasCustomersPermission">
-                      <a [routerLink]="['/app/crm/leads']">{{ls.ls(localization, 'Leads')}}</a>, <a [routerLink]="['/app/crm/clients']">{{ls.ls(localization, 'Clients')}}</a>
+                      , <a [routerLink]="['/app/crm/clients']">{{ls.ls(localization, 'Clients')}}</a>
                   </ng-container>
-                  <ng-container *ngIf="hasCustomersPermission && hasOrdersPermission"> and </ng-container>
+                  <ng-container *ngIf="hasAnyCGPermission && hasOrdersPermission"> and </ng-container>
                   <a *ngIf="hasOrdersPermission" [routerLink]="['/app/crm/orders']">{{ls.ls(localization, 'Orders')}}</a>
               </p>
               <!-- p class="last-line"><a [routerLink]="['/app/crm/clients']">{{ls.ls(localization, 'CRMDashboard_AddContact')}}</a> | {{ls.ls(localization, 'CRMDashboard_ImportContact')}}</p -->
@@ -37,20 +38,20 @@
           </div>
           <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
               <div class="dashboard-widgets">
-                  <counts-and-totals *ngIf="isGrantedCustomers || isGrantedOrders"></counts-and-totals>
+                  <counts-and-totals *ngIf="hasAnyCGPermission || isGrantedOrders"></counts-and-totals>
                   <div class="analytics-wrap">
                       <div class="left-side col-xl-4">
-                          <new-items-totals *ngIf="isGrantedCustomers || isGrantedOrders"></new-items-totals>
-                          <totals-by-source *ngIf="isGrantedCustomers"></totals-by-source>
+                          <new-items-totals *ngIf="hasAnyCGPermission || isGrantedOrders"></new-items-totals>
+                          <totals-by-source *ngIf="hasAnyCGPermission"></totals-by-source>
                       </div>
                       <div class="right-side col-xl-8">
-                          <ng-container *ngIf="isGrantedCustomers">
+                          <ng-container *ngIf="hasAnyCGPermission">
                               <totals-by-period></totals-by-period>
                               <recent-clients></recent-clients>
                           </ng-container>
                       </div>
                   </div>
-                  <clients-by-region *ngIf="isGrantedCustomers"></clients-by-region>
+                  <clients-by-region *ngIf="hasAnyCGPermission"></clients-by-region>
               </div>
           </dx-scroll-view>
           <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>

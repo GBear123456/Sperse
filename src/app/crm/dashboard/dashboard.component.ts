@@ -71,8 +71,8 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     showLoadingSpinner = true;
     private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
     dialogConfig = new MatDialogConfig();
-    isGrantedCustomers = this.permission.isGranted(AppPermissions.CRMCustomers);
     isGrantedOrders = this.permission.isGranted(AppPermissions.CRMOrders);
+    hasAnyCGPermission: boolean = !!this.permission.getFirstAvailableCG();
     hasCustomersPermission: boolean = this.permission.isGranted(AppPermissions.CRMCustomers);
     hasOrdersPermission: boolean = this.permission.isGranted(AppPermissions.CRMOrders);
     hasPermissionToAddClient: boolean = this.permission.isGranted(AppPermissions.CRMCustomersManage);
@@ -154,7 +154,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                 items: {
                     element: new FilterRadioGroupModel({
                         showFirstAsDefault: true,
-                        value: ContactGroup.Client,
+                        value: this.permission.getFirstAvailableCG(),
                         list: Object.keys(ContactGroup).map(item => {
                             if (this.permission.checkCGPermission(ContactGroup[item], ''))
                                 return {
@@ -216,7 +216,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     private loadStatus() {
-        this.dashboardServiceProxy.getStatus(undefined, undefined).subscribe((status: GetCRMStatusOutput) => {
+        this.dashboardServiceProxy.getStatus(this.permission.getFirstAvailableCG().toString(), undefined).subscribe((status: GetCRMStatusOutput) => {
             this.showWelcomeSection.next(!status.hasData);
             this.showLoadingSpinner = false;
         });

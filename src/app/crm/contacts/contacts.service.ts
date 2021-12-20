@@ -7,10 +7,9 @@ import { Params, Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject, of, BehaviorSubject, Subscriber, forkJoin } from 'rxjs';
 import { filter, first, finalize, tap, switchMap, catchError,
-    map, mapTo, distinctUntilChanged, debounceTime } from 'rxjs/operators';
+    map, mapTo, distinctUntilChanged } from 'rxjs/operators';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 import { ContactStatus } from '@root/shared/AppEnums';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
@@ -105,7 +104,6 @@ export class ContactsService {
     next: Subject<any> = new Subject();
 
     constructor(injector: Injector,
-        private authService: AppAuthService,
         private contactProxy: ContactServiceProxy,
         private leadService: LeadServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
@@ -116,7 +114,6 @@ export class ContactsService {
         private notifyService: NotifyService,
         private ls: AppLocalizationService,
         private router: Router,
-        private location: Location,
         private cacheHelper: CacheHelper,
         private cacheService: CacheService,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
