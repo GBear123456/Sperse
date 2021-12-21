@@ -40,4 +40,13 @@ export class AppPermissionService {
 
         return null;
     }
+
+    getFirstManageCG(): boolean {
+        for (let contactGroup of Object.keys(ContactGroup)) {
+            if (this.checkCGPermission(ContactGroup[contactGroup]))
+                return ContactGroup[contactGroup];
+        }
+
+        return null;
+    }
 }
