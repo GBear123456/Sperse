@@ -1563,7 +1563,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                         this.contactService.mergeContact(
                                             this.selectedLeads[0],
                                             this.selectedLeads[1],
-                                            ContactGroup.Client,
+                                            this.selectedContactGroup,
                                             false,
                                             true,
                                             () => this.refresh(),
@@ -2221,7 +2221,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [LeadDto, LeadDto]) => {
-                this.contactService.mergeContact(source, target, ContactGroup.Client, false, true, () => this.refresh(), true);
+                this.contactService.mergeContact(source, target, this.selectedContactGroup, false, true, () => this.refresh(), true);
             });
         }
     }
