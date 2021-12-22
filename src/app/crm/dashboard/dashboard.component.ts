@@ -51,6 +51,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
+import { LeftMenuComponent } from '../shared/common/left-menu/left-menu.component';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -62,6 +63,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
 export class DashboardComponent implements AfterViewInit, OnInit {
     @ViewChild(ClientsByRegionComponent, { static: false }) clientsByRegion: ClientsByRegionComponent;
     @ViewChild(TotalsBySourceComponent, { static: false }) totalsBySource: TotalsBySourceComponent;
+    @ViewChild(LeftMenuComponent, { static: false }) leftMenu: LeftMenuComponent;
 
     private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable();
@@ -79,6 +81,23 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     localization = AppConsts.localization.CRMLocalizationSourceName;
     leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
 
+    filterModelContactGroup = new FilterModel({
+        caption: 'ContactGroup',
+        component: FilterRadioGroupComponent,
+        items: {
+            element: new FilterRadioGroupModel({
+                showFirstAsDefault: true,
+                value: this.permission.getFirstAvailableCG(),
+                list: Object.keys(ContactGroup).map(item => {
+                    if (this.permission.checkCGPermission(ContactGroup[item], ''))
+                        return {
+                            id: ContactGroup[item],
+                            name: this.ls.l('ContactGroup_' + item)
+                        };
+                }).filter(Boolean)
+            })
+        }
+    });
     filterModelOrgUnit: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'SourceOrganizationUnitId',
@@ -148,23 +167,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
 
     private getFilters() {
         return [
-            new FilterModel({
-                caption: 'ContactGroup',
-                component: FilterRadioGroupComponent,
-                items: {
-                    element: new FilterRadioGroupModel({
-                        showFirstAsDefault: true,
-                        value: this.permission.getFirstAvailableCG(),
-                        list: Object.keys(ContactGroup).map(item => {
-                            if (this.permission.checkCGPermission(ContactGroup[item], ''))
-                                return {
-                                    id: ContactGroup[item],
-                                    name: this.ls.l('ContactGroup_' + item)
-                                };
-                        }).filter(Boolean)
-                    })
-                }
-            }),
+            this.filterModelContactGroup,
             this.filterModelOrgUnit,
             this.filterModelSource
         ];
@@ -192,6 +195,10 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                     this.dashboardWidgetsService.setGroupIdForTotals(
                         filter.items.element.value || ContactGroup.Client);
             });
+
+            if (this.leftMenu) {
+                this.leftMenu.initMenuItems();
+            }
         });
     }
 
@@ -216,7 +223,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     private loadStatus() {
-        this.dashboardServiceProxy.getStatus(this.permission.getFirstAvailableCG().toString(), undefined).subscribe((status: GetCRMStatusOutput) => {
+        this.dashboardServiceProxy.getStatus(this.filterModelContactGroup.items.element.value.toString(), undefined).subscribe((status: GetCRMStatusOutput) => {
             this.showWelcomeSection.next(!status.hasData);
             this.showLoadingSpinner = false;
         });
