@@ -124,7 +124,7 @@
                                     {{l('Download')}}
                                 </a>
                                 <ng-template #customPlatformTemplate>
-                                    <a href="assets/common/styles/custom/platform-custom-style.css" download>
+                                    <a [href]="getCustomPlatformStylePath()" download>
                                         {{l('DownloadTemplate')}}
                                     </a>
                                 </ng-template>

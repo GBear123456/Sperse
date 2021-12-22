@@ -9,6 +9,7 @@ import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of } from 'rxjs';
 import { finalize, tap, first, map, delay } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
+import kebabCase from 'lodash/kebabCase';
 
 /** Application imports */
 import { TokenService } from '@abp/auth/token.service';
@@ -81,7 +82,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFM) && abp.features.isEnabled(AppFeatures.PFMApplications);
-    isRapidTenantLayout: boolean = this.appSession.tenant.customLayoutType == LayoutType.Rapid;
+    isRapidTenantLayout: boolean = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.Rapid;
     isPerformancePartner: boolean = this.appSession.isPerformancePartnerTenant;
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
@@ -448,5 +449,14 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     copyToClipboard(event) {
         this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
         this.notify.info(this.l('SavedToClipboard'));
+    }
+
+    getCustomPlatformStylePath() {
+        let tenant = this.appSession.tenant,
+            basePath = 'assets/common/styles/custom/';
+        if (tenant && tenant.customLayoutType)
+            return basePath + kebabCase(tenant.customLayoutType) + '/style.css'
+        else
+            return basePath + 'platform-custom-style.css';
     }
 }
