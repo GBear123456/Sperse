@@ -400,18 +400,18 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                 class: 'assign-to'
                             },
                             action: this.toggleUserAssignment.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, 'ManageAssignments')
+                            disabled: !this.permission.checkCGPermission([this.customerType], 'ManageAssignments')
                         },
                         {
                             name: 'stage',
                             action: this.toggleStages.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups),
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, ''),
                             visible: this.pipelineDataSource && this.pipelineDataSource.length
                         },
                         {
                             name: 'status',
                             action: this.toggleStatus.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups)                                
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')                                
                         },
                         {
                             name: 'partnerType',
@@ -555,15 +555,17 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
 
     updateActiveGroups() {
         if (this.contactGroups) {
-            this.statuses = this.contactGroups.map(group => {
-                return {
-                    id: group.id,
-                    groupId: group.id,
-                    name: this.contactGroupKeys[group.id],
-                    displayName: this.l(this.contactGroupKeys[group.id]),
-                    isActive: this.contactInfo.groups.some(cg => cg.groupId == group.id && cg.isActive),
-                    disabled: !this.permission.getCGPermissionKey([group.id], 'Manage')
-                };
+            this.statuses = [];
+            this.contactGroups.forEach(group => {
+                if (this.permission.checkCGPermission([group.id], ''))
+                    this.statuses.push(<GroupStatus>{
+                        id: group.id,
+                        groupId: group.id,
+                        name: this.contactGroupKeys[group.id],
+                        displayName: this.l(this.contactGroupKeys[group.id]),
+                        isActive: this.contactInfo.groups.some(cg => cg.groupId == group.id && cg.isActive),
+                        disabled: !this.permission.checkCGPermission([group.id], 'Manage')
+                    });
             });
 
             this.activeGroupIds = this.statuses.filter(

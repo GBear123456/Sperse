@@ -12,4 +12,5 @@ export interface GroupStatus {
     name?: string;
     displayName?: string;
     isActive: boolean;
+    disabled: boolean;
 }
