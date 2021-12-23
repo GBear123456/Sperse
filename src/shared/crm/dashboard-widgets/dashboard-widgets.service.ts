@@ -40,7 +40,7 @@ export class DashboardWidgetsService  {
     );
     private totalsDataLoading: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
     totalsDataLoading$: Observable<boolean> = this.totalsDataLoading.asObservable();
-    private isGrantedCustomers = this.permissionService.isGranted(AppPermissions.CRMCustomers);
+    private isAnyCGGranted = !!this.permissionService.getFirstAvailableCG();
     totalsDataFields = [
         {
             title: 'Sales',
@@ -48,7 +48,7 @@ export class DashboardWidgetsService  {
             name: 'totalOrderAmount',
             type: 'currency',
             percent:  '0%',
-            visible: this.isGrantedCustomers ||
+            visible: this.isAnyCGGranted ||
                 this.permissionService.isGranted(AppPermissions.CRMOrders)
         }, {
             title: 'Leads',
@@ -56,22 +56,22 @@ export class DashboardWidgetsService  {
             name: 'totalLeadCount',
             type: 'number',
             percent: '0%',
-            visible: this.isGrantedCustomers
+            visible: this.isAnyCGGranted
        }, {
            title: 'Clients',
            color: this.layoutService.getLayoutColor('totalClients'),
            name: 'totalClientCount',
            type: 'number',
            percent: '0%',
-           visible: this.isGrantedCustomers
+           visible: this.isAnyCGGranted
        }];
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     refresh$: Observable<null> = this._refresh.asObservable();
     private _contactId: BehaviorSubject<number> = new BehaviorSubject<number>(undefined);
     contactId$: Observable<number> = this._contactId.asObservable();
-    private _contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject<ContactGroup>(ContactGroup.Client);
+    private _contactGroupId: BehaviorSubject<ContactGroup> = new BehaviorSubject<ContactGroup>(this.permissionService.getFirstAvailableCG());
     contactGroupId$: Observable<ContactGroup> = this._contactGroupId.asObservable().pipe(
-        map((value:ContactGroup) => value || ContactGroup.Client), distinctUntilChanged());
+        map((value: ContactGroup) => value || this.permissionService.getFirstAvailableCG()), distinctUntilChanged());
     private _sourceOrgUnitIds: BehaviorSubject<number[]> = new BehaviorSubject<number[]>([]);
     sourceOrgUnitIds$: Observable<number[]> = this._sourceOrgUnitIds.asObservable();
 

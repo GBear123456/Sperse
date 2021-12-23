@@ -105,6 +105,7 @@ import { UpdateCommissionRateDialogComponent } from '@app/crm/commission-history
 import { EditTypeItemDialogComponent } from '@app/crm/shared/types-dropdown/edit-type-item-dialog/edit-type-item-dialog.component';
 import { TenantSettingsWizardModule } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.module';
 import { ProductsComponent } from './products/products.component';
+import { CrmContactGroupGuard } from './crm-contact-group-guard';
 
 @NgModule({
     imports: [
@@ -206,6 +207,7 @@ import { ProductsComponent } from './products/products.component';
         DataSourceService,
         LeftMenuService,
         CalendarService,
+        CrmContactGroupGuard,
         { provide: 'leftMenuCollapsed', useValue: AppConsts.isMobile },
         { provide: 'showGlobalSearch', useValue: true }
     ],

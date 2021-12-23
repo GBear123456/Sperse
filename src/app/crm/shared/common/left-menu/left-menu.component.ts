@@ -1,5 +1,5 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Output, Input, EventEmitter, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Output, Input, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material';
@@ -15,6 +15,8 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
 import { AppFeatures } from '@shared/AppFeatures';
 import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-wizard.component';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { ContactGroup } from '@shared/AppEnums';
 
 @Component({
     templateUrl: './left-menu.component.html',
@@ -25,6 +27,7 @@ import { TenantSettingsWizardComponent } from '@shared/common/tenant-settings-wi
 export class LeftMenuComponent implements OnInit {
     @Input() selectedItemIndex: number;
     @Input() showIntroductionTour = false;
+    @Input() currentContactGroup: ContactGroup;
     @Output() openIntro: EventEmitter<any> = new EventEmitter();
     @Output() openPaymentWizard: EventEmitter<any> = new EventEmitter();
     get showIntroTour(): boolean {
@@ -32,16 +35,23 @@ export class LeftMenuComponent implements OnInit {
         return !tenant || !tenant.customLayoutType || tenant.customLayoutType == LayoutType.Default;
     }
     leftMenuItems: LeftMenuItem[];
+
     constructor(
         private appSessionService: AppSessionService,
         private permission: PermissionCheckerService,
+        private permissionChecker: AppPermissionService,
         private feature: FeatureCheckerService,
         private dialog: MatDialog,
         public appService: AppService,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        private changeDetector: ChangeDetectorRef,
     ) {}
 
     ngOnInit() {
+        this.initMenuItems();
+    }
+
+    initMenuItems() {
         this.leftMenuItems = [
             {
                 caption: this.ls.l('CRMDashboardMenu_ManageClients'),
@@ -50,11 +60,13 @@ export class LeftMenuComponent implements OnInit {
                 visible: this.permission.isGranted(AppPermissions.CRMCustomers),
                 iconSrc: 'assets/common/icons/person.svg'
             },
-            {
+            {       
                 caption: this.ls.l('CRMDashboardMenu_ManageLeads'),
                 component: '/leads',
-                showPlus: true,
-                visible: this.permission.isGranted(AppPermissions.CRMCustomers),
+                showPlus: this.currentContactGroup ? 
+                    this.permissionChecker.checkCGPermission([this.currentContactGroup]) :
+                    !!this.permissionChecker.getFirstManageCG(),
+                visible: !!this.permissionChecker.getFirstAvailableCG(),
                 iconSrc: 'assets/common/icons/setup-chart.svg'
             },
             {
@@ -100,6 +112,7 @@ export class LeftMenuComponent implements OnInit {
                 iconSrc: './assets/common/icons/folder.svg'
             }
         ];
+        this.changeDetector.detectChanges();
     }
 
     openProfileTenantSettingsDialog() {
