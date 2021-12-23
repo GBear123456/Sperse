@@ -27,7 +27,8 @@ import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignmen
 import { RatingComponent } from '@app/shared/common/lists/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-import { ContactInfoDto, LayoutType, UserServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactInfoDto, LayoutType, UserServiceProxy, 
+    ContactServiceProxy, ContactGroupDto } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -137,7 +138,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     statuses: GroupStatus[];
     activeGroupIds: string[];
     contactGroupKeys = invert(ContactGroup);
-    
+    contactGroups: ContactGroupDto[];
+
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
@@ -149,6 +151,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         private impersonationService: ImpersonationService,
         private crmService: CrmService,
         private userManagementService: UserManagementService,
+        private contactProxy: ContactServiceProxy,
         private renderer: Renderer2
     ) {
         super(injector);
@@ -163,6 +166,12 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
 
             this.initToolbarConfig();
         });
+        this.contactProxy.getContactGroups().subscribe(
+            (res: ContactGroupDto[]) => {
+                this.contactGroups = res;
+                this.updateActiveGroups();
+            }
+        );
     }
 
     ngAfterViewInit() {
@@ -181,18 +190,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     ngOnChanges(changes: SimpleChanges) {
         /** Load users instance (or get from cache) for user id to find out whether to show cfo or verify button */
         if (changes.contactInfo && this.contactInfo.groups) {
-            this.statuses = this.contactInfo.groups.map(group => {
-                if (this.permission.getCGPermissionKey([group.groupId], 'Manage'))
-                    return {
-                        id: group.groupId,
-                        groupId: group.groupId,
-                        name: this.contactGroupKeys[group.groupId],
-                        displayName: this.l(this.contactGroupKeys[group.groupId]),
-                        isActive: group.isActive
-                    };
-            }).filter(Boolean);
-
-            this.updateActiveGroup();
+            this.updateActiveGroups();
 
             if (this.contactInfo.groups.some(group => group.groupId == ContactGroup.Client) && 
                 this.appService.isCfoLinkOrVerifyEnabled
@@ -555,10 +553,23 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         }
     }
 
-    updateActiveGroup() {
-        this.activeGroupIds = this.statuses.filter(
-            status => status.isActive
-        ).map(status => status.id);
+    updateActiveGroups() {
+        if (this.contactGroups) {
+            this.statuses = this.contactGroups.map(group => {
+                return {
+                    id: group.id,
+                    groupId: group.id,
+                    name: this.contactGroupKeys[group.id],
+                    displayName: this.l(this.contactGroupKeys[group.id]),
+                    isActive: this.contactInfo.groups.some(cg => cg.groupId == group.id && cg.isActive),
+                    disabled: !this.permission.getCGPermissionKey([group.id], 'Manage')
+                };
+            });
+
+            this.activeGroupIds = this.statuses.filter(
+                status => status.isActive
+            ).map(status => status.id);
+        }
     }
 
     updateStage(event) {

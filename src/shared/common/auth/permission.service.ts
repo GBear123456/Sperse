@@ -39,8 +39,7 @@ export class AppPermissionService {
             contactGroups.filter(Boolean).forEach(group => {
                 groups.push(<ContactGroup>(group['groupId'] || group));
             });
-            return this.permissionChecker.isGranted(
-                this.getCGPermissionKey(groups , permission) as AppPermissions);
+            return this.isGranted(this.getCGPermissionKey(groups , permission));
         }
         return false;
     }

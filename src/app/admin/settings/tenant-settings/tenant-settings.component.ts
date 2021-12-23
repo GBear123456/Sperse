@@ -83,7 +83,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFM) && abp.features.isEnabled(AppFeatures.PFMApplications);
-    isRapidTenantLayout: boolean = this.appSession.tenant.customLayoutType == LayoutType.Rapid;
+    isRapidTenantLayout: boolean = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.Rapid;
     isPerformancePartner: boolean = this.appSession.isPerformancePartnerTenant;
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
