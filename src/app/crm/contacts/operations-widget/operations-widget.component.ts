@@ -542,6 +542,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 return;
             elm.isActive = true;
             this.onUpdateStatus.emit(elm);
+            this.statusComponent.tooltipVisible = false;
         }
 
         if (event.removedItems.length) {
@@ -549,11 +550,12 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
             if (this.activeGroupIds.some(id => id == elm.id)) {
                 elm.isActive = false;
                 this.onUpdateStatus.emit(elm);
+                this.statusComponent.tooltipVisible = false;
             }
         }
     }
 
-    updateActiveGroups() {
+    updateActiveGroups(status?: GroupStatus) {
         if (this.contactGroups) {
             this.statuses = [];
             this.contactGroups.forEach(group => {
@@ -563,7 +565,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         groupId: group.id,
                         name: this.contactGroupKeys[group.id],
                         displayName: this.l(this.contactGroupKeys[group.id]),
-                        isActive: this.contactInfo.groups.some(cg => cg.groupId == group.id && cg.isActive),
+                        isActive: status && status.groupId == group.id ? status.isActive : 
+                            this.contactInfo.groups.some(cg => cg.groupId == group.id && cg.isActive),
                         disabled: !this.permission.checkCGPermission([group.id], 'Manage')
                     });
             });
