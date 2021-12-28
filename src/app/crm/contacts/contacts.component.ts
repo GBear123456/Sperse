@@ -644,31 +644,33 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         let contactInfo = this.contactService['data'].contactInfo,
             leadInfo = this.contactService['data'].leadInfo;
         if ((contactInfo && (!leadInfo || !this.leadInfo || this.leadInfo.id != leadInfo.id)) || lastLeadCallback) {
-            !lastLeadCallback && this.startLoading(true);
-            let leadId = leadInfo && leadInfo.id,
-                leadInfo$ = leadId && !lastLeadCallback ? 
-                    this.leadService.getLeadInfo(leadId) :
-                    this.leadService.getLastLeadInfo(
-                        this.contactGroupId.value, contactInfo.id
-                    );
+            this.contactGroupId$.pipe(filter(Boolean), first()).subscribe((contactGroupId: string) => {
+                !lastLeadCallback && this.startLoading(true);
+                let leadId = leadInfo && leadInfo.id,
+                    leadInfo$ = leadId && !lastLeadCallback ? 
+                        this.leadService.getLeadInfo(leadId) :
+                        this.leadService.getLastLeadInfo(
+                            contactGroupId, contactInfo.id
+                        );
 
-            let successCallback = (result: LeadInfoDto) => {
-                this.fillLeadDetails(result);
-                this.appHttpConfiguration.avoidErrorHandling = false;
-                lastLeadCallback && lastLeadCallback();
-            };
+                let successCallback = (result: LeadInfoDto) => {
+                    this.fillLeadDetails(result);
+                    this.appHttpConfiguration.avoidErrorHandling = false;
+                    lastLeadCallback && lastLeadCallback();
+                };
 
-            this.appHttpConfiguration.avoidErrorHandling = true;
-            leadInfo$.pipe(finalize(() => {
-                this.finishLoading(true);
-            })).subscribe(successCallback, error => {
-                this.appHttpConfiguration.avoidErrorHandling = false;
-                if (error.code == 404)
-                    this.leadService.getLastLeadInfo(
-                        this.contactGroupId.value, contactInfo.id
-                    ).subscribe(successCallback);
-                else
-                    this.notify.error(error.message);
+                this.appHttpConfiguration.avoidErrorHandling = true;
+                leadInfo$.pipe(finalize(() => {
+                    this.finishLoading(true);
+                })).subscribe(successCallback, error => {
+                    this.appHttpConfiguration.avoidErrorHandling = false;
+                    if (error.code == 404)
+                        this.leadService.getLastLeadInfo(
+                            contactGroupId, contactInfo.id
+                        ).subscribe(successCallback);
+                    else
+                        this.notify.error(error.message);
+                });
             });
         } else
             this.contactsService.leadInfoUpdate({

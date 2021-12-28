@@ -556,7 +556,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     }
 
     updateActiveGroups(status?: GroupStatus) {
-        if (this.contactGroups && this.contactInfo) {
+        if (this.contactGroups && this.contactInfo && this.contactInfo.groups) {
             this.statuses = [];
             this.contactGroups.forEach(group => {
                 if (this.permission.checkCGPermission([group.id], ''))
