@@ -5,7 +5,7 @@ import { ContactStatus } from '@shared/AppEnums';
 export class FilterContactStatusModel extends FilterItemModel {
     includeActive: boolean = true;
     includeInActive: boolean = false;
-    includeProspective: number = 0;
+    includeProspective: number = 1;
 
     activeSubFilter = [{
         text: this.ls.l('IncludeProspective'),
