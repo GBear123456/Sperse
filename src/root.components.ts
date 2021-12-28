@@ -49,11 +49,10 @@ export class RootComponent implements OnInit, AfterViewInit {
         //tenant specific custom css
         let tenant = this.SS.tenant;
         if (tenant) {
-            if (abp.session.userId && tenant.loginCustomCssId || tenant.customCssId) {
-                let customCssPath = AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + 
-                    (abp.session.userId ? tenant.customCssId : tenant.loginCustomCssId) + '/' + tenant.id;
-                this.addStyleSheet(`${CustomCssType.Platform}CustomCss`, customCssPath);
-            }
+            let customCss = abp.session.userId ? tenant.customCssId : tenant.loginCustomCssId;
+            if (customCss)
+                this.addStyleSheet(`${CustomCssType.Platform}CustomCss`, AppConsts.remoteServiceBaseUrl + 
+                    '/api/TenantCustomization/GetCustomCss/' + customCss + '/' + tenant.id);
 
             if (tenant.customLayoutType && tenant.customLayoutType !== LayoutType.Default) {
                 let layoutName = kebabCase(tenant.customLayoutType);
