@@ -126,7 +126,6 @@ export class GlobalSearchComponent implements OnInit {
     private getClientsGroup(search: string): Observable<GlobalSearchGroup> {
         return this.getGlobalSearchGroup(
             this.oDataService.getODataUrl('Contact', [
-                { 'StatusId': { 'eq': 'A' }},
                 { 'ParentId': { 'eq': null }}
             ]),
             this.ls.l('Customers'),
@@ -139,14 +138,13 @@ export class GlobalSearchComponent implements OnInit {
                 ClientFields.Email,
                 ClientFields.PhotoPublicId
             ],
-            { contactGroupId: ContactGroup.Client }
+            { contactGroupId: ContactGroup.Client, isActive: 'true' }
         );
     }
 
     private getPartnersGroup(search: string): Observable<GlobalSearchGroup> {
         return this.getGlobalSearchGroup(
             this.oDataService.getODataUrl('Contact', [
-                { 'StatusId': { 'eq': 'A' }},
                 { 'ParentId': { 'eq': null }}
             ]),
             this.ls.l('Partners'),
@@ -159,7 +157,7 @@ export class GlobalSearchComponent implements OnInit {
                 PartnerFields.Email,
                 PartnerFields.PhotoPublicId
             ],
-            { contactGroupId: ContactGroup.Partner }
+            { contactGroupId: ContactGroup.Partner, isActive: 'true' }
         );
     }
 
