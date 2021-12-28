@@ -423,7 +423,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     action: () => {
                         this.contactService.deleteContact(
                             this.actionEvent.Name,
-                            ContactGroup.Client,
+                            [ContactGroup.Client],
                             (this.actionEvent.data || this.actionEvent).Id,
                             () => this.refresh()
                         );
@@ -1340,7 +1340,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                             const client =  clients[0];
                                             this.contactService.deleteContact(
                                                 client.Name,
-                                                ContactGroup.Client,
+                                                [ContactGroup.Client],
                                                 client.Id,
                                                 () => {
                                                     this.refresh();
