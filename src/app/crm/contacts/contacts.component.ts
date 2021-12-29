@@ -448,8 +448,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     private getContactGroupId(contactInfo: ContactInfoDto): string {
         let contactGroupId = this.contactsService.getContactGroupId(this.queryParams);
-        if (contactGroupId)
+        if (contactGroupId && contactInfo.groups.some(group => group.groupId == contactGroupId)) {
             return contactGroupId;
+        }
         let group = contactInfo.groups.filter(group => group.isActive).shift() || 
             contactInfo.groups.filter(group => group.isProspective).shift();
 
