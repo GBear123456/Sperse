@@ -221,7 +221,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             ([contactInfo, propertyId, manageAllowed]: [ContactInfoDto, number, boolean]) => {
                 this.addContextMenuItems = this.getDefaultContextMenuItems(manageAllowed, !!propertyId)
                     .filter((menuItem: ContextMenuItem) => {
-                        return contactInfo.groups.some(group => menuItem.contactGroups.indexOf(group.groupId) >= 0);
+                        return contactInfo.groups && contactInfo.groups.some(
+                            group => menuItem.contactGroups.indexOf(group.groupId) >= 0);
                     });
                 this.addOptionsInit();
             }

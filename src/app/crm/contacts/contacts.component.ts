@@ -643,6 +643,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     loadLeadData(personContactInfo?: PersonContactInfoDto, lastLeadCallback?) {
         let contactInfo = this.contactService['data'].contactInfo,
             leadInfo = this.contactService['data'].leadInfo;
+
+        if (contactInfo && (!contactInfo.hasOwnProperty('parentId') || contactInfo.parentId))
+            return this.fillLeadDetails(new LeadInfoDto());
+
         if ((contactInfo && (!leadInfo || !this.leadInfo || this.leadInfo.id != leadInfo.id)) || lastLeadCallback) {
             this.contactGroupId$.pipe(filter(Boolean), first()).subscribe((contactGroupId: string) => {
                 !lastLeadCallback && this.startLoading(true);
@@ -655,15 +659,14 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
                 let successCallback = (result: LeadInfoDto) => {
                     this.fillLeadDetails(result);
-                    this.appHttpConfiguration.avoidErrorHandling = false;
                     lastLeadCallback && lastLeadCallback();
                 };
 
                 this.appHttpConfiguration.avoidErrorHandling = true;
                 leadInfo$.pipe(finalize(() => {
+                    this.appHttpConfiguration.avoidErrorHandling = false;
                     this.finishLoading(true);
                 })).subscribe(successCallback, error => {
-                    this.appHttpConfiguration.avoidErrorHandling = false;
                     if (error.code == 404)
                         this.leadService.getLastLeadInfo(
                             contactGroupId, contactInfo.id
