@@ -67,7 +67,6 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
         DxDataGridDirective,
         ConditionsModalComponent,
         NoDataModule,
-        InlineSVGModule,
         GhostListModule,
         DateTimePipe
     ],
@@ -77,6 +76,7 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
         NoDataModule,
         RouterModule,
         FormsModule,
+        InlineSVGModule,
         CountryPhoneNumberModule,
         MatProgressBarModule,
         MatDialogModule,
@@ -91,6 +91,7 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
         BulkProgressDialogComponent
     ],
     providers: [
+        InlineSVGConfig,
         AppUrlService,
         CellsCopyingService,
         CacheHelper,

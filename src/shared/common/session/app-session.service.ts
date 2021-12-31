@@ -117,7 +117,7 @@ export class AppSessionService {
                 this._application = result.application;
                 this._user = result.user;
                 this._tenant = result.tenant;
-
+console.log(result);
                 if (this.featureService.isEnabled(AppFeatures.AdminCustomizations))
                     this.tenantHostProxy.getMemberPortalUrl().subscribe(res => {
                         AppConsts.appMemberPortalUrl = res.url;
@@ -126,12 +126,17 @@ export class AppSessionService {
                 resolve(true);
             };
             let generalInfo = window['generalInfo'];
+console.log('INIT');
             if (generalInfo && generalInfo.loginInfo)
                 updateLoginInfo(generalInfo.loginInfo);
-            else
+            else {
+console.log('START');
+
                 this.sessionService.getCurrentLoginInformations().subscribe(updateLoginInfo.bind(this), (err) => {
+console.log('ERROR');
                     reject(err);
                 });
+            }
         });
     }
 

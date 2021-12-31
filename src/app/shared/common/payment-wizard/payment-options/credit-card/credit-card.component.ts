@@ -4,7 +4,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
-import { CreditCardValidator } from 'angular-cc-library';
+import { CreditCardValidators } from 'angular-cc-library';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import * as _ from 'underscore';
@@ -44,7 +44,7 @@ export class CreditCardComponent implements OnInit {
 
     creditCardData = this.formBuilder.group({
         holderName: ['', [<any>Validators.required]],
-        cardNumber: ['', [<any>CreditCardValidator.validateCCNumber]],
+        cardNumber: ['', [<any>CreditCardValidators.validateCCNumber]],
         expirationMonth: ['', [<any>Validators.required]],
         expirationYear: ['', [<any>Validators.required]],
         cvv: ['', [<any>Validators.required, <any>Validators.minLength(3), <any>Validators.maxLength(4)]],

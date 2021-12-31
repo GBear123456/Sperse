@@ -40,6 +40,8 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+return super.intercept(request, next);
+console.log(request);
         if (request.urlWithParams && request.urlWithParams.length > 2048) {
             this.message.error('Too long request');
             return throwError('Too long request');

@@ -4363,7 +4363,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         dataGrid.endUpdate();
         this.changeTransactionGridEditMode = true;
 
-        let data: CashFlowStatsDetailDto = e.data;
+        let data: any = e.data;
 
         data.id = -1;
         data.forecastId = -1;

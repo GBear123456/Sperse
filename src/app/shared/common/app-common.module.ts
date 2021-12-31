@@ -51,7 +51,7 @@ import { PaginatorModule } from 'primeng/primeng';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { PapaParseModule } from 'ngx-papaparse';
-import { ImageCropperModule } from 'ng2-img-cropper';
+import { ImageCropperModule } from 'ngx-image-cropper';
 import { CreditCardDirectivesModule } from 'angular-cc-library';
 import { TimeAgoPipe } from 'time-ago-pipe';
 
@@ -211,7 +211,7 @@ import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.mo
         ConfirmDialogComponent,
         StarsListComponent,
         LeftMenuComponent,
-        CalendarButtonComponent
+        CalendarButtonComponent        
     ],
     providers: [
         ImportWizardService

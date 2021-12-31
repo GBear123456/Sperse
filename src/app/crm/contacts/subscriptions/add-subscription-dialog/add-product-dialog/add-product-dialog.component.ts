@@ -40,8 +40,7 @@ import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angula
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
-import { SettingService } from 'abp-ng2-module';
-import { FeatureCheckerService } from 'abp-ng2-module';
+import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
@@ -202,6 +201,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
                     this.dialogRef.close(new ProductDto({
                         id: res.productId,
+                        group: this.product.groupName,
                         name: this.product.name,
                         code: this.product.code,
                         paymentPeriodTypes: this.product.productSubscriptionOptions &&
