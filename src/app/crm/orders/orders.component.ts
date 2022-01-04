@@ -596,6 +596,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ).pipe(
         takeUntil(this.destroy$),
         switchMap(this.waitUntilOrderType(OrderType.Subscription)),
+        filter(() => this.subscriptionsDataLayoutType === DataLayoutType.DataGrid),
         map(([oDataRequestValues,]: [ODataRequestValues,]) => {
             return this.getODataUrl(
                 this.subscriptionGroupDataSourceURI,
@@ -611,6 +612,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             { 'selector': 'OrderAmount', 'summaryType': 'sum' },
                             { 'selector': 'Fee', 'summaryType': 'sum' }
                         ])
+                    },
+                    {
+                        name: 'take',
+                        value: 1
+                    },
+                    {
+                        name: 'select',
+                        value: '["Id"]'
                     }
                 ]
             );
