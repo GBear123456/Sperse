@@ -4,18 +4,20 @@
               [editTitle]="false"
               (onContextItemChanged)="save()">
     <ng-container headerContent>
-        <dx-select-box #templateSelector
+        <dx-select-box  #templateSelector
             name="template"
             width="380px"
             height="40px"
             displayExpr="name"
             valueExpr="id"
-            [placeholder]="ls.l('SelectTemplate')"            
+            [placeholder]="ls.l(data.addMode ? 'TemplateName' : 'SelectTemplate')"            
             [disabled]="templateEditMode && isManageUnallowed || onTemplateCreate.observers.length && !data.contact"
             [value]="data.templateId"
-            [showClearButton]="templateEditMode"
+            [showClearButton]="!data.addMode && templateEditMode"
             [dataSource]="templates$ | async"
             [acceptCustomValue]="templateEditMode && !isManageUnallowed"
+            [openOnFieldClick]="!data.addMode"
+            [showDropDownButton]="!data.addMode"
             itemTemplate="itemTemplate"
             (onOptionChanged)="onTemplateOptionChanged($event)"
             (onCustomItemCreating)="onNewTemplate($event)"
@@ -28,7 +30,7 @@
                 <i *ngIf="!isManageUnallowed" class="delete fa fa-times" [title]="ls.l('DeleteTemplate')" (click)="deleteTemplate($event, item, templateSelector)"></i>
             </div>
         </dx-select-box>
-        <div class="buttons" *ngIf="!isManageUnallowed && data.contact && onTemplateCreate.observers.length">
+        <div class="buttons" *ngIf="!data.addMode && !isManageUnallowed && data.contact && onTemplateCreate.observers.length">
             <i class="create-template" [title]="ls.l('CreateTemplate')" (click)="createTemplate()"></i>
             <i *ngIf="data.templateId" [title]="ls.l('EditTemplate')" class="edit-template fa fa-pencil" (click)="editTemplate(data)"></i>
         </div>
