@@ -406,7 +406,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             name: 'stage',
                             action: this.toggleStages.bind(this),
                             disabled: !this.permission.checkCGPermission(this.contactInfo.groups, ''),
-                            visible: this.pipelineDataSource && this.pipelineDataSource.length
+                            visible: this.pipelineDataSource && this.pipelineDataSource.length && !this.contactInfo.parentId
                         },
                         {
                             name: 'groups',

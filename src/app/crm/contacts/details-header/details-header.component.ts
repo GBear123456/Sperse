@@ -106,6 +106,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             && this.data['organizationContactInfo'].isUpdatable;
     }
 
+    @Input() contactGroupId: ContactGroup; 
+
     private contactInfo: BehaviorSubject<ContactInfoDto> = new BehaviorSubject<ContactInfoDto>(new ContactInfoDto());
     contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
 
@@ -570,7 +572,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             setTimeout(() => {
                 const dialogData: CreateEntityDialogData = {
                     parentId: this.data.id,
-                    customerType: this.contactGroups[0]
+                    customerType: this.contactGroupId
                 };
                 this.dialog.open(CreateEntityDialogComponent, {
                     panelClass: 'slider',

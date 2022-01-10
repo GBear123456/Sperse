@@ -414,9 +414,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             bankCodeSource: this.bankCode && this.bankCode !== '????' ? 'CRM' : null,
             leadTypeId: this.data.entityTypeId,
             isActive: this.statusId == ContactStatus.Active,
-            isProspective: this.data.isInLeadMode && !this.data.parentId
+            isProspective: !!this.data.isInLeadMode && !this.data.parentId
         };
-
         if (this.disallowMultipleItems) {
             dataObj.emailAddress = dataObj.emailAddresses[0];
             dataObj.phoneNumber = dataObj.phoneNumbers[0];

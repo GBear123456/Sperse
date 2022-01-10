@@ -501,7 +501,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             ...this.params,
             ...leadInfo
         });
-
         this.loadLeadsStages();
         this.storeInitialData();
     }
@@ -958,7 +957,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             return;
 
         let companyInfo = this.contactInfo['organizationContactInfo'];
-
         this.dialog.closeAll();
         const dialogData: CreateEntityDialogData = {
             parentId: isSubContact ? this.contactInfo.id : undefined,
@@ -995,6 +993,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     showParent() {
+        this.leadInfo = undefined;
         this.contactsService.updateLocation(this.contactInfo.parentId);
     }
 }
