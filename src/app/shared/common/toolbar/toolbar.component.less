@@ -413,7 +413,9 @@
                 }
             }
 
-            &[accesskey="status"], &[accesskey="stage"] {
+            &[accesskey="status"], 
+            &[accesskey="stage"],
+            &[accesskey="groups"] {
                 .dx-button-content {
                     text-align: left;
                     padding: 6px 20px 6px 11px;
@@ -441,6 +443,14 @@
                 .dx-button-content {
                     &::before {
                         content: 'Stage';
+                    }
+                }
+            }
+
+            &[accesskey="groups"] {
+                .dx-button-content {
+                    &::before {
+                        content: 'Groups';
                     }
                 }
             }
@@ -1108,7 +1118,9 @@
             }
         }
 
-        &[accesskey="status"], &[accesskey="stage"] {
+        &[accesskey="status"], 
+        &[accesskey="stage"],
+        &[accesskey="groups"] {
             .dx-button-content {
                 text-align: left;
                 padding: 6px 20px 6px 11px;
@@ -1136,6 +1148,14 @@
             .dx-button-content {
                 &::before {
                     content: 'Stage';
+                }
+            }
+        }
+
+        &[accesskey="groups"] {
+            .dx-button-content {
+                &::before {
+                    content: 'Groups';
                 }
             }
         }

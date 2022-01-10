@@ -409,7 +409,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             visible: this.pipelineDataSource && this.pipelineDataSource.length
                         },
                         {
-                            name: 'status',
+                            name: 'groups',
                             action: this.toggleStatus.bind(this),
                             disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')                                
                         },
