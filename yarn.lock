@@ -2088,10 +2088,12 @@ alphanum-sort@^1.0.2:
   resolved "https://registry.yarnpkg.com/alphanum-sort/-/alphanum-sort-1.0.2.tgz#97a1119649b211ad33691d9f9f486a8ec9fbe0a3"
   integrity sha1-l6ERlkmyEa0zaR2fn0hqjsn74KM=
 
-angular-cc-library@^1.2.4:
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/angular-cc-library/-/angular-cc-library-1.2.5.tgz#c3b4966b22f6ad8fa4fc02a4c5cb01b4c3095ec5"
-  integrity sha512-7Lz1DihbFghOe30UTufkx9J//MbG0wUjzMr9YJuej9/OyF4Z2pOP2yBRDWS0H5yXwNIc9xoOCjmZmABwLv1pxg==
+angular-cc-library@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/angular-cc-library/-/angular-cc-library-3.0.0.tgz#98fffe5172b34f413d5ae7e2cdf790840f75ca68"
+  integrity sha512-YgOIUEGEkV+JcbABR1FQDTys+MQx01h34Y+GXsseaEJ6a0cnlguRm2Vow/Nh4NP3m0ttRF1CWuDGWaNkneZI5w==
+  dependencies:
+    tslib "^2.1.0"
 
 angular-ide-loader@^0.9.12:
   version "0.9.13"
@@ -8170,7 +8172,7 @@ ng2-file-upload@^1.2.1:
   dependencies:
     tslib "^1.9.0"
 
-ng2-image-viewer@^3.0.0:
+ng2-image-viewer@^3.0.5:
   version "3.0.5"
   resolved "https://registry.yarnpkg.com/ng2-image-viewer/-/ng2-image-viewer-3.0.5.tgz#6684dc882a11e594386603be88b1ccfffbd27ba3"
   integrity sha512-VxNjNMCyjr+KGuGScgrWPCw+uzBdKrPRo2i4N/1VYnQn3haZcr8tIeUL4CXBnZGYC+0IjHRRLaI4kZFXqSxr1A==
@@ -8249,6 +8251,13 @@ ngx-google-places-autocomplete@^2.0.5:
   version "2.0.5"
   resolved "https://registry.yarnpkg.com/ngx-google-places-autocomplete/-/ngx-google-places-autocomplete-2.0.5.tgz#1e26b3fb236a0df22c1c65c05b601ca1d960b5d4"
   integrity sha512-TApaE+X/eaZBDduXvmOMsMC5FTWv3CmgbZ+Iv7NsnrBWJeonPF2SYMGs3vaydM3CY3Rch14/K94ecU0mfyRVWw==
+
+ngx-image-cropper@^5.0.1:
+  version "5.0.1"
+  resolved "https://registry.yarnpkg.com/ngx-image-cropper/-/ngx-image-cropper-5.0.1.tgz#b25650c43c49c67819fb02c053819e1a117683d0"
+  integrity sha512-WGfDJsYizOq3VE82JJkqjSjfvp+o2xrzsOwwm2rVtqNO64SvNJ8/PHP7ctkIjZmEkfjBfFE+eNZR82lLJJ+47w==
+  dependencies:
+    tslib "^2.0.0"
 
 ngx-mask@^7.0.1:
   version "7.9.10"
@@ -8521,10 +8530,10 @@ npmlog@^6.0.0:
     gauge "^4.0.0"
     set-blocking "^2.0.0"
 
-nswag@11.17.10:
-  version "11.17.10"
-  resolved "https://registry.yarnpkg.com/nswag/-/nswag-11.17.10.tgz#403beae9c23112c23a299b880475e3de7dc2a11c"
-  integrity sha1-QDvq6cIxEsI6KZuIBHXj3n3CoRw=
+nswag@^13.11.3:
+  version "13.15.5"
+  resolved "https://registry.yarnpkg.com/nswag/-/nswag-13.15.5.tgz#c14052c77adda0633907c0613fabb873e4daf5a6"
+  integrity sha512-1FHcyXME7YH9fYMkpr0DbU7tFz2mB+t6/nzFr8LkRonypwBBNaL++NVO1Gsi+r7hpV0b0QQqlP58JWHfRrbExQ==
 
 nth-check@^2.0.0:
   version "2.0.1"
@@ -11752,7 +11761,7 @@ tslib@^1.10.0, tslib@^1.13.0, tslib@^1.7.1, tslib@^1.8.1, tslib@^1.9.0:
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-1.14.1.tgz#cf2d38bdc34a134bcaf1091c41f6619e2f672d00"
   integrity sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==
 
-tslib@^2.0.0, tslib@^2.0.3, tslib@^2.2.0:
+tslib@^2.0.0, tslib@^2.0.3, tslib@^2.1.0, tslib@^2.2.0:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.3.1.tgz#e8a335add5ceae51aa261d32a490158ef042ef01"
   integrity sha512-77EbyPPpMz+FRFRuAFlWMtmgUWGe9UOG2Z25NqCwiIjRhOf5iKGuzSe5P2w1laq+FkRy4p+PCuVkJSGkzTEKVw==
