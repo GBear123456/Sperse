@@ -25,7 +25,6 @@ export const SubscriptionFields: KeysEnum<SubscriptionDto> = {
     OrderAmount: 'OrderAmount',
     SourceAffiliateCode: 'SourceAffiliateCode',
     SourceEntryUrl: 'SourceEntryUrl',
-    ContactGroupId: 'ContactGroupId',
     ContactXref: 'ContactXref',
     SourceOrganizationUnitId: 'SourceOrganizationUnitId'
 };
