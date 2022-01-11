@@ -31,6 +31,7 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { SubscriptionFields } from '@app/crm/orders/subscription-fields.enum';
+import { OrderType } from '@app/crm/orders/order-type.enum';
 import { ContactGroup } from '@shared/AppEnums';
 
 class CustomHttpParameterCodec implements HttpParameterCodec {
@@ -221,7 +222,9 @@ export class GlobalSearchComponent implements OnInit {
                 SubscriptionFields.PhotoPublicId,
                 SubscriptionFields.LeadId,
                 SubscriptionFields.ContactId
-            ]
+            ], null, {
+                orderType: OrderType.Subscription
+            }
         );
     }
 

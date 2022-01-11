@@ -606,11 +606,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             return this.http.get(
                 subscriptionSummaryUrl,
                 {
-                    params: new HttpParams({
+                    params: contactGroup ? new HttpParams({
                         fromObject: {
-                            'contactGroupId': contactGroup && contactGroup.toString()
+                            contactGroupId: contactGroup.toString()
                         }
-                    }),
+                    }) : undefined,
                     headers: new HttpHeaders({
                         'Authorization': 'Bearer ' + abp.auth.getToken()
                     })
