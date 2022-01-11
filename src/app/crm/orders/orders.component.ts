@@ -167,6 +167,26 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     );
     selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
     selectedContactGroup$: Observable<ContactGroup> = this.selectedContactGroup.asObservable();
+    contactGroupDataSource = Object.keys(ContactGroup).filter(
+        (group: string) => this.permission.checkCGPermission([ContactGroup[group]], '')
+    ).map((group: string) => ({
+        id: ContactGroup[group],
+        name: this.l('ContactGroup_' + group)
+    }));
+    private contactGroupFilter: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'ContactGroup',
+        field: this.orderFields.ContactGroupId,
+        hidden: true,
+        items: {
+            ContactGroupId: new FilterCheckBoxesModel({
+                selectedKeys$: this.selectedContactGroup$,
+                dataSource: this.contactGroupDataSource,
+                nameField: 'name',
+                keyExpr: 'id'
+            })
+        }
+    });
     private sourceFilter: FilterModel = new FilterModel({
         component: FilterSourceComponent,
         caption: 'Source',
@@ -178,6 +198,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     });
     private ordersFilters: FilterModel[] = [
+        this.contactGroupFilter,
         new FilterModel({
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
@@ -545,15 +566,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
         switchMap((totalUrl: string) => {
             this.totalCount = this.totalErrorMsg = undefined;
-            let contactGroup = this.selectedContactGroup.value;
             return this.http.get(
                 totalUrl,
                 {
-                    params: new HttpParams({
-                        fromObject: {
-                            'contactGroupId': contactGroup && contactGroup.toString()
-                        }
-                    }),
                     headers: new HttpHeaders({
                         'Authorization': 'Bearer ' + abp.auth.getToken()
                     })
@@ -890,14 +905,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
-                    request.params.contactGroupId = this.selectedContactGroup.value;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.params.$select = DataGridService.getSelectFields(
                         this.ordersGrid,
                         [
                             this.orderFields.Id,
                             this.orderFields.LeadId,
-                            this.orderFields.ContactId
+                            this.orderFields.ContactId,
+                            this.orderFields.ContactGroupId
                         ]
                     );
                 },
@@ -1508,6 +1523,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.filtersService.apply(() => {
             this.selectedOrderKeys = [];
             this.filterChanged = true;
+            this.contactGroupFilter.items.ContactGroupId.value = this.selectedContactGroup.value;
             this.processFilterInternal();
         });
     }

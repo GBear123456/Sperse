@@ -125,6 +125,9 @@
                                 <dxi-column [dataField]="orderFields.PersonalAffiliateCode" [caption]="l('ContactAffiliateCode')" [visible]="false"></dxi-column>
                                 <dxi-column [dataField]="orderFields.SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" [visible]="false"></dxi-column>
                                 <dxi-column [dataField]="orderFields.SourceEntryUrl" [width]="300" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>
+                                <dxi-column [dataField]="orderFields.ContactGroupId" [caption]="l('ContactGroup')" [visible]="false" >
+                                    <dxo-lookup [dataSource]="contactGroupDataSource" valueExpr="id" displayExpr="name"></dxo-lookup>
+                                </dxi-column>
                                 <dxo-sorting mode="multiple"></dxo-sorting>
                                 <dxo-group-panel [visible]="true"></dxo-group-panel>
                                 <dxo-paging [pageSize]="20" [enabled]="true" [pageIndex]="0"></dxo-paging>
@@ -169,9 +172,8 @@
                                 totalsURI="OrderCount"
                                 dragulaName="orderStages"
                                 [dataSource]="pipelineDataSource"
-                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId', 'Phone', 'Amount']"
+                                [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId', 'ContactGroupId', 'Phone', 'Amount']"
                                 dateField="OrderDate"
-                                [contactGroupId]="selectedContactGroup$ | async"
                                 [actionMenuGroups]="actionMenuGroups"
                                 [pipelinePurposeId]="pipelinePurposeId"
                                 [filterModelStages]="filterModelStages"
