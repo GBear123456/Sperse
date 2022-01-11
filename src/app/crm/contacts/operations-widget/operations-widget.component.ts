@@ -18,6 +18,7 @@ import { ActivatedRoute } from '@angular/router';
 import { Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
 import invert from 'lodash/invert';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { TagsListComponent } from '@app/shared/common/lists/tags-list/tags-list.component';
@@ -563,8 +564,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                     this.statuses.push(<GroupStatus>{
                         id: group.id,
                         groupId: group.id,
-                        name: this.contactGroupKeys[group.id],
-                        displayName: this.l(this.contactGroupKeys[group.id]),
+                        name: startCase(this.contactGroupKeys[group.id]),
                         isActive: status && status.groupId == group.id ? status.isActive : 
                             this.contactInfo.groups.some(cg => cg.groupId == group.id && cg.isActive),
                         disabled: !this.permission.checkCGPermission([group.id], 'Manage')

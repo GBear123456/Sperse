@@ -8,6 +8,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject, of, BehaviorSubject, Subscriber, forkJoin } from 'rxjs';
 import { filter, first, finalize, tap, switchMap, catchError, map, mapTo, distinctUntilChanged } from 'rxjs/operators';
 import invert from 'lodash/invert';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { ContactStatus } from '@root/shared/AppEnums';
@@ -793,7 +794,10 @@ export class ContactsService {
         return new Observable<any>((observer: Subscriber<any>) => {
             let contactGroupName: any = invert(ContactGroup);
             ContactsHelper.showConfirmMessage(
-                this.ls.l('ClientUpdateStatusWarningMessage', this.ls.l('ContactGroup_' + contactGroupName[<string>groupId])),
+                this.ls.l('ClientUpdateStatusWarningMessage', 
+                    this.ls.l((isActive ? '': 'un') + 'assign'), 
+                    startCase(contactGroupName[<string>groupId])
+                ),
                 (isConfirmed: boolean, [ notifyUser ]: boolean[]) => {
                     if (isConfirmed) {
                         this.updateStatusInternal(entityId, groupId, isActive, notifyUser, entity).subscribe(
