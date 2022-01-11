@@ -225,7 +225,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
             if (!this.contactInfo || !this.contactInfo.groups)
                 return ;
 
-            this.manageCGPermision = this.permission.getCGPermissionKey(this.contactInfo.groups, 'Manage');
+            this.manageCGPermision = this.permission.getCGPermissionKey(this.contactInfo.groups.map(group => group.groupId), 'Manage');
             if (this.customToolbarConfig)
                 return (this.toolbarConfig = this.customToolbarConfig);
 
