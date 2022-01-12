@@ -203,7 +203,9 @@ export class GlobalSearchComponent implements OnInit {
                 OrderFields.PhotoPublicId,
                 OrderFields.LeadId,
                 OrderFields.ContactId
-            ]
+            ],            
+            null,
+            { orderType: OrderType.Order }
         );
     }
 

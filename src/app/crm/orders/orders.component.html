@@ -269,7 +269,7 @@
                         {{cellData.value | datetime: formatting.dateMoment}}
                     </div>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
-                        <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
+                        <span *ngIf="cell.text >= 0"> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
                     </div>
                     <dxo-summary>
                         <dxo-texts sum="{0}"></dxo-texts>
