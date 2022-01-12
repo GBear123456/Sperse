@@ -447,7 +447,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private getContactGroupId(contactInfo: ContactInfoDto): string {
-        let contactGroupId = this.contactsService.getContactGroupId(this.queryParams);
+        let contactGroupId = this.contactsService.getContactGroupId(
+            (this._activatedRoute.queryParams as BehaviorSubject<any>).value
+        );
         if (contactGroupId && contactInfo.groups.some(group => group.groupId == contactGroupId)) {
             return contactGroupId;
         }
