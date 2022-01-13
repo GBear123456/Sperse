@@ -89,7 +89,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
         let tenant = this.sessionService.tenant,
             user = this.sessionService.user;
 
-        if (user && user.group != UserGroup.Member) {
+        if (user && !user.groups.some(group => group === UserGroup.Member)) {
             const lastModuleName = this.cacheService.get('lastVisitedModule_' + (tenant && tenant.id) + '_' + user.id);
             if (lastModuleName)
                 return 'app/' + lastModuleName;
