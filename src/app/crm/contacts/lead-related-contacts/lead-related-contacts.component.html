@@ -45,7 +45,7 @@
                 <dxi-column [dataField]="leadFields.CustomerId" [visible]="false"></dxi-column>
                 <dxi-column [dataField]="leadFields.LeadDate" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular" sortOrder="desc"></dxi-column>
                 <dxi-column [dataField]="leadFields.ContactGroupId" [caption]="ls.l('ContactGroup')" cellTemplate="contactGroupCell"></dxi-column>
-                <dxi-column [dataField]="leadFields.Stage" [caption]="ls.l('Stage')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column [dataField]="leadFields.Stage" [caption]="ls.l('Stage')"  cssClass="clipboard-holder"></dxi-column>
                 <dxi-column [dataField]="leadFields.SourceAffiliateCode" [caption]="ls.l('SourceAffiliateCode')" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column [dataField]="leadFields.SourceContactName" [caption]="ls.l('SourceContactName')" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column [dataField]="leadFields.SourceCampaignCode" [caption]="ls.l('CampaignCode')" cssClass="clipboard-holder"></dxi-column>
@@ -104,7 +104,7 @@
                 <dxi-column [dataField]="clientFields.Id" [visible]="false" sortOrder="desc"></dxi-column>
                 <dxi-column [dataField]="clientFields.Name" [caption]="ls.l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column [dataField]="clientFields.Email" [caption]="ls.l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column [dataField]="clientFields.Status" [caption]="ls.l('Status')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column [dataField]="clientFields.IsActive" [caption]="ls.l('Active')" dataType="boolean"></dxi-column>
                 <dxi-column [dataField]="clientFields.ContactDate" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular" sortOrder="desc"></dxi-column>
                 <ng-container *ngIf="tenantHasBankCodeFeature">
                     <dxi-column [dataField]="clientFields.BankCode"
@@ -171,7 +171,7 @@
                 <dxi-column [dataField]="clientFields.Id" [visible]="false" sortOrder="desc"></dxi-column>
                 <dxi-column [dataField]="clientFields.Name" [caption]="ls.l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column [dataField]="clientFields.Email" [caption]="ls.l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column [dataField]="clientFields.Status" [caption]="ls.l('Status')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column [dataField]="clientFields.IsActive" [caption]="ls.l('Active')" dataType="boolean"></dxi-column>
                 <dxi-column [dataField]="clientFields.ContactDate" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular" sortOrder="desc"></dxi-column>
                 <ng-container *ngIf="tenantHasBankCodeFeature">
                     <dxi-column [dataField]="clientFields.BankCode"

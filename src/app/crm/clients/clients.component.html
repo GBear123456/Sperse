@@ -163,8 +163,8 @@
                             </dxi-column>
                         </ng-container>
                         <dxi-column [dataField]="clientFields.AssignedUserName" [caption]="l('Contact.AssignedUserName')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column [dataField]="clientFields.Status" [caption]="l('Status')" cellTemplate="statusCell"></dxi-column>
-
+                        <dxi-column [dataField]="clientFields.IsActive" [caption]="l('Active')" dataType="boolean"></dxi-column>
+                        <dxi-column [dataField]="clientFields.IsProspective" [caption]="l('Prospective')" dataType="boolean" [visible]="false"></dxi-column>
                         <div *dxTemplate="let cellData of 'statusCell'">
                             <div [class]="'client-status ' + cellData.value | lowercase">
                                 {{cellData.value}}

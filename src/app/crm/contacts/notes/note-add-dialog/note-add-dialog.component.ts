@@ -89,7 +89,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
         filter(Boolean),
         switchMap((contactInfo: ContactInfoDto) => {
             return this.store$.pipe(
-                select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers)
+                select(ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers, {contactGroup: this.data.contactsService.contactGroupId.value })
             );
         })
     );

@@ -51,6 +51,7 @@ import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/life
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.service';
+import { LeftMenuComponent } from '../shared/common/left-menu/left-menu.component';
 
 @Component({
     templateUrl: './dashboard.component.html',
@@ -62,6 +63,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
 export class DashboardComponent implements AfterViewInit, OnInit {
     @ViewChild(ClientsByRegionComponent) clientsByRegion: ClientsByRegionComponent;
     @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
+    @ViewChild(LeftMenuComponent) leftMenu: LeftMenuComponent;
 
     private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable();
@@ -71,14 +73,31 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     showLoadingSpinner = true;
     private introAcceptedCacheKey: string = this.cacheHelper.getCacheKey('CRMIntro', 'IntroAccepted');
     dialogConfig = new MatDialogConfig();
-    isGrantedCustomers = this.permission.isGranted(AppPermissions.CRMCustomers);
     isGrantedOrders = this.permission.isGranted(AppPermissions.CRMOrders);
+    hasAnyCGPermission: boolean = !!this.permission.getFirstAvailableCG();
     hasCustomersPermission: boolean = this.permission.isGranted(AppPermissions.CRMCustomers);
     hasOrdersPermission: boolean = this.permission.isGranted(AppPermissions.CRMOrders);
     hasPermissionToAddClient: boolean = this.permission.isGranted(AppPermissions.CRMCustomersManage);
     localization = AppConsts.localization.CRMLocalizationSourceName;
     leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
 
+    filterModelContactGroup = new FilterModel({
+        caption: 'ContactGroup',
+        component: FilterRadioGroupComponent,
+        items: {
+            element: new FilterRadioGroupModel({
+                showFirstAsDefault: true,
+                value: this.permission.getFirstAvailableCG(),
+                list: Object.keys(ContactGroup).map(item => {
+                    if (this.permission.checkCGPermission([ContactGroup[item]], ''))
+                        return {
+                            id: ContactGroup[item],
+                            name: this.ls.l('ContactGroup_' + item)
+                        };
+                }).filter(Boolean)
+            })
+        }
+    });
     filterModelOrgUnit: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'SourceOrganizationUnitId',
@@ -148,23 +167,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
 
     private getFilters() {
         return [
-            new FilterModel({
-                caption: 'ContactGroup',
-                component: FilterRadioGroupComponent,
-                items: {
-                    element: new FilterRadioGroupModel({
-                        showFirstAsDefault: true,
-                        value: ContactGroup.Client,
-                        list: Object.keys(ContactGroup).map(item => {
-                            if (this.permission.checkCGPermission([ContactGroup[item]], ''))
-                                return {
-                                    id: ContactGroup[item],
-                                    name: this.ls.l('ContactGroup_' + item)
-                                };
-                        }).filter(Boolean)
-                    })
-                }
-            }),
+            this.filterModelContactGroup,
             this.filterModelOrgUnit,
             this.filterModelSource
         ];
@@ -192,6 +195,10 @@ export class DashboardComponent implements AfterViewInit, OnInit {
                     this.dashboardWidgetsService.setGroupIdForTotals(
                         filter.items.element.value || ContactGroup.Client);
             });
+
+            if (this.leftMenu) {
+                this.leftMenu.initMenuItems();
+            }
         });
     }
 
@@ -216,7 +223,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     private loadStatus() {
-        this.dashboardServiceProxy.getStatus(undefined, undefined).subscribe((status: GetCRMStatusOutput) => {
+        this.dashboardServiceProxy.getStatus(this.filterModelContactGroup.items.element.value.toString(), undefined).subscribe((status: GetCRMStatusOutput) => {
             this.showWelcomeSection.next(!status.hasData);
             this.showLoadingSpinner = false;
         });
@@ -262,8 +269,9 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         this.refreshTotalsBySource();
         this.initFilterConfig();
         this.ui.overflowHidden(true);
+        this.appService.isClientSearchDisabled = true;
         this.appService.toolbarIsHidden.next(true);
-        this.changeDetectorRef.detectChanges();
+        this.changeDetectorRef.markForCheck();
     }
 
     subscribeToRefreshParam() {
@@ -297,7 +305,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     deactivate() {
-        this.ui.overflowHidden();
+        this.ui.overflowHidden();        
         this.appService.toolbarIsHidden.next(false);
         this.lifeCycleSubject.deactivate.next();
         this.dialog.closeAll();

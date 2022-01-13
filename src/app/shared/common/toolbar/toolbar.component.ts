@@ -137,6 +137,11 @@ export class ToolBarComponent implements OnDestroy, OnInit {
                 hint: this.ls.l('Toolbar_Stage'),
                 icon: this.getImgURI('status-icon')
             },
+            groups: {
+                text: this.ls.l('Toolbar_Groups'),
+                hint: this.ls.l('Toolbar_Groups'),
+                icon: this.getImgURI('status-icon')
+            },
             partnerType: {
                 accessKey: 'PartnerType',
                 text: this.ls.l('Toolbar_Type'),

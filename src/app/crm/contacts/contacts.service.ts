@@ -6,11 +6,11 @@ import { Params, Router } from '@angular/router';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject, of, BehaviorSubject, Subscriber, forkJoin } from 'rxjs';
-import { filter, first, finalize, tap, switchMap, catchError,
-    map, mapTo, distinctUntilChanged, debounceTime } from 'rxjs/operators';
+import { filter, first, finalize, tap, switchMap, catchError, map, mapTo, distinctUntilChanged } from 'rxjs/operators';
+import invert from 'lodash/invert';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 import { ContactStatus } from '@root/shared/AppEnums';
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import { AddCompanyDialogComponent } from './add-company-dialog/add-company-dialog.component';
@@ -86,6 +86,7 @@ export class ContactsService {
     contactId$: Observable<number> = this.contactId.asObservable().pipe(
         filter((contactId: number) => !!contactId)
     );
+    contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);
     private organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>(1);
     organizationContactInfo$: Observable<OrganizationContactInfoDto> = this.organizationContactInfo.asObservable();
     private subscribers: any = {
@@ -105,7 +106,6 @@ export class ContactsService {
     next: Subject<any> = new Subject();
 
     constructor(injector: Injector,
-        private authService: AppAuthService,
         private contactProxy: ContactServiceProxy,
         private leadService: LeadServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
@@ -116,7 +116,6 @@ export class ContactsService {
         private notifyService: NotifyService,
         private ls: AppLocalizationService,
         private router: Router,
-        private location: Location,
         private cacheHelper: CacheHelper,
         private cacheService: CacheService,
         private contactPhotoServiceProxy: ContactPhotoServiceProxy,
@@ -671,7 +670,7 @@ export class ContactsService {
         });
     }
 
-    deleteContact(customerName, contactGroups, entityId, callback?, isLead = false, userId?) {
+    deleteContact(customerName, contactGroups: ContactGroup[], entityId, callback?, isLead = false, userId?) {
         let text = this.ls.l('LeadDeleteWarningMessage', customerName);
         let canForceDelete = this.permission.isGranted(AppPermissions.CRMForceDeleteEntites);
         if (isLead) {
@@ -689,7 +688,8 @@ export class ContactsService {
                 [ { text: this.ls.l('ForceDelete'), visible: canForceDelete, checked: false }]
             );
         } else {
-            let text = contactGroups.some(group => group.id == ContactGroup.Partner) ? this.ls.l('PartnerDeleteWarningMessage', customerName) : this.ls.l('ContactDeleteWarningMessage', customerName);
+            let text = contactGroups.some(group => group == ContactGroup.Partner) ? 
+                this.ls.l('PartnerDeleteWarningMessage', customerName) : this.ls.l('ContactDeleteWarningMessage', customerName);
             ContactsHelper.showConfirmMessage(
                 text,
                 (isConfirmed: boolean, [ forceDelete, notifyUser ]: boolean[]) => {
@@ -792,8 +792,12 @@ export class ContactsService {
 
     updateStatus(entityId: number, groupId: ContactGroup, isActive: boolean, entity: 'contact' | 'user' = 'contact'): Observable<any> {
         return new Observable<any>((observer: Subscriber<any>) => {
+            let contactGroupName: any = invert(ContactGroup);
             ContactsHelper.showConfirmMessage(
-                this.ls.l('ClientUpdateStatusWarningMessage'),
+                this.ls.l('ClientUpdateStatusWarningMessage', 
+                    this.ls.l((isActive ? '': 'un') + 'assign'), 
+                    startCase(contactGroupName[<string>groupId])
+                ),
                 (isConfirmed: boolean, [ notifyUser ]: boolean[]) => {
                     if (isConfirmed) {
                         this.updateStatusInternal(entityId, groupId, isActive, notifyUser, entity).subscribe(

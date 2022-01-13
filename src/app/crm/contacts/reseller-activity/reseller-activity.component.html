@@ -37,7 +37,7 @@
                 <dxi-column [dataField]="clientFields.Id" [visible]="false" sortOrder="desc"></dxi-column>
                 <dxi-column [dataField]="clientFields.Name" [caption]="ls.l('Customer.Name')" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column [dataField]="clientFields.Email" [caption]="ls.l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
-                <dxi-column [dataField]="clientFields.Status" [caption]="ls.l('Status')" cssClass="clipboard-holder"></dxi-column>
+                <dxi-column [dataField]="clientFields.IsActive" [caption]="ls.l('Active')" dataType="boolean"></dxi-column>
                 <dxi-column [dataField]="clientFields.ContactDate" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular" sortOrder="desc"></dxi-column>
 
                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">

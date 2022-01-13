@@ -179,7 +179,6 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                             this.clientFields.Id,
                             this.clientFields.Name,
                             this.clientFields.Email,
-                            this.clientFields.Status,
                             this.clientFields.ContactDate,
                             this.clientFields.BankCode,
                             this.clientFields.SourceContactId,
@@ -211,7 +210,6 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                             this.clientFields.Id,
                             this.clientFields.Name,
                             this.clientFields.Email,
-                            this.clientFields.Status,
                             this.clientFields.ContactDate,
                             this.clientFields.BankCode,
                             this.clientFields.ParentId,
@@ -312,7 +310,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         if (this.actionRecordData.CustomerId)
             this.contactsService.deleteContact(
                 this.data.contactInfo.personContactInfo.fullName,
-                this.data.contactInfo.groups, id,
+                this.data.contactInfo.groups.map(group => group.groupId), id,
                 () => {
                     this.itemDetailsService.clearItemsSource();
                     (this.reuseService as CustomReuseStrategy).invalidate('leads');

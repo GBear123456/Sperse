@@ -38,7 +38,7 @@ export class PivotGridComponent implements OnInit {
     @Output() onCellPrepared: EventEmitter<any> = new EventEmitter<any>();
     @Output() onContentReady: EventEmitter<any> = new EventEmitter<any>();
     @HostBinding('style.height')
-    public get  componentHeight(): string {
+    public get componentHeight(): string {
         return this.height + 'px';
     }
     @ViewChild(DxPivotGridComponent) dataGrid: DxPivotGridComponent;

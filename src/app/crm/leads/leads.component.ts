@@ -285,7 +285,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.Pipeline
     );
     private gridCompactView: BehaviorSubject<Boolean> = new BehaviorSubject(true);
-    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable().pipe(tap((layoutType) => {
+        this.appService.isClientSearchDisabled = layoutType != DataLayoutType.DataGrid;
+    }));
     showCompactView$: Observable<Boolean> = combineLatest(
         this.dataLayoutType$,
         this.pipelineService.compactView$,
@@ -1181,6 +1183,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
         if (!this.rowsViewHeight)
             this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
+
+        setTimeout(() => {
+            this.appService.isClientSearchDisabled = 
+                this.dataLayoutType.value == DataLayoutType.Pipeline;
+        });
     }
 
     refresh(invalidateDashboard: boolean = true) {
@@ -1425,8 +1432,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this.manageDisabled = !this.permission.checkCGPermission([this.selectedContactGroup]);
-        this.manageCGPermission = this.permission.getCGPermissionKey([this.selectedContactGroup], 'Manage');
+        if (this.selectedContactGroup) {
+            this.manageDisabled = !this.permission.checkCGPermission([this.selectedContactGroup]);
+            this.manageCGPermission = this.permission.getCGPermissionKey([this.selectedContactGroup], 'Manage');
+        }
         this.toolbarConfig = [
             {
                 location: 'before', items: [
@@ -1562,7 +1571,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                         this.contactService.mergeContact(
                                             this.selectedLeads[0],
                                             this.selectedLeads[1],
-                                            ContactGroup.Client,
+                                            this.selectedContactGroup,
                                             false,
                                             true,
                                             () => this.refresh(),
@@ -1857,8 +1866,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         ? this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
                         : context.dataGrid && context.dataGrid.instance;
                     if (this.showPipeline || dataGridInstance) {
-                        this.pipelineDataSource['total'] = this.pipelineDataSource['entities'] = 
-                        this.dataSource['total'] = this.dataSource['entities'] = undefined;
+                        if (this.pipelineDataSource)
+                            this.pipelineDataSource['total'] = this.pipelineDataSource['entities'] = undefined;
+                        if (this.dataSource)
+                            this.dataSource['total'] = this.dataSource['entities'] = undefined;
                         const filterQuery$: Observable<string> = context.processODataFilter.call(
                             context,
                             dataGridInstance,
@@ -2010,7 +2021,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             contactGroupId: this.selectedContactGroup,
                             dataLayoutType: this.dataLayoutType.value,
                             ...queryParams
-                        }}
+                        }
+                    }
                 );
             });
         });
@@ -2103,6 +2115,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initFilterConfig();
         this.initToolbarConfig();
         this.handleQueryParams();
+
         this.showHostElement(() => {
             this.repaintToolbar();
             this.pipelineComponent.detectChanges();
@@ -2216,7 +2229,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [LeadDto, LeadDto]) => {
-                this.contactService.mergeContact(source, target, ContactGroup.Client, false, true, () => this.refresh(), true);
+                this.contactService.mergeContact(source, target, this.selectedContactGroup, false, true, () => this.refresh(), true);
             });
         }
     }

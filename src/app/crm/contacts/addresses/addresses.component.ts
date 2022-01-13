@@ -57,8 +57,8 @@ export class AddressesComponent implements OnInit, OnDestroy {
     @Input() isCompany = false;
     @Input()
     set contactInfo(val: ContactInfoDto) {
-        if (this._contactInfo = val)
-            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groups);
+        if ((this._contactInfo = val) && val.groups)
+            this.isEditAllowed = this.permissionService.checkCGPermission(val.groups);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -327,13 +327,12 @@ export class AddressesComponent implements OnInit, OnDestroy {
                     filter(Boolean),
                     first()
                 ).subscribe(() => {
-                    if (this.countryName && this.streetNumber && this.stateName &&
-                        this.streetAddress && this.city &&
-                        ((this.countryName != address.countryName) ||
+                    if (((this.countryName != address.countryName) ||
                             (address.streetAddress != (this.streetAddress + ' ' + this.streetNumber)) ||
                             (this.neighborhood != address.neighborhood) ||
                             (this.city != address.city) ||
-                            (this.stateName != address.stateName))
+                            (this.stateName != address.stateName) ||
+                            (this.zip != address.zip))
                     ) {
                         this.onAddressUpdate.emit({
                             address: address,
@@ -348,9 +347,9 @@ export class AddressesComponent implements OnInit, OnDestroy {
                                 neighborhood: this.neighborhood,
                                 comment: address.comment,
                                 usageTypeId: address.usageTypeId,
-                                stateName: this.stateCode,
+                                stateName: this.stateName,
                                 stateId: this.statesService.getAdjustedStateCode(this.stateCode, this.stateName),
-                                zip: address.zip
+                                zip: this.zip
                             }
                         });
                         this.clearInplaceData();

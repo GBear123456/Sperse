@@ -2,9 +2,9 @@
 import {
     Directive,
     OnInit,
+    AfterViewInit,
     OnDestroy,
-    Renderer2,
-    ViewContainerRef
+    Renderer2
 } from '@angular/core';
 import { Location } from '@angular/common';
 
@@ -15,18 +15,23 @@ import { NotifyService } from 'abp-ng2-module';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
 import { on } from 'devextreme/events';
+import { map, filter } from 'rxjs/operators';
 
 /** Application imports */
+import { DomHelper } from '@shared/helpers/DomHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
+import { AppService } from '@app/app.service';
 
 @Directive({
     selector: 'dx-data-grid:not(.alone)'
 })
-export class DxDataGridDirective implements OnInit, OnDestroy {
+export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
+    uniqId = String(Math.random()).slice(-12);
 
     constructor(
+        private appService: AppService,
         private dateTimePipe: DateTimePipe,
         private renderer: Renderer2,
         private ls: AppLocalizationService,
@@ -34,7 +39,6 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
         private component: DxDataGridComponent,
         private clipboardService: ClipboardService,
         private cacheHelper: CacheHelper,
-        private viewContainerRef: ViewContainerRef,
         private location: Location
     ) {
         this.clipboardIcon = this.renderer.createElement('i');
@@ -45,6 +49,7 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
     private dateCheckTimeout;
     private subscriptions = [];
     private exporting = false;
+    private isMainComponentView = false;
     private copyToClipboard = (event) => {
         this.clipboardService.copyFromContent(event.target.parentNode.innerText.trim());
         this.notifyService.info(this.ls.l('SavedToClipboard'));
@@ -105,6 +110,9 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
                 }
             }),
             this.component.onContentReady.subscribe(event => {
+                if (DomHelper.isDomElementVisible(event.component.element()))
+                    this.appService.isClientSearchDisabled = !this.isMainComponentView;
+
                 let dataSource = event.component.getDataSource();
                 if (dataSource)
                     event.element.classList[dataSource.group()
@@ -149,6 +157,54 @@ export class DxDataGridDirective implements OnInit, OnDestroy {
                 this.exporting = false;
             })
         );
+    }
+
+    ngAfterViewInit() {
+        this.isMainComponentView = this.component.instance.element()
+            .classList.contains('main-component-view');
+        this.initClientSearch();
+    }
+
+    initClientSearch() {
+        let instance = this.component.instance,
+            element = this.component.instance.element();
+        if (this.isMainComponentView) {
+            element.classList.add(this.uniqId);
+            let initialRemoteOperations = instance.option('remoteOperations'),
+                initialDataSource = instance.option('dataSource'),
+                searchByTextTimeout, prevPhrase = '';
+            this.appService.clientSearchPhrase.pipe(map((phrase: string) => {
+                return document.getElementsByClassName(this.uniqId).length ? phrase || '' : '';
+            })).subscribe((phrase: string) => {
+                clearTimeout(searchByTextTimeout);
+                if (phrase != prevPhrase) {
+                    if (instance.option('dataSource') == initialDataSource) {
+                        if (!(initialDataSource instanceof Array))
+                            instance.option('dataSource', instance.getDataSource().items());
+                        instance.option('remoteOperations', '{filtering: false}');
+                    }
+                    searchByTextTimeout = setTimeout(() => {
+                        instance.searchByText(phrase);
+                    }, 100);
+                }
+                prevPhrase = phrase;
+            });
+            this.appService.clientSearchToggle.pipe(filter((isShowen: boolean) => {
+                return instance.option('dataSource') != initialDataSource;
+            })).subscribe((isShowen: boolean) => {
+                if (isShowen) {
+                    if (!initialDataSource) {
+                        initialRemoteOperations = instance.option('remoteOperations');
+                        initialDataSource = instance.option('dataSource');
+                    }
+                } else {
+                    instance.searchByText(prevPhrase = '');
+                    instance.option('remoteOperations', initialRemoteOperations);
+                    if (!(initialDataSource instanceof Array))
+                        instance.option('dataSource', initialDataSource);
+                }
+            });
+        }
     }
 
     initStateStoring() {

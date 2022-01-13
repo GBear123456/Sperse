@@ -97,10 +97,10 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
 
     private initialData: string;
 
-    public contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);
+    public contactGroupId: BehaviorSubject<string> = this.contactsService.contactGroupId;
     public contactGroupId$: Observable<string> = this.contactGroupId.asObservable().pipe(filter(Boolean)) as Observable<string>;
     isCommunicationHistoryAllowed$: Observable<boolean> = this.contactsService.contactInfo$.pipe(
-        map((contactInfo: ContactInfoDto) => this.permission.checkCGPermission(
+        map((contactInfo: ContactInfoDto) => contactInfo && this.permission.checkCGPermission(
             contactInfo.groups,
             'ViewCommunicationHistory'
         ))
@@ -173,7 +173,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             visible$: combineLatest(this.userId$, this.contactsService.contactInfo$).pipe(
                 map(([userId, contactInfo] : [number, ContactInfoDto]) => {
                     return userId ? this.permission.isGranted(AppPermissions.AdministrationUsersEdit)
-                        || this.permission.checkCGPermission(contactInfo.groups, 'UserInformation')
+                        || contactInfo && this.permission.checkCGPermission(contactInfo.groups, 'UserInformation')
                     : this.permission.isGranted(AppPermissions.AdministrationUsersCreate);
                 })
             ),
@@ -447,10 +447,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private getContactGroupId(contactInfo: ContactInfoDto): string {
-        let contactGroupId = this.contactsService.getContactGroupId(this.queryParams);
-        if (contactGroupId)
+        let contactGroupId = this.contactsService.getContactGroupId(
+            (this._activatedRoute.queryParams as BehaviorSubject<any>).value
+        );
+        if (contactGroupId && contactInfo.groups.some(group => group.groupId == contactGroupId)) {
             return contactGroupId;
-
+        }
         let group = contactInfo.groups.filter(group => group.isActive).shift() || 
             contactInfo.groups.filter(group => group.isProspective).shift();
 
@@ -458,13 +460,13 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private fillContactDetails(result: ContactInfoDto, contactId = null) {
-        this.checkUpdateToolbar();
         this.contactService['data'].contactInfo = result;
         this.contactsService.contactInfoUpdate(result);
         this.contactGroupId.next(this.getContactGroupId(result));
         this.manageAllowed = this.permission.checkCGPermission(result.groups);
         this.assignedUsersSelector = select(
-            ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers
+            ContactAssignedUsersStoreSelectors.getContactGroupAssignedUsers,
+            { contactGroup: this.contactGroupId.value }
         );
         contactId = contactId || result.personContactInfo.id;
         if (result['organizationContactInfo'] && result['organizationContactInfo'].contactPersons) {
@@ -490,6 +492,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             this.userService['data'].userId = this.primaryContact.userId
         );
         this.initContextTypeByRoute();
+        this.checkUpdateToolbar();
         this.storeInitialData();
     }
 
@@ -500,7 +503,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             ...this.params,
             ...leadInfo
         });
-
         this.loadLeadsStages();
         this.storeInitialData();
     }
@@ -619,8 +621,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     this.finishLoading(true);
                 }),
                 switchMap((result: ContactInfoDto) => {
-                    this.loadLeadData(result.personContactInfo);
                     this.fillContactDetails(result);
+                    this.loadLeadData(result.personContactInfo);
                     if (leadId)
                         this.loadLeadsStages();
                     if (this.contactGroupId.value == ContactGroup.Partner)
@@ -643,32 +645,37 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     loadLeadData(personContactInfo?: PersonContactInfoDto, lastLeadCallback?) {
         let contactInfo = this.contactService['data'].contactInfo,
             leadInfo = this.contactService['data'].leadInfo;
+
+        if (contactInfo && (!contactInfo.hasOwnProperty('parentId') || contactInfo.parentId))
+            return this.fillLeadDetails(new LeadInfoDto());
+
         if ((contactInfo && (!leadInfo || !this.leadInfo || this.leadInfo.id != leadInfo.id)) || lastLeadCallback) {
-            !lastLeadCallback && this.startLoading(true);
-            let leadId = leadInfo && leadInfo.id,
-                leadInfo$ = leadId && !lastLeadCallback ? 
-                    this.leadService.getLeadInfo(leadId) :
-                    this.leadService.getLastLeadInfo(
-                        this.contactGroupId.value, contactInfo.id
-                    );
+            this.contactGroupId$.pipe(filter(Boolean), first()).subscribe((contactGroupId: string) => {
+                !lastLeadCallback && this.startLoading(true);
+                let leadId = leadInfo && leadInfo.id,
+                    leadInfo$ = leadId && !lastLeadCallback ? 
+                        this.leadService.getLeadInfo(leadId) :
+                        this.leadService.getLastLeadInfo(
+                            contactGroupId, contactInfo.id
+                        );
 
-            let successCallback = (result: LeadInfoDto) => {
-                this.fillLeadDetails(result);
-                this.appHttpConfiguration.avoidErrorHandling = false;
-                lastLeadCallback && lastLeadCallback();
-            };
+                let successCallback = (result: LeadInfoDto) => {
+                    this.fillLeadDetails(result);
+                    lastLeadCallback && lastLeadCallback();
+                };
 
-            this.appHttpConfiguration.avoidErrorHandling = true;
-            leadInfo$.pipe(finalize(() => {
-                this.finishLoading(true);
-            })).subscribe(successCallback, error => {
-                this.appHttpConfiguration.avoidErrorHandling = false;
-                if (error.code == 404)
-                    this.leadService.getLastLeadInfo(
-                        this.contactGroupId.value, contactInfo.id
-                    ).subscribe(successCallback);
-                else
-                    this.notify.error(error.message);
+                this.appHttpConfiguration.avoidErrorHandling = true;
+                leadInfo$.pipe(finalize(() => {
+                    this.appHttpConfiguration.avoidErrorHandling = false;
+                    this.finishLoading(true);
+                })).subscribe(successCallback, error => {
+                    if (error.code == 404)
+                        this.leadService.getLastLeadInfo(
+                            contactGroupId, contactInfo.id
+                        ).subscribe(successCallback);
+                    else
+                        this.notify.error(error.message);
+                });
             });
         } else
             this.contactsService.leadInfoUpdate({
@@ -744,7 +751,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                     userData.user.isActive = status.isActive;
                 }
                 this.notify.success(this.l('StatusSuccessfullyUpdated'));
+            } else {
+                status.isActive = !status.isActive;
             }
+            this.toolbarComponent.updateActiveGroups(status);
+        }, () => {
+            this.toolbarComponent.updateActiveGroups();
         });
     }
 
@@ -836,7 +848,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     deleteContact() {
         let id = this.contactInfo.groups.every(group => group.isProspective) || this._router.url.split('?').shift().includes('lead') ? this.leadId : this.contactInfo.id,
             isLead = this._router.url.split('?').shift().includes('lead');
-        this.contactsService.deleteContact(this.getCustomerName(), this.contactGroupId.value, id, () => this.close(), isLead);
+        this.contactsService.deleteContact(this.getCustomerName(), this.contactInfo.groups.map(group => group.groupId), id, () => this.close(), isLead);
     }
 
     updateStatus(status: GroupStatus) {
@@ -934,7 +946,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     getAssignmentsPermissionKey = () => {
-        return this.permission.getCGPermissionKey([this.contactGroupId.value], 'ManageAssignments');
+        return this.contactGroupId.value ? this.permission.getCGPermissionKey(
+            [this.contactGroupId.value], 'ManageAssignments') : '';
     }
 
     getProxyService = () => {
@@ -946,7 +959,6 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             return;
 
         let companyInfo = this.contactInfo['organizationContactInfo'];
-
         this.dialog.closeAll();
         const dialogData: CreateEntityDialogData = {
             parentId: isSubContact ? this.contactInfo.id : undefined,
@@ -983,6 +995,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     showParent() {
+        this.leadInfo = undefined;
         this.contactsService.updateLocation(this.contactInfo.parentId);
     }
 }

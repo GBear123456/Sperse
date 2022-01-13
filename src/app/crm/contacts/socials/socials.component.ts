@@ -32,8 +32,8 @@ export class SocialsComponent {
     @Input() isCompany;
     @Input()
     set contactInfo(val: ContactInfoDto) {
-        if (this._contactInfo = val)
-            this.isEditAllowed = this.permissionService.checkCGPermission(this.contactInfo.groups);
+        if ((this._contactInfo = val) && val.groups)
+            this.isEditAllowed = this.permissionService.checkCGPermission(val.groups);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -188,7 +188,11 @@ export class SocialsComponent {
     updateLink(link, newValue) {
         this.updateDataField(link, _.extend(_.clone(link), {
             contactId: this.contactInfoData.contactId,
-            url: newValue
+            url: newValue,
+            usageTypeId: link.linkTypeId,
+            isConfirmed: link.isConfirmed,
+            isActive: link.isActive,
+            comment: link.comment
         }));
     }
 

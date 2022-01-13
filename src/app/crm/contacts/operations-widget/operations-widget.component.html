@@ -21,16 +21,16 @@
         <app-static-list
             #statusesList
             [width]="'180px'"
-            [title]="l('Status')"
+            [title]="l('Toolbar_Groups')"
             [showConfirmation]="false"
             [hideButtons]="true"
             [highlightSelected]="true"
             [showSelectionControls]="true"
             [selectionMode]="'multiple'"
-            [selectedKeys]="[activeGroupIds]"
-            targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
+            [selectedKeys]="activeGroupIds"
+            targetSelector="[aria-label='{{l('Toolbar_Groups')}}']"
             [list]="statuses"
-            (onItemSelected)="updateStatus($event)">
+            (onSelectionChanged)="updateStatus($event)">
         </app-static-list>
         <!--<app-static-list-->
             <!--#partnerTypesList-->

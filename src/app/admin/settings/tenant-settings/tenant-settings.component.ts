@@ -46,6 +46,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { AppService } from '@app/app.service';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 import { DomHelper } from '@shared/helpers/DomHelper';
 
@@ -82,7 +83,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFM) && abp.features.isEnabled(AppFeatures.PFMApplications);
-    isRapidTenantLayout: boolean = this.appSession.tenant.customLayoutType == LayoutType.Rapid;
+    isRapidTenantLayout: boolean = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.Rapid;
     isPerformancePartner: boolean = this.appSession.isPerformancePartnerTenant;
     epcvipSettings: EPCVIPOfferProviderSettings = new EPCVIPOfferProviderSettings();
     epcvipEmailSettings: EPCVIPMailerSettingsEditDto = new EPCVIPMailerSettingsEditDto();
@@ -133,6 +134,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private faviconsService: FaviconService,
         private clipboardService: ClipboardService,
         private contactService: ContactsService,
+        private appService: AppService,
         private emailSmtpSettingsService: EmailSmtpSettingsService,
         public changeDetection: ChangeDetectorRef,
         public dialog: MatDialog
@@ -143,6 +145,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     ngOnInit(): void {
+        this.appService.isClientSearchDisabled = true;
         this.testEmailAddress = this.appSessionService.user.emailAddress;
         this.getSettings();
         this.initUploaders();

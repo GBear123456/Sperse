@@ -34,18 +34,26 @@ export class OrdersHeaderDropdownComponent {
     ];
 
     contactGroupKeys = invert(ContactGroup);
-    contactGroups = ['All'].concat(Object.keys(ContactGroup))
-        .filter((group: string) => !ContactGroup[group] ||
-            this.permission.checkCGPermission([ContactGroup[group]], '')
-        ).map((group: string) => ({
-            text: this.ls.l('ContactGroup_' + group),
-            value: ContactGroup[group]
-        }));
+    contactGroups = []
 
     constructor(
         public ls: AppLocalizationService,
         private permission: AppPermissionService
-    ) {}
+    ) {
+        this.initContactGroups();
+    }
+
+    initContactGroups() {
+        let accessibleCG = Object.keys(ContactGroup)
+            .filter((group: string) => this.permission.checkCGPermission([ContactGroup[group]], ''));
+        if (accessibleCG.length > 1) {
+            accessibleCG.unshift('All');
+        }
+        this.contactGroups = accessibleCG.map((group: string) => ({
+                text: this.ls.l('ContactGroup_' + group),
+                value: ContactGroup[group]
+            }));
+    }
 
     isTotalCountValid() {
         return Number.isInteger(this.totalCount);

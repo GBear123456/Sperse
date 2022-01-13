@@ -69,6 +69,8 @@ import { FilterRangeComponent } from '@shared/filters/range/filter-range.compone
 import { FilterMultilineInputComponent } from '@shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterSourceComponent } from '../shared/filters/source-filter/source-filter.component';
 import { FilterMultilineInputModel } from '@shared/filters/multiline-input/filter-multiline-input.model';
+import { FilterContactStatusComponent } from '@app/crm/shared/filters/contact-status-filter/contact-status-filter.component';
+import { FilterContactStatusModel } from '@app/crm/shared/filters/contact-status-filter/contact-status-filter.model';
 import {
     UpdateContactStatusesInput,
     ProductDto,
@@ -247,17 +249,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     });
     filterModelStatus: FilterModel = new FilterModel({
-        component: FilterCheckBoxesComponent,
+        component: FilterContactStatusComponent,
         caption: 'status',
-        filterMethod: FilterHelpers.filterByCustomerStatus,
-        field: 'StatusId',
+        filterMethod: () => {return {}},
         isSelected: true,
         items: {
-            element: new FilterCheckBoxesModel({
-                dataSource: this.statuses,
-                nameField: 'name',
-                keyExpr: 'id',
-                selectedKeys$: of(['A'])
+            element: new FilterContactStatusModel({
+                ls: this.localizationService
             })
         }
     });
@@ -425,7 +423,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     action: () => {
                         this.contactService.deleteContact(
                             this.actionEvent.Name,
-                            ContactGroup.Client,
+                            [ContactGroup.Client],
                             (this.actionEvent.data || this.actionEvent).Id,
                             () => this.refresh()
                         );
@@ -446,15 +444,19 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         remoteOperations: true,
         load: (loadOptions) => {
             this.pivotGridDataIsLoading = true;
+
+            let params = {
+                contactGroupId: ContactGroup.Client,
+                ...this.getSubscriptionFilterObjectValue()
+            };
+            (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({params: params});
+
             return this.crmService.loadSlicePivotGridData(
                 this.getODataUrl(this.groupDataSourceURI),
                 this.filters,
                 loadOptions,
                 /** @todo change to strict typing and handle typescript error */
-                {
-                    contactGroupId: ContactGroup.Client,
-                    ...this.getSubscriptionFilterObjectValue()
-                }
+                params
             );
         },
         onChanged: () => {
@@ -537,7 +539,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
     );
-    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable().pipe(tap((layoutType) => {
+        this.appService.isClientSearchDisabled = layoutType != DataLayoutType.DataGrid;
+    }));
     hideDataGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
         return dataLayoutType !== DataLayoutType.DataGrid;
     }));
@@ -565,15 +569,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             return this.odataRequestValues$.pipe(
                 first(),
                 switchMap((odataRequestValues: ODataRequestValues) => {
+                    let params = {
+                        contactGroupId: ContactGroup.Client,
+                        ...this.getSubscriptionFilterObjectValue()
+                    };
+                    (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({params: params});
+
                     const chartDataUrl = this.chartDataUrl || this.crmService.getChartDataUrl(
                         this.getODataUrl(this.groupDataSourceURI),
                         odataRequestValues,
                         this.chartComponent.summaryBy.value,
                         this.dateField,
-                        {
-                            contactGroupId: ContactGroup.Client,
-                            ...this.getSubscriptionFilterObjectValue()
-                        }
+                        params
                     );
                     return this.httpClient.get(chartDataUrl);
                 })
@@ -611,7 +618,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false));
                     },
                     nameField: 'name',
-                    itemsExpr: 'memberServiceLevels'
+                    itemsExpr: 'memberServiceLevels',
+                    ignoreParent: false
                 }
             ),
             products: new SubscriptionsFilterModel(
@@ -622,12 +630,28 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     dataSource$: this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts) ?
                         this.productProxy.getProducts(
                             ProductType.Subscription
-                        ).pipe(map((products: ProductDto[]) => {
-                            return products.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
-                        })) : undefined,
+                        ).pipe(
+                            map((products: ProductDto[]) => {
+                                let productsWithGroups = products.filter(x => x.group);
+                                let productsWithoutGroups = products.filter(x => !x.group);
+                                let groups = _.groupBy(productsWithGroups, (x: ProductDto) => x.group);
+                                let arr: any[] = _.keys(groups).map(groupName => {
+                                    return {
+                                        id: groupName,
+                                        name: groupName,
+                                        products: groups[groupName].sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }))
+                                    };
+                                }).sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
+                                return arr.concat(
+                                    productsWithoutGroups.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }))
+                                );
+                            })
+                        ) : undefined,
                     nameField: 'name',
+                    codeField: 'code',
                     keyExpr: 'id',
-                    dataStructure: 'plain'
+                    itemsExpr: 'products',
+                    ignoreParent: true
                 }
             )
         }
@@ -690,7 +714,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 url: this.getODataUrl(
                     this.dataSourceURI,
                     [
-                        this.filterModelStatus.filterMethod(this.filterModelStatus),
                         FiltersService.filterByParentId()
                     ]
                 ),
@@ -703,11 +726,13 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.clientFields.Id,
                             this.clientFields.OrganizationId,
                             this.clientFields.UserId,
-                            this.clientFields.StatusId,
                             this.clientFields.Email,
                             this.clientFields.Phone
                         ]
                     );
+
+                    (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams(request);
+                    
                     request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -729,12 +754,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             paginate: false,
             store: new ODataStore({
                 url: this.getODataUrl(this.totalDataSourceURI, [
-                    this.filterModelStatus.filterMethod(this.filterModelStatus),
                     FiltersService.filterByParentId()
                 ]),
                 version: AppConsts.ODataVersion,
                 beforeSend: (request) => {
                     this.totalCount = this.totalErrorMsg = undefined;
+
+                    (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams(request);
+
                     request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -751,7 +778,6 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     }
 
     ngOnInit() {
-        this.filterModelStatus.updateCaptions();
         this.handleTotalCountUpdate();
         this.handleDataGridUpdate();
         this.handlePivotGridUpdate();
@@ -860,12 +886,15 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
         ).subscribe(([summaryBy, [odataRequestValues, ]]: [SummaryBy, [ODataRequestValues, ]]) => {
+            let params = {contactGroupId: ContactGroup.Client};
+            (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({params: params});
+
             const chartDataUrl = this.crmService.getChartDataUrl(
                 this.getODataUrl(this.groupDataSourceURI),
                 odataRequestValues,
                 summaryBy,
                 this.dateField,
-                {contactGroupId: ContactGroup.Client}
+                params
             );
             if (!this.oDataService.requestLengthIsValid(chartDataUrl)) {
                 this.message.error(this.l('QueryStringIsTooLong'));
@@ -882,15 +911,18 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.selectedMapArea$
         ).pipe(
             map(([[odataRequestValues, ], mapArea]: [[ODataRequestValues, null], MapArea]) => {
+                let params = {
+                    contactGroupId: ContactGroup.Client,
+                    ...this.getSubscriptionFilterObjectValue()
+                };
+                (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams({params: params});
+
                 return this.mapService.getSliceMapUrl(
                     this.getODataUrl(this.groupDataSourceURI),
                     odataRequestValues,
                     mapArea,
                     this.dateField,
-                    {
-                        contactGroupId: ContactGroup.Client,
-                        ...this.getSubscriptionFilterObjectValue()
-                    }
+                    params
                 );
             }),
             filter((mapUrl: string) => {
@@ -1249,7 +1281,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'status',
                         disabled: this.dataGrid && this.dataGrid.instance.getVisibleRows().some(row => {
-                            return this.selectedClientKeys.includes(row.data.Id) && row.data.Status == 'Prospective';
+                            return this.selectedClientKeys.includes(row.data.Id) && row.data.isProspecive;
                         }),
                         action: this.toggleStatus.bind(this),
                         attr: {
@@ -1308,7 +1340,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                             const client =  clients[0];
                                             this.contactService.deleteContact(
                                                 client.Name,
-                                                ContactGroup.Client,
+                                                [ContactGroup.Client],
                                                 client.Id,
                                                 () => {
                                                     this.refresh();

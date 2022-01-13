@@ -112,11 +112,14 @@ export class HostLoginComponent implements OnInit {
         return abp.session.tenantId ? this.ls.l('UserNameOrEmail') : this.ls.l('EmailAddress');
     }
 
-    showHidePassword(event) {
+    showHidePassword(event?) {
         this.showPassword = !this.showPassword;
-        if (event.currentTarget.text) event.currentTarget.text = this.ls.l((this.showPassword ? 'Hide' : 'Show'));
-        this.showPassword
-            ? event.currentTarget.classList.add('visible')
-            : event.currentTarget.classList.remove('visible');
+        if (event) {
+            if (event.currentTarget.text) 
+                event.currentTarget.text = this.ls.l((this.showPassword ? 'Hide' : 'Show'));
+            this.showPassword
+                ? event.currentTarget.classList.add('visible')
+                : event.currentTarget.classList.remove('visible');
+        }
     }
 }

@@ -704,6 +704,7 @@ export class StatsComponent extends CFOComponentBase implements OnInit, AfterVie
         this.setupFilters();
         this.initFiltering();
 
+        this.appService.isClientSearchDisabled = true;
         /** Load sync accounts (if something change - subscription in ngOnInit fires) */
         this.bankAccountsService.load();
         this.lifecycleService.activate.next();

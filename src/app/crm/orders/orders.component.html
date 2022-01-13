@@ -174,7 +174,6 @@
                                 [source]="pipelineDataSource"
                                 [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId', 'ContactGroupId', 'Phone', 'Amount']"
                                 dateField="OrderDate"
-                                [contactGroupId]="null"
                                 [actionMenuGroups]="actionMenuGroups"
                                 [pipelinePurposeId]="pipelinePurposeId"
                                 [filterModelStages]="filterModelStages"
@@ -262,9 +261,6 @@
                     <dxi-column [dataField]="subscriptionFields.OrderAmount" [width]="190" cssClass="padding-right" [caption]="l('OrderAmount')" cellTemplate="amountTemplate"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.SourceEntryUrl" [width]="300" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>  
-                    <dxi-column [dataField]="subscriptionFields.ContactGroupId" [caption]="l('ContactGroup')" [visible]="false" >
-                        <dxo-lookup [dataSource]="contactGroupDataSource" valueExpr="id" displayExpr="name"></dxo-lookup>
-                    </dxi-column>
   
                     <div *dxTemplate="let data of 'photoTemplate'">
                         <div [ngStyle]="{'background-image': 'url(' + profileService.getContactPhotoUrl(data.data.PhotoPublicId) + ')'}" class="img-circle"></div>
@@ -273,7 +269,7 @@
                         {{cellData.value | datetime: formatting.dateMoment}}
                     </div>
                     <div *dxTemplate="let cell of 'amountTemplate'" class="clipboard-holder">
-                        <span> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
+                        <span *ngIf="cell.text >= 0"> {{ cell.text | currency:currency:'symbol':'1.2-2' }} </span>
                     </div>
                     <dxo-summary>
                         <dxo-texts sum="{0}"></dxo-texts>

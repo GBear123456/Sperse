@@ -44,7 +44,8 @@ export class PaymentWizardComponent implements OnInit {
     paymentStatusData: StatusInfo;
     refreshAfterClose = false;
     module: ModuleType = this.data.module;
-    subscriptionIsLocked: boolean = this.appService.subscriptionIsLocked(this.module);
+    subscriptionIsLocked: boolean = this.appService.subscriptionIsLocked(this.module) && 
+        this.appService.getModuleSubscription(this.module).statusId != 'C';
     subscriptionIsFree: boolean = this.appService.checkSubscriptionIsFree(this.module);
     trackingCode: string;
 
@@ -96,13 +97,17 @@ export class PaymentWizardComponent implements OnInit {
     setRefreshAfterClose() {
         this.refreshAfterClose = true;
         this.dialogRef.afterClosed().subscribe(() => {
-            window.location.reload();
+            this.reloadAfterClosed();
         });
+    }
+
+    reloadAfterClosed() {
+        window.location.href = window.location.origin;
     }
 
     close() {
         this.refreshAfterClose
-            ? window.location.reload()
+            ? this.reloadAfterClosed()
             : this.dialogRef.close();
     }
 }

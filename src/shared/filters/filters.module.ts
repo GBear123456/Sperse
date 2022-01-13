@@ -35,6 +35,7 @@ import { BankAccountsCommonModule } from '@shared/cfo/bank-accounts/bank-account
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
 import { FilterRangeComponent } from '@shared/filters/range/filter-range.component';
 import { SubscriptionsFilterComponent } from '@app/crm/shared/filters/subscriptions-filter/subscriptions-filter.component';
+import { FilterContactStatusComponent } from '@app/crm/shared/filters/contact-status-filter/contact-status-filter.component';
 import { FilterSourceComponent } from '@app/crm/shared/filters/source-filter/source-filter.component';
 import { FilterServicesAndProductsComponent } from '@app/crm/shared/filters/services-and-products-filter/services-and-products-filter.component';
 import { SourceContactListModule } from '@shared/common/source-contact-list/source-contact-list.module';
@@ -81,6 +82,7 @@ import { DocumentServiceProxy } from '@shared/service-proxies/service-proxies';
         FilterTreeListComponent,
         FilterMultilineInputComponent,
         FilterServicesAndProductsComponent,
+        FilterContactStatusComponent,
         BankAccountFilterComponent,
         AdDirective
     ],
@@ -99,6 +101,7 @@ import { DocumentServiceProxy } from '@shared/service-proxies/service-proxies';
         FilterTreeListComponent,
         FilterMultilineInputComponent,
         FilterServicesAndProductsComponent,
+        FilterContactStatusComponent,
         BankAccountFilterComponent
     ],
     exports: [

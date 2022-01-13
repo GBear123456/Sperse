@@ -1,4 +1,4 @@
-﻿/** Core imports */
+/** Core imports */
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
@@ -6,6 +6,7 @@ import invert from 'lodash/invert';
 
 /** Application imports */
 import { PermissionCheckerService } from 'abp-ng2-module';
+import { ContactGroupInfo } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
 
@@ -32,7 +33,33 @@ export class AppPermissionService {
         );
     }
 
-    checkCGPermission(contactGroups: ContactGroup[], permission = 'Manage') {
-        return this.permissionChecker.isGranted(this.getCGPermissionKey(contactGroups, permission) as AppPermissions);
+    checkCGPermission(contactGroups: ContactGroup[] | ContactGroupInfo[], permission = 'Manage') {
+        if (contactGroups && contactGroups.length) {
+            let groups: ContactGroup[] = [];
+            contactGroups.forEach(group => {
+                if (group)
+                    groups.push(<ContactGroup>(group['groupId'] || group));
+            });
+            return this.isGranted(this.getCGPermissionKey(groups , permission));
+        }
+        return false;
+    }
+
+    getFirstAvailableCG(): ContactGroup {
+        for (let contactGroup of Object.keys(ContactGroup)) {
+            if (this.checkCGPermission([ContactGroup[contactGroup]], ''))
+                return ContactGroup[contactGroup];
+        }
+
+        return null;
+    }
+
+    getFirstManageCG(): boolean {
+        for (let contactGroup of Object.keys(ContactGroup)) {
+            if (this.checkCGPermission([ContactGroup[contactGroup]]))
+                return ContactGroup[contactGroup];
+        }
+
+        return null;
     }
 }

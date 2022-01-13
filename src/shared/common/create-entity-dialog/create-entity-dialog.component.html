@@ -13,6 +13,17 @@
                      [funnelStyling]="true"
                      [disableHindmost]="true">
     </app-static-list>
+    <app-static-list #statusesList
+            [width]="'180px'"
+            [title]="ls.l('Status')"
+            [selectedKeys]="[statusId]"
+            [showConfirmation]="false"
+            [highlightSelected]="true"
+            [hideButtons]="true"
+            targetSelector="#ClientStatus"
+            [list]="statuses"
+            (onItemSelected)="onStatusChanged($event)">
+    </app-static-list>
     <source-contact-list
         [selectedKey]="sourceContactId"
         (onItemSelected)="onPartnerSourceSelected($event)">
@@ -123,10 +134,11 @@
         <ng-template #notLead>
             <dxi-item *ngIf="data.customerType === contactGroups.Client" location="before" template="status"></dxi-item>
             <div *dxTemplate="let data of 'status'">
-                <dx-button [icon]="'./assets/common/icons/status-icon.svg'"
+                <dx-button id="ClientStatus"
                            [text]="ls.l('Status')"
-                           [disabled]="true"
-                           [ngClass]="{ 'filter-selected': isStatusSelected }">
+                           [icon]="'./assets/common/icons/status-icon.svg'"
+                           [ngClass]="{ 'filter-selected': isStatusSelected }"
+                           (onClick)="toggleStatus()">
                 </dx-button>
             </div>
         </ng-template>
