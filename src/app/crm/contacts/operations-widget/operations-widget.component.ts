@@ -83,14 +83,6 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         return this._pipelines;
     }
     @Input() selectedStageId: number;
-    @Input()
-    set stages(stages: any[]) {
-        this._stages = stages;
-        this.initToolbarConfig();
-    }
-    get stages(): any[] {
-        return this._stages;
-    }
     @Input() selectedPartnerTypeId: string;
     @Input()
     set partnerTypes(partnerTypes: any[]) {
@@ -406,7 +398,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'stage',
                             action: this.toggleStages.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, ''),
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups),
                             visible: this.pipelineDataSource && this.pipelineDataSource.length && !this.contactInfo.parentId
                         },
                         {

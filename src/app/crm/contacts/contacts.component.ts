@@ -497,13 +497,15 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private fillLeadDetails(leadInfo: LeadInfoDto) {
-        this.contactService['data'].leadInfo = this.leadInfo = leadInfo;
-        this.leadId = this.contactInfo['leadId'] = leadInfo.id;
-        this.contactsService.leadInfoUpdate({
-            ...this.params,
-            ...leadInfo
-        });
-        this.loadLeadsStages();
+        if (leadInfo.hasOwnProperty('id')) {
+            this.contactService['data'].leadInfo = this.leadInfo = leadInfo;
+            this.leadId = this.contactInfo['leadId'] = leadInfo.id;
+            this.contactsService.leadInfoUpdate({
+                ...this.params,
+                ...leadInfo
+            });        
+            this.loadLeadsStages();
+        }
         this.storeInitialData();
     }
 
