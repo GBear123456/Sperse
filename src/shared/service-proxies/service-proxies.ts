@@ -138,6 +138,62 @@ export class AccountServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    signUp(body: SignUpRequest | null | undefined): Observable<SignUpMemberResponse> {
+        let url_ = this.baseUrl + "/api/services/Platform/Account/SignUp";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSignUp(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSignUp(<any>response_);
+                } catch (e) {
+                    return <Observable<SignUpMemberResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SignUpMemberResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSignUp(response: HttpResponseBase): Observable<SignUpMemberResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SignUpMemberResponse.fromJS(resultData200) : new SignUpMemberResponse();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SignUpMemberResponse>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     isTenantAvailable(body: IsTenantAvailableInput | null | undefined): Observable<IsTenantAvailableOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Account/IsTenantAvailable";
         url_ = url_.replace(/[?&]$/, "");
@@ -42467,6 +42523,50 @@ export interface ISignUpMemberResponse {
     authenticateResult: AuthenticateResultModel | undefined;
 }
 
+export class SignUpRequest implements ISignUpRequest {
+    fullName!: string;
+    email!: string;
+    password!: string;
+
+    constructor(data?: ISignUpRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.fullName = data["fullName"];
+            this.email = data["email"];
+            this.password = data["password"];
+        }
+    }
+
+    static fromJS(data: any): SignUpRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SignUpRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fullName"] = this.fullName;
+        data["email"] = this.email;
+        data["password"] = this.password;
+        return data; 
+    }
+}
+
+export interface ISignUpRequest {
+    fullName: string;
+    email: string;
+    password: string;
+}
+
 export class IsTenantAvailableInput implements IIsTenantAvailableInput {
     tenancyName!: string;
 
@@ -65721,6 +65821,7 @@ export class ImportContactInput implements IImportContactInput {
     star!: string | undefined;
     importType!: ImportTypeInput | undefined;
     ignoreInvalidValues!: boolean | undefined;
+    matchExisting!: boolean | undefined;
     overrideLists!: boolean | undefined;
     createUser!: boolean | undefined;
     sendWelcomeEmail!: boolean | undefined;
@@ -65783,6 +65884,7 @@ export class ImportContactInput implements IImportContactInput {
             this.star = data["star"];
             this.importType = data["importType"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
+            this.matchExisting = data["matchExisting"];
             this.overrideLists = data["overrideLists"] !== undefined ? data["overrideLists"] : false;
             this.createUser = data["createUser"];
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
@@ -65842,6 +65944,7 @@ export class ImportContactInput implements IImportContactInput {
         data["star"] = this.star;
         data["importType"] = this.importType;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
+        data["matchExisting"] = this.matchExisting;
         data["overrideLists"] = this.overrideLists;
         data["createUser"] = this.createUser;
         data["sendWelcomeEmail"] = this.sendWelcomeEmail;
@@ -65894,6 +65997,7 @@ export interface IImportContactInput {
     star: string | undefined;
     importType: ImportTypeInput | undefined;
     ignoreInvalidValues: boolean | undefined;
+    matchExisting: boolean | undefined;
     overrideLists: boolean | undefined;
     createUser: boolean | undefined;
     sendWelcomeEmail: boolean | undefined;
@@ -82459,7 +82563,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
     bankCode!: string | undefined;
     affiliateCode!: string | undefined;
     affiliateRate!: number | undefined;
-    group!: UserGroup | undefined;
+    groups!: UserGroup[] | undefined;
     contactId!: number | undefined;
     creationTime!: moment.Moment | undefined;
     id!: number | undefined;
@@ -82484,7 +82588,11 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
             this.bankCode = data["bankCode"];
             this.affiliateCode = data["affiliateCode"];
             this.affiliateRate = data["affiliateRate"];
-            this.group = data["group"];
+            if (data["groups"] && data["groups"].constructor === Array) {
+                this.groups = [];
+                for (let item of data["groups"])
+                    this.groups.push(item);
+            }
             this.contactId = data["contactId"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.id = data["id"];
@@ -82509,7 +82617,11 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
         data["bankCode"] = this.bankCode;
         data["affiliateCode"] = this.affiliateCode;
         data["affiliateRate"] = this.affiliateRate;
-        data["group"] = this.group;
+        if (this.groups && this.groups.constructor === Array) {
+            data["groups"] = [];
+            for (let item of this.groups)
+                data["groups"].push(item);
+        }
         data["contactId"] = this.contactId;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
@@ -82527,7 +82639,7 @@ export interface IUserLoginInfoDto {
     bankCode: string | undefined;
     affiliateCode: string | undefined;
     affiliateRate: number | undefined;
-    group: UserGroup | undefined;
+    groups: UserGroup[] | undefined;
     contactId: number | undefined;
     creationTime: moment.Moment | undefined;
     id: number | undefined;
