@@ -205,7 +205,9 @@ export class GlobalSearchComponent implements OnInit {
                 OrderFields.ContactId
             ],            
             null,
-            { orderType: OrderType.Order }
+            { 
+                orderType: OrderType.Order
+            }
         );
     }
 
@@ -253,7 +255,7 @@ export class GlobalSearchComponent implements OnInit {
             map((entities: any) => {
                 return {
                     name: name,
-                    entities: entities.value,
+                    entities: entities ? entities.value : [],
                     link: link,
                     linkParams: linkParams
                 };
