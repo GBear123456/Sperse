@@ -738,26 +738,31 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private showConfirmationDialog(status: GroupStatus) {
+        let hasActiveGroupBefore = this.contactInfo.groups.some(group => group.isActive),
+            hasActiveGroupAfter = this.contactInfo.groups.some(group => 
+                group.groupId == status.groupId ? status.isActive : group.isActive
+            );
         this.contactsService.updateStatus(
-            this.contactInfo.id, status.groupId, status.isActive
+            this.contactInfo.id, status.groupId, 
+            status.isActive, 'contact', !hasActiveGroupAfter            
         ).subscribe((confirm: boolean) => {
-            if (confirm) {
+            if (confirm) {   
                 this.contactInfo.groups.some(group => {
-                    if (group.groupId == status.groupId) {                        
+                    if (group.groupId == status.groupId) {
                         group.isActive = status.isActive;
                         return true;
                     }
                 });
                 let userData = this.userService['data'];
-                if (userData && userData.user) {
-                    userData.user.isActive = status.isActive;
-                }
+                if (userData && userData.user && hasActiveGroupBefore != hasActiveGroupAfter)
+                    userData.user.isActive = hasActiveGroupAfter;
                 this.notify.success(this.l('StatusSuccessfullyUpdated'));
             } else {
                 status.isActive = !status.isActive;
             }
             this.toolbarComponent.updateActiveGroups(status);
         }, () => {
+            status.isActive = !status.isActive;
             this.toolbarComponent.updateActiveGroups();
         });
     }
