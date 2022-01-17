@@ -191,8 +191,8 @@ export class GlobalSearchComponent implements OnInit {
                 name: name,
                 entities: [],
                 link: '',
-                linkParams: ''
-            });
+                linkParams: null
+            } as GlobalSearchGroup);
     }
 
     private getOrdersGroup(search: string): Observable<GlobalSearchGroup> {
