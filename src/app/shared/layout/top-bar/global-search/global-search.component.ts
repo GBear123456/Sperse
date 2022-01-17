@@ -170,23 +170,29 @@ export class GlobalSearchComponent implements OnInit {
     }
 
     private getLeadGroup(search: string, name: string, contactGroup: string): Observable<GlobalSearchGroup> {
-        return this.getGlobalSearchGroup(
-            this.oDataService.getODataUrl('Lead'),
-            name,
-            'app/crm/leads',
-            search,
-            AppPermissions.CRMOrders,
-            [
-                LeadFields.Id,
-                LeadFields.Name,
-                LeadFields.Email,
-                LeadFields.PhotoPublicId,
-                LeadFields.SourceChannelCode,
-                LeadFields.CustomerId
-            ],
-            { contactGroupId: ContactGroup[contactGroup] },
-            { contactGroup: contactGroup }
-        );
+        return this.permissionService.checkCGPermission([ContactGroup[contactGroup]], '') ?
+            this.getGlobalSearchGroup(
+                this.oDataService.getODataUrl('Lead'),
+                name,
+                'app/crm/leads',
+                search,
+                AppPermissions.CRM,
+                [
+                    LeadFields.Id,
+                    LeadFields.Name,
+                    LeadFields.Email,
+                    LeadFields.PhotoPublicId,
+                    LeadFields.SourceChannelCode,
+                    LeadFields.CustomerId
+                ],
+                { contactGroupId: ContactGroup[contactGroup] },
+                { contactGroup: contactGroup }
+            ): of({
+                name: name,
+                entities: [],
+                link: '',
+                linkParams: ''
+            });
     }
 
     private getOrdersGroup(search: string): Observable<GlobalSearchGroup> {
