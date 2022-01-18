@@ -2,7 +2,8 @@
     <dx-tabs *ngIf="showFilterTabs"
         width="200px"
         [dataSource]="filterTabs"
-        [(selectedIndex)]="selectedTabIndex">
+        [selectedIndex]="selectedTabIndex"
+        (onItemClick)="onTabClick($event)">
     </dx-tabs>
     <div class="mode" [ngClass]="{single: !showFilterTabs}">
         <dx-radio-group [(value)]="items.products.filterMode"
@@ -24,11 +25,15 @@
                   [showColumnHeaders]="false"
                   height="calc(100vh - 193px)"
                   [scrolling]="{ preloadEnabled: true }"
-                  [autoExpandAll]="items[field].autoExpandAll">
+                  [autoExpandAll]="items[field].autoExpandAll"                 
+                  (onContentReady)="onContentReady()">
         <dxo-search-panel [visible]="true" width="100%"></dxo-search-panel>
         <dxi-column [dataField]="items[field].nameField" cellTemplate="checkBoxTemplate"></dxi-column>
         <div *dxTemplate="let cell of 'checkBoxTemplate'">
-            <div class="name" [title]="cell.data[items[field].nameField]">{{ cell.data[items[field].nameField] }}</div>
+            <div class="name" [title]="getTitle(cell.data)">
+                {{ cell.data[items[field].nameField] }}
+                <small *ngIf="isLoaded && items[field].codeField && cell.data[items[field].codeField]">({{ cell.data[items[field].codeField] }})</small>
+            </div>
             <dx-check-box [(value)]="cell.data.current"
                           (onContentReady)="checkSetInitialValue($event, cell, 'current')"
                           (onValueChanged)="onValueChanged(field, $event, cell, 'current')">

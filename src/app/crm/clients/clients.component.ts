@@ -533,7 +533,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
     );
-    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable().pipe(tap((layoutType) => {
+        this.appService.isClientSearchDisabled = layoutType != DataLayoutType.DataGrid;
+    }));
     hideDataGrid$: Observable<boolean> = this.dataLayoutType$.pipe(map((dataLayoutType: DataLayoutType) => {
         return dataLayoutType !== DataLayoutType.DataGrid;
     }));
@@ -607,7 +609,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.store$.dispatch(new SubscriptionsStoreActions.LoadRequestAction(false));
                     },
                     nameField: 'name',
-                    itemsExpr: 'memberServiceLevels'
+                    itemsExpr: 'memberServiceLevels',
+                    ignoreParent: false
                 }
             ),
             products: new SubscriptionsFilterModel(
@@ -618,12 +621,28 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     dataSource$: this.isGranted(AppPermissions.CRMOrders) || this.isGranted(AppPermissions.CRMProducts) ?
                         this.productProxy.getProducts(
                             ProductType.Subscription
-                        ).pipe(map((products: ProductDto[]) => {
-                            return products.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
-                        })) : undefined,
+                        ).pipe(
+                            map((products: ProductDto[]) => {
+                                let productsWithGroups = products.filter(x => x.group);
+                                let productsWithoutGroups = products.filter(x => !x.group);
+                                let groups = _.groupBy(productsWithGroups, (x: ProductDto) => x.group);
+                                let arr: any[] = _.keys(groups).map(groupName => {
+                                    return {
+                                        id: groupName,
+                                        name: groupName,
+                                        products: groups[groupName].sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }))
+                                    };
+                                }).sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
+                                return arr.concat(
+                                    productsWithoutGroups.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }))
+                                );
+                            })
+                        ) : undefined,
                     nameField: 'name',
+                    codeField: 'code',
                     keyExpr: 'id',
-                    dataStructure: 'plain'
+                    itemsExpr: 'products',
+                    ignoreParent: true
                 }
             )
         }

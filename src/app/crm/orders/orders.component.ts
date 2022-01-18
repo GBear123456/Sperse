@@ -29,10 +29,12 @@ import {
     pluck,
     skip,
     switchMap,
-    takeUntil
+    takeUntil,
+    tap
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
+import * as _ from 'underscore';
 
 /** Application imports */
 import {
@@ -68,8 +70,10 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
-import { InvoiceSettings, OrderServiceProxy, 
-    ProductServiceProxy, ProductType, ProductDto } from '@shared/service-proxies/service-proxies';
+import {
+    InvoiceSettings, OrderServiceProxy,
+    ProductServiceProxy, ProductType, ProductDto
+} from '@shared/service-proxies/service-proxies';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { OrderType } from '@app/crm/orders/order-type.enum';
 import { SubscriptionsStatus } from '@app/crm/orders/subscriptions-status.enum';
@@ -77,6 +81,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { CrmService } from '../crm.service';
 import { PivotGridComponent } from '@app/shared/common/slice/pivot-grid/pivot-grid.component';
 import { FilterSourceComponent } from '@app/crm/shared/filters/source-filter/source-filter.component';
+import { FilterServicesAndProductsModel } from '@app/crm/shared/filters/services-and-products-filter/services-and-products-filter.model';
 import { FilterServicesAndProductsComponent } from '@app/crm/shared/filters/services-and-products-filter/services-and-products-filter.component';
 import { SourceFilterModel } from '@app/crm/shared/filters/source-filter/source-filter.model';
 import { FilterHelpers } from '../shared/helpers/filter.helper';
@@ -101,7 +106,7 @@ import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dia
         '../shared/styles/grouped-action-menu.less',
         './orders.component.less'
     ],
-    providers: [ OrderServiceProxy, CurrencyPipe, ProductServiceProxy ]
+    providers: [OrderServiceProxy, CurrencyPipe, ProductServiceProxy]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('ordersGrid', { static: false }) ordersGrid: DxDataGridComponent;
@@ -140,7 +145,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.showOrdersPipeline ? DataLayoutType.Pipeline : DataLayoutType.DataGrid
     );
-    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable().pipe(tap((layoutType) => {
+        this.appService.isClientSearchDisabled = layoutType != DataLayoutType.DataGrid;
+    }));
     private readonly ordersDataSourceURI = 'Order';
     private readonly orderCountDataSourceURI = 'OrderCount';
     private readonly subscriptionsDataSourceURI = 'Subscription';
@@ -224,7 +231,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }),
         new FilterModel({
             component: FilterInputsComponent,
-            options: { type: 'number'},
+            options: { type: 'number' },
             operator: { from: 'ge', to: 'le' },
             caption: 'Amount',
             field: this.orderFields.Amount,
@@ -322,7 +329,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             id: SubscriptionsStatus[status],
                             name: startCase(status)
                         })),
-                        value: [ SubscriptionsStatus.CurrentActive ],
+                        value: [SubscriptionsStatus.CurrentActive],
                         nameField: 'name',
                         keyExpr: 'id'
                     })
@@ -330,7 +337,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }),
         new FilterModel({
             component: FilterInputsComponent,
-            options: { type: 'number'},
+            options: { type: 'number' },
             operator: { from: 'ge', to: 'le' },
             caption: 'Fee',
             field: this.subscriptionFields.Fee,
@@ -556,7 +563,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         takeUntil(this.destroy$),
         switchMap(this.waitUntilLayoutType(DataLayoutType.DataGrid)),
         switchMap(this.waitUntilOrderType(OrderType.Order)),
-        map(([oDataRequestValues, ]: [ODataRequestValues, ]) => {
+        map(([oDataRequestValues,]: [ODataRequestValues,]) => {
             return this.getODataUrl(this.orderCountDataSourceURI, oDataRequestValues.filter, null,
                 [...this.getSubscriptionsParams(), ...oDataRequestValues.params]);
         }),
@@ -592,7 +599,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ).pipe(
         takeUntil(this.destroy$),
         switchMap(this.waitUntilOrderType(OrderType.Subscription)),
-        map(([oDataRequestValues, ]: [ODataRequestValues, ]) => {
+        map(([oDataRequestValues,]: [ODataRequestValues,]) => {
             return this.getODataUrl(
                 this.subscriptionGroupDataSourceURI,
                 oDataRequestValues.filter,
@@ -604,7 +611,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         name: 'totalSummary',
                         value: JSON.stringify([
                             { 'summaryType': 'count' },
-                            { 'selector': 'OrderAmount', 'summaryType': 'sum'},
+                            { 'selector': 'OrderAmount', 'summaryType': 'sum' },
                             { 'selector': 'Fee', 'summaryType': 'sum' }
                         ])
                     }
@@ -698,7 +705,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     text: this.l('Appointment'),
                     class: 'appointment',
                     disabled: true,
-                    action: () => {}
+                    action: () => { }
                 },
                 {
                     text: this.l('Orders'),
@@ -711,24 +718,24 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     text: this.l('Notifications'),
                     class: 'notifications',
                     disabled: true,
-                    action: () => {}
+                    action: () => { }
                 }
-/*
-                {
-                    getText: (entity: any) => {
-                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, entity.Stage, entity.contactGroupId);
-                        return this.l('Checklist') + ' (' + entity.StageChecklistPointDoneCount + '/' + stage.checklistPoints.length + ')';
-                    },
-                    class: 'checklist',
-                    checkVisible: (entity: any) => {
-                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, entity.Stage, entity.contactGroupId);
-                        return !!(!stage.isFinal && stage.checklistPoints && stage.checklistPoints.length);
-                    },
-                    action: (data?) => {
-                        this.openEntityChecklistDialog(data);
-                    }
-                }
-*/
+                /*
+                                {
+                                    getText: (entity: any) => {
+                                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, entity.Stage, entity.contactGroupId);
+                                        return this.l('Checklist') + ' (' + entity.StageChecklistPointDoneCount + '/' + stage.checklistPoints.length + ')';
+                                    },
+                                    class: 'checklist',
+                                    checkVisible: (entity: any) => {
+                                        const stage = this.pipelineService.getStageByName(this.pipelinePurposeId, entity.Stage, entity.contactGroupId);
+                                        return !!(!stage.isFinal && stage.checklistPoints && stage.checklistPoints.length);
+                                    },
+                                    action: (data?) => {
+                                        this.openEntityChecklistDialog(data);
+                                    }
+                                }
+                */
             ]
         },
         {
@@ -864,8 +871,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     get totalCount() {
         return this.selectedOrderType.value === OrderType.Order
-               ? this.ordersTotalCount
-               : this.subscriptionsTotalCount;
+            ? this.ordersTotalCount
+            : this.subscriptionsTotalCount;
     }
 
     private waitUntilOrderType(orderType: OrderType) {
@@ -921,7 +928,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     get showToggleColumnSelectorButton() {
         return (this.selectedOrderType.value === OrderType.Order && this.ordersDataLayoutType === DataLayoutType.DataGrid)
-        || this.selectedOrderType.value === OrderType.Subscription;
+            || this.selectedOrderType.value === OrderType.Subscription;
     }
 
     getODataRequestValues(orderType: OrderType) {
@@ -960,7 +967,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             component: FilterServicesAndProductsComponent,
             caption: 'SubscriptionStatus',
             items: {
-                services: new FilterCheckBoxesModel(
+                services: new FilterServicesAndProductsModel(
                     {
                         dataSource$: this.store$.pipe(
                             select(SubscriptionsStoreSelectors.getSubscriptions),
@@ -982,16 +989,33 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         itemsExpr: 'memberServiceLevels'
                     }
                 ),
-                products: new FilterCheckBoxesModel(
+                products: new FilterServicesAndProductsModel(
                     {
                         dataSource$: this.productProxy.getProducts(
                             ProductType.Subscription
-                        ).pipe(map((products: ProductDto[]) => {
-                            return products.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
-                        })),
+                        ).pipe(
+                            map((products: ProductDto[]) => {
+                                let productsWithGroups = products.filter(x => x.group);
+                                let productsWithoutGroups = products.filter(x => !x.group);
+                                let groups = _.groupBy(productsWithGroups, (x: ProductDto) => x.group);
+                                let arr: any[] = _.keys(groups).map(groupName => {
+                                    return {
+                                        id: groupName,
+                                        name: groupName,
+                                        products: groups[groupName].sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }))
+                                    };
+                                }).sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }));
+                                return arr.concat(
+                                    productsWithoutGroups.sort((prev, next) => prev.name.localeCompare(next.name, 'en', { sensitivity: 'base' }))
+                                );
+                            })
+                        ),
                         nameField: 'name',
+                        codeField: 'code',
                         keyExpr: 'id',
-                        dataStructure: 'plain'
+                        dataStructure: 'tree',
+                        itemsExpr: 'products',
+                        recursive: true
                     }
                 )
             }
@@ -1394,7 +1418,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         if (this.selectedOrderType.value === OrderType.Order) {
             if (this.showOrdersPipeline) {
                 if (!this.pipelineDataSource)
-                    setTimeout(() => this.pipelineDataSource = this.getOrdersDataSourceConfig({uri: this.ordersDataSourceURI}));
+                    setTimeout(() => this.pipelineDataSource = this.getOrdersDataSourceConfig({ uri: this.ordersDataSourceURI }));
             } else
                 this.setDataGridInstance(this.dataGrid);
         } else if (this.selectedOrderType.value === OrderType.Subscription) {
@@ -1432,6 +1456,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 width: 40
             });
         }
+
+        setTimeout(() => {
+            this.appService.isClientSearchDisabled = 
+                this.dataLayoutType.value == DataLayoutType.Pipeline;
+        });
     }
 
     invalidate() {
@@ -1527,7 +1556,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             context.searchColumns = this.searchColumns;
             context.searchValue = this.searchValue;
         } else if (!grid)
-            return ;
+            return;
 
         context.processODataFilter.call(
             context,
@@ -1541,9 +1570,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     private getCheckCustomFilter(filter: FilterModel) {
-         if (this.selectedOrderType.value == OrderType.Subscription && filter.caption == 'Status')
+        if (this.selectedOrderType.value == OrderType.Subscription && filter.caption == 'Status')
             return FilterHelpers.filterBySubscriptionStatus(filter);
-         else
+        else
             return this.filtersService.getCheckCustom(filter);
     }
 
@@ -1554,11 +1583,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             selectedServices = selectedFilter.items.services['selectedItems'],
             selectedProducts = selectedFilter.items.products['selectedItems'];
 
-        selectedProducts && selectedProducts.forEach((item, i) => {
+        selectedProducts && selectedProducts.filter(item => Number.isInteger(item.id)).forEach((item, i) => {
             result.push({
                 name: 'subscriptionsFilter.ProductIds[' + i + ']',
                 value: item.id
-            });            
+            });
         });
 
         selectedServices && selectedServices.forEach(item => {
@@ -1585,7 +1614,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     searchValueChange(e: object) {
         if (this.filterChanged = (this.searchValue != e['value'])) {
             this.searchValue = e['value'];
-            this._router.navigate([], {queryParams: {search: this.searchValue}});
+            this._router.navigate([], { queryParams: { search: this.searchValue } });
             this.search.next(e['value']);
             this.processFilterInternal();
         }
@@ -1621,7 +1650,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    onCardClick({entity, entityStageDataSource, loadMethod, queryParams, section = 'invoices'}: {
+    onCardClick({ entity, entityStageDataSource, loadMethod, queryParams, section = 'invoices' }: {
         entity: OrderDto | SubscriptionDto,
         entityStageDataSource: any,
         loadMethod: () => any,
@@ -1639,7 +1668,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 CrmService.getEntityDetailsLink(entity.ContactId, section, entity.LeadId),
                 {
                     queryParams: {
-                        ...(isOrder ? {orderId: entity.Id} : {subId: entity.Id}),
+                        ...(isOrder ? { orderId: entity.Id } : { subId: entity.Id }),
                         referrer: 'app/crm/orders',
                         dataLayoutType: DataLayoutType.Pipeline,
                         ...queryParams
@@ -1721,7 +1750,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     deleteOrders(orderIds?) {
         ContactsHelper.showConfirmMessage(
             this.l('OrdersDeleteWarningMessage'),
-            (isConfirmed: boolean, [ forceDelete ]: boolean[]) => {
+            (isConfirmed: boolean, [forceDelete]: boolean[]) => {
                 if (isConfirmed) {
                     this.deleteOrdersInternal(forceDelete, orderIds);
                 }

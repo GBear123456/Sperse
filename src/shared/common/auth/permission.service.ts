@@ -1,4 +1,4 @@
-﻿/** Core imports */
+/** Core imports */
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
@@ -30,5 +30,23 @@ export class AppPermissionService {
 
     checkCGPermission(contactGroupKey: ContactGroup, permission = 'Manage') {
         return this.permissionChecker.isGranted(this.getCGPermissionKey(contactGroupKey, permission) as AppPermissions);
+    }
+
+    getFirstAvailableCG(): ContactGroup {
+        for (let contactGroup of Object.keys(ContactGroup)) {
+            if (this.checkCGPermission(ContactGroup[contactGroup], ''))
+                return ContactGroup[contactGroup];
+        }
+
+        return null;
+    }
+
+    getFirstManageCG(): boolean {
+        for (let contactGroup of Object.keys(ContactGroup)) {
+            if (this.checkCGPermission(ContactGroup[contactGroup]))
+                return ContactGroup[contactGroup];
+        }
+
+        return null;
     }
 }

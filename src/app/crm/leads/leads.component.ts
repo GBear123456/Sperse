@@ -200,7 +200,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         this.contactService.showSMSDialog({
                             phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
                         });
-                    },
+                },
                     checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail')
                 },
                 {
@@ -210,7 +210,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         this.contactService.showEmailDialog({
                             contactId: (data || this.actionEvent.data || this.actionEvent).CustomerId
                         }).subscribe();
-                    },
+                },
                     checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail')
                 },
             ]
@@ -260,7 +260,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             });
                         },
                         checkVisible: () => this.permission.checkCGPermission(this.selectedContactGroup)
-                    }
+                        }
                 },
                 {
                     text: this.l('Appointment'),
@@ -317,7 +317,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     disabled: false,
                     action: (data?) => {
                         this.deleteLeads([(data || this.actionEvent.data || this.actionEvent).Id]);
-                    },
+                },
                     checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup)
                 },
                 {
@@ -425,7 +425,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.Pipeline
     );
     private gridCompactView: BehaviorSubject<Boolean> = new BehaviorSubject(true);
-    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable().pipe(tap((layoutType) => {
+        this.appService.isClientSearchDisabled = layoutType != DataLayoutType.DataGrid;
+    }));
     showCompactView$: Observable<Boolean> = combineLatest(
         this.dataLayoutType$,
         this.pipelineService.compactView$,
@@ -1173,6 +1175,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
         if (!this.rowsViewHeight)
             this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
+
+        setTimeout(() => {
+            this.appService.isClientSearchDisabled = 
+                this.dataLayoutType.value == DataLayoutType.Pipeline;
+        });
     }
 
     refresh(invalidateDashboard: boolean = true) {
@@ -2093,6 +2100,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initFilterConfig();
         this.initToolbarConfig();
         this.handleQueryParams();
+
         this.showHostElement(() => {
             this.repaintToolbar();
             this.pipelineComponent.detectChanges();

@@ -46,6 +46,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
+import { AppService } from '@app/app.service';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 import { DomHelper } from '@shared/helpers/DomHelper';
 
@@ -133,6 +134,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         private faviconsService: FaviconService,
         private clipboardService: ClipboardService,
         private contactService: ContactsService,
+        private appService: AppService,
         private emailSmtpSettingsService: EmailSmtpSettingsService,
         public changeDetection: ChangeDetectorRef,
         public dialog: MatDialog
@@ -143,6 +145,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     ngOnInit(): void {
+        this.appService.isClientSearchDisabled = true;
         this.testEmailAddress = this.appSessionService.user.emailAddress;
         this.getSettings();
         this.initUploaders();

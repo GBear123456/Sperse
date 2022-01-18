@@ -1,6 +1,14 @@
-<app-header [hidden]="isFullscreenMode"
-            [ngClass]="{ withContactInfo: appService.showContactInfoPanel$ | async }">
+<app-header 
+    [hidden]="isFullscreenMode"
+    [ngClass]="{ withContactInfo: appService.showContactInfoPanel$ | async }">
 </app-header>
+
+<search-tooltip
+    target="app-header" 
+    [disabled]="true"
+    (onDisplay)="appService.clientSearchToggle.next($event)"
+    (onSearch)="onClientSearch($event)">
+</search-tooltip>
 
 <div class="clearfix"></div>
 <div class="page-container">
