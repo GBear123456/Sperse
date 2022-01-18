@@ -695,24 +695,26 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 ));
             })
         ).subscribe(([leadInfo, pipelines]) => {
+            let leadCGManageAllowed = this.permission.checkCGPermission([leadInfo.contactGroupId]);
             this.allPipelines = pipelines.filter(
-                (pipeline: PipelineDto) => this.permission.checkCGPermission([pipeline.contactGroupId])
-                    && (!pipeline.entityTypeSysId || (                        
-                        pipeline.entityTypeSysId.startsWith('Property')
-                            && leadInfo.propertyId
-                    )
-                )
+                (pipeline: PipelineDto) => leadCGManageAllowed ?
+                    this.permission.checkCGPermission([pipeline.contactGroupId]) && (
+                        !pipeline.entityTypeSysId || (                        
+                            pipeline.entityTypeSysId.startsWith('Property') && leadInfo.propertyId
+                        )
+                    ) : pipeline.contactGroupId == leadInfo.contactGroupId
             ).map((pipeline: PipelineDto) => {
                 return {
                     id: pipeline.id,
                     text: pipeline.name,
+                    contactGroupId: pipeline.contactGroupId,
                     items: pipeline.stages.map((stage: StageDto) => {
                         return {
                             id: stage.id,
                             name: stage.name,
                             index: stage.sortOrder,
                             action: this.updateLeadStage.bind(this),
-                            disabled: leadInfo.pipelineId != pipeline.id && stage.isFinal,
+                            disabled: !leadCGManageAllowed || (leadInfo.pipelineId != pipeline.id && stage.isFinal),
                             pipelineId: pipeline.id
                         }
                     })

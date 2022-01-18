@@ -187,14 +187,15 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
 
     ngOnInit() {
         this.contactsService.leadInfoSubscribe(leadInfo => {
-            this.data.leadInfo = leadInfo;
-            this.sourceContactName = leadInfo && leadInfo.sourceContactName || `<${this.ls.l('ClientNoName')}>`;
+            if (this.data.leadInfo = leadInfo) {
+                this.isCGManageAllowed = this.permissionService.checkCGPermission([leadInfo.contactGroupId]);
+                this.sourceContactName = leadInfo.sourceContactName || `<${this.ls.l('ClientNoName')}>`;
+            }
         }, this.ident);
         this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo) {
                 this.data.contactInfo = contactInfo;
                 this.initToolbarInfo();
-                this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groups);
                 this.showApplicationAllowed = this.permissionCheckerService.isGranted(AppPermissions.PFMApplicationsViewApplications) &&
                     contactInfo.personContactInfo.userId && contactInfo.groups.some(group => group.groupId == ContactGroup.Client);
                 this.loadOrganizationUnits();
