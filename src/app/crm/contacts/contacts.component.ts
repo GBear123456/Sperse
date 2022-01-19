@@ -46,7 +46,8 @@ import {
     UpdatePartnerTypeInput,
     UserServiceProxy,
     LayoutType,
-    PartnerTypeDto
+    PartnerTypeDto,
+    ContactGroupInfo
 } from '@shared/service-proxies/service-proxies';
 import { OperationsWidgetComponent } from './operations-widget/operations-widget.component';
 import { ContactsService } from './contacts.service';
@@ -759,14 +760,21 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 if (userData && userData.user && hasActiveGroupBefore != hasActiveGroupAfter)
                     userData.user.isActive = hasActiveGroupAfter;
                 this.notify.success(this.l('StatusSuccessfullyUpdated'));
-            } else {
-                status.isActive = !status.isActive;
-            }
-            this.toolbarComponent.updateActiveGroups(status);
-        }, () => {
-            status.isActive = !status.isActive;
-            this.toolbarComponent.updateActiveGroups();
-        });
+                this.toolbarComponent.updateActiveGroups(status);
+            } else
+                this.handleStatusUpdateError(status);
+        }, () => this.handleStatusUpdateError(status));
+    }
+
+    handleStatusUpdateError(status: GroupStatus) {
+        status.isActive = !status.isActive;
+        if (this.contactInfo.groups.every(group => group.groupId != status.groupId))
+            this.contactInfo.groups.push(<ContactGroupInfo>{
+                groupId: status.groupId, 
+                isActive: status.isActive, 
+                isProspective: true
+            });
+        this.toolbarComponent.updateActiveGroups();
     }
 
     showContactPersons(event) {

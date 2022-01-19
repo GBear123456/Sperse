@@ -156,7 +156,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 this.customToolbarConfig = undefined;
                 this.optionButtonConfig = undefined;
             }
-
+            this.updateActiveGroups();
             this.initToolbarConfig();
         });
         this.contactProxy.getContactGroups().subscribe(
