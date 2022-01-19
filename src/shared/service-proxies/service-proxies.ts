@@ -138,6 +138,62 @@ export class AccountServiceProxy {
      * @body (optional) 
      * @return Success
      */
+    signUp(body: SignUpRequest | null | undefined): Observable<SignUpMemberResponse> {
+        let url_ = this.baseUrl + "/api/services/Platform/Account/SignUp";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSignUp(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSignUp(<any>response_);
+                } catch (e) {
+                    return <Observable<SignUpMemberResponse>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<SignUpMemberResponse>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSignUp(response: HttpResponseBase): Observable<SignUpMemberResponse> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? SignUpMemberResponse.fromJS(resultData200) : new SignUpMemberResponse();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SignUpMemberResponse>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
     isTenantAvailable(body: IsTenantAvailableInput | null | undefined): Observable<IsTenantAvailableOutput> {
         let url_ = this.baseUrl + "/api/services/Platform/Account/IsTenantAvailable";
         url_ = url_.replace(/[?&]$/, "");
@@ -21771,6 +21827,289 @@ export class LeadTypeServiceProxy {
 }
 
 @Injectable()
+export class LearningResourceServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getAll(): Observable<LearningResourceGroupInfoOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(<any>response_);
+                } catch (e) {
+                    return <Observable<LearningResourceGroupInfoOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<LearningResourceGroupInfoOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<LearningResourceGroupInfoOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(LearningResourceGroupInfoOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<LearningResourceGroupInfoOutput[]>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    create(body: CreateLearningResourceInput | null | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(<any>response_);
+                } catch (e) {
+                    return <Observable<number>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<number>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    update(body: UpdateLearningResourceInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    setImage(body: SetLearningResourceImageInput | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/SetImage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetImage(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetImage(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSetImage(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    delete(id: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/Delete?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class LinkTrackingServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -42516,6 +42855,50 @@ export class SignUpMemberResponse implements ISignUpMemberResponse {
 
 export interface ISignUpMemberResponse {
     authenticateResult: AuthenticateResultModel | undefined;
+}
+
+export class SignUpRequest implements ISignUpRequest {
+    fullName!: string;
+    email!: string;
+    password!: string;
+
+    constructor(data?: ISignUpRequest) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.fullName = data["fullName"];
+            this.email = data["email"];
+            this.password = data["password"];
+        }
+    }
+
+    static fromJS(data: any): SignUpRequest {
+        data = typeof data === 'object' ? data : {};
+        let result = new SignUpRequest();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fullName"] = this.fullName;
+        data["email"] = this.email;
+        data["password"] = this.password;
+        return data; 
+    }
+}
+
+export interface ISignUpRequest {
+    fullName: string;
+    email: string;
+    password: string;
 }
 
 export class IsTenantAvailableInput implements IIsTenantAvailableInput {
@@ -65780,6 +66163,7 @@ export class ImportContactInput implements IImportContactInput {
     star!: string | undefined;
     importType!: ImportTypeInput | undefined;
     ignoreInvalidValues!: boolean | undefined;
+    matchExisting!: boolean | undefined;
     overrideLists!: boolean | undefined;
     createUser!: boolean | undefined;
     sendWelcomeEmail!: boolean | undefined;
@@ -65842,6 +66226,7 @@ export class ImportContactInput implements IImportContactInput {
             this.star = data["star"];
             this.importType = data["importType"];
             this.ignoreInvalidValues = data["ignoreInvalidValues"];
+            this.matchExisting = data["matchExisting"];
             this.overrideLists = data["overrideLists"] !== undefined ? data["overrideLists"] : false;
             this.createUser = data["createUser"];
             this.sendWelcomeEmail = data["sendWelcomeEmail"];
@@ -65901,6 +66286,7 @@ export class ImportContactInput implements IImportContactInput {
         data["star"] = this.star;
         data["importType"] = this.importType;
         data["ignoreInvalidValues"] = this.ignoreInvalidValues;
+        data["matchExisting"] = this.matchExisting;
         data["overrideLists"] = this.overrideLists;
         data["createUser"] = this.createUser;
         data["sendWelcomeEmail"] = this.sendWelcomeEmail;
@@ -65953,6 +66339,7 @@ export interface IImportContactInput {
     star: string | undefined;
     importType: ImportTypeInput | undefined;
     ignoreInvalidValues: boolean | undefined;
+    matchExisting: boolean | undefined;
     overrideLists: boolean | undefined;
     createUser: boolean | undefined;
     sendWelcomeEmail: boolean | undefined;
@@ -69626,6 +70013,438 @@ export class LeadTypeDto implements ILeadTypeDto {
 export interface ILeadTypeDto {
     id: number | undefined;
     name: string | undefined;
+}
+
+export class MemberServiceAssignmentInfoOutput implements IMemberServiceAssignmentInfoOutput {
+    memberServiceLevelIds!: number[] | undefined;
+    memberServiceId!: number | undefined;
+
+    constructor(data?: IMemberServiceAssignmentInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            if (data["memberServiceLevelIds"] && data["memberServiceLevelIds"].constructor === Array) {
+                this.memberServiceLevelIds = [];
+                for (let item of data["memberServiceLevelIds"])
+                    this.memberServiceLevelIds.push(item);
+            }
+            this.memberServiceId = data["memberServiceId"];
+        }
+    }
+
+    static fromJS(data: any): MemberServiceAssignmentInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new MemberServiceAssignmentInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (this.memberServiceLevelIds && this.memberServiceLevelIds.constructor === Array) {
+            data["memberServiceLevelIds"] = [];
+            for (let item of this.memberServiceLevelIds)
+                data["memberServiceLevelIds"].push(item);
+        }
+        data["memberServiceId"] = this.memberServiceId;
+        return data; 
+    }
+}
+
+export interface IMemberServiceAssignmentInfoOutput {
+    memberServiceLevelIds: number[] | undefined;
+    memberServiceId: number | undefined;
+}
+
+export enum LearningResourceType {
+    Link = "Link", 
+    Video = "Video", 
+    Audio = "Audio", 
+    Image = "Image", 
+    File = "File", 
+}
+
+export class LearningResourceInfoOutput implements ILearningResourceInfoOutput {
+    id!: number | undefined;
+    imageUrl!: string | undefined;
+    isParent!: boolean | undefined;
+    parentId!: number | undefined;
+    memberServiceAssignments!: MemberServiceAssignmentInfoOutput[] | undefined;
+    children!: LearningResourceInfoOutput[] | undefined;
+    type!: LearningResourceType | undefined;
+    name!: string | undefined;
+    url!: string | undefined;
+
+    constructor(data?: ILearningResourceInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.imageUrl = data["imageUrl"];
+            this.isParent = data["isParent"];
+            this.parentId = data["parentId"];
+            if (data["memberServiceAssignments"] && data["memberServiceAssignments"].constructor === Array) {
+                this.memberServiceAssignments = [];
+                for (let item of data["memberServiceAssignments"])
+                    this.memberServiceAssignments.push(MemberServiceAssignmentInfoOutput.fromJS(item));
+            }
+            if (data["children"] && data["children"].constructor === Array) {
+                this.children = [];
+                for (let item of data["children"])
+                    this.children.push(LearningResourceInfoOutput.fromJS(item));
+            }
+            this.type = data["type"];
+            this.name = data["name"];
+            this.url = data["url"];
+        }
+    }
+
+    static fromJS(data: any): LearningResourceInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new LearningResourceInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["imageUrl"] = this.imageUrl;
+        data["isParent"] = this.isParent;
+        data["parentId"] = this.parentId;
+        if (this.memberServiceAssignments && this.memberServiceAssignments.constructor === Array) {
+            data["memberServiceAssignments"] = [];
+            for (let item of this.memberServiceAssignments)
+                data["memberServiceAssignments"].push(item.toJSON());
+        }
+        if (this.children && this.children.constructor === Array) {
+            data["children"] = [];
+            for (let item of this.children)
+                data["children"].push(item.toJSON());
+        }
+        data["type"] = this.type;
+        data["name"] = this.name;
+        data["url"] = this.url;
+        return data; 
+    }
+}
+
+export interface ILearningResourceInfoOutput {
+    id: number | undefined;
+    imageUrl: string | undefined;
+    isParent: boolean | undefined;
+    parentId: number | undefined;
+    memberServiceAssignments: MemberServiceAssignmentInfoOutput[] | undefined;
+    children: LearningResourceInfoOutput[] | undefined;
+    type: LearningResourceType | undefined;
+    name: string | undefined;
+    url: string | undefined;
+}
+
+export class LearningResourceGroupInfoOutput implements ILearningResourceGroupInfoOutput {
+    groupId!: number | undefined;
+    groupName!: string | undefined;
+    groupImageUrl!: string | undefined;
+    groupHtmlColor!: string | undefined;
+    resources!: LearningResourceInfoOutput[] | undefined;
+
+    constructor(data?: ILearningResourceGroupInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.groupId = data["groupId"];
+            this.groupName = data["groupName"];
+            this.groupImageUrl = data["groupImageUrl"];
+            this.groupHtmlColor = data["groupHtmlColor"];
+            if (data["resources"] && data["resources"].constructor === Array) {
+                this.resources = [];
+                for (let item of data["resources"])
+                    this.resources.push(LearningResourceInfoOutput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): LearningResourceGroupInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new LearningResourceGroupInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["groupId"] = this.groupId;
+        data["groupName"] = this.groupName;
+        data["groupImageUrl"] = this.groupImageUrl;
+        data["groupHtmlColor"] = this.groupHtmlColor;
+        if (this.resources && this.resources.constructor === Array) {
+            data["resources"] = [];
+            for (let item of this.resources)
+                data["resources"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ILearningResourceGroupInfoOutput {
+    groupId: number | undefined;
+    groupName: string | undefined;
+    groupImageUrl: string | undefined;
+    groupHtmlColor: string | undefined;
+    resources: LearningResourceInfoOutput[] | undefined;
+}
+
+export class MemberServiceAssignmentInput implements IMemberServiceAssignmentInput {
+    memberServiceId!: number;
+    memberServiceLevelId!: number | undefined;
+
+    constructor(data?: IMemberServiceAssignmentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.memberServiceId = data["memberServiceId"];
+            this.memberServiceLevelId = data["memberServiceLevelId"];
+        }
+    }
+
+    static fromJS(data: any): MemberServiceAssignmentInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new MemberServiceAssignmentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["memberServiceId"] = this.memberServiceId;
+        data["memberServiceLevelId"] = this.memberServiceLevelId;
+        return data; 
+    }
+}
+
+export interface IMemberServiceAssignmentInput {
+    memberServiceId: number;
+    memberServiceLevelId: number | undefined;
+}
+
+export class CreateLearningResourceInput implements ICreateLearningResourceInput {
+    groupId!: number;
+    isParent!: boolean | undefined;
+    parentId!: number | undefined;
+    type!: LearningResourceType | undefined;
+    name!: string;
+    url!: string | undefined;
+    fileName!: string | undefined;
+    fileSize!: number | undefined;
+    file!: string | undefined;
+    memberServiceAssignments!: MemberServiceAssignmentInput[] | undefined;
+
+    constructor(data?: ICreateLearningResourceInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.groupId = data["groupId"];
+            this.isParent = data["isParent"];
+            this.parentId = data["parentId"];
+            this.type = data["type"];
+            this.name = data["name"];
+            this.url = data["url"];
+            this.fileName = data["fileName"];
+            this.fileSize = data["fileSize"];
+            this.file = data["file"];
+            if (data["memberServiceAssignments"] && data["memberServiceAssignments"].constructor === Array) {
+                this.memberServiceAssignments = [];
+                for (let item of data["memberServiceAssignments"])
+                    this.memberServiceAssignments.push(MemberServiceAssignmentInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): CreateLearningResourceInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateLearningResourceInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["groupId"] = this.groupId;
+        data["isParent"] = this.isParent;
+        data["parentId"] = this.parentId;
+        data["type"] = this.type;
+        data["name"] = this.name;
+        data["url"] = this.url;
+        data["fileName"] = this.fileName;
+        data["fileSize"] = this.fileSize;
+        data["file"] = this.file;
+        if (this.memberServiceAssignments && this.memberServiceAssignments.constructor === Array) {
+            data["memberServiceAssignments"] = [];
+            for (let item of this.memberServiceAssignments)
+                data["memberServiceAssignments"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface ICreateLearningResourceInput {
+    groupId: number;
+    isParent: boolean | undefined;
+    parentId: number | undefined;
+    type: LearningResourceType | undefined;
+    name: string;
+    url: string | undefined;
+    fileName: string | undefined;
+    fileSize: number | undefined;
+    file: string | undefined;
+    memberServiceAssignments: MemberServiceAssignmentInput[] | undefined;
+}
+
+export class UpdateLearningResourceInput implements IUpdateLearningResourceInput {
+    id!: number;
+    type!: LearningResourceType | undefined;
+    name!: string;
+    url!: string | undefined;
+    fileName!: string | undefined;
+    fileSize!: number | undefined;
+    file!: string | undefined;
+    memberServiceAssignments!: MemberServiceAssignmentInput[] | undefined;
+
+    constructor(data?: IUpdateLearningResourceInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.type = data["type"];
+            this.name = data["name"];
+            this.url = data["url"];
+            this.fileName = data["fileName"];
+            this.fileSize = data["fileSize"];
+            this.file = data["file"];
+            if (data["memberServiceAssignments"] && data["memberServiceAssignments"].constructor === Array) {
+                this.memberServiceAssignments = [];
+                for (let item of data["memberServiceAssignments"])
+                    this.memberServiceAssignments.push(MemberServiceAssignmentInput.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): UpdateLearningResourceInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLearningResourceInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["type"] = this.type;
+        data["name"] = this.name;
+        data["url"] = this.url;
+        data["fileName"] = this.fileName;
+        data["fileSize"] = this.fileSize;
+        data["file"] = this.file;
+        if (this.memberServiceAssignments && this.memberServiceAssignments.constructor === Array) {
+            data["memberServiceAssignments"] = [];
+            for (let item of this.memberServiceAssignments)
+                data["memberServiceAssignments"].push(item.toJSON());
+        }
+        return data; 
+    }
+}
+
+export interface IUpdateLearningResourceInput {
+    id: number;
+    type: LearningResourceType | undefined;
+    name: string;
+    url: string | undefined;
+    fileName: string | undefined;
+    fileSize: number | undefined;
+    file: string | undefined;
+    memberServiceAssignments: MemberServiceAssignmentInput[] | undefined;
+}
+
+export class SetLearningResourceImageInput implements ISetLearningResourceImageInput {
+    id!: number;
+    image!: string | undefined;
+
+    constructor(data?: ISetLearningResourceImageInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.image = data["image"];
+        }
+    }
+
+    static fromJS(data: any): SetLearningResourceImageInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetLearningResourceImageInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["image"] = this.image;
+        return data; 
+    }
+}
+
+export interface ISetLearningResourceImageInput {
+    id: number;
+    image: string | undefined;
 }
 
 export class LinkTrackingOutput implements ILinkTrackingOutput {

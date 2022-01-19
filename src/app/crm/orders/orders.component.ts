@@ -134,6 +134,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.initOrdersToolbarConfig();
     }
 
+    searchClear = false;
+    searchValue = this._activatedRoute.snapshot.queryParams.search || '';
     manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
     filterModelStages: FilterModel;
     layoutTypes = DataLayoutType;
@@ -151,7 +153,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private readonly subscriptionsDataSourceURI = 'Subscription';
     readonly orderFields: KeysEnum<OrderDto> = OrderFields;
     readonly subscriptionFields: KeysEnum<SubscriptionDto> = SubscriptionFields;
-    private filters: FilterModel[];
+    private filters: FilterModel[] = [];
     private orderSubscriptionStatusFilter = this.getSubscriptionsFilter();
     private subscriptionStatusFilter = this.getSubscriptionsFilter();
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
@@ -165,7 +167,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             return layoutType == DataLayoutType.Pipeline ? pipelineCompactView : gridCompactView;
         })
     );
-    selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable();
+    selectedOrderType$: Observable<OrderType> = this.selectedOrderType.asObservable().pipe(
+        filter(() => this.componentIsActivated),
+        takeUntil(this.destroy$)
+    );
     selectedContactGroup$: Observable<ContactGroup> = this.selectedContactGroup.asObservable();
     contactGroupDataSource = Object.keys(ContactGroup).filter(
         (group: string) => this.permission.checkCGPermission(ContactGroup[group], '')
@@ -403,15 +408,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
     ];
     permissions = AppPermissions;
-    currency: string;
+    currency: string = 'USD';
     totalErrorMsg: string;
     ordersTotalCount: number;
     subscriptionsTotalCount: number;
     ordersToolbarConfig: ToolbarGroupModel[];
     subscriptionsToolbarConfig: ToolbarGroupModel[];
     orderTypesEnum = OrderType;
-    searchValue = this._activatedRoute.snapshot.queryParams.search || '';
-    searchClear = false;
     ordersDataSource: any = new DataSource(this.getOrdersDataSourceConfig());
     subscriptionsDataSource = new DataSource({
         requireTotalCount: true,
@@ -779,15 +782,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         invoicesService.settings$.pipe(
             filter(Boolean)
         ).subscribe((res: InvoiceSettings) => this.currency = res.currency);
-        this._activatedRoute.queryParams.pipe(
-            takeUntil(this.destroy$),
-            filter(() => this.componentIsActivated),
+        this.queryParams$.pipe(
             pluck('refresh'),
             filter(Boolean)
         ).subscribe(() => this.invalidate());
-        this.selectedOrderType.value === OrderType.Order
-            ? this.initOrdersToolbarConfig()
-            : this.initSubscriptionsToolbarConfig();
     }
 
     ngOnInit() {
@@ -806,10 +804,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             }
         });
         this.selectedOrderType$.pipe(
-            skip(1),
-            takeUntil(this.destroy$)
+            skip(1)
         ).subscribe((selectedOrderType: OrderType) => {
             this.changeOrderType(selectedOrderType);
+        });
+        this.selectedOrderType$.pipe(
+            first()
+        ).subscribe((selectedOrderType: OrderType) => {
+            this.searchClear = false;
+            this.changeOrderType(this.selectedOrderType.value);
         });
     }
 
@@ -820,13 +823,16 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     private handleQueryParams() {
         this.queryParams$.pipe(
-            skip(1),
             /** Wait for activation to update the filters */
             switchMap((queryParams: Params) => this.activate$.pipe(
                 filter(Boolean),
                 mapTo(queryParams))
             )
         ).subscribe((params: Params) => {
+            if (params.orderType && this.selectedOrderType.value !== (+params.orderType)) {
+                this.searchClear = false;
+                this.selectedOrderType.next(+params.orderType);
+            }
             if (params.search && this.searchValue !== params.search) {
                 this.searchValue = params.search;
                 if (this.selectedOrderType.value == OrderType.Order)
@@ -836,10 +842,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 this.filtersService.clearAllFilters();
                 this.selectedContactGroup.next(undefined);
                 setTimeout(() => this.filtersService.change([this.contactGroupFilter]));
-            }
-            if (params.orderType && this.selectedOrderType.value !== (+params.orderType)) {
-                this.searchClear = false;
-                this.selectedOrderType.next(+params.orderType);
             }
         });
     }
@@ -1395,7 +1397,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     customizeAmountCell = (cellInfo) => {
-        return this.currencyPipe.transform(cellInfo.value, this.currency, 'symbol', '1.2-2');
+        return this.currencyPipe.transform(isNaN(cellInfo.value) ? 0 : cellInfo.value, this.currency, 'symbol', '1.2-2');
     }
 
     customizeAmountSummary = (cellInfo) => {
