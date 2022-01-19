@@ -542,7 +542,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     get isUserProfile() {
-        return this.contactGroupId.value === ContactGroup.UserProfile;
+        return this.contactGroupId.value === ContactGroup.Employee;
     }
 
     getContactInfoWithCompany(companyId: number, contactInfo$: Observable<ContactInfoDto>): Observable<ContactInfoDto> {

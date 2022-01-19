@@ -74,7 +74,7 @@ export class GlobalSearchComponent implements OnInit {
                 this.getPartnersGroup(search),
                 this.getLeadGroup(search, this.ls.l('ClientLeads'), 'Client'),
                 this.getLeadGroup(search, this.ls.l('PartnerLeads'), 'Partner'),
-                this.getLeadGroup(search, this.ls.l('Employees'), 'UserProfile'),
+                this.getLeadGroup(search, this.ls.l('Employees'), 'Employee'),
                 this.getLeadGroup(search, this.ls.l('Investors'), 'Investor'),
                 this.getLeadGroup(search, this.ls.l('Vendors'), 'Vendor'),
                 this.getLeadGroup(search, this.ls.l('Others'), 'Other'),

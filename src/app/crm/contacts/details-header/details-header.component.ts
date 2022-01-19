@@ -137,7 +137,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     showRemovingOrgRelationProgress = false;
 
     private readonly allContactGroups = _.values(ContactGroup);
-    private readonly allContactGroupsExceptUser = this.allContactGroups.filter(v => v != ContactGroup.UserProfile);
+    private readonly allContactGroupsExceptUser = this.allContactGroups.filter(v => v != ContactGroup.Employee);
 
     manageAllowed$: Observable<boolean> = this.contactInfo$.pipe(
         filter(Boolean),

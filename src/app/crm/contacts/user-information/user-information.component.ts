@@ -418,7 +418,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
             const initialValue = !this.data.user.isActive;
             this.contactsService.updateStatus(
                 this.data.user.id,
-                ContactGroup.UserProfile,
+                ContactGroup.Employee,
                 this.data.user.isActive,
                 'user'
             ).subscribe(

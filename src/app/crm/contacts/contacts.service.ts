@@ -757,7 +757,7 @@ export class ContactsService {
                     case 'partners':
                         return ContactGroup.Partner;
                     case 'users':
-                        return ContactGroup.UserProfile;
+                        return ContactGroup.Employee;
                 }
             }
         }

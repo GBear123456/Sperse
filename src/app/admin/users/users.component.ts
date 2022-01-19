@@ -376,7 +376,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
             this._router.navigate(['app/admin/user/' + userId + '/user-information'],
                 { 
                     queryParams: { 
-                        contactGroupId: ContactGroup.UserProfile,
+                        contactGroupId: ContactGroup.Employee,
                         referrer: 'app/admin/users'
                     } 
                 }
