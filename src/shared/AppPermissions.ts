@@ -124,6 +124,7 @@ export enum AppPermissions {
     CRMOthersIsAssignable = 'Pages.CRM.Others.IsAssignable',
     CRMOthersViewCommunicationHistory = 'Pages.CRM.Others.ViewCommunicationHistory',
     CRMOthersViewCommunicationHistorySendSMSAndEmail = 'Pages.CRM.Others.ViewCommunicationHistory.SendSMSAndEmail',
+    CRMManageLearningResources = 'Pages.CRM.ManageLearningResources',
     PFM = 'Pages.PFM',
     PFMApplications = 'Pages.PFM.Applications',
     PFMApplicationsViewSubmissions = 'Pages.PFM.Applications.ViewSubmissions',
