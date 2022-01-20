@@ -41,7 +41,7 @@ import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxCalendarModule } from 'devextreme-angular/ui/calendar';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { filter, map } from 'rxjs/operators';
-import { ImageViewerModule } from 'ng2-image-viewer';
+//import { ImageViewerModule } from 'ng2-image-viewer';
 
 /** Application imports */
 import { ReportPeriodComponent } from '@app/cfo/shared/report-period/report-period.component';
@@ -184,7 +184,7 @@ let COMPONENTS = [
         DxRangeSliderModule,
         DxSwitchModule,
         DxPopupModule,
-        ImageViewerModule,
+//        ImageViewerModule,
         BankAccountsCommonModule,
         SharedIntroStepsModule,
         AccountConnectorDialogModule,

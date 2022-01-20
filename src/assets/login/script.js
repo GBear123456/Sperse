@@ -105,14 +105,12 @@
             handleGetCurrentLoginInformations(generalInfo.loginInfo);
         }
         else {
-console.log(0);
             ajax(remoteServiceUrl + '/api/services/Platform/Session/GetCurrentLoginInformations',
                 {
                     "Content-Type": "application/json",
                     "Accept": "application/json"
                 }
             ).then(function (response) {
-console.log(123);
                 handleGetCurrentLoginInformations(response && response.result);
             });
         }

@@ -19,8 +19,7 @@ import { ProfileService } from '@shared/common/profile-service/profile.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ContactListDialogComponent {
-    @ContentChild(TemplateRef)
-    @Input() contactLayoutTemplate: TemplateRef<any>;
+    @ContentChild(TemplateRef) contactLayoutTemplate: TemplateRef<any>;
     @Input() title = this.ls.l('RelatedContacts');
     @Input() displayList: any[];
     @Input() addNewTitle = this.ls.l('AddRelatedContact');
