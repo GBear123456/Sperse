@@ -86,7 +86,7 @@ export class AppSessionService {
     }
 
     get userIsMember(): boolean {
-        return !!(this.user && this.user.group === UserGroup.Member);
+        return !!(this.user && this.user.groups.some(group => group === UserGroup.Member));
     }
 
     getShownLoginName(): string {

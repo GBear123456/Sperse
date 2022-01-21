@@ -46,7 +46,8 @@ import {
     UpdatePartnerTypeInput,
     UserServiceProxy,
     LayoutType,
-    PartnerTypeDto
+    PartnerTypeDto,
+    ContactGroupInfo
 } from '@shared/service-proxies/service-proxies';
 import { OperationsWidgetComponent } from './operations-widget/operations-widget.component';
 import { ContactsService } from './contacts.service';
@@ -497,13 +498,15 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private fillLeadDetails(leadInfo: LeadInfoDto) {
-        this.contactService['data'].leadInfo = this.leadInfo = leadInfo;
-        this.leadId = this.contactInfo['leadId'] = leadInfo.id;
-        this.contactsService.leadInfoUpdate({
-            ...this.params,
-            ...leadInfo
-        });
-        this.loadLeadsStages();
+        if (leadInfo.hasOwnProperty('id')) {
+            this.contactService['data'].leadInfo = this.leadInfo = leadInfo;
+            this.leadId = this.contactInfo['leadId'] = leadInfo.id;
+            this.contactsService.leadInfoUpdate({
+                ...this.params,
+                ...leadInfo
+            });        
+            this.loadLeadsStages();
+        }
         this.storeInitialData();
     }
 
@@ -540,7 +543,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     get isUserProfile() {
-        return this.contactGroupId.value === ContactGroup.UserProfile;
+        return this.contactGroupId.value === ContactGroup.Employee;
     }
 
     getContactInfoWithCompany(companyId: number, contactInfo$: Observable<ContactInfoDto>): Observable<ContactInfoDto> {
@@ -693,24 +696,26 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 ));
             })
         ).subscribe(([leadInfo, pipelines]) => {
+            let leadCGManageAllowed = this.permission.checkCGPermission([leadInfo.contactGroupId]);
             this.allPipelines = pipelines.filter(
-                (pipeline: PipelineDto) => this.permission.checkCGPermission([pipeline.contactGroupId])
-                    && (!pipeline.entityTypeSysId || (                        
-                        pipeline.entityTypeSysId.startsWith('Property')
-                            && leadInfo.propertyId
-                    )
-                )
+                (pipeline: PipelineDto) => leadCGManageAllowed ?
+                    this.permission.checkCGPermission([pipeline.contactGroupId]) && (
+                        !pipeline.entityTypeSysId || (                        
+                            pipeline.entityTypeSysId.startsWith('Property') && leadInfo.propertyId
+                        )
+                    ) : pipeline.contactGroupId == leadInfo.contactGroupId
             ).map((pipeline: PipelineDto) => {
                 return {
                     id: pipeline.id,
                     text: pipeline.name,
+                    contactGroupId: pipeline.contactGroupId,
                     items: pipeline.stages.map((stage: StageDto) => {
                         return {
                             id: stage.id,
                             name: stage.name,
                             index: stage.sortOrder,
                             action: this.updateLeadStage.bind(this),
-                            disabled: leadInfo.pipelineId != pipeline.id && stage.isFinal,
+                            disabled: !leadCGManageAllowed || (leadInfo.pipelineId != pipeline.id && stage.isFinal),
                             pipelineId: pipeline.id
                         }
                     })
@@ -736,28 +741,40 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     private showConfirmationDialog(status: GroupStatus) {
+        let hasActiveGroupBefore = this.contactInfo.groups.some(group => group.isActive),
+            hasActiveGroupAfter = this.contactInfo.groups.some(group => 
+                group.groupId == status.groupId ? status.isActive : group.isActive
+            );
         this.contactsService.updateStatus(
-            this.contactInfo.id, status.groupId, status.isActive
+            this.contactInfo.id, status.groupId, 
+            status.isActive, 'contact', !hasActiveGroupAfter            
         ).subscribe((confirm: boolean) => {
-            if (confirm) {
+            if (confirm) {   
                 this.contactInfo.groups.some(group => {
-                    if (group.groupId == status.groupId) {                        
+                    if (group.groupId == status.groupId) {
                         group.isActive = status.isActive;
                         return true;
                     }
                 });
                 let userData = this.userService['data'];
-                if (userData && userData.user) {
-                    userData.user.isActive = status.isActive;
-                }
+                if (userData && userData.user && hasActiveGroupBefore != hasActiveGroupAfter)
+                    userData.user.isActive = hasActiveGroupAfter;
                 this.notify.success(this.l('StatusSuccessfullyUpdated'));
-            } else {
-                status.isActive = !status.isActive;
-            }
-            this.toolbarComponent.updateActiveGroups(status);
-        }, () => {
-            this.toolbarComponent.updateActiveGroups();
-        });
+                this.toolbarComponent.updateActiveGroups(status);
+            } else
+                this.handleStatusUpdateError(status);
+        }, () => this.handleStatusUpdateError(status));
+    }
+
+    handleStatusUpdateError(status: GroupStatus) {
+        status.isActive = !status.isActive;
+        if (this.contactInfo.groups.every(group => group.groupId != status.groupId))
+            this.contactInfo.groups.push(<ContactGroupInfo>{
+                groupId: status.groupId, 
+                isActive: status.isActive, 
+                isProspective: true
+            });
+        this.toolbarComponent.updateActiveGroups();
     }
 
     showContactPersons(event) {

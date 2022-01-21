@@ -757,7 +757,7 @@ export class ContactsService {
                     case 'partners':
                         return ContactGroup.Partner;
                     case 'users':
-                        return ContactGroup.UserProfile;
+                        return ContactGroup.Employee;
                 }
             }
         }
@@ -790,12 +790,12 @@ export class ContactsService {
         return dataSourceURI;
     }
 
-    updateStatus(entityId: number, groupId: ContactGroup, isActive: boolean, entity: 'contact' | 'user' = 'contact'): Observable<any> {
+    updateStatus(entityId: number, groupId: ContactGroup, isActive: boolean, entity: 'contact' | 'user' = 'contact', showEmailCheckbox = false): Observable<any> {
         return new Observable<any>((observer: Subscriber<any>) => {
             let contactGroupName: any = invert(ContactGroup);
             ContactsHelper.showConfirmMessage(
-                this.ls.l('ClientUpdateStatusWarningMessage', 
-                    this.ls.l((isActive ? '': 'un') + 'assign'), 
+                this.ls.l(startCase(entity) + 'UpdateStatusWarningMessage', 
+                    this.ls.l((isActive ? '': 'in') + 'activate'), 
                     startCase(contactGroupName[<string>groupId])
                 ),
                 (isConfirmed: boolean, [ notifyUser ]: boolean[]) => {
@@ -810,10 +810,10 @@ export class ContactsService {
                 },
                 [ {
                     text: this.ls.l('SendCancellationEmail'),
-                    visible: this.userId.value && !isActive,
+                    visible: this.userId.value && (entity == 'user' && !isActive || showEmailCheckbox),
                     checked: false
                 } ],
-                this.ls.l('ClientStatusUpdateConfirmationTitle')
+                this.ls.l(startCase(entity) + 'StatusUpdateConfirmationTitle')
             );
         });
     }

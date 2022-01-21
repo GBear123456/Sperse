@@ -74,7 +74,7 @@ export class GlobalSearchComponent implements OnInit {
                 this.getPartnersGroup(search),
                 this.getLeadGroup(search, this.ls.l('ClientLeads'), 'Client'),
                 this.getLeadGroup(search, this.ls.l('PartnerLeads'), 'Partner'),
-                this.getLeadGroup(search, this.ls.l('Employees'), 'UserProfile'),
+                this.getLeadGroup(search, this.ls.l('Employees'), 'Employee'),
                 this.getLeadGroup(search, this.ls.l('Investors'), 'Investor'),
                 this.getLeadGroup(search, this.ls.l('Vendors'), 'Vendor'),
                 this.getLeadGroup(search, this.ls.l('Others'), 'Other'),
@@ -170,23 +170,29 @@ export class GlobalSearchComponent implements OnInit {
     }
 
     private getLeadGroup(search: string, name: string, contactGroup: string): Observable<GlobalSearchGroup> {
-        return this.getGlobalSearchGroup(
-            this.oDataService.getODataUrl('Lead'),
-            name,
-            'app/crm/leads',
-            search,
-            AppPermissions.CRMOrders,
-            [
-                LeadFields.Id,
-                LeadFields.Name,
-                LeadFields.Email,
-                LeadFields.PhotoPublicId,
-                LeadFields.SourceChannelCode,
-                LeadFields.CustomerId
-            ],
-            { contactGroupId: ContactGroup[contactGroup] },
-            { contactGroup: contactGroup }
-        );
+        return this.permissionService.checkCGPermission([ContactGroup[contactGroup]], '') ?
+            this.getGlobalSearchGroup(
+                this.oDataService.getODataUrl('Lead'),
+                name,
+                'app/crm/leads',
+                search,
+                AppPermissions.CRM,
+                [
+                    LeadFields.Id,
+                    LeadFields.Name,
+                    LeadFields.Email,
+                    LeadFields.PhotoPublicId,
+                    LeadFields.SourceChannelCode,
+                    LeadFields.CustomerId
+                ],
+                { contactGroupId: ContactGroup[contactGroup] },
+                { contactGroup: contactGroup }
+            ): of({
+                name: name,
+                entities: [],
+                link: '',
+                linkParams: null
+            } as GlobalSearchGroup);
     }
 
     private getOrdersGroup(search: string): Observable<GlobalSearchGroup> {
@@ -205,7 +211,9 @@ export class GlobalSearchComponent implements OnInit {
                 OrderFields.ContactId
             ],            
             null,
-            { orderType: OrderType.Order }
+            { 
+                orderType: OrderType.Order
+            }
         );
     }
 
@@ -253,7 +261,7 @@ export class GlobalSearchComponent implements OnInit {
             map((entities: any) => {
                 return {
                     name: name,
-                    entities: entities.value,
+                    entities: entities ? entities.value : [],
                     link: link,
                     linkParams: linkParams
                 };

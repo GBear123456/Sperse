@@ -418,15 +418,15 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
             const initialValue = !this.data.user.isActive;
             this.contactsService.updateStatus(
                 this.data.user.id,
-                ContactGroup.UserProfile,
+                ContactGroup.Employee,
                 this.data.user.isActive,
                 'user'
             ).subscribe(
                 (confirm: boolean) => {
                     if (confirm) {
                         let contactInfo = this.contactService['data'].contactInfo;
-                        if (this.data.user.isActive && contactInfo.statusId == ContactStatus.Inactive) {
-                            contactInfo.statusId = ContactStatus.Active;
+                        if (this.data.user.isActive && contactInfo.groups.every(group => !group.isActive)) {
+                            contactInfo.groups.forEach(group => group.isActive = true);
                             this.updateToolbarOptions();
                         }
                     } else {

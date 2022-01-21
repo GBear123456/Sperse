@@ -31,8 +31,6 @@ export class ImportLeadsService {
         let contactGroup: ContactGroup = importType;
         if (importType === ImportTypeInput.Lead)
             contactGroup = 'Client';
-        if (importType === ImportTypeInput.Employee)
-            contactGroup = 'UserProfile';
         return ContactGroup[contactGroup as string];
     }
 }

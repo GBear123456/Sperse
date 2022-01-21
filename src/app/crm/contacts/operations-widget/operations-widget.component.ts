@@ -83,14 +83,6 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         return this._pipelines;
     }
     @Input() selectedStageId: number;
-    @Input()
-    set stages(stages: any[]) {
-        this._stages = stages;
-        this.initToolbarConfig();
-    }
-    get stages(): any[] {
-        return this._stages;
-    }
     @Input() selectedPartnerTypeId: string;
     @Input()
     set partnerTypes(partnerTypes: any[]) {
@@ -164,7 +156,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 this.customToolbarConfig = undefined;
                 this.optionButtonConfig = undefined;
             }
-
+            this.updateActiveGroups();
             this.initToolbarConfig();
         });
         this.contactProxy.getContactGroups().subscribe(
