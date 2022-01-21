@@ -62376,8 +62376,6 @@ export interface IDynamicPropertyValueDto {
 export class EditionCreateDto implements IEditionCreateDto {
     id!: number | undefined;
     displayName!: string;
-    dailyPrice!: number | undefined;
-    weeklyPrice!: number | undefined;
     monthlyPrice!: number | undefined;
     annualPrice!: number | undefined;
     trialDayCount!: number | undefined;
@@ -62397,8 +62395,6 @@ export class EditionCreateDto implements IEditionCreateDto {
         if (_data) {
             this.id = _data["id"];
             this.displayName = _data["displayName"];
-            this.dailyPrice = _data["dailyPrice"];
-            this.weeklyPrice = _data["weeklyPrice"];
             this.monthlyPrice = _data["monthlyPrice"];
             this.annualPrice = _data["annualPrice"];
             this.trialDayCount = _data["trialDayCount"];
@@ -62418,8 +62414,6 @@ export class EditionCreateDto implements IEditionCreateDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["displayName"] = this.displayName;
-        data["dailyPrice"] = this.dailyPrice;
-        data["weeklyPrice"] = this.weeklyPrice;
         data["monthlyPrice"] = this.monthlyPrice;
         data["annualPrice"] = this.annualPrice;
         data["trialDayCount"] = this.trialDayCount;
@@ -62432,8 +62426,6 @@ export class EditionCreateDto implements IEditionCreateDto {
 export interface IEditionCreateDto {
     id: number | undefined;
     displayName: string;
-    dailyPrice: number | undefined;
-    weeklyPrice: number | undefined;
     monthlyPrice: number | undefined;
     annualPrice: number | undefined;
     trialDayCount: number | undefined;
@@ -62444,6 +62436,10 @@ export interface IEditionCreateDto {
 export class EditionEditDto implements IEditionEditDto {
     id!: number | undefined;
     displayName!: string;
+    monthlyPrice!: number | undefined;
+    annualPrice!: number | undefined;
+    trialDayCount!: number | undefined;
+    waitingDayAfterExpire!: number | undefined;
     expiringEditionId!: number | undefined;
 
     constructor(data?: IEditionEditDto) {
@@ -62459,6 +62455,10 @@ export class EditionEditDto implements IEditionEditDto {
         if (_data) {
             this.id = _data["id"];
             this.displayName = _data["displayName"];
+            this.monthlyPrice = _data["monthlyPrice"];
+            this.annualPrice = _data["annualPrice"];
+            this.trialDayCount = _data["trialDayCount"];
+            this.waitingDayAfterExpire = _data["waitingDayAfterExpire"];
             this.expiringEditionId = _data["expiringEditionId"];
         }
     }
@@ -62474,6 +62474,10 @@ export class EditionEditDto implements IEditionEditDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["displayName"] = this.displayName;
+        data["monthlyPrice"] = this.monthlyPrice;
+        data["annualPrice"] = this.annualPrice;
+        data["trialDayCount"] = this.trialDayCount;
+        data["waitingDayAfterExpire"] = this.waitingDayAfterExpire;
         data["expiringEditionId"] = this.expiringEditionId;
         return data;
     }
@@ -62482,6 +62486,10 @@ export class EditionEditDto implements IEditionEditDto {
 export interface IEditionEditDto {
     id: number | undefined;
     displayName: string;
+    monthlyPrice: number | undefined;
+    annualPrice: number | undefined;
+    trialDayCount: number | undefined;
+    waitingDayAfterExpire: number | undefined;
     expiringEditionId: number | undefined;
 }
 
@@ -62489,8 +62497,6 @@ export class EditionListDto implements IEditionListDto {
     name!: string | undefined;
     displayName!: string | undefined;
     creationTime!: moment.Moment;
-    dailyPrice!: number | undefined;
-    weeklyPrice!: number | undefined;
     monthlyPrice!: number | undefined;
     annualPrice!: number | undefined;
     waitingDayAfterExpire!: number | undefined;
@@ -62513,8 +62519,6 @@ export class EditionListDto implements IEditionListDto {
             this.name = _data["name"];
             this.displayName = _data["displayName"];
             this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
-            this.dailyPrice = _data["dailyPrice"];
-            this.weeklyPrice = _data["weeklyPrice"];
             this.monthlyPrice = _data["monthlyPrice"];
             this.annualPrice = _data["annualPrice"];
             this.waitingDayAfterExpire = _data["waitingDayAfterExpire"];
@@ -62537,8 +62541,6 @@ export class EditionListDto implements IEditionListDto {
         data["name"] = this.name;
         data["displayName"] = this.displayName;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
-        data["dailyPrice"] = this.dailyPrice;
-        data["weeklyPrice"] = this.weeklyPrice;
         data["monthlyPrice"] = this.monthlyPrice;
         data["annualPrice"] = this.annualPrice;
         data["waitingDayAfterExpire"] = this.waitingDayAfterExpire;
@@ -62554,8 +62556,6 @@ export interface IEditionListDto {
     name: string | undefined;
     displayName: string | undefined;
     creationTime: moment.Moment;
-    dailyPrice: number | undefined;
-    weeklyPrice: number | undefined;
     monthlyPrice: number | undefined;
     annualPrice: number | undefined;
     waitingDayAfterExpire: number | undefined;
@@ -80496,8 +80496,6 @@ export interface IPaymentMethodInfo {
 }
 
 export enum PaymentPeriodType {
-    Daily = "Daily",
-    Weekly = "Weekly",
     Monthly = "Monthly",
     Annual = "Annual",
     LifeTime = "LifeTime",
