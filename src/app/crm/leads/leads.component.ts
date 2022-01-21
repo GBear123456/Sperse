@@ -1902,7 +1902,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private setDataGridInstance() {
         let instance = this.dataGrid && this.dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
-            this.dataSource.store.url =
+            this.dataSource['_store']['_url'] =
                 this.getODataUrl(this.dataSourceURI, this.getInitialFilter());
             this.dataGrid.dataSource = this.dataSource;
             if (!instance.option('paging.pageSize'))
