@@ -27,14 +27,15 @@ export class ServerCacheService {
         const valuesHash: string = Md5.hashStr(values.join('')).toString();
         /** If local cache is older then 5 minutes - 30 second (to avoid cases with bad connection) - then load another one */
         if (!this.localCache[valuesHash]
-            || (this.localCache[valuesHash].date && moment(this.localCache[valuesHash].date).diff(moment(), 'second') < 30)) {
+            || (this.localCache[valuesHash].date && moment(this.localCache[valuesHash].date).diff(moment(), 'second') < 30)
+        ) {
             const uuid = UUID();
             this.localCache[valuesHash] = {
                 uuid$: this.cachingServiceProxy.cacheStrings({
                     [uuid]: values
                 }).pipe(
                     tap((cachedString) => {
-                        this.localCache[valuesHash].date = Object.values(cachedString)[0];
+                        this.localCache[valuesHash].date = cachedString[uuid];
                     }),
                     mapTo(uuid),
                     publishReplay(),
