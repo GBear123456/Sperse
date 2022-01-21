@@ -25,7 +25,7 @@ import {
     HostUserManagementSettingsEditDto,
     PasswordComplexitySettingsEditDto,
     SubscribableEditionComboboxItemDto,
-    SubscribableEditionComboboxItemDtoListResultDto,
+    ListResultDtoOfSubscribableEditionComboboxItemDto,
     TenantManagementSettingsEditDto,
     TenantSettingsServiceProxy,
     TenantUserManagementSettingsEditDto,
@@ -77,7 +77,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
         : of(null);
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     editions$: Observable<SubscribableEditionComboboxItemDto[]> = this.commonLookupServiceProxy.getEditionsForCombobox(false).pipe(
-        map((result: SubscribableEditionComboboxItemDtoListResultDto) => {
+        map((result: ListResultDtoOfSubscribableEditionComboboxItemDto) => {
             const notAssignedEdition: any = {
                 value: null,
                 displayText: this.ls.l('NotAssigned')

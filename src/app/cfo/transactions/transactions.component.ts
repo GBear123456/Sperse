@@ -44,7 +44,7 @@ import {
     BankAccountsServiceProxy,
     TransactionTypesAndCategoriesDto,
     TransactionTypeDto,
-    StringFilterElementDto,
+    FilterElementDtoOfString,
     FiltersInitialData,
     SyncAccountBankDto
 } from '@shared/service-proxies/service-proxies';
@@ -244,7 +244,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
         publishReplay(),
         refCount()
     );
-    categories$: Observable<StringFilterElementDto[]> = this.transactionTypesAndCategories$.pipe(
+    categories$: Observable<FilterElementDtoOfString[]> = this.transactionTypesAndCategories$.pipe(
         map((transactionTypesAndCategories: TransactionTypesAndCategoriesDto) => transactionTypesAndCategories.categories)
     );
     categories: string[];
@@ -503,7 +503,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                      [TransactionTypesAndCategoriesDto, FiltersInitialData, SyncAccountBankDto[]]) => {
             this.syncAccounts = syncAccounts;
             this.types = typeAndCategories.types.map((item: TransactionTypeDto) => item.name);
-            this.categories = typeAndCategories.categories.map((item: StringFilterElementDto) => item.name);
+            this.categories = typeAndCategories.categories.map((item: FilterElementDtoOfString) => item.name);
             this.filtersInitialData = filtersInitialData;
             this.filters = [
                 this.dateFilter,

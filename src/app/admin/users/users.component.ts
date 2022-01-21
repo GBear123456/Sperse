@@ -12,8 +12,8 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import {
-    UserServiceProxy, UserListDto, Int64EntityDto, RoleServiceProxy,
-    PermissionServiceProxy, UserGroup
+    UserServiceProxy, UserListDto, EntityDtoOfInt64, RoleServiceProxy,
+    PermissionServiceProxy, UserGroup, GetRolesInput
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module';
 import { ContactGroup } from '@shared/AppEnums';
@@ -41,9 +41,9 @@ import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import {
     FlatPermissionWithLevelDto,
-    FlatPermissionWithLevelDtoListResultDto,
+    ListResultDtoOfFlatPermissionWithLevelDto,
     RoleListDto,
-    RoleListDtoListResultDto
+    ListResultDtoOfRoleListDto
 } from '@shared/service-proxies/service-proxies';
 import { AppStoreService } from '@app/store/app-store.service';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
@@ -387,8 +387,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     initFilterConfig() {
         forkJoin(
             this.permissionService.getAllPermissions(false),
-            this.roleService.getRoles(undefined, undefined)
-        ).subscribe(([permissions, roles]: [FlatPermissionWithLevelDtoListResultDto, RoleListDtoListResultDto]) => {
+            this.roleService.getRoles(new GetRolesInput())
+        ).subscribe(([permissions, roles]: [ListResultDtoOfFlatPermissionWithLevelDto, ListResultDtoOfRoleListDto]) => {
             this.setupFilters(permissions.items, roles.items);
         });
 
@@ -515,7 +515,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     unlockUser(record): void {
-        this.userServiceProxy.unlockUser(new Int64EntityDto({ id: record.id })).subscribe(() => {
+        this.userServiceProxy.unlockUser(new EntityDtoOfInt64({ id: record.id })).subscribe(() => {
             this.notify.success(this.l('UnlockedTheUser', record.userName));
         });
     }

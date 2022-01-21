@@ -8,7 +8,7 @@ import { MatHorizontalStepper } from '@angular/material/stepper';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { ModuleType, RoleServiceProxy, UserServiceProxy } from 'shared/service-proxies/service-proxies';
+import { ModuleType, ModuleType2, RoleServiceProxy, UserServiceProxy } from 'shared/service-proxies/service-proxies';
 import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
 import { AppService } from '@app/app.service';
@@ -93,7 +93,7 @@ export class CrmIntroComponent implements OnInit {
 
     // GetAvailableUserCount
     getAvailableUserCount() {
-        this.userService.getAvailableUserCount(ModuleType[this.moduleType]).subscribe(result => {
+        this.userService.getAvailableUserCount(ModuleType2[this.moduleType]).subscribe(result => {
             this.maxAvailableUserCount = result;
         });
     }

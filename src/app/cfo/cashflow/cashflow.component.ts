@@ -98,7 +98,7 @@ import {
     RenameForecastModelInput,
     CreateForecastModelInput,
     SyncAccountBankDto,
-    ReportTemplate,
+    ReportTemplate2,
     GetReportTemplateDefinitionOutput,
     CashFlowGridSettingsDto,
     CashFlowStatsDto,
@@ -827,7 +827,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Create parallel operations */
         const cashFlowInitialData$: Observable<CashFlowInitialData> = this.cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
         const categoryTree$: Observable<GetCategoryTreeOutput> = this.categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, true);
-        const reportSections$ = this.categoryTreeServiceProxy.getReportTemplateDefinition(InstanceType[this.instanceType], this.instanceId, ReportTemplate.Personal);
+        const reportSections$ = this.categoryTreeServiceProxy.getReportTemplateDefinition(InstanceType[this.instanceType], this.instanceId, ReportTemplate2.Personal);
         const cashflowGridSettings$: Observable<CashFlowGridSettingsDto> = this.userPreferencesService.userPreferences$.pipe(first());
         const syncAccounts$: Observable<SyncAccountBankDto[]> = this.bankAccountsService.syncAccounts$.pipe(first());
         forkJoin(cashFlowInitialData$ , categoryTree$, reportSections$, cashflowGridSettings$, syncAccounts$)
@@ -1614,7 +1614,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.cashflowService.cashflowData && this.cashflowService.cashflowData.length) {
             this.cashflowService.cashflowData.slice().forEach(item => {
                 if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                    item.adjustmentType != AdjustmentType._2
+                    item.adjustmentType != AdjustmentType.StartDateBalance
                 ) {
                     this.cashflowService.cashflowData.splice(this.cashflowService.cashflowData.indexOf(item), 1);
                 }
@@ -1624,7 +1624,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.cashflowService.adjustmentsList && this.cashflowService.adjustmentsList.length) {
             this.cashflowService.adjustmentsList.slice().forEach(item => {
                 if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                    item.adjustmentType != AdjustmentType._2) {
+                    item.adjustmentType != AdjustmentType.StartDateBalance) {
                     this.cashflowService.adjustmentsList.splice(this.cashflowService.adjustmentsList.indexOf(item), 1);
                 }
             });
@@ -1778,8 +1778,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (isAccountTransaction) {
                 /** @todo Remove adjustment list for the months and create another for days */
                 if (transactionObj.cashflowTypeId === StartedBalance) {
-                    this.cashflowService.adjustmentsList.push({...extendedTransaction});
-                    if (transactionObj.adjustmentType == AdjustmentType._0) {
+                    this.cashflowService.adjustmentsList.push({ ...extendedTransaction });
+                    if (transactionObj.adjustmentType == AdjustmentType.StartingBalance) {
                         extendedTransaction.cashflowTypeId = Total;
                     }
                 }

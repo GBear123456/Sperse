@@ -7,7 +7,7 @@ import { Observable, of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 
 /** Application imports */
-import { InstanceServiceProxy, InstanceType } from '@shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, InstanceType2 } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
 
 @Injectable()
@@ -37,7 +37,7 @@ export class CfoInstanceStatusGuard implements CanActivate {
 
     setup(): Observable<boolean> {
         if (!this.cfoService.statusActive.value)
-            return this.instanceServiceProxy.setup(InstanceType[this.cfoService.instanceType], undefined).pipe(
+            return this.instanceServiceProxy.setup(InstanceType2[this.cfoService.instanceType], undefined).pipe(
                 map(() => true), catchError(() => of(false))
             );
         return of(true);

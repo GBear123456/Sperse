@@ -22,11 +22,10 @@ import { DxNumberBoxComponent } from 'devextreme-angular/ui/number-box';
 import {
     ComboboxItemDto,
     CommonLookupServiceProxy,
-    CreateOrUpdateEditionDto,
     EditionEditDto,
     EditionServiceProxy,
     GetEditionEditOutput,
-    SubscribableEditionComboboxItemDtoListResultDto
+    ListResultDtoOfSubscribableEditionComboboxItemDto
 } from '@shared/service-proxies/service-proxies';
 import { FeatureTreeComponent } from '@app/shared/features/feature-tree.component';
 import { NotifyService } from 'abp-ng2-module';
@@ -84,7 +83,7 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
     ngOnInit() {
         this.modalDialog.startLoading();
         this.commonLookupService.getEditionsForCombobox(true).pipe(
-            tap((editionsResult: SubscribableEditionComboboxItemDtoListResultDto) => {
+            tap((editionsResult: ListResultDtoOfSubscribableEditionComboboxItemDto) => {
                 this.expiringEditions = editionsResult.items;
                 this.expiringEditions.unshift(new ComboboxItemDto({
                     value: null,
@@ -106,9 +105,9 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
                 this.title = this.data.editionId ? this.ls.l('EditEdition') + ' ' + this.edition.displayName : this.ls.l('CreateNewEdition');
                 this.editData = editionResult;
                 this.expireAction = this.edition.expiringEditionId > 0 ? AppEditionExpireAction.AssignToAnotherEdition : AppEditionExpireAction.DeactiveTenant;
-                this.isFree = !editionResult.edition.monthlyPrice && !editionResult.edition.annualPrice;
-                this.isTrialActive = editionResult.edition.trialDayCount > 0;
-                this.isWaitingDayActive = editionResult.edition.waitingDayAfterExpire > 0;
+                //this.isFree = !editionResult.edition.monthlyPrice && !editionResult.edition.annualPrice;
+                //this.isTrialActive = editionResult.edition.trialDayCount > 0;
+                //this.isWaitingDayActive = editionResult.edition.waitingDayAfterExpire > 0;
                 this.changeDetectorRef.detectChanges();
             },
             () => this.modalDialog.finishLoading()
@@ -122,8 +121,8 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
     }
 
     resetPrices() {
-        this.edition.annualPrice = undefined;
-        this.edition.monthlyPrice = undefined;
+        //this.edition.annualPrice = undefined;
+        //this.edition.monthlyPrice = undefined;
     }
 
     removeExpiringEdition() {
@@ -135,23 +134,23 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
     }
 
     save(): void {
-        if (!this.isFree && (!this.edition.monthlyPrice || !this.edition.annualPrice)) {
-            this.checkSetFieldValid(this.monthlyPriceInput);
-            this.checkSetFieldValid(this.annualPriceInput);
-            return ;
-        }
+        //if (!this.isFree && (!this.edition.monthlyPrice || !this.edition.annualPrice)) {
+        //    this.checkSetFieldValid(this.monthlyPriceInput);
+        //    this.checkSetFieldValid(this.annualPriceInput);
+        //    return ;
+        //}
 
-        const input = new CreateOrUpdateEditionDto();
-        input.edition = this.edition;
-        input.featureValues = this.featureTree.getGrantedFeatures();
-        this.modalDialog.startLoading();
-        this.editionService.createOrUpdateEdition(input)
-            .pipe(finalize(() => this.modalDialog.finishLoading()))
-            .subscribe(() => {
-                this.notifyService.info(this.ls.l('SavedSuccessfully'));
-                this.dialogRef.close(true);
-                this.modalSave.emit(null);
-            });
+        //const input = new CreateOrUpdateEditionDto();
+        //input.edition = this.edition;
+        //input.featureValues = this.featureTree.getGrantedFeatures();
+        //this.modalDialog.startLoading();
+        //this.editionService.createOrUpdateEdition(input)
+        //    .pipe(finalize(() => this.modalDialog.finishLoading()))
+        //    .subscribe(() => {
+        //        this.notifyService.info(this.ls.l('SavedSuccessfully'));
+        //        this.dialogRef.close(true);
+        //        this.modalSave.emit(null);
+        //    });
     }
 
 }

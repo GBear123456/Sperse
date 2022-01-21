@@ -1,7 +1,7 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AfterViewChecked, Component, Injector, OnInit, OnDestroy } from '@angular/core';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { UiCustomizationSettingsEditDto, UiCustomizationSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ThemeSettingsDto, UiCustomizationSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
@@ -11,7 +11,8 @@ import { AppPermissions } from '@shared/AppPermissions';
 export class UiCustomizationComponent extends AppComponentBase implements AfterViewChecked, OnInit, OnDestroy {
 
     private rootComponent: any;
-    settings: UiCustomizationSettingsEditDto;
+    settings: ThemeSettingsDto;
+    allSettings: ThemeSettingsDto[];
     permissions = AppPermissions;
 
     constructor(
@@ -31,7 +32,7 @@ export class UiCustomizationComponent extends AppComponentBase implements AfterV
 
     ngOnInit(): void {
         this._uiCustomizationService.getUiManagementSettings().subscribe((settingsResult) => {
-            this.settings = settingsResult;
+            this.allSettings = settingsResult;
         });
     }
 
@@ -63,8 +64,8 @@ export class UiCustomizationComponent extends AppComponentBase implements AfterV
 
     allowAsideMinimizingChange(val): void {
         if (val) {
-            this.settings.menu.allowAsideHiding = false;
-            this.settings.menu.defaultHiddenAside = false;
+            //this.settings.menu.allowAsideHiding = false;
+            //this.settings.menu.defaultHiddenAside = false;
         } else {
             this.settings.menu.defaultMinimizedAside = false;
         }
@@ -72,7 +73,7 @@ export class UiCustomizationComponent extends AppComponentBase implements AfterV
 
     allowAsideHidingChange(val): void {
         if (!val) {
-            this.settings.menu.defaultHiddenAside = false;
+            //this.settings.menu.defaultHiddenAside = false;
         }
     }
 }

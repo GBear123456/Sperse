@@ -23,7 +23,7 @@ import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     AuditLogListDto,
-    AuditLogListDtoPagedResultDto,
+    PagedResultDtoOfAuditLogListDto,
     AuditLogServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { FileDownloadService } from '@shared/utils/file-download.service';
@@ -156,7 +156,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                 loadOptions.take,
                 loadOptions.skip
             ).toPromise().then(
-                (response: AuditLogListDtoPagedResultDto) => {
+                (response: PagedResultDtoOfAuditLogListDto) => {
                     this.finishLoading();
                     return {
                         data: response.items,

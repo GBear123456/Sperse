@@ -126,7 +126,7 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     loadNotifications(): void {
-        this.notificationService.getUserNotifications(UserNotificationState._0, 3, 0).subscribe((result: GetNotificationsOutput) => {
+        this.notificationService.getUserNotifications(UserNotificationState.Unread, undefined, undefined, 3, 0).subscribe((result: GetNotificationsOutput) => {
             this.unreadNotificationCount = result.items.length;
             this.notifications = [];
             $.each(result.items, (index, item: UserNotificationDto) => {

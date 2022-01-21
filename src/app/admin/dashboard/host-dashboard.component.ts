@@ -4,19 +4,17 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 
 /** Third party imports */
 import * as moment from 'moment-timezone';
-import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
-import { finalize, first, map, tap, switchMap, catchError, publishReplay, refCount } from 'rxjs/operators';
+import { BehaviorSubject, Observable, combineLatest, zip } from 'rxjs';
+import { finalize, first, map, tap, switchMap, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
-import { AppIncomeStatisticsDateInterval } from '@shared/AppEnums';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
-    ExpiringTenant,
-    HostDashboardData,
+    TopStatsData,
     HostDashboardServiceProxy,
     IncomeStastistic,
     ChartDateInterval,
-    RecentTenant, TenantEdition
+    TenantEdition, GetExpiringTenantsOutput, GetRecentTenantsOutput
 } from '@shared/service-proxies/service-proxies';
 import { MomentFormatPipe } from '@shared/utils/moment-format.pipe';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -47,14 +45,15 @@ export class HostDashboardComponent implements OnInit {
     refresh: BehaviorSubject<null> = new BehaviorSubject(null);
     refresh$: Observable<null> = this.refresh.asObservable();
     currency = '$';
-    appIncomeStatisticsDateInterval = AppIncomeStatisticsDateInterval;
-    private selectedIncomeStatisticsDateInterval: BehaviorSubject<AppIncomeStatisticsDateInterval> = new BehaviorSubject<AppIncomeStatisticsDateInterval>(AppIncomeStatisticsDateInterval.Daily);
-    selectedIncomeStatisticsDateInterval$: Observable<AppIncomeStatisticsDateInterval> = this.selectedIncomeStatisticsDateInterval.asObservable();
-    hostDashboardData$: Observable<HostDashboardData>;
+    chartDateInterval = ChartDateInterval;
+    private selectedIncomeStatisticsDateInterval: BehaviorSubject<ChartDateInterval> = new BehaviorSubject<ChartDateInterval>(ChartDateInterval.Daily);
+    selectedIncomeStatisticsDateInterval$: Observable<ChartDateInterval> = this.selectedIncomeStatisticsDateInterval.asObservable();
+    allData$: Observable<[TopStatsData, IncomeStastistic[], TenantEdition[], GetExpiringTenantsOutput, GetRecentTenantsOutput]>;
+    topStatsData$: Observable<TopStatsData>;
     incomeStatistics$: Observable<IncomeStastistic[]>;
     productStatisticData$: Observable<TenantEdition[]>;
-    expiringTenantsData$: Observable<ExpiringTenant[]>;
-    recentTenantsData$: Observable<RecentTenant[]>;
+    expiringTenantsData$: Observable<GetExpiringTenantsOutput>;
+    recentTenantsData$: Observable<GetRecentTenantsOutput>;
     refreshing = false;
     constructor(
         private appService: AppService,
@@ -80,41 +79,45 @@ export class HostDashboardComponent implements OnInit {
 
     ngOnInit() {
         this.appService.isClientSearchDisabled = true;
-        this.hostDashboardData$ = combineLatest(
+        this.allData$ = combineLatest(
             this.refresh$,
             this.selectedIncomeStatisticsDateInterval$,
             this.selectedDateRange$
         ).pipe(
             tap(() => {
-                this.refreshing = true;
+                //this.refreshing = true;
                 this.changeDetector.detectChanges();
             }),
-            switchMap(([, interval, dateRange]: [null, AppIncomeStatisticsDateInterval, CalendarValuesModel]) => {
-                return this.hostDashboardService.getDashboardStatisticsData(
-                    interval as ChartDateInterval,
-                    dateRange.from.value && DateHelper.removeTimezoneOffset(dateRange.from.value, true, 'from'),
-                    dateRange.to.value && DateHelper.removeTimezoneOffset(dateRange.to.value, true, 'to')
-                ).pipe(
-                    finalize(() => this.refreshing = false),
-                    catchError(() => of(new HostDashboardData()))
-                );
+            switchMap(([, interval, dateRange]: [null, ChartDateInterval, CalendarValuesModel]) => {
+                let from = dateRange.from.value && DateHelper.removeTimezoneOffset(dateRange.from.value, true, 'from');
+                let to = dateRange.to.value && DateHelper.removeTimezoneOffset(dateRange.to.value, true, 'to');
+                return zip(this.hostDashboardService.getTopStatsData(from, to),
+                    this.hostDashboardService.getIncomeStatistics(interval, from, to).pipe(map(data => data.incomeStatistics)),
+                    this.hostDashboardService.getEditionTenantStatistics(from, to).pipe(map(data => data.editionStatistics)),
+                    this.hostDashboardService.getSubscriptionExpiringTenantsData(),
+                    this.hostDashboardService.getRecentTenantsData()
+                )
             }),
+            //finalize(() => this.refreshing = false),
             publishReplay(),
             refCount()
         );
-        this.incomeStatistics$ = this.hostDashboardData$.pipe(
-            map((data: HostDashboardData) => data.incomeStatistics.map(
-                item => ({ ...item, ...{ minAmount: 0 }})
-            ) || [] as any)
+        this.topStatsData$ = this.allData$.pipe(
+            map(([topStatsData, incomeStatistics, editionStatistics, expiringTenantOutput, recentTenantsOutput]) => topStatsData)
         );
-        this.productStatisticData$ = this.hostDashboardData$.pipe(
-            map((data: HostDashboardData) => data.editionStatistics || [])
+        this.incomeStatistics$ = this.allData$.pipe(
+            map(([topStatsData, incomeStatistics, editionStatistics, expiringTenantOutput, recentTenantsOutput]) => incomeStatistics.map(
+                item => ({ ...item, ...{ minAmount: 0 } })
+            ) || [] as any),
         );
-        this.expiringTenantsData$ = this.hostDashboardData$.pipe(
-            map((data: HostDashboardData) => data.expiringTenants || [])
+        this.productStatisticData$ = this.allData$.pipe(
+            map(([topStatsData, incomeStatistics, editionStatistics, expiringTenantOutput, recentTenantsOutput]) => editionStatistics || [])
         );
-        this.recentTenantsData$ = this.hostDashboardData$.pipe(
-            map((data: HostDashboardData) => data.recentTenants || [])
+        this.expiringTenantsData$ = this.allData$.pipe(
+            map(([topStatsData, incomeStatistics, editionStatistics, expiringTenantOutput, recentTenantsOutput]) => expiringTenantOutput)
+        );
+        this.recentTenantsData$ = this.allData$.pipe(
+            map(([topStatsData, incomeStatistics, editionStatistics, expiringTenantOutput, recentTenantsOutput]) => recentTenantsOutput)
         );
     }
 
@@ -132,9 +135,9 @@ export class HostDashboardComponent implements OnInit {
      * Recent tenants
      */
     gotoAllRecentTenants(): void {
-        this.hostDashboardData$.pipe(first()).subscribe(hostDashboardData => {
+        this.recentTenantsData$.pipe(first()).subscribe(recentTenantsData => {
             window.open(abp.appPath + 'app/crm/tenants?' +
-                'creationDateStart=' + encodeURIComponent(hostDashboardData.tenantCreationStartDate.format()));
+                'creationDateStart=' + encodeURIComponent(recentTenantsData.tenantCreationStartDate.format()));
         });
     }
 
@@ -142,14 +145,14 @@ export class HostDashboardComponent implements OnInit {
      * Expiring tenants
      */
     gotoAllExpiringTenants(): void {
-        this.hostDashboardData$.pipe(first()).subscribe(hostDashboardData => {
+        this.expiringTenantsData$.pipe(first()).subscribe(expiringTenantsData => {
             const url = abp.appPath +
                 'app/admin/tenants?' +
                 'subscriptionEndDateStart=' +
-                encodeURIComponent(hostDashboardData.subscriptionEndDateStart.format()) +
+                encodeURIComponent(expiringTenantsData.subscriptionEndDateStart.format()) +
                 '&' +
                 'subscriptionEndDateEnd=' +
-                encodeURIComponent(hostDashboardData.subscriptionEndDateEnd.format());
+                encodeURIComponent(expiringTenantsData.subscriptionEndDateEnd.format());
 
             window.open(url);
         });
@@ -170,7 +173,7 @@ export class HostDashboardComponent implements OnInit {
     customizeIncomeTooltip = e => {
         let html = '';
         const isSingleDaySelected = this.selectedDateRange.value.from.value.getTime() === this.selectedDateRange.value.to.value.getTime();
-        if (this.selectedIncomeStatisticsDateInterval.value === AppIncomeStatisticsDateInterval.Daily ||
+        if (this.selectedIncomeStatisticsDateInterval.value === ChartDateInterval.Daily ||
             isSingleDaySelected) {
             html += moment(e.argument).format('dddd, DD MMMM YYYY');
         } else {

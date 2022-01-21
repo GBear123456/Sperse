@@ -12,7 +12,8 @@ import {
     PermissionServiceProxy,
     RoleServiceProxy,
     RoleListDto,
-    ModuleType
+    ModuleType,
+    GetRolesInput
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateOrEditRoleModalComponent } from './create-or-edit-role-modal/create-or-edit-role-modal.component';
@@ -94,9 +95,12 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: () => {
+                let input = new GetRolesInput({
+                    permissions: [this.selectedPermission],
+                    moduleType: this.selectedModule
+                });
                 return this.roleService.getRoles(
-                    this.selectedPermission,
-                    this.selectedModule
+                    input
                 ).toPromise().then(response => {
                     return {
                         data: response.items,

@@ -16,7 +16,7 @@ import { ImpersonationService } from '@app/admin/users/impersonation.service';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
     CommonLookupServiceProxy,
-    Int64EntityDto,
+    EntityDtoOfInt64,
     NameValueDto,
     PermissionServiceProxy,
     TenantListDto,
@@ -342,7 +342,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
     }
 
     unlockUser(record: any): void {
-        this.tenantService.unlockTenantAdmin(new Int64EntityDto({ id: record.id })).subscribe(() => {
+        this.tenantService.unlockTenantAdmin(new EntityDtoOfInt64({ id: record.id })).subscribe(() => {
             this.notify.success(this.l('UnlockedTenandAdmin', record.name));
         });
     }

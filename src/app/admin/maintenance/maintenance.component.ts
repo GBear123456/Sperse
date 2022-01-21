@@ -9,9 +9,9 @@ import { finalize } from 'rxjs/operators';
 import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
     CacheDto,
-    CacheDtoListResultDto,
+    ListResultDtoOfCacheDto,
     CachingServiceProxy,
-    StringEntityDto,
+    EntityDtoOfString,
     WebLogServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { FileDownloadService } from '@shared/utils/file-download.service';
@@ -62,13 +62,13 @@ export class MaintenanceComponent implements OnInit, AfterViewInit {
         this.loading = true;
         this.cacheService.getAllCaches()
             .pipe(finalize(() => { this.loading = false; }))
-            .subscribe((result: CacheDtoListResultDto) => {
+            .subscribe((result: ListResultDtoOfCacheDto) => {
                 this.caches = result.items;
             });
     }
 
     clearCache(cacheName): void {
-        const input = new StringEntityDto();
+        const input = new EntityDtoOfString();
         input.id = cacheName;
         this.cacheService.clearCache(input).subscribe(() => {
             this.notify.success(this.ls.l('CacheSuccessfullyCleared'));

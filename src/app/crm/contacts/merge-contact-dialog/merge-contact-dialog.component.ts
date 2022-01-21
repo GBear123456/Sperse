@@ -537,9 +537,9 @@ export class MergeContactDialogComponent implements AfterViewInit {
     }
 
     getPreferredProperties() {
-        return (this.isFieldSelected(this.CONTACT_FULL_NAME_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties._1 : 0)
-            | (this.isFieldSelected(this.CONTACT_DATE_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties._2 : 0)
-            | (this.isFieldSelected(this.CONTACT_BANK_CODE, this.COLUMN_SOURCE_FIELD) ? PreferredProperties._4 : 0);
+        return (this.isFieldSelected(this.CONTACT_FULL_NAME_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.FullName : 0)
+            | (this.isFieldSelected(this.CONTACT_DATE_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.ContactDate : 0)
+            | (this.isFieldSelected(this.CONTACT_BANK_CODE, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.BANKCode : 0);
     }
 
     getMergeContactInput() {

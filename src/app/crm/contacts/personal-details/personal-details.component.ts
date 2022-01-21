@@ -24,7 +24,7 @@ import {
     Gender,
     LayoutType,
     MaritalStatus,
-    NameValueDtoListResultDto,
+    ListResultDtoOfNameValueDto,
     PersonContactInfoDto,
     PersonContactServiceProxy,
     PersonInfoDto,
@@ -139,7 +139,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
             }
         }, this.ident);
 
-        this.timingService.getTimezones(AppTimezoneScope.Application).subscribe((res: NameValueDtoListResultDto) => {
+        this.timingService.getTimezones(AppTimezoneScope.Application).subscribe((res: ListResultDtoOfNameValueDto) => {
             this.selectList.timeZone = res.items.map(item => ({ id: item.value, name: item.name }));
             this.changeDetector.markForCheck();
         });

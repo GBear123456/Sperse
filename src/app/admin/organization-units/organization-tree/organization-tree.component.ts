@@ -7,7 +7,7 @@ import { throwError as observableThrowError,  Observable } from 'rxjs';
 
 /** Application imports */
 import { HtmlHelper } from '@shared/helpers/HtmlHelper';
-import { OrganizationUnitDtoListResultDto, MoveOrganizationUnitInput, OrganizationUnitDto, OrganizationUnitServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ListResultDtoOfOrganizationUnitDto, MoveOrganizationUnitInput, OrganizationUnitDto, OrganizationUnitServiceProxy } from '@shared/service-proxies/service-proxies';
 import { IBasicOrganizationUnitInfo } from '../basic-organization-unit-info';
 import { CreateOrEditUnitModalComponent } from '../create-or-edit-unit-modal/create-or-edit-unit-modal.component';
 import { IUserWithOrganizationUnit } from '../user-with-organization-unit';
@@ -165,7 +165,7 @@ export class OrganizationTreeComponent implements AfterViewInit {
     }
 
     private getTreeDataFromServer(callback: (ous: IOrganizationUnitOnTree[]) => void): void {
-        this.organizationUnitService.getOrganizationUnits().subscribe((result: OrganizationUnitDtoListResultDto) => {
+        this.organizationUnitService.getOrganizationUnits().subscribe((result: ListResultDtoOfOrganizationUnitDto) => {
             const treeData = result.items.map(item => (<IOrganizationUnitOnTree>{
                 id: item.id,
                 parent: item.parentId ? item.parentId : '#',
