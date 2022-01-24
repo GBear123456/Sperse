@@ -121,7 +121,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return [AppConsts.PipelinePurposeIds.lead, AppConsts.PipelinePurposeIds.order].indexOf(this.pipeline.purpose) >= 0;
     }
     private queryWithSearch: any = [];
-    private params: any = [];
+    params: any = [];
     private readonly DEFAULT_PAGE_COUNT = 10;
     private readonly COMPACT_VIEW_PAGE_COUNT = 10;
     compactView: boolean;
@@ -481,6 +481,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         .LoadRequestAction(skipAlreadyLoadedChecking));
             });
         }
+    }
+
+    clearStageDataSources() {
+        this._dataSources = {};
     }
 
     private getEntityById(id, stage: Stage) {
