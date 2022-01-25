@@ -1,7 +1,7 @@
 <header>
     <h2 mat-dialog-title>{{ls.l('AddSubscription')}}</h2>
     <mat-dialog-actions>
-        <button mat-button (click)="saveSubscription()" class="button-layout button-primary">{{ls.l('Save')}}</button>
+        <button mat-button (click)="saveSubscription()" [disabled]="loadingService.loading" class="button-layout button-primary">{{ls.l('Save')}}</button>
     </mat-dialog-actions>
     <span class="close" (click)="close()"></span>
 </header>
