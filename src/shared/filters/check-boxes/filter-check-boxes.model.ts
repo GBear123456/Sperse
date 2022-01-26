@@ -76,7 +76,7 @@ export class FilterCheckBoxesModel extends FilterItemModel {
                 if (valuesIndex != -1)
                     this.value.splice(valuesIndex, 1);
 
-                let selectedItemsIndex = this.selectedItems.findIndex(x => x[this.keyExpr] == args);
+                let selectedItemsIndex = this.selectedItems ? this.selectedItems.findIndex(x => x[this.keyExpr] == args) : -1;
                 if (selectedItemsIndex != -1) {
                     if (this.recursive && this.selectedItems[selectedItemsIndex][this.parentExpr]) { //Remove parents
                         this.removeFilterItem(filter, this.selectedItems[selectedItemsIndex][this.parentExpr]);
