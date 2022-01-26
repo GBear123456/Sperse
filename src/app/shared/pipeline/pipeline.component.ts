@@ -631,11 +631,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private getTotalsRequestUrl(filter) {
+        let filters = filter;
+        let customFilter = this._dataSource && this._dataSource.customFilter;
+        if (customFilter)
+            filters = filters.concat({ and: [customFilter] });
+
         return this.getODataUrl(
             this.totalsURI,
-            filter.concat({and: [
-                this._dataSource.customFilter
-            ]}),
+            filters,
             null,
             this.params
         );
