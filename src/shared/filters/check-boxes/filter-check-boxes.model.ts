@@ -82,6 +82,7 @@ export class FilterCheckBoxesModel extends FilterItemModel {
                         this.removeFilterItem(filter, this.selectedItems[selectedItemsIndex][this.parentExpr]);
                     }
 
+                    selectedItemsIndex = this.selectedItems.findIndex(x => x[this.keyExpr] == args);
                     this.selectedItems.splice(selectedItemsIndex, 1);
                 }
             } else {
