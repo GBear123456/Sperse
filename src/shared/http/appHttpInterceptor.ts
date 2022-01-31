@@ -3,7 +3,7 @@ import { Injector, Injectable } from '@angular/core';
 import { HttpEvent, HttpRequest, HttpHandler, HttpHeaders, HttpParams } from '@angular/common/http';
 
 /** Third party imports */
-import { finalize } from 'rxjs/operators';
+import { finalize, map, switchMap, catchError } from 'rxjs/operators';
 import { Observable, Subject, throwError } from 'rxjs';
 
 /** Application imports */
@@ -40,8 +40,6 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-return super.intercept(request, next);
-console.log(request);
         if (request.urlWithParams && request.urlWithParams.length > 2048) {
             this.message.error('Too long request');
             return throwError('Too long request');
@@ -49,8 +47,9 @@ console.log(request);
 
         let key = this.getKeyFromUrl(request);
 
-        if (this.EXCEPTION_KEYS.some(item => key.includes(item)))
+        if (this.EXCEPTION_KEYS.some(item => key.includes(item))) {
             return super.intercept(request, next);
+        }
 
         let poolRequest = this._poolRequests[key];
         if (!poolRequest) {
@@ -69,7 +68,6 @@ console.log(request);
                 poolRequest.subject.observers.forEach(sub => {
                     sub.unsubscribe();
                 });
-            poolRequest.httpSubscriber.unsubscribe();
             poolRequest.subject.complete();
 
             this._poolRequests[key] = poolRequest;
@@ -79,18 +77,15 @@ console.log(request);
     }
 
     private interceptInternal(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        let key = this.getKeyFromUrl(request),
-            interceptObservable = new Subject<HttpEvent<any>>(),
-            modifiedRequest = this.normalizeRequestHeaders(request);
-
-        this._poolRequests[key].httpSubscriber = next.handle(modifiedRequest)
-            .pipe(finalize(() => delete this._poolRequests[key]))
-            .subscribe(
-                (event: HttpEvent<any>) => this.handleSuccessResponse(event),
-                (error: any) => this.handleErrorResponseInternal(error, interceptObservable)
-            );
-
-        return interceptObservable;
+        let key = this.getKeyFromUrl(request);
+            
+        return next.handle(
+            this.normalizeRequestHeaders(request)
+        ).pipe(
+            finalize(() => delete this._poolRequests[key]),
+            catchError((error: any) => this.handleErrorResponseInternal(error)),
+            switchMap((event: HttpEvent<any>) => this.handleSuccessResponse(event))
+        );
     }
 
     private getKeyFromUrl(request: HttpRequest<any>): string {
@@ -126,7 +121,7 @@ console.log(request);
                 error.error = new Blob([JSON.stringify(error.errorDetails || error)]);
             if (error.httpStatus)
                 error.status = error.httpStatus;
-            return this.handleErrorResponseInternal(error, new Subject());
+            return this.handleErrorResponseInternal(error);
         }
     }
 
@@ -160,16 +155,14 @@ console.log(request);
         }
     }
 
-    protected handleErrorResponseInternal(response, interceptObservable: Subject<HttpEvent<any>>): Observable<any> {
+    protected handleErrorResponseInternal(response): Observable<any> {
         let keys = this.configuration['avoidErrorHandlingKeys'];
         if (this.configuration['avoidErrorHandling'] || (response.url &&
             keys && keys.some(key => response.url.toLowerCase().includes(key.toLowerCase()))
         )) {
-            this.configuration.blobToText(response.error).subscribe(error => {
-                interceptObservable.error(JSON.parse(error).error);
-                interceptObservable.complete();
-            });
-            return interceptObservable;
+            return this.configuration.blobToText(response.error).pipe(map(error => {
+                return JSON.parse(error).error;
+            }));
         } else {
             return super.handleErrorResponse(response);
         }
