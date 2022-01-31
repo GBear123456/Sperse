@@ -621,6 +621,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                             { 'selector': 'OrderAmount', 'summaryType': 'sum' },
                             { 'selector': 'Fee', 'summaryType': 'sum' }
                         ])
+                    },
+                    {
+                        name: 'take',
+                        value: 1
+                    },
+                    {
+                        name: 'select',
+                        value: '["Id"]'
                     }
                 ]
             );
@@ -928,10 +936,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 switchMap(() => this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)))
             ),
         ).pipe(
-            filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues),
-            distinctUntilChanged((prev: ODataRequestValues, curr: ODataRequestValues) => {
-                return !!prev.filter && prev.filter === curr.filter && !ArrayHelper.dataChanged(prev.params, curr.params);
-            })
+            filter((oDataRequestValues: ODataRequestValues) => !!oDataRequestValues)
         );
     }
 

@@ -11,6 +11,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class AddRenameMergeDialogComponent implements OnInit {
     availableStages: any[];
+    hasCurrentStageChecklistPoints = false;
 
     constructor(
         @Inject(MAT_DIALOG_DATA) public dialogData: any,
@@ -18,8 +19,11 @@ export class AddRenameMergeDialogComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        if (this.dialogData.stages && this.dialogData.stages.length)
+        if (this.dialogData.stages && this.dialogData.stages.length) {
             this.availableStages = this.dialogData.stages.filter(item => item.id != this.dialogData.currentStageId);
+            let currentStage = this.dialogData.stages.filter(item => item.id == this.dialogData.currentStageId)[0];
+            this.hasCurrentStageChecklistPoints = currentStage.checklistPoints && currentStage.checklistPoints.length > 0;
+        }
     }
 
     onStageSelected(stage) {

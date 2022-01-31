@@ -121,7 +121,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return [AppConsts.PipelinePurposeIds.lead, AppConsts.PipelinePurposeIds.order].indexOf(this.pipeline.purpose) >= 0;
     }
     private queryWithSearch: any = [];
-    private params: any = [];
+    params: any = [];
     private readonly DEFAULT_PAGE_COUNT = 10;
     private readonly COMPACT_VIEW_PAGE_COUNT = 10;
     compactView: boolean;
@@ -483,6 +483,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         }
     }
 
+    clearStageDataSources() {
+        this._dataSources = {};
+    }
+
     private getEntityById(id, stage: Stage) {
         return stage && stage.entities.find((entity) => {
             return entity && (entity['Id'] == id);
@@ -627,12 +631,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private getTotalsRequestUrl(filter) {
+        let filters = filter;
+        let customFilter = this._dataSource && this._dataSource.customFilter;
+        if (customFilter)
+            filters = filters.concat({ and: [customFilter] });
+
         return this.getODataUrl(
             this.totalsURI,
-            this._dataSource && this._dataSource.customFilter ?
-                filter.concat({and: [
-                    this._dataSource.customFilter
-                ]}) : filter,
+            filters,
             null,
             this.params
         );
