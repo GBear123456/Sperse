@@ -9,7 +9,6 @@ import { forkJoin, Observable } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { GetFileUrlOutput, ImportServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -24,7 +23,6 @@ import { ImportListFields } from '@app/crm/import-leads/import-list/import-list.
 @Component({
     templateUrl: './import-list.component.html',
     styleUrls: ['./import-list.component.less'],
-    animations: [appModuleAnimation()],
     providers: [ FileSizePipe ]
 })
 export class ImportListComponent extends AppComponentBase implements AfterViewInit, OnDestroy {

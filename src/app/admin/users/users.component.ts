@@ -22,7 +22,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { TokenAuthServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CreateUserDialogComponent } from './create-user-dialog/create-user-dialog.component';
 import { ImpersonationService } from './impersonation.service';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
@@ -51,8 +50,7 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Component({
     templateUrl: './users.component.html',
-    styleUrls: ['./users.component.less'],
-    animations: [appModuleAnimation()]
+    styleUrls: ['./users.component.less']
 })
 export class UsersComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;

@@ -81,7 +81,6 @@ import {
     CreateContactEmailInput,
     LayoutType
 } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
@@ -137,7 +136,6 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
         '../shared/styles/grouped-action-menu.less',
         './clients.component.less'
     ],
-    animations: [appModuleAnimation()],
     providers: [
         ClientService,
         ContactServiceProxy,

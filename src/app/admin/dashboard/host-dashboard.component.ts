@@ -8,7 +8,6 @@ import { BehaviorSubject, Observable, combineLatest, zip } from 'rxjs';
 import { finalize, first, map, tap, switchMap, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
     TopStatsData,
     HostDashboardServiceProxy,
@@ -33,7 +32,6 @@ import { AppService } from '@app/app.service';
         './host-dashboard.component.less'
     ],
     encapsulation: ViewEncapsulation.None,
-    animations: [ appModuleAnimation() ],
     providers: [ CurrencyPipe, DatePipe, MomentFormatPipe ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })

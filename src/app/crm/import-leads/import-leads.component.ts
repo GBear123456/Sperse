@@ -27,7 +27,6 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-wizard.component';
 import { Country } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import {
@@ -45,7 +44,6 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
 @Component({
     templateUrl: 'import-leads.component.html',
     styleUrls: ['import-leads.component.less'],
-    animations: [appModuleAnimation()],
     providers: [ ZipCodeFormatterPipe, PartnerServiceProxy ]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {

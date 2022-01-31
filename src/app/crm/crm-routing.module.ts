@@ -31,7 +31,7 @@ import { CrmContactGroupGuard } from '@app/crm/crm-contact-group-guard'
                     { path: 'clients', component: ClientsComponent, data: { permission: AppPermissions.CRMCustomers, reuse: true } },
                     { path: 'products', component: ProductsComponent, data: { permission: AppPermissions.CRMProducts, reuse: true } },
                     { path: 'partners', component: PartnersComponent, data: { permission: AppPermissions.CRMPartners, reuse: true } },
-                    { path: 'leads', component: LeadsComponent, data: { reuse: true }, canActivate: [CrmContactGroupGuard] },
+                    { path: 'leads', component: LeadsComponent, data: { reuse: true, reuseComponent: true }, canActivate: [CrmContactGroupGuard] },
                     { path: 'orders', component: OrdersComponent, data: { permission: AppPermissions.CRMOrders, reuse: true } },
                     { path: 'import-leads', component: ImportLeadsComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },
                     { path: 'import-list', component: ImportListComponent, data: { permission: AppPermissions.CRMBulkImport, reuse: true } },

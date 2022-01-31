@@ -83,7 +83,6 @@ import {
     StageDto,
     UpdateLeadSourceContactsInput
 } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -144,8 +143,7 @@ import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
         '../shared/styles/grouped-action-menu.less',
         './leads.component.less'
     ],
-    providers: [LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, MapService],
-    animations: [appModuleAnimation()]
+    providers: [LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, MapService]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;

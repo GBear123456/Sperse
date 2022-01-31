@@ -10,7 +10,6 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { ClassificationServiceProxy, AccountingCategoryDto, InstanceType, CategoryTreeServiceProxy } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CategorizationComponent } from '@app/cfo/transactions/categorization/categorization.component';
 import { SyncTypeIds } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
@@ -30,8 +29,7 @@ class UploadCategoryModel {
     selector: 'chart-of-accounts',
     templateUrl: './chart-of-accounts.component.html',
     styleUrls: ['./chart-of-accounts.component.less'],
-    providers: [ ClassificationServiceProxy, CategoryTreeServiceProxy ],
-    animations: [ appModuleAnimation() ]
+    providers: [ ClassificationServiceProxy, CategoryTreeServiceProxy ]
 })
 export class ChartOfAccountsComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(CategorizationComponent, { static: true }) categorizationComponent: CategorizationComponent;

@@ -56,7 +56,6 @@ import { FilterCBoxesComponent } from '@shared/filters/cboxes/filter-cboxes.comp
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
 import { FilterCheckBoxesModel } from '@shared/filters/check-boxes/filter-check-boxes.model';
 import { RuleDialogComponent } from '../rules/rule-edit-dialog/rule-edit-dialog.component';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CategorizationComponent } from 'app/cfo/transactions/categorization/categorization.component';
 import { ChooseResetRulesComponent } from './choose-reset-rules/choose-reset-rules.component';
 import { BankAccountFilterComponent } from 'shared/filters/bank-account-filter/bank-account-filter.component';
@@ -87,7 +86,6 @@ import { RequestHelper } from '@shared/helpers/RequestHelper';
 @Component({
     templateUrl: './transactions.component.html',
     styleUrls: ['./transactions.component.less'],
-    animations: [appModuleAnimation()],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
         TransactionsServiceProxy,

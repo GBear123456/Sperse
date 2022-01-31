@@ -7,7 +7,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { InstanceType, ModuleType2, UserServiceProxy } from 'shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
@@ -23,7 +22,6 @@ import { AppFeatures } from '@shared/AppFeatures';
         '../../../../shared/common/styles/close-button.less',
         './cfo-intro.component.less'
     ],
-    animations: [appModuleAnimation()],
     providers: [UserServiceProxy]
 })
 export class CfoIntroComponent extends CFOComponentBase implements OnInit {

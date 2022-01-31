@@ -11,7 +11,6 @@ import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
@@ -30,7 +29,6 @@ import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
     templateUrl: './host-settings.component.html',
-    animations: [appModuleAnimation()],
     styleUrls: ['../../../shared/common/styles/checkbox-radio.less', './host-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [TenantPaymentSettingsServiceProxy]

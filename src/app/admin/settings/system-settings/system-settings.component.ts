@@ -6,7 +6,6 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
     TenantSslCertificateServiceProxy, TenantHostServiceProxy, TenantHostType,
     TenantSslBindingInfo, DictionaryServiceProxy, TenantSslCertificateInfo
@@ -26,7 +25,6 @@ import { AppService } from '@app/app.service';
     selector: 'system-settings',
     templateUrl: './system-settings.component.html',
     styleUrls: ['../../../shared/common/styles/checkbox-radio.less', './system-settings.component.less'],
-    animations: [appModuleAnimation()],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ TenantSslCertificateServiceProxy, TenantHostServiceProxy ]
 })

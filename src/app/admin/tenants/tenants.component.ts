@@ -13,7 +13,6 @@ import * as moment from 'moment-timezone';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
     CommonLookupServiceProxy,
     EntityDtoOfInt64,
@@ -44,8 +43,7 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 
 @Component({
     templateUrl: './tenants.component.html',
-    styleUrls: [ './tenants.component.less' ],
-    animations: [ appModuleAnimation() ]
+    styleUrls: [ './tenants.component.less' ]
 })
 export class TenantsComponent extends AppComponentBase implements OnDestroy, OnInit {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;

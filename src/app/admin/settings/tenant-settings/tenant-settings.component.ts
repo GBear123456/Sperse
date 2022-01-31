@@ -14,7 +14,6 @@ import { MatDialog } from '@angular/material/dialog';
 import { TokenService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
@@ -52,7 +51,6 @@ import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
-    animations: [appModuleAnimation()],
     styleUrls: ['../../../shared/common/styles/checkbox-radio.less', './tenant-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [

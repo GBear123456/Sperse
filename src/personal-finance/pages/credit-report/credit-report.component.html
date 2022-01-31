@@ -58,7 +58,7 @@
     <ng-template #creditReportBlock>
         <div *ngIf="creditReportResult.isSubscriptionCancelled || creditReportResult.kbaPassed; else kbaBlock">
             <div *ngIf="creditReportResult.creditReport; else refreshBtn">
-                <div class="content-wrap" [@routerTransition]>
+                <div class="content-wrap">
                     <aside class="sidebar">
                         <ul class="left-navigation">
                             <li class="left-navigation-item" *ngFor="let item of menuItems; let i = index;" (click)="isClicked=i" [class.active]="isClicked==i">
@@ -110,7 +110,7 @@
                 </div>
             </div>
             <ng-template #refreshBtn>
-                <div class="content-wrap" [@routerTransition]>
+                <div class="content-wrap">
                     <div class="refresh-content">
                         <div *ngIf="creditReportResult.updatable; else noreport">
                             <h3 class="text-center">{{ls.l("creditReportIsNotReady")}}</h3>
@@ -128,6 +128,6 @@
         </div>
     </ng-template>
     <ng-template #kbaBlock>
-        <app-kba [@routerTransition]></app-kba>
+        <app-kba></app-kba>
     </ng-template>
 </div>

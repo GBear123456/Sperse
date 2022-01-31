@@ -13,7 +13,6 @@ import { AppComponentBase } from '@shared/common/app-component-base';
 import { LanguageServiceProxy } from '@shared/service-proxies/service-proxies';
 import { FiltersService } from '@shared/filters/filters.service';
 import { EditTextModalComponent } from '../edit-text-modal/edit-text-modal.component';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterDropDownComponent } from '@shared/filters/dropdown/filter-dropdown.component';
 import { FilterDropDownModel } from '@shared/filters/dropdown/filter-dropdown.model';
@@ -23,8 +22,7 @@ import { AppService } from '@app/app.service';
 
 @Component({
     templateUrl: './language-texts.component.html',
-    styleUrls: ['./language-texts.component.less'],
-    animations: [appModuleAnimation()]
+    styleUrls: ['./language-texts.component.less']
 })
 export class LanguageTextsComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;

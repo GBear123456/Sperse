@@ -33,7 +33,6 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { RootStore, StatesStoreActions } from '@root/store';
 import { DashboardServiceProxy, GetCRMStatusOutput, ModuleType, LayoutType } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -55,7 +54,6 @@ import { LeftMenuComponent } from '../shared/common/left-menu/left-menu.componen
 
 @Component({
     templateUrl: './dashboard.component.html',
-    animations: [appModuleAnimation()],
     styleUrls: ['./dashboard.component.less'],
     providers: [ DashboardWidgetsService, LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush

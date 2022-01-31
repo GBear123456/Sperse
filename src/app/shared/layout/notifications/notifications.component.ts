@@ -8,7 +8,6 @@ import DataSource from 'devextreme/data/data_source';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { NotificationServiceProxy, UserNotificationDto } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -21,7 +20,6 @@ import { DxDataGridComponent } from 'devextreme-angular';
     templateUrl: './notifications.component.html',
     styleUrls: ['./notifications.component.less'],
     encapsulation: ViewEncapsulation.None,
-    animations: [appModuleAnimation()],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NotificationsComponent implements OnInit {

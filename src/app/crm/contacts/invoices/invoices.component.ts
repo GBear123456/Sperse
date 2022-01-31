@@ -20,7 +20,6 @@ import startCase from 'lodash/startCase';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import {
@@ -48,7 +47,6 @@ import { AppFeatures } from '@shared/AppFeatures';
 @Component({
     templateUrl: './invoices.component.html',
     styleUrls: ['./invoices.component.less'],
-    animations: [appModuleAnimation()],
     providers: [ InvoiceServiceProxy ]
 })
 export class InvoicesComponent extends AppComponentBase implements OnInit, OnDestroy {

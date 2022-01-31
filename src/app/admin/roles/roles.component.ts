@@ -17,7 +17,6 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateOrEditRoleModalComponent } from './create-or-edit-role-modal/create-or-edit-role-modal.component';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
@@ -33,8 +32,7 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 
 @Component({
     templateUrl: './roles.component.html',
-    styleUrls: ['./roles.component.less'],
-    animations: [appModuleAnimation()]
+    styleUrls: ['./roles.component.less']
 })
 export class RolesComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;

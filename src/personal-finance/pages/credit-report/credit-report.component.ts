@@ -10,15 +10,13 @@ import { PageScrollConfig } from 'ngx-page-scroll';
 /** Application imports */
 import { PackageIdService } from '../../shared/common/packages/package-id.service';
 import { KBAServiceProxy, CreditReportServiceProxy, CreditReportOutput } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
     selector: 'app-root',
     templateUrl: './credit-report.component.html',
     styleUrls: ['./credit-report.component.less'],
-    providers: [ KBAServiceProxy ],
-    animations: [appModuleAnimation()]
+    providers: [ KBAServiceProxy ]
 })
 export class CreditReportComponent implements OnInit {
     creditReportResult: CreditReportOutput;

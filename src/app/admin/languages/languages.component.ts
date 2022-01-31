@@ -13,7 +13,6 @@ import { AbpSessionService } from 'abp-ng2-module';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ApplicationLanguageListDto, LanguageServiceProxy, SetDefaultLanguageInput } from '@shared/service-proxies/service-proxies';
 import { CreateOrEditLanguageModalComponent } from './create-or-edit-language-modal/create-or-edit-language-modal.component';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
@@ -23,8 +22,7 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 
 @Component({
     templateUrl: './languages.component.html',
-    styleUrls: ['./languages.component.less'],
-    animations: [appModuleAnimation()]
+    styleUrls: ['./languages.component.less']
 })
 export class LanguagesComponent extends AppComponentBase implements OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;

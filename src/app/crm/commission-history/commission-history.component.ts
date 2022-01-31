@@ -26,7 +26,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
@@ -73,7 +72,6 @@ import { CrmService } from '@app/crm/crm.service';
         '../shared/styles/grouped-action-menu.less',
         './commission-history.component.less'
     ],
-    animations: [appModuleAnimation()],
     providers: [
         ProductServiceProxy, LifecycleSubjectsService
     ],

@@ -6,7 +6,6 @@ import escape from 'lodash/escape';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
     CacheDto,
     ListResultDtoOfCacheDto,
@@ -21,8 +20,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 
 @Component({
     templateUrl: './maintenance.component.html',
-    styleUrls: [ '../../../shared/metronic/table.less', './maintenance.component.less' ],
-    animations: [ appModuleAnimation() ]
+    styleUrls: [ '../../../shared/metronic/table.less', './maintenance.component.less' ]
 })
 export class MaintenanceComponent implements OnInit, AfterViewInit {
 

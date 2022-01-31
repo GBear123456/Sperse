@@ -4,7 +4,7 @@
     </div>
     <div class="history-log">
         <ol>
-            <li *ngFor="let item of historyItems" [@routerTransition]>
+            <li *ngFor="let item of historyItems">
                 <span class="request-description">
                     <span class="request" *ngFor="let request of item.request">
                         {{request.key}} = {{request.val}}

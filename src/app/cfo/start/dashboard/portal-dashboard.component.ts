@@ -9,7 +9,6 @@ import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { BankAccountsSelectDialogComponent } from 'app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { AccountsComponent } from '@shared/cfo/dashboard-widgets/accounts/accounts.component';
 import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by-period/totals-by-period.component';
 import { TrendByPeriodComponent } from '@shared/cfo/dashboard-widgets/trend-by-period/trend-by-period.component';
@@ -21,8 +20,7 @@ import { AppService } from '@app/app.service';
 @Component({
     selector: 'portal-dashboard',
     templateUrl: './portal-dashboard.component.html',
-    styleUrls: ['./portal-dashboard.component.less'],
-    animations: [appModuleAnimation()]
+    styleUrls: ['./portal-dashboard.component.less']
 })
 export class PortalDashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(AccountsComponent) accountsComponent: AccountsComponent;

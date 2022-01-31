@@ -6,7 +6,6 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import kebabCase from 'lodash/kebabCase';
 
 /** Application imports */
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -16,8 +15,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: [
         '../../../shared/common/styles/close-button.less',
         './pfm-intro.component.less'
-    ],
-    animations: [ appModuleAnimation() ]
+    ]
 })
 export class PfmIntroComponent {
     readonly bankNames: string[] = [

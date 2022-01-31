@@ -9,7 +9,6 @@ import { SynchProgressComponent } from '@shared/cfo/bank-accounts/synch-progress
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { BankAccountsSelectDialogComponent } from 'app/cfo/shared/bank-accounts-select-dialog/bank-accounts-select-dialog.component';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { appModuleAnimation } from 'shared/animations/routerTransition';
 import { AccountsComponent } from '@shared/cfo/dashboard-widgets/accounts/accounts.component';
 import { CategorizationStatusComponent } from '@shared/cfo/dashboard-widgets/categorization-status/categorization-status.component';
 import { TotalsByPeriodComponent } from '@shared/cfo/dashboard-widgets/totals-by-period/totals-by-period.component';
@@ -22,8 +21,7 @@ import { AppService } from '@app/app.service';
 @Component({
     selector: 'dashboard',
     templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.component.less'],
-    animations: [appModuleAnimation()]
+    styleUrls: ['./dashboard.component.less']
 })
 export class DashboardComponent extends CFOComponentBase implements OnInit, OnDestroy {
     @ViewChild(AccountsComponent) accountsComponent: AccountsComponent;

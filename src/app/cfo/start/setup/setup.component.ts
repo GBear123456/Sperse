@@ -18,15 +18,13 @@ import { catchError, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { InstanceServiceProxy, InstanceType2 } from 'shared/service-proxies/service-proxies';
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
 
 @Component({
     selector: 'setup',
     templateUrl: './setup.component.html',
-    styleUrls: ['./setup.component.less'],
-    animations: [appModuleAnimation()]
+    styleUrls: ['./setup.component.less']
 })
 export class SetupComponent extends CFOComponentBase implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild('cashflowSetup') cashflowSetup: ElementRef;

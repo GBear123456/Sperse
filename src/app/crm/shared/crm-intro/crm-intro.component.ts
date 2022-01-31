@@ -7,7 +7,6 @@ import { MatHorizontalStepper } from '@angular/material/stepper';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ModuleType, ModuleType2, RoleServiceProxy, UserServiceProxy } from 'shared/service-proxies/service-proxies';
 import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
@@ -26,7 +25,6 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
         '../../../../shared/common/styles/close-button.less',
         './crm-intro.component.less'
     ],
-    animations: [ appModuleAnimation() ],
     providers: [ RoleServiceProxy, UserServiceProxy ]
 })
 export class CrmIntroComponent implements OnInit {

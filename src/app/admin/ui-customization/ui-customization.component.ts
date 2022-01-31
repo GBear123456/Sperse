@@ -1,12 +1,10 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AfterViewChecked, Component, Injector, OnInit, OnDestroy } from '@angular/core';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ThemeSettingsDto, UiCustomizationSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
-    templateUrl: './ui-customization.component.html',
-    animations: [appModuleAnimation()]
+    templateUrl: './ui-customization.component.html'
 })
 export class UiCustomizationComponent extends AppComponentBase implements AfterViewChecked, OnInit, OnDestroy {
 

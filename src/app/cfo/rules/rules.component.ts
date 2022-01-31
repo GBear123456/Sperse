@@ -20,7 +20,6 @@ import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { FilterCalendarComponent } from '@shared/filters/calendar/filter-calendar.component';
 import { ClassificationServiceProxy, ApplyToTransactionsOption, InstanceType } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { AppService } from '@app/app.service';
@@ -29,7 +28,6 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
 @Component({
     templateUrl: './rules.component.html',
     styleUrls: ['./rules.component.less'],
-    animations: [appModuleAnimation()],
     providers: [ ClassificationServiceProxy ]
 })
 export class RulesComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {

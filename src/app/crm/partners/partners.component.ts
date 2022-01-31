@@ -69,7 +69,6 @@ import {
     PartnerServiceProxy,
     PartnerTypeServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
@@ -119,7 +118,6 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
         '../shared/styles/grouped-action-menu.less',
         './partners.component.less'
     ],
-    animations: [appModuleAnimation()],
     providers: [
         ClientService,
         ContactServiceProxy,

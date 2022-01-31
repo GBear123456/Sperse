@@ -19,7 +19,6 @@ import { takeUntil } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AuditLogDetailModalComponent } from '@app/admin/audit-logs/audit-log-detail/audit-log-detail-modal.component';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     AuditLogListDto,
@@ -44,8 +43,7 @@ import { UrlHelper } from '@shared/helpers/UrlHelper';
 @Component({
     templateUrl: './audit-logs.component.html',
     styleUrls: ['./audit-logs.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    animations: [appModuleAnimation()]
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
