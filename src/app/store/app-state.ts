@@ -6,7 +6,6 @@ import {
     PartnerTypesStoreState,
     RatingsStoreState,
     StarsStoreState,
-    StatusesStoreState,
     TagsStoreState,
     OrganizationTypeStoreState
 } from 'app/store/index';
@@ -19,7 +18,6 @@ export interface State {
     partnersTypes: PartnerTypesStoreState.State;
     ratings: RatingsStoreState.State;
     stars: StarsStoreState.State;
-    statuses: StatusesStoreState.State;
     tags: TagsStoreState.State;
     organizationTypes: OrganizationTypeStoreState.State;
 }

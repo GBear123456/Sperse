@@ -99,7 +99,6 @@ export class BankPassComponent implements OnInit, OnDestroy {
             url: this.getODataUrl(
                 this.dataSourceURI,
                 [
-                    ...FiltersService.getCustomerFilters(),
                     this.bankCodeService.getSourceFilters(),
                     FiltersService.filterByParentId()
                 ]
@@ -111,6 +110,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
                     this.dataIsLoading = true;
                     this.changeDetectorRef.detectChanges();
                 }
+                request.params.isActive = true;
                 request.params.$select = DataGridService.getSelectFields(
                     this.dataGrid,
                     [ this.bankPassFields.Id ],
@@ -132,7 +132,6 @@ export class BankPassComponent implements OnInit, OnDestroy {
             url: this.getODataUrl(
                 this.totalDataSourceURI,
                 [
-                    ...FiltersService.getCustomerFilters(),
                     this.bankCodeService.getSourceFilters()
                 ]
             ),
@@ -248,6 +247,7 @@ export class BankPassComponent implements OnInit, OnDestroy {
         if (this.searchValue) {
             request.params.quickSearchString = this.searchValue;
         }
+        request.params.isActive = true;
         request.params.contactGroupId = ContactGroup.Client;
         request.params.$count = true;
         const queryParams = UrlHelper.getQueryParameters();

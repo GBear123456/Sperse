@@ -76,7 +76,7 @@ export class NotesComponent extends AppComponentBase implements OnDestroy {
         map(([contactInfo, leadInfo]: [ ContactInfoDto, LeadInfoDto]) => {
             this.leadInfo = leadInfo;
             this.contactInfo = contactInfo;
-            this.manageAllowed = this.permission.checkCGPermission(contactInfo.groupId);
+            this.manageAllowed = this.permission.checkCGPermission(contactInfo.groups);
             this.updateToolbar();
             return [
                 contactInfo.id, contactInfo.primaryOrganizationContactId || 0, leadInfo.propertyId || 0

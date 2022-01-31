@@ -6,8 +6,9 @@ import { Params, Router } from '@angular/router';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Observable, ReplaySubject, Subject, of, BehaviorSubject, Subscriber, forkJoin } from 'rxjs';
-import { filter, first, finalize, tap, switchMap, catchError,
-    map, mapTo, distinctUntilChanged } from 'rxjs/operators';
+import { filter, first, finalize, tap, switchMap, catchError, map, mapTo, distinctUntilChanged } from 'rxjs/operators';
+import invert from 'lodash/invert';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { ContactStatus } from '@root/shared/AppEnums';
@@ -85,6 +86,7 @@ export class ContactsService {
     contactId$: Observable<number> = this.contactId.asObservable().pipe(
         filter((contactId: number) => !!contactId)
     );
+    contactGroupId: BehaviorSubject<string> = new BehaviorSubject<string>(null);
     private organizationContactInfo: ReplaySubject<OrganizationContactInfoDto> = new ReplaySubject<OrganizationContactInfoDto>(1);
     organizationContactInfo$: Observable<OrganizationContactInfoDto> = this.organizationContactInfo.asObservable();
     private subscribers: any = {
@@ -598,13 +600,15 @@ export class ContactsService {
     showMergeContactDialog(
         sourceInfo,
         targetInfo,
+        contactGroupId: ContactGroup,
         loadFinalize = () => {},
         keepSource = true,
         keepTarget = true
     ) {
         return this.contactProxy.getContactInfoForMerge(
             sourceInfo.id, sourceInfo.leadId,
-            targetInfo.id, targetInfo.leadId
+            targetInfo.id, targetInfo.leadId,
+            String(contactGroupId)
         ).pipe(finalize(
             () => loadFinalize()
         ), switchMap((response: GetContactInfoForMergeOutput) => {
@@ -615,7 +619,8 @@ export class ContactsService {
                 data: {
                     mergeInfo: response,
                     keepSource: keepSource,
-                    keepTarget: keepTarget
+                    keepTarget: keepTarget,
+                    contactGroupId: contactGroupId
                 }
             }).afterClosed();
         }));
@@ -665,7 +670,7 @@ export class ContactsService {
         });
     }
 
-    deleteContact(customerName, contactGroup, entityId, callback?, isLead = false, userId?) {
+    deleteContact(customerName, contactGroups: ContactGroup[], entityId, callback?, isLead = false, userId?) {
         let text = this.ls.l('LeadDeleteWarningMessage', customerName);
         let canForceDelete = this.permission.isGranted(AppPermissions.CRMForceDeleteEntites);
         if (isLead) {
@@ -683,7 +688,8 @@ export class ContactsService {
                 [ { text: this.ls.l('ForceDelete'), visible: canForceDelete, checked: false }]
             );
         } else {
-            let text = contactGroup == ContactGroup.Partner ? this.ls.l('PartnerDeleteWarningMessage', customerName) : this.ls.l('ContactDeleteWarningMessage', customerName);
+            let text = contactGroups.some(group => group == ContactGroup.Partner) ? 
+                this.ls.l('PartnerDeleteWarningMessage', customerName) : this.ls.l('ContactDeleteWarningMessage', customerName);
             ContactsHelper.showConfirmMessage(
                 text,
                 (isConfirmed: boolean, [ forceDelete, notifyUser ]: boolean[]) => {
@@ -702,7 +708,7 @@ export class ContactsService {
         }
     }
 
-    mergeContact(source, target, keepSource?: boolean, keepTarget?: boolean, callback?, isLead = false) {
+    mergeContact(source, target, contactGroupId: ContactGroup, keepSource?: boolean, keepTarget?: boolean, callback?, isLead = false) {
         abp.ui.setBusy();
         this.showMergeContactDialog(
             {
@@ -713,6 +719,7 @@ export class ContactsService {
                 id: isLead ? target.CustomerId : target.Id,
                 leadId: isLead ? target.Id : ''
             },
+            contactGroupId,
             () => abp.ui.clearBusy(),
             keepSource,
             keepTarget
@@ -722,19 +729,43 @@ export class ContactsService {
         });
     }
 
-    getSection(queryParams: Params, contactGroupId?: string): string {
+    getSection(queryParams: Params): string {
         if (queryParams) {
             if (queryParams.subId)
-                return 'subscriptions';
+                return 'subscriptions';            
             else if (queryParams.referrer)
                 return queryParams.referrer.split('/').pop();
         }
-        return contactGroupId && contactGroupId === ContactGroup.Partner ? 'partners' : 'clients';
+        return 'clients';
     }
 
-    getCurrentItemType(queryParams: Params, contactGroupId?: string): ItemTypeEnum {
+    getContactGroupId(queryParams: Params): string {
+        if (queryParams) {
+            if (queryParams.contactGroupId) {
+                let contactGroupId = queryParams.contactGroupId.toUpperCase();
+                if (Object.keys(ContactGroup).some(group => ContactGroup[group] == contactGroupId))
+                    return contactGroupId;
+            }
+
+            if (queryParams.referrer) {
+                let section = queryParams.referrer.split('/').pop();
+                switch (section) {
+                    case 'orders':
+                    case 'clients':
+                    case 'subscriptions':
+                        return ContactGroup.Client;
+                    case 'partners':
+                        return ContactGroup.Partner;
+                    case 'users':
+                        return ContactGroup.Employee;
+                }
+            }
+        }
+    }
+
+    getCurrentItemType(queryParams: Params): ItemTypeEnum {
         let dataSourceURI: ItemTypeEnum;
-        switch (this.getSection(queryParams, contactGroupId)) {
+        switch (this.getSection(queryParams)) {
             case 'leads':
                 dataSourceURI = ItemTypeEnum.Lead;
                 break;
@@ -759,13 +790,17 @@ export class ContactsService {
         return dataSourceURI;
     }
 
-    updateStatus(entityId: number, status: Status, entity: 'contact' | 'user' = 'contact'): Observable<any> {
+    updateStatus(entityId: number, groupId: ContactGroup, isActive: boolean, entity: 'contact' | 'user' = 'contact', showEmailCheckbox = false): Observable<any> {
         return new Observable<any>((observer: Subscriber<any>) => {
+            let contactGroupName: any = invert(ContactGroup);
             ContactsHelper.showConfirmMessage(
-                this.ls.l('ClientUpdateStatusWarningMessage'),
+                this.ls.l(startCase(entity) + 'UpdateStatusWarningMessage', 
+                    this.ls.l((isActive ? '': 'in') + 'activate'), 
+                    startCase(contactGroupName[<string>groupId])
+                ),
                 (isConfirmed: boolean, [ notifyUser ]: boolean[]) => {
                     if (isConfirmed) {
-                        this.updateStatusInternal(entityId, status.id, notifyUser, entity).subscribe(
+                        this.updateStatusInternal(entityId, groupId, isActive, notifyUser, entity).subscribe(
                             () => observer.next(true),
                             (error) => observer.error(error)
                         );
@@ -775,24 +810,25 @@ export class ContactsService {
                 },
                 [ {
                     text: this.ls.l('SendCancellationEmail'),
-                    visible: this.userId.value && status.id === ContactStatus.Inactive,
+                    visible: this.userId.value && (entity == 'user' && !isActive || showEmailCheckbox),
                     checked: false
                 } ],
-                this.ls.l('ClientStatusUpdateConfirmationTitle')
+                this.ls.l(startCase(entity) + 'StatusUpdateConfirmationTitle')
             );
         });
     }
 
-    private updateStatusInternal(entityId: number, statusId: ContactStatus, notifyUser: boolean, entityType: 'contact' | 'user' = 'contact') {
+    private updateStatusInternal(entityId: number, groupId: ContactGroup, isActive: boolean, notifyUser: boolean, entityType: 'contact' | 'user' = 'contact') {
         return entityType === 'contact'
             ? this.contactProxy.updateContactStatus(new UpdateContactStatusInput({
                 contactId: entityId,
-                statusId: String(statusId),
+                groupId: String(groupId),
+                isActive: isActive,
                 notifyUser: notifyUser
             }))
-            : this.userService.updateOptions(new UpdateUserOptionsDto ({
+            : this.userService.updateOptions(new UpdateUserOptionsDto({
                 id: entityId,
-                isActive: statusId === ContactStatus.Active,
+                isActive: isActive,
                 notifyUser: notifyUser,
                 isLockoutEnabled: null,
                 isTwoFactorEnabled: null

@@ -7,7 +7,7 @@ import {
     OnInit,
     ViewChild
 } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { CurrencyPipe } from '@angular/common';
 import { Params } from '@angular/router';
 
@@ -30,6 +30,7 @@ import {
     skip,
     switchMap,
     takeUntil,
+    debounceTime,
     tap
 } from 'rxjs/operators';
 import { CacheService } from 'ng2-cache-service';
@@ -134,6 +135,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.initOrdersToolbarConfig();
     }
 
+    filterTimeout: any;
     searchClear = false;
     searchValue = this._activatedRoute.snapshot.queryParams.search || '';
     manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
@@ -173,7 +175,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     );
     selectedContactGroup$: Observable<ContactGroup> = this.selectedContactGroup.asObservable();
     contactGroupDataSource = Object.keys(ContactGroup).filter(
-        (group: string) => this.permission.checkCGPermission(ContactGroup[group], '')
+        (group: string) => this.permission.checkCGPermission([ContactGroup[group]], '')
     ).map((group: string) => ({
         id: ContactGroup[group],
         name: this.l('ContactGroup_' + group)
@@ -189,7 +191,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 dataSource: this.contactGroupDataSource,
                 nameField: 'name',
                 keyExpr: 'id'
-            }),
+            })
         }
     });
     private sourceFilter: FilterModel = new FilterModel({
@@ -292,7 +294,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         })
     ];
     private subscriptionsFilters: FilterModel[] = [
-        this.contactGroupFilter,
         new FilterModel({
             component: FilterCalendarComponent,
             operator: { from: 'ge', to: 'le' },
@@ -424,14 +425,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             version: AppConsts.ODataVersion,
             deserializeDates: false,
             beforeSend: (request) => {
+                request.params.contactGroupId = this.selectedContactGroup.value; 
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.params.$select = DataGridService.getSelectFields(
                     this.subscriptionsGrid,
                     [
                         this.subscriptionFields.Id,
                         this.subscriptionFields.LeadId,
-                        this.subscriptionFields.ContactId,
-                        this.subscriptionFields.ContactGroupId
+                        this.subscriptionFields.ContactId
                     ]
                 );
             },
@@ -560,10 +561,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.search$,
         this.refresh$
     ).pipe(
+        debounceTime(600),
         takeUntil(this.destroy$),
-        switchMap(this.waitUntilLayoutType(DataLayoutType.DataGrid)),
-        switchMap(this.waitUntilOrderType(OrderType.Order)),
-        map(([oDataRequestValues,]: [ODataRequestValues,]) => {
+        filter(() => this.componentIsActivated && 
+            this.selectedOrderType.value === OrderType.Order && 
+            this.dataLayoutType.value === DataLayoutType.DataGrid
+        ),
+        map(([oDataRequestValues, search, refresh]: [ODataRequestValues, string, any]) => {
             return this.getODataUrl(this.orderCountDataSourceURI, oDataRequestValues.filter, null,
                 [...this.getSubscriptionsParams(), ...oDataRequestValues.params]);
         }),
@@ -597,10 +601,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.search$,
         this.refresh$
     ).pipe(
+        debounceTime(600),
         takeUntil(this.destroy$),
-        switchMap(this.waitUntilOrderType(OrderType.Subscription)),
-        filter(() => this.subscriptionsDataLayoutType === DataLayoutType.DataGrid),
-        map(([oDataRequestValues,]: [ODataRequestValues,]) => {
+        filter(() => this.componentIsActivated && 
+            this.selectedOrderType.value === OrderType.Subscription
+        ),
+        map(([oDataRequestValues, search, refresh]: [ODataRequestValues, string, any]) => {
             return this.getODataUrl(
                 this.subscriptionGroupDataSourceURI,
                 oDataRequestValues.filter,
@@ -630,9 +636,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
         switchMap((subscriptionSummaryUrl: string) => {
             this.totalCount = this.totalErrorMsg = undefined;
+            let contactGroup = this.selectedContactGroup.value;
             return this.http.get(
                 subscriptionSummaryUrl,
                 {
+                    params: contactGroup ? new HttpParams({
+                        fromObject: {
+                            contactGroupId: contactGroup.toString()
+                        }
+                    }) : undefined,
                     headers: new HttpHeaders({
                         'Authorization': 'Bearer ' + abp.auth.getToken()
                     })
@@ -645,8 +657,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             )
         }),
     );
-    private _activate: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(true);
-    private activate$: Observable<boolean> = this._activate.asObservable();
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
@@ -812,17 +822,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 this.subscriptionsGrid.instance.repaint();
             }
         });
-        this.selectedOrderType$.pipe(
-            skip(1)
-        ).subscribe((selectedOrderType: OrderType) => {
+        this.selectedOrderType$.subscribe((selectedOrderType: OrderType) => {
             this.changeOrderType(selectedOrderType);
         });
-        this.selectedOrderType$.pipe(
-            first()
-        ).subscribe((selectedOrderType: OrderType) => {
-            this.searchClear = false;
-            this.changeOrderType(this.selectedOrderType.value);
-        });
+        this.handleQueryParams();
     }
 
     customizeTotal = () => this.totalCount !== undefined ? this.l('Count') + ': ' + this.totalCount : '';
@@ -832,38 +835,31 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     private handleQueryParams() {
         this.queryParams$.pipe(
-            /** Wait for activation to update the filters */
-            switchMap((queryParams: Params) => this.activate$.pipe(
-                filter(Boolean),
-                mapTo(queryParams))
-            )
+            filter(() => this.componentIsActivated),
+            takeUntil(this.destroy$)
         ).subscribe((params: Params) => {
-            if (params.orderType && this.selectedOrderType.value !== (+params.orderType)) {
-                this.searchClear = false;
-                this.selectedOrderType.next(+params.orderType);
-            }
-            if (params.search && this.searchValue !== params.search) {
+            let isOrderTypeChanged = params.orderType && this.selectedOrderType.value != params.orderType,
+                isSearchChanged = params.search && this.searchValue != params.search;
+
+            if (isSearchChanged) {
                 this.searchValue = params.search;
-                if (this.selectedOrderType.value == OrderType.Order)
-                    this.initOrdersToolbarConfig();
-                else
-                    this.initSubscriptionsToolbarConfig();
+            }
+            if (isOrderTypeChanged || isSearchChanged) {
+                this.searchClear = false;                
                 this.filtersService.clearAllFilters();
                 this.selectedContactGroup.next(undefined);
-                setTimeout(() => this.filtersService.change([this.contactGroupFilter]));
-            }
+                this.selectedOrderType.next(+params.orderType || this.selectedOrderType.value);
+            }            
         });
     }
 
     activate() {
         super.activate();
-        this.handleQueryParams();
         this.initFilterConfig();
         this.subscribeToFilter();
         this.showHostElement(() => {
             this.pipelineComponent.detectChanges();
         });
-        this._activate.next(true);
     }
 
     get dataGrid() {
@@ -882,14 +878,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return this.selectedOrderType.value === OrderType.Order
             ? this.ordersTotalCount
             : this.subscriptionsTotalCount;
-    }
-
-    private waitUntilOrderType(orderType: OrderType) {
-        return (data) => this.selectedOrderType.value === orderType ? of(data) : this.selectedOrderType$.pipe(
-            filter((dataOrderType: OrderType) => dataOrderType === orderType),
-            first(),
-            mapTo(data)
-        );
     }
 
     private waitUntilLayoutType(layoutType: DataLayoutType) {
@@ -942,10 +930,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     getODataRequestValues(orderType: OrderType) {
         return concat(
-            /** Do not emit initial empty filters for subscriptions since they apply its own initial filters */
-            orderType === OrderType.Subscription
-                ? of(null)
-                : this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)).pipe(first()),
+            this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)).pipe(first()),
             this.filterChanged$.pipe(
                 filter(() => this.selectedOrderType.value === orderType),
                 switchMap(() => this.oDataService.getODataFilter(this.filters, this.getCheckCustomFilter.bind(this)))
@@ -1491,7 +1476,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         }
         if (this.filterChanged) {
             this.filterChanged = false;
-            setTimeout(() => this.processFilterInternal());
+            this.processFilterInternal();
         }
     }
 
@@ -1506,7 +1491,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         if (this.filterChanged) {
             this.filterChanged = false;
-            setTimeout(() => this.processFilterInternal());
+            this.processFilterInternal();
         }
     }
 
@@ -1545,34 +1530,37 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     processFilterInternal() {
-        let context: any = this;
-        let grid: any;
+        clearTimeout(this.filterTimeout);
+        this.filterTimeout = setTimeout(() => {
+            let context: any = this;
+            let grid: any;
 
-        if (this.selectedOrderType.value === OrderType.Order) {
-            grid = this.ordersGrid;
-            this.ordersDataSource['entities'] = this.ordersDataSource['total'] = undefined;
-        } else if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
-            grid = this.subscriptionsGrid;
-            this.subscriptionsDataSource['entities'] = this.subscriptionsDataSource['total'] = undefined;
-        } else
-            grid = this.pivotGridComponent.dataGrid;
+            if (this.selectedOrderType.value === OrderType.Order) {
+                grid = this.ordersGrid;
+                this.ordersDataSource['entities'] = this.ordersDataSource['total'] = undefined;
+            } else if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
+                grid = this.subscriptionsGrid;
+                this.subscriptionsDataSource['entities'] = this.subscriptionsDataSource['total'] = undefined;
+            } else
+                grid = this.pivotGridComponent.dataGrid;
 
-        if (this.selectedOrderType.value === OrderType.Order && this.showOrdersPipeline && this.pipelineComponent) {
-            context = this.pipelineComponent;
-            context.searchColumns = this.searchColumns;
-            context.searchValue = this.searchValue;
-        } else if (!grid)
-            return;
+            if (this.selectedOrderType.value === OrderType.Order && this.showOrdersPipeline && this.pipelineComponent) {
+                context = this.pipelineComponent;
+                context.searchColumns = this.searchColumns;
+                context.searchValue = this.searchValue;
+            } else if (!grid)
+                return;
 
-        context.processODataFilter.call(
-            context,
-            grid.instance,
-            this.selectedOrderType.value === OrderType.Order ? this.ordersDataSourceURI : this.subscriptionsDataSourceURI,
-            this.filters,
-            this.getCheckCustomFilter.bind(this),
-            null,
-            this.getSubscriptionsParams()
-        );
+            context.processODataFilter.call(
+                context,
+                grid.instance,
+                this.selectedOrderType.value === OrderType.Order ? this.ordersDataSourceURI : this.subscriptionsDataSourceURI,
+                this.filters,
+                this.getCheckCustomFilter.bind(this),
+                null,
+                this.getSubscriptionsParams()
+            );
+        }, 100);
     }
 
     private getCheckCustomFilter(filter: FilterModel) {
@@ -1627,10 +1615,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onStagesLoaded($event) {
-        this.stages = $event.stages.map((stage) => {
+        this.stages = $event.stages.map(stage => {
             return {
-                id: this.pipelineService.getPipeline(
-                    this.pipelinePurposeId, null).id + ':' + stage.id,
+                id: stage.pipeline.id + ':' + stage.id,
                 index: stage.sortOrder,
                 name: stage.name,
             };
@@ -1676,6 +1663,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     queryParams: {
                         ...(isOrder ? { orderId: entity.Id } : { subId: entity.Id }),
                         referrer: 'app/crm/orders',
+                        contactGroupId: ContactGroup.Client,                        
                         dataLayoutType: DataLayoutType.Pipeline,
                         ...queryParams
                     }
@@ -1795,7 +1783,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         if (event.itemData.value != this.selectedContactGroup.value) {
             this.selectedContactGroup.next(event.itemData.value);
-            this.filtersService.change([this.contactGroupFilter]);
+            this.processFilterInternal();
         }
     }
 
@@ -1812,7 +1800,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.initSubscriptionsToolbarConfig();
         setTimeout(() => {
             this.initDataSource();
-            this.filtersService.change([this.contactGroupFilter]);
+            this.invalidate();
         });
     }
 
@@ -1861,6 +1849,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     deactivate() {
         super.deactivate();
+        this.searchClear = false;
         this.filtersService.unsubscribe();
         this.hideHostElement();
     }

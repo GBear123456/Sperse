@@ -46,7 +46,7 @@ export class AddCompanyDialogComponent {
     ) {}
 
     lookupCompanies(search?: string) {
-        return this.orgServiceProxy.getOrganizations(search, this.data.contactInfo.groupId, 10);
+        return this.orgServiceProxy.getOrganizations(search, 10);
     }
 
     lookupItems($event) {
@@ -130,10 +130,7 @@ export class AddCompanyDialogComponent {
                 let result = of(response);
                 if (response.organizationId) {
                     this.data.updateLocation(this.data.contactId, this.data.leadId, response.organizationId);
-                    /** Reload list of organization units */
-                    if (this.data.contactInfo.groupId === ContactGroup.Partner) {
-                        this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(true));
-                    }
+                    this.store$.dispatch(new OrganizationUnitsStoreActions.LoadRequestAction(true));
                     result = this.applyContactInfo(response);
                 }
                 return result;

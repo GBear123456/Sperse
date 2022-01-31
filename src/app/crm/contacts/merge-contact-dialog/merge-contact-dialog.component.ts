@@ -226,7 +226,7 @@ export class MergeContactDialogComponent implements AfterViewInit {
         this.updateLeadResultFields();
         pipelineService.getPipelineDefinitionObservable(
             AppConsts.PipelinePurposeIds.lead,
-            data.mergeInfo.contactInfo.groupId
+            data.contactGroupId
         ).pipe(first()).subscribe();
 
         this.store$.dispatch(new AddressUsageTypesStoreActions.LoadRequestAction());

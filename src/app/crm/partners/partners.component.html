@@ -47,7 +47,7 @@
                          [hideButtons]="true"
                          [filterModel]="filterModelStatus"
                          targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
-                         [list]="statuses$ | async"
+                         [list]="statuses"
                          (onItemSelected)="updatePartnerStatuses($event)">
         </app-static-list>
         <types-list [selectedKeys]="selectedPartnerKeys"
@@ -143,7 +143,8 @@
                                         [showInColumnChooser]="tenantHasBankCodeFeature">
                             </dxi-column>
                         </ng-container>
-                        <dxi-column [dataField]="partnerFields.Status" [caption]="l('Status')" cellTemplate="statusCell"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.IsActive" [caption]="l('Active')" dataType="boolean"></dxi-column>
+                        <dxi-column [dataField]="partnerFields.IsProspective" [caption]="l('Prospective')" dataType="boolean" [visible]="false"></dxi-column>
                         <dxi-column [dataField]="partnerFields.PartnerType" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
                         <div *dxTemplate="let cellData of 'statusCell'">
                             <div [class]="'client-status ' + cellData.value | lowercase">

@@ -189,7 +189,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     this.contactInfo.affiliateRate === null ? null : this.contactInfo.affiliateRate;
                 this.affiliateRate2Initil = this.affiliateRate2 =
                     this.contactInfo.affiliateRateTier2 === null ? null : this.contactInfo.affiliateRateTier2;
-                this.manageAllowed = this.permissionChecker.checkCGPermission(contactInfo.groupId);
+                this.manageAllowed = this.permissionChecker.checkCGPermission(contactInfo.groups);
                 this.affiliateCode.next(contactInfo.affiliateCode);
                 this.contactXref.next(contactInfo.personContactInfo.xref);
                 this.contactProxy.getContactLastModificationInfo(
@@ -402,7 +402,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
             items: []
         }, dataSource = [rootItem];
         this.pipelineService.getPipelineDefinitionObservable(
-            purposeId, AppConsts.PipelinePurposeIds.lead == purposeId ? this.contactInfo.groupId : undefined
+            purposeId, this.leadInfo && this.leadInfo.contactGroupId || ContactGroup.Client
         ).pipe(takeUntil(this.dialogRef.beforeClosed())).subscribe((pipeline: PipelineDto) => {
             rootItem.items = [];
             pipeline.stages.forEach((stage: StageDto) => {

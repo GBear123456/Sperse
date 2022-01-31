@@ -131,7 +131,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
                 this.personContactInfo = contactInfo.personContactInfo;
                 this.person = contactInfo.personContactInfo.person;
                 this.getStates(this.person && this.person.citizenship);
-                this.isEditAllowed = this.permission.checkCGPermission(contactInfo.groupId);
+                this.isEditAllowed = this.permission.checkCGPermission(contactInfo.groups);
                 setTimeout(() => this.updateToolbar(contactInfo));
                 if (contactInfo.parentId)
                     this.contactsService.closeSettingsDialog(false);

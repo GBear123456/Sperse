@@ -36,7 +36,7 @@ import { AppFeatures } from '@shared/AppFeatures';
         '../shared/metronic/m-subheader.less',
         './app.component.less'
     ],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent implements OnInit {
     installationMode = false;

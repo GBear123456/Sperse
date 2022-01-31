@@ -257,18 +257,6 @@ export class FiltersService {
         return CrmFilterHelpers.filterByParentId();
     }
 
-    static getCustomerFilters(): any[] {
-        return [
-            {
-                'or': [
-                    { 'StatusId': { 'eq': ContactStatus.Active }},
-                    { 'StatusId': { 'eq': ContactStatus.Prospective }}
-                ]
-            },
-            { 'ParentId': { 'eq': null }}
-        ];
-    }
-
     constructor(
         private serverCacheService: ServerCacheService
     ) {}

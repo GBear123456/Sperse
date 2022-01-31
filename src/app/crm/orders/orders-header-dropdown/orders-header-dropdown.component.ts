@@ -45,7 +45,7 @@ export class OrdersHeaderDropdownComponent {
 
     initContactGroups() {
         let accessibleCG = Object.keys(ContactGroup)
-            .filter((group: string) => this.permission.checkCGPermission(ContactGroup[group], ''));
+            .filter((group: string) => this.permission.checkCGPermission([ContactGroup[group]], ''));
         if (accessibleCG.length > 1) {
             accessibleCG.unshift('All');
         }

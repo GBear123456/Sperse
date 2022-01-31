@@ -203,9 +203,9 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
                     this.dialogRef.close(new ProductDto({
                         id: res.productId,
+                        group: this.product.groupName,
                         name: this.product.name,
                         code: this.product.code,
-                        group: this.product.groupName,
                         paymentPeriodTypes: this.product.productSubscriptionOptions &&
                             this.product.productSubscriptionOptions.map(item => item.frequency)
                     }));

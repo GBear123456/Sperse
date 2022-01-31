@@ -8798,9 +8798,10 @@ export class ContactServiceProxy {
     /**
      * @contactLeadId (optional) 
      * @targetContactLeadId (optional) 
+     * @leadContactGroupId (optional) 
      * @return Success
      */
-    getContactInfoForMerge(contactId: number, contactLeadId: number | null | undefined, targetContactId: number, targetContactLeadId: number | null | undefined): Observable<GetContactInfoForMergeOutput> {
+    getContactInfoForMerge(contactId: number, contactLeadId: number | null | undefined, targetContactId: number, targetContactLeadId: number | null | undefined, leadContactGroupId: string | null | undefined): Observable<GetContactInfoForMergeOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactInfoForMerge?";
         if (contactId === undefined || contactId === null)
             throw new Error("The parameter 'contactId' must be defined and cannot be null.");
@@ -8814,6 +8815,8 @@ export class ContactServiceProxy {
             url_ += "TargetContactId=" + encodeURIComponent("" + targetContactId) + "&"; 
         if (targetContactLeadId !== undefined)
             url_ += "TargetContactLeadId=" + encodeURIComponent("" + targetContactLeadId) + "&"; 
+        if (leadContactGroupId !== undefined)
+            url_ += "LeadContactGroupId=" + encodeURIComponent("" + leadContactGroupId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -9475,62 +9478,6 @@ export class ContactServiceProxy {
             }));
         }
         return _observableOf<ContactGroupDto[]>(<any>null);
-    }
-
-    /**
-     * @return Success
-     */
-    getContactStatuses(): Observable<ContactStatusDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Contact/GetContactStatuses";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetContactStatuses(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetContactStatuses(<any>response_);
-                } catch (e) {
-                    return <Observable<ContactStatusDto[]>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<ContactStatusDto[]>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processGetContactStatuses(response: HttpResponseBase): Observable<ContactStatusDto[]> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
-                for (let item of resultData200)
-                    result200.push(ContactStatusDto.fromJS(item));
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<ContactStatusDto[]>(<any>null);
     }
 
     /**
@@ -20564,7 +20511,7 @@ export class LeadServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    cancelLead(body: CancelLeadInfo | null | undefined): Observable<void> {
+    cancelLead(body: CancelLeadInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/CancelLead";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -20888,7 +20835,7 @@ export class LeadServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updateLeadStage(body: UpdateLeadStageInfo | null | undefined): Observable<void> {
+    updateLeadStage(body: UpdateLeadStageInput | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/UpdateLeadStage";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -21096,13 +21043,18 @@ export class LeadServiceProxy {
     }
 
     /**
-     * @customerId (optional) 
      * @return Success
      */
-    getLastLeadInfo(customerId: number | null | undefined): Observable<LeadInfoDto> {
+    getLastLeadInfo(contactGroupId: string, contactId: number): Observable<LeadInfoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/GetLastLeadInfo?";
-        if (customerId !== undefined)
-            url_ += "customerId=" + encodeURIComponent("" + customerId) + "&"; 
+        if (contactGroupId === undefined || contactGroupId === null)
+            throw new Error("The parameter 'contactGroupId' must be defined and cannot be null.");
+        else
+            url_ += "contactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
+        if (contactId === undefined || contactId === null)
+            throw new Error("The parameter 'contactId' must be defined and cannot be null.");
+        else
+            url_ += "contactId=" + encodeURIComponent("" + contactId) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -26008,16 +25960,13 @@ export class OrganizationContactServiceProxy {
 
     /**
      * @searchString (optional) 
-     * @groupId (optional) 
      * @topCount (optional) 
      * @return Success
      */
-    getOrganizations(searchString: string | null | undefined, groupId: string | null | undefined, topCount: number | null | undefined): Observable<OrganizationShortInfo[]> {
+    getOrganizations(searchString: string | null | undefined, topCount: number | null | undefined): Observable<OrganizationShortInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/GetOrganizations?";
         if (searchString !== undefined)
             url_ += "searchString=" + encodeURIComponent("" + searchString) + "&"; 
-        if (groupId !== undefined)
-            url_ += "groupId=" + encodeURIComponent("" + groupId) + "&"; 
         if (topCount !== undefined)
             url_ += "topCount=" + encodeURIComponent("" + topCount) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
@@ -52929,6 +52878,50 @@ export interface IGetDefaultEditionNameOutput {
     name: string | undefined;
 }
 
+export class ContactGroupInfo implements IContactGroupInfo {
+    groupId!: string | undefined;
+    isActive!: boolean | undefined;
+    isProspective!: boolean | undefined;
+
+    constructor(data?: IContactGroupInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.groupId = data["groupId"];
+            this.isActive = data["isActive"];
+            this.isProspective = data["isProspective"];
+        }
+    }
+
+    static fromJS(data: any): ContactGroupInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactGroupInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["groupId"] = this.groupId;
+        data["isActive"] = this.isActive;
+        data["isProspective"] = this.isProspective;
+        return data; 
+    }
+}
+
+export interface IContactGroupInfo {
+    groupId: string | undefined;
+    isActive: boolean | undefined;
+    isProspective: boolean | undefined;
+}
+
 export enum MaritalStatus {
     Single = "Single", 
     Married = "Married", 
@@ -53726,8 +53719,7 @@ export enum AffiliateServiceStatus {
 export class ContactInfoDto implements IContactInfoDto {
     id!: number | undefined;
     typeId!: string | undefined;
-    statusId!: string | undefined;
-    groupId!: string | undefined;
+    groups!: ContactGroupInfo[] | undefined;
     assignedContactId!: number | undefined;
     assignedUserId!: number | undefined;
     assignedUserName!: string | undefined;
@@ -53767,8 +53759,11 @@ export class ContactInfoDto implements IContactInfoDto {
         if (data) {
             this.id = data["id"];
             this.typeId = data["typeId"];
-            this.statusId = data["statusId"];
-            this.groupId = data["groupId"];
+            if (data["groups"] && data["groups"].constructor === Array) {
+                this.groups = [];
+                for (let item of data["groups"])
+                    this.groups.push(ContactGroupInfo.fromJS(item));
+            }
             this.assignedContactId = data["assignedContactId"];
             this.assignedUserId = data["assignedUserId"];
             this.assignedUserName = data["assignedUserName"];
@@ -53816,8 +53811,11 @@ export class ContactInfoDto implements IContactInfoDto {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
         data["typeId"] = this.typeId;
-        data["statusId"] = this.statusId;
-        data["groupId"] = this.groupId;
+        if (this.groups && this.groups.constructor === Array) {
+            data["groups"] = [];
+            for (let item of this.groups)
+                data["groups"].push(item.toJSON());
+        }
         data["assignedContactId"] = this.assignedContactId;
         data["assignedUserId"] = this.assignedUserId;
         data["assignedUserName"] = this.assignedUserName;
@@ -53858,8 +53856,7 @@ export class ContactInfoDto implements IContactInfoDto {
 export interface IContactInfoDto {
     id: number | undefined;
     typeId: string | undefined;
-    statusId: string | undefined;
-    groupId: string | undefined;
+    groups: ContactGroupInfo[] | undefined;
     assignedContactId: number | undefined;
     assignedUserId: number | undefined;
     assignedUserName: string | undefined;
@@ -53889,7 +53886,6 @@ export interface IContactInfoDto {
 
 export class GetAffiliateInfoOutput implements IGetAffiliateInfoOutput {
     id!: number | undefined;
-    groupId!: string | undefined;
     typeId!: string | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
@@ -53913,7 +53909,6 @@ export class GetAffiliateInfoOutput implements IGetAffiliateInfoOutput {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.groupId = data["groupId"];
             this.typeId = data["typeId"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
@@ -53937,7 +53932,6 @@ export class GetAffiliateInfoOutput implements IGetAffiliateInfoOutput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["groupId"] = this.groupId;
         data["typeId"] = this.typeId;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
@@ -53954,7 +53948,6 @@ export class GetAffiliateInfoOutput implements IGetAffiliateInfoOutput {
 
 export interface IGetAffiliateInfoOutput {
     id: number | undefined;
-    groupId: string | undefined;
     typeId: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
@@ -54020,7 +54013,6 @@ export interface IContactLastModificationInfoDto {
 }
 
 export class ContactDetailsDto implements IContactDetailsDto {
-    groupId!: string | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
     primaryOrgRelationId!: number | undefined;
@@ -54040,7 +54032,6 @@ export class ContactDetailsDto implements IContactDetailsDto {
 
     init(data?: any) {
         if (data) {
-            this.groupId = data["groupId"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
             this.primaryOrgRelationId = data["primaryOrgRelationId"];
@@ -54076,7 +54067,6 @@ export class ContactDetailsDto implements IContactDetailsDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["groupId"] = this.groupId;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["primaryOrgRelationId"] = this.primaryOrgRelationId;
@@ -54105,7 +54095,6 @@ export class ContactDetailsDto implements IContactDetailsDto {
 }
 
 export interface IContactDetailsDto {
-    groupId: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
     primaryOrgRelationId: number | undefined;
@@ -54164,8 +54153,6 @@ export class ContactShortInfo implements IContactShortInfo {
     fullName!: string | undefined;
     photo!: ContactPhotoInfo | undefined;
     ratingId!: number | undefined;
-    groupId!: string | undefined;
-    statusId!: string | undefined;
 
     constructor(data?: IContactShortInfo) {
         if (data) {
@@ -54182,8 +54169,6 @@ export class ContactShortInfo implements IContactShortInfo {
             this.fullName = data["fullName"];
             this.photo = data["photo"] ? ContactPhotoInfo.fromJS(data["photo"]) : <any>undefined;
             this.ratingId = data["ratingId"];
-            this.groupId = data["groupId"];
-            this.statusId = data["statusId"];
         }
     }
 
@@ -54200,8 +54185,6 @@ export class ContactShortInfo implements IContactShortInfo {
         data["fullName"] = this.fullName;
         data["photo"] = this.photo ? this.photo.toJSON() : <any>undefined;
         data["ratingId"] = this.ratingId;
-        data["groupId"] = this.groupId;
-        data["statusId"] = this.statusId;
         return data; 
     }
 }
@@ -54211,8 +54194,6 @@ export interface IContactShortInfo {
     fullName: string | undefined;
     photo: ContactPhotoInfo | undefined;
     ratingId: number | undefined;
-    groupId: string | undefined;
-    statusId: string | undefined;
 }
 
 export class ContactEmailInfo implements IContactEmailInfo {
@@ -54403,7 +54384,7 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
     id!: number | undefined;
     fullName!: string | undefined;
     contactDate!: moment.Moment | undefined;
-    groupId!: string | undefined;
+    groupIds!: string[] | undefined;
     typeId!: string | undefined;
     parentId!: number | undefined;
     affiliateCode!: string | undefined;
@@ -54441,7 +54422,11 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
             this.id = data["id"];
             this.fullName = data["fullName"];
             this.contactDate = data["contactDate"] ? moment(data["contactDate"].toString()) : <any>undefined;
-            this.groupId = data["groupId"];
+            if (data["groupIds"] && data["groupIds"].constructor === Array) {
+                this.groupIds = [];
+                for (let item of data["groupIds"])
+                    this.groupIds.push(item);
+            }
             this.typeId = data["typeId"];
             this.parentId = data["parentId"];
             this.affiliateCode = data["affiliateCode"];
@@ -54491,7 +54476,11 @@ export class ContactInfoForMerge implements IContactInfoForMerge {
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["contactDate"] = this.contactDate ? this.contactDate.toISOString() : <any>undefined;
-        data["groupId"] = this.groupId;
+        if (this.groupIds && this.groupIds.constructor === Array) {
+            data["groupIds"] = [];
+            for (let item of this.groupIds)
+                data["groupIds"].push(item);
+        }
         data["typeId"] = this.typeId;
         data["parentId"] = this.parentId;
         data["affiliateCode"] = this.affiliateCode;
@@ -54534,7 +54523,7 @@ export interface IContactInfoForMerge {
     id: number | undefined;
     fullName: string | undefined;
     contactDate: moment.Moment | undefined;
-    groupId: string | undefined;
+    groupIds: string[] | undefined;
     typeId: string | undefined;
     parentId: number | undefined;
     affiliateCode: string | undefined;
@@ -54689,7 +54678,6 @@ export interface IGetContactInfoForMergeOutput {
 
 export class SourceContactLevelInfo implements ISourceContactLevelInfo {
     id!: number | undefined;
-    groupId!: string | undefined;
     name!: string | undefined;
     affiliateCode!: string | undefined;
     photoPublicId!: string | undefined;
@@ -54706,7 +54694,6 @@ export class SourceContactLevelInfo implements ISourceContactLevelInfo {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.groupId = data["groupId"];
             this.name = data["name"];
             this.affiliateCode = data["affiliateCode"];
             this.photoPublicId = data["photoPublicId"];
@@ -54723,7 +54710,6 @@ export class SourceContactLevelInfo implements ISourceContactLevelInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["groupId"] = this.groupId;
         data["name"] = this.name;
         data["affiliateCode"] = this.affiliateCode;
         data["photoPublicId"] = this.photoPublicId;
@@ -54733,7 +54719,6 @@ export class SourceContactLevelInfo implements ISourceContactLevelInfo {
 
 export interface ISourceContactLevelInfo {
     id: number | undefined;
-    groupId: string | undefined;
     name: string | undefined;
     affiliateCode: string | undefined;
     photoPublicId: string | undefined;
@@ -55434,6 +55419,8 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     contactGroupId!: string;
+    isActive!: boolean | undefined;
+    isProspective!: boolean | undefined;
     statusId!: string | undefined;
     partnerTypeName!: string | undefined;
     leadTypeId!: number | undefined;
@@ -55526,6 +55513,8 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.contactGroupId = data["contactGroupId"];
+            this.isActive = data["isActive"];
+            this.isProspective = data["isProspective"];
             this.statusId = data["statusId"];
             this.partnerTypeName = data["partnerTypeName"];
             this.leadTypeId = data["leadTypeId"];
@@ -55618,6 +55607,8 @@ export class CreateOrUpdateContactInput implements ICreateOrUpdateContactInput {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["contactGroupId"] = this.contactGroupId;
+        data["isActive"] = this.isActive;
+        data["isProspective"] = this.isProspective;
         data["statusId"] = this.statusId;
         data["partnerTypeName"] = this.partnerTypeName;
         data["leadTypeId"] = this.leadTypeId;
@@ -55675,6 +55666,8 @@ export interface ICreateOrUpdateContactInput {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     contactGroupId: string;
+    isActive: boolean | undefined;
+    isProspective: boolean | undefined;
     statusId: string | undefined;
     partnerTypeName: string | undefined;
     leadTypeId: number | undefined;
@@ -55954,7 +55947,7 @@ export class MergeContactInput implements IMergeContactInput {
     targetContactLeadId!: number | undefined;
     targetContactMergeOptions!: TargetContactMergeOptions | undefined;
     primaryContactInfo!: PrimaryContactInfo | undefined;
-    mergeLeadMode!: MergeLeadMode;
+    mergeLeadMode!: MergeLeadMode | undefined;
 
     constructor(data?: IMergeContactInput) {
         if (data) {
@@ -56007,7 +56000,7 @@ export interface IMergeContactInput {
     targetContactLeadId: number | undefined;
     targetContactMergeOptions: TargetContactMergeOptions | undefined;
     primaryContactInfo: PrimaryContactInfo | undefined;
-    mergeLeadMode: MergeLeadMode;
+    mergeLeadMode: MergeLeadMode | undefined;
 }
 
 export class SimilarContactOutput implements ISimilarContactOutput {
@@ -56076,7 +56069,6 @@ export interface ISimilarContactOutput {
 
 export class SourceContactInfo implements ISourceContactInfo {
     id!: number | undefined;
-    groupId!: string | undefined;
     typeId!: string | undefined;
     affiliateCode!: string | undefined;
     companyName!: string | undefined;
@@ -56095,7 +56087,6 @@ export class SourceContactInfo implements ISourceContactInfo {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.groupId = data["groupId"];
             this.typeId = data["typeId"];
             this.affiliateCode = data["affiliateCode"];
             this.companyName = data["companyName"];
@@ -56114,7 +56105,6 @@ export class SourceContactInfo implements ISourceContactInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["groupId"] = this.groupId;
         data["typeId"] = this.typeId;
         data["affiliateCode"] = this.affiliateCode;
         data["companyName"] = this.companyName;
@@ -56126,7 +56116,6 @@ export class SourceContactInfo implements ISourceContactInfo {
 
 export interface ISourceContactInfo {
     id: number | undefined;
-    groupId: string | undefined;
     typeId: string | undefined;
     affiliateCode: string | undefined;
     companyName: string | undefined;
@@ -56196,9 +56185,6 @@ export class EntityContactInfo implements IEntityContactInfo {
     email!: string | undefined;
     userId!: number | undefined;
     address!: EntityAddressInfo | undefined;
-    isActive!: boolean | undefined;
-    statusId!: string | undefined;
-    groupId!: string | undefined;
     photoPublicId!: string | undefined;
 
     constructor(data?: IEntityContactInfo) {
@@ -56217,9 +56203,6 @@ export class EntityContactInfo implements IEntityContactInfo {
             this.email = data["email"];
             this.userId = data["userId"];
             this.address = data["address"] ? EntityAddressInfo.fromJS(data["address"]) : <any>undefined;
-            this.isActive = data["isActive"];
-            this.statusId = data["statusId"];
-            this.groupId = data["groupId"];
             this.photoPublicId = data["photoPublicId"];
         }
     }
@@ -56238,9 +56221,6 @@ export class EntityContactInfo implements IEntityContactInfo {
         data["email"] = this.email;
         data["userId"] = this.userId;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
-        data["isActive"] = this.isActive;
-        data["statusId"] = this.statusId;
-        data["groupId"] = this.groupId;
         data["photoPublicId"] = this.photoPublicId;
         return data; 
     }
@@ -56252,16 +56232,14 @@ export interface IEntityContactInfo {
     email: string | undefined;
     userId: number | undefined;
     address: EntityAddressInfo | undefined;
-    isActive: boolean | undefined;
-    statusId: string | undefined;
-    groupId: string | undefined;
     photoPublicId: string | undefined;
 }
 
 export class UpdateContactStatusInput implements IUpdateContactStatusInput {
     contactId!: number;
-    statusId!: string;
     notifyUser!: boolean | undefined;
+    groupId!: string;
+    isActive!: boolean | undefined;
 
     constructor(data?: IUpdateContactStatusInput) {
         if (data) {
@@ -56275,8 +56253,9 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
-            this.statusId = data["statusId"];
             this.notifyUser = data["notifyUser"];
+            this.groupId = data["groupId"];
+            this.isActive = data["isActive"];
         }
     }
 
@@ -56290,22 +56269,25 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        data["statusId"] = this.statusId;
         data["notifyUser"] = this.notifyUser;
+        data["groupId"] = this.groupId;
+        data["isActive"] = this.isActive;
         return data; 
     }
 }
 
 export interface IUpdateContactStatusInput {
     contactId: number;
-    statusId: string;
     notifyUser: boolean | undefined;
+    groupId: string;
+    isActive: boolean | undefined;
 }
 
 export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
     contactIds!: number[];
-    statusId!: string;
     notifyUsers!: boolean | undefined;
+    groupId!: string;
+    isActive!: boolean | undefined;
 
     constructor(data?: IUpdateContactStatusesInput) {
         if (data) {
@@ -56326,8 +56308,9 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
                 for (let item of data["contactIds"])
                     this.contactIds.push(item);
             }
-            this.statusId = data["statusId"];
             this.notifyUsers = data["notifyUsers"];
+            this.groupId = data["groupId"];
+            this.isActive = data["isActive"];
         }
     }
 
@@ -56345,16 +56328,18 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
             for (let item of this.contactIds)
                 data["contactIds"].push(item);
         }
-        data["statusId"] = this.statusId;
         data["notifyUsers"] = this.notifyUsers;
+        data["groupId"] = this.groupId;
+        data["isActive"] = this.isActive;
         return data; 
     }
 }
 
 export interface IUpdateContactStatusesInput {
     contactIds: number[];
-    statusId: string;
     notifyUsers: boolean | undefined;
+    groupId: string;
+    isActive: boolean | undefined;
 }
 
 export class ContactGroupDto implements IContactGroupDto {
@@ -56395,50 +56380,6 @@ export class ContactGroupDto implements IContactGroupDto {
 export interface IContactGroupDto {
     id: string | undefined;
     name: string | undefined;
-}
-
-export class ContactStatusDto implements IContactStatusDto {
-    id!: string | undefined;
-    name!: string | undefined;
-    forFilterOnly!: boolean | undefined;
-
-    constructor(data?: IContactStatusDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.id = data["id"];
-            this.name = data["name"];
-            this.forFilterOnly = data["forFilterOnly"];
-        }
-    }
-
-    static fromJS(data: any): ContactStatusDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactStatusDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["name"] = this.name;
-        data["forFilterOnly"] = this.forFilterOnly;
-        return data; 
-    }
-}
-
-export interface IContactStatusDto {
-    id: string | undefined;
-    name: string | undefined;
-    forFilterOnly: boolean | undefined;
 }
 
 export class AffiliateInfoHistoryInfo implements IAffiliateInfoHistoryInfo {
@@ -66582,18 +66523,8 @@ export interface IRegisterMemberOutput {
     alreadyInitialized: boolean | undefined;
 }
 
-export enum UserGroup {
-    Employee = "Employee", 
-    Member = "Member", 
-    Partner = "Partner", 
-    Investor = "Investor", 
-    Vendor = "Vendor", 
-    Other = "Other", 
-}
-
 export class GetUsersInfoDto implements IGetUsersInfoDto {
     userId!: number | undefined;
-    userGroup!: UserGroup | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
     emailAddress!: string | undefined;
@@ -66612,7 +66543,6 @@ export class GetUsersInfoDto implements IGetUsersInfoDto {
     init(data?: any) {
         if (data) {
             this.userId = data["userId"];
-            this.userGroup = data["userGroup"];
             this.firstName = data["firstName"];
             this.lastName = data["lastName"];
             this.emailAddress = data["emailAddress"];
@@ -66631,7 +66561,6 @@ export class GetUsersInfoDto implements IGetUsersInfoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["userId"] = this.userId;
-        data["userGroup"] = this.userGroup;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["emailAddress"] = this.emailAddress;
@@ -66643,7 +66572,6 @@ export class GetUsersInfoDto implements IGetUsersInfoDto {
 
 export interface IGetUsersInfoDto {
     userId: number | undefined;
-    userGroup: UserGroup | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
     emailAddress: string | undefined;
@@ -67201,6 +67129,7 @@ export interface ICreateInvoiceLineInput {
 
 export class CreateInvoiceInput implements ICreateInvoiceInput {
     contactId!: number;
+    groupId!: string | undefined;
     orderId!: number | undefined;
     orderNumber!: string | undefined;
     leadId!: number | undefined;
@@ -67231,6 +67160,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     init(data?: any) {
         if (data) {
             this.contactId = data["contactId"];
+            this.groupId = data["groupId"];
             this.orderId = data["orderId"];
             this.orderNumber = data["orderNumber"];
             this.leadId = data["leadId"];
@@ -67265,6 +67195,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
+        data["groupId"] = this.groupId;
         data["orderId"] = this.orderId;
         data["orderNumber"] = this.orderNumber;
         data["leadId"] = this.leadId;
@@ -67292,6 +67223,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
 
 export interface ICreateInvoiceInput {
     contactId: number;
+    groupId: string | undefined;
     orderId: number | undefined;
     orderNumber: string | undefined;
     leadId: number | undefined;
@@ -68395,14 +68327,13 @@ export interface IUpdateLanguageTextInput {
     value: string;
 }
 
-export class CancelLeadInfo implements ICancelLeadInfo {
+export class CancelLeadInput implements ICancelLeadInput {
     leadId!: number;
     cancellationReasonId!: string;
     comment!: string | undefined;
     sortOrder!: number | undefined;
-    stageId!: number | undefined;
 
-    constructor(data?: ICancelLeadInfo) {
+    constructor(data?: ICancelLeadInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -68417,13 +68348,12 @@ export class CancelLeadInfo implements ICancelLeadInfo {
             this.cancellationReasonId = data["cancellationReasonId"];
             this.comment = data["comment"];
             this.sortOrder = data["sortOrder"];
-            this.stageId = data["stageId"];
         }
     }
 
-    static fromJS(data: any): CancelLeadInfo {
+    static fromJS(data: any): CancelLeadInput {
         data = typeof data === 'object' ? data : {};
-        let result = new CancelLeadInfo();
+        let result = new CancelLeadInput();
         result.init(data);
         return result;
     }
@@ -68434,17 +68364,15 @@ export class CancelLeadInfo implements ICancelLeadInfo {
         data["cancellationReasonId"] = this.cancellationReasonId;
         data["comment"] = this.comment;
         data["sortOrder"] = this.sortOrder;
-        data["stageId"] = this.stageId;
         return data; 
     }
 }
 
-export interface ICancelLeadInfo {
+export interface ICancelLeadInput {
     leadId: number;
     cancellationReasonId: string;
     comment: string | undefined;
     sortOrder: number | undefined;
-    stageId: number | undefined;
 }
 
 export class LeadCancellationReasonDto implements ILeadCancellationReasonDto {
@@ -68572,6 +68500,8 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
     assignedUserId!: number | undefined;
     ratingId!: number | undefined;
     contactGroupId!: string;
+    isActive!: boolean | undefined;
+    isProspective!: boolean | undefined;
     statusId!: string | undefined;
     partnerTypeName!: string | undefined;
     leadTypeId!: number | undefined;
@@ -68661,6 +68591,8 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
             this.assignedUserId = data["assignedUserId"];
             this.ratingId = data["ratingId"];
             this.contactGroupId = data["contactGroupId"];
+            this.isActive = data["isActive"];
+            this.isProspective = data["isProspective"];
             this.statusId = data["statusId"];
             this.partnerTypeName = data["partnerTypeName"];
             this.leadTypeId = data["leadTypeId"];
@@ -68750,6 +68682,8 @@ export class CreateOrUpdateLeadInput implements ICreateOrUpdateLeadInput {
         data["assignedUserId"] = this.assignedUserId;
         data["ratingId"] = this.ratingId;
         data["contactGroupId"] = this.contactGroupId;
+        data["isActive"] = this.isActive;
+        data["isProspective"] = this.isProspective;
         data["statusId"] = this.statusId;
         data["partnerTypeName"] = this.partnerTypeName;
         data["leadTypeId"] = this.leadTypeId;
@@ -68804,6 +68738,8 @@ export interface ICreateOrUpdateLeadInput {
     assignedUserId: number | undefined;
     ratingId: number | undefined;
     contactGroupId: string;
+    isActive: boolean | undefined;
+    isProspective: boolean | undefined;
     statusId: string | undefined;
     partnerTypeName: string | undefined;
     leadTypeId: number | undefined;
@@ -69249,14 +69185,14 @@ export interface ISubmitClientRequestInput {
     isHelpNeeded: boolean | undefined;
 }
 
-export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
+export class UpdateLeadStageInput implements IUpdateLeadStageInput {
     leadId!: number;
     stageId!: number;
     sortOrder!: number | undefined;
     ignoreChecklist!: boolean | undefined;
     allowPipelineChange!: boolean | undefined;
 
-    constructor(data?: IUpdateLeadStageInfo) {
+    constructor(data?: IUpdateLeadStageInput) {
         if (data) {
             for (var property in data) {
                 if (data.hasOwnProperty(property))
@@ -69275,9 +69211,9 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
         }
     }
 
-    static fromJS(data: any): UpdateLeadStageInfo {
+    static fromJS(data: any): UpdateLeadStageInput {
         data = typeof data === 'object' ? data : {};
-        let result = new UpdateLeadStageInfo();
+        let result = new UpdateLeadStageInput();
         result.init(data);
         return result;
     }
@@ -69293,7 +69229,7 @@ export class UpdateLeadStageInfo implements IUpdateLeadStageInfo {
     }
 }
 
-export interface IUpdateLeadStageInfo {
+export interface IUpdateLeadStageInput {
     leadId: number;
     stageId: number;
     sortOrder: number | undefined;
@@ -75382,7 +75318,6 @@ export interface IPersonShortInfoDto {
 }
 
 export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
-    groupId!: string | undefined;
     organization!: OrganizationInfoDto | undefined;
     contactPersons!: PersonShortInfoDto[] | undefined;
     isUpdatable!: boolean | undefined;
@@ -75406,7 +75341,6 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
 
     init(data?: any) {
         if (data) {
-            this.groupId = data["groupId"];
             this.organization = data["organization"] ? OrganizationInfoDto.fromJS(data["organization"]) : <any>undefined;
             if (data["contactPersons"] && data["contactPersons"].constructor === Array) {
                 this.contactPersons = [];
@@ -75434,7 +75368,6 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["groupId"] = this.groupId;
         data["organization"] = this.organization ? this.organization.toJSON() : <any>undefined;
         if (this.contactPersons && this.contactPersons.constructor === Array) {
             data["contactPersons"] = [];
@@ -75455,7 +75388,6 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
 }
 
 export interface IOrganizationContactInfoDto {
-    groupId: string | undefined;
     organization: OrganizationInfoDto | undefined;
     contactPersons: PersonShortInfoDto[] | undefined;
     isUpdatable: boolean | undefined;
@@ -75472,6 +75404,7 @@ export interface IOrganizationContactInfoDto {
 export class CreateOrganizationInput implements ICreateOrganizationInput {
     relatedContactId!: number;
     relationTypeId!: string;
+    createRootOrganizationUnit!: boolean | undefined;
     companyName!: string;
     shortName!: string | undefined;
     typeId!: string | undefined;
@@ -75503,6 +75436,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
         if (data) {
             this.relatedContactId = data["relatedContactId"];
             this.relationTypeId = data["relationTypeId"];
+            this.createRootOrganizationUnit = data["createRootOrganizationUnit"];
             this.companyName = data["companyName"];
             this.shortName = data["shortName"];
             this.typeId = data["typeId"];
@@ -75534,6 +75468,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
         data = typeof data === 'object' ? data : {};
         data["relatedContactId"] = this.relatedContactId;
         data["relationTypeId"] = this.relationTypeId;
+        data["createRootOrganizationUnit"] = this.createRootOrganizationUnit;
         data["companyName"] = this.companyName;
         data["shortName"] = this.shortName;
         data["typeId"] = this.typeId;
@@ -75558,6 +75493,7 @@ export class CreateOrganizationInput implements ICreateOrganizationInput {
 export interface ICreateOrganizationInput {
     relatedContactId: number;
     relationTypeId: string;
+    createRootOrganizationUnit: boolean | undefined;
     companyName: string;
     shortName: string | undefined;
     typeId: string | undefined;
@@ -75616,7 +75552,6 @@ export interface ICreateOrganizationOutput {
 export class CreateOrgUnitForOrganizationInput implements ICreateOrgUnitForOrganizationInput {
     organizationId!: number | undefined;
     organizationName!: string | undefined;
-    groupId!: string | undefined;
 
     constructor(data?: ICreateOrgUnitForOrganizationInput) {
         if (data) {
@@ -75631,7 +75566,6 @@ export class CreateOrgUnitForOrganizationInput implements ICreateOrgUnitForOrgan
         if (data) {
             this.organizationId = data["organizationId"];
             this.organizationName = data["organizationName"];
-            this.groupId = data["groupId"];
         }
     }
 
@@ -75646,7 +75580,6 @@ export class CreateOrgUnitForOrganizationInput implements ICreateOrgUnitForOrgan
         data = typeof data === 'object' ? data : {};
         data["organizationId"] = this.organizationId;
         data["organizationName"] = this.organizationName;
-        data["groupId"] = this.groupId;
         return data; 
     }
 }
@@ -75654,7 +75587,6 @@ export class CreateOrgUnitForOrganizationInput implements ICreateOrgUnitForOrgan
 export interface ICreateOrgUnitForOrganizationInput {
     organizationId: number | undefined;
     organizationName: string | undefined;
-    groupId: string | undefined;
 }
 
 export class CreateOrgUnitForOrganizationOutput implements ICreateOrgUnitForOrganizationOutput {
@@ -80648,7 +80580,6 @@ export class PropertyDto implements IPropertyDto {
     photo!: string | undefined;
     links!: PropertyLinkDto[] | undefined;
     id!: number;
-    contactGroupId!: string | undefined;
     name!: string;
     address!: CreateContactAddressInput | undefined;
     propertyType!: PropertyType | undefined;
@@ -80758,7 +80689,6 @@ export class PropertyDto implements IPropertyDto {
                     this.links.push(PropertyLinkDto.fromJS(item));
             }
             this.id = data["id"];
-            this.contactGroupId = data["contactGroupId"];
             this.name = data["name"];
             this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.propertyType = data["propertyType"];
@@ -80868,7 +80798,6 @@ export class PropertyDto implements IPropertyDto {
                 data["links"].push(item.toJSON());
         }
         data["id"] = this.id;
-        data["contactGroupId"] = this.contactGroupId;
         data["name"] = this.name;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["propertyType"] = this.propertyType;
@@ -80967,7 +80896,6 @@ export interface IPropertyDto {
     photo: string | undefined;
     links: PropertyLinkDto[] | undefined;
     id: number;
-    contactGroupId: string | undefined;
     name: string;
     address: CreateContactAddressInput | undefined;
     propertyType: PropertyType | undefined;
@@ -81542,7 +81470,6 @@ export interface IPropertyInvestmentDto {
 
 export class PropertyBaseDto implements IPropertyBaseDto {
     id!: number;
-    contactGroupId!: string | undefined;
     name!: string;
     address!: CreateContactAddressInput | undefined;
     propertyType!: PropertyType | undefined;
@@ -81646,7 +81573,6 @@ export class PropertyBaseDto implements IPropertyBaseDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.contactGroupId = data["contactGroupId"];
             this.name = data["name"];
             this.address = data["address"] ? CreateContactAddressInput.fromJS(data["address"]) : <any>undefined;
             this.propertyType = data["propertyType"];
@@ -81750,7 +81676,6 @@ export class PropertyBaseDto implements IPropertyBaseDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["contactGroupId"] = this.contactGroupId;
         data["name"] = this.name;
         data["address"] = this.address ? this.address.toJSON() : <any>undefined;
         data["propertyType"] = this.propertyType;
@@ -81847,7 +81772,6 @@ export class PropertyBaseDto implements IPropertyBaseDto {
 
 export interface IPropertyBaseDto {
     id: number;
-    contactGroupId: string | undefined;
     name: string;
     address: CreateContactAddressInput | undefined;
     propertyType: PropertyType | undefined;
@@ -83335,6 +83259,15 @@ export interface IBankAccountUsers {
     userIds: number[] | undefined;
 }
 
+export enum UserGroup {
+    Employee = "Employee", 
+    Member = "Member", 
+    Partner = "Partner", 
+    Investor = "Investor", 
+    Vendor = "Vendor", 
+    Other = "Other", 
+}
+
 export class UserLoginInfoDto implements IUserLoginInfoDto {
     name!: string | undefined;
     surname!: string | undefined;
@@ -83345,7 +83278,7 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
     bankCode!: string | undefined;
     affiliateCode!: string | undefined;
     affiliateRate!: number | undefined;
-    group!: UserGroup | undefined;
+    groups!: UserGroup[] | undefined;
     contactId!: number | undefined;
     creationTime!: moment.Moment | undefined;
     id!: number | undefined;
@@ -83370,7 +83303,11 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
             this.bankCode = data["bankCode"];
             this.affiliateCode = data["affiliateCode"];
             this.affiliateRate = data["affiliateRate"];
-            this.group = data["group"];
+            if (data["groups"] && data["groups"].constructor === Array) {
+                this.groups = [];
+                for (let item of data["groups"])
+                    this.groups.push(item);
+            }
             this.contactId = data["contactId"];
             this.creationTime = data["creationTime"] ? moment(data["creationTime"].toString()) : <any>undefined;
             this.id = data["id"];
@@ -83395,7 +83332,11 @@ export class UserLoginInfoDto implements IUserLoginInfoDto {
         data["bankCode"] = this.bankCode;
         data["affiliateCode"] = this.affiliateCode;
         data["affiliateRate"] = this.affiliateRate;
-        data["group"] = this.group;
+        if (this.groups && this.groups.constructor === Array) {
+            data["groups"] = [];
+            for (let item of this.groups)
+                data["groups"].push(item);
+        }
         data["contactId"] = this.contactId;
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["id"] = this.id;
@@ -83413,7 +83354,7 @@ export interface IUserLoginInfoDto {
     bankCode: string | undefined;
     affiliateCode: string | undefined;
     affiliateRate: number | undefined;
-    group: UserGroup | undefined;
+    groups: UserGroup[] | undefined;
     contactId: number | undefined;
     creationTime: moment.Moment | undefined;
     id: number | undefined;

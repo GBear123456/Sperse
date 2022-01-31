@@ -18,7 +18,7 @@ import { ContactTagsServiceProxy, ContactTagInfoDto, ContactTagInput, UntagConta
 import { MessageService } from 'abp-ng2-module/dist/src/message/message.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
-import { PermissionCheckerService } from 'abp-ng2-module/dist/src/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
   selector: 'tags-list',
@@ -64,7 +64,7 @@ export class TagsListComponent implements OnInit {
         private actions$: ActionsSubject,
         private messageService: MessageService,
         private notifyService: NotifyService,
-        private permissionChecker: PermissionCheckerService,
+        private permissionChecker: AppPermissionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService
     ) {}

@@ -254,12 +254,12 @@ export class BankCodeService {
     private getClientsBankCodesData(filters = []): Observable<any> {
         let params = {
             group: '[{"selector":"BankCode","isExpanded":false}]',
-            contactGroupId: ContactGroup.Client
+            contactGroupId: ContactGroup.Client,
+            isActive: 'true'
         };
         filters.push(
             { 'BankCode': { 'ne': null }},
             { 'BankCode': { 'ne': '' }},
-            ...FiltersService.getCustomerFilters(),
             FiltersService.filterByParentId()
         );
         let filter = buildQuery({

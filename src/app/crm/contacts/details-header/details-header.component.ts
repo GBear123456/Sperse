@@ -31,6 +31,7 @@ import { CreateInvoiceDialogComponent } from '@app/crm/shared/create-invoice-dia
 import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import {
     ContactInfoDto,
+    ContactGroupInfo,
     ContactPhotoServiceProxy,
     ContactServiceProxy,
     CreateContactPhotoInput,
@@ -105,6 +106,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             && this.data['organizationContactInfo'].isUpdatable;
     }
 
+    @Input() contactGroupId: ContactGroup; 
+
     private contactInfo: BehaviorSubject<ContactInfoDto> = new BehaviorSubject<ContactInfoDto>(new ContactInfoDto());
     contactInfo$: Observable<ContactInfoDto> = this.contactInfo.asObservable();
 
@@ -130,15 +133,15 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
 
     private readonly CACHE_KEY_PREFIX = 'DetailsHeader';
     private readonly ADD_OPTION_CACHE_KEY = 'add_option_active_index';
-    private contactGroup: ContactGroup;
+    private contactGroups: ContactGroupInfo[];
     showRemovingOrgRelationProgress = false;
 
     private readonly allContactGroups = _.values(ContactGroup);
-    private readonly allContactGroupsExceptUser = this.allContactGroups.filter(v => v != ContactGroup.UserProfile);
+    private readonly allContactGroupsExceptUser = this.allContactGroups.filter(v => v != ContactGroup.Employee);
 
     manageAllowed$: Observable<boolean> = this.contactInfo$.pipe(
         filter(Boolean),
-        map((contactInfo: ContactInfoDto) => this.permissionService.checkCGPermission(contactInfo.groupId))
+        map((contactInfo: ContactInfoDto) => this.permissionService.checkCGPermission(contactInfo.groups))
     );
     manageAllowed: boolean;
     propertyId$: Observable<number> = this.contactsService.leadInfo$.pipe(
@@ -196,8 +199,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         ).subscribe(
             (contactInfo: ContactInfoDto) => {
                 this.contactId = contactInfo.id;
-                this.contactGroup = contactInfo.groupId;
-                this.manageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
+                this.contactGroups = contactInfo.groups;
+                this.manageAllowed = this.permissionService.checkCGPermission(contactInfo.groups);
             }
         );
         this.manageAllowed$.pipe(
@@ -220,7 +223,8 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             ([contactInfo, propertyId, manageAllowed]: [ContactInfoDto, number, boolean]) => {
                 this.addContextMenuItems = this.getDefaultContextMenuItems(manageAllowed, !!propertyId)
                     .filter((menuItem: ContextMenuItem) => {
-                        return menuItem.contactGroups.indexOf(contactInfo.groupId) >= 0;
+                        return contactInfo.groups && contactInfo.groups.some(
+                            group => menuItem.contactGroups.indexOf(group.groupId) >= 0);
                     });
                 this.addOptionsInit();
             }
@@ -521,7 +525,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     }
 
     get addOptionCacheKey() {
-        return this.ADD_OPTION_CACHE_KEY + '_' + this.contactGroup;
+        return this.ADD_OPTION_CACHE_KEY + '_' + this.data.groups.map(group => group.groupId).join('_');
     }
 
     addOptionsInit() {
@@ -568,7 +572,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             setTimeout(() => {
                 const dialogData: CreateEntityDialogData = {
                     parentId: this.data.id,
-                    customerType: this.contactGroup
+                    customerType: this.contactGroupId
                 };
                 this.dialog.open(CreateEntityDialogComponent, {
                     panelClass: 'slider',

@@ -63,7 +63,9 @@ export class LeftMenuComponent implements OnInit {
             {       
                 caption: this.ls.l('CRMDashboardMenu_ManageLeads'),
                 component: '/leads',
-                showPlus: this.currentContactGroup ? this.permissionChecker.checkCGPermission(this.currentContactGroup) : !!this.permissionChecker.getFirstManageCG(),
+                showPlus: this.currentContactGroup ? 
+                    this.permissionChecker.checkCGPermission([this.currentContactGroup]) :
+                    !!this.permissionChecker.getFirstManageCG(),
                 visible: !!this.permissionChecker.getFirstAvailableCG(),
                 iconSrc: 'assets/common/icons/setup-chart.svg'
             },

@@ -214,15 +214,15 @@ export class PropertyInformationComponent implements OnInit {
                 let investmentDetails = this.showContractDetails ? this.propertyServiceProxy.getPropertyInvestmentDetails(leadInfo.propertyId) : of(new PropertyInvestmentDto());
                 let deals = this.showContractDetails ? this.propertyServiceProxy.getDeals(leadInfo.propertyId) : of(<PropertyDealInfo[]>[]);
                 return forkJoin(this.propertyServiceProxy.getPropertyDetails(leadInfo.propertyId),
-                    acquisitionDetails, investmentDetails, deals);
+                    acquisitionDetails, investmentDetails, deals, of(leadInfo));
             })
-        ).subscribe(([property, acquisitionDto, investmentDto, deals]) => {
+        ).subscribe(([property, acquisitionDto, investmentDto, deals, leadInfo]) => {
             this.initialProperty = property;
             this.initialPropertyAcquisitionDto = this.propertyAcquisitionDto = acquisitionDto;
             this.initialPropertyInvestmentDto = this.propertyInvestmentDto = investmentDto;
             this.savePropertyInfo(property);
             this.acquisitionLeadDealInfo = deals.find(v => v.leadTypeSysId == EntityTypeSys.PropertyAcquisition);
-            this.disableEdit = !this.permission.checkCGPermission(property.contactGroupId);
+            this.disableEdit = !this.permission.checkCGPermission([leadInfo.contactGroupId]);
             this.changeDetectorRef.detectChanges();
         });
 
@@ -472,7 +472,6 @@ export class PropertyInformationComponent implements OnInit {
     }
 
     dealInfoChanged($event) {
-        console.log($event);
         this.loadingService.startLoading(this.elementRef.nativeElement);
         this.leadServiceProxy.updateDealInfo(new UpdateLeadDealInfoInput({
             leadId: this.acquisitionLeadDealInfo.leadId,

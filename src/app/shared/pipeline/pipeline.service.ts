@@ -13,7 +13,7 @@ import * as _ from 'underscore';
 /** Application imports */
 import { CrmStore, PipelinesStoreSelectors } from '@app/crm/store';
 import {
-    LeadServiceProxy, CancelLeadInfo, UpdateLeadStageInfo, ProcessLeadInput,
+    LeadServiceProxy, CancelLeadInput, UpdateLeadStageInput, ProcessLeadInput,
     PipelineServiceProxy, PipelineDto, ActivityServiceProxy, TransitionActivityDto,
     OrderServiceProxy, UpdateOrderStageInfo, CancelOrderInfo, ProcessOrderInfo, StageDto, LayoutType
 } from '@shared/service-proxies/service-proxies';
@@ -301,7 +301,7 @@ export class PipelineService {
             updatePipeline || toStage.sortOrder > fromStage.sortOrder ? leadId : null, useLastData, false
         ).subscribe(ignore => {
             this.leadService.updateLeadStage(
-                new UpdateLeadStageInfo({
+                new UpdateLeadStageInput({
                     leadId: leadId,
                     stageId: toStage.id,
                     sortOrder: entity.SortOrder,
@@ -440,7 +440,7 @@ export class PipelineService {
 
     private cancelLeadInternal(entity, data, complete) {
         this.leadService.cancelLead(
-            CancelLeadInfo.fromJS({
+            CancelLeadInput.fromJS({
                 leadId: this.getEntityId(entity),
                 cancellationReasonId: data.reasonId,
                 comment: data.comment

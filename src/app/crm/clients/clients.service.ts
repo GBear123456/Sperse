@@ -8,6 +8,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { ContactServiceProxy, UpdateContactStatusesInput } from '@shared/service-proxies/service-proxies';
 import { AppPermissions} from '@shared/AppPermissions';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
+import invert from 'lodash/invert';
 
 @Injectable()
 export class ClientService {
@@ -28,33 +29,34 @@ export class ClientService {
         this.ls = injector.get(AppLocalizationService);
     }
 
-    updateContactStatuses(contactIds: number[], groupId: string, statusId: ContactStatus, callback: (() => void)) {
+    updateContactStatuses(contactIds: number[], groupId: string, isActive: boolean, callback: (() => void)) {
         if (this.permission.isGranted(AppPermissions.CRMBulkUpdates)) {
             if (contactIds && contactIds.length) {
-                this.showUpdateContactStatusConfirmationDialog(contactIds, groupId, statusId, callback);
+                this.showUpdateContactStatusConfirmationDialog(contactIds, groupId, isActive, callback);
             } else {
                 this.message.warn(this.appLocalizationService.ls(this.crmLocalizationSourceName, 'NoRecordsToUpdate'));
             }
         }
     }
-    private showUpdateContactStatusConfirmationDialog(contactIds: number[], groupId: string, statusId: ContactStatus, callback: (() => void)) {
-        let contactGroup = groupId == ContactGroup.Partner ? 'Partner' : 'Client';
+    private showUpdateContactStatusConfirmationDialog(contactIds: number[], groupId: string, isActive: boolean, callback: (() => void)) {
+        let contactGroup = invert(ContactGroup)[groupId];
         ContactsHelper.showConfirmMessage(
             this.appLocalizationService.ls(this.crmLocalizationSourceName, `${contactGroup}StatusUpdateConfirmationTitle`),
             (isConfirmed: boolean, [ notifyUsers ]: boolean[]) => {
                 if (isConfirmed)
-                    this.updateContactStatusesInternal(contactIds, statusId, callback, notifyUsers);
+                    this.updateContactStatusesInternal(contactIds, groupId, isActive, callback, notifyUsers);
             },
-            [ { text: this.ls.l('SendCancellationEmailPlural'), visible: statusId === ContactStatus.Inactive, checked: false } ],
+            [ { text: this.ls.l('SendCancellationEmailPlural'), visible: !isActive, checked: false } ],
             this.appLocalizationService.ls(this.crmLocalizationSourceName, `${contactGroup}sUpdateStatusWarningMessage`)
         );
     }
 
-    private updateContactStatusesInternal(contactIds: number[], statusId: ContactStatus, callback: (() => void), notifyUsers: boolean) {
+    private updateContactStatusesInternal(contactIds: number[], groupId: string, isActive: boolean, callback: (() => void), notifyUsers: boolean) {
         this.contactServiceProxy.updateContactStatuses(new UpdateContactStatusesInput({
             contactIds: contactIds,
-            statusId: String(statusId),
-            notifyUsers: notifyUsers
+            groupId: groupId,
+            notifyUsers: notifyUsers,
+            isActive: isActive
         })).subscribe(() => {
             this.notify.success(this.appLocalizationService.ls(this.crmLocalizationSourceName, 'StatusSuccessfullyUpdated'));
             callback();

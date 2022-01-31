@@ -174,7 +174,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
             takeUntil(this.destroy$),
             filter(Boolean)
         ).subscribe((contactInfo: ContactInfoDto) => {
-            this.manageAllowed = contactInfo && this.permission.checkCGPermission(contactInfo.groupId);
+            this.manageAllowed = contactInfo && this.permission.checkCGPermission(contactInfo.groups);
             this.documents$.pipe(takeUntil(this.destroy$), first()).subscribe((documents: DocumentInfo[]) => {
                 if (this.manageAllowed && (!documents || !documents.length))
                     setTimeout(() => this.openDocumentAddDialog());

@@ -1,3 +1,5 @@
+import { ContactGroupInfo } from '@shared/service-proxies/service-proxies';
+
 export interface EditAddressDialogData {
     id: number;
     contactId: number;
@@ -11,7 +13,7 @@ export interface EditAddressDialogData {
     zip: string;
     isCompany: boolean;
     usageTypeId: string;
-    groupId: string;
+    groups: ContactGroupInfo[];
     isActive: boolean;
     isConfirmed: boolean;
     comment: string;

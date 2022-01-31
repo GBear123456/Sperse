@@ -1,7 +1,7 @@
 <div class="operations-widget">
     <app-toolbar [config]="toolbarConfig"></app-toolbar>
     <ng-container *ngIf="enabled">
-        <app-static-list *ngIf="permission.checkCGPermission(customerType) && pipelineDataSource?.length"
+        <app-static-list *ngIf="permission.checkCGPermission(contactInfo?.groups, '') && pipelineDataSource?.length && !contactInfo.parentId"
             #stagesList
             [width]="'210px'"
             [title]="l('Stages')"
@@ -15,20 +15,21 @@
             (onSelectionChanged)="updateStage($event)"
             targetSelector="[aria-label='{{l('Toolbar_Stage')}}']"
             [funnelStyling]="true"
-            [showTitle]="false"
-            [list]="stages">
+            [showTitle]="false">
         </app-static-list>
         <app-static-list
             #statusesList
             [width]="'180px'"
-            [title]="l('Status')"
+            [title]="l('Toolbar_Groups')"
             [showConfirmation]="false"
             [hideButtons]="true"
             [highlightSelected]="true"
-            [selectedKeys]="[contactInfo?.statusId]"
-            targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
+            [showSelectionControls]="true"
+            [selectionMode]="'multiple'"
+            [selectedKeys]="activeGroupIds"
+            targetSelector="[aria-label='{{l('Toolbar_Groups')}}']"
             [list]="statuses"
-            (onItemSelected)="updateStatus($event)">
+            (onSelectionChanged)="updateStatus($event)">
         </app-static-list>
         <!--<app-static-list-->
             <!--#partnerTypesList-->

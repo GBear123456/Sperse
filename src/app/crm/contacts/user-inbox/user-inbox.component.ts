@@ -99,7 +99,7 @@ export class UserInboxComponent implements OnDestroy {
                 this.contactInfo = contactInfo;
                 this.contactId = contactInfo.id;
                 this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(
-                    contactInfo.groupId, 'ViewCommunicationHistory.SendSMSAndEmail');
+                    contactInfo.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
                 this.activeMessage = undefined;
                 if (!this.dataSource || contactId != this.contactId)
                     this.initDataSource();
