@@ -111,7 +111,7 @@ export class AppSessionService {
         return info;
     }
 
-    init(): Promise<boolean> {        
+    init(forced = false): Promise<boolean> {        
         return new Promise<boolean>((resolve, reject) => {
             let updateLoginInfo = (result) => {
                 this._application = result.application;
@@ -125,7 +125,7 @@ export class AppSessionService {
                 resolve(true);
             };
             let generalInfo = window['generalInfo'];
-            if (generalInfo && generalInfo.loginInfo)
+            if (!forced && generalInfo && generalInfo.loginInfo)
                 updateLoginInfo(generalInfo.loginInfo);
             else {
                 this.sessionService.getCurrentLoginInformations().subscribe(updateLoginInfo.bind(this), (err) => {

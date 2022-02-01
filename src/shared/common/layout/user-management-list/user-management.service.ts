@@ -277,7 +277,9 @@ export class UserManagementService {
                         thumbnail: base64ThumbImage,
                         source: result.source
                     })).subscribe(thumbnailId => {
-                        this.handleProfilePictureChange(thumbnailId);
+                        this.appSession.init(true).then(() =>
+                            this.handleProfilePictureChange(thumbnailId)
+                        );
                     });
                 }
             });
