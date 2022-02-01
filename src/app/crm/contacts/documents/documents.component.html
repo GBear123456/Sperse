@@ -78,11 +78,11 @@
     </form>
     <span *ngIf="showViewerType == documentViewerTypes.WOPI" #frameHolder class="wopi-frame-holder"></span>
 
-    <!-- app-image-viewer *ngIf="showViewerType == documentViewerTypes.IMAGE"
+    <app-image-viewer *ngIf="showViewerType == documentViewerTypes.IMAGE"
         [images]="[previewContent]"
         [idContainer]="'imageViewer'"
         [loadOnInit]="true">
-    </app-image-viewer -->
+    </app-image-viewer>
     <textarea *ngIf="showViewerType == documentViewerTypes.TEXT" readonly>{{previewContent}}</textarea>
 
     <div [hidden]="showViewerType !== documentViewerTypes.XML" class="xmlContainer" #xmlContainer></div>

@@ -51,6 +51,7 @@
     ],
     "include": [
         "./typings.d.ts",
+        "./node_modules/ng2-image-viewer/",
         "./node_modules/ngx-international-phone-number/src/"
     ]
 }

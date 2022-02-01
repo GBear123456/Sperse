@@ -26,7 +26,7 @@ import { AppFeatures } from '@shared/AppFeatures';
     templateUrl: './app.component.html',
     styleUrls: [
         '../shared/common/dx-data-grid/dx-data-grid.directive.less',
-        '../../node_modules/ng2-image-viewer/imageviewer.scss',
+        '../node_modules/ng2-image-viewer/imageviewer.scss',
         '../assets/common/styles/spinner.css',
         './shared/layout/layout.less',
         '../shared/common/styles/dx-customs.less',
