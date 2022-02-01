@@ -6849,7 +6849,7 @@ iterall@1.0.2:
   resolved "https://registry.yarnpkg.com/iterall/-/iterall-1.0.2.tgz#41a2e96ce9eda5e61c767ee5dc312373bb046e91"
   integrity sha1-QaLpbOntpeYcdn7l3DEjc7sEbpE=
 
-iv-viewer@^2.0.1:
+iv-viewer@~2.0.0:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/iv-viewer/-/iv-viewer-2.0.1.tgz#566cdcfc2f2cefbb5b3c3654d3b22df1af805c8f"
   integrity sha512-dPwFs3fHGJAwE9APaJB3UpEaxoTAG6N1wraKv48SjDvOP+CMzUmFbW+TWpyKVSpjRmpCsMdCoBFiLRAFsTkulA==
@@ -8171,11 +8171,6 @@ ng2-file-upload@^1.2.1:
   integrity sha512-3J/KPU/tyh/ad6TFeUbrxX+SihUj0iOEt2Zsg4EX7mB3GFiQscXOfcUOxCkBtPWWWaqt3azrYbVGzsYa3/7NzQ==
   dependencies:
     tslib "^1.9.0"
-
-ng2-image-viewer@^3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/ng2-image-viewer/-/ng2-image-viewer-3.0.5.tgz#6684dc882a11e594386603be88b1ccfffbd27ba3"
-  integrity sha512-VxNjNMCyjr+KGuGScgrWPCw+uzBdKrPRo2i4N/1VYnQn3haZcr8tIeUL4CXBnZGYC+0IjHRRLaI4kZFXqSxr1A==
 
 ng2-img-cropper@^0.9.0:
   version "0.9.0"
