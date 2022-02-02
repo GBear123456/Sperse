@@ -38,7 +38,7 @@ import {
     InvoiceSettings,
     ReportServiceProxy,
     SubscriberDailyStatsReportInfo,
-    PaymentServiceProxy
+    PaymentServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';
@@ -67,6 +67,8 @@ import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.comp
 import { CalendarService } from '@app/shared/common/calendar-button/calendar.service';
 import { CalendarValuesModel } from '@shared/common/widgets/calendar/calendar-values.model';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
+import { StarsStoreSelectors } from '@app/store';
+import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 
 @Component({
     selector: 'reports-component',
@@ -86,13 +88,14 @@ import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service'
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('subscribersDataGrid') subscribersDataGrid: DxDataGridComponent;
-    @ViewChild('statsDataGrid') statsDataGrid: DxDataGridComponent;
-    @ViewChild('subscriptionTrackerGrid') subscriptionTrackerGrid: DxDataGridComponent;
-    @ViewChild(PivotGridComponent) salesReportComponent: PivotGridComponent;
-    @ViewChild('sourceOrganizationUnits') sourceOrganizationUnits: StaticListComponent;
-    @ViewChild('transactionTypes') transactionTypes: StaticListComponent;
-    @ViewChild('paymentProviders') paymentProviders: StaticListComponent;
+    @ViewChild('subscribersDataGrid', { static: false }) subscribersDataGrid: DxDataGridComponent;
+    @ViewChild('statsDataGrid', { static: false }) statsDataGrid: DxDataGridComponent;
+    @ViewChild('subscriptionTrackerGrid', { static: false }) subscriptionTrackerGrid: DxDataGridComponent;
+    @ViewChild(PivotGridComponent, { static: false }) salesReportComponent: PivotGridComponent;
+    @ViewChild('sourceOrganizationUnits', { static: false }) sourceOrganizationUnits: StaticListComponent;
+    @ViewChild('transactionTypes', { static: false }) transactionTypes: StaticListComponent;
+    @ViewChild('paymentProviders', { static: false }) paymentProviders: StaticListComponent;
+    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
     toolbarConfig: ToolbarGroupModel[];
     filters = [];
     filtersValues = {
@@ -367,6 +370,25 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         items: { from: new FilterItemModel(), to: new FilterItemModel() },
         filterMethod: () => 'cancelled'
     });
+    starsFilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'Star',
+        field: 'StarId',
+        items: {
+            element: new FilterCheckBoxesModel(
+                {
+                    dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
+                    nameField: 'name',
+                    keyExpr: 'id',
+                    templateFunc: (itemData) => {
+                        return `<div class="star-item">
+                                    <span class="star star-${itemData.colorType.toLowerCase()}"></span>
+                                    <span>${this.ls.l(itemData.name)}</span>
+                                </div>`;
+                    }
+                })
+        }
+    })
     totalCount: number;
     isDataLoaded = false;
     defaultGridPagerConfig = {
@@ -534,7 +556,8 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                     })
                 }
             }),
-            this.salesAmountFilter
+            this.salesAmountFilter,
+            this.starsFilterModel
         ];
         this.filtersService.setup(this.filters);
     }
@@ -684,6 +707,21 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
                         action: () => {
                             this.showRatio = true;
                             this.updatePivotGridView();
+                        }
+                    }
+                ]
+            },
+            {
+                location: 'before',
+                areItemsDependent: true,
+                locateInMenu: 'auto',
+                items: [
+                    {
+                        name: 'star',
+                        visible: this.selectedReportType == ReportType.SalesReport,
+                        action: this.toggleStars.bind(this),
+                        attr: {
+                            'filter-selected': this.starsFilterModel && this.starsFilterModel.isSelected
                         }
                     }
                 ]
@@ -928,6 +966,10 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.changeDetectorRef.detectChanges();
     }
 
+    toggleStars() {
+        this.starsListComponent.toggle();
+    }
+
     onSaleReportFilterApply(fieldName: string, newValues: any[]) {
         let currentlySelectedItems = fieldName == 'PaymentProvider' ? this.selectedPaymentProviders :
             fieldName == 'TransactionType' ? this.selectedTransactionTypes : null;
@@ -971,21 +1013,21 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     onSalesReportCellPrepared(event) {
         let data = event.component.getDataSource().getData();
         if (!data.rows.length || (event.columnIndex && !data.columns[event.columnIndex - 1]))
-            return ;
+            return;
 
         let dataIndex = this.showAmount ? 1 : 0,
-            columnIndex = event.columnIndex ? 
-                data.columns[event.columnIndex - 1].index : 
+            columnIndex = event.columnIndex ?
+                data.columns[event.columnIndex - 1].index :
                 data.grandTotalColumnIndex;
 
-        if (event.area == 'column' && event.rowIndex) {            
+        if (event.area == 'column' && event.rowIndex) {
             this.appendSparkLineChart(event, data.rows.map(row => {
                 return data.values[row.index][columnIndex][dataIndex] || 0;
             }));
         }
 
         if (event.area == 'data' && event.rowIndex && event.cell.rowType == 'T') {
-            let row = {children: data.rows};                
+            let row = { children: data.rows };
             event.cell.rowPath.forEach(path => {
                 row = row.children.find(entity => entity.value == path);
             });
@@ -993,11 +1035,11 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             this.appendSparkLineChart(event, row.children.map(row => {
                 return data.values[row.index][columnIndex][dataIndex] || 0;
             }), event.cell.rowPath);
-        }        
+        }
     }
 
     appendSparkLineChart(event, data, path?) {
-        if (data.length) {            
+        if (data.length) {
             let chartKey = 'chartTotal' + event.columnIndex + (path ? path.join('_') : '');
             setTimeout(() => {
                 if (!path && !this.salesReportGrandTotal)

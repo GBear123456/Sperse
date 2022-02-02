@@ -61,6 +61,10 @@
                  [showSelectionControls]="true"
                  (onApply)="onSaleReportFilterApply('PaymentProvider', $event)">
 </app-static-list>
+<crm-stars-list [bulkUpdateMode]="true"
+                [filterModel]="starsFilterModel"
+                [hideButtons]="true">
+</crm-stars-list>
 <div class="main-wrapper" [ngStyle]="{ height: 'calc(100% - ' + (appService.toolbarIsHidden.value ? '75px' : '136px' ) + ')' }">
     <ghost-list *ngIf="!isDataLoaded"></ghost-list>
     <div [hidden]="selectedReportType !== reportTypesEnum.Subscribers">

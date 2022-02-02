@@ -13,7 +13,7 @@
         </mat-select>
     </mat-form-field>
     <p *ngIf="dialogData.actionType == 'Merge' && !dialogData.entities.length">
-        {{ls.l('Really_Remove_Stage')}} <b>{{dialogData.currentStageName}}</b>?
+        <span [innerHtml]="ls.l('Really_Remove_Stage' + (hasCurrentStageChecklistPoints ? '_WithChecklistPoints' : ''), dialogData.currentStageName)"></span>
     </p>
 </div>
 <div mat-dialog-actions>

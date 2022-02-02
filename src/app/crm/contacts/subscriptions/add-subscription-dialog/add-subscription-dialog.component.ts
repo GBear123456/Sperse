@@ -12,8 +12,8 @@ import { getCurrencySymbol } from '@angular/common';
 /** Third party imports */
 import { MessageService } from 'abp-ng2-module';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
+import { finalize, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -37,6 +37,7 @@ import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dro
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AddProductDialogComponent } from './add-product-dialog/add-product-dialog.component';
 import { AddMemberServiceDialogComponent } from './add-member-service-dialog/add-member-service-dialog.component';
 import { BulkProgressDialogComponent } from '@shared/common/dialogs/bulk-progress/bulk-progress-dialog.component';
@@ -109,6 +110,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         private permission: AppPermissionService,
         private message: MessageService,
         public dialogRef: MatDialogRef<AddSubscriptionDialogComponent>,
+        public loadingService: LoadingService,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: any
@@ -199,12 +201,16 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
                         }
                     }
                 );
-            } else
-                this.orderSubscriptionProxy.update(subscriptionInput).subscribe(() => {
+            } else {
+                this.loadingService.startLoading(this.elementRef.nativeElement);
+                this.orderSubscriptionProxy.update(subscriptionInput).pipe(
+                    finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
+                ).subscribe(() => {
                     this.notify.info(this.ls.l('SavedSuccessfully'));
                     this.contactsService.invalidate('subscriptions');
                     this.dialogRef.close();
                 });
+            }
         }
     }
 

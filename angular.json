@@ -21,8 +21,8 @@
                 "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
                 "ngx-google-places-autocomplete", "ng-inline-svg", "angular-cc-library",
                 "angular-svg-round-progressbar", "uuid", "hammerjs", "moment-timezone",
-                "ng2-cache-service", "jquery-calendar", "ng2-image-viewer", "videogular2",
-                "@bugsnag/js", "buffer", "@angularclass/hmr"
+                "ng2-cache-service", "jquery-calendar", "ng2-image-viewer", "iv-viewer", 
+                "videogular2", "@bugsnag/js", "buffer", "@angularclass/hmr"
             ],
             "assets": [
               "src/assets",

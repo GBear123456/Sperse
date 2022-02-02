@@ -18,6 +18,7 @@ import {
     merge,
     Observable,
     of,
+    interval,
     ReplaySubject
 } from 'rxjs';
 import {
@@ -136,6 +137,7 @@ import { TypeItem } from '@app/crm/shared/types-dropdown/type-item.interface';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -653,6 +655,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.activate();
         this.handleFiltersPining();
         this.handleUserGroupTextUpdate();
+        this.setupFilterCacheChangeInterval();
     }
 
     ngAfterViewInit() {
@@ -1913,13 +1916,52 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private setDataGridInstance() {
         let instance = this.dataGrid && this.dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
-            this.dataSource.store.url =
-                this.getODataUrl(this.dataSourceURI, this.getInitialFilter());
-            this.dataGrid.dataSource = this.dataSource;
+            this.oDataService.getODataFilter(
+                this.filters, 
+                this.filtersService.getCheckCustom
+            ).subscribe((odataRequestValues: ODataRequestValues) => {
+                this.dataSource['_store']['_url'] = this.getODataUrl(
+                    this.dataSourceURI, odataRequestValues.filter, null, odataRequestValues.params);
+                this.dataGrid.dataSource = this.dataSource;                
+            });
             if (!instance.option('paging.pageSize'))
-                instance.option('paging.pageSize', 20);
+                instance.option('paging.pageSize', 20);            
             this.isDataLoaded = false;
         }
+    }
+
+    setupFilterCacheChangeInterval() {
+    /* 
+        !!VP This is necessary to update server cache 
+        outdated filters in grid infinity scroll mode
+    */
+        interval(30000).pipe(
+            takeUntil(this.destroy$),
+            filter(() => this.componentIsActivated),
+            switchMap(() => this.oDataService.getODataFilter(
+                this.filters, 
+                this.filtersService.getCheckCustom
+            ))
+        ).subscribe((odataRequestValues: ODataRequestValues) => {
+            let url = this.getODataUrl(this.dataSourceURI, 
+                odataRequestValues.filter, null, odataRequestValues.params);
+            if (this.pipelineDataSource && this.pipelineDataSource.store.url != url) {
+                this.pipelineDataSource.store.url = url;
+                if (this.pipelineComponent.params && this.pipelineComponent.params.length) {
+                    let params = UrlHelper.getQueryParametersUsingParameters(url.split('?').pop());
+                    this.pipelineComponent.params.forEach(param => {
+                        param.value = params[param.name];
+                    });
+                }
+                this.pipelineComponent.clearStageDataSources();
+            }
+            this.checkSetDataSourceUrl(this.dataSource, url);
+        });
+    }
+
+    checkSetDataSourceUrl(dataSource: DataSource, url: string): Boolean {
+        if (dataSource && dataSource['_store'] && dataSource['_store']['_url'] != url)
+            return Boolean(dataSource['_store']['_url'] = url);
     }
 
     private setPivotGridInstance() {
