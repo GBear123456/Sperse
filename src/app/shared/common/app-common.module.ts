@@ -47,7 +47,7 @@ import { DxPivotGridModule } from 'devextreme-angular/ui/pivot-grid';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
 
 import { TableModule } from 'primeng/table';
-import { PaginatorModule } from 'primeng/primeng';
+import { PaginatorModule } from 'primeng/paginator';
 import { ModalModule } from 'ngx-bootstrap/modal';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { PapaParseModule } from 'ngx-papaparse';
@@ -213,7 +213,7 @@ import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.mo
         ConfirmDialogComponent,
         StarsListComponent,
         LeftMenuComponent,
-        CalendarButtonComponent        
+        CalendarButtonComponent
     ],
     providers: [
         ImportWizardService

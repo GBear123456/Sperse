@@ -32,4 +32,12 @@ export class DateTimeService  {
 
         return options;
     }
+
+    formatDate(date: Date, format: string): string {
+        return moment(date).format(format);
+    }
+
+    fromISODateString(date: string): moment {
+        return moment(date);
+    }
 }

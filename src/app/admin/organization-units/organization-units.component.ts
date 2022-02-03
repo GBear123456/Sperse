@@ -1,27 +1,36 @@
-import { Component, Inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { DOCUMENT } from '@angular/common';
-import { OrganizationTreeComponent } from './organization-tree/organization-tree.component';
-import { OrganizationUnitMembersComponent } from './organization-unit-members/organization-unit-members.component';
-import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { Component, Injector, ViewChild, ViewEncapsulation } from '@angular/core';
+import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import { OrganizationTreeComponent } from './organization-tree.component';
+import { OrganizationUnitMembersComponent } from './organization-unit-members.component';
+import { OrganizationUnitRolesComponent } from './organization-unit-roles.component';
+import { IBasicOrganizationUnitInfo } from './basic-organization-unit-info';
 
 @Component({
     templateUrl: './organization-units.component.html',
-    styleUrls: ['./organization-units.component.less'],
+    styleUrls: [
+        '../../../../node_modules/primeng/resources/primeng.min.css',
+        '../../../../node_modules/primeng/resources/themes/fluent-light/theme.css',
+        '../../../assets/primeng/autocomplete/css/primeng.autocomplete.css',
+        '../../../assets/primeng/context-menu/css/primeng.context-menu.css',
+        '../../../assets/primeng/tree/css/primeng.tree.css'
+    ],
+    encapsulation: ViewEncapsulation.None,
+    animations: [appModuleAnimation()]
 })
-export class OrganizationUnitsComponent implements OnInit, OnDestroy {
-    @ViewChild('ouMembers') ouMembers: OrganizationUnitMembersComponent;
-    @ViewChild('ouTree') ouTree: OrganizationTreeComponent;
+export class OrganizationUnitsComponent extends AppComponentBase {
+    @ViewChild('ouMembers', { static: true }) ouMembers: OrganizationUnitMembersComponent;
+    @ViewChild('ouRoles', { static: true }) ouRoles: OrganizationUnitRolesComponent;
+    @ViewChild('ouTree', { static: true }) ouTree: OrganizationTreeComponent;
+    organizationUnit: IBasicOrganizationUnitInfo = null;
 
-    constructor(
-        public ls: AppLocalizationService,
-        @Inject(DOCUMENT) private document: any
-    ) {}
-
-    ngOnInit() {
-        this.document.body.classList.add('overflow-hidden');
+    constructor(injector: Injector) {
+        super(injector);
     }
 
-    ngOnDestroy() {
-        this.document.body.classList.remove('overflow-hidden');
+    ouSelected(event: any): void {
+        this.organizationUnit = event;
+        this.ouMembers.organizationUnit = event;
+        this.ouRoles.organizationUnit = event;
     }
 }

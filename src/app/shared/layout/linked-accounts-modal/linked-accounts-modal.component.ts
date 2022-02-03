@@ -3,7 +3,7 @@ import { Component, ChangeDetectionStrategy, ChangeDetectorRef, EventEmitter, Ou
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
-import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
+import { LazyLoadEvent } from 'primeng/api/lazyloadevent';
 import { Paginator } from 'primeng/paginator';
 import { Table } from 'primeng/table';
 import { finalize } from 'rxjs/operators';

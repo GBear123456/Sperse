@@ -1,14 +1,13 @@
-/** Core imports */
-import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
-
-/** Third party imports */
+import { ChangeDetectorRef, Component, ElementRef, EventEmitter, Injector, Output, ViewChild } from '@angular/core';
+import { AppComponentBase } from '@shared/common/app-component-base';
+import {
+    CreateOrganizationUnitInput,
+    OrganizationUnitDto,
+    OrganizationUnitServiceProxy,
+    UpdateOrganizationUnitInput,
+} from '@shared/service-proxies/service-proxies';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { finalize } from 'rxjs/operators';
-
-/** Application imports */
-import { CreateOrganizationUnitInput, OrganizationUnitDto, OrganizationUnitServiceProxy, UpdateOrganizationUnitInput } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from 'abp-ng2-module';
-import { AppLocalizationService } from '../../../shared/common/localization/app-localization.service';
 
 export interface IOrganizationUnitOnEdit {
     id?: number;
@@ -18,34 +17,37 @@ export interface IOrganizationUnitOnEdit {
 
 @Component({
     selector: 'createOrEditOrganizationUnitModal',
-    templateUrl: './create-or-edit-unit-modal.component.html'
+    templateUrl: './create-or-edit-unit-modal.component.html',
 })
-export class CreateOrEditUnitModalComponent {
-    @ViewChild('createOrEditModal') modal: ModalDirective;
-    @ViewChild('organizationUnitDisplayName') organizationUnitDisplayNameInput: ElementRef;
+export class CreateOrEditUnitModalComponent extends AppComponentBase {
+    @ViewChild('createOrEditModal', { static: true }) modal: ModalDirective;
+    @ViewChild('organizationUnitDisplayName', { static: true }) organizationUnitDisplayNameInput: ElementRef;
+
     @Output() unitCreated: EventEmitter<OrganizationUnitDto> = new EventEmitter<OrganizationUnitDto>();
     @Output() unitUpdated: EventEmitter<OrganizationUnitDto> = new EventEmitter<OrganizationUnitDto>();
 
     active = false;
     saving = false;
+
     organizationUnit: IOrganizationUnitOnEdit = {};
 
     constructor(
-        private organizationUnitService: OrganizationUnitServiceProxy,
-        private changeDetector: ChangeDetectorRef,
-        private notify: NotifyService,
-        public ls: AppLocalizationService
-    ) {}
+        injector: Injector,
+        private _organizationUnitService: OrganizationUnitServiceProxy,
+        private _changeDetector: ChangeDetectorRef
+    ) {
+        super(injector);
+    }
 
     onShown(): void {
-        $(this.organizationUnitDisplayNameInput.nativeElement).focus();
+        document.getElementById('OrganizationUnitDisplayName').focus();
     }
 
     show(organizationUnit: IOrganizationUnitOnEdit): void {
         this.organizationUnit = organizationUnit;
         this.active = true;
         this.modal.show();
-        this.changeDetector.detectChanges();
+        this._changeDetector.detectChanges();
     }
 
     save(): void {
@@ -62,11 +64,11 @@ export class CreateOrEditUnitModalComponent {
         createInput.displayName = this.organizationUnit.displayName;
 
         this.saving = true;
-        this.organizationUnitService
+        this._organizationUnitService
             .createOrganizationUnit(createInput)
-            .pipe(finalize(() => this.saving = false))
+            .pipe(finalize(() => (this.saving = false)))
             .subscribe((result: OrganizationUnitDto) => {
-                this.notify.info(this.ls.l('SavedSuccessfully'));
+                this.notify.info(this.l('SavedSuccessfully'));
                 this.close();
                 this.unitCreated.emit(result);
             });
@@ -78,11 +80,11 @@ export class CreateOrEditUnitModalComponent {
         updateInput.displayName = this.organizationUnit.displayName;
 
         this.saving = true;
-        this.organizationUnitService
+        this._organizationUnitService
             .updateOrganizationUnit(updateInput)
-            .pipe(finalize(() => this.saving = false))
+            .pipe(finalize(() => (this.saving = false)))
             .subscribe((result: OrganizationUnitDto) => {
-                this.notify.info(this.ls.l('SavedSuccessfully'));
+                this.notify.info(this.l('SavedSuccessfully'));
                 this.close();
                 this.unitUpdated.emit(result);
             });

@@ -8172,11 +8172,6 @@ ng2-file-upload@^1.2.1:
   dependencies:
     tslib "^1.9.0"
 
-ng2-img-cropper@^0.9.0:
-  version "0.9.0"
-  resolved "https://registry.yarnpkg.com/ng2-img-cropper/-/ng2-img-cropper-0.9.0.tgz#305337e669c4e5adc876d628dcae0bca4d10d1c3"
-  integrity sha1-MFM35mnE5a3IdtYo3K4Lyk0Q0cM=
-
 ng2-sticky-kit@^5.3.0:
   version "5.3.0"
   resolved "https://registry.yarnpkg.com/ng2-sticky-kit/-/ng2-sticky-kit-5.3.0.tgz#05db75a60790fe632adeafd9f8c2ae7547677b50"
@@ -9802,10 +9797,12 @@ pretty-bytes@^5.3.0:
   resolved "https://registry.yarnpkg.com/pretty-bytes/-/pretty-bytes-5.6.0.tgz#356256f643804773c82f64723fe78c92c62beaeb"
   integrity sha512-FFw039TmrBqFK8ma/7OL3sDz/VytdtJr044/QUJtH0wK9lb9jLq9tJyIxUwtQJHwar2BqtiA4iCWSwo9JLkzFg==
 
-primeng@6.0.0-alpha.1:
-  version "6.0.0-alpha.1"
-  resolved "https://registry.yarnpkg.com/primeng/-/primeng-6.0.0-alpha.1.tgz#bda5fb05ccc93e16706c85a3d617a0136967bf55"
-  integrity sha512-IUM7PS5TBXs/12pcKimHl89ywa/yXIuzKdoQVlisHcCODmBdorFXlfAkFcyN1k7FGYN+gv9kWkhf0zmlCH4BNg==
+primeng@^12.0.0:
+  version "12.2.3"
+  resolved "https://registry.yarnpkg.com/primeng/-/primeng-12.2.3.tgz#38778a59a77d67a4ac7211d9e921ba72577ebcee"
+  integrity sha512-O6NrFpdr8fPyD+8y85zGiBj5vacD2JZuBA2D6UpFav/8hx1OHX4hJYPGSZDyiAXn8v3lQjVD72ekIqox70II4A==
+  dependencies:
+    tslib "^2.1.0"
 
 print-js@^1.0.52:
   version "1.6.0"

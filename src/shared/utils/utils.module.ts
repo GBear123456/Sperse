@@ -11,6 +11,8 @@ import { ValidationMessagesComponent } from './validation-messages.component';
 import { EqualValidator } from './validation/equal-validator.directive';
 import { MinValueValidator } from './validation/min-value-validator.directive';
 import { PasswordComplexityValidator } from './validation/password-complexity-validator.directive';
+import { ArrayToTreeConverterService } from './array-to-tree-converter.service';
+import { TreeDataHelperService } from './tree-data-helper.service';
 
 @NgModule({
     imports: [
@@ -18,7 +20,9 @@ import { PasswordComplexityValidator } from './validation/password-complexity-va
     ],
     providers: [
         FileDownloadService,
-        LocalStorageService
+        LocalStorageService,
+        TreeDataHelperService,
+        ArrayToTreeConverterService
     ],
     declarations: [
         EqualValidator,

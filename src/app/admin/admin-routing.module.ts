@@ -6,7 +6,6 @@ import { EditionsComponent } from './editions/editions.component';
 import { LanguageTextsComponent } from './languages/language-texts/language-texts.component';
 import { LanguagesComponent } from './languages/languages.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
-import { OrganizationUnitsComponent } from './organization-units/organization-units.component';
 import { RolesComponent } from './roles/roles.component';
 import { HostSettingsComponent } from './settings/host-settings/host-settings.component';
 import { TenantSettingsComponent } from './settings/tenant-settings/tenant-settings.component';
@@ -31,7 +30,14 @@ import { AppPermissions } from '@shared/AppPermissions';
                     { path: 'hostSettings', component: HostSettingsComponent, data: { permission: AppPermissions.AdministrationHostSettings + '|' + AppPermissions.AdministrationTenantHosts } },
                     { path: 'languages', component: LanguagesComponent, data: { permission: AppPermissions.AdministrationLanguages } },
                     { path: 'languages/:name/texts', component: LanguageTextsComponent, data: { permission: AppPermissions.AdministrationLanguagesChangeTexts } },
-                    { path: 'organization-units', component: OrganizationUnitsComponent, data: { permission: AppPermissions.AdministrationOrganizationUnits } },
+                    { 
+                        path: 'organization-units',                         
+                        loadChildren: () =>
+                            import('./organization-units/organization-units.module').then(
+                                (m) => m.OrganizationUnitsModule
+                            ),
+                        data: { permission: AppPermissions.AdministrationOrganizationUnits } 
+                    },
                     { path: 'tenantSettings', component: TenantSettingsComponent, data: { permission: AppPermissions.AdministrationTenantSettings + '|' + AppPermissions.AdministrationTenantHosts } },
                     { path: 'hostDashboard', component: HostDashboardComponent, data: { permission: AppPermissions.AdministrationHostDashboard } },
                     { path: 'ui-customization', component: UiCustomizationComponent },

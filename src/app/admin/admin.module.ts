@@ -34,17 +34,17 @@ import { ModalModule } from 'ngx-bootstrap/modal';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 import { TabsModule } from 'ngx-bootstrap/tabs';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { AutoCompleteModule, EditorModule, 
-    FileUploadModule as PrimeNgFileUploadModule, 
-    InputMaskModule, PaginatorModule
-} from 'primeng/primeng';
+import { AutoCompleteModule } from 'primeng/autocomplete';
+import { EditorModule } from 'primeng/editor';
+import { FileUploadModule as PrimeNgFileUploadModule } from 'primeng/fileupload';
+import { InputMaskModule } from 'primeng/inputmask';
+import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { UtilsModule } from '@shared/utils/utils.module';
-import { AddMemberModalComponent } from 'app/admin/organization-units/add-member-modal/add-member-modal.component';
 import { AdminRoutingModule } from './admin-routing.module';
 import { AuditLogDetailModalComponent } from './audit-logs/audit-log-detail/audit-log-detail-modal.component';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
@@ -56,17 +56,12 @@ import { EditTextModalComponent } from './languages/edit-text-modal/edit-text-mo
 import { LanguageTextsComponent } from './languages/language-texts/language-texts.component';
 import { LanguagesComponent } from './languages/languages.component';
 import { MaintenanceComponent } from './maintenance/maintenance.component';
-import { CreateOrEditUnitModalComponent } from './organization-units/create-or-edit-unit-modal/create-or-edit-unit-modal.component';
-import { OrganizationTreeComponent } from './organization-units/organization-tree/organization-tree.component';
-import { OrganizationUnitMembersComponent } from './organization-units/organization-unit-members/organization-unit-members.component';
-import { OrganizationUnitsComponent } from './organization-units/organization-units.component';
 import { CreateOrEditRoleModalComponent } from './roles/create-or-edit-role-modal/create-or-edit-role-modal.component';
 import { RolesComponent } from './roles/roles.component';
 import { HostSettingsComponent } from './settings/host-settings/host-settings.component';
 import { TenantSettingsComponent } from './settings/tenant-settings/tenant-settings.component';
 import { EditionComboComponent } from './shared/edition-combo.component';
 import { FeaturesModule } from '@app/shared/features/features.module';
-import { OrganizationUnitsTreeComponent } from './shared/organization-units-tree/organization-units-tree.component';
 import { PermissionComboComponent } from './shared/permission-combo.component';
 import { PermissionTreeComponent } from './shared/permission-tree.component';
 import { RoleComboComponent } from './shared/role-combo.component';
@@ -152,7 +147,6 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         PermissionComboComponent,
         RoleComboComponent,
         PermissionTreeComponent,
-        OrganizationUnitsTreeComponent,
         RolesComponent,
         CreateOrEditRoleModalComponent,
         AuditLogsComponent,
@@ -164,16 +158,11 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         LanguageTextsComponent,
         CreateOrEditLanguageModalComponent,
         EditTextModalComponent,
-        OrganizationUnitsComponent,
-        OrganizationTreeComponent,
-        OrganizationUnitMembersComponent,
-        CreateOrEditUnitModalComponent,
         TenantSettingsComponent,
         SystemSettingsComponent,
         UploadSSLCertificateModalComponent,
         AddOrEditSSLBindingModalComponent,
         HostDashboardComponent,
-        AddMemberModalComponent,
         UiCustomizationComponent,
         EditionsComponent,
         CreateOrEditEditionModalComponent,
@@ -199,7 +188,6 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         AddOrEditSSLBindingModalComponent
     ],
     exports: [
-        AddMemberModalComponent,
         StorageChangeDialog
     ],
     providers: [

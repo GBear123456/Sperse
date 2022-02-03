@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, ModuleWithProviders } from '@angular/core';
 import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
 
 @NgModule({
@@ -7,4 +7,11 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
     declarations: [ DateTimePipe ],
     providers: [ DateTimePipe ],
 })
-export class DateTimeModule {}
+export class DateTimeModule {
+    static forRoot(): ModuleWithProviders<DateTimeModule> {
+        return {
+            ngModule: DateTimeModule,
+            providers: [ DateTimePipe ]
+        };
+    }
+}
