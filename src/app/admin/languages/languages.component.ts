@@ -84,7 +84,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             {
                 text: this.l('SetAsDefaultLanguage'),
                 class: 'set-as-default-language',
-                visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesChangeTexts),
+                visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesChangeDefaultLanguage),
                 action: () => {
                     this.setAsDefaultLanguage(this.actionRecord);
                 }
