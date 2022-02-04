@@ -57,15 +57,15 @@ export function appInitializerFactory(
     bugsnagService: BugsnagService
 ) {
     return () => {
-        let appAuthService = injector.get(AppAuthService);
-        appAuthService.setCheckDomainToken();
+        let appAuthService = injector.get(AppAuthService),
+            isAuthChanged = appAuthService.setCheckDomainToken();            
         handleLogoutRequest(appAuthService);
         return new Promise<boolean>((resolve, reject) => {
             AppConsts.appBaseHref = getBaseHref(platformLocation);
             AppPreBootstrap.run(appAuthService, (sessionCallback?) => {
                 appAuthService.startTokenCheck();
                 let appSessionService: AppSessionService = injector.get(AppSessionService);
-                appSessionService.init().then(
+                appSessionService.init(isAuthChanged).then(
                     (result) => {
                         //set og meta tags
                         sessionCallback && sessionCallback();
