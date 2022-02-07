@@ -1,9 +1,9 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, ChangeDetectorRef } from '@angular/core';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 
 /** Third party imports */
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -23,15 +23,25 @@ import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-set
 export class EmailComponent implements ITenantSettingsStepComponent {
     @Input() settings: EmailSettingsEditDto;
     testEmailAddress: string;
+    isSending: boolean = false;
+
     constructor(
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
         private emailSmtpSettingsService: EmailSmtpSettingsService,
+        private changeDetectorRef: ChangeDetectorRef,
         public ls: AppLocalizationService
     ) {}
 
     sendTestEmail(): void {
+        if (this.isSending)
+            return;
+
+        this.isSending = true;
         let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.settings);
-        this.emailSmtpSettingsService.sendTestEmail(input);
+        this.emailSmtpSettingsService.sendTestEmail(input, () => {
+            this.isSending = false;
+            this.changeDetectorRef.detectChanges();
+        });
     }
 
     save(): Observable<void> {

@@ -53,6 +53,7 @@ export class CreateTenantModalComponent implements OnInit {
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     editionsGroups$: Observable<SubscribableEditionComboboxItemDto[][]>;
     editionsModels: { [value: string]: TenantEditEditionDto } = {};
+    nameRegEx = AppConsts.regexPatterns.fullName;
     emailRegEx = AppConsts.regexPatterns.email;
     title = this.ls.l('CreateNewTenant');
     buttons: IDialogButton[] = [
