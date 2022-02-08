@@ -534,7 +534,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
                 selectedMenuItem = this.getContextMenuItemByType(
                     this.cacheService.exists(cacheKey) ? this.cacheService.get(cacheKey) : this.ADD_OPTION_DEFAULT
                 );
-            if (!selectedMenuItem.visible)
+            if (!selectedMenuItem || !selectedMenuItem.visible)
                 selectedMenuItem = this.getContextMenuItemByType(this.ADD_OPTION_DEFAULT);
 
             selectedMenuItem.selected = true;

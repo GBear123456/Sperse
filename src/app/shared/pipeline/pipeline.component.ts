@@ -421,15 +421,19 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
      * @param {HTMLElement} column
      */
     private updateDropColumnHeight(column: HTMLElement) {
-        const targetElmBoundingClientRect = column.getBoundingClientRect();
-        const targetElmBottom = targetElmBoundingClientRect.bottom;
-        const titleBoundingClientRect = column.previousElementSibling.getBoundingClientRect();
-        const titleBottom = titleBoundingClientRect.bottom;
-        const difference = (titleBottom + 106 - targetElmBottom);
-        /** If title is lower then target column */
-        if (difference > 0) {
-            /** Increase target column height to allow to drop to it */
-            column.style.height = (targetElmBoundingClientRect.height + difference) + 'px';
+        if (column) {
+            const targetElmBoundingClientRect = column.getBoundingClientRect();
+            const targetElmBottom = targetElmBoundingClientRect.bottom;
+            if (column.previousElementSibling) {
+                const titleBoundingClientRect = column.previousElementSibling.getBoundingClientRect();
+                const titleBottom = titleBoundingClientRect.bottom;
+                const difference = (titleBottom + 106 - targetElmBottom);
+                /** If title is lower then target column */
+                if (difference > 0) {
+                    /** Increase target column height to allow to drop to it */
+                    column.style.height = (targetElmBoundingClientRect.height + difference) + 'px';
+                }
+            }
         }
     }
 
