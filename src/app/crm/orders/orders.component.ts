@@ -1437,6 +1437,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onContentReady(event) {
+        this.dataGrid = this.dxDataGrid;
         if (this.exportCallback)
             this.exportCallback();
         else {
