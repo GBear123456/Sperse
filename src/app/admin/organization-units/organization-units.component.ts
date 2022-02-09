@@ -11,6 +11,7 @@ import { IBasicOrganizationUnitInfo } from './basic-organization-unit-info';
     styleUrls: [
         '../../../../node_modules/primeng/resources/primeng.min.css',
         '../../../../node_modules/primeng/resources/themes/fluent-light/theme.css',
+        '../../../../node_modules/primeicons/primeicons.css',
         '../../../assets/primeng/autocomplete/css/primeng.autocomplete.css',
         '../../../assets/primeng/context-menu/css/primeng.context-menu.css',
         '../../../assets/primeng/tree/css/primeng.tree.css'
