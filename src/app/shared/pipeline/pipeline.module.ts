@@ -10,7 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
-import { DragulaModule } from 'ng2-dragula/ng2-dragula';
+import { DragulaModule } from 'ng2-dragula';
 import { PipelineComponent } from './pipeline.component';
 import { DxDataGridModule } from 'devextreme-angular/ui/data-grid';
 import { DxRadioGroupModule } from 'devextreme-angular/ui/radio-group';
@@ -38,7 +38,7 @@ import { ActionMenuModule } from '@app/shared/common/action-menu/action-menu.mod
     imports: [
         CommonModule,
         AppCommonModule,
-        DragulaModule,
+        DragulaModule.forRoot(),
         DxDataGridModule,
         DxRadioGroupModule,
         DxTextAreaModule,
