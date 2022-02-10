@@ -85993,6 +85993,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
     currency!: Currency | undefined;
     showShippingAddress!: boolean | undefined;
     defaultAffiliateRate!: number | undefined;
+    defaultAffiliateRateTier2!: number | undefined;
     defaultAdvisorContactId!: number | undefined;
     tier2CommissionSource!: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode | undefined;
@@ -86018,6 +86019,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
             this.currency = data["currency"];
             this.showShippingAddress = data["showShippingAddress"];
             this.defaultAffiliateRate = data["defaultAffiliateRate"];
+            this.defaultAffiliateRateTier2 = data["defaultAffiliateRateTier2"];
             this.defaultAdvisorContactId = data["defaultAdvisorContactId"];
             this.tier2CommissionSource = data["tier2CommissionSource"];
             this.commissionAffiliateAssignmentMode = data["commissionAffiliateAssignmentMode"];
@@ -86043,6 +86045,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
         data["currency"] = this.currency;
         data["showShippingAddress"] = this.showShippingAddress;
         data["defaultAffiliateRate"] = this.defaultAffiliateRate;
+        data["defaultAffiliateRateTier2"] = this.defaultAffiliateRateTier2;
         data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
         data["tier2CommissionSource"] = this.tier2CommissionSource;
         data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
@@ -86061,6 +86064,7 @@ export interface IInvoiceSettingsDto {
     currency: Currency | undefined;
     showShippingAddress: boolean | undefined;
     defaultAffiliateRate: number | undefined;
+    defaultAffiliateRateTier2: number | undefined;
     defaultAdvisorContactId: number | undefined;
     tier2CommissionSource: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode | undefined;
@@ -86076,6 +86080,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     currency!: Currency | undefined;
     showShippingAddress!: boolean | undefined;
     defaultAffiliateRate!: number | undefined;
+    defaultAffiliateRateTier2!: number | undefined;
     defaultAdvisorContactId!: number | undefined;
     tier2CommissionSource!: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode | undefined;
@@ -86100,6 +86105,7 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.currency = data["currency"];
             this.showShippingAddress = data["showShippingAddress"];
             this.defaultAffiliateRate = data["defaultAffiliateRate"];
+            this.defaultAffiliateRateTier2 = data["defaultAffiliateRateTier2"];
             this.defaultAdvisorContactId = data["defaultAdvisorContactId"];
             this.tier2CommissionSource = data["tier2CommissionSource"];
             this.commissionAffiliateAssignmentMode = data["commissionAffiliateAssignmentMode"];
@@ -86124,6 +86130,7 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["currency"] = this.currency;
         data["showShippingAddress"] = this.showShippingAddress;
         data["defaultAffiliateRate"] = this.defaultAffiliateRate;
+        data["defaultAffiliateRateTier2"] = this.defaultAffiliateRateTier2;
         data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
         data["tier2CommissionSource"] = this.tier2CommissionSource;
         data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
@@ -86141,6 +86148,7 @@ export interface IInvoiceSettings {
     currency: Currency | undefined;
     showShippingAddress: boolean | undefined;
     defaultAffiliateRate: number | undefined;
+    defaultAffiliateRateTier2: number | undefined;
     defaultAdvisorContactId: number | undefined;
     tier2CommissionSource: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode | undefined;
