@@ -303,8 +303,11 @@ export class EmailTemplateDialogComponent implements OnInit {
                 return this.notifyService.error(
                     this.ls.l('RequiredField', this.ls.l('Subject')));
         } else {
-            if (!this.validationGroup.instance.validate().isValid)
-                return this.notifyService.error(this.ls.l('InvalidEmailAddress'));
+            let validate = this.validationGroup.instance.validate();
+            if (!validate.isValid)
+                return validate.brokenRules.forEach(rule => {
+                    this.notifyService.error(rule.message);
+                });
 
             if (!this.data.from)
                 return this.notifyService.error(
