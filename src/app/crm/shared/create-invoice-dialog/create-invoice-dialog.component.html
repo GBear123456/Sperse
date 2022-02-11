@@ -318,7 +318,42 @@
             </div>
             <div class="col-sm-6 conclusion">
                 <div class="sub-total"><span>{{ls.l('Sub Total')}}</span><span>{{subTotal | currency: invoiceSettings.currency}}</span></div>
-                <div class="total"><span>{{ls.l('Total')}} ({{invoiceSettings.currency}})</span><a>{{ls.l('Manage Default Taxes')}}</a><span>{{total | currency: invoiceSettings.currency}}</span></div>
+                <div class="user-total"><span>{{ls.l('Disount Total')}}</span>
+                    <span>
+                        <dx-number-box 
+                            [min]="0" 
+                            [height]="33"
+                            [placeholder]="ls.l('Disount')" 
+                            [format]="{ style: 'currency', currency: invoiceSettings.currency, useGrouping: true }"
+                            (onValueChanged)="calculateBalance()"
+                            [(value)]="discountTotal">
+                        </dx-number-box>
+                    </span>
+                </div>
+                <div class="user-total"><span>{{ls.l('Shipping Total')}}</span>
+                    <span>
+                        <dx-number-box 
+                            [min]="0" 
+                            [height]="33"
+                            [placeholder]="ls.l('Shipping')" 
+                            [format]="{ style: 'currency', currency: invoiceSettings.currency, useGrouping: true }"
+                            (onValueChanged)="calculateBalance()"
+                            [(value)]="shippingTotal">
+                        </dx-number-box>
+                    </span>
+                </div>
+                <div class="user-total"><span>{{ls.l('Tax Total')}}</span>
+                    <span>
+                        <dx-number-box 
+                            [min]="0" 
+                            [height]="33"
+                            [placeholder]="ls.l('Tax')" 
+                            [format]="{ style: 'currency', currency: invoiceSettings.currency, useGrouping: true }"
+                            (onValueChanged)="calculateBalance()"
+                            [(value)]="taxTotal">
+                        </dx-number-box>
+                    </span>
+                </div>
                 <div class="balance"><span>{{ls.l('Balance')}} ({{invoiceSettings.currency}})</span><span>{{balance | currency: invoiceSettings.currency}}</span></div>
             </div>
         </div>
