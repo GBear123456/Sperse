@@ -1,6 +1,7 @@
 <h5>{{ title }}</h5>
 <p>
-    <a [ngClass]="{disabled: !documentId}" [href]="documentLink" target="_blank">{{ls.l('Download')}}</a>&nbsp;&nbsp;&nbsp;
+    <a *ngIf="documentTemplateLink && !documentId" [href]="documentTemplateLink" download>{{ls.l('DownloadTemplate')}}</a>
+    <a *ngIf="documentId || !documentTemplateLink" [ngClass]="{disabled: !documentId}" [href]="documentLink" target="_blank">{{ls.l('Download')}}</a>&nbsp;&nbsp;&nbsp;
     <a href="javascript:void(0)" *ngIf="documentId && onDocumentClear?.observers?.length" (click)="clear()">{{ls.l('Clear')}}</a>
     <span *ngIf="uploadInfoText" class="m-form__help">{{uploadInfoText}}</span>
 </p>

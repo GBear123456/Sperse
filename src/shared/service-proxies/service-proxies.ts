@@ -21731,54 +21731,6 @@ export class LeadServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
-
-    /**
-     * @return Success
-     */
-    processLeadsWithSubscriptions(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/ProcessLeadsWithSubscriptions";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processProcessLeadsWithSubscriptions(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processProcessLeadsWithSubscriptions(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processProcessLeadsWithSubscriptions(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
 }
 
 @Injectable()
@@ -26310,6 +26262,54 @@ export class OrganizationContactServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    mergeOrganizations(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/MergeOrganizations";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMergeOrganizations(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMergeOrganizations(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMergeOrganizations(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -30467,6 +30467,121 @@ export class ProfileLinkServiceProxy {
             }));
         }
         return _observableOf<LinkDto[]>(<any>null);
+    }
+}
+
+@Injectable()
+export class ProfilePersonServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getProfileSummary(): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePerson/GetProfileSummary";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProfileSummary(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProfileSummary(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetProfileSummary(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @input (optional) 
+     * @return Success
+     */
+    updateProfileSummary(input: string | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePerson/UpdateProfileSummary?";
+        if (input !== undefined)
+            url_ += "input=" + encodeURIComponent("" + input) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateProfileSummary(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateProfileSummary(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateProfileSummary(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -34947,13 +35062,17 @@ export class TenantCustomizationServiceProxy {
     }
 
     /**
+     * @body (optional) 
      * @return Success
      */
-    clearCustomCss(): Observable<void> {
+    clearCustomCss(body: CustomCssType | null | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/ClearCustomCss";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
@@ -80401,6 +80520,8 @@ export interface IProfilePhoto {
 export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
     fullName!: string | undefined;
     email!: string | undefined;
+    profileSummary!: string | undefined;
+    calendlyUrl!: string | undefined;
     emails!: ProfileEmail[] | undefined;
     addresses!: ProfileAddress[] | undefined;
     phones!: ProfilePhone[] | undefined;
@@ -80420,6 +80541,8 @@ export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
         if (data) {
             this.fullName = data["fullName"];
             this.email = data["email"];
+            this.profileSummary = data["profileSummary"];
+            this.calendlyUrl = data["calendlyUrl"];
             if (data["emails"] && data["emails"].constructor === Array) {
                 this.emails = [];
                 for (let item of data["emails"])
@@ -80459,6 +80582,8 @@ export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
         data = typeof data === 'object' ? data : {};
         data["fullName"] = this.fullName;
         data["email"] = this.email;
+        data["profileSummary"] = this.profileSummary;
+        data["calendlyUrl"] = this.calendlyUrl;
         if (this.emails && this.emails.constructor === Array) {
             data["emails"] = [];
             for (let item of this.emails)
@@ -80491,6 +80616,8 @@ export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
 export interface IPublishedPersonProfileInfo {
     fullName: string | undefined;
     email: string | undefined;
+    profileSummary: string | undefined;
+    calendlyUrl: string | undefined;
     emails: ProfileEmail[] | undefined;
     addresses: ProfileAddress[] | undefined;
     phones: ProfilePhone[] | undefined;
@@ -83717,6 +83844,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     logoId!: string | undefined;
     logoFileType!: string | undefined;
     customCssId!: string | undefined;
+    loginCustomCssId!: string | undefined;
+    portalCustomCssId!: string | undefined;
     customToSDocumentId!: string | undefined;
     customPrivacyPolicyDocumentId!: string | undefined;
     customLayoutType!: LayoutType | undefined;
@@ -83743,6 +83872,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
             this.logoId = data["logoId"];
             this.logoFileType = data["logoFileType"];
             this.customCssId = data["customCssId"];
+            this.loginCustomCssId = data["loginCustomCssId"];
+            this.portalCustomCssId = data["portalCustomCssId"];
             this.customToSDocumentId = data["customToSDocumentId"];
             this.customPrivacyPolicyDocumentId = data["customPrivacyPolicyDocumentId"];
             this.customLayoutType = data["customLayoutType"];
@@ -83769,6 +83900,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data["logoId"] = this.logoId;
         data["logoFileType"] = this.logoFileType;
         data["customCssId"] = this.customCssId;
+        data["loginCustomCssId"] = this.loginCustomCssId;
+        data["portalCustomCssId"] = this.portalCustomCssId;
         data["customToSDocumentId"] = this.customToSDocumentId;
         data["customPrivacyPolicyDocumentId"] = this.customPrivacyPolicyDocumentId;
         data["customLayoutType"] = this.customLayoutType;
@@ -83788,6 +83921,8 @@ export interface ITenantLoginInfoDto {
     logoId: string | undefined;
     logoFileType: string | undefined;
     customCssId: string | undefined;
+    loginCustomCssId: string | undefined;
+    portalCustomCssId: string | undefined;
     customToSDocumentId: string | undefined;
     customPrivacyPolicyDocumentId: string | undefined;
     customLayoutType: LayoutType | undefined;
@@ -85321,6 +85456,12 @@ export class EntityDto implements IEntityDto {
 
 export interface IEntityDto {
     id: number | undefined;
+}
+
+export enum CustomCssType {
+    Platform = "Platform", 
+    Login = "Login", 
+    Portal = "Portal", 
 }
 
 export class TenantAppHostOutput implements ITenantAppHostOutput {
