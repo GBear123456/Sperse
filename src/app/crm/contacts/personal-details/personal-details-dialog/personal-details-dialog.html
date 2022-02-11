@@ -52,7 +52,7 @@
                             <div class="field tier" *ngIf="hasCommissionsFeature">
                                 <label>{{ ls.l('AffiliateRateTier2') }}:</label>
                                 <inplace-edit [id]="contactInfo?.id"
-                                              [editPlaceholder]="''"
+                                              [editPlaceholder]="defaultAffiliateRateTier2Str !== undefined ? ls.l('DefaultRate') + ' ' + defaultAffiliateRateTier2Str : ''"
                                               [displayValue]="affiliateRate2 === null ? '' : formatPercentValue(affiliateRate2, 'en-US', '1.0-2')"
                                               [value]="affiliateRate2"
                                               format="#0.##%"
