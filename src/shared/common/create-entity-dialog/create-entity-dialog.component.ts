@@ -138,6 +138,7 @@ import { Country } from '@shared/AppEnums';
 export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild('stagesList', { static: false }) stagesComponent: StaticListComponent;
+    @ViewChild('statusesList', { static: false }) statusComponent: StaticListComponent;
     @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
     @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
     @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
@@ -170,8 +171,16 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     private similarCustomersSubscription: Subscription;
     private similarCustomersTimeout: any;
     private readonly cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, 'CreateEntityDialog');
+    statuses = Object.keys(ContactStatus).map(status => {
+        return {
+            id: ContactStatus[status],
+            name: status,
+            displayName: this.ls.l(status)
+        }
+    });
     stages: any[] = [];
     stageId: number;
+    statusId = ContactStatus.Active;
     defaultStageSortOrder = 0;
     partnerTypes: any[] = [];
     saveButtonId = 'saveClientOptions';
@@ -270,11 +279,11 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     isSourceSelected = false;
 
     isAssignDisabled: boolean = !this.permissionService.checkCGPermission(
-        this.data.customerType,
+        [this.data.customerType],
         'ManageAssignments'
     );
-    isListAndTagsDisabled: boolean = !this.permissionService.checkCGPermission(this.data.customerType);
-    isRatingAndStarsDisabled: boolean = !this.permissionService.checkCGPermission(this.data.customerType);
+    isListAndTagsDisabled: boolean = !this.permissionService.checkCGPermission([this.data.customerType]);
+    isRatingAndStarsDisabled: boolean = !this.permissionService.checkCGPermission([this.data.customerType]);
     assignedUsersSelector = this.getAssignedUsersSelector();
     hideCompanyField: boolean = this.data.hideCompanyField;
     hideLinksField: boolean = this.data.hideLinksField;
@@ -403,7 +412,9 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             installmentAmount: this.installmentAmount,
             bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null,
             bankCodeSource: this.bankCode && this.bankCode !== '????' ? 'CRM' : null,
-            leadTypeId: this.data.entityTypeId
+            leadTypeId: this.data.entityTypeId,
+            isActive: this.statusId == ContactStatus.Active,
+            isProspective: !!this.data.isInLeadMode && !this.data.parentId
         };
         if (this.disallowMultipleItems) {
             dataObj.emailAddress = dataObj.emailAddresses[0];
@@ -437,9 +448,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         saveButton.disabled = true;
         const createModel = this.data.createModel || CreateOrUpdateContactInput;
         let createContactInput = createModel.fromJS(dataObj);
-        createContactInput.statusId = this.data.isInLeadMode && !this.data.parentId
-            ? ContactStatus.Prospective
-            : ContactStatus.Active;
+
         const createMethod = this.data.createMethod || this.contactProxy.createOrUpdateContact.bind(this.contactProxy);
         createMethod(createContactInput).pipe(
             finalize(() => { saveButton.disabled = false; this.modalDialog.finishLoading(); })
@@ -612,6 +621,10 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
     toggleStages() {
         this.stagesComponent.toggle();
+    }
+
+    toggleStatus() {
+        this.statusComponent.toggle();
     }
 
     togglePartnerTypes() {
@@ -928,7 +941,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
 
         clearTimeout(this.lookupTimeout);
         this.lookupTimeout = setTimeout(() => {
-            this.orgServiceProxy.getOrganizations(search, this.data.customerType.toString() || ContactGroup.Client, 10)
+            this.orgServiceProxy.getOrganizations(search, 10)
                 .subscribe((res: OrganizationShortInfo[]) => {
                     if (search == this.company)
                         this.companies = res;
@@ -1031,6 +1044,8 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
                 if (this.userAssignmentComponent) {
                     this.userAssignmentComponent.selectedItemKey = this.currentUserId;
                 }
+                this.isStatusSelected = false;
+                this.statusId = ContactStatus.Active;
                 this.stageId = this.stages.length
                     ? this.stages.find(v => v.index === this.defaultStageSortOrder).id
                     : undefined;
@@ -1110,6 +1125,11 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     onStagesChanged(event) {
         this.stageId = event.id;
         this.isStageSelected = true;
+    }
+
+    onStatusChanged(event) {
+        this.statusId = event.id;
+        this.isStatusSelected = true;
     }
 
     onPartnerTypeChanged(event) {

@@ -36,7 +36,7 @@ import { AppFeatures } from '@shared/AppFeatures';
         '../shared/metronic/m-subheader.less',
         './app.component.less'
     ],
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
 })
 export class AppComponent implements OnInit {
     installationMode = false;
@@ -115,5 +115,9 @@ export class AppComponent implements OnInit {
 
     initModuleAttribute() {
         document.body.setAttribute('module', this.appService.getModule());
+    }
+
+    onClientSearch(phrase: string) {
+        this.appService.clientSearchPhrase.next(phrase);
     }
 }

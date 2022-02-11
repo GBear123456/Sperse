@@ -34,8 +34,8 @@ export class ContactsAreaComponent {
     @Input() showContactType: string;
     @Input()
     set contactInfo(val: ContactInfoDto) {
-        if (this._contactInfo = val)
-            this.isEditAllowed = this.permissionService.checkCGPermission(val.groupId);
+        if ((this._contactInfo = val) && val.groups)
+            this.isEditAllowed = this.permissionService.checkCGPermission(val.groups);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -112,7 +112,7 @@ export class ContactsAreaComponent {
             id: data && data.id,
             value: data && data[field],
             name: this.getFieldName(field),
-            groupId: this.contactInfo.groupId,
+            groups: this.contactInfo.groups,
             contactId: data && data.contactId
                 || this.contactInfoData && this.contactInfoData.contactId,
             emailAddress: data && data.emailAddress,

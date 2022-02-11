@@ -6,6 +6,7 @@
     (onChanged)="updateContextType($event)">
     <ng-container topHeader>
         <details-header [data]="contactInfo"
+                        [contactGroupId]="contactGroupId$ | async"
                         [personContactInfo]="personContactInfo"
                         [ratingId]="contactInfo.ratingId"
                         (onInvalidate)="reloadCurrentSection($event)">

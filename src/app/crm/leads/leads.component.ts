@@ -18,6 +18,7 @@ import {
     merge,
     Observable,
     of,
+    interval,
     ReplaySubject
 } from 'rxjs';
 import {
@@ -137,6 +138,7 @@ import { TypeItem } from '@app/crm/shared/types-dropdown/type-item.interface';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
+import { UrlHelper } from '@shared/helpers/UrlHelper';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -201,7 +203,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
                         });
                     },
-                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail')
+                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
                 },
                 {
                     text: this.l('SendEmail'),
@@ -211,7 +213,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                             contactId: (data || this.actionEvent.data || this.actionEvent).CustomerId
                         }).subscribe();
                     },
-                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup, 'ViewCommunicationHistory.SendSMSAndEmail')
+                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
                 },
             ]
         },
@@ -225,7 +227,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     checkVisible: (lead: LeadDto) => {
                         return !!lead.UserId && (
                             this.impersonationIsGranted ||
-                            this.permission.checkCGPermission(this.selectedContactGroup, 'UserInformation.AutoLogin')
+                            this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
                         );
                     },
                     action: (data?) => {
@@ -239,7 +241,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     checkVisible: (lead: LeadDto) => !!lead.UserId && !!AppConsts.appMemberPortalUrl
                         && (
                             this.impersonationIsGranted ||
-                            this.permission.checkCGPermission(this.selectedContactGroup, 'UserInformation.AutoLogin')
+                            this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
                         ),
                     action: (data?) => {
                         const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
@@ -259,7 +261,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 addNew: true
                             });
                         },
-                        checkVisible: () => this.permission.checkCGPermission(this.selectedContactGroup)
+                        checkVisible: () => this.permission.checkCGPermission([this.selectedContactGroup])
                     }
                 },
                 {
@@ -318,13 +320,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     action: (data?) => {
                         this.deleteLeads([(data || this.actionEvent.data || this.actionEvent).Id]);
                     },
-                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup)
+                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup])
                 },
                 {
                     text: this.l('EditRow'),
                     class: 'edit',
                     action: (data?) => this.showLeadDetails({ data: data || this.actionEvent }),
-                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission(this.selectedContactGroup)
+                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup])
                 }
             ]
         }
@@ -425,7 +427,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.Pipeline
     );
     private gridCompactView: BehaviorSubject<Boolean> = new BehaviorSubject(true);
-    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable();
+    dataLayoutType$: Observable<DataLayoutType> = this.dataLayoutType.asObservable().pipe(tap((layoutType) => {
+        this.appService.isClientSearchDisabled = layoutType != DataLayoutType.DataGrid;
+    }));
     showCompactView$: Observable<Boolean> = combineLatest(
         this.dataLayoutType$,
         this.pipelineService.compactView$,
@@ -462,7 +466,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 : pluralize.singular(selectedPipeline.name);
             return [
                 {
-                    enabled: this.permission.checkCGPermission(selectedPipeline.contactGroupId),
+                    enabled: this.permission.checkCGPermission([selectedPipeline.contactGroupId]),
                     action: this.createLead.bind(this),
                     label: this.l('CreateNew') + ' ' + localizedLabel
                 }
@@ -644,7 +648,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
     isSmsAndEmailSendingAllowed: boolean = this.permission.checkCGPermission(
-        this.selectedContactGroup,
+        [this.selectedContactGroup],
         'ViewCommunicationHistory.SendSMSAndEmail'
     );
     readonly leadFields: KeysEnum<LeadDto> = LeadFields;
@@ -798,6 +802,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.activate();
         this.handleFiltersPining();
         this.handleUserGroupTextUpdate();
+        this.setupFilterCacheChangeInterval();
     }
 
     ngAfterViewInit() {
@@ -1173,6 +1178,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         }
         if (!this.rowsViewHeight)
             this.rowsViewHeight = DataGridService.getDataGridRowsViewHeight();
+
+        setTimeout(() => {
+            this.appService.isClientSearchDisabled = 
+                this.dataLayoutType.value == DataLayoutType.Pipeline;
+        });
     }
 
     refresh(invalidateDashboard: boolean = true) {
@@ -1417,8 +1427,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     }
 
     initToolbarConfig() {
-        this.manageDisabled = !this.permission.checkCGPermission(this.selectedContactGroup);
-        this.manageCGPermission = this.permission.getCGPermissionKey(this.selectedContactGroup, 'Manage');
+        if (this.selectedContactGroup) {
+            this.manageDisabled = !this.permission.checkCGPermission([this.selectedContactGroup]);
+            this.manageCGPermission = this.permission.getCGPermissionKey([this.selectedContactGroup], 'Manage');
+        }
         this.toolbarConfig = [
             {
                 location: 'before', items: [
@@ -1468,7 +1480,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'assign',
                         action: this.toggleUserAssignment.bind(this),
-                        disabled: !this.permission.checkCGPermission(this.selectedContactGroup, 'ManageAssignments'),
+                        disabled: !this.permission.checkCGPermission([this.selectedContactGroup], 'ManageAssignments'),
                         attr: {
                             'filter-selected': this.filterModelAssignment && this.filterModelAssignment.isSelected,
                             class: 'assign-to'
@@ -1500,7 +1512,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
                     {
                         name: 'lists',
-                        disabled: !this.permission.checkCGPermission(this.selectedContactGroup, ''),
+                        disabled: !this.permission.checkCGPermission([this.selectedContactGroup], ''),
                         action: this.toggleLists.bind(this),
                         attr: {
                             'filter-selected': this.filterModelLists && this.filterModelLists.isSelected
@@ -1508,7 +1520,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'tags',
-                        disabled: !this.permission.checkCGPermission(this.selectedContactGroup, ''),
+                        disabled: !this.permission.checkCGPermission([this.selectedContactGroup], ''),
                         action: this.toggleTags.bind(this),
                         attr: {
                             'filter-selected': this.filterModelTags && this.filterModelTags.isSelected
@@ -1516,7 +1528,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'rating',
-                        disabled: !this.permission.checkCGPermission(this.selectedContactGroup, ''),
+                        disabled: !this.permission.checkCGPermission([this.selectedContactGroup], ''),
                         action: this.toggleRating.bind(this),
                         attr: {
                             'filter-selected': this.filterModelRating && this.filterModelRating.isSelected
@@ -1524,7 +1536,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     },
                     {
                         name: 'star',
-                        disabled: !this.permission.checkCGPermission(this.selectedContactGroup, ''),
+                        disabled: !this.permission.checkCGPermission([this.selectedContactGroup], ''),
                         action: this.toggleStars.bind(this),
                         attr: {
                             'filter-selected': this.filterModelStar && this.filterModelStar.isSelected
@@ -1539,7 +1551,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'actions',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.selectedLeads.length || !this.permission.checkCGPermission(this.selectedContactGroup),
+                        disabled: !this.selectedLeads.length || !this.permission.checkCGPermission([this.selectedContactGroup]),
                         options: {
                             items: [
                                 {
@@ -1554,6 +1566,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                         this.contactService.mergeContact(
                                             this.selectedLeads[0],
                                             this.selectedLeads[1],
+                                            this.selectedContactGroup,
                                             false,
                                             true,
                                             () => this.refresh(),
@@ -1848,8 +1861,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         ? this.pivotGridComponent && this.pivotGridComponent.dataGrid && this.pivotGridComponent.dataGrid.instance
                         : context.dataGrid && context.dataGrid.instance;
                     if (this.showPipeline || dataGridInstance) {
-                        this.pipelineDataSource['total'] = this.pipelineDataSource['entities'] = 
-                        this.dataSource['total'] = this.dataSource['entities'] = undefined;
+                        if (this.pipelineDataSource)
+                            this.pipelineDataSource['total'] = this.pipelineDataSource['entities'] = undefined;
+                        if (this.dataSource)
+                            this.dataSource['total'] = this.dataSource['entities'] = undefined;
                         const filterQuery$: Observable<string> = context.processODataFilter.call(
                             context,
                             dataGridInstance,
@@ -1895,13 +1910,52 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private setDataGridInstance() {
         let instance = this.dataGrid && this.dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
-            this.dataSource.store.url =
-                this.getODataUrl(this.dataSourceURI, this.getInitialFilter());
-            this.dataGrid.dataSource = this.dataSource;
+            this.oDataService.getODataFilter(
+                this.filters, 
+                this.filtersService.getCheckCustom
+            ).subscribe((odataRequestValues: ODataRequestValues) => {
+                this.dataSource['_store']['_url'] = this.getODataUrl(
+                    this.dataSourceURI, odataRequestValues.filter, null, odataRequestValues.params);
+                this.dataGrid.dataSource = this.dataSource;                
+            });
             if (!instance.option('paging.pageSize'))
-                instance.option('paging.pageSize', 20);
+                instance.option('paging.pageSize', 20);            
             this.isDataLoaded = false;
         }
+    }
+
+    setupFilterCacheChangeInterval() {
+    /* 
+        !!VP This is necessary to update server cache 
+        outdated filters in grid infinity scroll mode
+    */
+        interval(30000).pipe(
+            takeUntil(this.destroy$),
+            filter(() => this.componentIsActivated),
+            switchMap(() => this.oDataService.getODataFilter(
+                this.filters, 
+                this.filtersService.getCheckCustom
+            ))
+        ).subscribe((odataRequestValues: ODataRequestValues) => {
+            let url = this.getODataUrl(this.dataSourceURI, 
+                odataRequestValues.filter, null, odataRequestValues.params);
+            if (this.pipelineDataSource && this.pipelineDataSource.store.url != url) {
+                this.pipelineDataSource.store.url = url;
+                if (this.pipelineComponent.params && this.pipelineComponent.params.length) {
+                    let params = UrlHelper.getQueryParametersUsingParameters(url.split('?').pop());
+                    this.pipelineComponent.params.forEach(param => {
+                        param.value = params[param.name];
+                    });
+                }
+                this.pipelineComponent.clearStageDataSources();
+            }
+            this.checkSetDataSourceUrl(this.dataSource, url);
+        });
+    }
+
+    checkSetDataSourceUrl(dataSource: DataSource, url: string): Boolean {
+        if (dataSource && dataSource['_store'] && dataSource['_store']['_url'] != url)
+            return Boolean(dataSource['_store']['_url'] = url);
     }
 
     private setPivotGridInstance() {
@@ -1998,9 +2052,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     CrmService.getEntityDetailsLink(clientId, section, leadId, orgId),
                     { queryParams: {
                             referrer: 'app/crm/leads',
+                            contactGroupId: this.selectedContactGroup,
                             dataLayoutType: this.dataLayoutType.value,
                             ...queryParams
-                        }}
+                        }
+                    }
                 );
             });
         });
@@ -2093,6 +2149,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.initFilterConfig();
         this.initToolbarConfig();
         this.handleQueryParams();
+
         this.showHostElement(() => {
             this.repaintToolbar();
             this.pipelineComponent.detectChanges();
@@ -2206,7 +2263,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.fromIndex))),
                 from(e.component.byKey(e.component.getKeyByRowIndex(e.toIndex)))
             ).subscribe(([source, target]: [LeadDto, LeadDto]) => {
-                this.contactService.mergeContact(source, target, false, true, () => this.refresh(), true);
+                this.contactService.mergeContact(source, target, this.selectedContactGroup, false, true, () => this.refresh(), true);
             });
         }
     }

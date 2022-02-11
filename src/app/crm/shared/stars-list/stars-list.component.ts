@@ -15,7 +15,7 @@ import { AppStore, StarsStoreSelectors } from '@app/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { MessageService } from '@abp/message/message.service';
 import { NotifyService } from '@abp/notify/notify.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
   selector: 'crm-stars-list',
@@ -30,12 +30,13 @@ export class StarsListComponent implements OnInit {
     @Input() hideButtons = false;
     @Input() managePermission = AppPermissions.CRMCustomersManage;
     @Input() set selectedItemKey(value) {
-        this.selectedItemKeys = [value];
+        if (value != undefined)
+            this.selectedItemKeys = [value];
     }
     get selectedItemKey() {
         return this.selectedItemKeys.length ? this.selectedItemKeys[0] : undefined;
     }
-    private selectedItemKeys = [];
+    selectedItemKeys = [];
 
     @Input() targetSelector = '[aria-label=\'star-icon\']';
     @Output() onSelectionChanged: EventEmitter<any> = new EventEmitter();
@@ -45,6 +46,7 @@ export class StarsListComponent implements OnInit {
     layoutType = LayoutType;
     listComponent: any;
     tooltipVisible = false;
+    manageAllowed = false;
 
     constructor(
         private filtersService: FiltersService,
@@ -52,7 +54,7 @@ export class StarsListComponent implements OnInit {
         private store$: Store<AppStore.State>,
         private messageService: MessageService,
         private notifyService: NotifyService,
-        private permissionCheckerService: PermissionCheckerService,
+        private permissionCheckerService: AppPermissionService,
         public appSessionService: AppSessionService,
         public ls: AppLocalizationService
     ) {
@@ -160,6 +162,7 @@ export class StarsListComponent implements OnInit {
     }
 
     ngOnInit() {
+        this.manageAllowed = this.isManageAllowed();
         this.store$.select(StarsStoreSelectors.getStars).subscribe((result) => {
             this.list = _.sortBy(result, 'id');
         });

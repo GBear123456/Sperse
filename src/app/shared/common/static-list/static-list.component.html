@@ -61,7 +61,8 @@
                      (onContentReady)="onContentReady()"
                      (onInitialized)="onInitialized($event)"
                      (onOptionChanged)="onOptionChanged.emit($event)"
-                     (onItemClick)="onItemClick($event)">
+                     (onItemClick)="onItemClick($event)"
+                     (onSelectionChanged)="onSelectionChanged.emit($event)">
                 <div *dxTemplate="let data of 'item'" [attr.filtered]="isFilteredItem(data)">
                     <div data-id="{{data.id}}"
                          class="item-row {{data.name.replace(whiteSpaceRegExp, '-') | lowercase}}"

@@ -7,8 +7,8 @@ export interface ContactDto {
     Phone: string;
     City: string;
     State: string;
-    Status: string;
-    StatusId: number;
+    IsActive: boolean;
+    IsProspective: boolean;
     ContactDate: string;
     OrganizationId: number;
     Xref: string;

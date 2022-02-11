@@ -12,7 +12,6 @@ import {
     ListsStoreActions,
     PartnerTypesStoreActions,
     StarsStoreActions,
-    StatusesStoreActions,
     TagsStoreActions,
     OrganizationTypeStoreActions
 } from '@app/store/index';
@@ -61,7 +60,6 @@ export class AppStoreService {
         if (this.crmIsAllowed) {
             this.store$.dispatch(new PartnerTypesStoreActions.LoadRequestAction(false));
             this.store$.dispatch(new StarsStoreActions.LoadRequestAction(false));
-            this.store$.dispatch(new StatusesStoreActions.LoadRequestAction(false));
             this.store$.dispatch(new TagsStoreActions.LoadRequestAction(false));
             this.store$.dispatch(new ListsStoreActions.LoadRequestAction(false));
             this.store$.dispatch(new OrganizationTypeStoreActions.LoadRequestAction(false));

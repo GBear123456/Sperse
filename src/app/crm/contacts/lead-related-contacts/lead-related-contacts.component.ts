@@ -8,6 +8,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { finalize, first } from 'rxjs/operators';
+import invert from 'lodash/invert';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -54,6 +55,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         leadInfo: new LeadInfoDto()
     };
 
+    contactGroup = invert(ContactGroup);
     userTimezone = DateHelper.getUserTimezone();
     private formatting = AppConsts.formatting;
     private readonly leadDataSourceURI = 'Lead';
@@ -116,7 +118,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         this.contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
             if (contactInfo) {
                 this.data.contactInfo = contactInfo;
-                this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groupId);
+                this.isCGManageAllowed = this.permissionService.checkCGPermission(contactInfo.groups);
                 this.refreshDataSources();
                 this.initActionMenuItems();
                 this.initQueryParams();
@@ -177,7 +179,6 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                             this.clientFields.Id,
                             this.clientFields.Name,
                             this.clientFields.Email,
-                            this.clientFields.Status,
                             this.clientFields.ContactDate,
                             this.clientFields.BankCode,
                             this.clientFields.SourceContactId,
@@ -209,7 +210,6 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                             this.clientFields.Id,
                             this.clientFields.Name,
                             this.clientFields.Email,
-                            this.clientFields.Status,
                             this.clientFields.ContactDate,
                             this.clientFields.BankCode,
                             this.clientFields.ParentId,
@@ -310,7 +310,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         if (this.actionRecordData.CustomerId)
             this.contactsService.deleteContact(
                 this.data.contactInfo.personContactInfo.fullName,
-                this.data.contactInfo.groupId, id,
+                this.data.contactInfo.groups.map(group => group.groupId), id,
                 () => {
                     this.itemDetailsService.clearItemsSource();
                     (this.reuseService as CustomReuseStrategy).invalidate('leads');
@@ -332,7 +332,7 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
         else
             this.contactsService.deleteContact(
                 this.actionRecordData.Name,
-                this.actionRecordData.GroupId,
+                [this.actionRecordData.GroupId],
                 id, () => {
                     (this.reuseService as CustomReuseStrategy).invalidate('clients');
                     this.subContactDataGrid.instance.refresh();

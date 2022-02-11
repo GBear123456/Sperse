@@ -17,6 +17,8 @@ import { ActivatedRoute } from '@angular/router';
 /** Third party imports */
 import { Observable } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import invert from 'lodash/invert';
+import startCase from 'lodash/startCase';
 
 /** Application imports */
 import { TagsListComponent } from '@app/shared/common/lists/tags-list/tags-list.component';
@@ -26,7 +28,8 @@ import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignmen
 import { RatingComponent } from '@app/shared/common/lists/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-import { ContactInfoDto, LayoutType, UserServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ContactInfoDto, LayoutType, UserServiceProxy, 
+    ContactServiceProxy, ContactGroupDto } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -37,7 +40,7 @@ import { AppPermissions } from '@shared/AppPermissions';
 import { CrmService } from '@app/crm/crm.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { AppConsts } from '@shared/AppConsts';
-import { Status } from '@app/crm/contacts/operations-widget/status.interface';
+import { GroupStatus } from '@app/crm/contacts/operations-widget/status.interface';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 
 @Component({
@@ -80,14 +83,6 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         return this._pipelines;
     }
     @Input() selectedStageId: number;
-    @Input()
-    set stages(stages: any[]) {
-        this._stages = stages;
-        this.initToolbarConfig();
-    }
-    get stages(): any[] {
-        return this._stages;
-    }
     @Input() selectedPartnerTypeId: string;
     @Input()
     set partnerTypes(partnerTypes: any[]) {
@@ -104,7 +99,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     @Output() onDelete: EventEmitter<any> = new EventEmitter();
     @Output() onUpdateStage: EventEmitter<any> = new EventEmitter();
     @Output() onUpdatePartnerType: EventEmitter<any> = new EventEmitter();
-    @Output() onUpdateStatus: EventEmitter<Status> = new EventEmitter();
+    @Output() onUpdateStatus: EventEmitter<GroupStatus> = new EventEmitter();
     @Output() print: EventEmitter<any> = new EventEmitter();
 
     private initTimeout;
@@ -133,10 +128,10 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     isPfmAvailable = false;
     isApiAvailable = false;
     isBankCodeLayout: boolean = this.userManagementService.isLayout(LayoutType.BankCode);
-    statuses: Status[] = [
-        { id: 'A', name: this.l('Active') },
-        { id: 'I', name: this.l('Inactive') }
-    ];
+    statuses: GroupStatus[];
+    activeGroupIds: string[];
+    contactGroupKeys = invert(ContactGroup);
+    contactGroups: ContactGroupDto[];
 
     constructor(
         injector: Injector,
@@ -149,6 +144,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         private impersonationService: ImpersonationService,
         private crmService: CrmService,
         private userManagementService: UserManagementService,
+        private contactProxy: ContactServiceProxy,
         private renderer: Renderer2
     ) {
         super(injector);
@@ -160,9 +156,15 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 this.customToolbarConfig = undefined;
                 this.optionButtonConfig = undefined;
             }
-
+            this.updateActiveGroups();
             this.initToolbarConfig();
         });
+        this.contactProxy.getContactGroups().subscribe(
+            (res: ContactGroupDto[]) => {
+                this.contactGroups = res;
+                this.updateActiveGroups();
+            }
+        );
     }
 
     ngAfterViewInit() {
@@ -180,25 +182,31 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
 
     ngOnChanges(changes: SimpleChanges) {
         /** Load users instance (or get from cache) for user id to find out whether to show cfo or verify button */
-        if (changes.contactInfo && this.contactInfo.groupId == ContactGroup.Client && this.appService.isCfoLinkOrVerifyEnabled) {
-            const contactInfo: ContactInfoDto = changes.contactInfo.currentValue;
-            if (contactInfo.id && contactInfo.personContactInfo) {
-                this.crmService.isCfoAvailable(contactInfo.personContactInfo.userId)
-                    .subscribe((isCfoAvailable: boolean) => {
-                        this.isCfoAvailable = isCfoAvailable;
-                    });
-                this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.CRM)
-                    .subscribe((isCrmAvailable: boolean) => {
-                        this.isCrmAvailable = isCrmAvailable;
-                    });
-                this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.PFM)
-                    .subscribe((isPfmAvailable: boolean) => {
-                        this.isPfmAvailable = isPfmAvailable;
-                    });
-                this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.API)
-                    .subscribe((isApiAvailable: boolean) => {
-                        this.isApiAvailable = isApiAvailable;
-                    });
+        if (changes.contactInfo && this.contactInfo.groups) {
+            this.updateActiveGroups();
+
+            if (this.contactInfo.groups.some(group => group.groupId == ContactGroup.Client) && 
+                this.appService.isCfoLinkOrVerifyEnabled
+            ) {
+                const contactInfo: ContactInfoDto = changes.contactInfo.currentValue;
+                if (contactInfo.id && contactInfo.personContactInfo) {
+                    this.crmService.isCfoAvailable(contactInfo.personContactInfo.userId)
+                        .subscribe((isCfoAvailable: boolean) => {
+                            this.isCfoAvailable = isCfoAvailable;
+                        });
+                    this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.CRM)
+                        .subscribe((isCrmAvailable: boolean) => {
+                            this.isCrmAvailable = isCrmAvailable;
+                        });
+                    this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.PFM)
+                        .subscribe((isPfmAvailable: boolean) => {
+                            this.isPfmAvailable = isPfmAvailable;
+                        });
+                    this.crmService.isModuleAvailable(contactInfo.personContactInfo.userId, AppPermissions.API)
+                        .subscribe((isApiAvailable: boolean) => {
+                            this.isApiAvailable = isApiAvailable;
+                        });
+                }
             }
         }
     }
@@ -207,7 +215,10 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         this.toolbarConfig = [];
         clearTimeout(this.initTimeout);
         this.initTimeout = setTimeout(() => {
-            this.manageCGPermision = this.permission.getCGPermissionKey(this.customerType, 'Manage');
+            if (!this.contactInfo || !this.contactInfo.groups)
+                return ;
+
+            this.manageCGPermision = this.permission.getCGPermissionKey(this.contactInfo.groups.map(group => group.groupId), 'Manage');
             if (this.customToolbarConfig)
                 return (this.toolbarConfig = this.customToolbarConfig);
 
@@ -382,46 +393,45 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                 class: 'assign-to'
                             },
                             action: this.toggleUserAssignment.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType, 'ManageAssignments')
+                            disabled: !this.permission.checkCGPermission([this.customerType], 'ManageAssignments')
                         },
                         {
                             name: 'stage',
                             action: this.toggleStages.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType),
-                            visible: this.pipelineDataSource && this.pipelineDataSource.length
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, ''),
+                            visible: this.pipelineDataSource && this.pipelineDataSource.length && !this.contactInfo.parentId
                         },
                         {
-                            name: 'status',
+                            name: 'groups',
                             action: this.toggleStatus.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType)
-                                || this.contactInfo.statusId == ContactStatus.Prospective
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')                                
                         },
                         {
                             name: 'partnerType',
                             action: this.togglePartnerTypes.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType, ''),
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, ''),
                             visible: this.customerType == ContactGroup.Partner
                         },
                         {
                             name: 'lists',
                             action: this.toggleLists.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType, '')
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')
                         },
                         {
                             name: 'tags',
                             action: this.toggleTags.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType, '')
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')
                         },
                         {
                             name: 'rating',
                             action: this.toggleRating.bind(this),
-                            disabled: !this.permission.checkCGPermission(this.customerType, '')
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')
                         },
                         {
                             name: 'star',
                             action: this.toggleStars.bind(this),
                             visible: !this.isBankCodeLayout,
-                            disabled: !this.permission.checkCGPermission(this.customerType, '')
+                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')
                         }
                     ]
                 },
@@ -432,7 +442,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                         {
                             name: 'delete',
                             action: this.delete.bind(this),
-                            visible: Boolean(this.leadId) && this.permission.checkCGPermission(this.customerType)
+                            visible: Boolean(this.leadId) && this.permission.checkCGPermission(this.contactInfo.groups)
                                 && this.route.snapshot.children[0].routeConfig.path == 'contact-information'                                
                         }
                     ]
@@ -459,7 +469,8 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     }
 
     get autoLoginAllowed(): Boolean {
-        return this.isUserAvailable() && this.permission.checkCGPermission(this.contactInfo.groupId, 'UserInformation.AutoLogin');
+        return this.isUserAvailable() && this.contactInfo && 
+            this.permission.checkCGPermission(this.contactInfo.groups, 'UserInformation.AutoLogin');
     }
 
     getNavigationConfig() {
@@ -518,7 +529,44 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     }
 
     updateStatus(event) {
-        this.onUpdateStatus.emit(event);
+        if (event.addedItems.length) {
+            let elm = event.addedItems[0];
+            if (this.activeGroupIds.some(id => id == elm.id))
+                return;
+            elm.isActive = true;
+            this.onUpdateStatus.emit(elm);
+            this.statusComponent.tooltipVisible = false;
+        }
+
+        if (event.removedItems.length) {
+            let elm = event.removedItems[0];
+            if (this.activeGroupIds.some(id => id == elm.id)) {
+                elm.isActive = false;
+                this.onUpdateStatus.emit(elm);
+                this.statusComponent.tooltipVisible = false;
+            }
+        }
+    }
+
+    updateActiveGroups(status?: GroupStatus) {
+        if (this.contactGroups && this.contactInfo && this.contactInfo.groups) {
+            this.statuses = [];
+            this.contactGroups.forEach(group => {
+                if (this.permission.checkCGPermission([group.id], ''))
+                    this.statuses.push(<GroupStatus>{
+                        id: group.id,
+                        groupId: group.id,
+                        name: startCase(this.contactGroupKeys[group.id]),
+                        isActive: status && status.groupId == group.id ? status.isActive : 
+                            this.contactInfo.groups.some(cg => cg.groupId == group.id && cg.isActive),
+                        disabled: !this.permission.checkCGPermission([group.id], 'Manage')
+                    });
+            });
+
+            this.activeGroupIds = this.statuses.filter(
+                status => status.isActive
+            ).map(status => status.id);
+        }
     }
 
     updateStage(event) {
@@ -574,9 +622,9 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
      */
     get cfoLinkOrVerifyEnabled(): boolean {
         return !!(this.isCfoAvailable && this.appService.checkCFOClientAccessPermission()
-               || (
-                   this.isCfoAvailable === false && this.appService.canSendVerificationRequest()
-                   && this.contactInfo.statusId === ContactStatus.Active
-               ));
+            || (
+                this.isCfoAvailable === false && this.appService.canSendVerificationRequest()
+                && ((this.contactInfo && this.contactInfo.groups) || []).some(group => group.groupId == ContactGroup.Client && group.isActive)
+            ));
     }
 }

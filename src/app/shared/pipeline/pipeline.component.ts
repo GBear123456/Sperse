@@ -121,7 +121,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
         return [AppConsts.PipelinePurposeIds.lead, AppConsts.PipelinePurposeIds.order].indexOf(this.pipeline.purpose) >= 0;
     }
     private queryWithSearch: any = [];
-    private params: any = [];
+    params: any = [];
     private readonly DEFAULT_PAGE_COUNT = 10;
     private readonly COMPACT_VIEW_PAGE_COUNT = 10;
     compactView: boolean;
@@ -421,15 +421,19 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
      * @param {HTMLElement} column
      */
     private updateDropColumnHeight(column: HTMLElement) {
-        const targetElmBoundingClientRect = column.getBoundingClientRect();
-        const targetElmBottom = targetElmBoundingClientRect.bottom;
-        const titleBoundingClientRect = column.previousElementSibling.getBoundingClientRect();
-        const titleBottom = titleBoundingClientRect.bottom;
-        const difference = (titleBottom + 106 - targetElmBottom);
-        /** If title is lower then target column */
-        if (difference > 0) {
-            /** Increase target column height to allow to drop to it */
-            column.style.height = (targetElmBoundingClientRect.height + difference) + 'px';
+        if (column) {
+            const targetElmBoundingClientRect = column.getBoundingClientRect();
+            const targetElmBottom = targetElmBoundingClientRect.bottom;
+            if (column.previousElementSibling) {
+                const titleBoundingClientRect = column.previousElementSibling.getBoundingClientRect();
+                const titleBottom = titleBoundingClientRect.bottom;
+                const difference = (titleBottom + 106 - targetElmBottom);
+                /** If title is lower then target column */
+                if (difference > 0) {
+                    /** Increase target column height to allow to drop to it */
+                    column.style.height = (targetElmBoundingClientRect.height + difference) + 'px';
+                }
+            }
         }
     }
 
@@ -481,6 +485,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         .LoadRequestAction(skipAlreadyLoadedChecking));
             });
         }
+    }
+
+    clearStageDataSources() {
+        this._dataSources = {};
     }
 
     private getEntityById(id, stage: Stage) {
@@ -627,11 +635,14 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private getTotalsRequestUrl(filter) {
+        let filters = filter;
+        let customFilter = this._dataSource && this._dataSource.customFilter;
+        if (customFilter)
+            filters = filters.concat({ and: [customFilter] });
+
         return this.getODataUrl(
             this.totalsURI,
-            filter.concat({and: [
-                this._dataSource.customFilter
-            ]}),
+            filters,
             null,
             this.params
         );

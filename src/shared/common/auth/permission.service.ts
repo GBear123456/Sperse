@@ -1,10 +1,11 @@
-﻿/** Core imports */
+/** Core imports */
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import invert from 'lodash/invert';
 
 /** Application imports */
+import { ContactGroupInfo } from '@shared/service-proxies/service-proxies';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ContactGroup, ContactGroupPermission } from '@shared/AppEnums';
@@ -22,13 +23,43 @@ export class AppPermissionService {
         });
     }
 
-    getCGPermissionKey(contactGroupKey: ContactGroup, permission = ''): string {
-        return ContactGroupPermission[
-            this.CONTACT_GROUP_KEYS[contactGroupKey ? contactGroupKey.toString() : undefined]
+    getCGPermissionKey(contactGroups: ContactGroup[], permission = ''): string {
+        return contactGroups.map((group: ContactGroup) => {
+            return ContactGroupPermission[
+                this.CONTACT_GROUP_KEYS[group ? group.toString() : undefined]
             ] + (permission ? '.' : '') + permission;
+        }).join(
+            permission.includes('Manage') || permission.includes('UserInformation') ? '&' : '|'
+        );
     }
 
-    checkCGPermission(contactGroupKey: ContactGroup, permission = 'Manage') {
-        return this.permissionChecker.isGranted(this.getCGPermissionKey(contactGroupKey, permission) as AppPermissions);
+    checkCGPermission(contactGroups: ContactGroup[] | ContactGroupInfo[], permission = 'Manage') {
+        if (contactGroups && contactGroups.length) {
+            let groups: ContactGroup[] = [];
+            contactGroups.forEach(group => {
+                if (group)
+                    groups.push(<ContactGroup>(group['groupId'] || group));
+            });
+            return this.isGranted(this.getCGPermissionKey(groups , permission));
+        }
+        return false;
+    }
+
+    getFirstAvailableCG(): ContactGroup {
+        for (let contactGroup of Object.keys(ContactGroup)) {
+            if (this.checkCGPermission([ContactGroup[contactGroup]], ''))
+                return ContactGroup[contactGroup];
+        }
+
+        return null;
+    }
+
+    getFirstManageCG(): boolean {
+        for (let contactGroup of Object.keys(ContactGroup)) {
+            if (this.checkCGPermission([ContactGroup[contactGroup]]))
+                return ContactGroup[contactGroup];
+        }
+
+        return null;
     }
 }

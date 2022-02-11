@@ -102,7 +102,6 @@ export class ContactTypes {
 }
 
 export class ContactStatus {
-    static Prospective = 'P';
     static Active = 'A';
     static Inactive = 'I';
 }
@@ -110,7 +109,7 @@ export class ContactStatus {
 export class ContactGroup {
     static Client = 'C';
     static Partner = 'P';
-    static UserProfile = 'U';
+    static Employee = 'U';
     static Investor = 'I';
     static Vendor = 'V';
     static Other = 'O';
@@ -119,7 +118,7 @@ export class ContactGroup {
 export class ContactGroupPermission {
     static Client = AppPermissions.CRMCustomers;
     static Partner = AppPermissions.CRMPartners;
-    static UserProfile = AppPermissions.CRMEmployees;
+    static Employee = AppPermissions.CRMEmployees;
     static Investor = AppPermissions.CRMInvestors;
     static Vendor = AppPermissions.CRMVendors;
     static Other = AppPermissions.CRMOthers;

@@ -25,7 +25,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 })
 export class RelationCompaniesDialogComponent implements OnInit {
     @ViewChild(ContactListDialogComponent, { static: true }) contactList: ContactListDialogComponent;
-    manageAllowed: boolean = this.permissionService.checkCGPermission(this.data.groupId);
+    manageAllowed: boolean = this.permissionService.checkCGPermission(this.data.groups);
     displayList: PersonOrgRelationShortInfo[] = this.search();
 
     constructor(

@@ -5,9 +5,9 @@
         <div class="lists-tooltip-container">
             <div class="actions clearfix">
                 <span class="title">{{ls.l('Stars')}}</span>
-                <div [hidden]="hideButtons || bulkUpdateMode && !selectedKeys?.length">
-                    <span class="filter-clear" [class.disabled]="!isManageAllowed()" (click)="clear()">{{ls.l('Clear')}}</span>
-                    <span class="filter-apply" [class.disabled]="!isManageAllowed() || !starslist.selectedItemKeys?.length" (click)="apply()">{{ls.l('Apply')}}</span>
+                <div [hidden]="hideButtons || !manageAllowed || bulkUpdateMode && !selectedKeys?.length">
+                    <span class="filter-clear" [class.disabled]="!selectedItemKeys?.length"(click)="clear()">{{ls.l('Clear')}}</span>
+                    <span class="filter-apply" [class.disabled]="!selectedItemKeys?.length" (click)="apply()">{{ls.l('Apply')}}</span>
                 </div>
             </div>
             <dx-list #starslist
@@ -16,7 +16,7 @@
                 [showSelectionControls]="true"
                 [dataSource]="list"
                 [keyExpr]="'id'"
-                [selectedItemKeys]="selectedItemKeys"
+                [(selectedItemKeys)]="selectedItemKeys"
                 (onContentReady)="onContentReady($event)"
                 (onInitialized)="onInitialized($event)"
                 (onSelectionChanged)="onSelectionChange($event)">

@@ -107,7 +107,9 @@ export class ContactInformationComponent implements AfterViewInit, OnDestroy {
                 address.usageTypeId = dialogData.usageTypeId;
                 address.zip = dialogData.zip;
             } else if (result.id) {
-                addresses.push(AddressDto.fromJS(dialogData));
+                let address = AddressDto.fromJS(dialogData);
+                address.id = result.id;
+                addresses.push(address);
             }
             this.contactsService.verificationUpdate();
         });

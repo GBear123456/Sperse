@@ -9,7 +9,6 @@ import { ListsStoreModule } from '@app/store/lists-store';
 import { PartnerTypesStoreModule } from '@app/store/partner-types-store';
 import { RatingsStoreModule } from '@app/store/ratings-store';
 import { StarsStoreModule } from '@app/store/stars-store';
-import { StatusesStoreModule } from '@app/store/statuses-store';
 import { TagsStoreModule } from '@app/store/tags-store';
 import { OrganizationTypeStoreModule } from '@app/store/organization-types-store';
 
@@ -22,7 +21,6 @@ import { OrganizationTypeStoreModule } from '@app/store/organization-types-store
         PartnerTypesStoreModule,
         RatingsStoreModule,
         StarsStoreModule,
-        StatusesStoreModule,
         TagsStoreModule,
         OrganizationTypeStoreModule
     ],
