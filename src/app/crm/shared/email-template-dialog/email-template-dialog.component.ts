@@ -293,16 +293,21 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     validateData() {
         if (this.templateEditMode) {
-            if (!this.getTemplateName())
+            if (!this.getTemplateName()) {
+                this.templateComponent.isValid = false;
                 return this.notifyService.error(
                     this.ls.l('RequiredField', this.ls.l('Template')));
+            }
 
             if (this.data.templateType == EmailTemplateType.WelcomeEmail && !this.data.subject)
                 return this.notifyService.error(
                     this.ls.l('RequiredField', this.ls.l('Subject')));
         } else {
-            if (!this.validationGroup.instance.validate().isValid)
-                return this.notifyService.error(this.ls.l('InvalidEmailAddress'));
+            let validate = this.validationGroup.instance.validate();
+            if (!validate.isValid)
+                return validate.brokenRules.forEach(rule => {
+                    this.notifyService.error(rule.message);
+                });
 
             if (!this.data.from)
                 return this.notifyService.error(
@@ -434,6 +439,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onTemplateChanged(event) {
+        if (event.value)
+            this.templateComponent.isValid = true;
         this.data.templateId = event.value;
         if (event.value) {
             if (this.templateEditMode)
@@ -527,6 +534,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onNewTemplate(event) {
+        if (event.text)
+            this.templateComponent.isValid = true;
         event.customItem = { name: event.text, id: undefined };
     }
 

@@ -22,7 +22,7 @@ export class EmailSmtpSettingsService {
         this.ls = injector.get(AppLocalizationService);
     }
 
-    sendTestEmail(input: SendTestEmailInput, finalizeCallback?: () => {}): void {
+    sendTestEmail(input: SendTestEmailInput, finalizeCallback?: () => void): void {
         this.emailSmtpSettingsService.sendTestEmail(input).pipe(
             finalize(() => finalizeCallback && finalizeCallback())
         ).subscribe(() => {

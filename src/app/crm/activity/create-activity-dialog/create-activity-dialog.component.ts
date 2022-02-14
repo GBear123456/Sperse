@@ -11,7 +11,6 @@ import { finalize } from 'rxjs/operators';
 import * as moment from 'moment';
 
 /** Application imports */
-import { DialogService } from '@app/shared/common/dialogs/dialog.service';
 import {
     ActivityServiceProxy,
     ContactServiceProxy,
@@ -19,7 +18,9 @@ import {
     CreateActivityDto,
     UpdateActivityDto,
     LayoutType,
-    ActivityDto
+    ActivityDto,
+
+    EntityContactInfo
 } from '@shared/service-proxies/service-proxies';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
 import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignment-list/user-assignment-list.component';
@@ -58,15 +59,13 @@ export class CreateActivityDialogComponent implements OnInit {
     @ViewChild('endDateRef') endDateComponent: DxDateBoxComponent;
 
     private readonly LOOKUP_RECORDS_COUNT = 20;
-    private lookupTimeout: any;
-    private latestSearchPhrase = '';
     private listFilterTimeout: any;
     private initialStageId;
 
     dateValidator: any;
     stages: any[] = [];
 
-    contacts: any = [];
+    contacts: EntityContactInfo[] = [];
 
     saveButtonId = 'saveActivityOptions';
     toolbarConfig = [];
@@ -112,6 +111,7 @@ export class CreateActivityDialogComponent implements OnInit {
         private changeDetectorRef: ChangeDetectorRef,
         private permissionChecker: PermissionCheckerService,
         private userManagementService: UserManagementService,
+        private contactsServiceProxy: ContactServiceProxy,
         public activityProxy: ActivityServiceProxy,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
@@ -183,13 +183,15 @@ export class CreateActivityDialogComponent implements OnInit {
 
     loadResourcesData() {
         this.modalDialog.startLoading();
-        Promise.all([
-            this.lookup('contacts').then(res => this.contacts = res)
-        ]).then(
-            () => this.modalDialog.finishLoading(),
-            () => this.modalDialog.finishLoading()
-        );
+        this.getAllByPhraseObserverable()
+            .pipe(finalize(() => this.modalDialog.finishLoading()))
+            .subscribe(res => this.contacts = res);
+
         this.initToolbarConfig();
+    }
+
+    getAllByPhraseObserverable(search = undefined) {
+        return this.contactsServiceProxy.getAllByPhrase(search, this.LOOKUP_RECORDS_COUNT, false, undefined, false);
     }
 
     lookup(uri, search = '') {
@@ -409,14 +411,12 @@ export class CreateActivityDialogComponent implements OnInit {
     onListFiltered(event) {
         clearTimeout(this.listFilterTimeout);
         this.listFilterTimeout = setTimeout(() => {
-            let uri = event.listTitle.toLowerCase(),
-                value = this.getInputElementValue(event);
-            this.lookup(uri, value).then(res => {
-                switch (uri) {
-                    case 'contacts':
+            let value = this.getInputElementValue(event);
+
+            this.getAllByPhraseObserverable(value)
+                .subscribe(res => {
                         this.contacts = res;
-                        break;
-                }
+                    this.changeDetectorRef.detectChanges();
             });
         }, 1000);
     }
@@ -478,32 +478,6 @@ export class CreateActivityDialogComponent implements OnInit {
 
     onSaveOptionSelectionChanged() {
         this.save();
-    }
-
-    lookupItems($event) {
-        let uri = $event.component.option('name'),
-            search = this.latestSearchPhrase = $event.event.target.value;
-
-        if (this[uri.toLowerCase()].length) {
-            setTimeout(() => { $event.event.target.value = search; });
-            this[uri.toLowerCase()] = [];
-        }
-
-        clearTimeout(this.lookupTimeout);
-        this.lookupTimeout = setTimeout(() => {
-            $event.component.option('opened', true);
-            $event.component.option('noDataText', this.ls.l('LookingForItems'));
-            this.lookup(uri, search).then((res) => {
-                if (search == this.latestSearchPhrase) {
-                    this[uri.toLowerCase()] = res;
-                    $event.component.option('opened', true);
-                    setTimeout(() => { $event.event.target.value = search; });
-                    if (!res['length'])
-                        $event.component.option('noDataText', this.ls.l('NoItemsFound'));
-                } else
-                    $event.component.option('opened', false);
-            });
-        }, 500);
     }
 
     onStagesChanged(event) {
