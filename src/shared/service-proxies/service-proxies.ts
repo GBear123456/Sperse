@@ -21660,54 +21660,6 @@ export class LeadServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
-
-    /**
-     * @return Success
-     */
-    processLeadsWithSubscriptions(): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/Lead/ProcessLeadsWithSubscriptions";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processProcessLeadsWithSubscriptions(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processProcessLeadsWithSubscriptions(<any>response_);
-                } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
-                }
-            } else
-                return <Observable<void>><any>_observableThrow(response_);
-        }));
-    }
-
-    protected processProcessLeadsWithSubscriptions(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
-            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(<any>null);
-    }
 }
 
 @Injectable()
@@ -26239,6 +26191,54 @@ export class OrganizationContactServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    mergeOrganizations(): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrganizationContact/MergeOrganizations";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processMergeOrganizations(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processMergeOrganizations(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processMergeOrganizations(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
 }
 
 @Injectable()
@@ -30470,7 +30470,7 @@ export class ProfilePhotoServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    createPhoto(body: ContactPhotoInput | null | undefined): Observable<ProfilePhotoDto> {
+    createPhoto(body: CreateProfilePhotoInput | null | undefined): Observable<ProfilePhotoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/ProfilePhoto/CreatePhoto";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -30520,6 +30520,57 @@ export class ProfilePhotoServiceProxy {
             }));
         }
         return _observableOf<ProfilePhotoDto>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    deletePhoto(id: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePhoto/DeletePhoto?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeletePhoto(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeletePhoto(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeletePhoto(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -70096,6 +70147,7 @@ export class LearningResourceGroupInfoOutput implements ILearningResourceGroupIn
     groupName!: string | undefined;
     groupImageUrl!: string | undefined;
     groupHtmlColor!: string | undefined;
+    groupSortOrder!: number | undefined;
     resources!: LearningResourceInfoOutput[] | undefined;
 
     constructor(data?: ILearningResourceGroupInfoOutput) {
@@ -70113,6 +70165,7 @@ export class LearningResourceGroupInfoOutput implements ILearningResourceGroupIn
             this.groupName = data["groupName"];
             this.groupImageUrl = data["groupImageUrl"];
             this.groupHtmlColor = data["groupHtmlColor"];
+            this.groupSortOrder = data["groupSortOrder"];
             if (data["resources"] && data["resources"].constructor === Array) {
                 this.resources = [];
                 for (let item of data["resources"])
@@ -70134,6 +70187,7 @@ export class LearningResourceGroupInfoOutput implements ILearningResourceGroupIn
         data["groupName"] = this.groupName;
         data["groupImageUrl"] = this.groupImageUrl;
         data["groupHtmlColor"] = this.groupHtmlColor;
+        data["groupSortOrder"] = this.groupSortOrder;
         if (this.resources && this.resources.constructor === Array) {
             data["resources"] = [];
             for (let item of this.resources)
@@ -70148,6 +70202,7 @@ export interface ILearningResourceGroupInfoOutput {
     groupName: string | undefined;
     groupImageUrl: string | undefined;
     groupHtmlColor: string | undefined;
+    groupSortOrder: number | undefined;
     resources: LearningResourceInfoOutput[] | undefined;
 }
 
@@ -79901,7 +79956,9 @@ export interface IUpdateLinksInput {
 
 export class ProfilePhotoDto implements IProfilePhotoDto {
     id!: number | undefined;
-    publicId!: string | undefined;
+    providerKey!: string | undefined;
+    fileUrl!: string | undefined;
+    thumbnailUrl!: string | undefined;
     isPublished!: boolean | undefined;
 
     constructor(data?: IProfilePhotoDto) {
@@ -79916,7 +79973,9 @@ export class ProfilePhotoDto implements IProfilePhotoDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.publicId = data["publicId"];
+            this.providerKey = data["providerKey"];
+            this.fileUrl = data["fileUrl"];
+            this.thumbnailUrl = data["thumbnailUrl"];
             this.isPublished = data["isPublished"];
         }
     }
@@ -79931,7 +79990,9 @@ export class ProfilePhotoDto implements IProfilePhotoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["publicId"] = this.publicId;
+        data["providerKey"] = this.providerKey;
+        data["fileUrl"] = this.fileUrl;
+        data["thumbnailUrl"] = this.thumbnailUrl;
         data["isPublished"] = this.isPublished;
         return data; 
     }
@@ -79939,8 +80000,54 @@ export class ProfilePhotoDto implements IProfilePhotoDto {
 
 export interface IProfilePhotoDto {
     id: number | undefined;
-    publicId: string | undefined;
+    providerKey: string | undefined;
+    fileUrl: string | undefined;
+    thumbnailUrl: string | undefined;
     isPublished: boolean | undefined;
+}
+
+export class CreateProfilePhotoInput implements ICreateProfilePhotoInput {
+    providerKey!: string | undefined;
+    fileUrl!: string | undefined;
+    thumbnailUrl!: string | undefined;
+
+    constructor(data?: ICreateProfilePhotoInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.providerKey = data["providerKey"];
+            this.fileUrl = data["fileUrl"];
+            this.thumbnailUrl = data["thumbnailUrl"];
+        }
+    }
+
+    static fromJS(data: any): CreateProfilePhotoInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateProfilePhotoInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["providerKey"] = this.providerKey;
+        data["fileUrl"] = this.fileUrl;
+        data["thumbnailUrl"] = this.thumbnailUrl;
+        return data; 
+    }
+}
+
+export interface ICreateProfilePhotoInput {
+    providerKey: string | undefined;
+    fileUrl: string | undefined;
+    thumbnailUrl: string | undefined;
 }
 
 export class ProfileEmail implements IProfileEmail {
@@ -80124,7 +80231,7 @@ export interface IProfileLink {
 }
 
 export class ProfilePhoto implements IProfilePhoto {
-    publicId!: string | undefined;
+    fileUrl!: string | undefined;
 
     constructor(data?: IProfilePhoto) {
         if (data) {
@@ -80137,7 +80244,7 @@ export class ProfilePhoto implements IProfilePhoto {
 
     init(data?: any) {
         if (data) {
-            this.publicId = data["publicId"];
+            this.fileUrl = data["fileUrl"];
         }
     }
 
@@ -80150,13 +80257,13 @@ export class ProfilePhoto implements IProfilePhoto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["publicId"] = this.publicId;
+        data["fileUrl"] = this.fileUrl;
         return data; 
     }
 }
 
 export interface IProfilePhoto {
-    publicId: string | undefined;
+    fileUrl: string | undefined;
 }
 
 export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
@@ -85888,6 +85995,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
     defaultAdvisorContactId!: number | undefined;
     tier2CommissionSource!: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode | undefined;
+    disableProlongingSubscriptionByQuantity!: boolean | undefined;
 
     constructor(data?: IInvoiceSettingsDto) {
         if (data) {
@@ -85913,6 +86021,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
             this.defaultAdvisorContactId = data["defaultAdvisorContactId"];
             this.tier2CommissionSource = data["tier2CommissionSource"];
             this.commissionAffiliateAssignmentMode = data["commissionAffiliateAssignmentMode"];
+            this.disableProlongingSubscriptionByQuantity = data["disableProlongingSubscriptionByQuantity"];
         }
     }
 
@@ -85938,6 +86047,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
         data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
         data["tier2CommissionSource"] = this.tier2CommissionSource;
         data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
+        data["disableProlongingSubscriptionByQuantity"] = this.disableProlongingSubscriptionByQuantity;
         return data; 
     }
 }
@@ -85956,6 +86066,7 @@ export interface IInvoiceSettingsDto {
     defaultAdvisorContactId: number | undefined;
     tier2CommissionSource: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode | undefined;
+    disableProlongingSubscriptionByQuantity: boolean | undefined;
 }
 
 export class InvoiceSettings implements IInvoiceSettings {
@@ -85971,6 +86082,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     defaultAdvisorContactId!: number | undefined;
     tier2CommissionSource!: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode | undefined;
+    disableProlongingSubscriptionByQuantity!: boolean | undefined;
 
     constructor(data?: IInvoiceSettings) {
         if (data) {
@@ -85995,6 +86107,7 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.defaultAdvisorContactId = data["defaultAdvisorContactId"];
             this.tier2CommissionSource = data["tier2CommissionSource"];
             this.commissionAffiliateAssignmentMode = data["commissionAffiliateAssignmentMode"];
+            this.disableProlongingSubscriptionByQuantity = data["disableProlongingSubscriptionByQuantity"];
         }
     }
 
@@ -86019,6 +86132,7 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
         data["tier2CommissionSource"] = this.tier2CommissionSource;
         data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
+        data["disableProlongingSubscriptionByQuantity"] = this.disableProlongingSubscriptionByQuantity;
         return data; 
     }
 }
@@ -86036,6 +86150,7 @@ export interface IInvoiceSettings {
     defaultAdvisorContactId: number | undefined;
     tier2CommissionSource: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode | undefined;
+    disableProlongingSubscriptionByQuantity: boolean | undefined;
 }
 
 export class TenantUserManagementSettingsEditDto implements ITenantUserManagementSettingsEditDto {
