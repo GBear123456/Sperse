@@ -1865,4 +1865,16 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
         this.onGridOptionChanged(event);
     }
+
+    filterByStatusApply(data) {
+        let filterElement: FilterContactStatusModel = 
+            <FilterContactStatusModel>this.filterModelStatus.items.element;
+        if (!data || filterElement.value == data.id)
+            filterElement.value = [];
+        else {
+            filterElement.value = [data.id];
+            filterElement.includeProspective = 
+                filterElement.FILTER_EXCLUDE_PROSPECTIVE;
+        }
+    }
 }
