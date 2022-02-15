@@ -103,7 +103,13 @@
                                            valueExpr="id"
                                            placeholder=""
                                            [(value)]="settings.commissionAffiliateAssignmentMode">
-                            </dx-select-box>
+                            </dx-select-box>                              
+                        </ng-container>
+                        <ng-container>
+                            <dx-check-box [readOnly]="isManageUnallowed"
+                                        [text]="ls.l('InvoiceEmail_DisableProlongingSubscriptionByQuantity')"
+                                        [(value)]="settings.disableProlongingSubscriptionByQuantity">
+                            </dx-check-box>    
                         </ng-container>
                     </div>
                 </div>
