@@ -8,6 +8,7 @@ import {
 
 /** Third party imports */
 import { forkJoin, Observable } from 'rxjs';
+import kebabCase from 'lodash/kebabCase';
 import { tap } from 'rxjs/operators';
 
 /** Application imports */
@@ -16,7 +17,8 @@ import {
     TenantLoginInfoDto,
     TenantCustomizationServiceProxy,
     TenantCustomizationInfoDto,
-    CustomCssType
+    CustomCssType,
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -121,5 +123,14 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                 this.tenant.portalCustomCssId = value;
                 break;
         }
+    }
+
+    getCustomPlatformStylePath() {
+        let tenant = this.appSession.tenant,
+            basePath = 'assets/common/styles/custom/';
+        if (tenant && tenant.customLayoutType && tenant.customLayoutType != LayoutType.Default)
+            return basePath + kebabCase(tenant.customLayoutType) + '/style.css'
+        else
+            return basePath + 'platform-custom-style.css';
     }
 }

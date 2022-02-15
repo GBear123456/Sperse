@@ -457,7 +457,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     getCustomPlatformStylePath() {
         let tenant = this.appSession.tenant,
             basePath = 'assets/common/styles/custom/';
-        if (tenant && tenant.customLayoutType)
+        if (tenant && tenant.customLayoutType && tenant.customLayoutType != LayoutType.Default)
             return basePath + kebabCase(tenant.customLayoutType) + '/style.css'
         else
             return basePath + 'platform-custom-style.css';
