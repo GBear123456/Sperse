@@ -30,11 +30,11 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                     if (!this.ignoreParent || !item[this.itemsExpr]) {
                         result.push(
                             {
-                                name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].' + this.filterKey],
+                                name: ['subscriptionFilter.' + this.filterBy + '[' + filterIndex + '].' + this.filterKey],
                                 value: item.id
                             },
                             {
-                                name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].Availability'],
+                                name: ['subscriptionFilter.' + this.filterBy + '[' + filterIndex + '].Availability'],
                                 value: (item.current ? SubscriptionAvailability.Current : 0) |
                                     (item.past ? SubscriptionAvailability.Past : 0) |
                                     (item.never ? SubscriptionAvailability.Never : 0)
@@ -50,16 +50,16 @@ export class SubscriptionsFilterModel extends FilterItemModel {
                     item[this.itemsExpr].forEach(level => {
                         if (level.current || level.past || level.never) {
                             result.push({
-                                name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].' + this.filterKey],
+                                name: ['subscriptionFilter.' + this.filterBy + '[' + filterIndex + '].' + this.filterKey],
                                 value: this.ignoreParent ? level.id : item.id
                             });
                             if (!this.ignoreParent)
                                 result.push({
-                                    name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].LevelId'],
+                                    name: ['subscriptionFilter.' + this.filterBy + '[' + filterIndex + '].LevelId'],
                                     value: level.id
                                 });
                             result.push({
-                                name: ['subscriptionFilters.' + this.filterBy + '[' + filterIndex + '].Availability'],
+                                name: ['subscriptionFilter.' + this.filterBy + '[' + filterIndex + '].Availability'],
                                 value: (level.current ? SubscriptionAvailability.Current : 0) |
                                     (level.past ? SubscriptionAvailability.Past : 0) |
                                     (level.never ? SubscriptionAvailability.Never : 0)
@@ -73,7 +73,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
 
         if (this.filterMode)
             result.push({
-                name: 'subscriptionFilters.Mode',
+                name: 'subscriptionFilter.Mode',
                 value: this.filterMode
             });
 
