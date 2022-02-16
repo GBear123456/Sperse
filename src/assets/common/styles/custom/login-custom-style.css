@@ -1,66 +1,66 @@
 .login {
     background: #FFF;
 }
-.logoImage {
-    width: 200px;
+.logo img {
+    width: auto;
     height: 60px;
 }
 h1 {
-    font-size: 32px;
-    font-weight: 600;
-    text-align: center;
-    color: #424c56;
+    font-size: 32px!important;
+    font-weight: 600!important;
+    text-align: center!important;
+    color: #424c56!important;
 }
 input {
-    font-size: 16px;
-    font-weight: 300;
-    color: #888d92;
-    border: 0;
-    border-bottom: 1px solid #dfdfdf;
-    border-radius: 0;
-    padding: 12px 8px;
-    outline: none;
+    font-size: 16px!important;
+    font-weight: 300!important;
+    color: #888d92!important;
+    border: 0!important;
+    border-bottom: 1px solid #dfdfdf!important;
+    border-radius: 0!important;
+    padding: 12px 8px!important;
+    outline: none!important;
 }
 button {
-    min-width: 300px;
-    border-radius: 100px;
-    background-color: #00aeef;
-    font-size: 18px;
-    font-weight: 500;
-    color: #ffffff;
-    border: 0;
-    box-shadow: none;
-    line-height: 54px;
-    position: relative;
-    outline: none;
+    min-width: 300px!important;
+    border-radius: 100px!important;
+    background-color: #00aeef!important;
+    font-size: 18px!important;
+    font-weight: 500!important;
+    color: #ffffff!important;
+    border: 0!important;
+    box-shadow: none!important;
+    line-height: 54px!important;
+    position: relative!important;
+    outline: none!important;
 }
 .agree-rights {
-    font-size: 15px;
-    font-weight: 300;
-    color: #888d92;
-    margin-top: 30px;
-    margin-bottom: 75px;
+    font-size: 15px!important;
+    font-weight: 300!important;
+    color: #888d92!important;
+    margin-top: 30px!important;
+    margin-bottom: 75px!important;
 }
 .img-responsive {
-    margin: 60px auto;
-    max-width: 100%;
+    margin: 60px auto!important;
+    max-width: 100%!important;
 }
 .slogan {
-    font-size: 24px;
-    font-weight: 600;
-    color: #424c56;
-    text-transform: uppercase;
+    font-size: 24px!important;
+    font-weight: 600!important;
+    color: #424c56!important;
+    text-transform: uppercase!important;
 }
 .slogan-description {
-    font-size: 16px;
-    font-weight: 300;
-    line-height: 1.44;
-    color: #888d92;
+    font-size: 16px!important;
+    font-weight: 300!important;
+    line-height: 1.44!important;
+    color: #888d92!important;
 }
 .copyright {
-    text-align: center;
-    margin: 10px auto;
-    padding: 10px;
-    color: #7a8ca5;
-    font-size: 13px;
+    text-align: center!important;
+    margin: 10px auto!important;
+    padding: 10px!important;
+    color: #7a8ca5!important;
+    font-size: 13px!important;
 }

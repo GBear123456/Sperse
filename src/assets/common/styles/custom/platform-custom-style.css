@@ -14,15 +14,17 @@ body app-header dx-nav-bar .dx-state-hover {
 body app-header dx-drop-down-box input {
   border: 0 !important;
 }
-body app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text,
+body app-header dx-nav-bar .dx-item.dx-tab.dx-state-hover .dx-menu-item-text {
+  color: #333 !important;
+}
 body app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected .dx-menu-item-text {
-  color: #f0d500 !important;
+  color: #202b35 !important;
 }
 body app-header dx-nav-bar .dx-item.dx-tab.dx-tab-selected {
-  border-bottom: none !important;
+  border-bottom: 3px solid #00aeef!important;
 }
 body app-header dx-nav-bar .dx-item.dx-tab .dx-menu-item-text {
-  color: #FFF !important;
+  color: #333 !important;
 }
 body .m-dropdown__arrow {
   color: #313131 !important;
@@ -152,24 +154,24 @@ body .accountsContainer .not-initialized-content body-text .btn-layout {
 }
 body .btn-layout {
   font-family: 'Poppins' !important;
-  background-color: #ffcc00;
-  color: #000000;
+  background-color: #00aeef;
+  color: #ffffff;
   transition: 0.2s;
   border: none;
 }
 body .btn-layout:hover {
-  background-color: #e0b400;
+  background-color: #00aeef;
   box-shadow: 0 0 3px rgba(255, 204, 0, 0.5);
 }
 body .alert.m-alert--outline.alert-success {
-  border-color: #ffcc00;
+  border-color: #00aeef;
   color: #000;
 }
 body .alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon {
-  background: #ffcc00 !important;
+  background: #00aeef !important;
 }
 body .alert.m-alert--outline.alert-success.alert-success.m-alert--icon-solid .m-alert__icon span {
-  border-left-color: #ffcc00 !important;
+  border-left-color: #00aeef !important;
 }
 body .alert.m-alert--outline .m-alert__icon small.label {
   font-weight: 600;
@@ -179,8 +181,8 @@ body .alert.m-alert--outline .m-alert__icon small.label {
 }
 body .btn.btn-primary,
 body .button-primary {
-  background-color: #ffcc00;
-  color: #000;
+  background-color: #00aeef;
+  color: #FFF;
 }
 body .btn.btn-primary:before,
 body .button-primary:before {
@@ -188,11 +190,11 @@ body .button-primary:before {
 }
 body .btn.btn-primary:after,
 body .button-primary:after {
-  background-color: #ffcc00;
+  background-color: #00aeef;
 }
 body .btn.btn-primary:hover,
 body .button-primary:hover {
-  background: #e0b400;
+  background: #00aeef;
 }
 body .cdk-overlay-pane.footer-slider,
 body .cdk-overlay-pane.user-info {
@@ -286,7 +288,7 @@ body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__it
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active,
 body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active,
 body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active {
-  border-bottom: 1px solid #ffcc00 !important;
+  border-bottom: 1px solid #00aeef !important;
 }
 body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link:hover span,
@@ -296,7 +298,7 @@ body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content .m-tabs__it
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span,
 body .cdk-overlay-pane.footer-slider app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span,
 body .cdk-overlay-pane.user-info app-modal-dialog mat-dialog-content .m-tabs__item .m-tabs__link.active span {
-  color: #ffcc00 !important;
+  color: #00aeef !important;
 }
 body .cdk-overlay-pane.footer-slider modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
 body .cdk-overlay-pane.user-info modal-dialog mat-dialog-content /deep/ country-phone-number .wrapper,
@@ -450,7 +452,7 @@ body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeli
   display: none;
 }
 body .m-scrollable .m-list-timeline__items .m-list-timeline__item .m-list-timeline__badge:before {
-  background-color: #ffcc00;
+  background-color: #00aeef;
   width: 10px;
   height: 10px;
   margin-top: -5px;
