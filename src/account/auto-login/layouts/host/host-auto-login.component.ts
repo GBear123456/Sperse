@@ -98,6 +98,9 @@ export class HostAutoLoginComponent {
                 if (res && res.detectedTenancies && res.detectedTenancies.length) {
                     this.detectedTenancies = res.detectedTenancies;
                     this.isLinkSent = res.detectedTenancies.length == 1;
+                    if (res.detectedTenancies.length == 1) {
+                        abp.multiTenancy.setTenantIdCookie(res.detectedTenancies[0].id);
+                    }
                 } else
                     this.isLinkSent = !isNaN(tenantId);
             }, () => this.isInstantForm = false);
