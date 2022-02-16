@@ -58,11 +58,13 @@ export class ODataService {
     }
 
     cancelDataSource(dataSource, requestKey) {
-        let operationId = dataSource['operationId'];
-        if (dataSource.isLoading() && !isNaN(operationId)) {
-            dataSource.cancel(operationId);
-            if (this.dxRequestPool[requestKey])
-                this.dxRequestPool[requestKey].abort();
+        if (dataSource) {
+            let operationId = dataSource['operationId'];
+            if (dataSource.isLoading() && !isNaN(operationId)) {
+                dataSource.cancel(operationId);
+                if (this.dxRequestPool[requestKey])
+                    this.dxRequestPool[requestKey].abort();
+            }
         }
     }
 
