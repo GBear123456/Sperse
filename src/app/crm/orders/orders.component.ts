@@ -1579,7 +1579,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         selectedProducts && selectedProducts.filter(item => Number.isInteger(item.id)).forEach((item, i) => {
             result.push({
-                name: 'subscriptionsFilter.ProductIds[' + i + ']',
+                name: 'subscriptionFilter.ProductIds[' + i + ']',
                 value: item.id
             });
         });
@@ -1590,13 +1590,13 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 isNaN(serviceIndex) ? serviceIndex = 0 : serviceIndex++;
                 serviceId = item.parentId || item.id;
                 result.push({
-                    name: 'subscriptionsFilter.Services[' + serviceIndex + '].ServiceId',
+                    name: 'subscriptionFilter.Services[' + serviceIndex + '].ServiceId',
                     value: serviceId
                 });
             }
             if (item.parentId) {
                 result.push({
-                    name: 'subscriptionsFilter.Services[' + serviceIndex + '].LevelIds[' + levelIndex + ']',
+                    name: 'subscriptionFilter.Services[' + serviceIndex + '].LevelIds[' + levelIndex + ']',
                     value: item.id
                 });
                 levelIndex++;
