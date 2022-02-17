@@ -56,6 +56,7 @@
                 [filterModel]="filterModelStatus"
                 targetSelector="[aria-label='{{l('Toolbar_Status')}}']"
                 [list]="statuses"
+                (onFilterApply)="filterByStatusApply($event)"
                 (onItemSelected)="updateClientStatuses($event)">
         </app-static-list>
         <tags-list [selectedKeys]="selectedClientKeys" [bulkUpdateMode]="true" [filterModel]="filterModelTags"></tags-list>
