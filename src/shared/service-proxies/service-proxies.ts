@@ -14502,6 +14502,77 @@ export class DashboardServiceProxy {
     }
 
     /**
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @contactGroupId (optional) 
+     * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
+     * @return Success
+     */
+    getContactInfoStatsByStar(startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<GetContactInfoStatsByStarOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactInfoStatsByStar?";
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
+        if (sourceContactId !== undefined)
+            url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactInfoStatsByStar(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactInfoStatsByStar(<any>response_);
+                } catch (e) {
+                    return <Observable<GetContactInfoStatsByStarOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetContactInfoStatsByStarOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactInfoStatsByStar(response: HttpResponseBase): Observable<GetContactInfoStatsByStarOutput[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(GetContactInfoStatsByStarOutput.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetContactInfoStatsByStarOutput[]>(<any>null);
+    }
+
+    /**
      * @contactGroupId (optional) 
      * @sourceContactId (optional) 
      * @return Success
@@ -30470,7 +30541,7 @@ export class ProfilePhotoServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    createPhoto(body: ContactPhotoInput | null | undefined): Observable<ProfilePhotoDto> {
+    createPhoto(body: CreateProfilePhotoInput | null | undefined): Observable<ProfilePhotoDto> {
         let url_ = this.baseUrl + "/api/services/CRM/ProfilePhoto/CreatePhoto";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -30520,6 +30591,57 @@ export class ProfilePhotoServiceProxy {
             }));
         }
         return _observableOf<ProfilePhotoDto>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    deletePhoto(id: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePhoto/DeletePhoto?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeletePhoto(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeletePhoto(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeletePhoto(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
     }
 }
 
@@ -61584,6 +61706,66 @@ export interface IGetCountByStarOutput {
     count: number | undefined;
 }
 
+export class GetContactInfoStatsByStarOutput implements IGetContactInfoStatsByStarOutput {
+    countWithEmail!: number | undefined;
+    countWithName!: number | undefined;
+    countWithPhone!: number | undefined;
+    countWithCountry!: number | undefined;
+    countWithNameAndEmail!: number | undefined;
+    key!: string | undefined;
+    count!: number | undefined;
+
+    constructor(data?: IGetContactInfoStatsByStarOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.countWithEmail = data["countWithEmail"];
+            this.countWithName = data["countWithName"];
+            this.countWithPhone = data["countWithPhone"];
+            this.countWithCountry = data["countWithCountry"];
+            this.countWithNameAndEmail = data["countWithNameAndEmail"];
+            this.key = data["key"];
+            this.count = data["count"];
+        }
+    }
+
+    static fromJS(data: any): GetContactInfoStatsByStarOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetContactInfoStatsByStarOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["countWithEmail"] = this.countWithEmail;
+        data["countWithName"] = this.countWithName;
+        data["countWithPhone"] = this.countWithPhone;
+        data["countWithCountry"] = this.countWithCountry;
+        data["countWithNameAndEmail"] = this.countWithNameAndEmail;
+        data["key"] = this.key;
+        data["count"] = this.count;
+        return data; 
+    }
+}
+
+export interface IGetContactInfoStatsByStarOutput {
+    countWithEmail: number | undefined;
+    countWithName: number | undefined;
+    countWithPhone: number | undefined;
+    countWithCountry: number | undefined;
+    countWithNameAndEmail: number | undefined;
+    key: string | undefined;
+    count: number | undefined;
+}
+
 export class GetCRMStatusOutput implements IGetCRMStatusOutput {
     hasData!: boolean | undefined;
 
@@ -70096,6 +70278,7 @@ export class LearningResourceGroupInfoOutput implements ILearningResourceGroupIn
     groupName!: string | undefined;
     groupImageUrl!: string | undefined;
     groupHtmlColor!: string | undefined;
+    groupSortOrder!: number | undefined;
     resources!: LearningResourceInfoOutput[] | undefined;
 
     constructor(data?: ILearningResourceGroupInfoOutput) {
@@ -70113,6 +70296,7 @@ export class LearningResourceGroupInfoOutput implements ILearningResourceGroupIn
             this.groupName = data["groupName"];
             this.groupImageUrl = data["groupImageUrl"];
             this.groupHtmlColor = data["groupHtmlColor"];
+            this.groupSortOrder = data["groupSortOrder"];
             if (data["resources"] && data["resources"].constructor === Array) {
                 this.resources = [];
                 for (let item of data["resources"])
@@ -70134,6 +70318,7 @@ export class LearningResourceGroupInfoOutput implements ILearningResourceGroupIn
         data["groupName"] = this.groupName;
         data["groupImageUrl"] = this.groupImageUrl;
         data["groupHtmlColor"] = this.groupHtmlColor;
+        data["groupSortOrder"] = this.groupSortOrder;
         if (this.resources && this.resources.constructor === Array) {
             data["resources"] = [];
             for (let item of this.resources)
@@ -70148,6 +70333,7 @@ export interface ILearningResourceGroupInfoOutput {
     groupName: string | undefined;
     groupImageUrl: string | undefined;
     groupHtmlColor: string | undefined;
+    groupSortOrder: number | undefined;
     resources: LearningResourceInfoOutput[] | undefined;
 }
 
@@ -79901,7 +80087,9 @@ export interface IUpdateLinksInput {
 
 export class ProfilePhotoDto implements IProfilePhotoDto {
     id!: number | undefined;
-    publicId!: string | undefined;
+    providerKey!: string | undefined;
+    fileUrl!: string | undefined;
+    thumbnailUrl!: string | undefined;
     isPublished!: boolean | undefined;
 
     constructor(data?: IProfilePhotoDto) {
@@ -79916,7 +80104,9 @@ export class ProfilePhotoDto implements IProfilePhotoDto {
     init(data?: any) {
         if (data) {
             this.id = data["id"];
-            this.publicId = data["publicId"];
+            this.providerKey = data["providerKey"];
+            this.fileUrl = data["fileUrl"];
+            this.thumbnailUrl = data["thumbnailUrl"];
             this.isPublished = data["isPublished"];
         }
     }
@@ -79931,7 +80121,9 @@ export class ProfilePhotoDto implements IProfilePhotoDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
-        data["publicId"] = this.publicId;
+        data["providerKey"] = this.providerKey;
+        data["fileUrl"] = this.fileUrl;
+        data["thumbnailUrl"] = this.thumbnailUrl;
         data["isPublished"] = this.isPublished;
         return data; 
     }
@@ -79939,8 +80131,54 @@ export class ProfilePhotoDto implements IProfilePhotoDto {
 
 export interface IProfilePhotoDto {
     id: number | undefined;
-    publicId: string | undefined;
+    providerKey: string | undefined;
+    fileUrl: string | undefined;
+    thumbnailUrl: string | undefined;
     isPublished: boolean | undefined;
+}
+
+export class CreateProfilePhotoInput implements ICreateProfilePhotoInput {
+    providerKey!: string | undefined;
+    fileUrl!: string | undefined;
+    thumbnailUrl!: string | undefined;
+
+    constructor(data?: ICreateProfilePhotoInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.providerKey = data["providerKey"];
+            this.fileUrl = data["fileUrl"];
+            this.thumbnailUrl = data["thumbnailUrl"];
+        }
+    }
+
+    static fromJS(data: any): CreateProfilePhotoInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateProfilePhotoInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["providerKey"] = this.providerKey;
+        data["fileUrl"] = this.fileUrl;
+        data["thumbnailUrl"] = this.thumbnailUrl;
+        return data; 
+    }
+}
+
+export interface ICreateProfilePhotoInput {
+    providerKey: string | undefined;
+    fileUrl: string | undefined;
+    thumbnailUrl: string | undefined;
 }
 
 export class ProfileEmail implements IProfileEmail {
@@ -80124,7 +80362,7 @@ export interface IProfileLink {
 }
 
 export class ProfilePhoto implements IProfilePhoto {
-    publicId!: string | undefined;
+    fileUrl!: string | undefined;
 
     constructor(data?: IProfilePhoto) {
         if (data) {
@@ -80137,7 +80375,7 @@ export class ProfilePhoto implements IProfilePhoto {
 
     init(data?: any) {
         if (data) {
-            this.publicId = data["publicId"];
+            this.fileUrl = data["fileUrl"];
         }
     }
 
@@ -80150,13 +80388,13 @@ export class ProfilePhoto implements IProfilePhoto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["publicId"] = this.publicId;
+        data["fileUrl"] = this.fileUrl;
         return data; 
     }
 }
 
 export interface IProfilePhoto {
-    publicId: string | undefined;
+    fileUrl: string | undefined;
 }
 
 export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
