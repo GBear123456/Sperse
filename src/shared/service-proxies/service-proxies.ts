@@ -86269,6 +86269,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
     defaultAdvisorContactId!: number | undefined;
     tier2CommissionSource!: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode | undefined;
+    disableProlongingSubscriptionByQuantity!: boolean | undefined;
 
     constructor(data?: IInvoiceSettingsDto) {
         if (data) {
@@ -86295,6 +86296,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
             this.defaultAdvisorContactId = data["defaultAdvisorContactId"];
             this.tier2CommissionSource = data["tier2CommissionSource"];
             this.commissionAffiliateAssignmentMode = data["commissionAffiliateAssignmentMode"];
+            this.disableProlongingSubscriptionByQuantity = data["disableProlongingSubscriptionByQuantity"];
         }
     }
 
@@ -86321,6 +86323,7 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
         data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
         data["tier2CommissionSource"] = this.tier2CommissionSource;
         data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
+        data["disableProlongingSubscriptionByQuantity"] = this.disableProlongingSubscriptionByQuantity;
         return data; 
     }
 }
@@ -86340,6 +86343,7 @@ export interface IInvoiceSettingsDto {
     defaultAdvisorContactId: number | undefined;
     tier2CommissionSource: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode | undefined;
+    disableProlongingSubscriptionByQuantity: boolean | undefined;
 }
 
 export class InvoiceSettings implements IInvoiceSettings {
@@ -86356,6 +86360,7 @@ export class InvoiceSettings implements IInvoiceSettings {
     defaultAdvisorContactId!: number | undefined;
     tier2CommissionSource!: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode | undefined;
+    disableProlongingSubscriptionByQuantity!: boolean | undefined;
 
     constructor(data?: IInvoiceSettings) {
         if (data) {
@@ -86381,6 +86386,7 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.defaultAdvisorContactId = data["defaultAdvisorContactId"];
             this.tier2CommissionSource = data["tier2CommissionSource"];
             this.commissionAffiliateAssignmentMode = data["commissionAffiliateAssignmentMode"];
+            this.disableProlongingSubscriptionByQuantity = data["disableProlongingSubscriptionByQuantity"];
         }
     }
 
@@ -86406,6 +86412,7 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
         data["tier2CommissionSource"] = this.tier2CommissionSource;
         data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
+        data["disableProlongingSubscriptionByQuantity"] = this.disableProlongingSubscriptionByQuantity;
         return data; 
     }
 }
@@ -86424,6 +86431,7 @@ export interface IInvoiceSettings {
     defaultAdvisorContactId: number | undefined;
     tier2CommissionSource: Tier2CommissionSource | undefined;
     commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode | undefined;
+    disableProlongingSubscriptionByQuantity: boolean | undefined;
 }
 
 export class TenantUserManagementSettingsEditDto implements ITenantUserManagementSettingsEditDto {
