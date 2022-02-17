@@ -11,7 +11,7 @@ import * as _ from 'underscore';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
-import { LayoutType } from '@shared/service-proxies/service-proxies';
+import { LayoutType, CustomCssType } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 /*
@@ -49,8 +49,10 @@ export class RootComponent implements OnInit, AfterViewInit {
         //tenant specific custom css
         let tenant = this.SS.tenant;
         if (tenant) {
-            if (tenant.customCssId)
-                this.addStyleSheet('TenantCustomCss', AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + tenant.customCssId + '/' + tenant.id);
+            let customCss = abp.session.userId ? tenant.customCssId : tenant.loginCustomCssId;
+            if (customCss)
+                this.addStyleSheet(`${CustomCssType.Platform}CustomCss`, AppConsts.remoteServiceBaseUrl + 
+                    '/api/TenantCustomization/GetCustomCss/' + customCss + '/' + tenant.id);
 
             if (tenant.customLayoutType && tenant.customLayoutType !== LayoutType.Default) {
                 let layoutName = kebabCase(tenant.customLayoutType);
