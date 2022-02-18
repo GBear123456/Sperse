@@ -29,11 +29,15 @@ import * as rtlDetect from 'rtl-detect';
     templateUrl: './customizable-dashboard.component.html',
     styleUrls: [
         './customizable-dashboard.component.css',
-        '../../../../assets/ngx-bootstrap/bs-datepicker.css'
+        '../../../../assets/ngx-bootstrap/bs-datepicker.css',
+        '../../../../assets/primeng/datatable/css/primeng.datatable.min.css',
+        '../../../../assets/common/styles/metronic-customize.min.css',
+        '../../../../assets/common/styles/themes/default/metronic-customize.min.css',
+        '../../../../assets/common/styles/metronic-customize-angular.min.css'
     ],    
     providers: [ DashboardCustomizationServiceProxy ],
     encapsulation: ViewEncapsulation.None,
-    animations: [appModuleAnimation()],
+    animations: [appModuleAnimation()]
 })
 export class CustomizableDashboardComponent extends AppComponentBase implements OnInit, OnDestroy, AfterViewInit {
     @Input() dashboardName: string;

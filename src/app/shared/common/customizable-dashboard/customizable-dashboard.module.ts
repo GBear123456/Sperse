@@ -41,7 +41,7 @@ import { SubheaderModule } from '../sub-header/subheader.module';
         AreaChartModule,
         LineChartModule,
         BarChartModule,
-        BsDropdownModule,
+        BsDropdownModule.forRoot(),
         ModalModule,
         TabsModule,
         PerfectScrollbarModule,

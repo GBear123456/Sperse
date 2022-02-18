@@ -1,3 +1,6 @@
+@import "../../../../assets/metronic/themes/default/css/style.bundle.css";
+@import "../../../../assets/metronic/vendors/global/vendors.bundle.css";
+
  /* The switch - the box around the slider */
  .switch {
   position: relative;

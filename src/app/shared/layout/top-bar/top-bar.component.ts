@@ -22,6 +22,8 @@ import { ConfigInterface } from '@app/shared/common/config.interface';
 import { ConfigNavigation } from '@app/shared/common/config-navigation.interface';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
+import { environment } from '@root/environments/environment';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: './top-bar.component.html',
@@ -239,6 +241,10 @@ export class TopBarComponent implements OnInit, OnDestroy {
     }
 
     private checkMenuItemPermission(item: PanelMenuItem): boolean {
+        if (environment.releaseStage != 'staging' && 
+            item.permission == AppPermissions.AdministrationHostDashboard
+        ) return false;
+
         return this.appService.isFeatureEnable(item.feature) && (this.permissionChecker.isGranted(item.permission) ||
             (item.items && item.items.length && this.checkChildMenuItemPermission(item) || !item.permission));
     }
