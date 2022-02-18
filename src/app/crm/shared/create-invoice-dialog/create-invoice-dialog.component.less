@@ -507,6 +507,7 @@
             margin-top: 20px;
             & > div {
                 display: flex;
+                padding: 0 10px;
                 justify-content: space-between;
                 border-bottom: 1px solid rgba(218, 222, 225, 0.7);
                 height: 43px;
@@ -520,25 +521,18 @@
                     color: #424c56;
                     margin: 10px 0;
                 }
-                &.total {
-                    span {
-                        font-weight: bold;
-                    }
-                    a {
-                        visibility: hidden;
-                        margin: 11px;
-                        font-size: 14px;
-                        font-weight: 300;
-                        font-style: normal;
-                        font-stretch: normal;
-                        letter-spacing: 0.3px;
-                        color: #00aeef;
-                        margin-right: auto;
+                &.user-total {
+                    ::ng-deep dx-number-box input {
+                        padding: 0;
+                        font-size: 15px;
+                        text-align: right;
                     }
                 }
                 &.balance {
+                    span {
+                        font-weight: bold;
+                    }
                     margin-top: 5px;
-                    padding: 0 10px;
                     background-color: #f3f7fa;
                     border-bottom: none;
                 }

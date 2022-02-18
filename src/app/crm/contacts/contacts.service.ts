@@ -484,9 +484,7 @@ export class ContactsService {
                         });
                     });
                 }
-                return this.sendEmail(res).pipe(
-                    finalize(() => dialogComponent.finishLoading())
-                );
+                return this.sendEmail(res, () => {dialogComponent.finishLoading()});
             }),
             tap((res: number) => {
                 if (!isNaN(res)) {
@@ -527,10 +525,14 @@ export class ContactsService {
         return dialogComponent;
     }
 
-    sendEmail(input: ISendEmailInput): Observable<number> {
-        return this.communicationProxy.sendEmail(new SendEmailInput(input)).pipe(
-            catchError(error => of(error))
-        );
+    sendEmail(input: ISendEmailInput, finalizeMethod: () => void): Observable<number> {
+        return new Observable<number>((observer) => {
+            this.communicationProxy.sendEmail(new SendEmailInput(input)).pipe(
+                finalize(() => finalizeMethod())
+            ).subscribe(res => {
+                observer.next(res);
+            }, err => {observer.next(err)});
+        });
     }
 
     sendSMS(input: ISendSMSInput) {

@@ -91,10 +91,8 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             finalize(() => this.modalDialog.finishLoading())
         ).subscribe((res: InvoiceSettingsDto) => {
             this.settings = new InvoiceSettingsDto(res);
-            if (this.settings.defaultAffiliateRate !== null)
-                this.settings.defaultAffiliateRate = parseFloat(
-                    (this.settings.defaultAffiliateRate * 100).toFixed(2)
-                );
+            this.settings.defaultAffiliateRate = this.convertFromPercent(this.settings.defaultAffiliateRate);
+            this.settings.defaultAffiliateRateTier2 = this.convertFromPercent(this.settings.defaultAffiliateRateTier2);
             this.changeDetectorRef.markForCheck();
         });
         this.changeDetectorRef.detectChanges();
@@ -105,10 +103,8 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
             return;
 
         this.modalDialog.startLoading();
-        if (this.settings.defaultAffiliateRate !== null)
-            this.settings.defaultAffiliateRate = parseFloat(
-                (this.settings.defaultAffiliateRate / 100).toFixed(4)
-            );
+        this.settings.defaultAffiliateRate = this.convertToPercent(this.settings.defaultAffiliateRate);
+        this.settings.defaultAffiliateRateTier2 = this.convertToPercent(this.settings.defaultAffiliateRateTier2);
         this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings)).pipe(
             finalize(() => this.modalDialog.finishLoading())
         ).subscribe(() => {
@@ -127,6 +123,18 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
                 isManageUnallowed: this.isManageUnallowed
             }
         });
+    }
+
+    convertFromPercent(value: number): number {
+        if (value !== null)
+            return parseFloat((value * 100).toFixed(2));
+        return value;
+    }
+
+    convertToPercent(value: number): number {
+        if (value !== null)
+            return parseFloat((value / 100).toFixed(4));
+        return value;
     }
 
     openAdvisorContactList(event) {

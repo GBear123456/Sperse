@@ -48,6 +48,13 @@ export class UserNotificationHelper {
         return '';
     }
 
+    private static getUiIconByNotification(userNotification: abp.notifications.IUserNotification): string {
+        if (userNotification.notification.notificationName == 'CRM.EmailReceivedForUser')
+            return 'fa fa-envelope-o';
+        else
+            return UserNotificationHelper.getUiIconBySeverity(userNotification.notification.severity);
+    }
+
     private static getUiIconBySeverity(severity: abp.notifications.severity): string {
         switch (severity) {
             case abp.notifications.severity.SUCCESS:
@@ -74,7 +81,7 @@ export class UserNotificationHelper {
             text: abp.notifications.getFormattedMessageFromUserNotification(userNotification),
             time: moment(userNotification.notification.creationTime).format('YYYY-MM-DD HH:mm:ss'),
             creationTime: userNotification.notification.creationTime,
-            icon: UserNotificationHelper.getUiIconBySeverity(userNotification.notification.severity),
+            icon: UserNotificationHelper.getUiIconByNotification(userNotification),
             state: abp.notifications.getUserNotificationStateAsString(userNotification.state),
             data: userNotification.notification.data,
             url: UserNotificationHelper.getUrl(userNotification),

@@ -132,8 +132,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
     lines = [{isCrmProduct: true}];
 
     subTotal = 0;
-    total = 0;
     balance = 0;
+    discountTotal = 0;
+    shippingTotal = 0;
+    taxTotal = 0;
 
     isSendEmailAllowed = false;
     disabledForUpdate = false;
@@ -270,9 +272,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
             this.invoiceProxy.getInvoiceInfo(invoice.InvoiceId)
                 .pipe(finalize(() => this.modalDialog.finishLoading()))
                 .subscribe((invoiceInfo: InvoiceInfo) => {
-                    this.subTotal =
-                    this.total =
-                    this.balance = invoiceInfo.grandTotal;
+                    this.subTotal = invoiceInfo.lines.map(line => {
+                        return line.quantity * line.rate;
+                    }).reduce((acc, val) => acc + val, 0);
+                    this.balance = invoiceInfo.grandTotal || 0;
+                    this.discountTotal = invoiceInfo.discountTotal || 0;
+                    this.shippingTotal = invoiceInfo.shippingTotal || 0;
+                    this.taxTotal = invoiceInfo.taxTotal || 0;
                     this.description = invoiceInfo.description;
                     this.notes = invoiceInfo.note;
                     if (!this.data.addNew) {
@@ -406,7 +412,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
             let data = new UpdateInvoiceInput();
             this.setRequestCommonFields(data);
             data.id = this.invoiceId;
-            data.grandTotal = this.total;
+            data.grandTotal = this.balance;
+            data.discountTotal = this.discountTotal;
+            data.shippingTotal = this.shippingTotal;
+            data.taxTotal = this.taxTotal;
             data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index: number) => {
                 return new UpdateInvoiceLineInput({
@@ -430,7 +439,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 data.leadId = this.data.contactInfo['leadId'];
             }
             data.orderId = this.orderId;
-            data.grandTotal = this.total;
+            data.grandTotal = this.balance;
+            data.discountTotal = this.discountTotal;
+            data.shippingTotal = this.shippingTotal;
+            data.taxTotal = this.taxTotal;
             data.status = InvoiceStatus[this.status];
             data.lines = this.lines.map((row, index) => {
                 return new CreateInvoiceLineInput({
@@ -687,15 +699,13 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     calculateBalance() {
         this.subTotal =
-        this.total =
         this.balance = 0;
         this.lines.forEach(line => {
             let total = line['total'];
             if (total)
-                this.subTotal =
-                this.total =
-                this.balance = this.total + total;
+                this.subTotal = this.subTotal + total;
         });
+        this.balance = this.subTotal - this.discountTotal + this.shippingTotal + this.taxTotal;
         this.changeDetectorRef.detectChanges();
     }
 

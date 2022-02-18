@@ -8,6 +8,7 @@ import {
 
 /** Third party imports */
 import { forkJoin, Observable } from 'rxjs';
+import kebabCase from 'lodash/kebabCase';
 import { tap } from 'rxjs/operators';
 
 /** Application imports */
@@ -15,7 +16,9 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import {
     TenantLoginInfoDto,
     TenantCustomizationServiceProxy,
-    TenantCustomizationInfoDto
+    TenantCustomizationInfoDto,
+    CustomCssType,
+    LayoutType
 } from '@shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -36,11 +39,15 @@ import { NotifyService } from 'abp-ng2-module';
 export class AppearanceComponent implements ITenantSettingsStepComponent {
     @ViewChild('logoUploader') logoUploader: UploaderComponent;
     @ViewChild('cssUploader') cssUploader: UploaderComponent;
+    @ViewChild('loginCssUploader') loginCssUploader: UploaderComponent;
+    @ViewChild('portalCssUploader') portalCssUploader: UploaderComponent;
     @ViewChild('faviconsUploader') faviconsUploader: UploaderComponent;
+
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     maxCssFileSize = 1024 * 1024 /* 1MB */;
     maxLogoFileSize = 1024 * 30 /* 30KB */;
+    CustomCssType = CustomCssType;
 
     constructor(
         private notify: NotifyService,
@@ -59,12 +66,9 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                     this.changeDetectorRef.detectChanges();
                 }
             })),
-            this.cssUploader.uploadFile().pipe(tap((res: any) => {
-                if (res.result && res.result.id) {
-                    this.tenant.customCssId = res.result.id;
-                    this.changeDetectorRef.detectChanges();
-                }
-            })),
+            this.cssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Platform, res))),
+            this.loginCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Login, res))),
+            this.portalCssUploader.uploadFile().pipe(tap((res: any) => this.handleCssUpload(CustomCssType.Portal, res))),
             this.faviconsUploader.uploadFile().pipe(tap((res) => {
                 if (res && res.result && res.result.faviconBaseUrl && res.result.favicons && res.result.favicons.length) {
                     this.tenant.tenantCustomizations = <any>{ ...this.tenant.tenantCustomizations, ...res.result };
@@ -73,6 +77,13 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
                 }
             }))
         );
+    }
+
+    handleCssUpload(cssType: CustomCssType, res: any) {
+        if (res.result && res.result.id) {
+            this.setCustomCssTenantProperty(cssType, res.result.id);
+            this.changeDetectorRef.detectChanges();
+        }
     }
 
     clearLogo(): void {
@@ -93,11 +104,34 @@ export class AppearanceComponent implements ITenantSettingsStepComponent {
         });
     }
 
-    clearCustomCss(): void {
-        this.tenantCustomizationService.clearCustomCss().subscribe(() => {
-            this.tenant.customCssId = null;
+    clearCustomCss(cssType: CustomCssType): void {
+        this.tenantCustomizationService.clearCustomCss(cssType).subscribe(() => {
+            this.setCustomCssTenantProperty(cssType, null);
             this.notify.info(this.ls.l('ClearedSuccessfully'));
             this.changeDetectorRef.detectChanges();
         });
+    }
+
+    setCustomCssTenantProperty(cssType: CustomCssType, value: string) {
+        switch (cssType) {
+            case CustomCssType.Platform:
+                this.tenant.customCssId = value;
+                break;
+            case CustomCssType.Login:
+                this.tenant.loginCustomCssId = value;
+                break;
+            case CustomCssType.Portal:
+                this.tenant.portalCustomCssId = value;
+                break;
+        }
+    }
+
+    getCustomPlatformStylePath() {
+        let tenant = this.appSession.tenant,
+            basePath = 'assets/common/styles/custom/';
+        if (tenant && tenant.customLayoutType && tenant.customLayoutType != LayoutType.Default)
+            return basePath + kebabCase(tenant.customLayoutType) + '/style.css'
+        else
+            return basePath + 'platform-custom-style.css';
     }
 }

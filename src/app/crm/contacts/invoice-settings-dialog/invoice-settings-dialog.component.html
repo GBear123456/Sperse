@@ -81,6 +81,15 @@
                                            [(value)]="settings.defaultAffiliateRate"
                                            [showSpinButtons]="true">
                             </dx-number-box>
+                            <dx-number-box [min]="0"
+                                           [max]="99"
+                                           mode="number"
+                                           [showClearButton]="true"
+                                           [readOnly]="isRateDisabled"
+                                           [placeholder]="ls.l('Default') + ' ' + ls.l('AffiliateRateTier2') + ', %'"
+                                           [(value)]="settings.defaultAffiliateRateTier2"
+                                           [showSpinButtons]="true">
+                            </dx-number-box>
                             <h3>{{ls.l('InvoiceEmail_Tier2CommissionSource')}}</h3>
                             <dx-select-box [items]="tier2SourceOptions"
                                            displayExpr="text"
@@ -94,7 +103,13 @@
                                            valueExpr="id"
                                            placeholder=""
                                            [(value)]="settings.commissionAffiliateAssignmentMode">
-                            </dx-select-box>
+                            </dx-select-box>                              
+                        </ng-container>
+                        <ng-container>
+                            <dx-check-box [readOnly]="isManageUnallowed"
+                                        [text]="ls.l('InvoiceEmail_DisableProlongingSubscriptionByQuantity')"
+                                        [(value)]="settings.disableProlongingSubscriptionByQuantity">
+                            </dx-check-box>    
                         </ng-container>
                     </div>
                 </div>

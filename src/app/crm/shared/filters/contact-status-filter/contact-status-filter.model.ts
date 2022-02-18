@@ -7,15 +7,19 @@ export class FilterContactStatusModel extends FilterItemModel {
     includeInActive: boolean = false;
     includeProspective: number = 1;
 
+    readonly FILTER_INCLUDE_PROSPECTIVE = 0;
+    readonly FILTER_EXCLUDE_PROSPECTIVE = 1;
+    readonly FILTER_PROSPECTIVE_ONLY    = 2;
+
     activeSubFilter = [{
         text: this.ls.l('IncludeProspective'),
-        value: 0
+        value: this.FILTER_INCLUDE_PROSPECTIVE
     }, {
         text: this.ls.l('ExcludeProspective'),
-        value: 1
+        value: this.FILTER_EXCLUDE_PROSPECTIVE
     }, {
         text: this.ls.l('ProspectiveOnly'),
-        value: 2
+        value: this.FILTER_PROSPECTIVE_ONLY
     }];
 
     get value(): ContactStatus[] {

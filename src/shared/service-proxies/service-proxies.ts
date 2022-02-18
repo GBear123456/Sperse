@@ -15421,6 +15421,89 @@ export class DashboardServiceProxy {
     }
 
     /**
+     * @param startDate (optional) 
+     * @param endDate (optional) 
+     * @param contactGroupId (optional) 
+     * @param sourceContactId (optional) 
+     * @param sourceOrganizationUnitIds (optional) 
+     * @return Success
+     */
+    getContactInfoStatsByStar(startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetContactInfoStatsByStarOutput[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactInfoStatsByStar?";
+        if (startDate === null)
+            throw new Error("The parameter 'startDate' cannot be null.");
+        else if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&";
+        if (endDate === null)
+            throw new Error("The parameter 'endDate' cannot be null.");
+        else if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&";
+        if (contactGroupId === null)
+            throw new Error("The parameter 'contactGroupId' cannot be null.");
+        else if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&";
+        if (sourceContactId === null)
+            throw new Error("The parameter 'sourceContactId' cannot be null.");
+        else if (sourceContactId !== undefined)
+            url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&";
+        if (sourceOrganizationUnitIds === null)
+            throw new Error("The parameter 'sourceOrganizationUnitIds' cannot be null.");
+        else if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactInfoStatsByStar(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactInfoStatsByStar(<any>response_);
+                } catch (e) {
+                    return <Observable<GetContactInfoStatsByStarOutput[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<GetContactInfoStatsByStarOutput[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactInfoStatsByStar(response: HttpResponseBase): Observable<GetContactInfoStatsByStarOutput[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(GetContactInfoStatsByStarOutput.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetContactInfoStatsByStarOutput[]>(<any>null);
+    }
+
+    /**
      * @param contactGroupId (optional) 
      * @param sourceContactId (optional) 
      * @return Success
@@ -32938,6 +33021,122 @@ export class ProfileLinkServiceProxy {
 }
 
 @Injectable()
+export class ProfilePersonServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getProfileSummary(): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePerson/GetProfileSummary";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetProfileSummary(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetProfileSummary(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetProfileSummary(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @param input (optional) 
+     * @return Success
+     */
+    updateProfileSummary(input: string | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePerson/UpdateProfileSummary?";
+        if (input === null)
+            throw new Error("The parameter 'input' cannot be null.");
+        else if (input !== undefined)
+            url_ += "input=" + encodeURIComponent("" + input) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateProfileSummary(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateProfileSummary(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateProfileSummary(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+}
+
+@Injectable()
 export class ProfilePhotoServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -37587,16 +37786,21 @@ export class TenantCustomizationServiceProxy {
     }
 
     /**
+     * @param body (optional) 
      * @return Success
      */
-    clearCustomCss(): Observable<void> {
+    clearCustomCss(body: CustomCssType | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantCustomization/ClearCustomCss";
         url_ = url_.replace(/[?&]$/, "");
 
+        const content_ = JSON.stringify(body);
+
         let options_ : any = {
+            body: content_,
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
             })
         };
 
@@ -59422,6 +59626,12 @@ export interface ICurrentUserProfileEditDto {
     countryId: string | undefined;
 }
 
+export enum CustomCssType {
+    Platform = "Platform",
+    Login = "Login",
+    Portal = "Portal",
+}
+
 export enum CustomerAccountingType {
     Checking = 0,
     Saving = 1,
@@ -64034,6 +64244,66 @@ export interface IGetContactInfoForMergeOutput {
     contactLeadInfo: LeadInfoForMerge | undefined;
     targetContactInfo: ContactInfoForMerge | undefined;
     targetContactLeadInfo: LeadInfoForMerge | undefined;
+}
+
+export class GetContactInfoStatsByStarOutput implements IGetContactInfoStatsByStarOutput {
+    countWithEmail!: number;
+    countWithName!: number;
+    countWithPhone!: number;
+    countWithCountry!: number;
+    countWithNameAndEmail!: number;
+    key!: string | undefined;
+    count!: number;
+
+    constructor(data?: IGetContactInfoStatsByStarOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.countWithEmail = _data["countWithEmail"];
+            this.countWithName = _data["countWithName"];
+            this.countWithPhone = _data["countWithPhone"];
+            this.countWithCountry = _data["countWithCountry"];
+            this.countWithNameAndEmail = _data["countWithNameAndEmail"];
+            this.key = _data["key"];
+            this.count = _data["count"];
+        }
+    }
+
+    static fromJS(data: any): GetContactInfoStatsByStarOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetContactInfoStatsByStarOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["countWithEmail"] = this.countWithEmail;
+        data["countWithName"] = this.countWithName;
+        data["countWithPhone"] = this.countWithPhone;
+        data["countWithCountry"] = this.countWithCountry;
+        data["countWithNameAndEmail"] = this.countWithNameAndEmail;
+        data["key"] = this.key;
+        data["count"] = this.count;
+        return data;
+    }
+}
+
+export interface IGetContactInfoStatsByStarOutput {
+    countWithEmail: number;
+    countWithName: number;
+    countWithPhone: number;
+    countWithCountry: number;
+    countWithNameAndEmail: number;
+    key: string | undefined;
+    count: number;
 }
 
 export class GetContactsByCompanySizeOutput implements IGetContactsByCompanySizeOutput {
@@ -70485,9 +70755,11 @@ export class InvoiceSettings implements IInvoiceSettings {
     currency!: Currency;
     showShippingAddress!: boolean;
     defaultAffiliateRate!: number | undefined;
+    defaultAffiliateRateTier2!: number | undefined;
     defaultAdvisorContactId!: number | undefined;
     tier2CommissionSource!: Tier2CommissionSource;
     commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode;
+    disableProlongingSubscriptionByQuantity!: boolean;
 
     constructor(data?: IInvoiceSettings) {
         if (data) {
@@ -70509,9 +70781,11 @@ export class InvoiceSettings implements IInvoiceSettings {
             this.currency = _data["currency"];
             this.showShippingAddress = _data["showShippingAddress"];
             this.defaultAffiliateRate = _data["defaultAffiliateRate"];
+            this.defaultAffiliateRateTier2 = _data["defaultAffiliateRateTier2"];
             this.defaultAdvisorContactId = _data["defaultAdvisorContactId"];
             this.tier2CommissionSource = _data["tier2CommissionSource"];
             this.commissionAffiliateAssignmentMode = _data["commissionAffiliateAssignmentMode"];
+            this.disableProlongingSubscriptionByQuantity = _data["disableProlongingSubscriptionByQuantity"];
         }
     }
 
@@ -70533,9 +70807,11 @@ export class InvoiceSettings implements IInvoiceSettings {
         data["currency"] = this.currency;
         data["showShippingAddress"] = this.showShippingAddress;
         data["defaultAffiliateRate"] = this.defaultAffiliateRate;
+        data["defaultAffiliateRateTier2"] = this.defaultAffiliateRateTier2;
         data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
         data["tier2CommissionSource"] = this.tier2CommissionSource;
         data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
+        data["disableProlongingSubscriptionByQuantity"] = this.disableProlongingSubscriptionByQuantity;
         return data;
     }
 }
@@ -70550,9 +70826,11 @@ export interface IInvoiceSettings {
     currency: Currency;
     showShippingAddress: boolean;
     defaultAffiliateRate: number | undefined;
+    defaultAffiliateRateTier2: number | undefined;
     defaultAdvisorContactId: number | undefined;
     tier2CommissionSource: Tier2CommissionSource;
     commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode;
+    disableProlongingSubscriptionByQuantity: boolean;
 }
 
 export class InvoiceSettingsDto implements IInvoiceSettingsDto {
@@ -70566,9 +70844,11 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
     currency!: Currency;
     showShippingAddress!: boolean;
     defaultAffiliateRate!: number | undefined;
+    defaultAffiliateRateTier2!: number | undefined;
     defaultAdvisorContactId!: number | undefined;
     tier2CommissionSource!: Tier2CommissionSource;
     commissionAffiliateAssignmentMode!: CommissionAffiliateAssignmentMode;
+    disableProlongingSubscriptionByQuantity!: boolean;
 
     constructor(data?: IInvoiceSettingsDto) {
         if (data) {
@@ -70591,9 +70871,11 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
             this.currency = _data["currency"];
             this.showShippingAddress = _data["showShippingAddress"];
             this.defaultAffiliateRate = _data["defaultAffiliateRate"];
+            this.defaultAffiliateRateTier2 = _data["defaultAffiliateRateTier2"];
             this.defaultAdvisorContactId = _data["defaultAdvisorContactId"];
             this.tier2CommissionSource = _data["tier2CommissionSource"];
             this.commissionAffiliateAssignmentMode = _data["commissionAffiliateAssignmentMode"];
+            this.disableProlongingSubscriptionByQuantity = _data["disableProlongingSubscriptionByQuantity"];
         }
     }
 
@@ -70616,9 +70898,11 @@ export class InvoiceSettingsDto implements IInvoiceSettingsDto {
         data["currency"] = this.currency;
         data["showShippingAddress"] = this.showShippingAddress;
         data["defaultAffiliateRate"] = this.defaultAffiliateRate;
+        data["defaultAffiliateRateTier2"] = this.defaultAffiliateRateTier2;
         data["defaultAdvisorContactId"] = this.defaultAdvisorContactId;
         data["tier2CommissionSource"] = this.tier2CommissionSource;
         data["commissionAffiliateAssignmentMode"] = this.commissionAffiliateAssignmentMode;
+        data["disableProlongingSubscriptionByQuantity"] = this.disableProlongingSubscriptionByQuantity;
         return data;
     }
 }
@@ -70634,9 +70918,11 @@ export interface IInvoiceSettingsDto {
     currency: Currency;
     showShippingAddress: boolean;
     defaultAffiliateRate: number | undefined;
+    defaultAffiliateRateTier2: number | undefined;
     defaultAdvisorContactId: number | undefined;
     tier2CommissionSource: Tier2CommissionSource;
     commissionAffiliateAssignmentMode: CommissionAffiliateAssignmentMode;
+    disableProlongingSubscriptionByQuantity: boolean;
 }
 
 export enum InvoiceStatus {
@@ -79452,6 +79738,7 @@ export enum ProductMeasurementUnit {
     Piece = "Piece",
     Unit = "Unit",
     Year = "Year",
+    Zone = "Zone",
 }
 
 export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
@@ -81739,6 +82026,8 @@ export interface IPublicRecordDto {
 export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
     fullName!: string | undefined;
     email!: string | undefined;
+    profileSummary!: string | undefined;
+    calendlyUrl!: string | undefined;
     emails!: ProfileEmail[] | undefined;
     addresses!: ProfileAddress[] | undefined;
     phones!: ProfilePhone[] | undefined;
@@ -81758,6 +82047,8 @@ export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
         if (_data) {
             this.fullName = _data["fullName"];
             this.email = _data["email"];
+            this.profileSummary = _data["profileSummary"];
+            this.calendlyUrl = _data["calendlyUrl"];
             if (Array.isArray(_data["emails"])) {
                 this.emails = [] as any;
                 for (let item of _data["emails"])
@@ -81797,6 +82088,8 @@ export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
         data = typeof data === 'object' ? data : {};
         data["fullName"] = this.fullName;
         data["email"] = this.email;
+        data["profileSummary"] = this.profileSummary;
+        data["calendlyUrl"] = this.calendlyUrl;
         if (Array.isArray(this.emails)) {
             data["emails"] = [];
             for (let item of this.emails)
@@ -81829,6 +82122,8 @@ export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
 export interface IPublishedPersonProfileInfo {
     fullName: string | undefined;
     email: string | undefined;
+    profileSummary: string | undefined;
+    calendlyUrl: string | undefined;
     emails: ProfileEmail[] | undefined;
     addresses: ProfileAddress[] | undefined;
     phones: ProfilePhone[] | undefined;
@@ -89025,6 +89320,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
     logoId!: string | undefined;
     logoFileType!: string | undefined;
     customCssId!: string | undefined;
+    loginCustomCssId!: string | undefined;
+    portalCustomCssId!: string | undefined;
     customToSDocumentId!: string | undefined;
     customPrivacyPolicyDocumentId!: string | undefined;
     customLayoutType!: LayoutType | undefined;
@@ -89051,6 +89348,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
             this.logoId = _data["logoId"];
             this.logoFileType = _data["logoFileType"];
             this.customCssId = _data["customCssId"];
+            this.loginCustomCssId = _data["loginCustomCssId"];
+            this.portalCustomCssId = _data["portalCustomCssId"];
             this.customToSDocumentId = _data["customToSDocumentId"];
             this.customPrivacyPolicyDocumentId = _data["customPrivacyPolicyDocumentId"];
             this.customLayoutType = _data["customLayoutType"];
@@ -89077,6 +89376,8 @@ export class TenantLoginInfoDto implements ITenantLoginInfoDto {
         data["logoId"] = this.logoId;
         data["logoFileType"] = this.logoFileType;
         data["customCssId"] = this.customCssId;
+        data["loginCustomCssId"] = this.loginCustomCssId;
+        data["portalCustomCssId"] = this.portalCustomCssId;
         data["customToSDocumentId"] = this.customToSDocumentId;
         data["customPrivacyPolicyDocumentId"] = this.customPrivacyPolicyDocumentId;
         data["customLayoutType"] = this.customLayoutType;
@@ -89096,6 +89397,8 @@ export interface ITenantLoginInfoDto {
     logoId: string | undefined;
     logoFileType: string | undefined;
     customCssId: string | undefined;
+    loginCustomCssId: string | undefined;
+    portalCustomCssId: string | undefined;
     customToSDocumentId: string | undefined;
     customPrivacyPolicyDocumentId: string | undefined;
     customLayoutType: LayoutType | undefined;

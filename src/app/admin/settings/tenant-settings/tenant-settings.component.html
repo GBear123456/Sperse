@@ -83,8 +83,8 @@
             </mat-tab>
             <mat-tab [label]="l('Appearance')" *ngIf="isAdminCustomizations">
                 <dx-scroll-view showScrollbar="onHover">
-                    <div class="row m-form">
-                        <div class="col-md-4">
+                    <div class="row m-form split-border">
+                        <div class="col-lg-4 col-md-6">
                             <h5>{{l("ApplicationLogo")}}</h5>
                             <p *ngIf="appSession.tenant.logoId">
                                 <a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetLogo?logoId=' + appSession.tenant.logoId"
@@ -99,21 +99,7 @@
                                 <button class="btn btn-default" type="button" (click)="clearLogo()">{{l("Clear")}}</button>
                             </form>
                         </div>
-                        <div class="col-md-4">
-                            <h5>{{l("CustomCSS")}}</h5>
-                            <p *ngIf="appSession.tenant.customCssId">
-                                <a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.customCssId + '/' + appSession.tenant.id" target="_blank">{{l('Download')}}</a>
-                            </p>
-                            <form #cssUploadForm>
-                                <div class="form-group row">
-                                    <input type="file" ng2FileSelect [uploader]="customCssUploader" class="col-lg-12" required #cssInput />
-                                    <span class="m-form__help col-lg-12">{{l("UploadCSS_Info")}}</span>
-                                </div>
-                                <button class="btn btn-primary" type="button" (click)="uploadCustomCss()">{{l("Upload")}}</button>
-                                <button class="btn btn-default" type="button" (click)="clearCustomCss()">{{l("Clear")}}</button>
-                            </form>
-                        </div>
-                        <div class="col-md-4">
+                        <div class="col-lg-4 col-md-6">
                             <h5>{{l('CustomFavicons')}}</h5>
                             <p *ngIf="appSession.tenant.tenantCustomizations?.favicons?.length">
                                 <a [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetFavicons'" target="_blank">{{l('Download')}}</a>
@@ -125,6 +111,77 @@
                                 </div>
                                 <button class="btn btn-primary" type="button" (click)="uploadFavicons()">{{l("Upload")}}</button>
                                 <button class="btn btn-default" type="button" (click)="clearFavicons()">{{l("Clear")}}</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="row m-form">
+                        <div class="col-lg-4 col-md-6">
+                            <h5>{{l("CustomCSS")}}</h5>
+                            <p>
+                                <a *ngIf="appSession.tenant.customCssId; else customPlatformTemplate"
+                                   [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.customCssId + '/' + appSession.tenant.id"
+                                   target="_blank">
+                                    {{l('Download')}}
+                                </a>
+                                <ng-template #customPlatformTemplate>
+                                    <a [href]="getCustomPlatformStylePath()" target="_blank">
+                                        {{l('DownloadTemplate')}}
+                                    </a>
+                                </ng-template>
+                            </p>
+                            <form #cssUploadForm>
+                                <div class="form-group row">
+                                    <input type="file" ng2FileSelect [uploader]="customCssUploaders[CustomCssType.Platform]" class="col-lg-12" required #cssInput />
+                                    <span class="m-form__help col-lg-12">{{l("UploadCSS_Info")}}</span>
+                                </div>
+                                <button class="btn btn-primary" type="button" (click)="uploadCustomCss(CustomCssType.Platform, cssInput)">{{l("Upload")}}</button>
+                                <button class="btn btn-default" type="button" (click)="clearCustomCss(CustomCssType.Platform)">{{l("Clear")}}</button>
+                            </form>
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <h5>{{l("CustomLoginCSS")}}</h5>
+                            <p>
+                                <a *ngIf="appSession.tenant.loginCustomCssId; else customLoginTemplate"
+                                   [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.loginCustomCssId + '/' + appSession.tenant.id"
+                                   target="_blank">
+                                    {{l('Download')}}
+                                </a>
+                                <ng-template #customLoginTemplate>
+                                    <a href="assets/common/styles/custom/login-custom-style.css" target="_blank">
+                                        {{l('DownloadTemplate')}}
+                                    </a>
+                                </ng-template>
+                            </p>
+                            <form #loginCssUploadForm>
+                                <div class="form-group row">
+                                    <input type="file" ng2FileSelect [uploader]="customCssUploaders[CustomCssType.Login]" class="col-lg-12" required #loginCssInput />
+                                    <span class="m-form__help col-lg-12">{{l("UploadCSS_Info")}}</span>
+                                </div>
+                                <button class="btn btn-primary" type="button" (click)="uploadCustomCss(CustomCssType.Login, loginCssInput)">{{l("Upload")}}</button>
+                                <button class="btn btn-default" type="button" (click)="clearCustomCss(CustomCssType.Login)">{{l("Clear")}}</button>
+                            </form>
+                        </div>
+                        <div class="col-lg-4 col-md-6">
+                            <h5>{{l("CustomPortalCSS")}}</h5>
+                            <p>
+                                <a *ngIf="appSession.tenant.portalCustomCssId; else customPortalTemplate"
+                                   [href]="remoteServiceBaseUrl + '/api/TenantCustomization/GetCustomCss/' + appSession.tenant.portalCustomCssId + '/' + appSession.tenant.id"
+                                   target="_blank">
+                                    {{l('Download')}}
+                                </a>
+                                <ng-template #customPortalTemplate>
+                                    <a href="assets/common/styles/custom/portal-custom-style.css" target="_blank">
+                                        {{l('DownloadTemplate')}}
+                                    </a>
+                                </ng-template>
+                            </p>
+                            <form #portalCssUploadForm>
+                                <div class="form-group row">
+                                    <input type="file" ng2FileSelect [uploader]="customCssUploaders[CustomCssType.Portal]" class="col-lg-12" required #portalCssInput />
+                                    <span class="m-form__help col-lg-12">{{l("UploadCSS_Info")}}</span>
+                                </div>
+                                <button class="btn btn-primary" type="button" (click)="uploadCustomCss(CustomCssType.Portal, portalCssInput)">{{l("Upload")}}</button>
+                                <button class="btn btn-default" type="button" (click)="clearCustomCss(CustomCssType.Portal)">{{l("Clear")}}</button>
                             </form>
                         </div>
                     </div>
@@ -149,7 +206,7 @@
                                     {{l("NewRegisteredUsersIsActiveByDefault")}}
                                     <span></span>
                                 </label>
-                                <span class="m-form__help">{{l("NewRegisteredUsersIsActiveByDefault_Hint")}}</span>
+                                <span class="m-form__help">{{l("NewRegisteredUsersюIsActiveByDefault_Hint")}}</span>
                             </div>
                             <label for="Setting_UseCaptchaOnRegistration" class="m-checkbox" [hidden]="!settings.userManagement.allowSelfRegistration">
                                 <input id="Setting_UseCaptchaOnRegistration" type="checkbox" name="UseCaptchaOnRegistration" [(ngModel)]="settings.userManagement.useCaptchaOnRegistration">
@@ -399,7 +456,7 @@
                             {{l("ImapUseSsl")}}
                             <span></span>
                         </label>
-                    </div>         
+                    </div>
                 </dx-scroll-view>
             </mat-tab>
             <mat-tab [label]="l('SendGrid')">
@@ -424,7 +481,7 @@
                         </div>
                     <p>
                         <span [innerHtml]="l('SendGridWebhookHint', 'https://app.sendgrid.com/settings/mail_settings')"></span>
-                        <br /><b>{{getSendGridWebhookUrl()}}</b><br/><br />
+                        <br /><b>{{getSendGridWebhookUrl()}}</b><br /><br />
                     </p>
                     <ng-container *ngIf="isPerformancePartner">
                         <div class="form-group">

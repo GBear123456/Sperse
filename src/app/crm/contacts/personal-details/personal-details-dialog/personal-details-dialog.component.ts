@@ -128,6 +128,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     checklistSources = [];
     manageAllowed = false;
     defaultAffiliateRateStr;
+    defaultAffiliateRateTier2Str;
     affiliateRateInitil;
     affiliateRate;
     affiliateRate2Initil;
@@ -180,6 +181,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         ).subscribe((res: InvoiceSettings) => {
             if (res.defaultAffiliateRate !== null)
                 this.defaultAffiliateRateStr = formatPercent(res.defaultAffiliateRate, 'en-US', '1.0-2');
+            if (res.defaultAffiliateRateTier2 !== null)
+                this.defaultAffiliateRateTier2Str = formatPercent(res.defaultAffiliateRateTier2, 'en-US', '1.0-2');
         });
 
         contactsService.contactInfoSubscribe((contactInfo: ContactInfoDto) => {
