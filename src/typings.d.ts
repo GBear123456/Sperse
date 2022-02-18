@@ -25,6 +25,11 @@ declare namespace abp {
     }
 }
 
+interface AbpEventSubscription {
+    eventName: string;
+    callback: (...args: any[]) => void;
+}
+
 interface JQuery {
     mOffcanvas(...any): any;
 }

@@ -35,6 +35,7 @@ import { TitleService } from '@shared/common/title/title.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { InstanceModel } from '@shared/cfo/instance.model';
 import { Param } from '@shared/common/odata/param.model';
+import { UiCustomizationSettingsDto } from '@shared/service-proxies/service-proxies';
 
 @Directive()
 export abstract class AppComponentBase implements OnDestroy {
@@ -77,6 +78,10 @@ export abstract class AppComponentBase implements OnDestroy {
         return this._exportService;
     }
 
+    get currentTheme(): UiCustomizationSettingsDto {
+        return this.appSession.theme;
+    }
+
     public searchClear = true;
     public searchValue: string;
     public searchColumns: any[];
@@ -91,6 +96,8 @@ export abstract class AppComponentBase implements OnDestroy {
     public cacheHelper: CacheHelper;
     public loadingService: LoadingService;
     public defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
+
+    eventSubscriptions: AbpEventSubscription[] = [];
 
     constructor(
         private _injector: Injector
@@ -276,8 +283,22 @@ export abstract class AppComponentBase implements OnDestroy {
         this.getRootComponent().overflowHidden();
     }
 
+    protected subscribeToEvent(eventName: string, callback: (...args: any[]) => void): void {
+        abp.event.on(eventName, callback);
+        this.eventSubscriptions.push({
+            eventName,
+            callback,
+        });
+    }
+
+    private unSubscribeAllEvents() {
+        this.eventSubscriptions.forEach((s) => abp.event.off(s.eventName, s.callback));
+        this.eventSubscriptions = [];
+    }
+
     ngOnDestroy() {
         this.destroySubject.next(true);
         this.destroySubject.unsubscribe();
+        this.unSubscribeAllEvents();
     }
 }

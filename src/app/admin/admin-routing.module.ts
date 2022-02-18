@@ -39,7 +39,12 @@ import { AppPermissions } from '@shared/AppPermissions';
                         data: { permission: AppPermissions.AdministrationOrganizationUnits } 
                     },
                     { path: 'tenantSettings', component: TenantSettingsComponent, data: { permission: AppPermissions.AdministrationTenantSettings + '|' + AppPermissions.AdministrationTenantHosts } },
-                    { path: 'hostDashboard', component: HostDashboardComponent, data: { permission: AppPermissions.AdministrationHostDashboard } },
+                    {
+                        path: 'hostDashboard',
+                        loadChildren: () =>
+                            import('./dashboard/host-dashboard.module').then((m) => m.HostDashboardModule),
+                        data: { permission: AppPermissions.AdministrationHostDashboard },
+                    },
                     { path: 'ui-customization', component: UiCustomizationComponent },
                     { path: 'products', component: EditionsComponent, data: { permission: AppPermissions.Editions } },
                     { path: 'tenants', component: TenantsComponent, data: { permission: AppPermissions.Tenants } }

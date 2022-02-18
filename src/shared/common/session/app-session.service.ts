@@ -15,6 +15,7 @@ import {
     UserGroup,
     UserLoginInfoDto,
     TenantHostServiceProxy,
+    UiCustomizationSettingsDto,
     CountryDto
 } from '@shared/service-proxies/service-proxies';
 import { Country } from '@shared/AppEnums';
@@ -29,6 +30,7 @@ export class AppSessionService {
     private _user: UserLoginInfoDto;
     private _tenant: TenantLoginInfoDto;
     private _application: ApplicationInfoDto;
+    private _theme: UiCustomizationSettingsDto;
     private countries: any;
 
     constructor(
@@ -89,6 +91,14 @@ export class AppSessionService {
         return !!(this.user && this.user.groups.some(group => group === UserGroup.Member));
     }
 
+    get theme(): UiCustomizationSettingsDto {
+        return this._theme;
+    }
+
+    set theme(val: UiCustomizationSettingsDto) {
+        this._theme = val;
+    }
+
     getShownLoginName(): string {
         const userName = this._user.userName;
         if (!this.abpMultiTenancyService.isEnabled) {
@@ -117,6 +127,7 @@ export class AppSessionService {
                 this._application = result.application;
                 this._user = result.user;
                 this._tenant = result.tenant;
+                this._theme = result.theme;
                 if (this.featureService.isEnabled(AppFeatures.AdminCustomizations))
                     this.tenantHostProxy.getMemberPortalUrl().subscribe(res => {
                         AppConsts.appMemberPortalUrl = res.url;

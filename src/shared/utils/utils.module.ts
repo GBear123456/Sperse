@@ -13,6 +13,9 @@ import { MinValueValidator } from './validation/min-value-validator.directive';
 import { PasswordComplexityValidator } from './validation/password-complexity-validator.directive';
 import { ArrayToTreeConverterService } from './array-to-tree-converter.service';
 import { TreeDataHelperService } from './tree-data-helper.service';
+import { LuxonFormatPipe } from './luxon-format.pipe';
+import { DatePickerLuxonModifierDirective } from './date-time/date-picker-luxon-modifier.directive';
+import { DateRangePickerLuxonModifierDirective } from './date-time/date-range-picker-luxon-modifier.directive';
 
 @NgModule({
     imports: [
@@ -33,7 +36,10 @@ import { TreeDataHelperService } from './tree-data-helper.service';
         BusyIfDirective,
         FriendProfilePictureComponent,
         MomentFormatPipe,
-        ValidationMessagesComponent
+        ValidationMessagesComponent,
+        DatePickerLuxonModifierDirective,
+        DateRangePickerLuxonModifierDirective,
+        LuxonFormatPipe
     ],
     exports: [
         EqualValidator,
@@ -44,7 +50,10 @@ import { TreeDataHelperService } from './tree-data-helper.service';
         BusyIfDirective,
         FriendProfilePictureComponent,
         MomentFormatPipe,
-        ValidationMessagesComponent
+        ValidationMessagesComponent,
+        DatePickerLuxonModifierDirective,
+        DateRangePickerLuxonModifierDirective,
+        LuxonFormatPipe
     ]
 })
 export class UtilsModule { }

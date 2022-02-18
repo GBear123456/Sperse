@@ -1,6 +1,6 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AfterViewChecked, Component, Injector, OnInit, OnDestroy } from '@angular/core';
-import { ThemeSettingsDto, UiCustomizationSettingsServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ThemeSettingsDto } from '@shared/service-proxies/service-proxies';
 import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
@@ -14,8 +14,7 @@ export class UiCustomizationComponent extends AppComponentBase implements AfterV
     permissions = AppPermissions;
 
     constructor(
-        injector: Injector,
-        private _uiCustomizationService: UiCustomizationSettingsServiceProxy
+        injector: Injector
     ) {
         super(injector);
         this.rootComponent = this.getRootComponent();
@@ -29,9 +28,11 @@ export class UiCustomizationComponent extends AppComponentBase implements AfterV
     }
 
     ngOnInit(): void {
+/*
         this._uiCustomizationService.getUiManagementSettings().subscribe((settingsResult) => {
             this.allSettings = settingsResult;
         });
+*/
     }
 
     ngOnDestroy() {
@@ -43,21 +44,27 @@ export class UiCustomizationComponent extends AppComponentBase implements AfterV
     }
 
     updateDefaultUiManagementSettings(): void {
+/*
         this._uiCustomizationService.updateDefaultUiManagementSettings(this.settings).subscribe(() => {
             window.location.reload();
         });
+*/
     }
 
     updateUiManagementSettings(): void {
+/*
         this._uiCustomizationService.updateUiManagementSettings(this.settings).subscribe(() => {
             window.location.reload();
         });
+*/
     }
 
     useSystemDefaultSettings(): void {
+/*
         this._uiCustomizationService.useSystemDefaultSettings().subscribe(() => {
             window.location.reload();
         });
+*/
     }
 
     allowAsideMinimizingChange(val): void {

@@ -48,7 +48,6 @@ import { UtilsModule } from '@shared/utils/utils.module';
 import { AdminRoutingModule } from './admin-routing.module';
 import { AuditLogDetailModalComponent } from './audit-logs/audit-log-detail/audit-log-detail-modal.component';
 import { AuditLogsComponent } from './audit-logs/audit-logs.component';
-import { HostDashboardComponent } from './dashboard/host-dashboard.component';
 import { CreateOrEditEditionModalComponent } from './editions/create-or-edit-edition-modal/create-or-edit-edition-modal.component';
 import { EditionsComponent } from './editions/editions.component';
 import { CreateOrEditLanguageModalComponent } from './languages/create-or-edit-language-modal/create-or-edit-language-modal.component';
@@ -162,7 +161,6 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         SystemSettingsComponent,
         UploadSSLCertificateModalComponent,
         AddOrEditSSLBindingModalComponent,
-        HostDashboardComponent,
         UiCustomizationComponent,
         EditionsComponent,
         CreateOrEditEditionModalComponent,
