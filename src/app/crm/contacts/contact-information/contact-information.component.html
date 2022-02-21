@@ -124,7 +124,7 @@
             <img src="./assets/common/icons/flag-icon.svg" class="dx-icon" [alt]="ls.l('Rating')">
             {{ls.l('Rating')}}:
         </div>
-        <rating-bar *ngIf="data?.contactInfo.ratingId as ratingId" [rating]="ratingId"></rating-bar>
+        <rating-bar *ngIf="data?.contactInfo?.ratingId as ratingId" [rating]="ratingId"></rating-bar>
     </div>
     <div class="item width-percent-15">
         <div class="title">
@@ -133,7 +133,7 @@
         </div>
         <ng-container *ngIf="(star$ | async) as star">
             <div class="item-row" data-id="{{star.id}}">
-                <div [ngClass]="'star star-' + star.colorType.toLowerCase()"></div>
+                <div [ngClass]="'star star-' + star?.colorType?.toLowerCase()"></div>
                 <span>{{ ls.l(star.name) }}</span>
             </div>
         </ng-container>

@@ -74,11 +74,11 @@ export class SearchTooltipComponent {
 
     windowClick(event) {
         let target = event.target;
-        if (target) {
+        if (target && target.tagName) {
             let tooltip = this.tooltip.instance.element();
             while(target.tagName.toLowerCase() != 'body') {
                 target = target.parentNode;
-                if (!target || tooltip == target)
+                if (!target || !target.tagName || tooltip == target)
                     return ;
             }
             this.hide();
