@@ -393,12 +393,15 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     isActiveFirstItem(): boolean {
-        return this.activeMessage && this.activeMessage.id == this.getVisibleList()[0].id;
+        let items = this.getVisibleList();
+        return this.activeMessage && items[0] && 
+            this.activeMessage.id == items[0].id;
     }
 
     isActiveLastItem(): boolean {
-        let visibleItems = this.getVisibleList();
-        return this.activeMessage && this.activeMessage.id == visibleItems[visibleItems.length - 1].id;
+        let visibleItems = this.getVisibleList(),
+            item = visibleItems[visibleItems.length - 1];
+        return this.activeMessage && item && this.activeMessage.id == item.id;
     }
 
     moveSelectedItem(shift) {

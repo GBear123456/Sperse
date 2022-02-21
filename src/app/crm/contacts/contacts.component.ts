@@ -391,17 +391,17 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
                 finalize(() => this.finishLoading(true))
             ))
         ).subscribe((itemFullInfo: ItemFullInfo) => {
-            if (itemFullInfo && this.currentItemId != itemFullInfo.itemData[itemKeyField]) {
+            let isImproperItemInfo = itemFullInfo && this.currentItemId != itemFullInfo.itemData[itemKeyField]; 
+            if (isImproperItemInfo && itemFullInfo.items.some(item => this.currentItemId == item[itemKeyField])) {
                 subscription.unsubscribe();
                 this.targetEntity.next(TargetDirectionEnum.Current);
                 this.updateLocation(itemFullInfo);
-            } else
-                if (this.toolbarComponent) {
-                    this.toolbarComponent.updateNavButtons(
-                        !itemFullInfo || itemFullInfo.isFirstOnList,
-                        !itemFullInfo || itemFullInfo.isLastOnList
-                    );
-                }
+            } else if (this.toolbarComponent) {
+                this.toolbarComponent.updateNavButtons(
+                    !itemFullInfo || isImproperItemInfo || itemFullInfo.isFirstOnList,
+                    !itemFullInfo || isImproperItemInfo || itemFullInfo.isLastOnList
+                );
+            }
         });
     }
 
