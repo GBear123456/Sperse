@@ -61,6 +61,9 @@ export class NotificationsComponent implements OnInit {
     });
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
 
+    private readonly CONTACT_ENTITY_TYPE = 'Sperse.CRM.Contacts.Entities.Contact';
+    private readonly COMMUNICATION_MESSAGE_ENTITY_TYPE = 'Sperse.CRM.Contacts.Communication.CommunicationMessage';
+
     constructor(
         private router: Router,
         private dialog: MatDialog,
@@ -133,7 +136,17 @@ export class NotificationsComponent implements OnInit {
     }
 
     notificationClick(e) {
-        this.gotoUrl(e.data.url);
+        let notification = e.data;
+        if (notification.entityId) {
+            if (notification.entityTypeName == this.CONTACT_ENTITY_TYPE) {
+                this.router.navigate(['app/crm/contact', notification.entityId]);
+                this.dialog.closeAll();
+            } else if (notification.entityTypeName == this.COMMUNICATION_MESSAGE_ENTITY_TYPE) {
+                this.router.navigate(['app/crm/contact', notification.entityId, 'user-inbox']);
+                this.dialog.closeAll();
+            }
+        } else if (notification.url)
+            this.gotoUrl(notification.url);
     }
 
     gotoUrl(url: string): void {
