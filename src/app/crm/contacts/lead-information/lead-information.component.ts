@@ -88,7 +88,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                 icon: 'c-info',
                 items: [
                     { name: 'stage', readonly: true },
-                    { name: 'dealAmount', type: { style: 'currency', useGrouping: true } },
+                    { name: 'dealAmount', type: { useGrouping: true } },
                     { name: 'creationDate', readonly: true },
                     { name: 'modificationDate', readonly: true }
                 ]
