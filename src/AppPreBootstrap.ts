@@ -51,7 +51,7 @@ export class AppPreBootstrap {
         let tenantId = queryStringObj.tenantId;
         if (tenantId && !queryStringObj['user-key'] && !queryStringObj['switchAccountToken']) {
             if (tenantId != abp.session.tenantId) {
-                window['generalInfo'] = undefined;
+                AppPreBootstrap.generalInfoClear();
                 abp.auth.clearToken();
             }
             abp.multiTenancy.setTenantIdCookie(queryStringObj.tenantId);
@@ -226,5 +226,9 @@ export class AppPreBootstrap {
             new Date(new Date().getTime() + 365 * 86400000), //1 year
             abp.appPath
         );
+    }
+
+    static generalInfoClear() {
+        window['generalInfo'] = undefined;
     }
 }

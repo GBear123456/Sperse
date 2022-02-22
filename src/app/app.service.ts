@@ -378,7 +378,8 @@ export class AppService extends AppServiceBase {
     }
 
     expiredModuleSubscribe(callback) {
-        this.expiredModule.asObservable().subscribe(callback);
+        if (this.expiredModule)
+            this.expiredModule.asObservable().subscribe(callback);
     }
 
     setContactInfoVisibility(value: boolean) {
