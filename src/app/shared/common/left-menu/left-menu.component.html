@@ -13,7 +13,7 @@
                     'disabled': item.disabled
                 }">
                 <div class="img">
-                    <div [inlineSVG]="item.iconSrc"></div>
+                    <div [inlineSVG]="'/' + item.iconSrc"></div>
                 </div>
                 <div [ngClass]="{ 'link': item.component || item.onClick }" (click)="onClick($event, item)">
                     <span>{{item.caption}}</span>
