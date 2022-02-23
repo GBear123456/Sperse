@@ -68,6 +68,8 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     orgUnits: OrganizationUnitDto[];
     selectedOrgUnits = [];
     showContacts = true;
+    includeProspective = false;
+    searchPhrase: string;
 
     constructor(
         public ls: AppLocalizationService,
@@ -100,8 +102,9 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
             if (dxList && !elm)
                 elm = dxList.instance.element();
             elm && abp.ui.setBusy(elm);
+            let includeProspective = this.showOrgUnits ? true : this.includeProspective;
             this.lookupSubscription && this.lookupSubscription.unsubscribe();
-            this.lookupSubscription = this.contactProxy.getSourceContacts(searchPhrase, this._leadId, 10)
+            this.lookupSubscription = this.contactProxy.getSourceContacts(searchPhrase, this._leadId, includeProspective, 10)
                 .pipe(finalize(() => elm && abp.ui.clearBusy(elm)))
                 .subscribe((contacts: SourceContactInfo[]) => {
                     this.onDataLoaded.emit(this.contacts = contacts.map(item => {
@@ -162,6 +165,7 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
         clearTimeout(this.lookupTimeout);
         this.lookupTimeout = setTimeout(() => {
             let value = this.getInputElementValue(event);
+            this.searchPhrase = value;
             this.loadSourceContacts(value, this.sourceComponent.dxList.instance.element());
         }, 600);
     }
@@ -216,7 +220,11 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
     checkSelectionAllowed() {
         return this.relatedItemsKeys && (this.relatedItemsKeys.length == 1 || this.hasBulkUpdatePermission && this.relatedItemsKeys.length > 1);
     }
-    
+
+    onIncludeProspectiveChanged() {
+        this.loadSourceContacts(this.searchPhrase, this.sourceComponent.dxList.instance.element());
+    }
+
     ngOnDestroy() {
         if (this.showOrgUnits) {
             this.contactsService.unsubscribe(this.ident);
