@@ -88,15 +88,10 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
         BulkProgressDialogComponent
     ],
     providers: [
-        InlineSVGConfig,
         AppUrlService,
         CellsCopyingService,
         CacheHelper,
         PrimengTableHelper
     ]
 })
-export class CommonModule {
-    constructor(private inlineSVGConfig: InlineSVGConfig) {
-        this.inlineSVGConfig.baseUrl = AppConsts.appBaseHref;
-    }
-}
+export class CommonModule {}
