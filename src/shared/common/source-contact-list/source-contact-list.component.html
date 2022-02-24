@@ -38,7 +38,7 @@
                       [hidden]="showContacts || !selectedOrgUnits?.length || !hasBulkUpdatePermission"
                       (click)="applyOrganizationUnits()">{{ls.l('Apply')}}
                 </span>
-                <span class="filter-apply"
+                <span class="filter-apply {{sourceComponent?.isFilteredItem() ? 'transparent' : ''}}"
                       [hidden]="showContacts || !filterModelOrgUnit?.items?.element?.value?.length"
                       (click)="onOwnerFilter()">
                     {{ls.l('ClearFilter')}}
