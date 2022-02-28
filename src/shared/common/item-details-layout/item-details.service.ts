@@ -66,6 +66,7 @@ export class ItemDetailsService {
                     isFirstOnList = isFirstOnPage && dataSource.pageIndex() === 0,
                     isLastOnList = dataSource.isLastPage() && itemIndex + 1 === itemsCountOnTheLastPage;
                 fullInfo$ = of({
+                    items: items,
                     itemData: itemData,
                     isFirstOnPage: isFirstOnPage,
                     isLastOnPage: isLastOnPage,

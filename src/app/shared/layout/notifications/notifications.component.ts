@@ -9,6 +9,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { appModuleAnimation } from '@shared/animations/routerTransition';
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { NotificationServiceProxy, UserNotificationDto } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -61,9 +62,13 @@ export class NotificationsComponent implements OnInit {
     });
     defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
 
+    private readonly CONTACT_ENTITY_TYPE = 'Sperse.CRM.Contacts.Entities.Contact';
+    private readonly COMMUNICATION_MESSAGE_ENTITY_TYPE = 'Sperse.CRM.Contacts.Communication.CommunicationMessage';
+
     constructor(
         private router: Router,
         private dialog: MatDialog,
+        private itemDetailsService: ItemDetailsService,
         private notificationService: NotificationServiceProxy,
         public userNotificationHelper: UserNotificationHelper,
         public ls: AppLocalizationService
@@ -133,7 +138,19 @@ export class NotificationsComponent implements OnInit {
     }
 
     notificationClick(e) {
-        this.gotoUrl(e.data.url);
+        let notification = e.data;
+        if (notification.entityId) {
+            if (notification.entityTypeName == this.CONTACT_ENTITY_TYPE) {
+                this.router.navigate(['app/crm/contact', notification.entityId]);
+                setTimeout(() => this.itemDetailsService.clearItemsSource());
+                this.dialog.closeAll();
+            } else if (notification.entityTypeName == this.COMMUNICATION_MESSAGE_ENTITY_TYPE) {
+                this.router.navigate(['app/crm/contact', notification.entityId, 'user-inbox']);
+                setTimeout(() => this.itemDetailsService.clearItemsSource());
+                this.dialog.closeAll();
+            }
+        } else if (notification.url)
+            this.gotoUrl(notification.url);
     }
 
     gotoUrl(url: string): void {
