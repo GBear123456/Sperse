@@ -9186,14 +9186,17 @@ export class ContactServiceProxy {
     /**
      * @searchPhrase (optional) 
      * @leadId (optional) 
+     * @includeProspective (optional) 
      * @return Success
      */
-    getSourceContacts(searchPhrase: string | null | undefined, leadId: number | null | undefined, topCount: number): Observable<SourceContactInfo[]> {
+    getSourceContacts(searchPhrase: string | null | undefined, leadId: number | null | undefined, includeProspective: boolean | null | undefined, topCount: number): Observable<SourceContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetSourceContacts?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
         if (leadId !== undefined)
             url_ += "LeadId=" + encodeURIComponent("" + leadId) + "&"; 
+        if (includeProspective !== undefined)
+            url_ += "IncludeProspective=" + encodeURIComponent("" + includeProspective) + "&"; 
         if (topCount === undefined || topCount === null)
             throw new Error("The parameter 'topCount' must be defined and cannot be null.");
         else
