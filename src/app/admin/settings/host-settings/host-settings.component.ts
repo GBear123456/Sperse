@@ -182,7 +182,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
         ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
             if (this.initialDefaultCountry !== this.hostSettings.general.defaultCountryCode) {
-                this.message.info(this.l('DefaultCountrySettingChangedRefreshPageNotification')).done(function () {
+                this.message.info(this.l('DefaultSettingChangedRefreshPageNotification', this.l('Country'))).done(function () {
                     window.location.reload();
                 });
             }
