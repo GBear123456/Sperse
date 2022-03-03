@@ -11,7 +11,11 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { PopoverModule } from 'ngx-bootstrap/popover';
 
 import { TableModule } from 'primeng/table';
-import { AutoCompleteModule, EditorModule, FileUploadModule as PrimeNgFileUploadModule, InputMaskModule, PaginatorModule } from 'primeng/primeng';
+import { PaginatorModule } from 'primeng/paginator';
+import { FileUploadModule as PrimeNgFileUploadModule } from 'primeng/fileupload';
+import { AutoCompleteModule} from 'primeng/autocomplete';
+import { EditorModule } from 'primeng/editor';
+import { InputMaskModule } from 'primeng/inputmask';
 
 /** Application imports */
 import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';

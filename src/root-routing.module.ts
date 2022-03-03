@@ -37,6 +37,11 @@ const routes: Routes = [
                 }
             },
             {
+                path: 'personal-finance',
+                loadChildren: () => import('personal-finance/personal-finance.module').then(m => m.PersonalFinanceModule), //Lazy load account module
+                data: { feature: 'PFM', localizationSource: 'PFM' }
+            },
+            {
                 path: 'app',
                 loadChildren: () => import('app/app.module').then(m => m.AppModule), //Lazy load desktop module
                 data: { localizationSource: 'Platform' }

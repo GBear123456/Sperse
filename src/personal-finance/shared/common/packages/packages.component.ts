@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { PackageServiceProxy, PackageDtoListResultDto } from '@shared/service-proxies/service-proxies';
+import { PackageServiceProxy, ListResultDtoOfPackageDto } from '@shared/service-proxies/service-proxies';
 import { PackageIdService } from './package-id.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { PackageIdService } from './package-id.service';
     providers: [PackageServiceProxy]
 })
 export class PackagesComponent implements OnInit {
-    packageList: PackageDtoListResultDto;
+    packageList: ListResultDtoOfPackageDto;
     constructor(
         private data: PackageIdService,
         private packageListService: PackageServiceProxy,
