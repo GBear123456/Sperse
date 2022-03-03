@@ -417,7 +417,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
             if (this.initialDefaultCountry !== this.settings.general.defaultCountryCode) {
-                this.message.info(this.l('DefaultCountrySettingChangedRefreshPageNotification')).done(() => {
+                this.message.info(this.l('DefaultSettingChangedRefreshPageNotification', this.l('Country'))).done(() => {
                     window.location.reload();
                 });
             }

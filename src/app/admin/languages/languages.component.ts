@@ -173,6 +173,9 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this.languageService.setDefaultLanguage(input).subscribe(() => {
             this.invalidate();
             this.notify.success(this.l('SuccessfullySaved'));
+            this.message.info(this.l('DefaultSettingChangedRefreshPageNotification', this.l('Language'))).done(() => {
+                window.location.reload();
+            });
         });
     }
 

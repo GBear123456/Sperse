@@ -113,7 +113,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                     window.location.reload();
                 });
             if (this.countryChanged)
-                this.messageService.info(this.ls.l('DefaultCountrySettingChangedRefreshPageNotification')).done(() => {
+                this.messageService.info(this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Country'))).done(() => {
                     window.location.reload();
             });
         });
