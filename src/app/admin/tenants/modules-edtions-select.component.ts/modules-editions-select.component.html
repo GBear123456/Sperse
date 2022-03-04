@@ -7,9 +7,11 @@
                 name="edition"
                 [disabled]="moduleIsDisabled(moduleId)"
                 class="form-control"
-                [value]="editionsModels[moduleId].editionId"
                 (change)="onEditionChange($event, moduleId)">
-            <option *ngFor="let edition of editionGroup" [value]="+edition.value">{{edition.displayText}}</option>
+            <option *ngFor="let edition of editionGroup" 
+                [value]="+edition.value" 
+                [attr.selected]="editionsModels[moduleId].editionId == edition.value">{{edition.displayText}}
+            </option>
         </select>
         <div>
             <label *ngIf="i === 0">{{ ls.l('Users') }}</label>
