@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { PackageServiceProxy, ListResultDtoOfPackageDto } from '@shared/service-proxies/service-proxies';
+import { AppLocalizationService } from '../../../../app/shared/common/localization/app-localization.service';
 import { PackageIdService } from './package-id.service';
 
 @Component({
@@ -12,9 +13,10 @@ import { PackageIdService } from './package-id.service';
 export class PackagesComponent implements OnInit {
     packageList: ListResultDtoOfPackageDto;
     constructor(
-        private data: PackageIdService,
+        private router: Router,
+        private data: PackageIdService,        
         private packageListService: PackageServiceProxy,
-        private router: Router
+        public ls: AppLocalizationService
     ) {}
 
     ngOnInit() {
