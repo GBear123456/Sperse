@@ -70534,6 +70534,7 @@ export class LearningResourceInfoOutput implements ILearningResourceInfoOutput {
     type!: LearningResourceType | undefined;
     name!: string | undefined;
     url!: string | undefined;
+    isActive!: boolean | undefined;
 
     constructor(data?: ILearningResourceInfoOutput) {
         if (data) {
@@ -70563,6 +70564,7 @@ export class LearningResourceInfoOutput implements ILearningResourceInfoOutput {
             this.type = data["type"];
             this.name = data["name"];
             this.url = data["url"];
+            this.isActive = data["isActive"];
         }
     }
 
@@ -70592,6 +70594,7 @@ export class LearningResourceInfoOutput implements ILearningResourceInfoOutput {
         data["type"] = this.type;
         data["name"] = this.name;
         data["url"] = this.url;
+        data["isActive"] = this.isActive;
         return data; 
     }
 }
@@ -70606,6 +70609,7 @@ export interface ILearningResourceInfoOutput {
     type: LearningResourceType | undefined;
     name: string | undefined;
     url: string | undefined;
+    isActive: boolean | undefined;
 }
 
 export class LearningResourceGroupInfoOutput implements ILearningResourceGroupInfoOutput {
@@ -70614,6 +70618,7 @@ export class LearningResourceGroupInfoOutput implements ILearningResourceGroupIn
     groupImageUrl!: string | undefined;
     groupHtmlColor!: string | undefined;
     groupSortOrder!: number | undefined;
+    groupIsActive!: boolean | undefined;
     resources!: LearningResourceInfoOutput[] | undefined;
 
     constructor(data?: ILearningResourceGroupInfoOutput) {
@@ -70632,6 +70637,7 @@ export class LearningResourceGroupInfoOutput implements ILearningResourceGroupIn
             this.groupImageUrl = data["groupImageUrl"];
             this.groupHtmlColor = data["groupHtmlColor"];
             this.groupSortOrder = data["groupSortOrder"];
+            this.groupIsActive = data["groupIsActive"];
             if (data["resources"] && data["resources"].constructor === Array) {
                 this.resources = [];
                 for (let item of data["resources"])
@@ -70654,6 +70660,7 @@ export class LearningResourceGroupInfoOutput implements ILearningResourceGroupIn
         data["groupImageUrl"] = this.groupImageUrl;
         data["groupHtmlColor"] = this.groupHtmlColor;
         data["groupSortOrder"] = this.groupSortOrder;
+        data["groupIsActive"] = this.groupIsActive;
         if (this.resources && this.resources.constructor === Array) {
             data["resources"] = [];
             for (let item of this.resources)
@@ -70669,6 +70676,7 @@ export interface ILearningResourceGroupInfoOutput {
     groupImageUrl: string | undefined;
     groupHtmlColor: string | undefined;
     groupSortOrder: number | undefined;
+    groupIsActive: boolean | undefined;
     resources: LearningResourceInfoOutput[] | undefined;
 }
 
@@ -70722,6 +70730,7 @@ export class CreateLearningResourceInput implements ICreateLearningResourceInput
     fileName!: string | undefined;
     fileSize!: number | undefined;
     file!: string | undefined;
+    isActive!: boolean | undefined;
     memberServiceAssignments!: MemberServiceAssignmentInput[] | undefined;
 
     constructor(data?: ICreateLearningResourceInput) {
@@ -70744,6 +70753,7 @@ export class CreateLearningResourceInput implements ICreateLearningResourceInput
             this.fileName = data["fileName"];
             this.fileSize = data["fileSize"];
             this.file = data["file"];
+            this.isActive = data["isActive"];
             if (data["memberServiceAssignments"] && data["memberServiceAssignments"].constructor === Array) {
                 this.memberServiceAssignments = [];
                 for (let item of data["memberServiceAssignments"])
@@ -70770,6 +70780,7 @@ export class CreateLearningResourceInput implements ICreateLearningResourceInput
         data["fileName"] = this.fileName;
         data["fileSize"] = this.fileSize;
         data["file"] = this.file;
+        data["isActive"] = this.isActive;
         if (this.memberServiceAssignments && this.memberServiceAssignments.constructor === Array) {
             data["memberServiceAssignments"] = [];
             for (let item of this.memberServiceAssignments)
@@ -70789,6 +70800,7 @@ export interface ICreateLearningResourceInput {
     fileName: string | undefined;
     fileSize: number | undefined;
     file: string | undefined;
+    isActive: boolean | undefined;
     memberServiceAssignments: MemberServiceAssignmentInput[] | undefined;
 }
 
@@ -70800,6 +70812,7 @@ export class UpdateLearningResourceInput implements IUpdateLearningResourceInput
     fileName!: string | undefined;
     fileSize!: number | undefined;
     file!: string | undefined;
+    isActive!: boolean | undefined;
     memberServiceAssignments!: MemberServiceAssignmentInput[] | undefined;
 
     constructor(data?: IUpdateLearningResourceInput) {
@@ -70820,6 +70833,7 @@ export class UpdateLearningResourceInput implements IUpdateLearningResourceInput
             this.fileName = data["fileName"];
             this.fileSize = data["fileSize"];
             this.file = data["file"];
+            this.isActive = data["isActive"];
             if (data["memberServiceAssignments"] && data["memberServiceAssignments"].constructor === Array) {
                 this.memberServiceAssignments = [];
                 for (let item of data["memberServiceAssignments"])
@@ -70844,6 +70858,7 @@ export class UpdateLearningResourceInput implements IUpdateLearningResourceInput
         data["fileName"] = this.fileName;
         data["fileSize"] = this.fileSize;
         data["file"] = this.file;
+        data["isActive"] = this.isActive;
         if (this.memberServiceAssignments && this.memberServiceAssignments.constructor === Array) {
             data["memberServiceAssignments"] = [];
             for (let item of this.memberServiceAssignments)
@@ -70861,6 +70876,7 @@ export interface IUpdateLearningResourceInput {
     fileName: string | undefined;
     fileSize: number | undefined;
     file: string | undefined;
+    isActive: boolean | undefined;
     memberServiceAssignments: MemberServiceAssignmentInput[] | undefined;
 }
 
@@ -70907,6 +70923,7 @@ export interface ISetLearningResourceImageInput {
 export class CreateLearningResourceGroupInput implements ICreateLearningResourceGroupInput {
     name!: string;
     htmlColor!: string | undefined;
+    isActive!: boolean | undefined;
 
     constructor(data?: ICreateLearningResourceGroupInput) {
         if (data) {
@@ -70921,6 +70938,7 @@ export class CreateLearningResourceGroupInput implements ICreateLearningResource
         if (data) {
             this.name = data["name"];
             this.htmlColor = data["htmlColor"];
+            this.isActive = data["isActive"];
         }
     }
 
@@ -70935,6 +70953,7 @@ export class CreateLearningResourceGroupInput implements ICreateLearningResource
         data = typeof data === 'object' ? data : {};
         data["name"] = this.name;
         data["htmlColor"] = this.htmlColor;
+        data["isActive"] = this.isActive;
         return data; 
     }
 }
@@ -70942,12 +70961,14 @@ export class CreateLearningResourceGroupInput implements ICreateLearningResource
 export interface ICreateLearningResourceGroupInput {
     name: string;
     htmlColor: string | undefined;
+    isActive: boolean | undefined;
 }
 
 export class UpdateLearningResourceGroupInput implements IUpdateLearningResourceGroupInput {
     id!: number;
     name!: string;
     htmlColor!: string | undefined;
+    isActive!: boolean | undefined;
 
     constructor(data?: IUpdateLearningResourceGroupInput) {
         if (data) {
@@ -70963,6 +70984,7 @@ export class UpdateLearningResourceGroupInput implements IUpdateLearningResource
             this.id = data["id"];
             this.name = data["name"];
             this.htmlColor = data["htmlColor"];
+            this.isActive = data["isActive"];
         }
     }
 
@@ -70978,6 +71000,7 @@ export class UpdateLearningResourceGroupInput implements IUpdateLearningResource
         data["id"] = this.id;
         data["name"] = this.name;
         data["htmlColor"] = this.htmlColor;
+        data["isActive"] = this.isActive;
         return data; 
     }
 }
@@ -70986,6 +71009,7 @@ export interface IUpdateLearningResourceGroupInput {
     id: number;
     name: string;
     htmlColor: string | undefined;
+    isActive: boolean | undefined;
 }
 
 export class SetLearningResourceGroupImageInput implements ISetLearningResourceGroupImageInput {
