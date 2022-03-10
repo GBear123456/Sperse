@@ -7,7 +7,6 @@
     </span>
     <div class="entrance-page__form entrance-page__form--verification">
         <code-input #codeInput
-                    (codeChanged)="onCodeChanged($event)"
                     (codeCompleted)="onCodeCompleted($event)"
                     [codeLength]="6"
                     [isCodeHidden]="false"

@@ -37,6 +37,7 @@ export class HostLoginVerificationComponent implements OnInit, AfterViewInit {
     @Output() onCodeRefresh: EventEmitter<any> = new EventEmitter();
     @ViewChild('codeInput', { read: CodeInputComponent, static: false }) codeInput !: CodeInputComponent;
 
+    isLoggedIn: boolean = false;
     isExtLogin: boolean = false;
     public readonly CODE_TIME_LIVE = 5 * 60 * 1000;
     showResetButton: boolean = false;
@@ -54,8 +55,9 @@ export class HostLoginVerificationComponent implements OnInit, AfterViewInit {
         this.activatedRoute.queryParams.pipe(first())
             .subscribe((params: Params) => {
                 this.isExtLogin = params.extlogin == 'true';
-                if (this.isExtLogin) {
-                    if (!!this.appSession.user)
+                this.isLoggedIn = !!this.appSession.user;
+
+                if (this.isExtLogin && this.isLoggedIn) {
                         this.loginService.completeSourceEvent();
                 }
             });
@@ -109,6 +111,11 @@ export class HostLoginVerificationComponent implements OnInit, AfterViewInit {
         })).pipe(
             finalize(() => abp.ui.clearBusy())
         ).subscribe((res: AuthenticateResultModel) => {
+            this.isLoggedIn = this.isExtLogin;
+            if (this.isExtLogin) {
+                if (!res.shouldResetPassword)
+                    this.loginService.completeSourceEvent();
+            }
             this.loginService.processAuthenticateResult(
                 res, AppConsts.appBaseUrl, this.isExtLogin);
         }, () => {
