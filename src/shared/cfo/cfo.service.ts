@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 
 /** Third party imports */
 import { BehaviorSubject, Observable, ReplaySubject } from 'rxjs';
-import { finalize, map } from 'rxjs/operators';
+import { finalize, map, refCount, publishReplay } from 'rxjs/operators';
 import capitalize from 'lodash/capitalize';
 
 /** Application imports */
@@ -169,7 +169,7 @@ export class CFOService extends CFOServiceBase {
             this.instanceStatus$ = this.instanceServiceProxy
                 .getStatus(InstanceType[this.instanceType], this.instanceId, invalidateServerCache)
                 .pipe(
-                    finalize(() => this.instanceStatus$ = undefined),
+                    finalize(() => setTimeout(() => this.instanceStatus$ = undefined, 1000)),
                     map((data: GetStatusOutput) => {
                         this.currentInstanceStatus.next(data);
                         this.userId = data.userId;
@@ -187,7 +187,7 @@ export class CFOService extends CFOServiceBase {
                         this.hasAccountsAccess.next(data.hasAccountsAccess);
                         this.updateMenuItems();
                         return this.hasTransactions;
-                    })
+                    }), publishReplay(), refCount()
                 );
         return this.instanceStatus$;
     }

@@ -3,7 +3,7 @@ import { Injector, Injectable } from '@angular/core';
 import { HttpEvent, HttpRequest, HttpHandler, HttpHeaders, HttpParams } from '@angular/common/http';
 
 /** Third party imports */
-import { finalize, map, switchMap, catchError } from 'rxjs/operators';
+import { finalize, map, switchMap, catchError, takeUntil, first } from 'rxjs/operators';
 import { Observable, Subject, throwError } from 'rxjs';
 
 /** Application imports */
@@ -54,6 +54,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         let poolRequest = this._poolRequests[key];
         if (!poolRequest) {
             poolRequest = this._poolRequests[key] = { request };
+            poolRequest.destroy$ = new Subject<boolean>();
             return poolRequest.subject = this.interceptInternal(request, next);
         }
 
@@ -68,6 +69,8 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
                 poolRequest.subject.observers.forEach(sub => {
                     sub.unsubscribe();
                 });
+            poolRequest.httpSubscriber.unsubscribe();
+            poolRequest.destroy$.next(true);
             poolRequest.subject.complete();
 
             this._poolRequests[key] = poolRequest;
@@ -77,15 +80,19 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     }
 
     private interceptInternal(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-        let key = this.getKeyFromUrl(request);
+        let key = this.getKeyFromUrl(request),
+            interceptObservable = new Subject<HttpEvent<any>>();
             
-        return next.handle(
-            this.normalizeRequestHeaders(request)
+        this._poolRequests[key].httpSubscriber = next.handle(
+             this.normalizeRequestHeaders(request)
         ).pipe(
+            takeUntil(this._poolRequests[key].destroy$),
             finalize(() => delete this._poolRequests[key]),
             catchError((error: any) => this.handleErrorResponseInternal(error)),
             switchMap((event: HttpEvent<any>) => this.handleSuccessResponse(event))
-        );
+        ).subscribe(res => interceptObservable.next(res));
+
+        return interceptObservable.asObservable().pipe(first());
     }
 
     private getKeyFromUrl(request: HttpRequest<any>): string {
