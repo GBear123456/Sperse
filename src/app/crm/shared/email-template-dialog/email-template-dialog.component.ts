@@ -123,7 +123,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             '/',
             { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strikethrough', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat' ] },
             { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] },
-            { name: 'insert', items: [ 'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe', 'Mathjax' ] },
+            { name: 'insert', items: [ 'Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe', 'Mathjax' ] },
             '/',
             { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
             { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
@@ -131,7 +131,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] }
         ],
         removePlugins: 'elementspath',
-        extraPlugins: 'preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,flash,pagebreak,iframe,language,bidi,copyformatting',
+        extraPlugins: 'preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,pagebreak,iframe,language,bidi,copyformatting',
         skin: 'moono-lisa' //kama,moono,moono-lisa
     };
 
