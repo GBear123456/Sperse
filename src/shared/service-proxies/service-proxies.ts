@@ -9824,11 +9824,12 @@ export class ContactServiceProxy {
     }
 
     /**
-     * @param searchPhrase (optional) 
-     * @param leadId (optional) 
+     * @searchPhrase (optional) 
+     * @leadId (optional) 
+     * @includeProspective (optional) 
      * @return Success
      */
-    getSourceContacts(searchPhrase: string | undefined, leadId: number | undefined, topCount: number): Observable<SourceContactInfo[]> {
+    getSourceContacts(searchPhrase: string | null | undefined, leadId: number | null | undefined, includeProspective: boolean | null | undefined, topCount: number): Observable<SourceContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetSourceContacts?";
         if (searchPhrase === null)
             throw new Error("The parameter 'searchPhrase' cannot be null.");
@@ -9838,6 +9839,8 @@ export class ContactServiceProxy {
             throw new Error("The parameter 'leadId' cannot be null.");
         else if (leadId !== undefined)
             url_ += "LeadId=" + encodeURIComponent("" + leadId) + "&";
+        if (includeProspective !== undefined)
+            url_ += "IncludeProspective=" + encodeURIComponent("" + includeProspective) + "&"; 
         if (topCount === undefined || topCount === null)
             throw new Error("The parameter 'topCount' must be defined and cannot be null.");
         else
@@ -15504,8 +15507,85 @@ export class DashboardServiceProxy {
     }
 
     /**
-     * @param contactGroupId (optional) 
-     * @param sourceContactId (optional) 
+     * @groupBy (optional) 
+     * @starNames (optional) 
+     * @startDate (optional) 
+     * @endDate (optional) 
+     * @contactGroupId (optional) 
+     * @sourceContactId (optional) 
+     * @sourceOrganizationUnitIds (optional) 
+     * @return Success
+     */
+    getContactStatsByStar(groupBy: GroupByPeriod | null | undefined, starNames: string[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<ContactsStatsByStarInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactStatsByStar?";
+        if (groupBy !== undefined)
+            url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
+        if (starNames !== undefined)
+            starNames && starNames.forEach(item => { url_ += "StarNames=" + encodeURIComponent("" + item) + "&"; });
+        if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
+        if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
+        if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
+        if (sourceContactId !== undefined)
+            url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
+        if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetContactStatsByStar(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetContactStatsByStar(<any>response_);
+                } catch (e) {
+                    return <Observable<ContactsStatsByStarInfo[]>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<ContactsStatsByStarInfo[]>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetContactStatsByStar(response: HttpResponseBase): Observable<ContactsStatsByStarInfo[]> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (resultData200 && resultData200.constructor === Array) {
+                result200 = [];
+                for (let item of resultData200)
+                    result200.push(ContactsStatsByStarInfo.fromJS(item));
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ContactsStatsByStarInfo[]>(<any>null);
+    }
+
+    /**
+     * @contactGroupId (optional) 
+     * @sourceContactId (optional) 
      * @return Success
      */
     getStatus(contactGroupId: string | undefined, sourceContactId: number | undefined): Observable<GetCRMStatusOutput> {
@@ -16045,52 +16125,47 @@ export class DashboardCustomizationServiceProxy {
     }
 
     /**
-     * @param application (optional) 
      * @return Success
      */
-    getSettingName(application: string | undefined): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/Platform/DashboardCustomization/GetSettingName?";
-        if (application === null)
-            throw new Error("The parameter 'application' cannot be null.");
-        else if (application !== undefined)
-            url_ += "application=" + encodeURIComponent("" + application) + "&";
+    getDefaultOrganizationUnit(): Observable<OrganizationUnitShortDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dictionary/GetDefaultOrganizationUnit";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetSettingName(response_);
+            return this.processGetDefaultOrganizationUnit(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetSettingName(<any>response_);
+                    return this.processGetDefaultOrganizationUnit(<any>response_);
                 } catch (e) {
-                    return <Observable<string>><any>_observableThrow(e);
+                    return <Observable<OrganizationUnitShortDto>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<string>><any>_observableThrow(response_);
+                return <Observable<OrganizationUnitShortDto>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetSettingName(response: HttpResponseBase): Observable<string> {
+    protected processGetDefaultOrganizationUnit(response: HttpResponseBase): Observable<OrganizationUnitShortDto> {
         const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
+            result200 = resultData200 ? OrganizationUnitShortDto.fromJS(resultData200) : new OrganizationUnitShortDto();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -16098,7 +16173,7 @@ export class DashboardCustomizationServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<string>(<any>null);
+        return _observableOf<OrganizationUnitShortDto>(<any>null);
     }
 }
 
@@ -65624,6 +65699,62 @@ export class GetLanguagesOutput implements IGetLanguagesOutput {
 export interface IGetLanguagesOutput {
     defaultLanguageName: string | undefined;
     items: ApplicationLanguageListDto[] | undefined;
+}
+
+export class ContactsStatsByStarInfo implements IContactsStatsByStarInfo {
+    date!: moment.Moment | undefined;
+    totalCount!: number | undefined;
+    starCount!: { [key: string] : number; } | undefined;
+
+    constructor(data?: IContactsStatsByStarInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
+            this.totalCount = data["totalCount"];
+            if (data["starCount"]) {
+                this.starCount = {};
+                for (let key in data["starCount"]) {
+                    if (data["starCount"].hasOwnProperty(key))
+                        this.starCount[key] = data["starCount"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): ContactsStatsByStarInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactsStatsByStarInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["totalCount"] = this.totalCount;
+        if (this.starCount) {
+            data["starCount"] = {};
+            for (let key in this.starCount) {
+                if (this.starCount.hasOwnProperty(key))
+                    data["starCount"][key] = this.starCount[key];
+            }
+        }
+        return data; 
+    }
+}
+
+export interface IContactsStatsByStarInfo {
+    date: moment.Moment | undefined;
+    totalCount: number | undefined;
+    starCount: { [key: string] : number; } | undefined;
 }
 
 export class GetLatestWebLogsOutput implements IGetLatestWebLogsOutput {

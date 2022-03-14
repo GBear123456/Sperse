@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
+import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { InstanceServiceProxy, NotificationServiceProxy, TenantSubscriptionServiceProxy, UserNotificationDto, UserNotificationState, GetNotificationsOutput } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from '../UserNotificationHelper';
 import { PaymentWizardComponent } from '../../../common/payment-wizard/payment-wizard.component';
@@ -17,7 +18,6 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { ConfigInterface } from '@app/shared/common/config.interface';
-
 
 @Component({
     templateUrl: './header-notifications.component.html',
@@ -51,6 +51,7 @@ export class HeaderNotificationsComponent implements OnInit {
         private dialog: MatDialog,
         private notificationService: NotificationServiceProxy,
         private userNotificationHelper: UserNotificationHelper,
+        private itemDetailsService: ItemDetailsService,
         private appService: AppService,
         private appSession: AppSessionService,
         private permission: PermissionCheckerService,
@@ -178,8 +179,10 @@ export class HeaderNotificationsComponent implements OnInit {
         if (notification.entityId) {
             if (notification.entityTypeName == this.CONTACT_ENTITY_TYPE) {
                 this.router.navigate(['app/crm/contact', notification.entityId]);
+                setTimeout(() => this.itemDetailsService.clearItemsSource());
             } else if (notification.entityTypeName == this.COMMUNICATION_MESSAGE_ENTITY_TYPE) {
                 this.router.navigate(['app/crm/contact', notification.entityId, 'user-inbox']);
+                setTimeout(() => this.itemDetailsService.clearItemsSource());
             }
         } else if (notification.url) {
             this.router.navigateByUrl(notification.url);
