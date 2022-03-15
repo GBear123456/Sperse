@@ -24,7 +24,8 @@
         <div custom-title>
             <div [hidden]="showOrgUnits">
                 <span class="selected">{{ls.l('ReferredByPerson')}}</span>
-                <dx-switch [(value)]="includeProspective"
+                <dx-switch [class.centered] = "showSwitchInTheMiddle()"
+                           [(value)]="includeProspective"
                            [switchedOffText]="ls.l('ActiveOnly')"
                            [switchedOnText]="ls.l('AllContacts')"
                            [width]="80"

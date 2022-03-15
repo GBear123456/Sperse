@@ -98,7 +98,8 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
 
     loadSourceContacts(searchPhrase?: string, elm?: any) {
         if (!this.contacts.length || elm) {
-            let dxList  = this.sourceComponent.dxList;
+            let dxList = this.sourceComponent.dxList;
+
             if (dxList && !elm)
                 elm = dxList.instance.element();
             elm && abp.ui.setBusy(elm);
@@ -219,6 +220,16 @@ export class SourceContactListComponent implements AfterViewInit, OnDestroy {
 
     checkSelectionAllowed() {
         return this.relatedItemsKeys && (this.relatedItemsKeys.length == 1 || this.hasBulkUpdatePermission && this.relatedItemsKeys.length > 1);
+    }
+
+    showSwitchInTheMiddle(): boolean {
+        if (this.sourceComponent) {
+            let dxList = this.sourceComponent.dxList;
+            if (dxList && dxList.selectionMode != 'none' && this.checkSelectionAllowed()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     onIncludeProspectiveChanged() {
