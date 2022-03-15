@@ -9824,12 +9824,12 @@ export class ContactServiceProxy {
     }
 
     /**
-     * @searchPhrase (optional) 
-     * @leadId (optional) 
-     * @includeProspective (optional) 
+     * @param searchPhrase (optional) 
+     * @param leadId (optional) 
+     * @param includeProspective (optional) 
      * @return Success
      */
-    getSourceContacts(searchPhrase: string | null | undefined, leadId: number | null | undefined, includeProspective: boolean | null | undefined, topCount: number): Observable<SourceContactInfo[]> {
+    getSourceContacts(searchPhrase: string | undefined, leadId: number | undefined, includeProspective: boolean | undefined, topCount: number): Observable<SourceContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetSourceContacts?";
         if (searchPhrase === null)
             throw new Error("The parameter 'searchPhrase' cannot be null.");
@@ -9839,8 +9839,10 @@ export class ContactServiceProxy {
             throw new Error("The parameter 'leadId' cannot be null.");
         else if (leadId !== undefined)
             url_ += "LeadId=" + encodeURIComponent("" + leadId) + "&";
-        if (includeProspective !== undefined)
-            url_ += "IncludeProspective=" + encodeURIComponent("" + includeProspective) + "&"; 
+        if (includeProspective === null)
+            throw new Error("The parameter 'includeProspective' cannot be null.");
+        else if (includeProspective !== undefined)
+            url_ += "IncludeProspective=" + encodeURIComponent("" + includeProspective) + "&";
         if (topCount === undefined || topCount === null)
             throw new Error("The parameter 'topCount' must be defined and cannot be null.");
         else
@@ -15507,30 +15509,43 @@ export class DashboardServiceProxy {
     }
 
     /**
-     * @groupBy (optional) 
-     * @starNames (optional) 
-     * @startDate (optional) 
-     * @endDate (optional) 
-     * @contactGroupId (optional) 
-     * @sourceContactId (optional) 
-     * @sourceOrganizationUnitIds (optional) 
+     * @param starNames (optional) 
+     * @param startDate (optional) 
+     * @param endDate (optional) 
+     * @param contactGroupId (optional) 
+     * @param sourceContactId (optional) 
+     * @param sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getContactStatsByStar(groupBy: GroupByPeriod | null | undefined, starNames: string[] | null | undefined, startDate: moment.Moment | null | undefined, endDate: moment.Moment | null | undefined, contactGroupId: string | null | undefined, sourceContactId: number | null | undefined, sourceOrganizationUnitIds: number[] | null | undefined): Observable<ContactsStatsByStarInfo[]> {
+    getContactStatsByStar(groupBy: GroupByPeriod, starNames: string[] | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, contactGroupId: string | undefined, sourceContactId: number | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<ContactsStatsByStarInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Dashboard/GetContactStatsByStar?";
-        if (groupBy !== undefined)
-            url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&"; 
-        if (starNames !== undefined)
+        if (groupBy === undefined || groupBy === null)
+            throw new Error("The parameter 'groupBy' must be defined and cannot be null.");
+        else
+            url_ += "GroupBy=" + encodeURIComponent("" + groupBy) + "&";
+        if (starNames === null)
+            throw new Error("The parameter 'starNames' cannot be null.");
+        else if (starNames !== undefined)
             starNames && starNames.forEach(item => { url_ += "StarNames=" + encodeURIComponent("" + item) + "&"; });
-        if (startDate !== undefined)
-            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&"; 
-        if (endDate !== undefined)
-            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&"; 
-        if (contactGroupId !== undefined)
-            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&"; 
-        if (sourceContactId !== undefined)
-            url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&"; 
-        if (sourceOrganizationUnitIds !== undefined)
+        if (startDate === null)
+            throw new Error("The parameter 'startDate' cannot be null.");
+        else if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toJSON() : "") + "&";
+        if (endDate === null)
+            throw new Error("The parameter 'endDate' cannot be null.");
+        else if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toJSON() : "") + "&";
+        if (contactGroupId === null)
+            throw new Error("The parameter 'contactGroupId' cannot be null.");
+        else if (contactGroupId !== undefined)
+            url_ += "ContactGroupId=" + encodeURIComponent("" + contactGroupId) + "&";
+        if (sourceContactId === null)
+            throw new Error("The parameter 'sourceContactId' cannot be null.");
+        else if (sourceContactId !== undefined)
+            url_ += "SourceContactId=" + encodeURIComponent("" + sourceContactId) + "&";
+        if (sourceOrganizationUnitIds === null)
+            throw new Error("The parameter 'sourceOrganizationUnitIds' cannot be null.");
+        else if (sourceOrganizationUnitIds !== undefined)
             sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
@@ -15538,8 +15553,7 @@ export class DashboardServiceProxy {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
             })
         };
 
@@ -15559,19 +15573,22 @@ export class DashboardServiceProxy {
 
     protected processGetContactStatsByStar(response: HttpResponseBase): Observable<ContactsStatsByStarInfo[]> {
         const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (resultData200 && resultData200.constructor === Array) {
-                result200 = [];
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
                 for (let item of resultData200)
-                    result200.push(ContactsStatsByStarInfo.fromJS(item));
+                    result200!.push(ContactsStatsByStarInfo.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
             }
             return _observableOf(result200);
             }));
@@ -15584,8 +15601,8 @@ export class DashboardServiceProxy {
     }
 
     /**
-     * @contactGroupId (optional) 
-     * @sourceContactId (optional) 
+     * @param contactGroupId (optional) 
+     * @param sourceContactId (optional) 
      * @return Success
      */
     getStatus(contactGroupId: string | undefined, sourceContactId: number | undefined): Observable<GetCRMStatusOutput> {
@@ -16125,47 +16142,52 @@ export class DashboardCustomizationServiceProxy {
     }
 
     /**
+     * @param application (optional) 
      * @return Success
      */
-    getDefaultOrganizationUnit(): Observable<OrganizationUnitShortDto> {
-        let url_ = this.baseUrl + "/api/services/CRM/Dictionary/GetDefaultOrganizationUnit";
+    getSettingName(application: string | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/Platform/DashboardCustomization/GetSettingName?";
+        if (application === null)
+            throw new Error("The parameter 'application' cannot be null.");
+        else if (application !== undefined)
+            url_ += "application=" + encodeURIComponent("" + application) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
             observe: "response",
             responseType: "blob",
             headers: new HttpHeaders({
-                "Content-Type": "application/json", 
-                "Accept": "application/json"
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
             })
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetDefaultOrganizationUnit(response_);
+            return this.processGetSettingName(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetDefaultOrganizationUnit(<any>response_);
+                    return this.processGetSettingName(<any>response_);
                 } catch (e) {
-                    return <Observable<OrganizationUnitShortDto>><any>_observableThrow(e);
+                    return <Observable<string>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<OrganizationUnitShortDto>><any>_observableThrow(response_);
+                return <Observable<string>><any>_observableThrow(response_);
         }));
     }
 
-    protected processGetDefaultOrganizationUnit(response: HttpResponseBase): Observable<OrganizationUnitShortDto> {
+    protected processGetSettingName(response: HttpResponseBase): Observable<string> {
         const status = response.status;
-        const responseBlob = 
-            response instanceof HttpResponse ? response.body : 
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
             (<any>response).error instanceof Blob ? (<any>response).error : undefined;
 
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 ? OrganizationUnitShortDto.fromJS(resultData200) : new OrganizationUnitShortDto();
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -16173,7 +16195,7 @@ export class DashboardCustomizationServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<OrganizationUnitShortDto>(<any>null);
+        return _observableOf<string>(<any>null);
     }
 }
 
@@ -16687,6 +16709,57 @@ export class DictionaryServiceProxy {
             }));
         }
         return _observableOf<OrganizationUnitShortDto[]>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getDefaultOrganizationUnit(): Observable<OrganizationUnitShortDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Dictionary/GetDefaultOrganizationUnit";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetDefaultOrganizationUnit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetDefaultOrganizationUnit(<any>response_);
+                } catch (e) {
+                    return <Observable<OrganizationUnitShortDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<OrganizationUnitShortDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetDefaultOrganizationUnit(response: HttpResponseBase): Observable<OrganizationUnitShortDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = OrganizationUnitShortDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<OrganizationUnitShortDto>(<any>null);
     }
 }
 
@@ -33387,6 +33460,57 @@ export class ProfilePhotoServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getFilestackSettings(): Observable<FilestackSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePhoto/GetFilestackSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetFilestackSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetFilestackSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<FilestackSettingsDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FilestackSettingsDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetFilestackSettings(response: HttpResponseBase): Observable<FilestackSettingsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = FilestackSettingsDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FilestackSettingsDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -40364,6 +40488,57 @@ export class TenantSettingsServiceProxy {
     /**
      * @return Success
      */
+    getFilestackSettings(): Observable<FilestackSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetFilestackSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetFilestackSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetFilestackSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<FilestackSettingsDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FilestackSettingsDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetFilestackSettings(response: HttpResponseBase): Observable<FilestackSettingsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = FilestackSettingsDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FilestackSettingsDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     getLdapSettings(): Observable<LdapSettingsEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetLdapSettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -41064,6 +41239,58 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateRapidSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateFilestackSettings(body: FilestackSettingsDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateFilestackSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateFilestackSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateFilestackSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateFilestackSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -54441,6 +54668,62 @@ export interface IContactShortInfo {
     ratingId: number | undefined;
 }
 
+export class ContactsStatsByStarInfo implements IContactsStatsByStarInfo {
+    date!: moment.Moment;
+    totalCount!: number;
+    starCount!: { [key: string]: number; } | undefined;
+
+    constructor(data?: IContactsStatsByStarInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
+            this.totalCount = _data["totalCount"];
+            if (_data["starCount"]) {
+                this.starCount = {} as any;
+                for (let key in _data["starCount"]) {
+                    if (_data["starCount"].hasOwnProperty(key))
+                        (<any>this.starCount)![key] = _data["starCount"][key];
+                }
+            }
+        }
+    }
+
+    static fromJS(data: any): ContactsStatsByStarInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ContactsStatsByStarInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
+        data["totalCount"] = this.totalCount;
+        if (this.starCount) {
+            data["starCount"] = {};
+            for (let key in this.starCount) {
+                if (this.starCount.hasOwnProperty(key))
+                    (<any>data["starCount"])[key] = this.starCount[key];
+            }
+        }
+        return data;
+    }
+}
+
+export interface IContactsStatsByStarInfo {
+    date: moment.Moment;
+    totalCount: number;
+    starCount: { [key: string]: number; } | undefined;
+}
+
 export enum ContactStarColorType {
     Green = "Green",
     Blue = "Blue",
@@ -58520,6 +58803,10 @@ export class CreateProfilePhotoInput implements ICreateProfilePhotoInput {
     providerKey!: string | undefined;
     fileUrl!: string | undefined;
     thumbnailUrl!: string | undefined;
+    original!: string | undefined;
+    thumbnail!: string | undefined;
+    source!: string | undefined;
+    comment!: string | undefined;
 
     constructor(data?: ICreateProfilePhotoInput) {
         if (data) {
@@ -58535,6 +58822,10 @@ export class CreateProfilePhotoInput implements ICreateProfilePhotoInput {
             this.providerKey = _data["providerKey"];
             this.fileUrl = _data["fileUrl"];
             this.thumbnailUrl = _data["thumbnailUrl"];
+            this.original = _data["original"];
+            this.thumbnail = _data["thumbnail"];
+            this.source = _data["source"];
+            this.comment = _data["comment"];
         }
     }
 
@@ -58550,6 +58841,10 @@ export class CreateProfilePhotoInput implements ICreateProfilePhotoInput {
         data["providerKey"] = this.providerKey;
         data["fileUrl"] = this.fileUrl;
         data["thumbnailUrl"] = this.thumbnailUrl;
+        data["original"] = this.original;
+        data["thumbnail"] = this.thumbnail;
+        data["source"] = this.source;
+        data["comment"] = this.comment;
         return data;
     }
 }
@@ -58558,6 +58853,10 @@ export interface ICreateProfilePhotoInput {
     providerKey: string | undefined;
     fileUrl: string | undefined;
     thumbnailUrl: string | undefined;
+    original: string | undefined;
+    thumbnail: string | undefined;
+    source: string | undefined;
+    comment: string | undefined;
 }
 
 export class CreateRuleDto implements ICreateRuleDto {
@@ -62676,6 +62975,50 @@ export interface IFileInfo {
     name: string | undefined;
 }
 
+export class FilestackSettingsDto implements IFilestackSettingsDto {
+    apiKey!: string | undefined;
+    policy!: string | undefined;
+    signature!: string | undefined;
+
+    constructor(data?: IFilestackSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.apiKey = _data["apiKey"];
+            this.policy = _data["policy"];
+            this.signature = _data["signature"];
+        }
+    }
+
+    static fromJS(data: any): FilestackSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new FilestackSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["apiKey"] = this.apiKey;
+        data["policy"] = this.policy;
+        data["signature"] = this.signature;
+        return data;
+    }
+}
+
+export interface IFilestackSettingsDto {
+    apiKey: string | undefined;
+    policy: string | undefined;
+    signature: string | undefined;
+}
+
 export class FilterElementDtoOfInt32 implements IFilterElementDtoOfInt32 {
     id!: number;
     name!: string | undefined;
@@ -65699,62 +66042,6 @@ export class GetLanguagesOutput implements IGetLanguagesOutput {
 export interface IGetLanguagesOutput {
     defaultLanguageName: string | undefined;
     items: ApplicationLanguageListDto[] | undefined;
-}
-
-export class ContactsStatsByStarInfo implements IContactsStatsByStarInfo {
-    date!: moment.Moment | undefined;
-    totalCount!: number | undefined;
-    starCount!: { [key: string] : number; } | undefined;
-
-    constructor(data?: IContactsStatsByStarInfo) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(data?: any) {
-        if (data) {
-            this.date = data["date"] ? moment(data["date"].toString()) : <any>undefined;
-            this.totalCount = data["totalCount"];
-            if (data["starCount"]) {
-                this.starCount = {};
-                for (let key in data["starCount"]) {
-                    if (data["starCount"].hasOwnProperty(key))
-                        this.starCount[key] = data["starCount"][key];
-                }
-            }
-        }
-    }
-
-    static fromJS(data: any): ContactsStatsByStarInfo {
-        data = typeof data === 'object' ? data : {};
-        let result = new ContactsStatsByStarInfo();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["date"] = this.date ? this.date.toISOString() : <any>undefined;
-        data["totalCount"] = this.totalCount;
-        if (this.starCount) {
-            data["starCount"] = {};
-            for (let key in this.starCount) {
-                if (this.starCount.hasOwnProperty(key))
-                    data["starCount"][key] = this.starCount[key];
-            }
-        }
-        return data; 
-    }
-}
-
-export interface IContactsStatsByStarInfo {
-    date: moment.Moment | undefined;
-    totalCount: number | undefined;
-    starCount: { [key: string] : number; } | undefined;
 }
 
 export class GetLatestWebLogsOutput implements IGetLatestWebLogsOutput {
