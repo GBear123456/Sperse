@@ -98,7 +98,7 @@ import {
     RenameForecastModelInput,
     CreateForecastModelInput,
     SyncAccountBankDto,
-    ReportTemplate2,
+    ReportTemplate,
     GetReportTemplateDefinitionOutput,
     CashFlowGridSettingsDto,
     CashFlowStatsDto,
@@ -827,7 +827,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         /** Create parallel operations */
         const cashFlowInitialData$: Observable<CashFlowInitialData> = this.cashflowServiceProxy.getCashFlowInitialData(InstanceType[this.instanceType], this.instanceId);
         const categoryTree$: Observable<GetCategoryTreeOutput> = this.categoryTreeServiceProxy.get(InstanceType[this.instanceType], this.instanceId, true);
-        const reportSections$ = this.categoryTreeServiceProxy.getReportTemplateDefinition(InstanceType[this.instanceType], this.instanceId, ReportTemplate2.Personal);
+        const reportSections$ = this.categoryTreeServiceProxy.getReportTemplateDefinition(InstanceType[this.instanceType], this.instanceId, ReportTemplate.Personal);
         const cashflowGridSettings$: Observable<CashFlowGridSettingsDto> = this.userPreferencesService.userPreferences$.pipe(first());
         const syncAccounts$: Observable<SyncAccountBankDto[]> = this.bankAccountsService.syncAccounts$.pipe(first());
         forkJoin(cashFlowInitialData$ , categoryTree$, reportSections$, cashflowGridSettings$, syncAccounts$)

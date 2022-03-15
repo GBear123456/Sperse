@@ -5866,7 +5866,7 @@ export class CategoryTreeServiceProxy {
      * @param instanceId (optional) 
      * @return Success
      */
-    getReportTemplateDefinition(instanceType: InstanceType | undefined, instanceId: number | undefined, reportTemplate: ReportTemplate2): Observable<GetReportTemplateDefinitionOutput> {
+    getReportTemplateDefinition(instanceType: InstanceType | undefined, instanceId: number | undefined, reportTemplate: ReportTemplate): Observable<GetReportTemplateDefinitionOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/CategoryTree/GetReportTemplateDefinition?";
         if (instanceType === null)
             throw new Error("The parameter 'instanceType' cannot be null.");
@@ -20786,7 +20786,7 @@ export class InstanceServiceProxy {
      * @param accountingTreeType (optional) 
      * @return Success
      */
-    setup(instanceType: InstanceType2, accountingTreeType: AccountingTreeType | undefined): Observable<SetupOutput> {
+    setup(instanceType: InstanceType, accountingTreeType: AccountingTreeType | undefined): Observable<SetupOutput> {
         let url_ = this.baseUrl + "/api/services/CFO/Instance/Setup?";
         if (instanceType === undefined || instanceType === null)
             throw new Error("The parameter 'instanceType' must be defined and cannot be null.");
@@ -27068,7 +27068,7 @@ export class OfferManagementServiceProxy {
      * @param value (optional) 
      * @return Success
      */
-    setAttribute(offerAttribute: OfferAttribute, value: string | undefined, body: OfferFilter): Observable<number> {
+    setAttribute(offerAttribute: OfferAttributeType, value: string | undefined, body: OfferFilter): Observable<number> {
         let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/SetAttribute?";
         if (offerAttribute === undefined || offerAttribute === null)
             throw new Error("The parameter 'offerAttribute' must be defined and cannot be null.");
@@ -27133,7 +27133,7 @@ export class OfferManagementServiceProxy {
      * @param value (optional) 
      * @return Success
      */
-    setFlag(offerFlag: OfferFlag, value: boolean | undefined, body: OfferFilter): Observable<number> {
+    setFlag(offerFlag: OfferFlagType, value: boolean | undefined, body: OfferFilter): Observable<number> {
         let url_ = this.baseUrl + "/api/services/PFM/OfferManagement/SetFlag?";
         if (offerFlag === undefined || offerFlag === null)
             throw new Error("The parameter 'offerFlag' must be defined and cannot be null.");
@@ -45185,7 +45185,7 @@ export class UserServiceProxy {
     /**
      * @return Success
      */
-    getAvailableUserCount(moduleType: ModuleType2): Observable<number> {
+    getAvailableUserCount(moduleType: ModuleType): Observable<number> {
         let url_ = this.baseUrl + "/api/services/Platform/User/GetAvailableUserCount?";
         if (moduleType === undefined || moduleType === null)
             throw new Error("The parameter 'moduleType' must be defined and cannot be null.");
@@ -97880,72 +97880,6 @@ export interface IYTelSettingsEditDto {
     password: string | undefined;
     from: string | undefined;
     inboundSmsKey: string | undefined;
-}
-
-export enum ReportTemplate2 {
-    Personal = "Personal",
-    Suspense = "Suspense",
-    Business = "Business",
-    Yacht = "Yacht",
-    JH1 = "JH1",
-}
-
-export enum InstanceType2 {
-    User = "User",
-    Main = "Main",
-}
-
-export enum OfferAttribute {
-    SubId = "SubId",
-    IsPublished = "IsPublished",
-    OverallRating = "OverallRating",
-    IssuingBank = "IssuingBank",
-    AnnualFee = "AnnualFee",
-    RewardsRate = "RewardsRate",
-    IntroRewardsBonus = "IntroRewardsBonus",
-    RegularAPR = "RegularAPR",
-    CampaignProviderType = "CampaignProviderType",
-    OfferCollection = "OfferCollection",
-    MinLoanAmount = "MinLoanAmount",
-    MaxLoanAmount = "MaxLoanAmount",
-    MinLoanTermMonths = "MinLoanTermMonths",
-    MaxLoanTermMonths = "MaxLoanTermMonths",
-    MinAnnualIncome = "MinAnnualIncome",
-    MaxAnnualIncome = "MaxAnnualIncome",
-    States = "States",
-    ParameterHandlerType = "ParameterHandlerType",
-}
-
-export enum OfferFlag {
-    Choice = "Choice",
-    Best = "Best",
-    TravelAndAirlineMiles = "TravelAndAirlineMiles",
-    DinigRewards = "DinigRewards",
-    GasRewards = "GasRewards",
-    CashBackRewards = "CashBackRewards",
-    InstantDecision = "InstantDecision",
-    InstantResponse = "InstantResponse",
-    NoCreditCheck = "NoCreditCheck",
-    GuaranteedApproval = "GuaranteedApproval",
-    RebuildCredit = "RebuildCredit",
-    ChipCard = "ChipCard",
-    ApplePay = "ApplePay",
-    GroceryRewards = "GroceryRewards",
-    EntertainmentRewards = "EntertainmentRewards",
-    HotelRewards = "HotelRewards",
-    HasNoRewards = "HasNoRewards",
-    ZeroPercentageOnPurchases = "ZeroPercentageOnPurchases",
-    ZeroPercentageInterestTransfers = "ZeroPercentageInterestTransfers",
-    Special = "Special",
-    Newest = "Newest",
-}
-
-export enum ModuleType2 {
-    CFO = "CFO",
-    CRM = "CRM",
-    CFO_CRM = "CFO_CRM",
-    PFM = "PFM",
-    CFO_Partner = "CFO_Partner",
 }
 
 export class Flags implements IFlags {

@@ -7,7 +7,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { InstanceType, ModuleType2, UserServiceProxy } from 'shared/service-proxies/service-proxies';
+import { InstanceType, ModuleType, UserServiceProxy } from 'shared/service-proxies/service-proxies';
 import { AppConsts } from '@shared/AppConsts';
 import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
@@ -30,7 +30,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
     @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
     dialogRef: MatDialogRef<CfoIntroComponent, any>;
     readonly identifier = 'CFO-Instance-Setup';
-    readonly moduleType = ModuleType2.CFO;
+    readonly moduleType = ModuleType.CFO;
     moduleName: string;
     showImportUsersStep: boolean;
     maxAvailableUserCount: number;
@@ -85,7 +85,7 @@ export class CfoIntroComponent extends CFOComponentBase implements OnInit {
 
     // GetAvailableUserCount
     getAvailableUserCount() {
-        this.userService.getAvailableUserCount(ModuleType2[this.moduleType]).subscribe(result => {
+        this.userService.getAvailableUserCount(ModuleType[this.moduleType]).subscribe(result => {
             this.maxAvailableUserCount = result;
         });
     }

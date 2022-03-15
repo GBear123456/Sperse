@@ -18,7 +18,7 @@ import { catchError, switchMap } from 'rxjs/operators';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { InstanceServiceProxy, InstanceType2 } from 'shared/service-proxies/service-proxies';
+import { InstanceServiceProxy, InstanceType } from 'shared/service-proxies/service-proxies';
 import { AccountConnectorDialogComponent } from '@shared/common/account-connector-dialog/account-connector-dialog';
 
 @Component({
@@ -81,7 +81,7 @@ export class SetupComponent extends CFOComponentBase implements AfterViewInit, O
         this.startLoading(false, this.setupContainerElement);
         this.addAccount();
         if (this._cfoService.instanceId == null)
-            this.instanceServiceProxy.setup(InstanceType2[this.instanceType], undefined).pipe(
+            this.instanceServiceProxy.setup(InstanceType[this.instanceType], undefined).pipe(
                 switchMap(() => this._cfoService.instanceChangeProcess()),
                 catchError(() => {
                     this.dialog.closeAll();
