@@ -800,9 +800,9 @@ export class ContactsService {
                     this.ls.l((isActive ? '': 'in') + 'activate'), 
                     startCase(contactGroupName[<string>groupId])
                 ),
-                (isConfirmed: boolean, [ notifyUser ]: boolean[]) => {
+                (isConfirmed: boolean, [ notifyUser, processLead ]: boolean[]) => {
                     if (isConfirmed) {
-                        this.updateStatusInternal(entityId, groupId, isActive, notifyUser, entity).subscribe(
+                        this.updateStatusInternal(entityId, groupId, isActive, notifyUser, processLead, entity).subscribe(
                             () => observer.next(true),
                             (error) => observer.error(error)
                         );
@@ -810,23 +810,31 @@ export class ContactsService {
                         observer.next(false);
                     }
                 },
-                [ {
-                    text: this.ls.l('SendCancellationEmail'),
-                    visible: this.userId.value && (entity == 'user' && !isActive || showEmailCheckbox),
-                    checked: false
-                } ],
+                [
+                    {
+                        text: this.ls.l('SendCancellationEmail'),
+                        visible: this.userId.value && (entity == 'user' && !isActive || showEmailCheckbox),
+                        checked: false
+                    },
+                    {
+                        text: this.ls.l('FinalizeLeadIfNotCompleted'),
+                        visible: isActive,
+                        checked: true
+                    }
+                ],
                 this.ls.l(startCase(entity) + 'StatusUpdateConfirmationTitle')
             );
         });
     }
 
-    private updateStatusInternal(entityId: number, groupId: ContactGroup, isActive: boolean, notifyUser: boolean, entityType: 'contact' | 'user' = 'contact') {
+    private updateStatusInternal(entityId: number, groupId: ContactGroup, isActive: boolean, notifyUser: boolean, processLead: boolean, entityType: 'contact' | 'user' = 'contact') {
         return entityType === 'contact'
             ? this.contactProxy.updateContactStatus(new UpdateContactStatusInput({
                 contactId: entityId,
                 groupId: String(groupId),
                 isActive: isActive,
-                notifyUser: notifyUser
+                notifyUser: notifyUser,
+                processLead: processLead
             }))
             : this.userService.updateOptions(new UpdateUserOptionsDto({
                 id: entityId,

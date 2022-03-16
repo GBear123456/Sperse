@@ -42,21 +42,25 @@ export class ClientService {
         let contactGroup = invert(ContactGroup)[groupId];
         ContactsHelper.showConfirmMessage(
             this.appLocalizationService.ls(this.crmLocalizationSourceName, `${contactGroup}StatusUpdateConfirmationTitle`),
-            (isConfirmed: boolean, [ notifyUsers ]: boolean[]) => {
+            (isConfirmed: boolean, [ notifyUsers, processLeads ]: boolean[]) => {
                 if (isConfirmed)
-                    this.updateContactStatusesInternal(contactIds, groupId, isActive, callback, notifyUsers);
+                    this.updateContactStatusesInternal(contactIds, groupId, isActive, callback, notifyUsers, processLeads);
             },
-            [ { text: this.ls.l('SendCancellationEmailPlural'), visible: !isActive, checked: false } ],
+            [
+                { text: this.ls.l('SendCancellationEmailPlural'), visible: !isActive, checked: false },
+                { text: this.ls.l('FinalizeLeadIfNotCompleted'), visible: isActive, checked: true }
+            ],
             this.appLocalizationService.ls(this.crmLocalizationSourceName, `${contactGroup}sUpdateStatusWarningMessage`)
         );
     }
 
-    private updateContactStatusesInternal(contactIds: number[], groupId: string, isActive: boolean, callback: (() => void), notifyUsers: boolean) {
+    private updateContactStatusesInternal(contactIds: number[], groupId: string, isActive: boolean, callback: (() => void), notifyUsers: boolean, processLeads: boolean) {
         this.contactServiceProxy.updateContactStatuses(new UpdateContactStatusesInput({
             contactIds: contactIds,
             groupId: groupId,
             notifyUsers: notifyUsers,
-            isActive: isActive
+            isActive: isActive,
+            processLeads: processLeads
         })).subscribe(() => {
             this.notify.success(this.appLocalizationService.ls(this.crmLocalizationSourceName, 'StatusSuccessfullyUpdated'));
             callback();

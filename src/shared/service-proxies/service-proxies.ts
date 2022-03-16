@@ -30890,6 +30890,58 @@ export class ProfilePhotoServiceProxy {
         }
         return _observableOf<void>(<any>null);
     }
+
+    /**
+     * @return Success
+     */
+    getFilestackSettings(): Observable<FilestackSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePhoto/GetFilestackSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetFilestackSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetFilestackSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<FilestackSettingsDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FilestackSettingsDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetFilestackSettings(response: HttpResponseBase): Observable<FilestackSettingsDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? FilestackSettingsDto.fromJS(resultData200) : new FilestackSettingsDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FilestackSettingsDto>(<any>null);
+    }
 }
 
 @Injectable()
@@ -37286,6 +37338,58 @@ export class TenantSettingsServiceProxy {
     /**
      * @return Success
      */
+    getFilestackSettings(): Observable<FilestackSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetFilestackSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetFilestackSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetFilestackSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<FilestackSettingsDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<FilestackSettingsDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetFilestackSettings(response: HttpResponseBase): Observable<FilestackSettingsDto> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? FilestackSettingsDto.fromJS(resultData200) : new FilestackSettingsDto();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<FilestackSettingsDto>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
     getLdapSettings(): Observable<LdapSettingsEditDto> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/GetLdapSettings";
         url_ = url_.replace(/[?&]$/, "");
@@ -37993,6 +38097,58 @@ export class TenantSettingsServiceProxy {
     }
 
     protected processUpdateRapidSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateFilestackSettings(body: FilestackSettingsDto | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSettings/UpdateFilestackSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateFilestackSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateFilestackSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateFilestackSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -56611,6 +56767,7 @@ export interface IEntityContactInfo {
 export class UpdateContactStatusInput implements IUpdateContactStatusInput {
     contactId!: number;
     notifyUser!: boolean | undefined;
+    processLead!: boolean | undefined;
     groupId!: string;
     isActive!: boolean | undefined;
 
@@ -56627,6 +56784,7 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
         if (data) {
             this.contactId = data["contactId"];
             this.notifyUser = data["notifyUser"];
+            this.processLead = data["processLead"];
             this.groupId = data["groupId"];
             this.isActive = data["isActive"];
         }
@@ -56643,6 +56801,7 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["notifyUser"] = this.notifyUser;
+        data["processLead"] = this.processLead;
         data["groupId"] = this.groupId;
         data["isActive"] = this.isActive;
         return data; 
@@ -56652,6 +56811,7 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
 export interface IUpdateContactStatusInput {
     contactId: number;
     notifyUser: boolean | undefined;
+    processLead: boolean | undefined;
     groupId: string;
     isActive: boolean | undefined;
 }
@@ -56659,6 +56819,7 @@ export interface IUpdateContactStatusInput {
 export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
     contactIds!: number[];
     notifyUsers!: boolean | undefined;
+    processLeads!: boolean | undefined;
     groupId!: string;
     isActive!: boolean | undefined;
 
@@ -56682,6 +56843,7 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
                     this.contactIds.push(item);
             }
             this.notifyUsers = data["notifyUsers"];
+            this.processLeads = data["processLeads"];
             this.groupId = data["groupId"];
             this.isActive = data["isActive"];
         }
@@ -56702,6 +56864,7 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
                 data["contactIds"].push(item);
         }
         data["notifyUsers"] = this.notifyUsers;
+        data["processLeads"] = this.processLeads;
         data["groupId"] = this.groupId;
         data["isActive"] = this.isActive;
         return data; 
@@ -56711,6 +56874,7 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
 export interface IUpdateContactStatusesInput {
     contactIds: number[];
     notifyUsers: boolean | undefined;
+    processLeads: boolean | undefined;
     groupId: string;
     isActive: boolean | undefined;
 }
@@ -80449,6 +80613,10 @@ export class CreateProfilePhotoInput implements ICreateProfilePhotoInput {
     providerKey!: string | undefined;
     fileUrl!: string | undefined;
     thumbnailUrl!: string | undefined;
+    original!: string | undefined;
+    thumbnail!: string | undefined;
+    source!: string | undefined;
+    comment!: string | undefined;
 
     constructor(data?: ICreateProfilePhotoInput) {
         if (data) {
@@ -80464,6 +80632,10 @@ export class CreateProfilePhotoInput implements ICreateProfilePhotoInput {
             this.providerKey = data["providerKey"];
             this.fileUrl = data["fileUrl"];
             this.thumbnailUrl = data["thumbnailUrl"];
+            this.original = data["original"];
+            this.thumbnail = data["thumbnail"];
+            this.source = data["source"];
+            this.comment = data["comment"];
         }
     }
 
@@ -80479,6 +80651,10 @@ export class CreateProfilePhotoInput implements ICreateProfilePhotoInput {
         data["providerKey"] = this.providerKey;
         data["fileUrl"] = this.fileUrl;
         data["thumbnailUrl"] = this.thumbnailUrl;
+        data["original"] = this.original;
+        data["thumbnail"] = this.thumbnail;
+        data["source"] = this.source;
+        data["comment"] = this.comment;
         return data; 
     }
 }
@@ -80487,6 +80663,54 @@ export interface ICreateProfilePhotoInput {
     providerKey: string | undefined;
     fileUrl: string | undefined;
     thumbnailUrl: string | undefined;
+    original: string | undefined;
+    thumbnail: string | undefined;
+    source: string | undefined;
+    comment: string | undefined;
+}
+
+export class FilestackSettingsDto implements IFilestackSettingsDto {
+    apiKey!: string | undefined;
+    policy!: string | undefined;
+    signature!: string | undefined;
+
+    constructor(data?: IFilestackSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.apiKey = data["apiKey"];
+            this.policy = data["policy"];
+            this.signature = data["signature"];
+        }
+    }
+
+    static fromJS(data: any): FilestackSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new FilestackSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["apiKey"] = this.apiKey;
+        data["policy"] = this.policy;
+        data["signature"] = this.signature;
+        return data; 
+    }
+}
+
+export interface IFilestackSettingsDto {
+    apiKey: string | undefined;
+    policy: string | undefined;
+    signature: string | undefined;
 }
 
 export class ProfileEmail implements IProfileEmail {
@@ -91294,6 +91518,82 @@ export class ProcessLeadConfiguration implements IProcessLeadConfiguration {
 }
 
 export interface IProcessLeadConfiguration {
+}
+
+export class SendEmailToContactConfiguration implements ISendEmailToContactConfiguration {
+    emailTemplateId!: number;
+    contactGroupId!: string | undefined;
+
+    constructor(data?: ISendEmailToContactConfiguration) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.emailTemplateId = data["emailTemplateId"];
+            this.contactGroupId = data["contactGroupId"];
+        }
+    }
+
+    static fromJS(data: any): SendEmailToContactConfiguration {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendEmailToContactConfiguration();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailTemplateId"] = this.emailTemplateId;
+        data["contactGroupId"] = this.contactGroupId;
+        return data; 
+    }
+}
+
+export interface ISendEmailToContactConfiguration {
+    emailTemplateId: number;
+    contactGroupId: string | undefined;
+}
+
+export class SendEmailToOrgUnitConfiguration implements ISendEmailToOrgUnitConfiguration {
+    emailTemplateId!: number;
+
+    constructor(data?: ISendEmailToOrgUnitConfiguration) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.emailTemplateId = data["emailTemplateId"];
+        }
+    }
+
+    static fromJS(data: any): SendEmailToOrgUnitConfiguration {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendEmailToOrgUnitConfiguration();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailTemplateId"] = this.emailTemplateId;
+        return data; 
+    }
+}
+
+export interface ISendEmailToOrgUnitConfiguration {
+    emailTemplateId: number;
 }
 
 export class Body implements IBody {
