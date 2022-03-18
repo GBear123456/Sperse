@@ -22,6 +22,8 @@ export enum AppPermissions {
     AdministrationTenantHostsCreate = 'Pages.Administration.TenantHosts.Create',
     AdministrationTenantHostsEdit = 'Pages.Administration.TenantHosts.Edit',
     AdministrationTenantHostsDelete = 'Pages.Administration.TenantHosts.Delete',
+    AdministrationWorkflowEvents = 'Pages.Administration.WorkflowEvents',
+    AdministrationWorkflowEventsManage = 'Pages.Administration.WorkflowEvents.Manage',
     AdministrationTenantSettings = 'Pages.Administration.Tenant.Settings',
     AdministrationTenantSubscriptionManagement = 'Pages.Administration.Tenant.SubscriptionManagement',
     AdministrationHostSettings = 'Pages.Administration.Host.Settings',
