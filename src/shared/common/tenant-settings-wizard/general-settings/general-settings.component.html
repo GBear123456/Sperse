@@ -31,6 +31,14 @@
     </div>
     <ng-container *ngIf="tenant">
         <div class="form-group">
+            <label for="PublicPhone">{{ls.l("PublicPhone")}}</label>
+            <country-phone-number #publicPhoneNumber
+                                  [phoneNumber]="settings.publicPhone"
+                                  [required]="false"
+                                  (phoneNumberChange)="onPhoneNumberChange($event, publicPhoneNumber)">
+            </country-phone-number>
+        </div>
+        <div class="form-group">
             <label for="PublicSiteUrl">{{ls.l("PublicSiteUrl")}}</label>
             <input #publicSiteUrl="ngModel"
                    id="PublicSiteUrl"
