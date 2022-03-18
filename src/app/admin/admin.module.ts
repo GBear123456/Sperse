@@ -38,6 +38,7 @@ import { TableModule } from 'primeng/table';
 import { CommonModule } from '@shared/common/common.module';
 import { AppCommonModule } from '@app/shared/common/app-common.module';
 import { UtilsModule } from '@shared/utils/utils.module';
+import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
 import { AddMemberModalComponent } from 'app/admin/organization-units/add-member-modal/add-member-modal.component';
 import { AdminRoutingModule } from './admin-routing.module';
 import { AuditLogDetailModalComponent } from './audit-logs/audit-log-detail/audit-log-detail-modal.component';
@@ -131,6 +132,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         TableModule,
         PaginatorModule,
         PrimeNgFileUploadModule,
+        CountryPhoneNumberModule,
         AutoCompleteModule,
         EditorModule,
         InputMaskModule,
