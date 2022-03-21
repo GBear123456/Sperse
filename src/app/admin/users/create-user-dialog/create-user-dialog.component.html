@@ -89,17 +89,10 @@
                 </div>
                 <div class="form-group field">
                     <label class="phone-label">{{ls.l("PhoneNumber")}}</label>
-                    <dx-text-box #phoneNumber
-                                 type="tel"
-                                 name="PhoneNumber"
-                                 class="tabular"
-                                 [(value)]="user.phoneNumber"
-                                 [maskInvalidMessage]="ls.l('PhoneValidationError')"
-                                 [mask]="masks.phone"
-                                 (onFocusIn)="focusInput($event)"
-                                 (onFocusOut)="phoneComponentFocusOut($event)"
-                                 (onInitialized)="phoneComponentInitialized($event)">
-                    </dx-text-box>
+                    <country-phone-number #countryPhoneNumber
+                                          [(phoneNumber)]="user.phoneNumber"
+                                          [required]="false">
+                    </country-phone-number>
                 </div>
                 <div class="user-options-delimiter"></div>
                 <dx-check-box [(value)]="setRandomPassword" [text]="ls.l('SetRandomPassword')"></dx-check-box>
