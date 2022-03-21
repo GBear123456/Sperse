@@ -69,7 +69,8 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
         NoDataModule,
         InlineSVGModule,
         GhostListModule,
-        DateTimePipe
+        DateTimePipe,
+        CountryPhoneNumberModule
     ],
     imports: [
         ngCommon.CommonModule,
