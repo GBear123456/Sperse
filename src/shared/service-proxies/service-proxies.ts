@@ -63761,6 +63761,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
     timezone!: string | undefined;
     timezoneForComparison!: string | undefined;
     zendeskAccountUrl!: string | undefined;
+    publicPhone!: string | undefined;
     publicSiteUrl!: string | undefined;
 
     constructor(data?: IGeneralSettingsEditDto) {
@@ -63778,6 +63779,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
             this.timezone = _data["timezone"];
             this.timezoneForComparison = _data["timezoneForComparison"];
             this.zendeskAccountUrl = _data["zendeskAccountUrl"];
+            this.publicPhone = _data["publicPhone"];
             this.publicSiteUrl = _data["publicSiteUrl"];
         }
     }
@@ -63795,6 +63797,7 @@ export class GeneralSettingsEditDto implements IGeneralSettingsEditDto {
         data["timezone"] = this.timezone;
         data["timezoneForComparison"] = this.timezoneForComparison;
         data["zendeskAccountUrl"] = this.zendeskAccountUrl;
+        data["publicPhone"] = this.publicPhone;
         data["publicSiteUrl"] = this.publicSiteUrl;
         return data;
     }
@@ -63805,6 +63808,7 @@ export interface IGeneralSettingsEditDto {
     timezone: string | undefined;
     timezoneForComparison: string | undefined;
     zendeskAccountUrl: string | undefined;
+    publicPhone: string | undefined;
     publicSiteUrl: string | undefined;
 }
 
@@ -85767,6 +85771,106 @@ export interface ISendEmailInput {
     body: string;
     saveAttachmentsToDocuments: boolean;
     attachments: FileInfo[] | undefined;
+}
+
+export class SendEmailToContactConfiguration implements ISendEmailToContactConfiguration {
+    emailTemplateId!: number;
+    contactGroupIds!: string[] | undefined;
+
+    constructor(data?: ISendEmailToContactConfiguration) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.emailTemplateId = _data["emailTemplateId"];
+            if (Array.isArray(_data["contactGroupIds"])) {
+                this.contactGroupIds = [] as any;
+                for (let item of _data["contactGroupIds"])
+                    this.contactGroupIds!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SendEmailToContactConfiguration {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendEmailToContactConfiguration();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailTemplateId"] = this.emailTemplateId;
+        if (Array.isArray(this.contactGroupIds)) {
+            data["contactGroupIds"] = [];
+            for (let item of this.contactGroupIds)
+                data["contactGroupIds"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISendEmailToContactConfiguration {
+    emailTemplateId: number;
+    contactGroupIds: string[] | undefined;
+}
+
+export class SendEmailToOrgUnitConfiguration implements ISendEmailToOrgUnitConfiguration {
+    emailTemplateId!: number;
+    contactGroupIds!: string[] | undefined;
+    usersFilterTagId!: number | undefined;
+
+    constructor(data?: ISendEmailToOrgUnitConfiguration) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.emailTemplateId = _data["emailTemplateId"];
+            if (Array.isArray(_data["contactGroupIds"])) {
+                this.contactGroupIds = [] as any;
+                for (let item of _data["contactGroupIds"])
+                    this.contactGroupIds!.push(item);
+            }
+            this.usersFilterTagId = _data["usersFilterTagId"];
+        }
+    }
+
+    static fromJS(data: any): SendEmailToOrgUnitConfiguration {
+        data = typeof data === 'object' ? data : {};
+        let result = new SendEmailToOrgUnitConfiguration();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["emailTemplateId"] = this.emailTemplateId;
+        if (Array.isArray(this.contactGroupIds)) {
+            data["contactGroupIds"] = [];
+            for (let item of this.contactGroupIds)
+                data["contactGroupIds"].push(item);
+        }
+        data["usersFilterTagId"] = this.usersFilterTagId;
+        return data;
+    }
+}
+
+export interface ISendEmailToOrgUnitConfiguration {
+    emailTemplateId: number;
+    contactGroupIds: string[] | undefined;
+    usersFilterTagId: number | undefined;
 }
 
 export class SendGridSettingsDto implements ISendGridSettingsDto {
