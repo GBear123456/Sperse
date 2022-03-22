@@ -27,6 +27,7 @@ import { TenantManagementComponent } from '@shared/common/tenant-settings-wizard
 import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/user-management/user-management.component';
 import { MemberPortalComponent } from '@shared/common/tenant-settings-wizard/member-portal/member-portal.component';
 import { ContactsModule } from '@app/crm/contacts/contacts.module';
+import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-phone-number.module';
 
 @NgModule({
     imports: [
@@ -43,7 +44,8 @@ import { ContactsModule } from '@app/crm/contacts/contacts.module';
         FormsModule,
         TimeZoneComboModule,
         NgxFileDropModule,
-        ContactsModule
+        ContactsModule,
+        CountryPhoneNumberModule
     ],
     exports: [TenantSettingsWizardComponent],
     declarations: [

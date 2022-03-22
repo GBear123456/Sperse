@@ -43,11 +43,13 @@ import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wiz
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
-    @ViewChild('privacyInput') privacyInput: ElementRef;
-    @ViewChild('tosInput') tosInput: ElementRef;
-    @ViewChild('privacyPolicyUploader') privacyPolicyUploader: UploaderComponent;
-    @ViewChild('tosUploader') tosUploader: UploaderComponent;
-    @ViewChild('publicSiteUrl') publicSiteUrl: AbstractControlDirective;
+    @ViewChild('privacyInput', { static: false }) privacyInput: ElementRef;
+    @ViewChild('tosInput', { static: false }) tosInput: ElementRef;
+    @ViewChild('privacyPolicyUploader', { static: false }) privacyPolicyUploader: UploaderComponent;
+    @ViewChild('tosUploader', { static: false }) tosUploader: UploaderComponent;
+    @ViewChild('publicSiteUrl', { static: false }) publicSiteUrl: AbstractControlDirective;
+    @ViewChild('publicPhoneNumber', { static: false }) publicPhoneNumber;
+
     @Output() onOptionChanged: EventEmitter<string> = new EventEmitter<string>();
     @Input() set settings(value: GeneralSettingsEditDto) {
         if (value) {
@@ -109,8 +111,12 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
             this.paymentSettings.currency = Currency.USD;
     }
 
+    onPhoneNumberChange(phone, elm) {
+        this.settings.publicPhone = phone == elm.getCountryCode() ? undefined : phone;
+    }
+
     save(): Observable<any> {
-        if (!this.publicSiteUrl || this.publicSiteUrl.valid) {
+        if ((!this.publicSiteUrl || this.publicSiteUrl.valid) && this.publicPhoneNumber.isValid()) {
             return forkJoin(
                 this.tenantSettingsServiceProxy.updateGeneralSettings(this.settings).pipe(tap(() => {
                     if (this.initialTimezone != this.settings.timezone)
@@ -123,8 +129,6 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
                 this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),
                 this.tosUploader ? this.tosUploader.uploadFile() : of(null)
             );
-        } else {
-            return throwError('Invalid data');
         }
     }
 }

@@ -462,4 +462,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         else
             return basePath + 'platform-custom-style.css';
     }
+
+    onPhoneNumberChange(phone, elm) {
+        this.settings.general.publicPhone = phone == elm.getCountryCode() ? undefined : phone;
+    }
 }

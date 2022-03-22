@@ -54,8 +54,7 @@ import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload
 })
 export class CreateUserDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
-    @ViewChild('phoneNumber', { static: true }) phoneNumber: DxTextBoxComponent;
+    @ViewChild(DxContextMenuComponent, { static: false }) saveContextComponent: DxContextMenuComponent;
 
     user = new UserEditDto();
     roles: UserRoleDto[];
@@ -136,6 +135,7 @@ export class CreateUserDialogComponent implements OnInit {
             .pipe(
                 tap((userResult: GetUserForEditOutput) => {
                     this.user = userResult.user;
+                    this.user.phoneNumber = '+1';
                     this.roles = userResult.roles;
                     this.initialRoles = this.roles.map((role) => {
                         return _.clone(role);
@@ -295,6 +295,7 @@ export class CreateUserDialogComponent implements OnInit {
             this.user = new UserEditDto();
             this.user.shouldChangePasswordOnNextLogin = true;
             this.user.isActive = true;
+            this.user.phoneNumber = '+1';
             this.user.isLockoutEnabled = true;
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;
@@ -311,7 +312,6 @@ export class CreateUserDialogComponent implements OnInit {
                 this.selectedOrganizationsIds = [ this.orgUnits[0].id ];
             }
 
-            setTimeout(() => this.setComponentToValid(this.phoneNumber.instance), 800);
             setTimeout(() => this.changeDetectorRef.detectChanges());
         };
 
@@ -350,32 +350,6 @@ export class CreateUserDialogComponent implements OnInit {
 
     setComponentToValid(component) {
         component.option('isValid', true);
-    }
-
-    focusInput(event) {
-        if (!(event.component._value && event.component._value.trim())) {
-            let input = event.event.originalEvent.target;
-            setTimeout(function () {
-                if (input.createTextRange) {
-                    let part = input.createTextRange();
-                    part.move('character', 0);
-                    part.select();
-                } else if (input.setSelectionRange)
-                    input.setSelectionRange(0, 0);
-
-                input.focus();
-            }, 100);
-        }
-    }
-
-    phoneComponentInitialized(event) {
-        setTimeout(() => this.setComponentToValid(event.component), 800);
-    }
-
-    phoneComponentFocusOut(event) {
-        let value = event.component.option('value');
-        if (!value)
-            this.setComponentToValid(event.component);
     }
 
     toggleUserRolesDropdown() {

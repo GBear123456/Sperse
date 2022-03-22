@@ -66,7 +66,8 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
         ConditionsModalComponent,
         NoDataModule,
         GhostListModule,
-        DateTimePipe
+        DateTimePipe,
+        CountryPhoneNumberModule
     ],
     imports: [
         ngCommon.CommonModule,
