@@ -15,6 +15,7 @@ export interface EmailTemplateData {
     to: string[];
     body: string;
     subject: string;
+    previewText: string;
     cc: string[];
     bcc: string[];
     templateId: number;

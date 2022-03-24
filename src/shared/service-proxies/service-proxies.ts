@@ -58165,6 +58165,7 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
     subject!: string | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
+    previewText!: string | undefined;
     body!: string | undefined;
     attachments!: Attachment[] | undefined;
     tags!: { [key: string] : string; } | undefined;
@@ -58196,6 +58197,7 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
                 for (let item of data["bcc"])
                     this.bcc.push(item);
             }
+            this.previewText = data["previewText"];
             this.body = data["body"];
             if (data["attachments"] && data["attachments"].constructor === Array) {
                 this.attachments = [];
@@ -58237,6 +58239,7 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
             for (let item of this.bcc)
                 data["bcc"].push(item);
         }
+        data["previewText"] = this.previewText;
         data["body"] = this.body;
         if (this.attachments && this.attachments.constructor === Array) {
             data["attachments"] = [];
@@ -58259,6 +58262,7 @@ export interface IGetEmailDataOutput {
     subject: string | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
+    previewText: string | undefined;
     body: string | undefined;
     attachments: Attachment[] | undefined;
     tags: { [key: string] : string; } | undefined;
@@ -58313,6 +58317,7 @@ export class SendEmailInput implements ISendEmailInput {
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
     subject!: string;
+    previewText!: string | undefined;
     body!: string;
     saveAttachmentsToDocuments!: boolean | undefined;
     attachments!: FileInfo[] | undefined;
@@ -58355,6 +58360,7 @@ export class SendEmailInput implements ISendEmailInput {
                     this.bcc.push(item);
             }
             this.subject = data["subject"];
+            this.previewText = data["previewText"];
             this.body = data["body"];
             this.saveAttachmentsToDocuments = data["saveAttachmentsToDocuments"];
             if (data["attachments"] && data["attachments"].constructor === Array) {
@@ -58398,6 +58404,7 @@ export class SendEmailInput implements ISendEmailInput {
                 data["bcc"].push(item);
         }
         data["subject"] = this.subject;
+        data["previewText"] = this.previewText;
         data["body"] = this.body;
         data["saveAttachmentsToDocuments"] = this.saveAttachmentsToDocuments;
         if (this.attachments && this.attachments.constructor === Array) {
@@ -58418,6 +58425,7 @@ export interface ISendEmailInput {
     cc: string[] | undefined;
     bcc: string[] | undefined;
     subject: string;
+    previewText: string | undefined;
     body: string;
     saveAttachmentsToDocuments: boolean | undefined;
     attachments: FileInfo[] | undefined;
@@ -63689,6 +63697,7 @@ export class GetTemplateReponse implements IGetTemplateReponse {
     subject!: string | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
+    previewText!: string | undefined;
     body!: string | undefined;
 
     constructor(data?: IGetTemplateReponse) {
@@ -63715,6 +63724,7 @@ export class GetTemplateReponse implements IGetTemplateReponse {
                 for (let item of data["bcc"])
                     this.bcc.push(item);
             }
+            this.previewText = data["previewText"];
             this.body = data["body"];
         }
     }
@@ -63741,6 +63751,7 @@ export class GetTemplateReponse implements IGetTemplateReponse {
             for (let item of this.bcc)
                 data["bcc"].push(item);
         }
+        data["previewText"] = this.previewText;
         data["body"] = this.body;
         return data; 
     }
@@ -63752,6 +63763,7 @@ export interface IGetTemplateReponse {
     subject: string | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
+    previewText: string | undefined;
     body: string | undefined;
 }
 
@@ -63761,6 +63773,7 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
     subject!: string | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
+    previewText!: string | undefined;
     body!: string;
 
     constructor(data?: ICreateEmailTemplateRequest) {
@@ -63787,6 +63800,7 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
                 for (let item of data["bcc"])
                     this.bcc.push(item);
             }
+            this.previewText = data["previewText"];
             this.body = data["body"];
         }
     }
@@ -63813,6 +63827,7 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
             for (let item of this.bcc)
                 data["bcc"].push(item);
         }
+        data["previewText"] = this.previewText;
         data["body"] = this.body;
         return data; 
     }
@@ -63824,6 +63839,7 @@ export interface ICreateEmailTemplateRequest {
     subject: string | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
+    previewText: string | undefined;
     body: string;
 }
 
@@ -63834,6 +63850,7 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
     subject!: string | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
+    previewText!: string | undefined;
     body!: string;
 
     constructor(data?: IUpdateEmailTemplateRequest) {
@@ -63861,6 +63878,7 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
                 for (let item of data["bcc"])
                     this.bcc.push(item);
             }
+            this.previewText = data["previewText"];
             this.body = data["body"];
         }
     }
@@ -63888,6 +63906,7 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
             for (let item of this.bcc)
                 data["bcc"].push(item);
         }
+        data["previewText"] = this.previewText;
         data["body"] = this.body;
         return data; 
     }
@@ -63900,6 +63919,7 @@ export interface IUpdateEmailTemplateRequest {
     subject: string | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
+    previewText: string | undefined;
     body: string;
 }
 
@@ -91518,7 +91538,7 @@ export interface IProcessLeadConfiguration {
 
 export class SendEmailToContactConfiguration implements ISendEmailToContactConfiguration {
     emailTemplateId!: number;
-    contactGroupId!: string | undefined;
+    contactGroupIds!: string[] | undefined;
 
     constructor(data?: ISendEmailToContactConfiguration) {
         if (data) {
@@ -91532,7 +91552,11 @@ export class SendEmailToContactConfiguration implements ISendEmailToContactConfi
     init(data?: any) {
         if (data) {
             this.emailTemplateId = data["emailTemplateId"];
-            this.contactGroupId = data["contactGroupId"];
+            if (data["contactGroupIds"] && data["contactGroupIds"].constructor === Array) {
+                this.contactGroupIds = [];
+                for (let item of data["contactGroupIds"])
+                    this.contactGroupIds.push(item);
+            }
         }
     }
 
@@ -91546,18 +91570,24 @@ export class SendEmailToContactConfiguration implements ISendEmailToContactConfi
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["emailTemplateId"] = this.emailTemplateId;
-        data["contactGroupId"] = this.contactGroupId;
+        if (this.contactGroupIds && this.contactGroupIds.constructor === Array) {
+            data["contactGroupIds"] = [];
+            for (let item of this.contactGroupIds)
+                data["contactGroupIds"].push(item);
+        }
         return data; 
     }
 }
 
 export interface ISendEmailToContactConfiguration {
     emailTemplateId: number;
-    contactGroupId: string | undefined;
+    contactGroupIds: string[] | undefined;
 }
 
 export class SendEmailToOrgUnitConfiguration implements ISendEmailToOrgUnitConfiguration {
     emailTemplateId!: number;
+    contactGroupIds!: string[] | undefined;
+    usersFilterTagId!: number | undefined;
 
     constructor(data?: ISendEmailToOrgUnitConfiguration) {
         if (data) {
@@ -91571,6 +91601,12 @@ export class SendEmailToOrgUnitConfiguration implements ISendEmailToOrgUnitConfi
     init(data?: any) {
         if (data) {
             this.emailTemplateId = data["emailTemplateId"];
+            if (data["contactGroupIds"] && data["contactGroupIds"].constructor === Array) {
+                this.contactGroupIds = [];
+                for (let item of data["contactGroupIds"])
+                    this.contactGroupIds.push(item);
+            }
+            this.usersFilterTagId = data["usersFilterTagId"];
         }
     }
 
@@ -91584,12 +91620,20 @@ export class SendEmailToOrgUnitConfiguration implements ISendEmailToOrgUnitConfi
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["emailTemplateId"] = this.emailTemplateId;
+        if (this.contactGroupIds && this.contactGroupIds.constructor === Array) {
+            data["contactGroupIds"] = [];
+            for (let item of this.contactGroupIds)
+                data["contactGroupIds"].push(item);
+        }
+        data["usersFilterTagId"] = this.usersFilterTagId;
         return data; 
     }
 }
 
 export interface ISendEmailToOrgUnitConfiguration {
     emailTemplateId: number;
+    contactGroupIds: string[] | undefined;
+    usersFilterTagId: number | undefined;
 }
 
 export class Body implements IBody {
