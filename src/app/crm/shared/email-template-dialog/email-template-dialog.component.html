@@ -187,6 +187,16 @@
                             </dx-validator>
                         </dx-text-box>
                     </div>
+                    <div class="field-area preview-text">
+                        <label class="caption">{{ls.l('PreviewText')}}:</label>
+                        <dx-text-box
+                            name="previewText"
+                            width="calc(100% - 102px)"
+                            height="40px"
+                            placeholder=""
+                            [(value)]="data.previewText">
+                        </dx-text-box>
+                    </div>                                    
                     <div class="field-area ckeditor">
                         <dx-tooltip [width]="250"
                              position="bottom"
