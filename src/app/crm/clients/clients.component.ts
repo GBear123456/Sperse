@@ -746,6 +746,9 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 this.changeDetectorRef.markForCheck();
                             }) : of().subscribe();
                     }
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             })
         });
@@ -761,7 +764,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     this.totalCount = this.totalErrorMsg = undefined;
 
                     (<FilterContactStatusModel>this.filterModelStatus.items.element).applyRequestParams(request);
-
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     request.params.contactGroupId = ContactGroup.Client;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;

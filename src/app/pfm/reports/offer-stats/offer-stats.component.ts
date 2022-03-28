@@ -34,6 +34,9 @@ export class OfferStatsComponent extends AppComponentBase {
                 this.isDataLoaded = false;
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.params.$select = DataGridService.getSelectFields(this.dataGrid);
+            },
+            errorHandler: (error) => {
+                setTimeout(() => this.isDataLoaded = true);
             }
         }),
         sort: [

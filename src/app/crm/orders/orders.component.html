@@ -221,7 +221,8 @@
                               (onEditingStart)="toggleActionsMenu($event)"
                               (onCellClick)="onCellClick($event, 'subscriptions')"
                               (onOptionChanged)="onGridOptionChanged($event)"
-                              (onContentReady)="onContentReady($event)">
+                              (onContentReady)="onContentReady($event)"
+                              (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                     <dxo-pager [visible]="true"></dxo-pager>
                     <dxo-sorting mode="multiple"></dxo-sorting>
                     <dxo-group-panel [visible]="true"></dxo-group-panel>

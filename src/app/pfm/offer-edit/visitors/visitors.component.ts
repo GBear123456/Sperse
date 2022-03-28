@@ -89,6 +89,9 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
                         this.fieldsDependencies
                     );
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             })
         });

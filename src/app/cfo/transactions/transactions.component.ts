@@ -413,6 +413,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     const orderBy = request.params.$orderby;
                     request.params.$orderby = orderBy ? orderBy + (orderBy.match(/\b(Id)\b/i) ? '' : ',Id desc') : 'Id desc';
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     request.params.$select = DataGridService.getSelectFields(
                         this.dataGrid,
                         [ this.transactionFields.Id, this.transactionFields.CashFlowTypeId ],
@@ -445,6 +446,9 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                         }
                         this.repaintTimeout = true;
                     });
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             })
         });

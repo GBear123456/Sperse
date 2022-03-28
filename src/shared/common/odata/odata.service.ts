@@ -41,6 +41,7 @@ export class ODataService {
                 };
             let key = (options.url.match(/odata\/([\w|\/|\$]+)[\?|$]?/) || []).pop() +
                 ((options.headers && options.headers.context) || '');
+            options.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             return (this.dxRequestPool[key] = dxAjax.sendRequest(options));
         });
     }

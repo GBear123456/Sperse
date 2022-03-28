@@ -581,6 +581,9 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         onLoaded: (records) => {
             if (records instanceof Array)
                 this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
+        },
+        errorHandler: (error) => {
+            setTimeout(() => this.isDataLoaded = true);
         }
     };
 

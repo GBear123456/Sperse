@@ -427,6 +427,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             beforeSend: (request) => {
                 request.params.contactGroupId = this.selectedContactGroup.value; 
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 request.params.$select = DataGridService.getSelectFields(
                     this.subscriptionsGrid,
                     [
@@ -439,6 +440,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             onLoaded: (records) => {
                 if (records instanceof Array)
                     this.subscriptionsDataSource['entities'] = (this.subscriptionsDataSource['entities'] || []).concat(records);
+            },
+            errorHandler: (error) => {
+                setTimeout(() => this.isDataLoaded = true);
             }
         })
     });
@@ -899,6 +903,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.params.$select = DataGridService.getSelectFields(
                         this.ordersGrid,
@@ -914,6 +919,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     let dataSource = this.showOrdersPipeline ? this.pipelineDataSource : this.ordersDataSource;
                     if (records instanceof Array)
                         dataSource['entities'] = (dataSource['entities'] || []).concat(records);
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             }
         };
