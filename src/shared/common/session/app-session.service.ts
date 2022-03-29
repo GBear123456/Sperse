@@ -85,8 +85,8 @@ export class AppSessionService {
         return this.tenant && this.tenant.customLayoutType ? this.tenant.customLayoutType : LayoutType.Default;
     }
 
-    get userIsMember(): boolean {
-        return !!(this.user && this.user.groups.some(group => group === UserGroup.Member));
+    get hideUserSourceFilters(): boolean {
+        return this.layoutType != LayoutType.BankCode || !this.user || this.user.groups.every(group => group !== UserGroup.Employee && group !== UserGroup.Partner);
     }
 
     getShownLoginName(): string {
