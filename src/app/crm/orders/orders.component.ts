@@ -293,6 +293,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             }
         })
     ];
+    subscriptionStatuses = Object.keys(SubscriptionsStatus).map(status => {
+        return {
+            id: SubscriptionsStatus[status],
+            name: this.l(status)
+        };
+    });
     private subscriptionsFilters: FilterModel[] = [
         new FilterModel({
             component: FilterCalendarComponent,
@@ -326,11 +332,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             items: {
                 element: new FilterCheckBoxesModel(
                     {
-                        dataSource: Object.keys(SubscriptionsStatus).map((status: string) => ({
-                            id: SubscriptionsStatus[status],
-                            name: startCase(status)
-                        })),
-                        value: [SubscriptionsStatus.CurrentActive],
+                        dataSource: this.subscriptionStatuses,
+                        value: [SubscriptionsStatus.Current],
                         nameField: 'name',
                         keyExpr: 'id'
                     })
@@ -1543,6 +1546,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             let context: any = this;
             let grid: any;
 
+            this.initDataSource();
             if (this.selectedOrderType.value === OrderType.Order) {
                 grid = this.ordersGrid;
                 this.ordersDataSource['entities'] = this.ordersDataSource['total'] = undefined;
@@ -1806,10 +1810,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.initOrdersToolbarConfig();
         else
             this.initSubscriptionsToolbarConfig();
-        setTimeout(() => {
-            this.initDataSource();
-            this.invalidate();
-        });
+        setTimeout(() => this.invalidate());
     }
 
     showContactDetails(event, section?: string, queryParams?: Params) {
