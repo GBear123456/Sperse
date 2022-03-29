@@ -44,7 +44,7 @@
                 <dxi-column [dataField]="leadFields.Id" [visible]="false"></dxi-column>
                 <dxi-column [dataField]="leadFields.CustomerId" [visible]="false"></dxi-column>
                 <dxi-column [dataField]="leadFields.LeadDate" [caption]="ls.l('Created')" cellTemplate="dateCell" cssClass="tabular" sortOrder="desc"></dxi-column>
-                <dxi-column [dataField]="leadFields.ContactGroupId" [caption]="ls.l('Pipeline')" cellTemplate="contactGroupCell"></dxi-column>
+                <dxi-column [dataField]="leadFields.PipelineId" [caption]="ls.l('Pipeline')" cellTemplate="pipelineCell"></dxi-column>
                 <dxi-column [dataField]="leadFields.Stage" [caption]="ls.l('Stage')"  cssClass="clipboard-holder"></dxi-column>
                 <dxi-column [dataField]="leadFields.SourceAffiliateCode" [caption]="ls.l('SourceAffiliateCode')" cssClass="clipboard-holder"></dxi-column>
                 <dxi-column [dataField]="leadFields.SourceContactName" [caption]="ls.l('SourceContactName')" cssClass="clipboard-holder"></dxi-column>
@@ -54,8 +54,8 @@
 
                 <a class="dx-link dx-link-edit" *dxTemplate="let cellData of 'actionsCellTemplate'"></a>
 
-                <div *dxTemplate="let cellData of 'contactGroupCell'" class="clipboard-holder">
-                    {{ls.l('ContactGroup_' + contactGroup[cellData.value])}}
+                <div *dxTemplate="let cellData of 'pipelineCell'" class="clipboard-holder">
+                    {{ pipelines[cellData.value].name }}
                 </div>
 
                 <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">

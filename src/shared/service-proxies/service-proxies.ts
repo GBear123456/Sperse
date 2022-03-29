@@ -9258,9 +9258,10 @@ export class ContactServiceProxy {
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
      * @excludeSubContacts (optional) 
+     * @fullAccess (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined, fullAccess: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -9272,6 +9273,8 @@ export class ContactServiceProxy {
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         if (excludeSubContacts !== undefined)
             url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
+        if (fullAccess !== undefined)
+            url_ += "FullAccess=" + encodeURIComponent("" + fullAccess) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -13360,9 +13363,10 @@ export class CustomerServiceProxy {
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
      * @excludeSubContacts (optional) 
+     * @fullAccess (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined, fullAccess: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Customer/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -13374,6 +13378,8 @@ export class CustomerServiceProxy {
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         if (excludeSubContacts !== undefined)
             url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
+        if (fullAccess !== undefined)
+            url_ += "FullAccess=" + encodeURIComponent("" + fullAccess) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -21684,9 +21690,10 @@ export class LeadServiceProxy {
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
      * @excludeSubContacts (optional) 
+     * @fullAccess (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined, fullAccess: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -21698,6 +21705,8 @@ export class LeadServiceProxy {
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         if (excludeSubContacts !== undefined)
             url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
+        if (fullAccess !== undefined)
+            url_ += "FullAccess=" + encodeURIComponent("" + fullAccess) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -25159,9 +25168,10 @@ export class OrderServiceProxy {
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
      * @excludeSubContacts (optional) 
+     * @fullAccess (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined, fullAccess: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Order/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -25173,6 +25183,8 @@ export class OrderServiceProxy {
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         if (excludeSubContacts !== undefined)
             url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
+        if (fullAccess !== undefined)
+            url_ += "FullAccess=" + encodeURIComponent("" + fullAccess) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -27248,9 +27260,10 @@ export class PartnerServiceProxy {
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
      * @excludeSubContacts (optional) 
+     * @fullAccess (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined, fullAccess: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Partner/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -27262,6 +27275,8 @@ export class PartnerServiceProxy {
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         if (excludeSubContacts !== undefined)
             url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
+        if (fullAccess !== undefined)
+            url_ += "FullAccess=" + encodeURIComponent("" + fullAccess) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -56767,6 +56782,7 @@ export interface IEntityContactInfo {
 export class UpdateContactStatusInput implements IUpdateContactStatusInput {
     contactId!: number;
     notifyUser!: boolean | undefined;
+    processLead!: boolean | undefined;
     groupId!: string;
     isActive!: boolean | undefined;
 
@@ -56783,6 +56799,7 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
         if (data) {
             this.contactId = data["contactId"];
             this.notifyUser = data["notifyUser"];
+            this.processLead = data["processLead"];
             this.groupId = data["groupId"];
             this.isActive = data["isActive"];
         }
@@ -56799,6 +56816,7 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["notifyUser"] = this.notifyUser;
+        data["processLead"] = this.processLead;
         data["groupId"] = this.groupId;
         data["isActive"] = this.isActive;
         return data; 
@@ -56808,6 +56826,7 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
 export interface IUpdateContactStatusInput {
     contactId: number;
     notifyUser: boolean | undefined;
+    processLead: boolean | undefined;
     groupId: string;
     isActive: boolean | undefined;
 }
@@ -56815,6 +56834,7 @@ export interface IUpdateContactStatusInput {
 export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
     contactIds!: number[];
     notifyUsers!: boolean | undefined;
+    processLeads!: boolean | undefined;
     groupId!: string;
     isActive!: boolean | undefined;
 
@@ -56838,6 +56858,7 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
                     this.contactIds.push(item);
             }
             this.notifyUsers = data["notifyUsers"];
+            this.processLeads = data["processLeads"];
             this.groupId = data["groupId"];
             this.isActive = data["isActive"];
         }
@@ -56858,6 +56879,7 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
                 data["contactIds"].push(item);
         }
         data["notifyUsers"] = this.notifyUsers;
+        data["processLeads"] = this.processLeads;
         data["groupId"] = this.groupId;
         data["isActive"] = this.isActive;
         return data; 
@@ -56867,6 +56889,7 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
 export interface IUpdateContactStatusesInput {
     contactIds: number[];
     notifyUsers: boolean | undefined;
+    processLeads: boolean | undefined;
     groupId: string;
     isActive: boolean | undefined;
 }

@@ -49,7 +49,7 @@ export class EditKeyDialog extends AppComponentBase {
     }
 
     contactLookupRequest(phrase = '', callback?) {
-        this.contactProxy.getAllByPhrase(phrase, 10, true, [], false).subscribe(res => {
+        this.contactProxy.getAllByPhrase(phrase, 10, true, [], false, false).subscribe(res => {
             if (!phrase || phrase == this.latestSearchPhrase) {
                 this.contacts = res;
                 callback && callback(res);
