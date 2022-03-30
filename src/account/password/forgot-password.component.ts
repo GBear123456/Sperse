@@ -21,6 +21,7 @@ import { HostForgotPasswordComponent } from '@root/account/password/layouts/host
 import { RapidForgotPasswordComponent } from "@root/account/password/layouts/rapid/rapid-forgot-password.component";
 import { HoaForgotPasswordComponent } from "@root/account/password/layouts/hoa/hoa-forgot-password.component";
 import { SperserForgotPasswordComponent } from '@root/account/password/layouts/sperser/sperser-forgot-password.component';
+import { HostCombinedForgotPasswordComponent } from './layouts/host/host-combined-forgot-password.component';
 
 @Directive({
     selector: '[ad-forgot-password-host]'
@@ -68,7 +69,7 @@ export class ForgotPasswordComponent implements OnInit {
         }
     }
 
-    private loadLayoutComponent(component: Type<HostForgotPasswordComponent>) {
+    private loadLayoutComponent(component: Type<HostForgotPasswordComponent | HostCombinedForgotPasswordComponent>) {
         this.adForgotPasswordHost.viewContainerRef.createComponent(
             this.componentFactoryResolver.resolveComponentFactory(component)
         );

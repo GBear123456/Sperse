@@ -10,9 +10,13 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 import { HostLoginVerificationComponent } from '../host/host-login-verification.component';
 
 @Component({
-    selector: 'sperser-login-verification',
-    templateUrl: './sperser-login-verification.component.html',
+    selector: 'bank-code-login-verification',
+    templateUrl: './bank-code-login-verification.component.html',
+    styleUrls: [
+        './bank-code-login-verification.component.less',
+        '../host/host-login-verification.component.less'
+    ],
     animations: [accountModuleAnimation()]
 })
-export class SperserLoginVerificationComponent extends HostLoginVerificationComponent {
+export class BankCodeLoginVerificationComponent extends HostLoginVerificationComponent {
 }
