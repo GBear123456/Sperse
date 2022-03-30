@@ -1,6 +1,6 @@
 /** Core imports */
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, NavigationExtras } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
@@ -8,7 +8,7 @@ import * as Push from 'push.js'; // if using ES6
 import * as moment from 'moment';
 
 /** Application imports */
-import { GuidEntityDto, NotificationServiceProxy } from '@shared/service-proxies/service-proxies';
+import { GuidEntityDto, NotificationServiceProxy, INotificationData } from '@shared/service-proxies/service-proxies';
 import { NotificationSettingsModalComponent } from './notification-settings-modal/notification-settings-modal.component';
 
 export interface IFormattedUserNotification {
@@ -20,7 +20,7 @@ export interface IFormattedUserNotification {
     creationTime: Date;
     icon: string;
     state: String;
-    data: any;
+    data: INotificationData;
     url: string;
     isUnread: boolean;
 }
@@ -150,5 +150,16 @@ export class UserNotificationHelper {
         if (e.stopPropagation) {
             e.stopPropagation();
         }
+    }
+
+    navigateToUserInbox(notification: IFormattedUserNotification): void {
+        let navExtras: NavigationExtras = {};
+        let messageId = notification.data.properties['MessageId'];
+        if (messageId) {
+            navExtras.queryParams = {
+                messageId: messageId
+            };
+        }
+        this.router.navigate(['app/crm/contact', notification.entityId, 'user-inbox'], navExtras);
     }
 }
