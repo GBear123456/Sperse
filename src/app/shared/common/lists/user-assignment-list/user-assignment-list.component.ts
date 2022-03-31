@@ -79,9 +79,7 @@ export class UserAssignmentComponent implements OnDestroy {
         private notifyService: NotifyService,
         public profileService: ProfileService,
         public ls: AppLocalizationService
-    ) {
-        appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup));
-    }
+    ) {}
 
     private moveSelectedItemsToTop() {
         let index = 0;
@@ -105,8 +103,11 @@ export class UserAssignmentComponent implements OnDestroy {
     }
 
     toggle() {
-        if (this.tooltipVisible = !this.tooltipVisible)
+        if (this.tooltipVisible = !this.tooltipVisible) {
+            if (!this.list || !this.list.length)
+                this.appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup));
             this.highlightSelectedFilters();
+        }
         return this.tooltipVisible;
     }
 
