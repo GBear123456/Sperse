@@ -22,6 +22,7 @@ import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-set
 })
 export class EmailComponent implements ITenantSettingsStepComponent {
     @Input() settings: EmailSettingsEditDto;
+    smtpProviderErrorLink: string;
     testEmailAddress: string;
     isSending: boolean = false;
 
@@ -37,10 +38,16 @@ export class EmailComponent implements ITenantSettingsStepComponent {
             return;
 
         this.isSending = true;
+        this.smtpProviderErrorLink = undefined;
         let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.settings);
         this.emailSmtpSettingsService.sendTestEmail(input, () => {
             this.isSending = false;
             this.changeDetectorRef.detectChanges();
+        }, () => {
+            this.smtpProviderErrorLink = this.testEmailAddress &&
+                this.emailSmtpSettingsService.getSmtpErrorHelpLink(this.settings.smtpHost);
+            if (this.smtpProviderErrorLink)
+                this.changeDetectorRef.detectChanges();
         });
     }
 
