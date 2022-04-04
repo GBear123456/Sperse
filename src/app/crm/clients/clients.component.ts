@@ -186,7 +186,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelOrgUnit: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'SourceOrganizationUnitId',
-        hidden: this.appSession.userIsMember,
+        hidden: this.appSession.hideUserSourceFilters,
         field: 'SourceOrganizationUnitId',
         items: {
             element: new FilterCheckBoxesModel({
@@ -199,7 +199,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelSource: FilterModel = new FilterModel({
         component: FilterSourceComponent,
         caption: 'Source',
-        hidden: this.appSession.userIsMember,
+        hidden: this.appSession.hideUserSourceFilters,
         items: {
             element: new SourceFilterModel({
                 ls: this.localizationService
@@ -222,7 +222,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelTags: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'Tag',
-        hidden: this.appSession.userIsMember,
+        hidden: this.appSession.hideUserSourceFilters,
         field: 'TagId',
         items: {
             element: new FilterCheckBoxesModel({
@@ -235,7 +235,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelAssignment: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'assignedUser',
-        hidden: this.appSession.userIsMember,
+        hidden: this.appSession.hideUserSourceFilters,
         field: 'AssignedUserId',
         items: {
             element: new FilterCheckBoxesModel(
@@ -267,7 +267,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     filterModelRating: FilterModel = new FilterModel({
         component: FilterRangeComponent,
         operator: { from: 'ge', to: 'le' },
-        hidden: this.appSession.userIsMember,
+        hidden: this.appSession.hideUserSourceFilters,
         caption: 'Rating',
         field: 'Rating',
         items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
@@ -1106,7 +1106,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 caption: 'xref',
                 filterMethod: this.filtersService.filterByMultiline,
                 field: 'Xref',
-                hidden: this.appSession.userIsMember,
+                hidden: this.appSession.hideUserSourceFilters,
                 items: {
                     element: new FilterMultilineInputModel({
                         ls: this.localizationService,

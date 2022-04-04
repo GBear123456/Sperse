@@ -1249,7 +1249,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 new FilterModel({
                     component: FilterMultilineInputComponent,
                     caption: 'xref',
-                    hidden: this.appSession.userIsMember,
+                    hidden: this.appSession.hideUserSourceFilters,
                     filterMethod: this.filtersService.filterByMultiline,
                     field: 'ContactXref',
                     items: {
@@ -1333,7 +1333,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.filterModelAssignment = new FilterModel({
                     component: FilterCheckBoxesComponent,
                     caption: 'assignedUser',
-                    hidden: this.appSession.userIsMember,
+                    hidden: this.appSession.hideUserSourceFilters,
                     field: 'AssignedUserId',
                     items: {
                         element: new FilterCheckBoxesModel(
@@ -1349,7 +1349,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.filterModelOrgUnit = new FilterModel({
                     component: FilterCheckBoxesComponent,
                     caption: 'SourceOrganizationUnitId',
-                    hidden: this.appSession.userIsMember,
+                    hidden: this.appSession.hideUserSourceFilters,
                     field: 'SourceOrganizationUnitId',
                     items: {
                         element: new FilterCheckBoxesModel(
@@ -1363,7 +1363,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.filterModelSource = new FilterModel({
                     component: FilterSourceComponent,
                     caption: 'Source',
-                    hidden: this.appSession.userIsMember,
+                    hidden: this.appSession.hideUserSourceFilters,
                     items: {
                         element: new SourceFilterModel({
                             ls: this.localizationService
@@ -1386,7 +1386,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.filterModelTags = new FilterModel({
                     component: FilterCheckBoxesComponent,
                     caption: 'Tag',
-                    hidden: this.appSession.userIsMember,
+                    hidden: this.appSession.hideUserSourceFilters,
                     field: 'TagId',
                     items: {
                         element: new FilterCheckBoxesModel(
@@ -1401,7 +1401,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     component: FilterRangeComponent,
                     operator: { from: 'ge', to: 'le' },
                     caption: 'Rating',
-                    hidden: this.appSession.userIsMember,
+                    hidden: this.appSession.hideUserSourceFilters,
                     field: 'Rating',
                     items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
                 }),

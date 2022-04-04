@@ -341,6 +341,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                 subject: this.data.subject,
                 cc: this.data.cc,
                 bcc: this.data.bcc,
+                previewText: this.data.previewText,
                 body: this.data.body
             };
 
@@ -460,6 +461,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.data.body = res.body;
                 this.data.cc = res.cc;
                 this.data.subject = res.subject;
+                this.data.previewText = res.previewText;
                 this.showCC = Boolean(res.cc && res.cc.length);
                 this.showBCC = Boolean(res.bcc && res.bcc.length);
                 this.onTemplateChange.emit(templateId);

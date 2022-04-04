@@ -222,7 +222,8 @@
             }
 
             &.to,
-            &.from {
+            &.from,
+            &.subject {
                 border-bottom: 1px solid #dfdfdf;
             }
 
@@ -235,14 +236,18 @@
                 }
             }
 
-            &.subject {
-                border-bottom: none;
+            &.subject,
+            &.preview-text {
                 label {
                     line-height: 42px;
                 }
                 dx-text-box input {
                     border: none;
                 }
+            }
+
+            &.preview-text {
+                border: none;
             }
 
             &.attachments {

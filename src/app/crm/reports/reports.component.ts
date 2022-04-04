@@ -341,7 +341,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
     salesOrgUnitFilter = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'SourceOrganizationUnitId',
-        hidden: this.appSessionService.userIsMember,
+        hidden: this.appSessionService.hideUserSourceFilters,
         field: 'sourceOrganizationUnitId',
         items: {
             element: new FilterCheckBoxesModel(
@@ -525,7 +525,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'SourceOrganizationUnitId',
-                hidden: this.appSessionService.userIsMember,
+                hidden: this.appSessionService.hideUserSourceFilters,
                 field: 'sourceOrganizationUnits',
                 items: {
                     element: new FilterCheckBoxesModel(
@@ -549,7 +549,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
             new FilterModel({
                 component: FilterSourceComponent,
                 caption: 'Source',
-                hidden: this.appSessionService.userIsMember,
+                hidden: this.appSessionService.hideUserSourceFilters,
                 items: {
                     element: new SourceFilterModel({
                         ls: this.ls

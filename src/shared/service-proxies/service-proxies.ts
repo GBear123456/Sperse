@@ -3562,6 +3562,109 @@ export class BANKCodeServiceProxy {
         }
         return _observableOf<BankCodeHistoryInfo[]>(<any>null);
     }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateBankCodeUserSettings(body: UpdateBankCodeUserSettingsInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/UpdateBankCodeUserSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateBankCodeUserSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateBankCodeUserSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateBankCodeUserSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getBankCodeUserSettings(): Observable<BANKCodeUserSettings> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetBankCodeUserSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetBankCodeUserSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetBankCodeUserSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<BANKCodeUserSettings>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<BANKCodeUserSettings>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetBankCodeUserSettings(response: HttpResponseBase): Observable<BANKCodeUserSettings> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = BANKCodeUserSettings.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BANKCodeUserSettings>(<any>null);
+    }
 }
 
 @Injectable()
@@ -50276,6 +50379,46 @@ export interface IBANKCodeSelfAssessmentDto {
     k: number;
 }
 
+export class BANKCodeUserSettings implements IBANKCodeUserSettings {
+    isSetupWizardEnabled!: boolean;
+    isWelcomeVideoWatched!: boolean;
+
+    constructor(data?: IBANKCodeUserSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isSetupWizardEnabled = _data["isSetupWizardEnabled"];
+            this.isWelcomeVideoWatched = _data["isWelcomeVideoWatched"];
+        }
+    }
+
+    static fromJS(data: any): BANKCodeUserSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new BANKCodeUserSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isSetupWizardEnabled"] = this.isSetupWizardEnabled;
+        data["isWelcomeVideoWatched"] = this.isWelcomeVideoWatched;
+        return data;
+    }
+}
+
+export interface IBANKCodeUserSettings {
+    isSetupWizardEnabled: boolean;
+    isWelcomeVideoWatched: boolean;
+}
+
 export class BankDto implements IBankDto {
     id!: number;
     name!: string | undefined;
@@ -56425,6 +56568,7 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
     subject!: string | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
+    previewText!: string | undefined;
     body!: string;
 
     constructor(data?: ICreateEmailTemplateRequest) {
@@ -56451,6 +56595,7 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
                 for (let item of _data["bcc"])
                     this.bcc!.push(item);
             }
+            this.previewText = _data["previewText"];
             this.body = _data["body"];
         }
     }
@@ -56477,6 +56622,7 @@ export class CreateEmailTemplateRequest implements ICreateEmailTemplateRequest {
             for (let item of this.bcc)
                 data["bcc"].push(item);
         }
+        data["previewText"] = this.previewText;
         data["body"] = this.body;
         return data;
     }
@@ -56488,6 +56634,7 @@ export interface ICreateEmailTemplateRequest {
     subject: string | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
+    previewText: string | undefined;
     body: string;
 }
 
@@ -65509,6 +65656,7 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
     subject!: string | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
+    previewText!: string | undefined;
     body!: string | undefined;
     attachments!: Attachment[] | undefined;
     tags!: { [key: string]: string; } | undefined;
@@ -65540,6 +65688,7 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
                 for (let item of _data["bcc"])
                     this.bcc!.push(item);
             }
+            this.previewText = _data["previewText"];
             this.body = _data["body"];
             if (Array.isArray(_data["attachments"])) {
                 this.attachments = [] as any;
@@ -65581,6 +65730,7 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
             for (let item of this.bcc)
                 data["bcc"].push(item);
         }
+        data["previewText"] = this.previewText;
         data["body"] = this.body;
         if (Array.isArray(this.attachments)) {
             data["attachments"] = [];
@@ -65603,6 +65753,7 @@ export interface IGetEmailDataOutput {
     subject: string | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
+    previewText: string | undefined;
     body: string | undefined;
     attachments: Attachment[] | undefined;
     tags: { [key: string]: string; } | undefined;
@@ -67824,6 +67975,7 @@ export class GetTemplateReponse implements IGetTemplateReponse {
     subject!: string | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
+    previewText!: string | undefined;
     body!: string | undefined;
 
     constructor(data?: IGetTemplateReponse) {
@@ -67850,6 +68002,7 @@ export class GetTemplateReponse implements IGetTemplateReponse {
                 for (let item of _data["bcc"])
                     this.bcc!.push(item);
             }
+            this.previewText = _data["previewText"];
             this.body = _data["body"];
         }
     }
@@ -67876,6 +68029,7 @@ export class GetTemplateReponse implements IGetTemplateReponse {
             for (let item of this.bcc)
                 data["bcc"].push(item);
         }
+        data["previewText"] = this.previewText;
         data["body"] = this.body;
         return data;
     }
@@ -67887,6 +68041,7 @@ export interface IGetTemplateReponse {
     subject: string | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
+    previewText: string | undefined;
     body: string | undefined;
 }
 
@@ -85663,6 +85818,7 @@ export class SendEmailInput implements ISendEmailInput {
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
     subject!: string;
+    previewText!: string | undefined;
     body!: string;
     saveAttachmentsToDocuments!: boolean;
     attachments!: FileInfo[] | undefined;
@@ -85705,6 +85861,7 @@ export class SendEmailInput implements ISendEmailInput {
                     this.bcc!.push(item);
             }
             this.subject = _data["subject"];
+            this.previewText = _data["previewText"];
             this.body = _data["body"];
             this.saveAttachmentsToDocuments = _data["saveAttachmentsToDocuments"];
             if (Array.isArray(_data["attachments"])) {
@@ -85748,6 +85905,7 @@ export class SendEmailInput implements ISendEmailInput {
                 data["bcc"].push(item);
         }
         data["subject"] = this.subject;
+        data["previewText"] = this.previewText;
         data["body"] = this.body;
         data["saveAttachmentsToDocuments"] = this.saveAttachmentsToDocuments;
         if (Array.isArray(this.attachments)) {
@@ -85768,6 +85926,7 @@ export interface ISendEmailInput {
     cc: string[] | undefined;
     bcc: string[] | undefined;
     subject: string;
+    previewText: string | undefined;
     body: string;
     saveAttachmentsToDocuments: boolean;
     attachments: FileInfo[] | undefined;
@@ -92171,6 +92330,46 @@ export interface IUpdateBankAccountDto {
     businessEntityId: number | undefined;
 }
 
+export class UpdateBankCodeUserSettingsInput implements IUpdateBankCodeUserSettingsInput {
+    isSetupWizardEnabled!: boolean;
+    isWelcomeVideoWatched!: boolean;
+
+    constructor(data?: IUpdateBankCodeUserSettingsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isSetupWizardEnabled = _data["isSetupWizardEnabled"];
+            this.isWelcomeVideoWatched = _data["isWelcomeVideoWatched"];
+        }
+    }
+
+    static fromJS(data: any): UpdateBankCodeUserSettingsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateBankCodeUserSettingsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isSetupWizardEnabled"] = this.isSetupWizardEnabled;
+        data["isWelcomeVideoWatched"] = this.isWelcomeVideoWatched;
+        return data;
+    }
+}
+
+export interface IUpdateBankCodeUserSettingsInput {
+    isSetupWizardEnabled: boolean;
+    isWelcomeVideoWatched: boolean;
+}
+
 export class UpdateBusinessEntityDto implements IUpdateBusinessEntityDto {
     id!: number;
     status!: BusinessEntityStatus | undefined;
@@ -93428,6 +93627,7 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
     subject!: string | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
+    previewText!: string | undefined;
     body!: string;
 
     constructor(data?: IUpdateEmailTemplateRequest) {
@@ -93455,6 +93655,7 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
                 for (let item of _data["bcc"])
                     this.bcc!.push(item);
             }
+            this.previewText = _data["previewText"];
             this.body = _data["body"];
         }
     }
@@ -93482,6 +93683,7 @@ export class UpdateEmailTemplateRequest implements IUpdateEmailTemplateRequest {
             for (let item of this.bcc)
                 data["bcc"].push(item);
         }
+        data["previewText"] = this.previewText;
         data["body"] = this.body;
         return data;
     }
@@ -93494,6 +93696,7 @@ export interface IUpdateEmailTemplateRequest {
     subject: string | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
+    previewText: string | undefined;
     body: string;
 }
 

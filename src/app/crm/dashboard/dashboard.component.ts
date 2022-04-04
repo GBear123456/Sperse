@@ -99,7 +99,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     filterModelOrgUnit: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'SourceOrganizationUnitId',
-        hidden: this.appSessionService.userIsMember,
+        hidden: this.appSessionService.hideUserSourceFilters,
         field: 'SourceOrganizationUnitId',
         items: {
             element: new FilterCheckBoxesModel(
@@ -113,7 +113,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     filterModelSource: FilterModel = new FilterModel({
         component: FilterSourceComponent,
         caption: 'Source',
-        hidden: this.appSessionService.userIsMember,
+        hidden: this.appSessionService.hideUserSourceFilters,
         items: {
             element: new SourceContactFilterModel({
                 ls: this.ls

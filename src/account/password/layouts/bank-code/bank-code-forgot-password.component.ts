@@ -3,7 +3,7 @@ import {Component} from '@angular/core';
 
 /** Application imports */
 import { accountModuleAnimation } from '@shared/animations/routerTransition';
-import { HostForgotPasswordComponent } from '../host/host-forgot-password.component';
+import { HostCombinedForgotPasswordComponent } from '../host/host-combined-forgot-password.component';
 
 @Component({
     templateUrl: './bank-code-forgot-password.component.html',
@@ -13,5 +13,5 @@ import { HostForgotPasswordComponent } from '../host/host-forgot-password.compon
     ],
     animations: [accountModuleAnimation()]
 })
-export class BankCodeForgotPasswordComponent extends HostForgotPasswordComponent {
+export class BankCodeForgotPasswordComponent extends HostCombinedForgotPasswordComponent {
 }

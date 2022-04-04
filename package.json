@@ -1,6 +1,6 @@
 {
   "name": "abp-zero-template",
-  "version": "6.5.8",
+  "version": "6.5.9",
   "license": "MIT",
   "angular-cli": {},
   "scripts": {
@@ -66,6 +66,7 @@
     "abp-ng2-module": "^6.3.0",
     "abp-web-resources": "^5.4.0",
     "angular-cc-library": "^3.0.0",
+    "angular-code-input": "^1.6.0",
     "angular-svg-round-progressbar": "^3.0.1",
     "angular2-chartjs": "^0.5.1",
     "angular2-counto": "^1.2.5",
