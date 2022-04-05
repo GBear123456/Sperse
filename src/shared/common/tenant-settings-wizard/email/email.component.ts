@@ -3,7 +3,8 @@ import { ChangeDetectionStrategy, Component, Input, ChangeDetectorRef } from '@a
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 
 /** Third party imports */
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -43,15 +44,20 @@ export class EmailComponent implements ITenantSettingsStepComponent {
         this.emailSmtpSettingsService.sendTestEmail(input, () => {
             this.isSending = false;
             this.changeDetectorRef.detectChanges();
-        }, () => {
-            this.smtpProviderErrorLink = this.testEmailAddress &&
-                this.emailSmtpSettingsService.getSmtpErrorHelpLink(this.settings.smtpHost);
-            if (this.smtpProviderErrorLink)
-                this.changeDetectorRef.detectChanges();
-        });
+        }, () => this.checkHandlerErrorWarning());
+    }
+
+    checkHandlerErrorWarning(forced = false) {
+        this.smtpProviderErrorLink = (forced || this.testEmailAddress) &&
+            this.emailSmtpSettingsService.getSmtpErrorHelpLink(this.settings.smtpHost);
+        if (this.smtpProviderErrorLink)
+            this.changeDetectorRef.detectChanges();
     }
 
     save(): Observable<void> {
-        return this.tenantSettingsServiceProxy.updateEmailSettings(this.settings);
+        return this.tenantSettingsServiceProxy.updateEmailSettings(this.settings).pipe(catchError(error => {
+            this.checkHandlerErrorWarning(true);
+            return throwError(error);
+        }));
     }
 }
