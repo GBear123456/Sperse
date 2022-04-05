@@ -1,6 +1,7 @@
 /** Core imports */
 import { Component, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
 import { Observable, of, forkJoin, Subscription } from 'rxjs';
@@ -50,6 +51,7 @@ export class UserInboxComponent implements OnDestroy {
     contentToolbar = [];
     dataSource: DataSource;
     activeMessage: Partial<Message>;
+    isNotListedMessage: boolean = false;
     instantMessageText: string;
     instantMessageAttachments = [];
     contactInfo: ContactInfoDto;
@@ -86,6 +88,8 @@ export class UserInboxComponent implements OnDestroy {
         private contactsService: ContactsService,
         private notifyService: NotifyService,
         private permission: AppPermissionService,
+        private router: Router,
+        private activatedRoute: ActivatedRoute,
         public dialog: MatDialog,
         public ls: AppLocalizationService,
         public profileService: ProfileService
@@ -107,6 +111,17 @@ export class UserInboxComponent implements OnDestroy {
                     this.initMainToolbar();
             }
         }, this.ident);
+        activatedRoute.queryParamMap.pipe().subscribe((paramsMap: ParamMap) => {
+            let messageId = paramsMap.get('messageId');
+            if (messageId && this.dataSource && this.dataSource.isLoaded()) {
+                this.clearQueryMessageParams();
+                let record = this.dataSource.items().find(item => item.id == messageId);
+                if (record)
+                    this.initActiveMessage(record);
+                else
+                    this.showNotListedEmail(messageId);
+            }
+        });
     }
 
     initMainToolbar() {
@@ -234,12 +249,12 @@ export class UserInboxComponent implements OnDestroy {
                 {
                     name: 'prev',
                     action: this.moveSelectedItem.bind(this, -1),
-                    disabled: this.isActiveFirstItem()
+                    disabled: this.isNotListedMessage ||  this.isActiveFirstItem()
                 },
                 {
                     name: 'next',
                     action: this.moveSelectedItem.bind(this, 1),
-                    disabled: this.isActiveLastItem()
+                    disabled: this.isNotListedMessage || this.isActiveLastItem()
                 }
             ]
         }, {
@@ -256,7 +271,7 @@ export class UserInboxComponent implements OnDestroy {
                     name: 'replyToAll',
                     visible: this.isActiveEmilType,
                     action: () => this.reply(true),
-                    disabled: !this.isSendSmsAndEmailAllowed || !this.activeMessage.cc
+                    disabled: !this.isSendSmsAndEmailAllowed || !this.activeMessage || !this.activeMessage.cc
                 },
                 {
                     name: 'forward',
@@ -288,11 +303,24 @@ export class UserInboxComponent implements OnDestroy {
                         let record;
                         this.initMainToolbar();
                         response.items.forEach(v => this.setMessageStatus(v));
-                        if (this.activeMessage) {
-                            let lookupId = this.activeMessage.parentId || this.activeMessage.id;
-                            response.items.some(item => (record = item).id == lookupId);
-                        } else
-                            record = response && response.items[0];
+
+                        let queryMessageId = this.activatedRoute.snapshot.queryParamMap.get('messageId');
+                        if (queryMessageId)
+                            this.clearQueryMessageParams();
+
+                        if (queryMessageId || this.activeMessage) {
+                            let lookupId = queryMessageId || this.activeMessage.parentId || this.activeMessage.id;
+                            record = response.items.find(item => item.id == lookupId);
+                        }
+                        if (!record) {
+                            if (queryMessageId) {
+                                this.showNotListedEmail(queryMessageId);
+                            }
+                            else {
+                                record = response && response.items[0];
+                            }
+                        }
+
                         this.loadingService.finishLoading();
                         this.initActiveMessage(record);
                         return {
@@ -302,6 +330,19 @@ export class UserInboxComponent implements OnDestroy {
                     });
                 }
             }
+        });
+    }
+
+    showNotListedEmail(messageId) {
+        this.loadingService.startLoading(this.contentView.nativeElement);
+        this.communicationService.getMessage(messageId, this.contactId).pipe(
+            finalize(() => this.loadingService.finishLoading(this.contentView.nativeElement))
+        ).subscribe(message => {
+            this.setMessageStatus(message);
+            this.activeMessage = message;
+            this.isNotListedMessage = true;
+            this.showEmailContent();
+            this.initContentToolbar();
         });
     }
 
@@ -319,7 +360,7 @@ export class UserInboxComponent implements OnDestroy {
                 forkJoin(
                     this.communicationService.getMessage(record.id, this.contactId),
                     record.hasChildren ? this.communicationService.getMessages(this.contactId, record.id,
-                        undefined, undefined, undefined, undefined, 'Id ASC', undefined, undefined) : of({items: null})
+                        undefined, undefined, undefined, undefined, 'Id ASC', undefined, undefined) : of({ items: null })
                 ).pipe(
                     finalize(() => this.loadingService.finishLoading(this.contentView.nativeElement))
                 ).subscribe(([message, children]) => {
@@ -337,6 +378,7 @@ export class UserInboxComponent implements OnDestroy {
         let component = this.listComponent && this.listComponent.instance;
         if (component) {
             this.activeMessage = record.message = message;
+            this.isNotListedMessage = false;
             if (record.hasChildren && children && children.items) {
                 record.items = children.items;
                 if (message.deliveryType == CommunicationMessageDeliveryType.Email)
@@ -369,6 +411,13 @@ export class UserInboxComponent implements OnDestroy {
                 window.document.close();
             }
         });
+    }
+
+    clearQueryMessageParams() {
+        this.router.navigate([], {
+            queryParams: { 'messageId': null },
+            queryParamsHandling: 'merge'
+        })
     }
 
     onContentReady(event) {
@@ -524,20 +573,21 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     loadChild(parent) {
-        if (!this.activeMessage.items)
-            this.activeMessage.items = [];
-        let item = parent.items[this.activeMessage.items.length];
+        let currentActiveMessage = this.activeMessage;
+        if (!currentActiveMessage.items)
+            currentActiveMessage.items = [];
+        let item = parent.items[currentActiveMessage.items.length];
         if (item) {
             this.loadingService.startLoading(this.contentView.nativeElement);
             this.communicationService.getMessage(item.id, this.contactId).pipe(
                 finalize(() => this.loadingService.finishLoading(this.contentView.nativeElement))
             ).subscribe(child => {
                 this.setMessageStatus(child);
-                this.activeMessage.items.unshift(child);
-                this.activeMessage.loaded = this.activeMessage.items.length == parent.items.length;
+                currentActiveMessage.items.unshift(child);
+                currentActiveMessage.loaded = currentActiveMessage.items.length == parent.items.length;
             });
         } else
-            this.activeMessage.loaded = true;
+            currentActiveMessage.loaded = true;
     }
 
     loadOneMoreChild(record?) {

@@ -138,14 +138,14 @@ export class NotificationsComponent implements OnInit {
     }
 
     notificationClick(e) {
-        let notification = e.data;
+        let notification: IFormattedUserNotification = e.data;
         if (notification.entityId) {
             if (notification.entityTypeName == this.CONTACT_ENTITY_TYPE) {
                 this.router.navigate(['app/crm/contact', notification.entityId]);
                 setTimeout(() => this.itemDetailsService.clearItemsSource());
                 this.dialog.closeAll();
             } else if (notification.entityTypeName == this.COMMUNICATION_MESSAGE_ENTITY_TYPE) {
-                this.router.navigate(['app/crm/contact', notification.entityId, 'user-inbox']);
+                this.userNotificationHelper.navigateToUserInbox(notification);
                 setTimeout(() => this.itemDetailsService.clearItemsSource());
                 this.dialog.closeAll();
             }
