@@ -28,7 +28,7 @@ import { Period } from '@app/shared/common/period/period.enum';
 import { CFOService } from '@shared/cfo/cfo.service';
 
 export function defaultPeriodFactory(cfoService: CFOService) {
-    return cfoService && cfoService.hasStaticInstance ? Period.LastQuarter : Period.ThisYear;
+    return Period.ThisWeek;
 }
 
 @NgModule({
