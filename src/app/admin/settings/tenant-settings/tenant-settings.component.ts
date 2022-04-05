@@ -121,6 +121,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     EmailTemplateType = EmailTemplateType;
     CustomCssType = CustomCssType;
     tabIndex: Observable<number>;
+    smtpProviderErrorLink: string;
 
     constructor(
         injector: Injector,
@@ -431,8 +432,14 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
     sendTestEmail(): void {
         this.startLoading();
+        this.smtpProviderErrorLink = undefined;
         let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.settings.email);
-        this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this));
+        this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this), () => {
+            this.smtpProviderErrorLink = this.testEmailAddress && 
+                this.emailSmtpSettingsService.getSmtpErrorHelpLink(this.settings.email.smtpHost);
+            if (this.smtpProviderErrorLink)
+                this.changeDetection.detectChanges();
+        });
     }
 
     getSendGridWebhookUrl(): string {

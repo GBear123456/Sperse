@@ -74,6 +74,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
 
     isTenantHosts: boolean = this.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
+    smtpProviderErrorLink: string;
 
     constructor(
         injector: Injector,
@@ -164,8 +165,14 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
 
     sendTestEmail(): void {
         this.startLoading();
+        this.smtpProviderErrorLink = undefined;
         let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.hostSettings.email);
-        this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this));
+        this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this), () => {
+            this.smtpProviderErrorLink = this.testEmailAddress &&
+                this.emailSmtpSettingsService.getSmtpErrorHelpLink(this.hostSettings.email.smtpHost);
+            if (this.smtpProviderErrorLink)
+                this.changeDetection.detectChanges();
+        });
     }
 
     saveAll(): void {
