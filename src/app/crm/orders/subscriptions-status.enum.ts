@@ -1,5 +1,6 @@
 export enum SubscriptionsStatus {
-    CurrentActive = 'A',
-    CurrentExpired = 'E',
-    Cancelled = 'C'
+    Current = 'A',
+    Canceled = 'C',
+    Draft = 'D',
+    Upgraded = 'U'
 }

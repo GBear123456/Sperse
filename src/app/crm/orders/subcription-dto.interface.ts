@@ -2,8 +2,7 @@ export interface SubscriptionDto {
     Id: string;
     PhotoPublicId: string;
     ContactId: string;
-    FirstName: string;
-    LastName: string;
+    FullName: string;
     EmailAddress: string;
     PhoneNumber: string;
     City: string;

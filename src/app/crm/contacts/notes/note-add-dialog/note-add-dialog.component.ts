@@ -130,6 +130,9 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
                 beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
+                },
                 deserializeDates: false
             })
         });

@@ -751,6 +751,9 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         if (records instanceof Array)
                             dataSource['entities'] = (dataSource['entities'] || []).concat(records);
                     },
+                    errorHandler: (error) => {
+                        setTimeout(() => this.isDataLoaded = true);
+                    },
                     deserializeDates: false
                 }
             };

@@ -47,12 +47,12 @@ export class OrdersHeaderDropdownComponent {
         let accessibleCG = Object.keys(ContactGroup)
             .filter((group: string) => this.permission.checkCGPermission([ContactGroup[group]], ''));
         if (accessibleCG.length > 1) {
-            accessibleCG.unshift('All');
+            accessibleCG.push('All');
         }
         this.contactGroups = accessibleCG.map((group: string) => ({
-                text: this.ls.l('ContactGroup_' + group),
-                value: ContactGroup[group]
-            }));
+            text: this.ls.l('ContactGroup_' + group),
+            value: ContactGroup[group]
+        }));
     }
 
     isTotalCountValid() {
