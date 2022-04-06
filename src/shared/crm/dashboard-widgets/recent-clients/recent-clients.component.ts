@@ -1,10 +1,12 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, ElementRef, OnInit, OnDestroy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, 
+    ElementRef, OnInit, OnDestroy, Input, Output } from '@angular/core';
 import { Router } from '@angular/router';
 
 /** Third party imports */
 import { Observable, BehaviorSubject, combineLatest, of } from 'rxjs';
-import { catchError, finalize, switchMap, tap, distinctUntilChanged, takeUntil } from 'rxjs/operators';
+import { catchError, finalize, first, switchMap, tap, distinctUntilChanged, 
+    takeUntil, publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
 import {
@@ -33,6 +35,11 @@ import { AppPermissionService } from '@root/shared/common/auth/permission.servic
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class RecentClientsComponent implements OnInit, OnDestroy {
+    @Input() waitFor$: Observable<any> = of().pipe(
+        publishReplay(), refCount()
+    );
+    @Output() loadComplete: EventEmitter<any> = new EventEmitter();
+
     recordsCount = 10;
     formatting = AppConsts.formatting;
     recentlyCreatedCustomers$: Observable<GetRecentlyCreatedCustomersOutput[]>;
@@ -43,7 +50,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             dataLink: 'app/crm/contact/{contactId}/lead/{leadId}',
             allRecordsLink: '/app/crm/leads',
             visible: this.permissionService.isGranted(AppPermissions.CRMCustomers),
-            dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>
+            dataSource: (contactId: number, orgUnitIds: number[]): Observable<GetRecentlyCreatedCustomersOutput[]> =>                
                 this.dashboardServiceProxy.getRecentlyCreatedLeads(this.recordsCount, ContactGroup.Client, contactId, orgUnitIds)
         },
         {
@@ -134,10 +141,17 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
             this.dashboardWidgetsService.refresh$
         ).pipe(
             tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
-            switchMap(([selectedItem, contactId, orgUnitIds, ]) => selectedItem.dataSource(contactId, orgUnitIds).pipe(
-                catchError(() => of([])),
-                finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-            ))
+            switchMap(([selectedItem, contactId, orgUnitIds, ]) => 
+                this.waitFor$.pipe(first(), switchMap(() =>
+                    selectedItem.dataSource(contactId, orgUnitIds).pipe(
+                        catchError(() => of([])),
+                        finalize(() => {
+                            this.loadComplete.next();
+                            this.loadingService.finishLoading(this.elementRef.nativeElement);
+                        })
+                    )
+                ))
+            )
         );
         this.dashboardWidgetsService.contactGroupId$.pipe(
             takeUntil(this.lifeCycleSubject.deactivate$)

@@ -7,7 +7,10 @@ import {
     Inject,
     OnDestroy,
     ChangeDetectorRef,
-    ElementRef
+    EventEmitter,
+    ElementRef,
+    Input,
+    Output
 } from '@angular/core';
 import { DOCUMENT, DecimalPipe } from '@angular/common';
 
@@ -64,6 +67,11 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
+    @Input() waitFor$: Observable<any> = of().pipe(
+        publishReplay(), refCount()
+    );
+    @Output() loadComplete: EventEmitter<any> = new EventEmitter();
+
     totalsData: any[] = [];
     totalsData$: Observable<GetCustomerAndLeadStatsOutput[]>;
     startDate: any;
@@ -156,18 +164,23 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
             switchMap(([period, isCumulative, contactId, contactGroupId, orgUnitIds, ]:
                              [PeriodModel, boolean, number, string, number[], null]) => {
                 const totalsByPeriodModel = this.savePeriod(period);
-                return this.loadCustomersAndLeadsStats(
-                    totalsByPeriodModel,
-                    period.from,
-                    period.to,
-                    isCumulative,
-                    contactId,
-                    contactGroupId,
-                    orgUnitIds
-                ).pipe(
-                    catchError(() => of([])),
-                    finalize(() => this.loadingService.finishLoading())
-                );
+                return this.waitFor$.pipe(first(), switchMap(() =>
+                    this.loadCustomersAndLeadsStats(
+                        totalsByPeriodModel,
+                        period.from,
+                        period.to,
+                        isCumulative,
+                        contactId,
+                        contactGroupId,
+                        orgUnitIds
+                    ).pipe(
+                        catchError(() => of([])),
+                        finalize(() => {
+                            this.loadComplete.next();
+                            this.loadingService.finishLoading();
+                        })
+                    )
+                ));
             }),
             publishReplay(),
             refCount()
