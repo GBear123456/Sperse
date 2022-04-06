@@ -4,8 +4,8 @@ import { Component, Injector, OnInit, AfterViewInit, ViewChild, ElementRef,
 import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
-import { Observable, forkJoin } from 'rxjs';
-import { finalize, tap, first, map, delay } from 'rxjs/operators';
+import { Observable, forkJoin, throwError } from 'rxjs';
+import { finalize, tap, first, map, delay, catchError } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
 
@@ -167,19 +167,26 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
         this.startLoading();
         this.smtpProviderErrorLink = undefined;
         let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.hostSettings.email);
-        this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this), () => {
-            this.smtpProviderErrorLink = this.testEmailAddress &&
-                this.emailSmtpSettingsService.getSmtpErrorHelpLink(this.hostSettings.email.smtpHost);
-            if (this.smtpProviderErrorLink)
-                this.changeDetection.detectChanges();
-        });
+        this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this), () => this.checkHandlerErrorWarning());
+    }
+
+    checkHandlerErrorWarning(forced = false) {
+        this.smtpProviderErrorLink = (forced || this.testEmailAddress) &&
+            this.emailSmtpSettingsService.getSmtpErrorHelpLink(this.hostSettings.email.smtpHost);
+        if (this.smtpProviderErrorLink)
+            this.changeDetection.detectChanges();
     }
 
     saveAll(): void {
         this.startLoading();
+        this.smtpProviderErrorLink = undefined;
         forkJoin(
             this.hostSettingService.updateAllSettings(this.hostSettings).pipe(tap(() => {
                 this.appSessionService.checkSetDefaultCountry(this.hostSettings.general.defaultCountryCode);
+            }),
+            catchError(error => {
+                this.checkHandlerErrorWarning(true);
+                return throwError(error);
             })),
             this.tenantPaymentSettingsService.updatePayPalSettings(this.payPalPaymentSettings),
             this.tenantPaymentSettingsService.updateACHWorksSettings(this.achWorksSettings),
