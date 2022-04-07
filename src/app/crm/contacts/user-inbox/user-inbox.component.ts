@@ -113,7 +113,8 @@ export class UserInboxComponent implements OnDestroy {
         }, this.ident);
         activatedRoute.queryParamMap.pipe().subscribe((paramsMap: ParamMap) => {
             let messageId = paramsMap.get('messageId');
-            if (messageId && this.dataSource && this.dataSource.isLoaded()) {
+            let contactId = this.activatedRoute.parent.snapshot.paramMap.get('contactId');
+            if (messageId && this.contactId && this.contactId.toString() == contactId && this.dataSource && this.dataSource.isLoaded()) {
                 this.clearQueryMessageParams();
                 let record = this.dataSource.items().find(item => item.id == messageId);
                 if (record)
