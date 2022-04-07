@@ -371,15 +371,12 @@ export class UserInboxComponent implements OnDestroy {
                         undefined, undefined, undefined, undefined, 'Id ASC', undefined, undefined) : of({ items: null })
                 ).pipe(
                     finalize(() => this.loadingService.finishLoading(this.contentView.nativeElement))
-                ).subscribe(([message, children]) => {
+                ).subscribe(([message, children]: [any, any]) => {
                     this.setMessageStatus(message);
-                    if (children.items) {
+                    if (record.hasChildren && children && children.items) {
                         children.items.forEach(v => this.setMessageStatus(v));
                         record.items = children.items;
-                        if (message.deliveryType == CommunicationMessageDeliveryType.Email)
-                            this.loadOneMoreChild(record);
-                        else
-                            message.items = children.items;
+                        message.items = children.items;
                         this.checkExpandRecord(record);
                     }
 
@@ -593,36 +590,6 @@ export class UserInboxComponent implements OnDestroy {
         });
         this.instantMessageAttachments = [];
         this.instantMessageText = '';
-    }
-
-    loadChild(parent) {
-        let currentActiveMessage = this.activeMessage;
-        if (!currentActiveMessage.items)
-            currentActiveMessage.items = [];
-        let item = parent.items[currentActiveMessage.items.length];
-        if (item) {
-            this.loadingService.startLoading(this.contentView.nativeElement);
-            this.communicationService.getMessage(item.id, this.contactId).pipe(
-                finalize(() => this.loadingService.finishLoading(this.contentView.nativeElement))
-            ).subscribe(child => {
-                this.setMessageStatus(child);
-                currentActiveMessage.items.unshift(child);
-                currentActiveMessage.loaded = currentActiveMessage.items.length == parent.items.length;
-            });
-        } else
-            currentActiveMessage.loaded = true;
-    }
-
-    loadOneMoreChild(record?) {
-        if (record)
-            this.loadChild(record);
-        else
-            this.getVisibleList().some(item => {
-                if (this.activeMessage.id == item.id) {
-                    this.loadChild(item);
-                    return true;
-                }
-            });
     }
 
     addAttachments(files: NgxFileDropEntry[]) {
