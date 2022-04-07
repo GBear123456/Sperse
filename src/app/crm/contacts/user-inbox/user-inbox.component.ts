@@ -338,11 +338,19 @@ export class UserInboxComponent implements OnDestroy {
         this.communicationService.getMessage(messageId, this.contactId).pipe(
             finalize(() => this.loadingService.finishLoading(this.contentView.nativeElement))
         ).subscribe(message => {
-            this.setMessageStatus(message);
-            this.activeMessage = message;
-            this.isNotListedMessage = true;
-            this.showEmailContent();
-            this.initContentToolbar();
+            let record;
+            if (message.parentId)
+                record = this.dataSource.items().find(item => item.id == message.parentId);
+
+            if (record)
+                this.initActiveMessage(record, message);
+            else {
+                this.setMessageStatus(message);
+                this.activeMessage = message;
+                this.isNotListedMessage = true;
+                this.showEmailContent();
+                this.initContentToolbar();
+            }
         });
     }
 
@@ -351,14 +359,14 @@ export class UserInboxComponent implements OnDestroy {
         this.initActiveMessage(item);
     }
 
-    initActiveMessage(record) {
+    initActiveMessage(record, message?) {
         if (record && (!this.activeMessage || record.id != this.activeMessage.id || (record.hasChildren && !record.items))) {
             if (record.message && (!record.hasChildren || record.items)) {
                 this.setActiveMessage(record, record.message);
             } else {
                 this.loadingService.startLoading(this.contentView.nativeElement);
                 forkJoin(
-                    this.communicationService.getMessage(record.id, this.contactId),
+                    message ? of(message) : this.communicationService.getMessage(record.id, this.contactId),
                     record.hasChildren ? this.communicationService.getMessages(this.contactId, record.id,
                         undefined, undefined, undefined, undefined, 'Id ASC', undefined, undefined) : of({ items: null })
                 ).pipe(
@@ -427,10 +435,14 @@ export class UserInboxComponent implements OnDestroy {
                 if (item.id == this.activeMessage.id)
                     return true;
                 if (item.hasChildren && item.expanded) {
-                    index += item.items.length;
+                    if (item.items.some(child => {
+                        if (child.id == this.activeMessage.id)
+                            return true;
+                        index++;
+                    })) return true;
                 } else
                     index++;
-            }),
+            });
             event.component.scrollTo(65 * index);
         }
     }
