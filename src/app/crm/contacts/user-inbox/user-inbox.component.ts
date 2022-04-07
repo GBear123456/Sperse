@@ -359,50 +359,61 @@ export class UserInboxComponent implements OnDestroy {
         this.initActiveMessage(item);
     }
 
-    initActiveMessage(record, message?) {
+    initActiveMessage(record, childMessage?) {
         if (record && (!this.activeMessage || record.id != this.activeMessage.id || (record.hasChildren && !record.items))) {
             if (record.message && (!record.hasChildren || record.items)) {
                 this.setActiveMessage(record, record.message);
             } else {
                 this.loadingService.startLoading(this.contentView.nativeElement);
                 forkJoin(
-                    message ? of(message) : this.communicationService.getMessage(record.id, this.contactId),
+                    this.communicationService.getMessage(record.id, this.contactId),
                     record.hasChildren ? this.communicationService.getMessages(this.contactId, record.id,
                         undefined, undefined, undefined, undefined, 'Id ASC', undefined, undefined) : of({ items: null })
                 ).pipe(
                     finalize(() => this.loadingService.finishLoading(this.contentView.nativeElement))
                 ).subscribe(([message, children]) => {
                     this.setMessageStatus(message);
-                    if (children.items)
+                    if (children.items) {
                         children.items.forEach(v => this.setMessageStatus(v));
-                    this.setActiveMessage(record, message, children);
+                        record.items = children.items;
+                        if (message.deliveryType == CommunicationMessageDeliveryType.Email)
+                            this.loadOneMoreChild(record);
+                        else
+                            message.items = children.items;
+                        this.checkExpandRecord(record);
+                    }
+
+                    if (childMessage) {
+                        message = childMessage;
+                        record = children.items.find(
+                            item => item.id == childMessage.id);
+                    }
+
+                    this.setActiveMessage(record, message);                    
                 });
             }
             return true;
         }
     }
 
-    setActiveMessage(record, message, children?) {
+    setActiveMessage(record, message) {
+        this.activeMessage = record.message = message;
+        this.isNotListedMessage = false;            
+        this.checkExpandRecord(record);
+        if (this.isActiveEmilType)
+            this.showEmailContent();
+        this.initContentToolbar();
+    }
+
+    checkExpandRecord(record) {
         let component = this.listComponent && this.listComponent.instance;
-        if (component) {
-            this.activeMessage = record.message = message;
-            this.isNotListedMessage = false;
-            if (record.hasChildren && children && children.items) {
-                record.items = children.items;
-                if (message.deliveryType == CommunicationMessageDeliveryType.Email)
-                    this.loadOneMoreChild(record);
-                else
-                    message.items = children.items;
-                if (record.expanded == undefined)
-                    record.expanded = true;
-                component.repaint();
-                this.getVisibleList().forEach((item, index) =>
-                    component[(item.expanded ? 'expand' : 'collapse') + 'Group'](index)
-                );
-            }
-            if (this.isActiveEmilType)
-                this.showEmailContent();
-            this.initContentToolbar();
+        if (component && record.hasChildren) {
+            if (record.expanded == undefined)
+                record.expanded = true;
+            component.repaint();
+            this.getVisibleList().forEach((item, index) =>
+                component[(item.expanded ? 'expand' : 'collapse') + 'Group'](index)
+            );
         }
     }
 
