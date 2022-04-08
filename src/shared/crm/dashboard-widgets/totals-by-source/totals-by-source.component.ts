@@ -2,11 +2,14 @@
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
+    EventEmitter,
     Component,
     ElementRef,
     OnDestroy,
     OnInit,
-    ViewChild
+    ViewChild,
+    Input,
+    Output
 } from '@angular/core';
 
 /** Third party imports */
@@ -15,6 +18,7 @@ import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import {
     catchError,
     finalize,
+    first,
     publishReplay,
     refCount,
     switchMap,
@@ -50,6 +54,11 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class TotalsBySourceComponent implements OnInit, OnDestroy {
     @ViewChild(DxPieChartComponent, { static: false }) chartComponent: DxPieChartComponent;
+    @Input() waitFor$: Observable<any> = of().pipe(
+        publishReplay(), refCount()
+    );
+    @Output() loadComplete: EventEmitter<any> = new EventEmitter();
+
     data$: Observable<any[]>;
     totalCount$: Observable<number>;
     totalCount: string;
@@ -169,13 +178,18 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             }),
             switchMap(([selectedTotal, period, groupId, contactId, orgUnitIds, ]: [ITotalOption, PeriodModel, string, number, number[], null]) => {
                 this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.selectedContactGroupId = groupId).subscribe();
-                return selectedTotal.method.call(
-                    this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'),
-                    period && period.to || new Date(), groupId, contactId, orgUnitIds
-                ).pipe(
-                    catchError(() => of([])),
-                    finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-                );
+                return this.waitFor$.pipe(first(), switchMap(() =>
+                    selectedTotal.method.call(
+                        this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'),
+                        period && period.to || new Date(), groupId, contactId, orgUnitIds
+                    ).pipe(
+                        catchError(() => of([])),
+                        finalize(() => {
+                            this.loadComplete.next();
+                            this.loadingService.finishLoading(this.elementRef.nativeElement);
+                        })
+                    )
+                ));
             }),
             map((data: any[]) => {
                 this.rawData = data;

@@ -1,5 +1,6 @@
 /** Core imports */
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { ChangeDetectionStrategy, Component, AfterViewInit, OnDestroy, 
+    EventEmitter, Output, ElementRef, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
 import { takeUntil } from 'rxjs/operators';
@@ -19,7 +20,9 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     providers: [ DashboardServiceProxy, LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class CountsAndTotalsComponent implements OnInit, OnDestroy {
+export class CountsAndTotalsComponent implements AfterViewInit, OnDestroy {
+    @Output() loadComplete: EventEmitter<any> = new EventEmitter();
+
     data: GetTotalsOutput;
     fields = this.dashboardService.totalsDataFields;
     totalsDataLoading$ = this.dashboardService.totalsDataLoading$.pipe(takeUntil(this.lifeCycleService.destroy$));
@@ -33,19 +36,20 @@ export class CountsAndTotalsComponent implements OnInit, OnDestroy {
         public ls: AppLocalizationService
     ) {}
 
-    ngOnInit() {
-        this.dashboardService.totalsData$
-            .pipe(takeUntil(this.lifeCycleService.destroy$))
-            .subscribe((totalsData: GetTotalsOutput) => {
-                this.data = totalsData;
-                this.fields.forEach((field) => {
-                    field.percent = this.dashboardService.getPercentage(
-                        totalsData[field.name.replace('total', 'new')],
-                        totalsData[field.name]
-                    );
-                });
-                this.changeDetectorRef.detectChanges();
+    ngAfterViewInit() {
+        this.dashboardService.totalsData$.pipe(
+            takeUntil(this.lifeCycleService.destroy$)
+        ).subscribe((totalsData: GetTotalsOutput) => {
+            this.data = totalsData;
+            this.fields.forEach((field) => {
+                field.percent = this.dashboardService.getPercentage(
+                    totalsData[field.name.replace('total', 'new')],
+                    totalsData[field.name]
+                );
             });
+            this.loadComplete.emit();
+            this.changeDetectorRef.detectChanges();
+        });
 
         this.totalsDataLoading$.pipe(
             takeUntil(this.lifeCycleService.destroy$)
