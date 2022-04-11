@@ -10,6 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
+import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -77,6 +78,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
+        private phoneService: PhoneNumberService,
         private hostSettingService: HostSettingsServiceProxy,
         private commonLookupService: CommonLookupServiceProxy,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
@@ -180,7 +182,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
         this.smtpProviderErrorLink = undefined;
         forkJoin(
             this.hostSettingService.updateAllSettings(this.hostSettings).pipe(tap(() => {
-                this.appSessionService.checkSetDefaultCountry(this.hostSettings.general.defaultCountryCode);
+                this.phoneService.checkSetDefaultPhoneCodeByCountryCode(this.hostSettings.general.defaultCountryCode);
             }),
             catchError(error => {
                 this.checkHandlerErrorWarning(true);

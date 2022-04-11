@@ -7,8 +7,8 @@ const concat = require('concat');
         './dist/package-chooser-widget/polyfills.js',
         './dist/package-chooser-widget/scripts.js',
         './dist/package-chooser-widget/main.js',
-        './dist/package-chooser-widget/vendor.js'
-//        './dist/package-chooser-widget/styles.js',
+        './dist/package-chooser-widget/vendor.js',
+        './dist/package-chooser-widget/styles.js'
     ];
     await fs.ensureDir('./dist/assets/widgets');
     await concat(files, './dist/assets/widgets/package-chooser-widget.js');

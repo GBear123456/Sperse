@@ -48,6 +48,7 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppService } from '@app/app.service';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
+import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
@@ -126,6 +127,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
+        private phoneNumberService: PhoneNumberService, 
         private tenantSettingsService: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         private tenantSettingsCreditReportService: TenantSettingsCreditReportServiceProxy,
@@ -389,7 +391,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this.smtpProviderErrorLink = undefined;
         let requests: Observable<any>[] = [
             this.tenantSettingsService.updateAllSettings(this.settings).pipe(tap(() => {
-                this.appSessionService.checkSetDefaultCountry(this.settings.general.defaultCountryCode);
+                this.phoneNumberService.checkSetDefaultPhoneCodeByCountryCode(this.settings.general.defaultCountryCode);
             }),
             catchError(error => {
                 this.checkHandlerErrorWarning(true);

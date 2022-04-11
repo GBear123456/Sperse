@@ -18,6 +18,7 @@ import { tap } from 'rxjs/operators';
 /** Application imports */
 import { AppPermissions } from '@shared/AppPermissions';
 import { PermissionCheckerService } from 'abp-ng2-module';
+import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     GeneralSettingsEditDto,
@@ -90,6 +91,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
 
     constructor(
         private appSession: AppSessionService,
+        private phoneNumberService: PhoneNumberService,
         private timingService: TimingServiceProxy,
         private permissionService: PermissionCheckerService,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
@@ -125,7 +127,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
                         this.onOptionChanged.emit('timezone');
                     if (this.initialCountry != this.settings.defaultCountryCode)
                         this.onOptionChanged.emit('defaultCountry');
-                    this.appSession.checkSetDefaultCountry(this.settings.defaultCountryCode);
+                    this.phoneNumberService.checkSetDefaultPhoneCodeByCountryCode(this.settings.defaultCountryCode);
                 })),
                 this.tenantPaymentSettingsProxy.updateInvoiceSettings(this.paymentSettings),
                 this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),

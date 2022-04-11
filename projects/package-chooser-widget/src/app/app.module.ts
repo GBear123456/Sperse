@@ -9,7 +9,6 @@ import { MatSlider, MatSliderModule } from '@angular/material/slider';
 import { MatSlideToggle, MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 /** Application imports */
-import { CountryService } from '@root/node_modules/ngx-international-phone-number/src/country.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PackageChooserComponent } from '@app/shared/common/payment-wizard/package-chooser/package-chooser.component';
 import { PackageCardComponent } from '@app/shared/common/payment-wizard/package-chooser/package-card/package-card.component';
@@ -62,7 +61,6 @@ export function initialize(widgetsService: WidgetsService, injector: Injector) {
     ],
     providers: [
         StatesService,
-        CountryService,
         AppSessionService,
         AppLocalizationService,
         AppHttpConfiguration,
