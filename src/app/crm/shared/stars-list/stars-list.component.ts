@@ -27,6 +27,7 @@ export class StarsListComponent implements OnInit {
     @Input() selectedKeys: any;
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
+    @Input() selectionMode = 'none';
     @Input() managePermission = AppPermissions.CRMCustomersManage;
     @Input() set selectedItemKey(value) {
         if (value != undefined)
