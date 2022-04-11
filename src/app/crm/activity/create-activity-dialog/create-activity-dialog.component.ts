@@ -190,7 +190,7 @@ export class CreateActivityDialogComponent implements OnInit {
     }
 
     getAllByPhraseObserverable(search = undefined) {
-        return this.contactsServiceProxy.getAllByPhrase(search, this.LOOKUP_RECORDS_COUNT, false, undefined, false);
+        return this.contactsServiceProxy.getAllByPhrase(search, this.LOOKUP_RECORDS_COUNT, false, undefined, false, false);
     }
 
     lookup(uri, search = '') {

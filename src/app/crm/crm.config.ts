@@ -17,7 +17,7 @@ export class CrmConfig implements ConfigInterface {
             route: '/app/crm/dashboard'
         },
         {
-            text: 'Contacts',
+            text: 'Leads',
             permission: AppPermissions.CRMCustomers + '|' + AppPermissions.CRMPartners + '|' + AppPermissions.CRMEmployees + '|' + AppPermissions.CRMInvestors + '|' + AppPermissions.CRMVendors + '|' + AppPermissions.CRMOthers,
             route: '/app/crm/leads'
         },
