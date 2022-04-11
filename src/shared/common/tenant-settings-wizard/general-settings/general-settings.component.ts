@@ -65,7 +65,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     private _settings: GeneralSettingsEditDto;
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
-    siteUrlRegexPattern = AppConsts.regexPatterns.siteUrl;
+    siteUrlRegexPattern = AppConsts.regexPatterns.url;
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
@@ -116,7 +116,9 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     }
 
     save(): Observable<any> {
-        if ((!this.publicSiteUrl || this.publicSiteUrl.valid) && this.publicPhoneNumber.isValid()) {
+        if ((!this.publicSiteUrl || this.publicSiteUrl.valid) && 
+            (!this.publicPhoneNumber || this.publicPhoneNumber.isValid())
+        ) {
             return forkJoin(
                 this.tenantSettingsServiceProxy.updateGeneralSettings(this.settings).pipe(tap(() => {
                     if (this.initialTimezone != this.settings.timezone)

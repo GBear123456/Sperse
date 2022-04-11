@@ -8,7 +8,7 @@
             }"
             (click)="stepClick(i)">
             <div class="icon-container">
-                <div [ngClass]="step.name" inlineSVG="assets/common/icons/tenant-settings/{{ step.name }}.svg"></div>
+                <img [ngClass]="step.name" src="assets/common/icons/tenant-settings/{{ step.name }}.svg">
             </div>
             <span>{{ step.text }}</span>
         </li>
