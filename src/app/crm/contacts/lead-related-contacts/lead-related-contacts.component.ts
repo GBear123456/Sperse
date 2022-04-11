@@ -3,24 +3,25 @@ import { Component, OnInit, ViewChild, OnDestroy } from '@angular/core';
 import { Router, ActivatedRoute, RouteReuseStrategy, Params } from '@angular/router';
 
 /** Third party imports */
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Observable } from 'rxjs';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
-import { finalize, first } from 'rxjs/operators';
+import { first, filter, takeUntil } from 'rxjs/operators';
 import invert from 'lodash/invert';
 import * as _ from 'underscore';
+import { select, Store } from '@ngrx/store';
 
 /** Application imports */
 import { ContactGroup } from '@shared/AppEnums';
 import {
-    LeadServiceProxy, LeadInfoDto,
-    ContactInfoDto, ContactServiceProxy
+    LeadInfoDto,
+    ContactInfoDto,
+    PipelineDto
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { ContactsService } from '../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
-import { AppPermissions } from '@shared/AppPermissions';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
@@ -30,19 +31,19 @@ import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PermissionCheckerService } from 'abp-ng2-module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import { ClientFields } from '@app/crm/clients/client-fields.enum';
 import { LeadFields } from '@app/crm/leads/lead-fields.enum';
+import { PipelinesStoreSelectors } from '@app/crm/store';
+import { AppStore } from '@app/store';
 
 @Component({
     selector: 'lead-related-contacts',
     templateUrl: './lead-related-contacts.component.html',
     styleUrls: ['./lead-related-contacts.component.less'],
-    providers: [ LifecycleSubjectsService ]
+    providers: [LifecycleSubjectsService]
 })
 export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
     @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
@@ -91,23 +92,24 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
     tenantHasBankCodeFeature = this.userManagementService.checkBankCodeFeature();
     isCGManageAllowed = false;
 
+    pipelines: { [id: number]: PipelineDto } = {};
+
     constructor(
         private router: Router,
         private route: ActivatedRoute,
         private reuseService: RouteReuseStrategy,
-        private invoicesService: InvoicesService,
-        private contactProxy: ContactServiceProxy,
         private contactsService: ContactsService,
         private lifeCycleService: LifecycleSubjectsService,
         private itemDetailsService: ItemDetailsService,
-        private permissionCheckerService: PermissionCheckerService,
         private permissionService: AppPermissionService,
         private oDataService: ODataService,
+        private store$: Store<AppStore.State>,
         public loadingService: LoadingService,
         public userManagementService: UserManagementService,
         public httpInterceptor: AppHttpInterceptor,
         public ls: AppLocalizationService
     ) {
+        this.loadPipelines();
         this.contactsService.loadLeadInfo();
     }
 
@@ -124,6 +126,19 @@ export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
                 this.initQueryParams();
             }
         }, this.ident);
+    }
+
+    loadPipelines() {
+        this.store$.pipe(
+            select(PipelinesStoreSelectors.getPipelines({
+                purpose: AppConsts.PipelinePurposeIds.lead
+            })),
+            takeUntil(this.lifeCycleService.destroy$),
+            filter((pipelines: PipelineDto[]) => !!pipelines)
+        ).subscribe(pipelines => {
+            this.pipelines = {};
+            pipelines.forEach(pipeline => this.pipelines[pipeline.id] = pipeline);
+        });
     }
 
     refreshDataSources() {

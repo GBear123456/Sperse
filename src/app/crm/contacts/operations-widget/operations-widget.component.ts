@@ -556,7 +556,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                     this.statuses.push(<GroupStatus>{
                         id: group.id,
                         groupId: group.id,
-                        name: startCase(this.contactGroupKeys[group.id]),
+                        name: startCase(this.l('ContactGroup_' + this.contactGroupKeys[group.id])),
                         isActive: status && status.groupId == group.id ? status.isActive : 
                             this.contactInfo.groups.some(cg => cg.groupId == group.id && cg.isActive),
                         disabled: !this.permission.checkCGPermission([group.id], 'Manage')

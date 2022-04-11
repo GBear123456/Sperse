@@ -226,7 +226,10 @@
                 </dx-scroll-view>
             </mat-tab>
             <mat-tab label="{{l('EmailSmtp')}}" *ngIf="hostSettings.email">
-                <dx-scroll-view showScrollbar="onHover">
+                <div class="smtp-error-block" *ngIf="smtpProviderErrorLink">
+                    <a [href]="smtpProviderErrorLink" target="blank">{{l("CheckProviderRecommendation")}}</a>
+                </div>
+                <dx-scroll-view showScrollbar="onHover" [height]="smtpProviderErrorLink ? 'calc(100% - 80px)' : '100%'">
                     <div class="form-group">
                         <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
                         <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control"

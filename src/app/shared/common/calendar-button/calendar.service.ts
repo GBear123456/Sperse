@@ -22,9 +22,9 @@ export class CalendarService {
                 period: Period.LastQuarter
             }
             : {
-                from: { value: DateHelper.addTimezoneOffset(moment().startOf('year').toDate(), true) },
-                to: { value: DateHelper.addTimezoneOffset(moment().endOf('year').toDate(), true) },
-                period: Period.ThisYear
+                from: { value: DateHelper.addTimezoneOffset(moment().startOf('isoWeek').toDate(), true) },
+                to: { value: DateHelper.addTimezoneOffset(moment().endOf('isoWeek').toDate(), true) },
+                period: Period.ThisWeek
             }
     );
     dateRange$: Observable<CalendarValuesModel> = this.dateRange.asObservable();

@@ -15,6 +15,10 @@ export class EmailSmtpSettingsService {
     private emailSmtpSettingsService: EmailSmtpSettingsServiceProxy;
     private notify: NotifyService;
     private ls: AppLocalizationService;
+    private smptProviderHelpLinks = {
+        'gmail': 'https://support.google.com/mail/?p=BadCredentials',
+        'office': 'https://aka.ms/smtp_auth_disabled'
+    };
 
     constructor(injector: Injector) {
         this.emailSmtpSettingsService = injector.get(EmailSmtpSettingsServiceProxy);
@@ -22,11 +26,21 @@ export class EmailSmtpSettingsService {
         this.ls = injector.get(AppLocalizationService);
     }
 
-    sendTestEmail(input: SendTestEmailInput, finalizeCallback?: () => void): void {
+    getSmtpErrorHelpLink(host: string): string {
+        let isGmail = host && host.includes('gmail.com'),
+            isOffice = host && host.includes('office365.com');
+        if (isGmail || isOffice)
+            return this.smptProviderHelpLinks[isGmail ? 'gmail' : 'office'];
+        return '';
+    }
+
+    sendTestEmail(input: SendTestEmailInput, finalizeCallback?: () => void, errorCallback?: () => void): void {
         this.emailSmtpSettingsService.sendTestEmail(input).pipe(
             finalize(() => finalizeCallback && finalizeCallback())
-        ).subscribe(() => {
+        ).subscribe((res) => {
             this.notify.info(this.ls.l('TestEmailSentSuccessfully'));
+        }, () => {
+            errorCallback && errorCallback();
         });
     }
 
