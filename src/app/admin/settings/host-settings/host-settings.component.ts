@@ -32,7 +32,7 @@ import { DomHelper } from '@shared/helpers/DomHelper';
     templateUrl: './host-settings.component.html',
     styleUrls: ['../../../shared/common/styles/checkbox-radio.less', './host-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantPaymentSettingsServiceProxy]
+    providers: [PhoneNumberService, TenantPaymentSettingsServiceProxy]
 })
 export class HostSettingsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('tabGroup') tabGroup: ElementRef;

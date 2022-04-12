@@ -56,6 +56,7 @@ import { DomHelper } from '@shared/helpers/DomHelper';
     styleUrls: ['../../../shared/common/styles/checkbox-radio.less', './tenant-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
+        PhoneNumberService,
         TenantSettingsCreditReportServiceProxy,
         TenantPaymentSettingsServiceProxy,
         TenantOfferProviderSettingsServiceProxy
