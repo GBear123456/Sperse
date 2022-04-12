@@ -45,6 +45,7 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import {
+    ContactGroupDto,
     AddressUsageTypeDto,
     ContactAddressServiceProxy,
     ContactEmailServiceProxy,
@@ -171,16 +172,9 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     private similarCustomersSubscription: Subscription;
     private similarCustomersTimeout: any;
     private readonly cacheKey = this.cacheHelper.getCacheKey(this.SAVE_OPTION_CACHE_KEY, 'CreateEntityDialog');
-    statuses = Object.keys(ContactStatus).map(status => {
-        return {
-            id: ContactStatus[status],
-            name: status,
-            displayName: this.ls.l(status)
-        }
-    });
+    statuses = [];
     stages: any[] = [];
     stageId: number;
-    statusId = ContactStatus.Active;
     defaultStageSortOrder = 0;
     partnerTypes: any[] = [];
     saveButtonId = 'saveClientOptions';
@@ -350,7 +344,14 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         public ls: AppLocalizationService,
         public toolbarService: ToolbarService,
         @Inject(MAT_DIALOG_DATA) public data: CreateEntityDialogData
-    ) {}
+    ) {
+        if (data.customerType === ContactGroup.Client)
+            this.contactProxy.getContactGroups().subscribe(
+                (res: ContactGroupDto[]) => {
+                    this.statuses = res;
+                }
+            );
+    }
 
     ngOnInit() {
         this.addressTypesLoad();
@@ -413,7 +414,7 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
             bankCode: this.bankCode && this.bankCode !== '????' ? this.bankCode : null,
             bankCodeSource: this.bankCode && this.bankCode !== '????' ? 'CRM' : null,
             leadTypeId: this.data.entityTypeId,
-            isActive: this.statusId == ContactStatus.Active,
+            isActive: true,
             isProspective: !!this.data.isInLeadMode && !this.data.parentId
         };
         if (this.disallowMultipleItems) {
@@ -1045,7 +1046,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
                     this.userAssignmentComponent.selectedItemKey = this.currentUserId;
                 }
                 this.isStatusSelected = false;
-                this.statusId = ContactStatus.Active;
                 this.stageId = this.stages.length
                     ? this.stages.find(v => v.index === this.defaultStageSortOrder).id
                     : undefined;
@@ -1128,7 +1128,6 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
     }
 
     onStatusChanged(event) {
-        this.statusId = event.id;
         this.isStatusSelected = true;
     }
 
