@@ -133,7 +133,7 @@
         </div>
 
         <ng-template #notLead>
-            <dxi-item *ngIf="data.customerType === contactGroups.Client" location="before" template="status"></dxi-item>
+            <dxi-item *ngIf="data.customerType === contactGroups.Client" [visible]="false" location="before" template="status"></dxi-item>
             <div *dxTemplate="let data of 'status'">
                 <dx-button id="ClientStatus"
                            [text]="ls.l('Group')"
