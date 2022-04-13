@@ -345,12 +345,14 @@ export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDes
         public toolbarService: ToolbarService,
         @Inject(MAT_DIALOG_DATA) public data: CreateEntityDialogData
     ) {
+/*
         if (data.customerType === ContactGroup.Client)
             this.contactProxy.getContactGroups().subscribe(
                 (res: ContactGroupDto[]) => {
                     this.statuses = res;
                 }
             );
+*/
     }
 
     ngOnInit() {
