@@ -166,7 +166,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
     ngAfterViewInit() {
         this.contactsService.settingsDialogOpened$.pipe(
             takeUntil(this.lifeCycleService.destroy$),
-            debounceTime(300)
+            debounceTime(1000)
         ).subscribe(opened => {
             let isOpened = this.contactInfo && this.contactInfo.parentId ? false : opened;
             this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, isOpened);

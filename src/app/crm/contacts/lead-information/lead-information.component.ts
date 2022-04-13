@@ -218,7 +218,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
     ngAfterViewInit() {
         this.contactsService.settingsDialogOpened$.pipe(
             takeUntil(this.lifeCycleService.destroy$),
-            debounceTime(300)
+            debounceTime(1000)
         ).subscribe(opened => {
             this.toggleOrgUnitsDialog(opened);
         });

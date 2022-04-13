@@ -37,6 +37,7 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
     @Input() key = '';
     @Input() bankCode: string | '????';
     @Input() personId: number;
+    @Input() showDialogOnBottom = false;
     @Input() showDescriptionsOnHover = false;
     @Input() showDescriptionsOnClick = false;
     @Input() showBankCodeDefinition = false;
@@ -137,13 +138,15 @@ export class BankCodeLettersComponent implements OnChanges, OnDestroy {
             this.editPopupIsOpened = true;
             const editDialog = this.customDialog.open(BankCodeLettersEditorDialogComponent, {
                 id: 'bankCodeLettersEditorDialog',
-                hasBackdrop: true,
+                hasBackdrop: false,
                 backdropClass: 'no-backdrop',
                 position: DialogService.calculateDialogPosition(
                     e,
                     e.target.closest('div'),
                     this.editDialogPosition && this.editDialogPosition.x || 200,
-                    this.editDialogPosition && this.editDialogPosition.y || -12
+                    this.editDialogPosition && this.editDialogPosition.y || (
+                        this.showDialogOnBottom ? -20 : 170
+                    )
                 ),
                 data: {
                     bankCode: this.bankCode,
