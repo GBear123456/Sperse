@@ -3283,6 +3283,110 @@ export class BANKCodeServiceProxy {
         }
         return _observableOf<BankCodeHistoryInfo[]>(<any>null);
     }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateBankCodeUserSettings(body: UpdateBankCodeUserSettingsInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/UpdateBankCodeUserSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateBankCodeUserSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateBankCodeUserSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateBankCodeUserSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @return Success
+     */
+    getBankCodeUserSettings(): Observable<BANKCodeUserSettings> {
+        let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetBankCodeUserSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetBankCodeUserSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetBankCodeUserSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<BANKCodeUserSettings>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<BANKCodeUserSettings>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetBankCodeUserSettings(response: HttpResponseBase): Observable<BANKCodeUserSettings> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? BANKCodeUserSettings.fromJS(resultData200) : new BANKCodeUserSettings();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<BANKCodeUserSettings>(<any>null);
+    }
 }
 
 @Injectable()
@@ -22121,7 +22225,7 @@ export class LearningResourceServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updateResourceGroup(body: UpdateResourceGroupInput | null | undefined): Observable<void> {
+    updateResourceGroup(body: UpdateResourceGroupInput | null | undefined): Observable<UpdateResourceGroupOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/LearningResource/UpdateResourceGroup";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -22133,6 +22237,7 @@ export class LearningResourceServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -22143,14 +22248,14 @@ export class LearningResourceServiceProxy {
                 try {
                     return this.processUpdateResourceGroup(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<UpdateResourceGroupOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<UpdateResourceGroupOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processUpdateResourceGroup(response: HttpResponseBase): Observable<void> {
+    protected processUpdateResourceGroup(response: HttpResponseBase): Observable<UpdateResourceGroupOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -22159,14 +22264,17 @@ export class LearningResourceServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? UpdateResourceGroupOutput.fromJS(resultData200) : new UpdateResourceGroupOutput();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<UpdateResourceGroupOutput>(<any>null);
     }
 
     /**
@@ -22388,7 +22496,7 @@ export class LearningResourceServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    updateGroupSortOrder(body: UpdateGroupSortOrderInput | null | undefined): Observable<void> {
+    updateGroupSortOrder(body: UpdateGroupSortOrderInput | null | undefined): Observable<UpdateGroupSortOrderOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/LearningResource/UpdateGroupSortOrder";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -22400,6 +22508,7 @@ export class LearningResourceServiceProxy {
             responseType: "blob",
             headers: new HttpHeaders({
                 "Content-Type": "application/json", 
+                "Accept": "application/json"
             })
         };
 
@@ -22410,14 +22519,14 @@ export class LearningResourceServiceProxy {
                 try {
                     return this.processUpdateGroupSortOrder(<any>response_);
                 } catch (e) {
-                    return <Observable<void>><any>_observableThrow(e);
+                    return <Observable<UpdateGroupSortOrderOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<void>><any>_observableThrow(response_);
+                return <Observable<UpdateGroupSortOrderOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processUpdateGroupSortOrder(response: HttpResponseBase): Observable<void> {
+    protected processUpdateGroupSortOrder(response: HttpResponseBase): Observable<UpdateGroupSortOrderOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -22426,14 +22535,17 @@ export class LearningResourceServiceProxy {
         let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
         if (status === 200) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(<any>null);
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? UpdateGroupSortOrderOutput.fromJS(resultData200) : new UpdateGroupSortOrderOutput();
+            return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<void>(<any>null);
+        return _observableOf<UpdateGroupSortOrderOutput>(<any>null);
     }
 
     /**
@@ -47903,6 +48015,86 @@ export interface IBankCodeHistoryInfo {
     userPhotoPublicId: string | undefined;
 }
 
+export class UpdateBankCodeUserSettingsInput implements IUpdateBankCodeUserSettingsInput {
+    isSetupWizardEnabled!: boolean;
+    isWelcomeVideoWatched!: boolean;
+
+    constructor(data?: IUpdateBankCodeUserSettingsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.isSetupWizardEnabled = data["isSetupWizardEnabled"];
+            this.isWelcomeVideoWatched = data["isWelcomeVideoWatched"];
+        }
+    }
+
+    static fromJS(data: any): UpdateBankCodeUserSettingsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateBankCodeUserSettingsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isSetupWizardEnabled"] = this.isSetupWizardEnabled;
+        data["isWelcomeVideoWatched"] = this.isWelcomeVideoWatched;
+        return data; 
+    }
+}
+
+export interface IUpdateBankCodeUserSettingsInput {
+    isSetupWizardEnabled: boolean;
+    isWelcomeVideoWatched: boolean;
+}
+
+export class BANKCodeUserSettings implements IBANKCodeUserSettings {
+    isSetupWizardEnabled!: boolean | undefined;
+    isWelcomeVideoWatched!: boolean | undefined;
+
+    constructor(data?: IBANKCodeUserSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.isSetupWizardEnabled = data["isSetupWizardEnabled"];
+            this.isWelcomeVideoWatched = data["isWelcomeVideoWatched"];
+        }
+    }
+
+    static fromJS(data: any): BANKCodeUserSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new BANKCodeUserSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isSetupWizardEnabled"] = this.isSetupWizardEnabled;
+        data["isWelcomeVideoWatched"] = this.isWelcomeVideoWatched;
+        return data; 
+    }
+}
+
+export interface IBANKCodeUserSettings {
+    isSetupWizardEnabled: boolean | undefined;
+    isWelcomeVideoWatched: boolean | undefined;
+}
+
 export class BudgetImportInput implements IBudgetImportInput {
     year!: number;
     businessEntityId!: number;
@@ -65364,6 +65556,7 @@ export interface IHostUserManagementSettingsEditDto {
 }
 
 export class EmailSettingsEditDto implements IEmailSettingsEditDto {
+    defaultReplyTo!: string | undefined;
     smtpHost!: string | undefined;
     smtpPort!: number | undefined;
     smtpEnableSsl!: boolean | undefined;
@@ -65388,6 +65581,7 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
 
     init(data?: any) {
         if (data) {
+            this.defaultReplyTo = data["defaultReplyTo"];
             this.smtpHost = data["smtpHost"];
             this.smtpPort = data["smtpPort"];
             this.smtpEnableSsl = data["smtpEnableSsl"];
@@ -65412,6 +65606,7 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["defaultReplyTo"] = this.defaultReplyTo;
         data["smtpHost"] = this.smtpHost;
         data["smtpPort"] = this.smtpPort;
         data["smtpEnableSsl"] = this.smtpEnableSsl;
@@ -65429,6 +65624,7 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
 }
 
 export interface IEmailSettingsEditDto {
+    defaultReplyTo: string | undefined;
     smtpHost: string | undefined;
     smtpPort: number | undefined;
     smtpEnableSsl: boolean | undefined;
@@ -71463,6 +71659,42 @@ export interface IUpdateResourceGroupInput {
     sortOrder: number | undefined;
 }
 
+export class UpdateResourceGroupOutput implements IUpdateResourceGroupOutput {
+    sortOrder!: number | undefined;
+
+    constructor(data?: IUpdateResourceGroupOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): UpdateResourceGroupOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateResourceGroupOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IUpdateResourceGroupOutput {
+    sortOrder: number | undefined;
+}
+
 export class SetLearningResourceImageInput implements ISetLearningResourceImageInput {
     id!: number;
     image!: string | undefined;
@@ -71673,6 +71905,42 @@ export class UpdateGroupSortOrderInput implements IUpdateGroupSortOrderInput {
 export interface IUpdateGroupSortOrderInput {
     id: number;
     sortOrder: number;
+}
+
+export class UpdateGroupSortOrderOutput implements IUpdateGroupSortOrderOutput {
+    sortOrder!: number | undefined;
+
+    constructor(data?: IUpdateGroupSortOrderOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): UpdateGroupSortOrderOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateGroupSortOrderOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IUpdateGroupSortOrderOutput {
+    sortOrder: number | undefined;
 }
 
 export class SetLearningResourceGroupImageInput implements ISetLearningResourceGroupImageInput {

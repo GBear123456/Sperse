@@ -121,6 +121,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     EmailTemplateType = EmailTemplateType;
     CustomCssType = CustomCssType;
     tabIndex: Observable<number>;
+    showCustomSmptSettings = false;
     smtpProviderErrorLink: string;
 
     constructor(
@@ -212,6 +213,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                     this.rapidSettings
                 ] = results;
 
+                this.showCustomSmptSettings = !!this.settings.email.imapHost;
                 if (this.settings.general) {
                     this.initialTimeZone = this.settings.general.timezone;
                     this.initialDefaultCountry = this.settings.general.defaultCountryCode;
