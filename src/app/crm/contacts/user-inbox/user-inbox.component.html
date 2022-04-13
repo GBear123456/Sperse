@@ -17,7 +17,7 @@
             [selectedItemKeys]="[activeMessage?.id]"
             [searchEditorOptions]="{placeholder: ls.l('SearchMessage')}"
             [searchEnabled]="true"
-            (onContentReady)="onContentReady($event)"
+            (onContentReady)="scrollToActiveMessage()"
             (onItemClick)="initActiveMessage($event.itemData)">
                 <div *dxTemplate="let item of 'group'" class="group-item" [ngClass]="{selected: item.id == activeMessage?.id, 'has-children': item.hasChildren, expanded: item.expanded}" (click)="expandGroup(item)">
                     <div class="email" [title]="item.date | datetime: formatting.fieldDateTime">

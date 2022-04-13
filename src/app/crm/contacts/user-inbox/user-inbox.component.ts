@@ -351,6 +351,7 @@ export class UserInboxComponent implements OnDestroy {
                 this.isNotListedMessage = true;
                 this.showEmailContent();
                 this.initContentToolbar();
+                this.scrollToActiveMessage();
             }
         });
     }
@@ -401,6 +402,7 @@ export class UserInboxComponent implements OnDestroy {
         if (this.isActiveEmilType)
             this.showEmailContent();
         this.initContentToolbar();
+        this.scrollToActiveMessage();
     }
 
     checkExpandRecord(record) {
@@ -437,7 +439,7 @@ export class UserInboxComponent implements OnDestroy {
         })
     }
 
-    onContentReady(event) {
+    scrollToActiveMessage() {
         if (this.activeMessage) {
             let index = 0;
             this.getVisibleList().some(item => {
@@ -452,7 +454,7 @@ export class UserInboxComponent implements OnDestroy {
                 } else
                     index++;
             });
-            event.component.scrollTo(65 * index);
+            this.listComponent.instance.scrollTo(65 * index);
         }
     }
 
