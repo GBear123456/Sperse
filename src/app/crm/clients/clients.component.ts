@@ -17,7 +17,8 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, concat, merge, Observable, of, Subscription, forkJoin, from } from 'rxjs';
+import { Subject, BehaviorSubject, combineLatest, concat, merge, 
+    Observable, of, Subscription, forkJoin, from } from 'rxjs';
 import {
     filter,
     finalize,
@@ -461,6 +462,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         },
         onChanged: () => {
             this.pivotGridDataIsLoading = false;
+            this.loadTotalsRequest.next();
         },
         fields: [
             {
@@ -588,6 +590,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 result = this.crmService.parseChartData(result);
                 this.chartDataUrl = null;
                 this.chartInfoItems = result.infoItems;
+                this.loadTotalsRequest.next();
                 return result.items;
             });
         }
@@ -657,6 +660,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         }
     });
     private filters: FilterModel[] = this.getFilters();
+    loadTotalsRequest: Subject<ODataRequestValues> = new Subject<ODataRequestValues>(); 
+    loadTotalsRequest$: Observable<ODataRequestValues> = this.loadTotalsRequest.asObservable();
     odataRequestValues$: Observable<ODataRequestValues> = concat(
         this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom),
         this.filterChanged$.pipe(
@@ -746,6 +751,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 this.changeDetectorRef.markForCheck();
                             }) : of().subscribe();
                     }
+                    this.loadTotalsRequest.next();
                 },
                 errorHandler: (error) => {
                     setTimeout(() => this.isDataLoaded = true);
@@ -770,11 +776,14 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 },
                 onLoaded: (count: any) => {
-                    if (!isNaN(count))
+                    if (!isNaN(count)) {
                         this.dataSource['total'] = this.totalCount = count;
+                        this.changeDetectorRef.detectChanges();
+                    }
                 },
                 errorHandler: (e: any) => {
                     this.totalErrorMsg = this.l('AnHttpErrorOccured');
+                    this.changeDetectorRef.detectChanges();
                 }                
             })
         });
@@ -844,8 +853,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             this.odataRequestValues$,
             this.refresh$
         ).pipe(
-            takeUntil(this.lifeCycleSubjectsService.destroy$)
-        ).subscribe(([odataRequestValues, ]: [ODataRequestValues, null]) => {
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            switchMap(([odataRequestValues, ]: [ODataRequestValues, null]) => {
+                return this.loadTotalsRequest$.pipe(map(() => odataRequestValues));
+            })
+        ).subscribe((odataRequestValues: ODataRequestValues) => {
             let url = this.getODataUrl(
                 this.totalDataSourceURI,
                 odataRequestValues.filter,
