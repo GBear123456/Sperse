@@ -4,7 +4,6 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
 /** Third party imports */
-import { GestureConfig } from '@angular/material';
 import { MatSlider, MatSliderModule } from '@angular/material/slider';
 import { MatSlideToggle, MatSlideToggleModule } from '@angular/material/slide-toggle';
 
@@ -78,10 +77,6 @@ export function initialize(widgetsService: WidgetsService, injector: Injector) {
             useFactory: initialize,
             deps: [ WidgetsService, Injector ],
             multi: true
-        },
-        {
-            provide: HAMMER_GESTURE_CONFIG,
-            useClass: GestureConfig
         }
     ],
     entryComponents: [ MatSlider, MatSlideToggle, PackageChooserWidgetComponent, PackageCardComponent ],
