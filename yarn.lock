@@ -178,12 +178,12 @@
   dependencies:
     tslib "^2.2.0"
 
-"@angular/cdk@^8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-8.2.3.tgz#16b96ffa935cbf5a646757ecaf2b19c434678f72"
-  integrity sha512-ZwO5Sn720RA2YvBqud0JAHkZXjmjxM0yNzCO8RVtRE9i8Gl26Wk0j0nQeJkVm4zwv2QO8MwbKUKGTMt8evsokA==
+"@angular/cdk@^12.2.13":
+  version "12.2.13"
+  resolved "https://registry.yarnpkg.com/@angular/cdk/-/cdk-12.2.13.tgz#1fdbe814adfd6b4ff906c6d9c4c6df07b83f09d8"
+  integrity sha512-zSKRhECyFqhingIeyRInIyTvYErt4gWo+x5DQr0b7YLUbU8DZSwWnG4w76Ke2s4U8T7ry1jpJBHoX/e8YBpGMg==
   dependencies:
-    tslib "^1.7.1"
+    tslib "^2.2.0"
   optionalDependencies:
     parse5 "^5.0.0"
 
@@ -277,12 +277,12 @@
   dependencies:
     tslib "^2.2.0"
 
-"@angular/material@^8.2.3":
-  version "8.2.3"
-  resolved "https://registry.yarnpkg.com/@angular/material/-/material-8.2.3.tgz#16543e4e06a3fde2651a25cfe126e88e714ae105"
-  integrity sha512-SOczkIaqes+r+9XF/UUiokidfFKBpHkOPIaFK857sFD0FBNPvPEpOr5oHKCG3feERRwAFqHS7Wo2ohVEWypb5A==
+"@angular/material@^12.2.13":
+  version "12.2.13"
+  resolved "https://registry.yarnpkg.com/@angular/material/-/material-12.2.13.tgz#7f92f95002a2abaa8bb115ca8f0809bdc3f7d3fc"
+  integrity sha512-6g2GyN4qp2D+DqY2AwrQuPB3cd9gybvQVXvNRbTPXEulHr+LgGei00ySdFHFp6RvdGSMZ4i3LM1Fq3VkFxhCfQ==
   dependencies:
-    tslib "^1.7.1"
+    tslib "^2.2.0"
 
 "@angular/platform-browser-dynamic@12.2.14":
   version "12.2.14"
@@ -2136,19 +2136,19 @@ angular-cc-library@^3.0.0:
   dependencies:
     tslib "^2.1.0"
 
-angular-gridster2@^12.0.1:
-  version "12.1.1"
-  resolved "https://registry.yarnpkg.com/angular-gridster2/-/angular-gridster2-12.1.1.tgz#699cd0a2477b81b052f6bd7b336ba7cc2adc8bc3"
-  integrity sha512-HK7vf212LSn7mp8g4sNA6/X8TQN4wJyHupKemx+PUPmTs6FHDyquUMUFXYxANR47jdyLEMW/DxCDI0bEhIIChw==
-  dependencies:
-    tslib "^2.1.0"
-
 angular-code-input@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/angular-code-input/-/angular-code-input-1.6.0.tgz#7e5e0219ed8556cb69039a45243255cc92005bcb"
   integrity sha512-EAsHf2z7T2rze39zCWopJehuANbylX6Em9It75DvNrWiRVKbhLH8LmLXfofJ3ajdQ1DAAEnswB5HiAxAZAgiOA==
   dependencies:
     tslib "^2.2.0"
+
+angular-gridster2@^12.0.1:
+  version "12.1.1"
+  resolved "https://registry.yarnpkg.com/angular-gridster2/-/angular-gridster2-12.1.1.tgz#699cd0a2477b81b052f6bd7b336ba7cc2adc8bc3"
+  integrity sha512-HK7vf212LSn7mp8g4sNA6/X8TQN4wJyHupKemx+PUPmTs6FHDyquUMUFXYxANR47jdyLEMW/DxCDI0bEhIIChw==
+  dependencies:
+    tslib "^2.1.0"
 
 angular-ide-loader@^0.9.12:
   version "0.9.13"
