@@ -100,7 +100,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         private feature: FeatureCheckerService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: this.data.fullHeigth ? '0px' : '75px',
                 right: '-100vw'

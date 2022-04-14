@@ -169,7 +169,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         public appSession: AppSessionService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '157px',
                 right: '-100vw'

@@ -23,7 +23,7 @@ export class AddContactDialogComponent implements OnInit, AfterViewInit {
         public dialogRef: MatDialogRef<AddContactDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: ContactInfoDto,
     ) {
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '157px',
                 right: '-100vw'

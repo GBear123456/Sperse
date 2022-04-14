@@ -115,7 +115,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         public dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '75px',
                 right: '-100vw'

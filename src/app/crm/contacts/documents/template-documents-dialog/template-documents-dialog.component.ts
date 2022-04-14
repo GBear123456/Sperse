@@ -91,7 +91,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: TemplateDocumentsDialogData,
     ) {
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: (this.data.fullHeight ? 0 : 75) + 'px',
                 right: '-100vw'

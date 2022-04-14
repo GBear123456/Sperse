@@ -2,7 +2,7 @@
 import { ChangeDetectionStrategy, Component, Output, Input, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppService } from '@app/app.service';

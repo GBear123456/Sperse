@@ -1545,7 +1545,7 @@ export class TransactionsComponent extends CFOComponentBase implements OnInit, A
                 }
             });
 
-            this.transactionDetailDialogRef.afterOpen().subscribe(
+            this.transactionDetailDialogRef.afterOpened().subscribe(
                 () => this.transactionId$.next(this.transactionId)
             );
 

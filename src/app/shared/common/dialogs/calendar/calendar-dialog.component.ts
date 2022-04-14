@@ -20,7 +20,7 @@ export class CalendarDialogComponent implements OnInit, AfterViewInit {
         public dialogRef: MatDialogRef<CalendarDialogComponent, any>,
         public elementRef: ElementRef
     ) {
-        dialogRef.beforeClose().subscribe(() => {
+        dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '75px',
                 right: '-100vw'

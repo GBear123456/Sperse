@@ -48,7 +48,7 @@ export class BankAccountsSelectDialogComponent implements OnInit {
                 disabled: this.data && this.data.applyDisabled
             }
         ];
-        this.dialogRef.afterOpen().subscribe(() => {
+        this.dialogRef.afterOpened().subscribe(() => {
             this.bankAccountsService.clearTempState();
         });
         this.dialogRef.afterClosed().subscribe((isApply: boolean) => {

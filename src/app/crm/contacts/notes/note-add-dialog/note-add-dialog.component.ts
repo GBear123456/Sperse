@@ -141,7 +141,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             this.applyOrdersFilter();
             this.initNoteData();
         });
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '75px',
                 right: '-100vw'

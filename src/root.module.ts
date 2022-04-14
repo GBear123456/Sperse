@@ -1,6 +1,5 @@
 /** Core imports */
 import { APP_INITIALIZER, LOCALE_ID, Injector, NgModule, ErrorHandler } from '@angular/core';
-import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_BASE_HREF, PlatformLocation, registerLocaleData } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
@@ -8,7 +7,6 @@ import { RouteReuseStrategy, Router } from '@angular/router';
 
 /** Third party imports */
 import { AbpModule } from 'abp-ng2-module';
-import { GestureConfig } from '@angular/material';
 import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
 import { CacheService } from 'ng2-cache-service';
 import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
@@ -217,10 +215,6 @@ function handleLogoutRequest(authService: AppAuthService) {
         {
             provide: RouteReuseStrategy,
             useClass: CustomReuseStrategy
-        },
-        {
-            provide: HAMMER_GESTURE_CONFIG,
-            useClass: GestureConfig
         },
         {
             provide: ErrorHandler,

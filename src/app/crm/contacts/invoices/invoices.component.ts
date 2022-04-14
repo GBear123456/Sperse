@@ -430,7 +430,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 stages$: this.stages$,
                 invoice: this.actionRecordData
             }
-        }).beforeClose().subscribe((successed: boolean) => {
+        }).beforeClosed().subscribe((successed: boolean) => {
             if (successed) {
                 this.notify.success(this.l('SuccessfullyUpdated'));
                 this.dataGrid.instance.refresh();

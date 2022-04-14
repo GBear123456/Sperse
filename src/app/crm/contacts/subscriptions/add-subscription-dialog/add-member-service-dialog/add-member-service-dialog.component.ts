@@ -67,7 +67,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '75px',
                 right: '-100vw'
