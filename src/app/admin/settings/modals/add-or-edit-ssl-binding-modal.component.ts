@@ -158,9 +158,12 @@ export class AddOrEditSSLBindingModalComponent {
                 this.closeSuccess();
             });
         } else {
-            if (!this.domainComponent.instance.option('isValid'))
+            if (!this.domainComponent.instance.option('isValid')) {
+                this.saving = false;
+                this.finishLoading();
+                this.changeDetection.detectChanges();
                 return this.notify.error(this.ls.l('HostName_NotMapped'));
-
+            }
             this.tenantHostService.addSslBinding(new AddSslBindingInput({
                 ...this.model,
                 organizationUnitId: this.model.organizationUnitId == -1

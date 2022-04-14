@@ -32,9 +32,9 @@
                    [(ngModel)]="editionsModels[moduleId].trialDayCount"
                    [ngModelOptions]="{ standalone: true }">
         </div>
-        <img *ngIf="showCleanIcon(editionsModels[moduleId], i)"
+        <clear-icon *ngIf="showCleanIcon(editionsModels[moduleId], i)"
              class="clean-icon"
-             src="assets/common/icons/close.svg"
              (click)="clearEdition(editionsModels[moduleId])">
+        </clear-icon>
     </ng-container>
 </div>

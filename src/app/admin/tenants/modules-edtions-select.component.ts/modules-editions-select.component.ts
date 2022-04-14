@@ -5,6 +5,12 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppConsts } from '@root/shared/AppConsts';
 
 @Component({
+  selector: 'clear-icon',
+  templateUrl: '../../../../assets/common/icons/close.svg'
+})
+export class ClearIconSvgComponent {}
+
+@Component({
     selector: 'modules-editions-select',
     templateUrl: './modules-editions-select.component.html',
     styleUrls: [ './modules-editions-select.component.less' ]

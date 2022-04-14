@@ -90,9 +90,13 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
             finalize(() => delete this._poolRequests[key]),
             catchError((error: any) => this.handleErrorResponseInternal(error)),
             switchMap((event: HttpEvent<any>) => this.handleSuccessResponse(event))
-        ).subscribe(res => interceptObservable.next(res));
+        ).subscribe(res => {
+            interceptObservable.next(res);
+        }, error => {
+            interceptObservable.error(error);
+        });
 
-        return interceptObservable.asObservable().pipe(first());
+        return interceptObservable.pipe(first());
     }
 
     private getKeyFromUrl(request: HttpRequest<any>): string {
