@@ -618,34 +618,32 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.selectedOrderType.value === OrderType.Subscription
         ),
         switchMap(([oDataRequestValues, search, refresh]: [ODataRequestValues, string, any]) => {
-            return (this.subscriptionsDataSource.isLoading() ? this.loadTotalsRequest$: of(true)).pipe(
-                map(() => {
-                    return this.getODataUrl(
-                        this.subscriptionGroupDataSourceURI,
-                        oDataRequestValues.filter,
-                        null,
-                        [
-                            ...this.getSubscriptionsParams(),
-                            ...oDataRequestValues.params,
-                            {
-                                name: 'totalSummary',
-                                value: JSON.stringify([
-                                    { 'summaryType': 'count' },
-                                    { 'selector': 'OrderAmount', 'summaryType': 'sum' },
-                                    { 'selector': 'Fee', 'summaryType': 'sum' }
-                                ])
-                            },
-                            {
-                                name: 'take',
-                                value: 1
-                            },
-                            {
-                                name: 'select',
-                                value: '["Id"]'
-                            }
-                        ]
-                    );
-                })
+            return (this.subscriptionsDataSource.isLoading() ? this.loadTotalsRequest$: of(oDataRequestValues)).pipe(
+                first(), map(() => this.getODataUrl(
+                    this.subscriptionGroupDataSourceURI,
+                    oDataRequestValues.filter,
+                    null,
+                    [
+                        ...this.getSubscriptionsParams(),
+                        ...oDataRequestValues.params,
+                        {
+                            name: 'totalSummary',
+                            value: JSON.stringify([
+                                { 'summaryType': 'count' },
+                                { 'selector': 'OrderAmount', 'summaryType': 'sum' },
+                                { 'selector': 'Fee', 'summaryType': 'sum' }
+                            ])
+                        },
+                        {
+                            name: 'take',
+                            value: 1
+                        },
+                        {
+                            name: 'select',
+                            value: '["Id"]'
+                        }
+                    ]
+                ))
             );
         }),
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
