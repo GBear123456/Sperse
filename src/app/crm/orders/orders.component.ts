@@ -17,7 +17,8 @@ import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { BehaviorSubject, combineLatest, concat, forkJoin, Observable, of } from 'rxjs';
+import { Subject, BehaviorSubject, combineLatest, 
+    concat, forkJoin, Observable, of } from 'rxjs';
 import {
     catchError,
     distinctUntilChanged,
@@ -159,7 +160,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private orderSubscriptionStatusFilter = this.getSubscriptionsFilter();
     private subscriptionStatusFilter = this.getSubscriptionsFilter();
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
-    public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || undefined);
+    public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || ContactGroup.Client);
     showCompactView$: Observable<Boolean> = combineLatest(
         this.dataLayoutType$,
         this.pipelineService.compactView$,
@@ -443,6 +444,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             onLoaded: (records) => {
                 if (records instanceof Array)
                     this.subscriptionsDataSource['entities'] = (this.subscriptionsDataSource['entities'] || []).concat(records);
+                this.loadTotalsRequest.next();
             },
             errorHandler: (error) => {
                 setTimeout(() => this.isDataLoaded = true);
@@ -458,6 +460,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
+    loadTotalsRequest: Subject<ODataRequestValues> = new Subject<ODataRequestValues>(); 
+    loadTotalsRequest$: Observable<ODataRequestValues> = this.loadTotalsRequest.asObservable();
     ordersODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Order);
     subscriptionsODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Subscription);
     private search: BehaviorSubject<string> = new BehaviorSubject<string>(this.searchValue);
@@ -613,31 +617,35 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         filter(() => this.componentIsActivated && 
             this.selectedOrderType.value === OrderType.Subscription
         ),
-        map(([oDataRequestValues, search, refresh]: [ODataRequestValues, string, any]) => {
-            return this.getODataUrl(
-                this.subscriptionGroupDataSourceURI,
-                oDataRequestValues.filter,
-                null,
-                [
-                    ...this.getSubscriptionsParams(),
-                    ...oDataRequestValues.params,
-                    {
-                        name: 'totalSummary',
-                        value: JSON.stringify([
-                            { 'summaryType': 'count' },
-                            { 'selector': 'OrderAmount', 'summaryType': 'sum' },
-                            { 'selector': 'Fee', 'summaryType': 'sum' }
-                        ])
-                    },
-                    {
-                        name: 'take',
-                        value: 1
-                    },
-                    {
-                        name: 'select',
-                        value: '["Id"]'
-                    }
-                ]
+        switchMap(([oDataRequestValues, search, refresh]: [ODataRequestValues, string, any]) => {
+            return (this.subscriptionsDataSource.isLoading() ? this.loadTotalsRequest$: of(true)).pipe(
+                map(() => {
+                    return this.getODataUrl(
+                        this.subscriptionGroupDataSourceURI,
+                        oDataRequestValues.filter,
+                        null,
+                        [
+                            ...this.getSubscriptionsParams(),
+                            ...oDataRequestValues.params,
+                            {
+                                name: 'totalSummary',
+                                value: JSON.stringify([
+                                    { 'summaryType': 'count' },
+                                    { 'selector': 'OrderAmount', 'summaryType': 'sum' },
+                                    { 'selector': 'Fee', 'summaryType': 'sum' }
+                                ])
+                            },
+                            {
+                                name: 'take',
+                                value: 1
+                            },
+                            {
+                                name: 'select',
+                                value: '["Id"]'
+                            }
+                        ]
+                    );
+                })
             );
         }),
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
