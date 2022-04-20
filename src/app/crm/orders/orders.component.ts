@@ -12,6 +12,7 @@ import { CurrencyPipe } from '@angular/common';
 import { Params } from '@angular/router';
 
 /** Third party imports */
+import moment from 'moment-timezone';
 import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
@@ -294,10 +295,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             }
         })
     ];
-    subscriptionStatuses = Object.keys(SubscriptionsStatus).map(status => {
+    subscriptionStatuses = Object.keys(SubscriptionsStatus).filter(status => 
+        ![SubscriptionsStatus.Upgraded, SubscriptionsStatus.Draft].includes(SubscriptionsStatus[status])
+    ).map(status => {
         return {
             id: SubscriptionsStatus[status],
-            name: this.l(status)
+            name: startCase(status)
         };
     });
     private subscriptionsFilters: FilterModel[] = [
@@ -334,7 +337,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 element: new FilterCheckBoxesModel(
                     {
                         dataSource: this.subscriptionStatuses,
-                        value: [SubscriptionsStatus.Current],
+                        value: [SubscriptionsStatus.CurrentActive],
                         nameField: 'name',
                         keyExpr: 'id'
                     })
@@ -455,8 +458,6 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     subscriptionGroupDataSourceURI = 'SubscriptionSlice';
     pivotGridDataIsLoading: boolean;
-    private refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
-    refresh$: Observable<null> = this.refresh.asObservable();
     filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
@@ -569,8 +570,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ordersSum: number;
     ordersSummary$: Observable<OrderStageSummary> = combineLatest(
         this.ordersODataRequestValues$,
-        this.search$,
-        this.refresh$
+        this.search$
     ).pipe(
         debounceTime(600),
         takeUntil(this.destroy$),
@@ -578,7 +578,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.selectedOrderType.value === OrderType.Order && 
             this.dataLayoutType.value === DataLayoutType.DataGrid
         ),
-        map(([oDataRequestValues, search, refresh]: [ODataRequestValues, string, any]) => {
+        map(([oDataRequestValues, search]: [ODataRequestValues, string]) => {
             return this.getODataUrl(this.orderCountDataSourceURI, oDataRequestValues.filter, null,
                 [...this.getSubscriptionsParams(), ...oDataRequestValues.params]);
         }),
@@ -609,15 +609,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     subscriptionsTotalOrderAmount: number;
     subscriptionsSummary$: Observable<any> = combineLatest(
         this.subscriptionsODataRequestValues$,
-        this.search$,
-        this.refresh$
+        this.search$
     ).pipe(
         debounceTime(600),
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated && 
             this.selectedOrderType.value === OrderType.Subscription
         ),
-        switchMap(([oDataRequestValues, search, refresh]: [ODataRequestValues, string, any]) => {
+        switchMap(([oDataRequestValues, search]: [ODataRequestValues, string]) => {
             return (this.subscriptionsDataSource.isLoading() ? this.loadTotalsRequest$: of(oDataRequestValues)).pipe(
                 first(), map(() => this.getODataUrl(
                     this.subscriptionGroupDataSourceURI,
@@ -826,14 +825,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.ordersSummary$.subscribe((ordersSummary: OrderStageSummary) => {
             this.ordersSum = ordersSummary.sum;
             this.ordersDataSource['total'] = this.totalCount = ordersSummary.count;
+            if (this.ordersGrid)
+                this.ordersGrid.instance.repaint();
         });
         this.subscriptionsSummary$.subscribe((data) => {
             this.subscriptionsDataSource['total'] = this.totalCount = data.summary[0];
             this.subscriptionsTotalOrderAmount = data.summary[1];
             this.subscriptionsTotalFee = data.summary[2];
-            if (this.subscriptionsGrid) {
+            if (this.subscriptionsGrid)
                 this.subscriptionsGrid.instance.repaint();
-            }
         });
         this.selectedOrderType$.subscribe((selectedOrderType: OrderType) => {
             this.changeOrderType(selectedOrderType);
@@ -1473,8 +1473,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     invalidate() {
         this.selectedOrders = [];
-        this.processFilterInternal();
-        this.refresh.next(null);
+        this.filtersService.change([]);
         this.filterChanged = true;
     }
 
@@ -1801,7 +1800,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         if (event.itemData.value != this.selectedContactGroup.value) {
             this.selectedContactGroup.next(event.itemData.value);
-            this.processFilterInternal();
+            this.filtersService.change([this.contactGroupFilter]);
         }
     }
 
@@ -1867,6 +1866,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.searchClear = false;
         this.filtersService.unsubscribe();
         this.hideHostElement();
+    }
+
+    calculateStatusDisplayValue = (data) => {
+        if (data.StatusId == SubscriptionsStatus.CurrentActive)
+            return this.l(moment().diff(data.EndDate) > 0 ? 'Expired' : 'Active');
+        else if (data.StatusId == SubscriptionsStatus.Cancelled)
+            return this.l('Cancelled');
+        else if (data.StatusId == SubscriptionsStatus.Upgraded)
+            return this.l('Upgraded');
+        else
+            return this.l('Draft');
     }
 
     ngOnDestroy() {

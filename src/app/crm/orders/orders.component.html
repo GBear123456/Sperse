@@ -244,7 +244,7 @@
                                 [allowGrouping]="false" [allowSorting]="false">
                     </dxi-column>
                     <dxi-column [dataField]="subscriptionFields.ContactId" cssClass="clipboard-holder" [visible]="false"></dxi-column>
-                    <dxi-column [dataField]="subscriptionFields.FullName" [caption]="l('FullName')" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="subscriptionFields.FullName" [caption]="l('Contact.FullName')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.EmailAddress" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.PhoneNumber" [caption]="l('Contact.Phone')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.City" [caption]="l('Contact.City')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
@@ -257,7 +257,7 @@
                     <dxi-column [dataField]="subscriptionFields.StartDate" [caption]="l('StartDate')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.EndDate" [caption]="l('EndDate')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.Fee" [width]="170" cssClass="padding-right" [caption]="l('Fee')" cellTemplate="amountTemplate"></dxi-column>
-                    <dxi-column [dataField]="subscriptionFields.StatusId" [caption]="l('Status')" [lookup]="{dataSource: subscriptionStatuses, valueExpr: 'id', displayExpr: 'name'}" cssClass="clipboard-holder"></dxi-column>
+                    <dxi-column [dataField]="subscriptionFields.StatusId" [caption]="l('Status')" [calculateDisplayValue]="calculateStatusDisplayValue" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.OrderAmount" [width]="190" cssClass="padding-right" [caption]="l('OrderAmount')" cellTemplate="amountTemplate"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.SourceAffiliateCode" [caption]="l('SourceAffiliateCode')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="subscriptionFields.SourceEntryUrl" [width]="300" [caption]="l('EntryUrl')" [visible]="false" ></dxi-column>  
