@@ -1,10 +1,11 @@
 /** Core imports */
-import { Component, Input, EventEmitter, Output, OnDestroy } from '@angular/core';
+import { ViewChild, Component, ElementRef, EventEmitter, 
+    Input, Output, OnInit, OnDestroy } from '@angular/core';
 
 /** Third party imports */
 import { Store } from '@ngrx/store';
 import { Observable, Subscription } from 'rxjs';
-import { filter, finalize } from 'rxjs/operators';
+import { first, filter, finalize } from 'rxjs/operators';
 import * as _ from 'underscore';
 
 /** Application imports */
@@ -22,6 +23,7 @@ import { MessageService } from '@abp/message/message.service';
 import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { NotifyService } from '@abp/notify/notify.service';
 
@@ -30,7 +32,10 @@ import { NotifyService } from '@abp/notify/notify.service';
     templateUrl: './user-assignment-list.component.html',
     styleUrls: ['./user-assignment-list.component.less']
 })
-export class UserAssignmentComponent implements OnDestroy {
+export class UserAssignmentComponent implements OnInit, OnDestroy {
+    @ViewChild('tooltipContainer', {static: false}) tooltipContainer: ElementRef;
+
+    @Input() postponedLoad: Observable<any>;
     @Input() multiSelection = false;
     @Input() filterModel: any;
     @Input() get selectedKeys(): Array<any> {
@@ -70,6 +75,7 @@ export class UserAssignmentComponent implements OnDestroy {
     subscription: Subscription;
 
     constructor(
+        private loadingService: LoadingService,
         private appSessionService: AppSessionService,
         private appStoreService: AppStoreService,
         private filtersService: FiltersService,
@@ -80,6 +86,19 @@ export class UserAssignmentComponent implements OnDestroy {
         public profileService: ProfileService,
         public ls: AppLocalizationService
     ) {}
+
+    ngOnInit() {
+        if (this.postponedLoad)
+            this.postponedLoad.pipe(first()).subscribe(() => 
+                this.dispatchUserAssignments()
+            );
+        else                
+            this.dispatchUserAssignments();
+    }
+
+    private dispatchUserAssignments() {        
+        this.appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup));
+    }
 
     private moveSelectedItemsToTop() {
         let index = 0;
@@ -105,8 +124,8 @@ export class UserAssignmentComponent implements OnDestroy {
     toggle() {
         if (this.tooltipVisible = !this.tooltipVisible) {
             if (!this.list || !this.list.length)
-                this.appStoreService.dispatchUserAssignmentsActions(Object.keys(ContactGroup));
-            this.highlightSelectedFilters();
+                setTimeout(() => this.loadingService.startLoading(this.tooltipContainer.nativeElement), 100);
+            this.highlightSelectedFilters();            
         }
         return this.tooltipVisible;
     }
@@ -181,6 +200,8 @@ export class UserAssignmentComponent implements OnDestroy {
         this.subscription = this.store$.pipe(assignedUsersSelector)
             .pipe(filter(Boolean))
             .subscribe((assignedUsers: UserInfoDto[]) => {
+                if (this.tooltipContainer)
+                    this.loadingService.finishLoading(this.tooltipContainer.nativeElement);
                 if (assignedUsers && assignedUsers instanceof Array) {
                     this.list = assignedUsers.slice(0);
                     this.sortAssignableList();
