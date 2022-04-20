@@ -92,16 +92,29 @@ export class FilterHelpers {
         if (element && element.value) {
             let filterData = _.map(element.value, item => {
                 let result = {};
-                if (item == SubscriptionsStatus.Current) {
-                    result = {
-                        and: {
-                            [filter.field]: item,
-                            or: [
-                                {EndDate: null},
-                                {EndDate: {ge: new Date()}}
-                            ]
-                        }
-                    };
+                if (item == SubscriptionsStatus.CurrentActive) {
+                    if (element.value.indexOf(SubscriptionsStatus.CurrentExpired) >= 0)
+                        result[filter.field] = item;
+                    else
+                        result = {
+                            and: {
+                                [filter.field]: item,
+                                or: [
+                                    {EndDate: null},
+                                    {EndDate: {ge: new Date()}}
+                                ]
+                            }
+                        };
+                } else if (item == SubscriptionsStatus.CurrentExpired) {
+                    if (element.value.indexOf(SubscriptionsStatus.CurrentActive) >= 0)
+                        result = undefined;
+                    else
+                        result = {
+                            and: {
+                                [filter.field]: SubscriptionsStatus.CurrentActive,
+                                EndDate: {lt: new Date()}
+                            }
+                        };
                 } else
                     result[filter.field] = item;
                 return result;
