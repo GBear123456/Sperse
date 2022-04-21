@@ -309,7 +309,7 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                 location: 'after',
                 locateInMenu: 'auto',
                 items: [
-                    { name: 'showCompactRowsHeight', action: DataGridService.toggleCompactRowsHeight.bind(this, this.dataGrid) },
+                    { name: 'showCompactRowsHeight', action: () => DataGridService.toggleCompactRowsHeight(this.dataGrid, true) },
                     {
                         name: 'download',
                         widget: 'dxDropDownMenu',
