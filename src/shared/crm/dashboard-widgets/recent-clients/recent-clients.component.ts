@@ -114,7 +114,8 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         }
     ];
     visibleItems: IRecentClientsSelectItem[] = this.selectItems.filter(item => item.visible);
-    selectedItem: BehaviorSubject<IRecentClientsSelectItem> = new BehaviorSubject<IRecentClientsSelectItem>(this.selectItems[0]);
+    lastSelectedItem: IRecentClientsSelectItem = this.selectItems[0];
+    selectedItem: BehaviorSubject<IRecentClientsSelectItem> = new BehaviorSubject<IRecentClientsSelectItem>(this.lastSelectedItem);
     selectedItem$: Observable<IRecentClientsSelectItem> = this.selectedItem.asObservable().pipe(distinctUntilChanged());
     userTimezone = DateHelper.getUserTimezone();
     hasBankCodeFeature: boolean = this.userManagementService.checkBankCodeFeature();
@@ -142,11 +143,12 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         ).pipe(
             tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
             switchMap(([selectedItem, contactId, orgUnitIds, ]) => 
-                this.waitFor$.pipe(first(), switchMap(() =>
+                (this.lastSelectedItem != selectedItem ? of(selectedItem) : this.waitFor$).pipe(first(), switchMap(() =>
                     selectedItem.dataSource(contactId, orgUnitIds).pipe(
                         catchError(() => of([])),
                         finalize(() => {
                             this.loadComplete.next();
+                            this.lastSelectedItem = selectedItem;
                             this.loadingService.finishLoading(this.elementRef.nativeElement);
                         })
                     )
@@ -181,7 +183,7 @@ export class RecentClientsComponent implements OnInit, OnDestroy {
         }
     }
 
-    onSelectionChanged($event) {
+    onSelectionChanged($event) {        
         this.selectedItem.next($event.selectedItem);
     }
 

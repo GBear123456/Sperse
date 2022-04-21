@@ -4,7 +4,7 @@
         <dx-select-box [items]="totalsOptions"
                        displayExpr="label"
                        [value]="selectedTotal$ | async"
-                       (onValueChanged)="selectedTotal.next($event.value)">
+                       (onSelectionChanged)="selectedTotal.next($event.selectedItem)">
         </dx-select-box>
     </header>
     <ng-container *ngIf="data$ | async as data">

@@ -137,12 +137,12 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             }]
         )
     ];
-    selectedTotal: BehaviorSubject<ITotalOption> = new BehaviorSubject<ITotalOption>(
-        this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.LendSpace
-            || this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode
-        ? this.totalsOptions.find(option => option.key === 'star')
-        : this.totalsOptions.find(option => option.key === 'companySize')
-    );
+    lastSelectedTotal: ITotalOption = 
+        this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.LendSpace ||
+        this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode ?
+            this.totalsOptions.find(option => option.key === 'star') :
+            this.totalsOptions.find(option => option.key === 'companySize');
+    selectedTotal: BehaviorSubject<ITotalOption> = new BehaviorSubject<ITotalOption>(this.lastSelectedTotal);
     selectedTotal$: Observable<ITotalOption> = this.selectedTotal.asObservable();
     selectedArgumentField$: Observable<string> = this.selectedTotal$.pipe(pluck('argumentField'));
     selectedValueField$: Observable<string> = this.selectedTotal$.pipe(pluck('valueField'));
@@ -178,7 +178,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             }),
             switchMap(([selectedTotal, period, groupId, contactId, orgUnitIds, ]: [ITotalOption, PeriodModel, string, number, number[], null]) => {
                 this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.selectedContactGroupId = groupId).subscribe();
-                return this.waitFor$.pipe(first(), switchMap(() =>
+                return (this.lastSelectedTotal != selectedTotal ? of(selectedTotal) : this.waitFor$).pipe(first(), switchMap(() =>
                     selectedTotal.method.call(
                         this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'),
                         period && period.to || new Date(), groupId, contactId, orgUnitIds
@@ -186,6 +186,7 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
                         catchError(() => of([])),
                         finalize(() => {
                             this.loadComplete.next();
+                            this.lastSelectedTotal = selectedTotal;
                             this.loadingService.finishLoading(this.elementRef.nativeElement);
                         })
                     )

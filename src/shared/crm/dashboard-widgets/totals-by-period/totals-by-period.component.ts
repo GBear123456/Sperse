@@ -108,11 +108,10 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     ];
 
     private cumulativeOptionCacheKey = 'CRM_Dashboard_TotalsByPeriod_IsCumulative_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
-    private isCumulative: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-        this.cacheService.get(this.cumulativeOptionCacheKey) !== null ?
-            !!+this.cacheService.get(this.cumulativeOptionCacheKey) :
-            this.selectItems[0].value
-    );
+    private lastIsCumulative: boolean = this.cacheService.get(this.cumulativeOptionCacheKey) !== null ?
+        !!+this.cacheService.get(this.cumulativeOptionCacheKey) :
+        this.selectItems[0].value
+    private isCumulative: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.lastIsCumulative);
     isCumulative$: Observable<boolean> = this.isCumulative.asObservable().pipe(distinctUntilChanged());
     selectedPeriod: TotalsByPeriodModel = this.periods.find(period => period.name === 'Daily');
 
@@ -162,9 +161,9 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
             takeUntil(this.destroy$),
             tap(() => this.loadingService.startLoading()),
             switchMap(([period, isCumulative, contactId, contactGroupId, orgUnitIds, ]:
-                             [PeriodModel, boolean, number, string, number[], null]) => {
+                [PeriodModel, boolean, number, string, number[], null]) => {
                 const totalsByPeriodModel = this.savePeriod(period);
-                return this.waitFor$.pipe(first(), switchMap(() =>
+                return (this.lastIsCumulative != isCumulative ? of(isCumulative) : this.waitFor$).pipe(first(), switchMap(() =>
                     this.loadCustomersAndLeadsStats(
                         totalsByPeriodModel,
                         period.from,
@@ -177,6 +176,7 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
                         catchError(() => of([])),
                         finalize(() => {
                             this.loadComplete.next();
+                            this.lastIsCumulative = isCumulative;
                             this.loadingService.finishLoading();
                         })
                     )
