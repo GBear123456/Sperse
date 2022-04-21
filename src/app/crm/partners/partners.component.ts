@@ -731,7 +731,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
             switchMap(([odataRequestValues, ]: [ODataRequestValues, null]) => {
-                return this.loadTotalsRequest$.pipe(map(() => odataRequestValues));
+                return this.loadTotalsRequest$.pipe(first(), map(() => odataRequestValues));
             })
         ).subscribe((odataRequestValues: ODataRequestValues) => {
             let url = this.getODataUrl(
