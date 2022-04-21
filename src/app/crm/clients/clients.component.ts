@@ -855,7 +855,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         ).pipe(
             takeUntil(this.lifeCycleSubjectsService.destroy$),
             switchMap(([odataRequestValues, ]: [ODataRequestValues, null]) => {
-                return this.loadTotalsRequest$.pipe(map(() => odataRequestValues));
+                return this.loadTotalsRequest$.pipe(first(), map(() => odataRequestValues));
             })
         ).subscribe((odataRequestValues: ODataRequestValues) => {
             let url = this.getODataUrl(

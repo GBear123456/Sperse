@@ -670,6 +670,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     ].concat(
         this.isSmsAndEmailSendingAllowed ? [ this.leadFields.Phone ] : []
     );
+    loadAssignUsersList: Subject<any> = new Subject<null>();
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
@@ -2280,6 +2281,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onTotalChange(totalCount: number) {
         this.totalCount = totalCount;
+        this.loadAssignUsersList.next();
     }
 
     openEntityChecklistDialog(data?) {
