@@ -162,7 +162,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     ngAfterViewInit() {
         setTimeout(() => {
             this.slider.classList.remove('hide');
-            this.dialogRef.updateSize(undefined, '100vh');
+            this.dialogRef.updateSize(undefined, 'calc(100vh - 75px)');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
                     top: '75px',

@@ -258,7 +258,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     ngAfterViewInit() {
         setTimeout(() => {
             this.slider.classList.remove('hide');
-            this.dialogRef.updateSize('425px', '100vh');
+            this.dialogRef.updateSize('425px', 'calc(100vh - 218px)');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
                     top: '218px',

@@ -154,7 +154,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     ngAfterViewInit() {
         this.slider.classList.remove('hide');
-        this.dialogRef.updateSize(undefined, '100vh');
+        this.dialogRef.updateSize(undefined, this.data.fullHeigth ? '100vh' : 'calc(100vh - 75px)');
             this.dialogRef.updatePosition({
                 top: this.data.fullHeigth ? '0px' : '75px',
                 right: '0px'
