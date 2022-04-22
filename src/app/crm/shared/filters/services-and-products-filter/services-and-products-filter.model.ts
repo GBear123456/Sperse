@@ -5,5 +5,6 @@ export class FilterServicesAndProductsModel extends FilterCheckBoxesModel {
 
     public constructor(init?: Partial<FilterServicesAndProductsModel>) {
         super(init);
+        this.disableOuterScroll = true;
     }
 }
