@@ -13,12 +13,9 @@ import { accountModuleAnimation } from '@shared/animations/routerTransition';
 
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
-    AccountServiceProxy,
     PasswordComplexitySetting,
-    ProfileServiceProxy,
     LayoutType
 } from '@shared/service-proxies/service-proxies';
-import { LoginService } from '../login/login.service';
 import { ResetPasswordModel } from './reset-password.model';
 import { LendSpaceResetPasswordComponent } from './layouts/lend-space/lend-space-reset-password.component';
 import { AdvicePeriodResetPasswordComponent } from './layouts/advice-period/advice-period-reset-password.component';
@@ -51,10 +48,7 @@ export class ResetPasswordComponent implements OnInit {
     saving = false;
 
     constructor(
-        private accountService: AccountServiceProxy,
-        private loginService: LoginService,
         private appSessionService: AppSessionService,
-        private profileService: ProfileServiceProxy,
         private componentFactoryResolver: ComponentFactoryResolver
     ) {}
 

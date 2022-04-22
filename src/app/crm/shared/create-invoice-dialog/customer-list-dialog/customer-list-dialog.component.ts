@@ -25,7 +25,7 @@ export class CustomerListDialogComponent {
         debounceTime(500),
         tap(() => this.loadingService.startLoading(this.elementRef.nativeElement)),
         switchMap((search?: string) => {
-            return this.contactProxy.getAllByPhrase(search, 10, undefined, undefined, true).pipe(
+            return this.contactProxy.getAllByPhrase(search, 10, undefined, undefined, true, true).pipe(
                 finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
             )
         })

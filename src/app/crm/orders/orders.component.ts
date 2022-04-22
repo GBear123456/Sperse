@@ -199,7 +199,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private sourceFilter: FilterModel = new FilterModel({
         component: FilterSourceComponent,
         caption: 'Source',
-        hidden: this.appSession.userIsMember,
+        hidden: this.appSession.hideUserSourceFilters,
         items: {
             element: new SourceFilterModel({
                 ls: this.localizationService
@@ -259,7 +259,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         new FilterModel({
             component: FilterMultilineInputComponent,
             caption: 'xref',
-            hidden: this.appSession.userIsMember,
+            hidden: this.appSession.hideUserSourceFilters,
             filterMethod: this.filtersService.filterByMultiline,
             field: this.orderFields.ContactXref,
             items: {
@@ -369,7 +369,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         new FilterModel({
             component: FilterMultilineInputComponent,
             caption: 'xref',
-            hidden: this.appSession.userIsMember,
+            hidden: this.appSession.hideUserSourceFilters,
             filterMethod: this.filtersService.filterByMultiline,
             field: this.subscriptionFields.ContactXref,
             items: {
@@ -1034,7 +1034,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         return new FilterModel({
             component: FilterCheckBoxesComponent,
             caption: this.subscriptionFields.SourceOrganizationUnitId,
-            hidden: this.appSession.userIsMember,
+            hidden: this.appSession.hideUserSourceFilters,
             field: this.orderFields.SourceOrganizationUnitId,
             items: {
                 element: new FilterCheckBoxesModel(

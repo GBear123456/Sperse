@@ -9258,9 +9258,10 @@ export class ContactServiceProxy {
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
      * @excludeSubContacts (optional) 
+     * @fullAccess (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined, fullAccess: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Contact/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -9272,6 +9273,8 @@ export class ContactServiceProxy {
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         if (excludeSubContacts !== undefined)
             url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
+        if (fullAccess !== undefined)
+            url_ += "FullAccess=" + encodeURIComponent("" + fullAccess) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -13360,9 +13363,10 @@ export class CustomerServiceProxy {
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
      * @excludeSubContacts (optional) 
+     * @fullAccess (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined, fullAccess: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Customer/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -13374,6 +13378,8 @@ export class CustomerServiceProxy {
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         if (excludeSubContacts !== undefined)
             url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
+        if (fullAccess !== undefined)
+            url_ += "FullAccess=" + encodeURIComponent("" + fullAccess) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -21684,9 +21690,10 @@ export class LeadServiceProxy {
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
      * @excludeSubContacts (optional) 
+     * @fullAccess (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined, fullAccess: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Lead/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -21698,6 +21705,8 @@ export class LeadServiceProxy {
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         if (excludeSubContacts !== undefined)
             url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
+        if (fullAccess !== undefined)
+            url_ += "FullAccess=" + encodeURIComponent("" + fullAccess) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -22004,7 +22013,7 @@ export class LearningResourceServiceProxy {
      * @body (optional) 
      * @return Success
      */
-    create(body: CreateLearningResourceInput | null | undefined): Observable<number> {
+    create(body: CreateLearningResourceInput | null | undefined): Observable<CreateLearningResourceOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/LearningResource/Create";
         url_ = url_.replace(/[?&]$/, "");
 
@@ -22027,14 +22036,14 @@ export class LearningResourceServiceProxy {
                 try {
                     return this.processCreate(<any>response_);
                 } catch (e) {
-                    return <Observable<number>><any>_observableThrow(e);
+                    return <Observable<CreateLearningResourceOutput>><any>_observableThrow(e);
                 }
             } else
-                return <Observable<number>><any>_observableThrow(response_);
+                return <Observable<CreateLearningResourceOutput>><any>_observableThrow(response_);
         }));
     }
 
-    protected processCreate(response: HttpResponseBase): Observable<number> {
+    protected processCreate(response: HttpResponseBase): Observable<CreateLearningResourceOutput> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -22045,7 +22054,7 @@ export class LearningResourceServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            result200 = resultData200 ? CreateLearningResourceOutput.fromJS(resultData200) : new CreateLearningResourceOutput();
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -22053,7 +22062,7 @@ export class LearningResourceServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<number>(<any>null);
+        return _observableOf<CreateLearningResourceOutput>(<any>null);
     }
 
     /**
@@ -22090,6 +22099,58 @@ export class LearningResourceServiceProxy {
     }
 
     protected processUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateResourceGroup(body: UpdateResourceGroupInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/UpdateResourceGroup";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateResourceGroup(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateResourceGroup(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateResourceGroup(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -22197,6 +22258,273 @@ export class LearningResourceServiceProxy {
     }
 
     protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    createGroup(body: CreateLearningResourceGroupInput | null | undefined): Observable<CreateLearningResourceGroupOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/CreateGroup";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreateGroup(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreateGroup(<any>response_);
+                } catch (e) {
+                    return <Observable<CreateLearningResourceGroupOutput>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<CreateLearningResourceGroupOutput>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processCreateGroup(response: HttpResponseBase): Observable<CreateLearningResourceGroupOutput> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 ? CreateLearningResourceGroupOutput.fromJS(resultData200) : new CreateLearningResourceGroupOutput();
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CreateLearningResourceGroupOutput>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateGroup(body: UpdateLearningResourceGroupInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/UpdateGroup";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateGroup(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateGroup(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateGroup(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    updateGroupSortOrder(body: UpdateGroupSortOrderInput | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/UpdateGroupSortOrder";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateGroupSortOrder(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateGroupSortOrder(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateGroupSortOrder(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @body (optional) 
+     * @return Success
+     */
+    setGroupImage(body: SetLearningResourceGroupImageInput | null | undefined): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/SetGroupImage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+                "Accept": "application/json"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetGroupImage(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetGroupImage(<any>response_);
+                } catch (e) {
+                    return <Observable<string>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<string>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processSetGroupImage(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob = 
+            response instanceof HttpResponse ? response.body : 
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }};
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = resultData200 !== undefined ? resultData200 : <any>null;
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(<any>null);
+    }
+
+    /**
+     * @id (optional) 
+     * @return Success
+     */
+    deleteGroup(id: number | null | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/LearningResource/DeleteGroup?";
+        if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&"; 
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json", 
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDeleteGroup(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDeleteGroup(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processDeleteGroup(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob = 
             response instanceof HttpResponse ? response.body : 
@@ -25159,9 +25487,10 @@ export class OrderServiceProxy {
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
      * @excludeSubContacts (optional) 
+     * @fullAccess (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined, fullAccess: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Order/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -25173,6 +25502,8 @@ export class OrderServiceProxy {
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         if (excludeSubContacts !== undefined)
             url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
+        if (fullAccess !== undefined)
+            url_ += "FullAccess=" + encodeURIComponent("" + fullAccess) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -27248,9 +27579,10 @@ export class PartnerServiceProxy {
      * @hasUserAccount (optional) 
      * @exceptUserIds (optional) 
      * @excludeSubContacts (optional) 
+     * @fullAccess (optional) 
      * @return Success
      */
-    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined): Observable<EntityContactInfo[]> {
+    getAllByPhrase(searchPhrase: string | null | undefined, topCount: number | null | undefined, hasUserAccount: boolean | null | undefined, exceptUserIds: number[] | null | undefined, excludeSubContacts: boolean | null | undefined, fullAccess: boolean | null | undefined): Observable<EntityContactInfo[]> {
         let url_ = this.baseUrl + "/api/services/CRM/Partner/GetAllByPhrase?";
         if (searchPhrase !== undefined)
             url_ += "SearchPhrase=" + encodeURIComponent("" + searchPhrase) + "&"; 
@@ -27262,6 +27594,8 @@ export class PartnerServiceProxy {
             exceptUserIds && exceptUserIds.forEach(item => { url_ += "ExceptUserIds=" + encodeURIComponent("" + item) + "&"; });
         if (excludeSubContacts !== undefined)
             url_ += "ExcludeSubContacts=" + encodeURIComponent("" + excludeSubContacts) + "&"; 
+        if (fullAccess !== undefined)
+            url_ += "FullAccess=" + encodeURIComponent("" + fullAccess) + "&"; 
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -56767,6 +57101,7 @@ export interface IEntityContactInfo {
 export class UpdateContactStatusInput implements IUpdateContactStatusInput {
     contactId!: number;
     notifyUser!: boolean | undefined;
+    processLead!: boolean | undefined;
     groupId!: string;
     isActive!: boolean | undefined;
 
@@ -56783,6 +57118,7 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
         if (data) {
             this.contactId = data["contactId"];
             this.notifyUser = data["notifyUser"];
+            this.processLead = data["processLead"];
             this.groupId = data["groupId"];
             this.isActive = data["isActive"];
         }
@@ -56799,6 +57135,7 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
         data["notifyUser"] = this.notifyUser;
+        data["processLead"] = this.processLead;
         data["groupId"] = this.groupId;
         data["isActive"] = this.isActive;
         return data; 
@@ -56808,6 +57145,7 @@ export class UpdateContactStatusInput implements IUpdateContactStatusInput {
 export interface IUpdateContactStatusInput {
     contactId: number;
     notifyUser: boolean | undefined;
+    processLead: boolean | undefined;
     groupId: string;
     isActive: boolean | undefined;
 }
@@ -56815,6 +57153,7 @@ export interface IUpdateContactStatusInput {
 export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
     contactIds!: number[];
     notifyUsers!: boolean | undefined;
+    processLeads!: boolean | undefined;
     groupId!: string;
     isActive!: boolean | undefined;
 
@@ -56838,6 +57177,7 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
                     this.contactIds.push(item);
             }
             this.notifyUsers = data["notifyUsers"];
+            this.processLeads = data["processLeads"];
             this.groupId = data["groupId"];
             this.isActive = data["isActive"];
         }
@@ -56858,6 +57198,7 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
                 data["contactIds"].push(item);
         }
         data["notifyUsers"] = this.notifyUsers;
+        data["processLeads"] = this.processLeads;
         data["groupId"] = this.groupId;
         data["isActive"] = this.isActive;
         return data; 
@@ -56867,6 +57208,7 @@ export class UpdateContactStatusesInput implements IUpdateContactStatusesInput {
 export interface IUpdateContactStatusesInput {
     contactIds: number[];
     notifyUsers: boolean | undefined;
+    processLeads: boolean | undefined;
     groupId: string;
     isActive: boolean | undefined;
 }
@@ -70687,6 +71029,8 @@ export class LearningResourceInfoOutput implements ILearningResourceInfoOutput {
     type!: LearningResourceType | undefined;
     name!: string | undefined;
     url!: string | undefined;
+    sortOrder!: number | undefined;
+    isActive!: boolean | undefined;
 
     constructor(data?: ILearningResourceInfoOutput) {
         if (data) {
@@ -70716,6 +71060,8 @@ export class LearningResourceInfoOutput implements ILearningResourceInfoOutput {
             this.type = data["type"];
             this.name = data["name"];
             this.url = data["url"];
+            this.sortOrder = data["sortOrder"];
+            this.isActive = data["isActive"];
         }
     }
 
@@ -70745,6 +71091,8 @@ export class LearningResourceInfoOutput implements ILearningResourceInfoOutput {
         data["type"] = this.type;
         data["name"] = this.name;
         data["url"] = this.url;
+        data["sortOrder"] = this.sortOrder;
+        data["isActive"] = this.isActive;
         return data; 
     }
 }
@@ -70759,6 +71107,8 @@ export interface ILearningResourceInfoOutput {
     type: LearningResourceType | undefined;
     name: string | undefined;
     url: string | undefined;
+    sortOrder: number | undefined;
+    isActive: boolean | undefined;
 }
 
 export class LearningResourceGroupInfoOutput implements ILearningResourceGroupInfoOutput {
@@ -70767,6 +71117,7 @@ export class LearningResourceGroupInfoOutput implements ILearningResourceGroupIn
     groupImageUrl!: string | undefined;
     groupHtmlColor!: string | undefined;
     groupSortOrder!: number | undefined;
+    groupIsActive!: boolean | undefined;
     resources!: LearningResourceInfoOutput[] | undefined;
 
     constructor(data?: ILearningResourceGroupInfoOutput) {
@@ -70785,6 +71136,7 @@ export class LearningResourceGroupInfoOutput implements ILearningResourceGroupIn
             this.groupImageUrl = data["groupImageUrl"];
             this.groupHtmlColor = data["groupHtmlColor"];
             this.groupSortOrder = data["groupSortOrder"];
+            this.groupIsActive = data["groupIsActive"];
             if (data["resources"] && data["resources"].constructor === Array) {
                 this.resources = [];
                 for (let item of data["resources"])
@@ -70807,6 +71159,7 @@ export class LearningResourceGroupInfoOutput implements ILearningResourceGroupIn
         data["groupImageUrl"] = this.groupImageUrl;
         data["groupHtmlColor"] = this.groupHtmlColor;
         data["groupSortOrder"] = this.groupSortOrder;
+        data["groupIsActive"] = this.groupIsActive;
         if (this.resources && this.resources.constructor === Array) {
             data["resources"] = [];
             for (let item of this.resources)
@@ -70822,6 +71175,7 @@ export interface ILearningResourceGroupInfoOutput {
     groupImageUrl: string | undefined;
     groupHtmlColor: string | undefined;
     groupSortOrder: number | undefined;
+    groupIsActive: boolean | undefined;
     resources: LearningResourceInfoOutput[] | undefined;
 }
 
@@ -70875,6 +71229,7 @@ export class CreateLearningResourceInput implements ICreateLearningResourceInput
     fileName!: string | undefined;
     fileSize!: number | undefined;
     file!: string | undefined;
+    isActive!: boolean | undefined;
     memberServiceAssignments!: MemberServiceAssignmentInput[] | undefined;
 
     constructor(data?: ICreateLearningResourceInput) {
@@ -70897,6 +71252,7 @@ export class CreateLearningResourceInput implements ICreateLearningResourceInput
             this.fileName = data["fileName"];
             this.fileSize = data["fileSize"];
             this.file = data["file"];
+            this.isActive = data["isActive"];
             if (data["memberServiceAssignments"] && data["memberServiceAssignments"].constructor === Array) {
                 this.memberServiceAssignments = [];
                 for (let item of data["memberServiceAssignments"])
@@ -70923,6 +71279,7 @@ export class CreateLearningResourceInput implements ICreateLearningResourceInput
         data["fileName"] = this.fileName;
         data["fileSize"] = this.fileSize;
         data["file"] = this.file;
+        data["isActive"] = this.isActive;
         if (this.memberServiceAssignments && this.memberServiceAssignments.constructor === Array) {
             data["memberServiceAssignments"] = [];
             for (let item of this.memberServiceAssignments)
@@ -70942,7 +71299,48 @@ export interface ICreateLearningResourceInput {
     fileName: string | undefined;
     fileSize: number | undefined;
     file: string | undefined;
+    isActive: boolean | undefined;
     memberServiceAssignments: MemberServiceAssignmentInput[] | undefined;
+}
+
+export class CreateLearningResourceOutput implements ICreateLearningResourceOutput {
+    id!: number | undefined;
+    sortOrder!: number | undefined;
+
+    constructor(data?: ICreateLearningResourceOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): CreateLearningResourceOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateLearningResourceOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface ICreateLearningResourceOutput {
+    id: number | undefined;
+    sortOrder: number | undefined;
 }
 
 export class UpdateLearningResourceInput implements IUpdateLearningResourceInput {
@@ -70953,6 +71351,7 @@ export class UpdateLearningResourceInput implements IUpdateLearningResourceInput
     fileName!: string | undefined;
     fileSize!: number | undefined;
     file!: string | undefined;
+    isActive!: boolean | undefined;
     memberServiceAssignments!: MemberServiceAssignmentInput[] | undefined;
 
     constructor(data?: IUpdateLearningResourceInput) {
@@ -70973,6 +71372,7 @@ export class UpdateLearningResourceInput implements IUpdateLearningResourceInput
             this.fileName = data["fileName"];
             this.fileSize = data["fileSize"];
             this.file = data["file"];
+            this.isActive = data["isActive"];
             if (data["memberServiceAssignments"] && data["memberServiceAssignments"].constructor === Array) {
                 this.memberServiceAssignments = [];
                 for (let item of data["memberServiceAssignments"])
@@ -70997,6 +71397,7 @@ export class UpdateLearningResourceInput implements IUpdateLearningResourceInput
         data["fileName"] = this.fileName;
         data["fileSize"] = this.fileSize;
         data["file"] = this.file;
+        data["isActive"] = this.isActive;
         if (this.memberServiceAssignments && this.memberServiceAssignments.constructor === Array) {
             data["memberServiceAssignments"] = [];
             for (let item of this.memberServiceAssignments)
@@ -71014,7 +71415,52 @@ export interface IUpdateLearningResourceInput {
     fileName: string | undefined;
     fileSize: number | undefined;
     file: string | undefined;
+    isActive: boolean | undefined;
     memberServiceAssignments: MemberServiceAssignmentInput[] | undefined;
+}
+
+export class UpdateResourceGroupInput implements IUpdateResourceGroupInput {
+    resourceId!: number;
+    groupId!: number;
+    sortOrder!: number | undefined;
+
+    constructor(data?: IUpdateResourceGroupInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.resourceId = data["resourceId"];
+            this.groupId = data["groupId"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): UpdateResourceGroupInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateResourceGroupInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["resourceId"] = this.resourceId;
+        data["groupId"] = this.groupId;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IUpdateResourceGroupInput {
+    resourceId: number;
+    groupId: number;
+    sortOrder: number | undefined;
 }
 
 export class SetLearningResourceImageInput implements ISetLearningResourceImageInput {
@@ -71053,6 +71499,218 @@ export class SetLearningResourceImageInput implements ISetLearningResourceImageI
 }
 
 export interface ISetLearningResourceImageInput {
+    id: number;
+    image: string | undefined;
+}
+
+export class CreateLearningResourceGroupInput implements ICreateLearningResourceGroupInput {
+    name!: string;
+    htmlColor!: string | undefined;
+    isActive!: boolean | undefined;
+
+    constructor(data?: ICreateLearningResourceGroupInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.name = data["name"];
+            this.htmlColor = data["htmlColor"];
+            this.isActive = data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): CreateLearningResourceGroupInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateLearningResourceGroupInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["htmlColor"] = this.htmlColor;
+        data["isActive"] = this.isActive;
+        return data; 
+    }
+}
+
+export interface ICreateLearningResourceGroupInput {
+    name: string;
+    htmlColor: string | undefined;
+    isActive: boolean | undefined;
+}
+
+export class CreateLearningResourceGroupOutput implements ICreateLearningResourceGroupOutput {
+    id!: number | undefined;
+    sortOrder!: number | undefined;
+
+    constructor(data?: ICreateLearningResourceGroupOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): CreateLearningResourceGroupOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateLearningResourceGroupOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface ICreateLearningResourceGroupOutput {
+    id: number | undefined;
+    sortOrder: number | undefined;
+}
+
+export class UpdateLearningResourceGroupInput implements IUpdateLearningResourceGroupInput {
+    id!: number;
+    name!: string;
+    htmlColor!: string | undefined;
+    isActive!: boolean | undefined;
+
+    constructor(data?: IUpdateLearningResourceGroupInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.name = data["name"];
+            this.htmlColor = data["htmlColor"];
+            this.isActive = data["isActive"];
+        }
+    }
+
+    static fromJS(data: any): UpdateLearningResourceGroupInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateLearningResourceGroupInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["htmlColor"] = this.htmlColor;
+        data["isActive"] = this.isActive;
+        return data; 
+    }
+}
+
+export interface IUpdateLearningResourceGroupInput {
+    id: number;
+    name: string;
+    htmlColor: string | undefined;
+    isActive: boolean | undefined;
+}
+
+export class UpdateGroupSortOrderInput implements IUpdateGroupSortOrderInput {
+    id!: number;
+    sortOrder!: number;
+
+    constructor(data?: IUpdateGroupSortOrderInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.sortOrder = data["sortOrder"];
+        }
+    }
+
+    static fromJS(data: any): UpdateGroupSortOrderInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateGroupSortOrderInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["sortOrder"] = this.sortOrder;
+        return data; 
+    }
+}
+
+export interface IUpdateGroupSortOrderInput {
+    id: number;
+    sortOrder: number;
+}
+
+export class SetLearningResourceGroupImageInput implements ISetLearningResourceGroupImageInput {
+    id!: number;
+    image!: string | undefined;
+
+    constructor(data?: ISetLearningResourceGroupImageInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(data?: any) {
+        if (data) {
+            this.id = data["id"];
+            this.image = data["image"];
+        }
+    }
+
+    static fromJS(data: any): SetLearningResourceGroupImageInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetLearningResourceGroupImageInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["image"] = this.image;
+        return data; 
+    }
+}
+
+export interface ISetLearningResourceGroupImageInput {
     id: number;
     image: string | undefined;
 }

@@ -306,7 +306,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     filterModelTypes: FilterModel;
     filterModelSource: FilterModel = new FilterModel({
         component: FilterSourceComponent,
-        hidden: this.appSession.userIsMember,
+        hidden: this.appSession.hideUserSourceFilters,
         caption: 'Source',
         items: {
             element: new SourceFilterModel({
@@ -317,7 +317,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     filterModelOrgUnit: FilterModel = new FilterModel({
         component: FilterCheckBoxesComponent,
         caption: 'SourceOrganizationUnitId',
-        hidden: this.appSession.userIsMember,
+        hidden: this.appSession.hideUserSourceFilters,
         field: 'SourceOrganizationUnitId',
         items: {
             element: new FilterCheckBoxesModel(
@@ -968,7 +968,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             new FilterModel({
                 component: FilterMultilineInputComponent,
                 caption: 'xref',
-                hidden: this.appSession.userIsMember,
+                hidden: this.appSession.hideUserSourceFilters,
                 filterMethod: this.filtersService.filterByMultiline,
                 field: 'Xref',
                 items: {
@@ -1046,7 +1046,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.filterModelAssignment = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'assignedUser',
-                hidden: this.appSession.userIsMember,
+                hidden: this.appSession.hideUserSourceFilters,
                 field: 'AssignedUserId',
                 items: {
                     element: new FilterCheckBoxesModel(
@@ -1075,7 +1075,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.filterModelTags = new FilterModel({
                 component: FilterCheckBoxesComponent,
                 caption: 'Tag',
-                hidden: this.appSession.userIsMember,
+                hidden: this.appSession.hideUserSourceFilters,
                 field: 'TagId',
                 items: {
                     element: new FilterCheckBoxesModel(
@@ -1090,7 +1090,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 component: FilterRangeComponent,
                 operator: { from: 'ge', to: 'le' },
                 caption: 'Rating',
-                hidden: this.appSession.userIsMember,
+                hidden: this.appSession.hideUserSourceFilters,
                 field: 'Rating',
                 items$: this.store$.pipe(select(RatingsStoreSelectors.getRatingItems))
             }),

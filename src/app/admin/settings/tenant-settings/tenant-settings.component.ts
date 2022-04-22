@@ -6,8 +6,8 @@ import { ClipboardService } from 'ngx-clipboard';
 /** Third party imports */
 import { IAjaxResponse } from '@abp/abpHttpInterceptor';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
-import { Observable, forkJoin, of } from 'rxjs';
-import { finalize, tap, first, map, delay } from 'rxjs/operators';
+import { Observable, forkJoin, of, throwError } from 'rxjs';
+import { finalize, tap, first, map, delay, catchError } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import kebabCase from 'lodash/kebabCase';
 
@@ -121,6 +121,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     EmailTemplateType = EmailTemplateType;
     CustomCssType = CustomCssType;
     tabIndex: Observable<number>;
+    smtpProviderErrorLink: string;
 
     constructor(
         injector: Injector,
@@ -385,9 +386,14 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     }
 
     saveAll(): void {
+        this.smtpProviderErrorLink = undefined;
         let requests: Observable<any>[] = [
             this.tenantSettingsService.updateAllSettings(this.settings).pipe(tap(() => {
                 this.appSessionService.checkSetDefaultCountry(this.settings.general.defaultCountryCode);
+            }),
+            catchError(error => {
+                this.checkHandlerErrorWarning(true);
+                return throwError(error);
             })),
             this.tenantPaymentSettingsService.updateStripeSettings(this.stripePaymentSettings),
             this.tenantSettingsService.updateSendGridSettings(this.sendGridSettings),
@@ -431,8 +437,16 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
 
     sendTestEmail(): void {
         this.startLoading();
+        this.smtpProviderErrorLink = undefined;
         let input = this.emailSmtpSettingsService.getSendTestEmailInput(this.testEmailAddress, this.settings.email);
-        this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this));
+        this.emailSmtpSettingsService.sendTestEmail(input, this.finishLoading.bind(this), () => this.checkHandlerErrorWarning());
+    }
+
+    checkHandlerErrorWarning(forced = false) {
+        this.smtpProviderErrorLink = (forced || this.testEmailAddress) && 
+            this.emailSmtpSettingsService.getSmtpErrorHelpLink(this.settings.email.smtpHost);
+        if (this.smtpProviderErrorLink)
+            this.changeDetection.detectChanges();
     }
 
     getSendGridWebhookUrl(): string {

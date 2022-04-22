@@ -80,12 +80,24 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
             )
         ], [
             { name: 'Profile Summary', type: 'head', icon: 'blog' },
-            { name: 'profileSummary', type: 'string', multiline: true }
+            { name: 'profileSummary', type: 'html', multiline: true }
         ], [
             { name: 'Experience', type: 'head', icon: 'blog' },
             { name: 'experience', type: 'string', multiline: true }
         ]
     ];
+    ckConfig: any = {
+        enterMode: 3, /*CKEDITOR.ENTER_DIV*/
+        toolbar: [
+            { name: 'basicstyles', items: ['Bold', 'Italic', 'Underline', 'Strikethrough', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat'] },
+            { name: 'paragraph', items: ['NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language'] },
+            { name: 'insert', items: ['Table', 'HorizontalRule', 'Smiley'] },
+            { name: 'tools', items: ['Maximize'] }
+        ],
+        removePlugins: 'elementspath',
+        skin: 'moono-lisa', //kama,moono,moono-lisa
+        height: "70px"
+    };
     get isDefaultCountryCanada() {
         return AppConsts.defaultCountryCode == Country.Canada;
     }
@@ -103,6 +115,8 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
     };
     private readonly settingsDialogId = 'personal-details-dialog';
     settingsDialog$: Subscription;
+
+    htmlFieldOrignValue: string;
 
     constructor(
         private notifyService: NotifyService,
@@ -152,7 +166,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
     ngAfterViewInit() {
         this.contactsService.settingsDialogOpened$.pipe(
             takeUntil(this.lifeCycleService.destroy$),
-            debounceTime(300)
+            debounceTime(1000)
         ).subscribe(opened => {
             let isOpened = this.contactInfo && this.contactInfo.parentId ? false : opened;
             this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, isOpened);
@@ -264,47 +278,57 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
         return (collection || []).map(item => ({ id: item.code, name: item.name }));
     }
 
-    updateValue(value: string, field: string) {
+    focusinBindValue(field: string) {
+        this.htmlFieldOrignValue = this.person[field];
+    }
+
+    focusoutBindValue(field: string) {
+        if (this.htmlFieldOrignValue != this.person[field])
+            this.updateValue(this.person[field], field, false);
+    }
+
+    updateValue(value: string, field: string, checkInitialValue = true) {
         if (!this.isEditAllowed || !this.person)
             return ;
         if (value == '') value = null;
         let initialValue = this.person[field];
-        if (initialValue != value) {
-            this.person[field] = value;
-            /** If field is citizenship - then load its states, changed select list and clear the value */
-            if (field === 'citizenship') {
-                this.loadStates(value);
-                this.getStates(this.person && this.person.citizenship);
-                this.person.drivingLicenseState = null;
-            }
-            if (!this.person.marriageDate)
-                this.person.divorceDate = null;
-            this.personContactService.updatePersonInfo(new UpdatePersonInfoInput({
-                id: this.person.contactId,
-                dob: this.getDateWithoutTime(this.person.dob),
-                ssn: this.accessConfidentialData ? this.person.ssn : undefined,
-                bankCode: this.person.bankCode,
-                timeZone: this.person.timeZone,
-                maritalStatus: MaritalStatus[this.person.maritalStatus],
-                marriageDate: this.getDateWithoutTime(this.person.marriageDate),
-                divorceDate: this.getDateWithoutTime(this.person.divorceDate),
-                gender: Gender[this.person.gender],
-                isUSCitizen: this.person.isUSCitizen,
-                citizenship: this.person.citizenship,
-                experience: this.person.experience,
-                profileSummary: this.person.profileSummary,
-                preferredToD: TimeOfDay[this.person.preferredToD],
-                drivingLicense: this.accessConfidentialData ? this.person.drivingLicense : undefined,
-                drivingLicenseState: this.person.drivingLicenseState,
-                isActiveMilitaryDuty: this.person.isActiveMilitaryDuty,
-                interests: this.person.interests
-            })).subscribe(
-                () => this.notifyService.success(this.ls.l('SavedSuccessfully')),
-                () => {
-                    this.person[field] = initialValue;
-                    this.changeDetector.markForCheck();
-                });
+        if (checkInitialValue && initialValue == value)
+            return;
+
+        this.person[field] = value;
+        /** If field is citizenship - then load its states, changed select list and clear the value */
+        if (field === 'citizenship') {
+            this.loadStates(value);
+            this.getStates(this.person && this.person.citizenship);
+            this.person.drivingLicenseState = null;
         }
+        if (!this.person.marriageDate)
+            this.person.divorceDate = null;
+        this.personContactService.updatePersonInfo(new UpdatePersonInfoInput({
+            id: this.person.contactId,
+            dob: this.getDateWithoutTime(this.person.dob),
+            ssn: this.accessConfidentialData ? this.person.ssn : undefined,
+            bankCode: this.person.bankCode,
+            timeZone: this.person.timeZone,
+            maritalStatus: MaritalStatus[this.person.maritalStatus],
+            marriageDate: this.getDateWithoutTime(this.person.marriageDate),
+            divorceDate: this.getDateWithoutTime(this.person.divorceDate),
+            gender: Gender[this.person.gender],
+            isUSCitizen: this.person.isUSCitizen,
+            citizenship: this.person.citizenship,
+            experience: this.person.experience,
+            profileSummary: this.person.profileSummary,
+            preferredToD: TimeOfDay[this.person.preferredToD],
+            drivingLicense: this.accessConfidentialData ? this.person.drivingLicense : undefined,
+            drivingLicenseState: this.person.drivingLicenseState,
+            isActiveMilitaryDuty: this.person.isActiveMilitaryDuty,
+            interests: this.person.interests
+        })).subscribe(
+            () => this.notifyService.success(this.ls.l('SavedSuccessfully')),
+            () => {
+                this.person[field] = initialValue;
+                this.changeDetector.markForCheck();
+            });
     }
 
     getDateWithoutTime(value) {

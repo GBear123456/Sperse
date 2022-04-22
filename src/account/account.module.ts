@@ -6,6 +6,7 @@ import { SperserForgotPasswordComponent } from '@root/account/password/layouts/s
 import { SperserResetPasswordComponent } from '@root/account/password/layouts/sperser/sperser-reset-password.component';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { ModalModule } from 'ngx-bootstrap/modal';
+import { CodeInputModule } from 'angular-code-input';
 import { SignupModule } from './signup/signup.module';
 import { AccountRoutingModule } from './account-routing.module';
 import { AccountComponent, AdLayoutHostDirective } from './account.component';
@@ -64,6 +65,9 @@ import { GHostLayoutComponent } from '@root/account/layouts/ghost/ghost-layout.c
 import { GHostLoginComponent } from "@root/account/login/layouts/ghost/ghost-login.component";
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxButtonModule } from 'devextreme-angular/ui/button';
+import { BankCodeLoginVerificationComponent } from './password/layouts/bank-code/bank-code-login-verification.component';
+import { HostLoginVerificationComponent } from './password/layouts/host/host-login-verification.component';
+import { HostCombinedForgotPasswordComponent } from './password/layouts/host/host-combined-forgot-password.component';
 
 // import { HoaLoginComponent } from "@root/account/login/layouts/hoa/hoa-login.component";
 // import { HoaAutoLoginComponent } from "@root/account/auto-login/layouts/hoa/hoa-auto-login.component";
@@ -84,7 +88,8 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
         PersonalFinanceLayoutModule,
         BankCodeLayoutModule,
         DxTextBoxModule,
-        DxButtonModule
+        DxButtonModule,
+        CodeInputModule
     ],
     declarations: [
         AccountComponent,
@@ -119,13 +124,16 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
         LanguageSwitchComponent,
         CompleteTenantRegistrationComponent,
         HostForgotPasswordComponent,
+        HostCombinedForgotPasswordComponent,
         LendSpaceForgotPasswordComponent,
         HostResetPasswordComponent,
+        HostLoginVerificationComponent,
         LendSpaceResetPasswordComponent,
         AdvicePeriodResetPasswordComponent,
         AdvicePeriodForgotPasswordComponent,
         BankCodeResetPasswordComponent,
         BankCodeForgotPasswordComponent,
+        BankCodeLoginVerificationComponent,
 
         RapidLayoutComponent,
         RapidLoginComponent,
@@ -161,6 +169,7 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
         AdvicePeriodLayoutComponent,
         BankCodeLayoutComponent,
         BankCodeLoginComponent,
+        HostCombinedForgotPasswordComponent,
         BankCodeAutoLoginComponent,
         HostForgotPasswordComponent,
         LendSpaceForgotPasswordComponent,

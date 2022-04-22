@@ -7,42 +7,49 @@
             <ng-container *ngIf="isEditAllowed && (!field.confidential || accessConfidentialData)">
                 <div [ngSwitch]="field.type" class="item-value {{field.multiline ? 'multiline' : ''}}">
                     <inplace-edit *ngSwitchCase="'string'"
-                        [isOptional]="true"
-                        [mask]="field.name == 'ssn' ? ssnMask : ''"
-                        [maskInvalidMessage]="field.name == 'ssn' ? ls.l('SSNFormatError') : ''"
-                        [maxLength]="20"
-                        [data]="getInputData(field.name)"
-                        [multiline]="field.multiline"
-                        (valueChanged)="updateValue($event, field.name)">
+                                  [isOptional]="true"
+                                  [mask]="field.name == 'ssn' ? ssnMask : ''"
+                                  [maskInvalidMessage]="field.name == 'ssn' ? ls.l('SSNFormatError') : ''"
+                                  [maxLength]="20"
+                                  [data]="getInputData(field.name)"
+                                  [multiline]="field.multiline"
+                                  (valueChanged)="updateValue($event, field.name)">
                     </inplace-edit>
+                    <ckeditor *ngSwitchCase="'html'"
+                              [(data)]="person[field.name]"
+                              type="inline"
+                              [config]="ckConfig"
+                              (focusin)="focusinBindValue(field.name)"
+                              (focusout)="focusoutBindValue(field.name)">
+                    </ckeditor>
                     <inplace-select *ngSwitchCase="'select'"
-                        width="260px"
-                        height="36px"
-                        [data]="getSelectData(field.name)"
-                        (valueChanged)="updateValue($event, field.name)">
+                                    width="260px"
+                                    height="36px"
+                                    [data]="getSelectData(field.name)"
+                                    (valueChanged)="updateValue($event, field.name)">
                     </inplace-select>
                     <dx-date-box *ngSwitchCase="'date'"
-                        width="260px"
-                        [placeholder]="ls.l('Select') + '...'"
-                        [value]="person[field.name]"
-                        (onKeyDown)="allowDigitsOnly($event, ['/'])"
-                        (onValueChanged)="updateValue($event.value, field.name)">
+                                 width="260px"
+                                 [placeholder]="ls.l('Select') + '...'"
+                                 [value]="person[field.name]"
+                                 (onKeyDown)="allowDigitsOnly($event, ['/'])"
+                                 (onValueChanged)="updateValue($event.value, field.name)">
                     </dx-date-box>
                     <dx-check-box *ngSwitchCase="'bool'"
-                        [value]="person[field.name]"
-                        (onValueChanged)="updateValue($event.value, field.name)">
+                                  [value]="person[field.name]"
+                                  (onValueChanged)="updateValue($event.value, field.name)">
                     </dx-check-box>
                     <dx-tag-box *ngSwitchCase="'list'"
-                        [multiline]="field.multiline"
-                        [placeholder]="ls.l('EditValuePlaceholder')"
-                        [items]="field.source | async"
-                        noDataText=""
-                        [acceptCustomValue]="true"
-                        [value]="person[field.name]"
-                        (onValueChanged)="updateValue($event.value, field.name)">
+                                [multiline]="field.multiline"
+                                [placeholder]="ls.l('EditValuePlaceholder')"
+                                [items]="field.source | async"
+                                noDataText=""
+                                [acceptCustomValue]="true"
+                                [value]="person[field.name]"
+                                (onValueChanged)="updateValue($event.value, field.name)">
                     </dx-tag-box>
                 </div>
-                <i class="save-to-clipboard" [hidden]="!person[field.name] || (field.type != 'date' && !person[field.name].length) || field.type == 'string'" (click)="saveToClipboard($event, person[field.name])"></i>
+                <i class="save-to-clipboard" [hidden]="!person[field.name] || (field.type != 'date' && !person[field.name].length) || field.type == 'string' || field.type == 'html'" (click)="saveToClipboard($event, person[field.name])"></i>
             </ng-container>
         </div>
     </div>
