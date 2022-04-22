@@ -1,6 +1,6 @@
 export interface VisitorStatsDto {
     Id: number;
-    State: string;
+    StateCode: string;
     Email: string;
     PhoneNumber: string;
     Date: string;

@@ -3,7 +3,7 @@ import { VisitorStatsDto } from './visitor-stats-dto.inteface';
 
 export const VisitorStatsFields: KeysEnum<VisitorStatsDto> = {
     Id: 'Id',
-    State: 'State',
+    StateCode: 'StateCode',
     Email: 'Email',
     PhoneNumber: 'PhoneNumber',
     Date: 'Date',
