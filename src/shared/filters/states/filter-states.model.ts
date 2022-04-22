@@ -19,6 +19,7 @@ export class FilterStatesModel extends FilterItemModel {
 
     constructor(filterStatesService: FilterStatesService, value?: any, isPartial = false) {
         super(value, isPartial);
+        this.disableOuterScroll = true;
         this.filterStatesService = filterStatesService;
     }
 

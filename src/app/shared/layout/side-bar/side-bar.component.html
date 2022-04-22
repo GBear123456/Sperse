@@ -62,7 +62,11 @@
             {{ls.ls('Platform', 'Apply')}}
         </button>
     </div>
-    <dx-scroll-view [showScrollbar]="disableFilterScroll ? 'never' : 'onHover'" [disabled]="disableFilterScroll">
+
+    <dx-scroll-view *ngIf="!disableFilterScroll; else filterContainer" showScrollbar="onHover">
         <filter [config]="activeFilter" (onApply)="filterApply($event)"></filter>
     </dx-scroll-view>
+    <ng-template #filterContainer>
+        <filter [config]="activeFilter" (onApply)="filterApply($event)"></filter>
+    </ng-template>
 </div>
