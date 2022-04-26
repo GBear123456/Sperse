@@ -554,6 +554,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     onContentReady(event) {
+        this.dataGrid = this.dxDataGrid;
         this.finishLoading();
         this.setGridDataLoaded();
         if (!this.rowsViewHeight)
