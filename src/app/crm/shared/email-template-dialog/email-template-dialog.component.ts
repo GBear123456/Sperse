@@ -501,7 +501,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onCustomItemCreating(event, callback?) {
         let field = event.component.option('name'),
-            values = event.text.split(/[,|;]+(?=(?:(?:[^"]*"){2})*[^"]*$)/),
+            values = event.text.trim().split(/[,|;]+(?=(?:(?:[^"]*"){2})*[^"]*$)/),
             validValues = [], invalidValues = [],
             currentList = this.data[field];
 
