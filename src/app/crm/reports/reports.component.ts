@@ -863,7 +863,7 @@ export class ReportsComponent implements OnInit, AfterViewInit, OnDestroy {
 
     customizeCreatedDateCell = (data) => this.datePipe.transform(data.Date, this.formatting.dateTime, this.userTimezone);
 
-    customizeDateCell = (data) => DateHelper.getDateWithoutTime(data.Date).format('YYYY-MM-DD');
+    customizeDateCell = (data) => DateHelper.getDateWithoutTime(data.date).format('YYYY-MM-DD');
 
     customizeBankPassFeeCell = (data) => this.customizeAmountCell(data.BankPassFee);
 
