@@ -105,7 +105,7 @@ export class SideBarComponent implements OnDestroy {
         }
         this.disableFilterScroll = this.activeFilter && this.activeFilter.items &&
             Object.keys(this.activeFilter.items).some(name => 
-                this.activeFilter.items[name].disableOuterScroll
+                this.activeFilter.items[name] && this.activeFilter.items[name].disableOuterScroll
             );
         event && event.stopPropagation();
     }
