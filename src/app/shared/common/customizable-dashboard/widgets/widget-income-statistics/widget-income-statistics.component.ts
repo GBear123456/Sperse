@@ -1,7 +1,7 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { ChartDateInterval, HostDashboardServiceProxy } from '@shared/service-proxies/service-proxies';
 import { DateTime } from 'luxon';
-import { filter as _filter } from 'lodash-es';
+import filter from 'lodash/filter';
 import { WidgetComponentBaseComponent } from '../widget-component-base';
 import { DateTimeService } from '@app/shared/common/timing/date-time.service';
 
@@ -55,7 +55,7 @@ export class WidgetIncomeStatisticsComponent extends WidgetComponentBaseComponen
             .subscribe((result) => {
                 this.incomeStatisticsData = this.normalizeIncomeStatisticsData(result.incomeStatistics);
                 this.incomeStatisticsHasData =
-                    _filter(this.incomeStatisticsData[0].series, (data) => data.value > 0).length > 0;
+                    filter(this.incomeStatisticsData[0].series, (data) => data.value > 0).length > 0;
                 this.loadingIncomeStatistics = false;
             });
     };

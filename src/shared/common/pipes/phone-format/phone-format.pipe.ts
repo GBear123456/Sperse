@@ -21,9 +21,9 @@ export class PhoneFormatPipe implements PipeTransform {
             }
             if (Object.keys(parsedNumber).length) {
                 if (parsedNumber.countryCallingCode === '1') {
-                    phoneNumber = `+${parsedNumber.countryCallingCode} ${formatNumber(parsedNumber, 'National')}`;
+                    phoneNumber = `+${parsedNumber.countryCallingCode} ${formatNumber(parsedNumber, 'NATIONAL')}`;
                 } else {
-                    phoneNumber = formatNumber(parsedNumber, 'International');
+                    phoneNumber = formatNumber(parsedNumber, 'INTERNATIONAL');
                 }
             }
         }

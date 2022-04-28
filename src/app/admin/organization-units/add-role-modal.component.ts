@@ -6,7 +6,7 @@ import {
     OrganizationUnitServiceProxy,
     RolesToOrganizationUnitInput,
 } from '@shared/service-proxies/service-proxies';
-import { map as _map } from 'lodash-es';
+import map from 'lodash/map';
 import { ModalDirective } from 'ngx-bootstrap/modal';
 import { LazyLoadEvent } from 'primeng/api';
 import { Paginator } from 'primeng/paginator';
@@ -90,7 +90,7 @@ export class AddRoleModalComponent extends AppComponentBase {
     addRolesToOrganizationUnit(): void {
         const input = new RolesToOrganizationUnitInput();
         input.organizationUnitId = this.organizationUnitId;
-        input.roleIds = _map(this.selectedRoles, (selectedRole) => Number(selectedRole.value));
+        input.roleIds = map(this.selectedRoles, (selectedRole) => Number(selectedRole.value));
         this.saving = true;
         this._organizationUnitService.addRolesToOrganizationUnit(input).subscribe(() => {
             this.notify.success(this.l('SuccessfullyAdded'));

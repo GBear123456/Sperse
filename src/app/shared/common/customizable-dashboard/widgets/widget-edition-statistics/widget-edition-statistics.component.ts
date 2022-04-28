@@ -1,7 +1,7 @@
 import { Component, OnInit, ElementRef, ViewChild, Injector } from '@angular/core';
 import { HostDashboardServiceProxy, GetEditionTenantStatisticsOutput } from '@shared/service-proxies/service-proxies';
 import { DateTime } from 'luxon';
-import { filter as _filter } from 'lodash-es';
+import filter from 'lodash/filter';
 import { WidgetComponentBaseComponent } from '../widget-component-base';
 import { DateTimeService } from '@app/shared/common/timing/date-time.service';
 
@@ -40,7 +40,7 @@ export class WidgetEditionStatisticsComponent extends WidgetComponentBaseCompone
             .subscribe((editionTenantStatistics) => {
                 this.editionStatisticsData = this.normalizeEditionStatisticsData(editionTenantStatistics);
                 this.editionStatisticsHasData =
-                    _filter(this.editionStatisticsData, (data) => data.value > 0).length > 0;
+                    filter(this.editionStatisticsData, (data) => data.value > 0).length > 0;
             });
     };
 

@@ -6,7 +6,8 @@ import {
     OrganizationUnitDto,
     OrganizationUnitServiceProxy,
 } from '@shared/service-proxies/service-proxies';
-import { filter as _filter, remove as _remove } from 'lodash-es';
+import filter from 'lodash/filter';
+import remove from 'lodash/remove';
 import { throwError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { IBasicOrganizationUnitInfo } from './basic-organization-unit-info';
@@ -179,7 +180,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements OnIni
         return (
             customSettings.EntityHistory &&
             customSettings.EntityHistory.isEnabled &&
-            _filter(
+            filter(
                 customSettings.EntityHistory.enabledEntities,
                 (entityType) => entityType === this._entityTypeFullName
             ).length === 1
@@ -297,7 +298,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements OnIni
         }
 
         if (!node.data.parentId) {
-            _remove(this.treeData, {
+            remove(this.treeData, {
                 data: {
                     id: id,
                 },
@@ -309,7 +310,7 @@ export class OrganizationTreeComponent extends AppComponentBase implements OnIni
             return;
         }
 
-        _remove(parentNode.children, {
+        remove(parentNode.children, {
             data: {
                 id: id,
             },

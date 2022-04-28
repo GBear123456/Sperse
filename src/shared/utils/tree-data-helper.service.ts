@@ -1,17 +1,18 @@
 import { Injectable } from '@angular/core';
-import { filter as _filter, forEach as _forEach } from 'lodash-es';
+import filter from 'lodash/filter';
+import forEach from 'lodash/forEach';
 
 @Injectable()
 export class TreeDataHelperService {
     findNode(data, selector): any {
-        let nodes = _filter(data, selector);
+        let nodes = filter(data, selector);
         if (nodes && nodes.length === 1) {
             return nodes[0];
         }
 
         let foundNode = null;
 
-        _forEach(data, (d) => {
+        forEach(data, (d) => {
             if (!foundNode) {
                 foundNode = this.findNode(d.children, selector);
             }
@@ -33,7 +34,7 @@ export class TreeDataHelperService {
         let traverseChildren = function (node) {
             let names = [];
             if (node.children) {
-                _forEach(node.children, (c) => {
+                forEach(node.children, (c) => {
                     names.push(c.data.name);
                     names = names.concat(traverseChildren(c));
                 });

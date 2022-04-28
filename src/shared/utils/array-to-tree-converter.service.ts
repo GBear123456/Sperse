@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { filter as _filter, forEach as _forEach } from 'lodash-es';
+import filter from 'lodash/filter';
+import forEach from 'lodash/forEach';
 
 @Injectable()
 export class ArrayToTreeConverterService {
@@ -13,9 +14,9 @@ export class ArrayToTreeConverterService {
     ): any {
         let tree = [];
 
-        let nodes = _filter(array, [parentIdProperty, parentIdValue]);
+        let nodes = filter(array, [parentIdProperty, parentIdValue]);
 
-        _forEach(nodes, (node) => {
+        forEach(nodes, (node) => {
             let newNode = {
                 data: node,
             };
@@ -38,7 +39,7 @@ export class ArrayToTreeConverterService {
     }
 
     mapFields(node, newNode, fieldMappings): void {
-        _forEach(fieldMappings, (fieldMapping) => {
+        forEach(fieldMappings, (fieldMapping) => {
             if (!fieldMapping['target']) {
                 return;
             }

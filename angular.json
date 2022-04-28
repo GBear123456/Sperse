@@ -19,10 +19,9 @@
             "allowedCommonJsDependencies": [
                 "underscore", "underscore.string", "lodash", "jspdf", "devextreme", "color",
                 "dragula", "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
-                "ngx-google-places-autocomplete", "ng-inline-svg", "angular-cc-library",
-                "angular-svg-round-progressbar", "uuid", "hammerjs", "moment-timezone",
-                "ng2-cache-service", "jquery-calendar", "ng2-image-viewer", "iv-viewer", 
-                "videogular2", "@bugsnag/js", "buffer", "@angularclass/hmr", "angular2-counto"
+                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar", 
+                "hammerjs", "moment-timezone", "ng2-cache-service", "jquery-calendar", "@angularclass/hmr",
+                "uuid", "ng2-image-viewer", "iv-viewer", "safe-buffer", "@bugsnag/js", "buffer", "angular2-counto"
             ],
             "assets": [
               "src/assets",
@@ -359,10 +358,9 @@
             "allowedCommonJsDependencies": [
                 "underscore", "underscore.string", "lodash", "jspdf", "devextreme", "color",
                 "dragula", "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
-                "ngx-google-places-autocomplete", "ng-inline-svg", "angular-cc-library",
-                "angular-svg-round-progressbar", "uuid", "hammerjs", "moment-timezone",
-                "ng2-cache-service", "jquery-calendar", "ng2-image-viewer", "videogular2",
-                "@bugsnag/js", "buffer", "@angularclass/hmr"
+                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar", 
+                "hammerjs", "moment-timezone", "ng2-cache-service", "jquery-calendar", "@angularclass/hmr",
+                "uuid", "ng2-image-viewer", "iv-viewer", "safe-buffer", "@bugsnag/js", "buffer", "angular2-counto"
             ],
             "assets": [
               "projects/package-chooser-widget/src/favicon.ico"
