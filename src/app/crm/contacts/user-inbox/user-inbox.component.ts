@@ -499,7 +499,10 @@ export class UserInboxComponent implements OnDestroy {
 
         this.showNewEmailDialog(forAll ? 'ReplyToAll' : 'Reply', {                          
             ...this.activeMessage,
-            to: [(this.activeMessage.fromUserName || '') + ' <' + this.activeMessage.from + '>'],
+            to: [this.activeMessage.isInbound ? 
+                (this.activeMessage.fromUserName || '') + ' <' + this.activeMessage.from + '>' :
+                this.activeMessage.to
+            ],
             cc: ccList,
             bcc: this.activeMessage.bcc ? this.activeMessage.bcc.split(',') : [],
             subject: (this.activeMessage.subject.startsWith('Re:')  ? '' : 'Re: ') + this.activeMessage.subject,
