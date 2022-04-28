@@ -9,9 +9,14 @@ import { LogService } from '@abp/log/log.service';
 export class AppHttpConfiguration extends AbpHttpConfiguration {
     avoidErrorHandling = false;
     private readonly avoidErrorHandlingKeys = [
+        'CRM/Dashboard/GetContactsByCompanySize',
+        'CRM/Dashboard/GetRecentlyCreatedLeads',
+        'CRM/Dashboard/GetContactAndLeadStats',
+        'CRM/Dashboard/GetContactsByRegion',
         'Platform/User/GetUserCount',
-        'odata/OrderCount',
-        'odata/SubscriptionSlice'
+        'CRM/Dashboard/GetTotals',
+        'odata/SubscriptionSlice',
+        'odata/OrderCount'
     ];
 
     constructor(

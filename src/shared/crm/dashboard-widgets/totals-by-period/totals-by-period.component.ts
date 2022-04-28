@@ -7,7 +7,10 @@ import {
     Inject,
     OnDestroy,
     ChangeDetectorRef,
-    ElementRef
+    EventEmitter,
+    ElementRef,
+    Input,
+    Output
 } from '@angular/core';
 import { DOCUMENT, DecimalPipe } from '@angular/common';
 
@@ -64,6 +67,11 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
+    @Input() waitFor$: Observable<any> = of().pipe(
+        publishReplay(), refCount()
+    );
+    @Output() loadComplete: EventEmitter<any> = new EventEmitter();
+
     totalsData: any[] = [];
     totalsData$: Observable<GetCustomerAndLeadStatsOutput[]>;
     startDate: any;
@@ -100,11 +108,10 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
     ];
 
     private cumulativeOptionCacheKey = 'CRM_Dashboard_TotalsByPeriod_IsCumulative_' + this.sessionService.tenantId + '_' + this.sessionService.userId;
-    private isCumulative: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(
-        this.cacheService.get(this.cumulativeOptionCacheKey) !== null ?
-            !!+this.cacheService.get(this.cumulativeOptionCacheKey) :
-            this.selectItems[0].value
-    );
+    private lastIsCumulative: boolean = this.cacheService.get(this.cumulativeOptionCacheKey) !== null ?
+        !!+this.cacheService.get(this.cumulativeOptionCacheKey) :
+        this.selectItems[0].value
+    private isCumulative: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(this.lastIsCumulative);
     isCumulative$: Observable<boolean> = this.isCumulative.asObservable().pipe(distinctUntilChanged());
     selectedPeriod: TotalsByPeriodModel = this.periods.find(period => period.name === 'Daily');
 
@@ -154,20 +161,26 @@ export class TotalsByPeriodComponent implements DoCheck, OnInit, OnDestroy {
             takeUntil(this.destroy$),
             tap(() => this.loadingService.startLoading()),
             switchMap(([period, isCumulative, contactId, contactGroupId, orgUnitIds, ]:
-                             [PeriodModel, boolean, number, string, number[], null]) => {
+                [PeriodModel, boolean, number, string, number[], null]) => {
                 const totalsByPeriodModel = this.savePeriod(period);
-                return this.loadCustomersAndLeadsStats(
-                    totalsByPeriodModel,
-                    period.from,
-                    period.to,
-                    isCumulative,
-                    contactId,
-                    contactGroupId,
-                    orgUnitIds
-                ).pipe(
-                    catchError(() => of([])),
-                    finalize(() => this.loadingService.finishLoading())
-                );
+                return (this.lastIsCumulative != isCumulative ? of(isCumulative) : this.waitFor$).pipe(first(), switchMap(() =>
+                    this.loadCustomersAndLeadsStats(
+                        totalsByPeriodModel,
+                        period.from,
+                        period.to,
+                        isCumulative,
+                        contactId,
+                        contactGroupId,
+                        orgUnitIds
+                    ).pipe(
+                        catchError(() => of([])),
+                        finalize(() => {
+                            this.loadComplete.next();
+                            this.lastIsCumulative = isCumulative;
+                            this.loadingService.finishLoading();
+                        })
+                    )
+                ));
             }),
             publishReplay(),
             refCount()

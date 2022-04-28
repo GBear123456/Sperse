@@ -15,8 +15,7 @@ import { ICountryState } from './country-state.interface';
 @Component({
     templateUrl: './filter-states.component.html',
     styleUrls: ['./filter-states.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    // providers: [ FilterStatesService ]
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FilterStatesComponent implements FilterComponent, OnInit {
     items: {
@@ -73,5 +72,4 @@ export class FilterStatesComponent implements FilterComponent, OnInit {
     updateValues($event) {
         this.items.countryStates.list = $event.component.getNodes();
     }
-
 }

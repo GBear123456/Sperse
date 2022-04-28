@@ -74,7 +74,8 @@
             [filterModel]="filterModelAssignment"
             [proxyService]="contactProxy"
             [permissionKey]="permissions.CRMCustomersManageAssignments"
-            [assignedUsersSelector]="assignedUsersSelector$ | async">
+            [assignedUsersSelector]="assignedUsersSelector$ | async"
+            [postponedLoad]="loadAssignUsersList.asObservable()">
         </user-assignment-list>
         <rating [selectedKeys]="selectedClientKeys"
                 [bulkUpdateMode]="true"

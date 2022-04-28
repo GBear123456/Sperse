@@ -12,12 +12,14 @@ import { CurrencyPipe } from '@angular/common';
 import { Params } from '@angular/router';
 
 /** Third party imports */
+import moment from 'moment-timezone';
 import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { BehaviorSubject, combineLatest, concat, forkJoin, Observable, of } from 'rxjs';
+import { Subject, BehaviorSubject, combineLatest, 
+    concat, forkJoin, Observable, of } from 'rxjs';
 import {
     catchError,
     distinctUntilChanged,
@@ -159,7 +161,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private orderSubscriptionStatusFilter = this.getSubscriptionsFilter();
     private subscriptionStatusFilter = this.getSubscriptionsFilter();
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
-    public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || undefined);
+    public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || ContactGroup.Client);
     showCompactView$: Observable<Boolean> = combineLatest(
         this.dataLayoutType$,
         this.pipelineService.compactView$,
@@ -293,6 +295,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             }
         })
     ];
+    subscriptionStatuses = Object.keys(SubscriptionsStatus).filter(status => 
+        ![SubscriptionsStatus.Upgraded, SubscriptionsStatus.Draft].includes(SubscriptionsStatus[status])
+    ).map(status => {
+        return {
+            id: SubscriptionsStatus[status],
+            name: startCase(status)
+        };
+    });
     private subscriptionsFilters: FilterModel[] = [
         new FilterModel({
             component: FilterCalendarComponent,
@@ -326,10 +336,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             items: {
                 element: new FilterCheckBoxesModel(
                     {
-                        dataSource: Object.keys(SubscriptionsStatus).map((status: string) => ({
-                            id: SubscriptionsStatus[status],
-                            name: startCase(status)
-                        })),
+                        dataSource: this.subscriptionStatuses,
                         value: [SubscriptionsStatus.CurrentActive],
                         nameField: 'name',
                         keyExpr: 'id'
@@ -427,6 +434,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             beforeSend: (request) => {
                 request.params.contactGroupId = this.selectedContactGroup.value; 
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 request.params.$select = DataGridService.getSelectFields(
                     this.subscriptionsGrid,
                     [
@@ -439,6 +447,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             onLoaded: (records) => {
                 if (records instanceof Array)
                     this.subscriptionsDataSource['entities'] = (this.subscriptionsDataSource['entities'] || []).concat(records);
+                this.loadTotalsRequest.next();
+            },
+            errorHandler: (error) => {
+                setTimeout(() => this.isDataLoaded = true);
             }
         })
     });
@@ -446,11 +458,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     subscriptionGroupDataSourceURI = 'SubscriptionSlice';
     pivotGridDataIsLoading: boolean;
-    private refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
-    refresh$: Observable<null> = this.refresh.asObservable();
     filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
+    loadTotalsRequest: Subject<ODataRequestValues> = new Subject<ODataRequestValues>(); 
+    loadTotalsRequest$: Observable<ODataRequestValues> = this.loadTotalsRequest.asObservable();
     ordersODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Order);
     subscriptionsODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Subscription);
     private search: BehaviorSubject<string> = new BehaviorSubject<string>(this.searchValue);
@@ -558,8 +570,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ordersSum: number;
     ordersSummary$: Observable<OrderStageSummary> = combineLatest(
         this.ordersODataRequestValues$,
-        this.search$,
-        this.refresh$
+        this.search$
     ).pipe(
         debounceTime(600),
         takeUntil(this.destroy$),
@@ -567,7 +578,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.selectedOrderType.value === OrderType.Order && 
             this.dataLayoutType.value === DataLayoutType.DataGrid
         ),
-        map(([oDataRequestValues, search, refresh]: [ODataRequestValues, string, any]) => {
+        map(([oDataRequestValues, search]: [ODataRequestValues, string]) => {
             return this.getODataUrl(this.orderCountDataSourceURI, oDataRequestValues.filter, null,
                 [...this.getSubscriptionsParams(), ...oDataRequestValues.params]);
         }),
@@ -598,39 +609,40 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     subscriptionsTotalOrderAmount: number;
     subscriptionsSummary$: Observable<any> = combineLatest(
         this.subscriptionsODataRequestValues$,
-        this.search$,
-        this.refresh$
+        this.search$
     ).pipe(
         debounceTime(600),
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated && 
             this.selectedOrderType.value === OrderType.Subscription
         ),
-        map(([oDataRequestValues, search, refresh]: [ODataRequestValues, string, any]) => {
-            return this.getODataUrl(
-                this.subscriptionGroupDataSourceURI,
-                oDataRequestValues.filter,
-                null,
-                [
-                    ...this.getSubscriptionsParams(),
-                    ...oDataRequestValues.params,
-                    {
-                        name: 'totalSummary',
-                        value: JSON.stringify([
-                            { 'summaryType': 'count' },
-                            { 'selector': 'OrderAmount', 'summaryType': 'sum' },
-                            { 'selector': 'Fee', 'summaryType': 'sum' }
-                        ])
-                    },
-                    {
-                        name: 'take',
-                        value: 1
-                    },
-                    {
-                        name: 'select',
-                        value: '["Id"]'
-                    }
-                ]
+        switchMap(([oDataRequestValues, search]: [ODataRequestValues, string]) => {
+            return (this.subscriptionsDataSource.isLoading() ? this.loadTotalsRequest$: of(oDataRequestValues)).pipe(
+                first(), map(() => this.getODataUrl(
+                    this.subscriptionGroupDataSourceURI,
+                    oDataRequestValues.filter,
+                    null,
+                    [
+                        ...this.getSubscriptionsParams(),
+                        ...oDataRequestValues.params,
+                        {
+                            name: 'totalSummary',
+                            value: JSON.stringify([
+                                { 'summaryType': 'count' },
+                                { 'selector': 'OrderAmount', 'summaryType': 'sum' },
+                                { 'selector': 'Fee', 'summaryType': 'sum' }
+                            ])
+                        },
+                        {
+                            name: 'take',
+                            value: 1
+                        },
+                        {
+                            name: 'select',
+                            value: '["Id"]'
+                        }
+                    ]
+                ))
             );
         }),
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
@@ -813,14 +825,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.ordersSummary$.subscribe((ordersSummary: OrderStageSummary) => {
             this.ordersSum = ordersSummary.sum;
             this.ordersDataSource['total'] = this.totalCount = ordersSummary.count;
+            if (this.ordersGrid)
+                this.ordersGrid.instance.repaint();
         });
         this.subscriptionsSummary$.subscribe((data) => {
             this.subscriptionsDataSource['total'] = this.totalCount = data.summary[0];
             this.subscriptionsTotalOrderAmount = data.summary[1];
             this.subscriptionsTotalFee = data.summary[2];
-            if (this.subscriptionsGrid) {
+            if (this.subscriptionsGrid)
                 this.subscriptionsGrid.instance.repaint();
-            }
         });
         this.selectedOrderType$.subscribe((selectedOrderType: OrderType) => {
             this.changeOrderType(selectedOrderType);
@@ -899,6 +912,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.params.$select = DataGridService.getSelectFields(
                         this.ordersGrid,
@@ -914,6 +928,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     let dataSource = this.showOrdersPipeline ? this.pipelineDataSource : this.ordersDataSource;
                     if (records instanceof Array)
                         dataSource['entities'] = (dataSource['entities'] || []).concat(records);
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             }
         };
@@ -1456,8 +1473,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     invalidate() {
         this.selectedOrders = [];
-        this.processFilterInternal();
-        this.refresh.next(null);
+        this.filtersService.change([]);
         this.filterChanged = true;
     }
 
@@ -1535,6 +1551,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             let context: any = this;
             let grid: any;
 
+            this.initDataSource();
             if (this.selectedOrderType.value === OrderType.Order) {
                 grid = this.ordersGrid;
                 this.ordersDataSource['entities'] = this.ordersDataSource['total'] = undefined;
@@ -1783,7 +1800,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         if (event.itemData.value != this.selectedContactGroup.value) {
             this.selectedContactGroup.next(event.itemData.value);
-            this.processFilterInternal();
+            this.filtersService.change([this.contactGroupFilter]);
         }
     }
 
@@ -1798,10 +1815,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.initOrdersToolbarConfig();
         else
             this.initSubscriptionsToolbarConfig();
-        setTimeout(() => {
-            this.initDataSource();
-            this.invalidate();
-        });
+        setTimeout(() => this.invalidate());
     }
 
     showContactDetails(event, section?: string, queryParams?: Params) {
@@ -1852,6 +1866,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.searchClear = false;
         this.filtersService.unsubscribe();
         this.hideHostElement();
+    }
+
+    calculateStatusDisplayValue = (data) => {
+        if (data.StatusId == SubscriptionsStatus.CurrentActive)
+            return this.l(moment().diff(data.EndDate) > 0 ? 'Expired' : 'Active');
+        else if (data.StatusId == SubscriptionsStatus.Cancelled)
+            return this.l('Cancelled');
+        else if (data.StatusId == SubscriptionsStatus.Upgraded)
+            return this.l('Upgraded');
+        else
+            return this.l('Draft');
     }
 
     ngOnDestroy() {
