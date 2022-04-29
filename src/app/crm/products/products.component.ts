@@ -102,6 +102,9 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                 this.dataGrid, [this.productFields.Id]
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+        },
+        errorHandler: (error) => {
+            setTimeout(() => this.isDataLoaded = true);
         }
     };
 

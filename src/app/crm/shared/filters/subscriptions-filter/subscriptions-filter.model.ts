@@ -16,6 +16,7 @@ export class SubscriptionsFilterModel extends FilterItemModel {
 
     public constructor(init?: Partial<SubscriptionsFilterModel>) {
         super(init, true);
+        this.disableOuterScroll = true;
     }
 
     get value() {

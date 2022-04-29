@@ -39,6 +39,9 @@ export class ActivityLogsComponent extends AppComponentBase {
                 beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.params.$select = DataGridService.getSelectFields(this.dataGrid);
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             }),
             filter: [ 'ApplicantUserId', '=', +this.userService['data'].userId ]

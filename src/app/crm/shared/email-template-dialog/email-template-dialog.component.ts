@@ -226,8 +226,12 @@ export class EmailTemplateDialogComponent implements OnInit {
                 this.data.cc.push(from.ccEmailAddress);
                 this.data.cc = this.data.cc.map((item, index) => {
                     if (this.data.cc.some((item2, index2) => {
-                        if (index2 > index)
-                            return item2.includes(item) || item.includes(item2);
+                        if (index2 > index) {
+                            let firstItem = item.toLowerCase(),
+                                secondItem = item2.toLowerCase();
+                            return secondItem.includes(firstItem) 
+                                || firstItem.includes(secondItem);
+                        }
                         return false;
                     }))
                         return undefined;
@@ -498,7 +502,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     onCustomItemCreating(event, callback?) {
         let field = event.component.option('name'),
-            values = event.text.split(/[,|;]+(?=(?:(?:[^"]*"){2})*[^"]*$)/),
+            values = event.text.trim().split(/[,|;]+(?=(?:(?:[^"]*"){2})*[^"]*$)/),
             validValues = [], invalidValues = [],
             currentList = this.data[field];
 

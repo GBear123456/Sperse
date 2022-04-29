@@ -184,6 +184,9 @@ export class OffersComponent extends AppComponentBase implements OnInit, OnDestr
                         this.dataGrid,
                         [ this.offerFields.Id, this.offerFields.CampaignId, this.offerFields.Rank ]
                     );
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             }),
             sort: [

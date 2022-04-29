@@ -206,6 +206,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         });
                         this.changeDetectorRef.detectChanges();
                     }
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             })
         });

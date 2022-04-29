@@ -85,7 +85,8 @@ export class AppSessionService {
     }
 
     get hideUserSourceFilters(): boolean {
-        return this.layoutType != LayoutType.BankCode || !this.user || this.user.groups.every(group => group !== UserGroup.Employee && group !== UserGroup.Partner);
+        return this.layoutType == LayoutType.BankCode && this.user && 
+            this.user.groups.every(group => group !== UserGroup.Employee && group !== UserGroup.Partner);
     }
 
     get theme(): UiCustomizationSettingsDto {

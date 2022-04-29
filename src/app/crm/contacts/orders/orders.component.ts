@@ -94,6 +94,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
                     this.dataGrid.instance.cancelEditData();
                     this.dataGrid.instance.endCustomLoading();
                 },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
+                },
                 deserializeDates: false
             })
         });

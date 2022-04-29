@@ -119,21 +119,21 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
     }
 
     handleError(error: any) {
-        if (error.url || error.httpStatus == 0) { //!! dxDataGrid error handling
+        if (error.url || error.httpStatus == 0) { //!! dxDataGrid && OData error handling
             error.name = error.url ? error.name : '';
-            error.message = error.url ? this.configuration.defaultError.message : '';
+            error.message = this.configuration.defaultError.message;
             error.url = '';
         } else if (error.requestOptions && error.requestOptions.url.indexOf('odata') > 0) {
             error.url = '';
             error.name = error.name;
             error.message = this.configuration.defaultError.message;
-        } else {
-            if (!error.error)
-                error.error = new Blob([JSON.stringify(error.errorDetails || error)]);
-            if (error.httpStatus)
-                error.status = error.httpStatus;
-            return this.handleErrorResponseInternal(error);
         }
+
+        if (!error.error)
+            error.error = new Blob([JSON.stringify(error.errorDetails || error)]);
+        if (error.httpStatus)
+            error.status = error.httpStatus;
+            return this.handleErrorResponseInternal(error);
     }
 
     protected normalizeRequestHeaders(request: HttpRequest<any>): HttpRequest<any> {

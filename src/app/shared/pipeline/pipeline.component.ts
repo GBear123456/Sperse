@@ -524,10 +524,8 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
 
     private loadData(page = 0, stageIndex?: number, oneStageOnly = false): Observable<any> {
         const entities$ = this.loadStagesEntities(page, stageIndex, oneStageOnly, false);
-        entities$.subscribe((result) => {
+        entities$.subscribe(() => {
             this.stageId = undefined;
-            if (result && this.totalsURI && !oneStageOnly)
-                this.processTotalsRequest(this.queryWithSearch);
         });
         return entities$;
     }
@@ -619,6 +617,9 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 () => {
                     stage.isLoading = false;
                     this.detectChanges();
+
+                    if (this.totalsURI && !oneStageOnly && stages.every(stage => !stage.isLoading))
+                        this.processTotalsRequest(this.queryWithSearch);
                 },
                 (error) => {
                     stage.isLoading = false;

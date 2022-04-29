@@ -178,6 +178,9 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
                             return 'departments=' + (item == this.noDepartmentItem ? '' : item);
                         }).join('&');
                     }
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             })
         });

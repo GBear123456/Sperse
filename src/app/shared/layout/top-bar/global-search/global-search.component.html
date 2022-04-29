@@ -34,7 +34,7 @@
                                     <li class="entity" (click)="moveToEntityDetails($event, entity, group.link)">
                                         <img [src]="getContactPhotoUrl(entity.PhotoPublicId)">
                                         <div>
-                                            <a>{{ entity.Name || ( (entity.FirstName || '') + ' ' + (this.entity.LastName || '') )}}</a>
+                                            <a>{{ entity.FullName || entity.Name || ( (entity.FirstName || '') + ' ' + (this.entity.LastName || '') )}}</a>
                                             <p>{{ entity.Email || entity.EmailAddress }}</p>
                                         </div>
                                     </li>

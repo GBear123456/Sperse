@@ -9,9 +9,14 @@ import { LogService } from 'abp-ng2-module';
 export class AppHttpConfiguration extends AbpHttpConfigurationService {
     avoidErrorHandling = false;
     private readonly avoidErrorHandlingKeys = [
+        'CRM/Dashboard/GetContactsByCompanySize',
+        'CRM/Dashboard/GetRecentlyCreatedLeads',
+        'CRM/Dashboard/GetContactAndLeadStats',
+        'CRM/Dashboard/GetContactsByRegion',
         'Platform/User/GetUserCount',
-        'odata/OrderCount',
-        'odata/SubscriptionSlice'
+        'CRM/Dashboard/GetTotals',
+        'odata/SubscriptionSlice',
+        'odata/OrderCount'
     ];
 
     constructor(

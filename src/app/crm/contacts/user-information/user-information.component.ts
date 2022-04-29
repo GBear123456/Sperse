@@ -178,7 +178,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
     ngAfterViewInit() {
         this.contactsService.settingsDialogOpened$.pipe(
             takeUntil(this.lifecycleSubjectService.destroy$),
-            debounceTime(300)
+            debounceTime(1000)
         ).subscribe(opened => {
             this.toggleOrgUnitsDialog(opened);
         });
