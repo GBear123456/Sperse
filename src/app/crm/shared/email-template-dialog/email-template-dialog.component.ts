@@ -67,6 +67,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     ckEditor: any;
     templateLoaded: boolean;
     emailSettingsSource: EmailSettingsSource;
+    fromDataSource = [];
     showCC = false;
     showBCC = false;
     tagLastValue: string;
@@ -180,7 +181,10 @@ export class EmailTemplateDialogComponent implements OnInit {
                 ).subscribe((res: GetEmailDataOutput) => {
                     this.data.tags = res.tags;
                     if (res.from && res.from.length)
-                        this.data.from = res.from;
+                        this.fromDataSource = res.from;
+                    else if (this.data.from)
+                        this.fromDataSource = this.data.from instanceof Array ? 
+                            this.data.from : [this.data.from];
                     this.initFromField();
                 });
             } else
@@ -204,15 +208,9 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     initFromField() {
-        if (this.data.from instanceof Array && this.data.from.length) {
-            let from = this.data.from.find(item => item.emailSettingsSource == EmailSettingsSource.User);
-            if (from) {
-                this.emailSettingsSource = from.emailSettingsSource;
-            } else {
-                from = this.data.from[0];
-                this.emailSettingsSource = from.emailSettingsSource;
-            }
-            this.data.emailSettingsSource = this.emailSettingsSource;
+        if (this.fromDataSource.length) {
+            let from = this.fromDataSource.find(item => item.emailSettingsSource == EmailSettingsSource.User);
+            this.emailSettingsSource = (from ? from : this.fromDataSource[0]).emailSettingsSource;
             this.checkUpdateCCFromEmail(from);
         }
     }
@@ -309,7 +307,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                     this.notifyService.error(rule.message);
                 });
 
-            if (!this.data.from)
+            if (!this.fromDataSource.length)
                 return this.notifyService.error(
                     this.ls.l('MailerSettingsAreNotConfigured', this.ls.l('SMTP')), 
                     this.ls.l('RequiredField', this.ls.l('From'))
@@ -484,13 +482,12 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onFromChanged(event) {
-        let from = this.data.from.find(
+        let from = this.fromDataSource.find(
             item => item.emailSettingsSource == event.value
         );
         if (from) {
-            this.data.emailSettingsSource = from.emailSettingsSource;
             if (this.data.cc && this.data.cc.length)
-                this.data.from.forEach(item => {
+                this.fromDataSource.forEach(item => {
                     let index = this.data.cc.indexOf(item.ccEmailAddress);
                     if (index >= 0)
                         this.data.cc.splice(index, 1);                    
