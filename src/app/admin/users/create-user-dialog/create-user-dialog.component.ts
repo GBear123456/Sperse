@@ -40,6 +40,7 @@ import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 import { AppStoreService } from '@app/store/app-store.service';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
+import { CountryPhoneNumberComponent } from '@shared/common/phone-numbers/country-phone-number.component';
 
 @Component({
     templateUrl: 'create-user-dialog.component.html',
@@ -55,6 +56,7 @@ import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload
 export class CreateUserDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
     @ViewChild(DxContextMenuComponent, { static: false }) saveContextComponent: DxContextMenuComponent;
+    @ViewChild(CountryPhoneNumberComponent, { static: false }) phoneComponent: CountryPhoneNumberComponent;
 
     user = new UserEditDto();
     roles: UserRoleDto[];
@@ -135,7 +137,7 @@ export class CreateUserDialogComponent implements OnInit {
             .pipe(
                 tap((userResult: GetUserForEditOutput) => {
                     this.user = userResult.user;
-                    this.user.phoneNumber = '+1';
+                    this.user.phoneNumber = AppConsts.defaultCountryPhoneCode;
                     this.roles = userResult.roles;
                     this.initialRoles = this.roles.map((role) => {
                         return _.clone(role);
@@ -165,7 +167,6 @@ export class CreateUserDialogComponent implements OnInit {
     }
 
     setPasswordComplexityInfo(): void {
-
         this.passwordComplexityInfo = '<ul>';
 
         if (this.passwordComplexitySetting.requireDigit) {
@@ -216,7 +217,7 @@ export class CreateUserDialogComponent implements OnInit {
         } else
             return this.notifyService.error(this.ls.l('EmailIsRequired'));
 
-        if (!this.validatePhoneNumber(this.user.phoneNumber))
+        if (!this.phoneComponent.isValid())
             return this.notifyService.error(this.ls.l('PhoneValidationError'));
 
         return true;
@@ -235,9 +236,11 @@ export class CreateUserDialogComponent implements OnInit {
 
         let input = new CreateOrUpdateUserInput();
 
-        input.user = this.user;
+        Object.assign(input.user, this.user);
         input.user.group = UserGroup[this.userGroup];
         input.user.userName = this.user.emailAddress;
+        if (this.phoneComponent.isEmpty())
+            input.user.phoneNumber = undefined;
         input.setRandomPassword = this.setRandomPassword;
         input.sendActivationEmail = this.sendActivationEmail;
         input.assignedRoleNames = this.roles.filter((role: UserRoleDto) => role.isAssigned)
@@ -260,10 +263,6 @@ export class CreateUserDialogComponent implements OnInit {
 
     validateEmailAddress(value): boolean {
         return this.emailRegEx.test(value);
-    }
-
-    validatePhoneNumber(value): boolean {
-        return !value || this.phoneRegEx.test(value);
     }
 
     showUploadPhoto($event) {
@@ -295,7 +294,7 @@ export class CreateUserDialogComponent implements OnInit {
             this.user = new UserEditDto();
             this.user.shouldChangePasswordOnNextLogin = true;
             this.user.isActive = true;
-            this.user.phoneNumber = '+1';
+            this.user.phoneNumber = AppConsts.defaultCountryPhoneCode;
             this.user.isLockoutEnabled = true;
             this.photoOriginalData = undefined;
             this.photoThumbnailData = undefined;

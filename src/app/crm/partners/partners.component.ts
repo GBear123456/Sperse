@@ -8,7 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, concat, merge, Observable, of, forkJoin, from } from 'rxjs';
+import { Subject, BehaviorSubject, combineLatest, concat, 
+    merge, Observable, of, forkJoin, from } from 'rxjs';
 import {
     filter,
     first,
@@ -396,6 +397,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         },
         onChanged: () => {
             this.pivotGridDataIsLoading = false;
+            this.loadTotalsRequest.next();
         },
         fields: [
             {
@@ -502,6 +504,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 })
             ).toPromise().then((result: any) => {
                 this.chartDataUrl = null;
+                this.loadTotalsRequest.next();
                 if (result) {
                     result = this.crmService.parseChartData(result);
                     this.chartInfoItems = result.infoItems;
@@ -525,6 +528,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     totalErrorMsg: string;
     toolbarConfig: ToolbarGroupModel[];
     private filters: FilterModel[] = this.getFilters();
+    loadTotalsRequest: Subject<ODataRequestValues> = new Subject<ODataRequestValues>(); 
+    loadTotalsRequest$: Observable<ODataRequestValues> = this.loadTotalsRequest.asObservable();
     odataRequestValues$: Observable<ODataRequestValues> = concat(
         this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom),
         this.filterChanged$.pipe(
@@ -579,6 +584,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         onLoaded: (records) => {
             if (records instanceof Array)
                 this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
+            this.loadTotalsRequest.next();
+        },
+        errorHandler: (error) => {
+            setTimeout(() => this.isDataLoaded = true);
         }
     };
 
@@ -718,8 +727,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.odataRequestValues$,
             this.refresh$
         ).pipe(
-            takeUntil(this.lifeCycleSubjectsService.destroy$)
-        ).subscribe(([odataRequestValues, ]: [ODataRequestValues, null]) => {
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            switchMap(([odataRequestValues, ]: [ODataRequestValues, null]) => {
+                return this.loadTotalsRequest$.pipe(first(), map(() => odataRequestValues));
+            })
+        ).subscribe((odataRequestValues: ODataRequestValues) => {
             let url = this.getODataUrl(
                 this.totalDataSourceURI,
                 odataRequestValues.filter,

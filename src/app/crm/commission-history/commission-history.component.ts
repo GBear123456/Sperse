@@ -183,6 +183,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         this.commissionFields.ResellerContactId
                     ]
                 );
+            },
+            errorHandler: (error) => {
+                setTimeout(() => this.isDataLoaded = true);
             }
         })
     });
@@ -201,6 +204,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     this.ledgerDataGrid,
                     [this.ledgerFields.Id, this.ledgerFields.ContactId]
                 );
+            },
+            errorHandler: (error) => {
+                setTimeout(() => this.isDataLoaded = true);
             }
         })
     });
@@ -219,6 +225,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     this.resellersDataGrid,
                     [this.resellersFields.Id]
                 );
+            },
+            errorHandler: (error) => {
+                setTimeout(() => this.isDataLoaded = true);
             }
         })
     });

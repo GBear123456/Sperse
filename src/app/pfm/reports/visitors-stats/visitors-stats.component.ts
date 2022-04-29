@@ -46,6 +46,9 @@ export class VisitorsStatsComponent extends AppComponentBase {
                     this.fieldsDependencies
                 );
                 request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+            },
+            errorHandler: (error) => {
+                setTimeout(() => this.isDataLoaded = true);
             }
         })
     });

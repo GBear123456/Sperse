@@ -10,6 +10,7 @@ import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { select, Store } from '@ngrx/store';
 import {
+    Subject,
     BehaviorSubject,
     combineLatest,
     concat,
@@ -495,6 +496,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         filter(() => this.componentIsActivated)
     );
     odataRequestValues$: Observable<ODataRequestValues>;
+    loadTotalsRequest: Subject<ODataRequestValues> = new Subject<ODataRequestValues>(); 
+    loadTotalsRequest$: Observable<ODataRequestValues> = this.loadTotalsRequest.asObservable();
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
@@ -520,6 +523,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.leadFields.Phone,
         this.leadFields.Amount
     ]; 
+    loadAssignUsersList: Subject<any> = new Subject<null>();
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
@@ -603,6 +607,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         let dataSource = this.showPipeline ? this.pipelineDataSource : this.dataSource;
                         if (records instanceof Array)
                             dataSource['entities'] = (dataSource['entities'] || []).concat(records);
+                        this.loadTotalsRequest.next();
+                    },
+                    errorHandler: (error) => {
+                        setTimeout(() => this.isDataLoaded = true);
                     },
                     deserializeDates: false
                 }
@@ -900,10 +908,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.odataRequestValues$,
             this.refresh$
         ).pipe(
-            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            debounceTime(300),
             filter(() => !this.showPipeline),
-            debounceTime(300)
-        ).subscribe(([odataRequestValues, ]) => {
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            switchMap(([odataRequestValues, ]: [ODataRequestValues, null]) => {
+                return this.loadTotalsRequest$.pipe(first(), map(() => odataRequestValues));
+            })
+        ).subscribe((odataRequestValues: ODataRequestValues) => {
             let url = this.getODataUrl(this.totalDataSourceURI,
                 odataRequestValues.filter, null, odataRequestValues.params);
             if (url && this.oDataService.requestLengthIsValid(url)) {
@@ -2276,6 +2287,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onTotalChange(totalCount: number) {
         this.totalCount = totalCount;
+        this.loadAssignUsersList.next();
     }
 
     openEntityChecklistDialog(data?) {

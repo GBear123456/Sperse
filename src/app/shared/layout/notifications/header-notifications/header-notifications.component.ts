@@ -181,7 +181,7 @@ export class HeaderNotificationsComponent implements OnInit {
                 this.router.navigate(['app/crm/contact', notification.entityId]);
                 setTimeout(() => this.itemDetailsService.clearItemsSource());
             } else if (notification.entityTypeName == this.COMMUNICATION_MESSAGE_ENTITY_TYPE) {
-                this.router.navigate(['app/crm/contact', notification.entityId, 'user-inbox']);
+                this.userNotificationHelper.navigateToUserInbox(notification);
                 setTimeout(() => this.itemDetailsService.clearItemsSource());
             }
         } else if (notification.url) {

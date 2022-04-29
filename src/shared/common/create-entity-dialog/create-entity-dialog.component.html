@@ -15,13 +15,14 @@
     </app-static-list>
     <app-static-list #statusesList
             [width]="'180px'"
-            [title]="ls.l('Status')"
-            [selectedKeys]="[statusId]"
+            [title]="ls.l('Toolbar_Groups')"
+            [selectedKeys]="[data.customerType]"
             [showConfirmation]="false"
             [highlightSelected]="true"
             [hideButtons]="true"
             targetSelector="#ClientStatus"
             [list]="statuses"
+            [disabled]="true"
             (onItemSelected)="onStatusChanged($event)">
     </app-static-list>
     <source-contact-list
@@ -132,10 +133,10 @@
         </div>
 
         <ng-template #notLead>
-            <dxi-item *ngIf="data.customerType === contactGroups.Client" location="before" template="status"></dxi-item>
+            <dxi-item *ngIf="data.customerType === contactGroups.Client" [visible]="false" location="before" template="status"></dxi-item>
             <div *dxTemplate="let data of 'status'">
                 <dx-button id="ClientStatus"
-                           [text]="ls.l('Status')"
+                           [text]="ls.l('Group')"
                            [icon]="'./assets/common/icons/status-icon.svg'"
                            [ngClass]="{ 'filter-selected': isStatusSelected }"
                            (onClick)="toggleStatus()">

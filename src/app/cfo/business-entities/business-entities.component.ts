@@ -89,6 +89,9 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                         ],
                         this.fieldsDependencies
                     );
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             })
         });

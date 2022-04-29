@@ -29,17 +29,25 @@
                     </div>
                     <div class="m-alert__text">
                         <div class="row">
-                            <label class="control-label col-sm-2">{{ls.l('AffiliateCode')}}:</label>
+                            <label class="control-label col-sm-2 left-side">{{ls.l('AffiliateCode')}}:</label>
                             <p class="form-control-static" [ngClass]="{code: hasCommissionsFeature}" [title]="affiliate.affiliateCode || ''">
                                 {{affiliate.affiliateCode}}
                             </p>
                         </div>
-                        <div *ngIf="hasCommissionsFeature; else contact" class="row">
-                            <label class="control-label col-sm-2 text-right">{{ls.l('AffiliateRate')}}:</label>
-                            <p class="form-control-static">
-                                {{affiliate.affiliateRate === null ? '' : (affiliate.affiliateRate * 100).toFixed(2) + '%'}}
-                            </p>
-                        </div>
+                        <ng-container *ngIf="hasCommissionsFeature; else contact"> 
+                            <div class="row">
+                                <label class="control-label col-sm-2 left-side">{{ls.l('AffiliateRateTier1')}}:</label>
+                                <p class="form-control-static">
+                                    {{affiliate.affiliateRate === null ? '' : (affiliate.affiliateRate * 100).toFixed(2) + '%'}}
+                                </p>
+                            </div>
+                            <div class="row">
+                                <label class="control-label col-sm-2 left-side">{{ls.l('AffiliateRateTier2')}}:</label>
+                                <p class="form-control-static">
+                                    {{affiliate.affiliateRateTier2 === null ? '' : (affiliate.affiliateRateTier2 * 100).toFixed(2) + '%'}}
+                                </p>
+                            </div>
+                        </ng-container>
                         <ng-template #contact>
                             <ng-container *ngTemplateOutlet="affiliateTemplate;context:{affiliate: affiliate}"></ng-container>
                         </ng-template>

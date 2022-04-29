@@ -154,5 +154,4 @@ export class BankCodeLettersEditorDialogComponent implements AfterViewInit {
         arr.splice(toIndex, 0, element);
         return arr;
     }
-
 }

@@ -58,6 +58,9 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.params.$select = DataGridService.getSelectFields(this.dataGrid, [this.importListFields.Id]);
                 },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
+                },
                 key: this.importListFields.Id
             })
         });

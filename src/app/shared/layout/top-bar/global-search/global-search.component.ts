@@ -226,8 +226,7 @@ export class GlobalSearchComponent implements OnInit {
             AppPermissions.CRMOrders,
             [
                 SubscriptionFields.Id,
-                SubscriptionFields.FirstName,
-                SubscriptionFields.LastName,
+                SubscriptionFields.FullName,
                 SubscriptionFields.EmailAddress,
                 SubscriptionFields.PhotoPublicId,
                 SubscriptionFields.LeadId,
