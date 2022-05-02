@@ -79,6 +79,7 @@ import { AddOrEditSSLBindingModalComponent } from './settings/modals/add-or-edit
 import { CreateUserDialogComponent } from './users/create-user-dialog/create-user-dialog.component';
 import { PaymentInfoModule } from '@shared/common/widgets/payment-info/payment-info.module';
 import { ContactsModule } from '../crm/contacts/contacts.module';
+import { OrganizationUnitsTreeComponent } from './shared/organization-units-tree/organization-units-tree.component';
 import { ModulesEditionsSelectComponent, ClearIconSvgComponent } from '@admin/tenants/modules-edtions-select.component.ts/modules-editions-select.component';
 import { ItemDetailsLayoutModule } from '@shared/common/item-details-layout/item-details-layout.module';
 import { LoadingSpinnerModule } from '@app/shared/common/loading-spinner/loading-spinner.module';
@@ -148,6 +149,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
         PermissionComboComponent,
         RoleComboComponent,
         PermissionTreeComponent,
+        OrganizationUnitsTreeComponent,
         RolesComponent,
         CreateOrEditRoleModalComponent,
         AuditLogsComponent,
