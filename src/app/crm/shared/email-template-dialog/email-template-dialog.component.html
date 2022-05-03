@@ -41,7 +41,7 @@
                 <div class="row">
                     <div class="field-area from">
                         <label class="caption" [ngClass]="{disabled: templateEditMode}">{{ls.l('From')}}:</label>            
-                        <dx-select-box *ngIf="data?.from?.length || templateEditMode; else configure"
+                        <dx-select-box *ngIf="fromDataSource?.length || templateEditMode; else configure"
                             name="from"
                             width="calc(50% - 52px)"
                             height="40px"
