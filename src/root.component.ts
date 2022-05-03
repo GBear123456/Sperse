@@ -5,6 +5,7 @@ import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
 import kebabCase from 'lodash/kebabCase';
+import startCase from 'lodash/startCase';
 import * as _ from 'underscore';
 
 /** Core imports */
@@ -26,11 +27,10 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 export class RootComponent implements OnInit, AfterViewInit {    
     maintenanceSettings: MaintenanceSettingsDto;
     hideMaintenanceMessage: Boolean = true;
-    maintenanceMessage = '';
 
     constructor(
-        public loadingService: LoadingService,
         private router: Router,
+        private loadingService: LoadingService,
         private hostSettingsProxy: HostSettingsServiceProxy,
         private uiCustomizationService: AppUiCustomizationService,
         @Inject(AppSessionService) private SS,
@@ -48,8 +48,6 @@ export class RootComponent implements OnInit, AfterViewInit {
 
         this.hostSettingsProxy.getMaintenanceSettings().subscribe((res: MaintenanceSettingsDto) => {
             this.maintenanceSettings = res;
-            if (res.showMaintenanceMessage && res.maintenanceMessage)
-                this.maintenanceMessage = this.getMaintenanceMessageLink();
         });
     }
 
@@ -139,12 +137,25 @@ export class RootComponent implements OnInit, AfterViewInit {
     getMaintenanceMessageLink() {
         let message = this.maintenanceSettings.maintenanceMessage,
             email = this.maintenanceSettings.maintenanceEmailAddress;
-        if (email) {
-            if (message.indexOf('{0}') >= 0)            
-                return message.replace('{0}', '<a target="_blank" href="mailto:' + email + '">' + email + '</a>');
-            else
-                return '<a target="_blank" href="mailto:' + email + '">' + message + '</a>'
-        } else 
-            return message;
+        if (this.maintenanceSettings.showMaintenanceMessage && message) {
+            if (email) {
+                if (message.indexOf('{0}') >= 0)            
+                    return message.replace('{0}', this.getEmailLink(email, email));
+                else
+                    return this.getEmailLink(email, message);
+            } else 
+                return message;
+        }
+        return '';
+    }
+
+    getEmailLink(email, text) {
+        return '<a target="_blank" href="mailto:' + email + '?subject=New Request from ' + (this.SS.tenantName
+            || AppConsts.defaultTenantName) + ' - ' + this.getModuleName() + '">' + text + '</a>';
+    }
+
+    getModuleName() {
+        let path = document.location.href.match(/\/[app|account]{3,7}\/(\w*)[\/|$]?/);
+        return path ? startCase(path[1]) : AppConsts.modules.platformModule;
     }
 }
