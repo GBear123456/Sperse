@@ -27,7 +27,7 @@ import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { AppPreBootstrap } from './AppPreBootstrap';
-import { RootComponent } from './root.components';
+import { RootComponent } from './root.component';
 import { RootRoutingModule, AppPreloadingStrategy } from './root-routing.module';
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { RootStoreModule } from '@root/store';

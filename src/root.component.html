@@ -1,0 +1,10 @@
+<div *ngIf="maintenanceSettings?.showMaintenanceMessage" 
+    class="maintenance-message"
+    [ngClass]="{'show-message': !hideMaintenanceMessage}"
+    (mouseenter)="hideMaintenanceMessage=false"
+    (mouseleave)="hideMaintenanceMessage=true">
+    <div [hidden]="hideMaintenanceMessage" class="version">{{maintenanceSettings?.releaseDate.format('LL')}}&nbsp;(v{{maintenanceSettings?.version}})</div>
+    <span [hidden]="hideMaintenanceMessage" [innerHtml]="maintenanceMessage"></span>
+    <div [hidden]="!hideMaintenanceMessage" class="arrow-down"></div>
+</div>
+<router-outlet></router-outlet>

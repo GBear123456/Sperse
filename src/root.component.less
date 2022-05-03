@@ -179,3 +179,39 @@ button {
         }
     }
 }
+
+.maintenance-message {
+    height: 15px;
+    transition: height 0.15s ease-out;
+    cursor: pointer;
+    text-align: center;
+    background: yellow;
+    position: absolute;
+    width: 100%;
+    z-index: 1;
+
+    &.show-message {
+        height: 35px;
+    }
+
+    span {
+        display: block;
+        margin: 7px;
+    }
+
+    .version {
+        position: absolute;
+        padding: 7px;
+        right: 0;
+    }
+
+    .arrow-down {
+        width: 0; 
+        height: 0;
+        margin-bottom: 5px;     
+        display: inline-block;    
+        border-left: 5px solid transparent;
+        border-right: 5px solid transparent;        
+        border-top: 5px solid #000;
+    }            
+}        

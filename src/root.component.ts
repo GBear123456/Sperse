@@ -11,7 +11,7 @@ import * as _ from 'underscore';
 import { AppConsts } from '@shared/AppConsts';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
-import { LayoutType, CustomCssType } from '@shared/service-proxies/service-proxies';
+import { LayoutType, CustomCssType, HostSettingsServiceProxy, MaintenanceSettingsDto } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 /*
@@ -19,14 +19,19 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 */
 @Component({
     selector: 'app-root',
-    template: '<router-outlet></router-outlet>',
+    templateUrl: 'root.component.html',
     styleUrls: ['./root.component.less'],
     encapsulation: ViewEncapsulation.None
 })
-export class RootComponent implements OnInit, AfterViewInit {
+export class RootComponent implements OnInit, AfterViewInit {    
+    maintenanceSettings: MaintenanceSettingsDto;
+    hideMaintenanceMessage: Boolean = true;
+    maintenanceMessage = '';
+
     constructor(
         public loadingService: LoadingService,
         private router: Router,
+        private hostSettingsProxy: HostSettingsServiceProxy,
         private uiCustomizationService: AppUiCustomizationService,
         @Inject(AppSessionService) private SS,
         @Inject(DOCUMENT) private document
@@ -39,6 +44,12 @@ export class RootComponent implements OnInit, AfterViewInit {
                 });
                 subscription.unsubscribe();
             }
+        });
+
+        this.hostSettingsProxy.getMaintenanceSettings().subscribe((res: MaintenanceSettingsDto) => {
+            this.maintenanceSettings = res;
+            if (res.showMaintenanceMessage && res.maintenanceMessage)
+                this.maintenanceMessage = this.getMaintenanceMessageLink();
         });
     }
 
@@ -123,5 +134,17 @@ export class RootComponent implements OnInit, AfterViewInit {
                 dataLayer.push(['config', tenantGACode]);
             });
         }
+    }
+
+    getMaintenanceMessageLink() {
+        let message = this.maintenanceSettings.maintenanceMessage,
+            email = this.maintenanceSettings.maintenanceEmailAddress;
+        if (email) {
+            if (message.indexOf('{0}') >= 0)            
+                return message.replace('{0}', '<a href="mailto:' + email + '">' + email + '</a>');
+            else
+                return '<a href="mailto:' + email + '">' + message + '</a>'
+        } else 
+            return message;
     }
 }
