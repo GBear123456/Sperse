@@ -6,7 +6,7 @@ import { MatDialog } from '@angular/material/dialog';
 import startCase from 'lodash/startCase';
 import { select, Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { filter, first, map, debounceTime, takeUntil } from 'rxjs/operators';
+import { filter, first, map, takeUntil } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
@@ -165,8 +165,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this.contactsService.settingsDialogOpened$.pipe(
-            takeUntil(this.lifeCycleService.destroy$),
-            debounceTime(1000)
+            takeUntil(this.lifeCycleService.destroy$)
         ).subscribe(opened => {
             let isOpened = this.contactInfo && this.contactInfo.parentId ? false : opened;
             this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, isOpened);

@@ -17,16 +17,17 @@ export class PersonalDetailsService {
 
      togglePersonalDetailsDialog(dialogId: string = 'personal-details-dialog', open = true): void {
         let dialog = this.dialog.getDialogById(dialogId);
-        if (!dialog)
-            open && this.dialog.open(PersonalDetailsDialogComponent, {
-                id: dialogId,
-                panelClass: ['slider'],
-                disableClose: false,
-                hasBackdrop: false,
-                closeOnNavigation: true,
-                data: {}
-            });
-        else if (!open)
+        if (!dialog) {
+            if (open)
+                dialog = this.dialog.open(PersonalDetailsDialogComponent, {
+                    id: dialogId,
+                    panelClass: ['slider'],
+                    disableClose: false,
+                    hasBackdrop: false,
+                    closeOnNavigation: true,
+                    data: {}
+                });
+        } else if (!open)
             dialog.close();
     }
 }

@@ -7,8 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable } from 'rxjs';
-import { finalize, filter, takeUntil,
-    debounceTime, first, map, startWith } from 'rxjs/operators';
+import { finalize, filter, takeUntil, first, map, startWith } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
@@ -177,8 +176,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
 
     ngAfterViewInit() {
         this.contactsService.settingsDialogOpened$.pipe(
-            takeUntil(this.lifecycleSubjectService.destroy$),
-            debounceTime(1000)
+            takeUntil(this.lifecycleSubjectService.destroy$)
         ).subscribe(opened => {
             this.toggleOrgUnitsDialog(opened);
         });

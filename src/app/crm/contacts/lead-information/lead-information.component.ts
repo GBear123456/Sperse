@@ -5,7 +5,7 @@ import { CurrencyPipe } from '@angular/common';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { finalize, filter, takeUntil, first, debounceTime } from 'rxjs/operators';
+import { finalize, filter, takeUntil, first } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import startCase from 'lodash/startCase';
 import upperCase from 'lodash/upperCase';
@@ -217,8 +217,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
 
     ngAfterViewInit() {
         this.contactsService.settingsDialogOpened$.pipe(
-            takeUntil(this.lifeCycleService.destroy$),
-            debounceTime(1000)
+            takeUntil(this.lifeCycleService.destroy$)
         ).subscribe(opened => {
             this.toggleOrgUnitsDialog(opened);
         });
