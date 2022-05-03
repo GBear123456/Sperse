@@ -19940,6 +19940,57 @@ export class HostSettingsServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getMaintenanceSettings(): Observable<MaintenanceSettingsDto> {
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/GetMaintenanceSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetMaintenanceSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetMaintenanceSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<MaintenanceSettingsDto>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<MaintenanceSettingsDto>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processGetMaintenanceSettings(response: HttpResponseBase): Observable<MaintenanceSettingsDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = MaintenanceSettingsDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<MaintenanceSettingsDto>(<any>null);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -20181,6 +20232,58 @@ export class HostSettingsServiceProxy {
     }
 
     protected processUpdateUserManagementSettings(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (<any>response).error instanceof Blob ? (<any>response).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(<any>null);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(<any>null);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateMaintenanceSettings(body: MaintenanceSettingsEditDto | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/HostSettings/UpdateMaintenanceSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateMaintenanceSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateMaintenanceSettings(<any>response_);
+                } catch (e) {
+                    return <Observable<void>><any>_observableThrow(e);
+                }
+            } else
+                return <Observable<void>><any>_observableThrow(response_);
+        }));
+    }
+
+    protected processUpdateMaintenanceSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -74292,6 +74395,102 @@ export enum MailSenderType {
     IAge = "IAge",
     Ongage = "Ongage",
     Platform = "Platform",
+}
+
+export class MaintenanceSettingsDto implements IMaintenanceSettingsDto {
+    version!: string | undefined;
+    releaseDate!: moment.Moment;
+    maintenanceMessage!: string | undefined;
+    maintenanceEmailAddress!: string | undefined;
+    showMaintenanceMessage!: boolean;
+
+    constructor(data?: IMaintenanceSettingsDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.version = _data["version"];
+            this.releaseDate = _data["releaseDate"] ? moment(_data["releaseDate"].toString()) : <any>undefined;
+            this.maintenanceMessage = _data["maintenanceMessage"];
+            this.maintenanceEmailAddress = _data["maintenanceEmailAddress"];
+            this.showMaintenanceMessage = _data["showMaintenanceMessage"];
+        }
+    }
+
+    static fromJS(data: any): MaintenanceSettingsDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MaintenanceSettingsDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["version"] = this.version;
+        data["releaseDate"] = this.releaseDate ? this.releaseDate.toISOString() : <any>undefined;
+        data["maintenanceMessage"] = this.maintenanceMessage;
+        data["maintenanceEmailAddress"] = this.maintenanceEmailAddress;
+        data["showMaintenanceMessage"] = this.showMaintenanceMessage;
+        return data;
+    }
+}
+
+export interface IMaintenanceSettingsDto {
+    version: string | undefined;
+    releaseDate: moment.Moment;
+    maintenanceMessage: string | undefined;
+    maintenanceEmailAddress: string | undefined;
+    showMaintenanceMessage: boolean;
+}
+
+export class MaintenanceSettingsEditDto implements IMaintenanceSettingsEditDto {
+    maintenanceMessage!: string | undefined;
+    maintenanceEmailAddress!: string | undefined;
+    showMaintenanceMessage!: boolean;
+
+    constructor(data?: IMaintenanceSettingsEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.maintenanceMessage = _data["maintenanceMessage"];
+            this.maintenanceEmailAddress = _data["maintenanceEmailAddress"];
+            this.showMaintenanceMessage = _data["showMaintenanceMessage"];
+        }
+    }
+
+    static fromJS(data: any): MaintenanceSettingsEditDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new MaintenanceSettingsEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["maintenanceMessage"] = this.maintenanceMessage;
+        data["maintenanceEmailAddress"] = this.maintenanceEmailAddress;
+        data["showMaintenanceMessage"] = this.showMaintenanceMessage;
+        return data;
+    }
+}
+
+export interface IMaintenanceSettingsEditDto {
+    maintenanceMessage: string | undefined;
+    maintenanceEmailAddress: string | undefined;
+    showMaintenanceMessage: boolean;
 }
 
 export enum MaritalStatus {
