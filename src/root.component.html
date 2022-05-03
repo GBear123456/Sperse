@@ -4,7 +4,7 @@
     (mouseenter)="hideMaintenanceMessage=false"
     (mouseleave)="hideMaintenanceMessage=true">
     <div [hidden]="hideMaintenanceMessage" class="version">{{maintenanceSettings?.releaseDate.format('LL')}}&nbsp;(v{{maintenanceSettings?.version}})</div>
-    <span [hidden]="hideMaintenanceMessage" [innerHtml]="maintenanceMessage"></span>
+    <b [hidden]="hideMaintenanceMessage" [innerHtml]="maintenanceMessage"></b>
     <div [hidden]="!hideMaintenanceMessage" class="arrow-down"></div>
 </div>
 <router-outlet></router-outlet>

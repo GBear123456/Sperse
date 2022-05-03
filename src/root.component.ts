@@ -141,9 +141,9 @@ export class RootComponent implements OnInit, AfterViewInit {
             email = this.maintenanceSettings.maintenanceEmailAddress;
         if (email) {
             if (message.indexOf('{0}') >= 0)            
-                return message.replace('{0}', '<a href="mailto:' + email + '">' + email + '</a>');
+                return message.replace('{0}', '<a target="_blank" href="mailto:' + email + '">' + email + '</a>');
             else
-                return '<a href="mailto:' + email + '">' + message + '</a>'
+                return '<a target="_blank" href="mailto:' + email + '">' + message + '</a>'
         } else 
             return message;
     }
