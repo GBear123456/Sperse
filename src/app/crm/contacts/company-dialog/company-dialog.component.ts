@@ -91,7 +91,8 @@ export class CompanyDialogComponent implements OnInit {
         rootOrganizationUnitId: null,
         departmentCode: null
     };
-    manageAllowed = this.permissionService.checkCGPermission(this.data.contactInfo.groups);
+    manageAllowed = this.permissionService.checkCGPermission(this.data.contactInfo.groups) ||
+        this.permissionService.isGranted(AppPermissions.CRMCompaniesManageAll);
     manageOrgUnits = this.permissionService.isGranted(AppPermissions.AdministrationOrganizationUnitsManageOrganizationTree);
     dunsRegex = AppConsts.regexPatterns.duns;
     einRegex = AppConsts.regexPatterns.ein;
