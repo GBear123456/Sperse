@@ -66,7 +66,6 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     ckEditor: any;
     templateLoaded: boolean;
-    emailSettingsSource: EmailSettingsSource;
     fromDataSource = [];
     showCC = false;
     showBCC = false;
@@ -210,7 +209,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     initFromField() {
         if (this.fromDataSource.length) {
             let from = this.fromDataSource.find(item => item.emailSettingsSource == EmailSettingsSource.User);
-            this.emailSettingsSource = (from ? from : this.fromDataSource[0]).emailSettingsSource;
+            this.data.emailSettingsSource = (from ? from : this.fromDataSource[0]).emailSettingsSource;
             this.checkUpdateCCFromEmail(from);
         }
     }
