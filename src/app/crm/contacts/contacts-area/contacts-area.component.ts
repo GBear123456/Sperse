@@ -35,7 +35,8 @@ export class ContactsAreaComponent {
     @Input()
     set contactInfo(val: ContactInfoDto) {
         if ((this._contactInfo = val) && val.groups)
-            this.isEditAllowed = this.permissionService.checkCGPermission(val.groups);
+            this.isEditAllowed = this.permissionService.checkCGPermission(val.groups) ||
+                this.isCompany && this.permissionService.isGranted(AppPermissions.CRMCompaniesManageAll);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;

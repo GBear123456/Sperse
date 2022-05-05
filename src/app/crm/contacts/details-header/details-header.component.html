@@ -43,7 +43,7 @@
     </div>
     <div *ngIf="data" class="organization_info">
         <div *ngIf="!data?.primaryOrganizationContactId; else companyInfo">
-            <div *ngIf="manageAllowed" class="add-new-company">
+            <div *ngIf="manageCompaniesAllowed" class="add-new-company">
                 <a (click)="addCompanyDialog($event)">+ {{ ls.l('AddCompany') }}</a>
             </div>
         </div>

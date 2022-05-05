@@ -31,6 +31,7 @@ import { StatesService } from '@root/store/states-store/states.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { EditAddressDialogData } from '@app/crm/contacts/edit-address-dialog/edit-address-dialog-data.interface';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'edit-address-dialog',
@@ -49,7 +50,8 @@ export class EditAddressDialog {
     action: string;
     address: any;
     movePos: any;
-    isEditAllowed = this.permissionService.checkCGPermission(this.data.groups);
+    isEditAllowed = this.permissionService.checkCGPermission(this.data.groups) || 
+        this.data.isCompany && this.permissionService.isGranted(AppPermissions.CRMCompaniesManageAll);
     states: CountryStateDto[];
     countries: CountryDto[];
     state: string;

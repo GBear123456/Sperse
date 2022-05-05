@@ -43,6 +43,7 @@ import { EditAddressDialogData } from '@app/crm/contacts/edit-address-dialog/edi
 import { AddressDto } from '@app/crm/contacts/addresses/address-dto.model';
 import { AddressUpdate } from '@app/crm/contacts/addresses/address-update.interface';
 import { AppSessionService } from '@shared/common/session/app-session.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     selector: 'addresses',
@@ -58,7 +59,8 @@ export class AddressesComponent implements OnInit, OnDestroy {
     @Input()
     set contactInfo(val: ContactInfoDto) {
         if ((this._contactInfo = val) && val.groups)
-            this.isEditAllowed = this.permissionService.checkCGPermission(val.groups);
+            this.isEditAllowed = this.permissionService.checkCGPermission(val.groups) ||
+                this.isCompany && this.permissionService.isGranted(AppPermissions.CRMCompaniesManageAll);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;

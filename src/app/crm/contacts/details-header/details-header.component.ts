@@ -102,7 +102,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
     @Output() onInvalidate: EventEmitter<any> = new EventEmitter();
 
     get isOrgUpdatable(): Boolean {
-        return this.manageAllowed && this.data && this.data['organizationContactInfo']
+        return this.manageCompaniesAllowed && this.data && this.data['organizationContactInfo']
             && this.data['organizationContactInfo'].isUpdatable;
     }
 
@@ -144,6 +144,7 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
         map((contactInfo: ContactInfoDto) => this.permissionService.checkCGPermission(contactInfo.groups))
     );
     manageAllowed: boolean;
+    manageCompaniesAllowed: boolean;
     propertyId$: Observable<number> = this.contactsService.leadInfo$.pipe(
         filter(Boolean),
         map((leadInfo: LeadInfoDto) => leadInfo.propertyId)
@@ -200,13 +201,14 @@ export class DetailsHeaderComponent implements OnInit, OnDestroy {
             (contactInfo: ContactInfoDto) => {
                 this.contactId = contactInfo.id;
                 this.contactGroups = contactInfo.groups;
-                this.manageAllowed = this.permissionService.checkCGPermission(contactInfo.groups);
             }
         );
         this.manageAllowed$.pipe(
             takeUntil(this.lifeCycleService.destroy$)
         ).subscribe((manageIsAllowed: boolean) => {
-             this.manageAllowed = manageIsAllowed;
+            this.manageAllowed = manageIsAllowed;
+            this.manageCompaniesAllowed = this.manageAllowed || 
+                this.permissionService.isGranted(AppPermissions.CRMCompaniesManageAll);
         });
         this.propertyId$.pipe(
             takeUntil(this.lifeCycleService.destroy$)

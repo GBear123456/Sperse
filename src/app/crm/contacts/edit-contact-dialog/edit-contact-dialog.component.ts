@@ -23,6 +23,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 
 @Component({
     templateUrl: 'edit-contact-dialog.html',
@@ -39,7 +40,8 @@ export class EditContactDialog {
     types: any[] = [];
     validator: any;
     movePos: any;
-    isEditAllowed = this.permissionService.checkCGPermission(this.data.groups);
+    isEditAllowed = this.permissionService.checkCGPermission(this.data.groups) || 
+        this.data.isCompany && this.permissionService.isGranted(AppPermissions.CRMCompaniesManageAll);
     masks = AppConsts.masks;
     urlRegEx = AppConsts.regexPatterns.url;
     emailRegEx = AppConsts.regexPatterns.email;
