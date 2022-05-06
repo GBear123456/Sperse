@@ -26,7 +26,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 })
 export class RootComponent implements OnInit, AfterViewInit {    
     maintenanceSettings: MaintenanceSettingsDto;
-    hideMaintenanceMessage: Boolean = true;
+    hideMaintenanceMessage: Boolean = false;
 
     constructor(
         private router: Router,
@@ -49,6 +49,10 @@ export class RootComponent implements OnInit, AfterViewInit {
         this.hostSettingsProxy.getMaintenanceSettings().subscribe((res: MaintenanceSettingsDto) => {
             this.maintenanceSettings = res;
         });
+
+        let hideMaintenanceMessage = localStorage.getItem('hideMaintenanceMessage');
+        if (hideMaintenanceMessage != null)
+            this.hideMaintenanceMessage = Boolean(hideMaintenanceMessage);
     }
 
     ngOnInit() {
@@ -157,5 +161,10 @@ export class RootComponent implements OnInit, AfterViewInit {
     getModuleName() {
         let path = document.location.href.match(/\/[app|account]{3,7}\/(\w*)[\/|$]?/);
         return path ? startCase(path[1]) : AppConsts.modules.platformModule;
+    }
+
+    toogleMaintenanceMessage() {
+        this.hideMaintenanceMessage = !this.hideMaintenanceMessage;
+        localStorage.setItem('hideMaintenanceMessage', this.hideMaintenanceMessage ? '1' : '');
     }
 }
