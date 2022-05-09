@@ -54,6 +54,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
     ) {}
 
     ngAfterViewInit() {
+        this.dialogRef.updateSize('700px', '560px');
         if (this.data.source) {
             let image: any = new Image();
             image.src = this.data.source;
