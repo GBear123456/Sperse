@@ -74,10 +74,12 @@
                                (click)="showCompanyDialog($event)">
                             </i>
                             <i class="add fa fa-plus"
+                               [hidden]="!manageAllowed"
                                [title]="ls.l('AddNewCompany')"
                                (click)="addCompanyDialog($event)">
                             </i>
                             <i class="delete fa fa-times"
+                               [hidden]="!manageAllowed"
                                [title]="ls.l('RemoveCompanyFromContact')"
                                (click)="removePersonOrgRelation($event)">
                             </i>
@@ -88,7 +90,7 @@
                                       lEntityName="JobTitle"
                                       [id]="selectedOrganizationId$ | async"
                                       [value]="personJobTitleInSelectedOrganization$ | async"
-                                      [isReadOnlyField]="!isOrgUpdatable"
+                                      [isReadOnlyField]="!(isOrgUpdatable && manageAllowed)"
                                       [editPlaceholder]="ls.l('JobTitle')"
                                       (valueChanged)="updateJobTitle($event)">
                         </inplace-edit>
