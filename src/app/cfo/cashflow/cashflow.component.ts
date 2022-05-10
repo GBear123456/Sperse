@@ -1330,7 +1330,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     initFooterToolbar() {
         combineLatest(
             this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean)),
-            this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(Boolean)))
+            this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex), filter(Boolean))
         ).pipe(
             first()
         ).subscribe(([forecastModels, selectedForecastModelIndex]) => {

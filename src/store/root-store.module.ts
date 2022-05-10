@@ -53,7 +53,13 @@ const metaReducers: Array<MetaReducer<any, any>> = [ localStorageSyncReducer ];
         AddressUsageTypesStoreModule,
         PhoneUsageTypesStoreModule,
         CountriesStoreModule,
-        StoreModule.forRoot({}, { metaReducers }),
+        StoreModule.forRoot({}, { 
+            metaReducers: metaReducers,
+            runtimeChecks: {
+                strictStateImmutability: false,
+                strictActionImmutability: false,
+            }  
+        }),
         EffectsModule.forRoot([]),
         environment.production ? [] :
             StoreDevtoolsModule.instrument({ maxAge: 10 })
