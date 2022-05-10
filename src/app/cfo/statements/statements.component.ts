@@ -341,7 +341,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         });
 
         this.cfoStore$.pipe(
-            select(ForecastModelsStoreSelectors.getSelectedForecastModelId, { defaultId: undefined })
+            select(ForecastModelsStoreSelectors.getSelectedForecastModelId)
         ).subscribe(
             (selectedForecastModelId: number) => this.selectedForecastModelId.next(selectedForecastModelId)
         );
