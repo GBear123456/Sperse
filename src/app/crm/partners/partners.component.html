@@ -76,7 +76,8 @@
                         [bulkUpdateMode]="true"
                         [filterModel]="filterModelStar"
                         [managePermission]="permissions.CRMPartnersManage"
-                        [hideButtons]="isBankCodeLayoutType">
+                        [hideButtons]="isBankCodeLayoutType"
+                        (onUpdated)="invalidate()">
         </crm-stars-list>
 
         <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
@@ -119,8 +120,14 @@
                             [allowUpdating]="true">
                         </dxo-editing>
                         <dxo-scrolling mode="infinite"></dxo-scrolling>
-                        <dxi-column cssClass="stars" [width]="40"
-                                    [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                        <dxi-column caption=""
+                                    width="40px"
+                                    cssClass="stars"
+                                    cellTemplate="starCell"
+                                    [dataField]="partnerFields.StarId"
+                                    [showInColumnChooser]="false"
+                                    [allowExporting]="false">
+                        </dxi-column>
                         <dxi-column [dataField]="partnerFields.Id" [caption]="l('Id')" cssClass="tabular clipboard-holder" [visible]="false" [sortOrder]="'desc'" [sortIndex]="0"></dxi-column>
                         <dxi-column [dataField]="partnerFields.PhotoPublicId" caption="" cellTemplate="photoTemplate"
                                     [width]="50" [showInColumnChooser]="false" [allowExporting]="false"
@@ -175,6 +182,9 @@
                                     [visible]="false"
                                     cssClass="clipboard-holder">
                         </dxi-column>
+                        <ng-container *dxTemplate="let cellData of 'starCell'">
+                            <div class="star star-{{starsLookup[cellData.value] ? starsLookup[cellData.value].colorType.toLowerCase() : 'default'}}"></div>
+                        </ng-container>
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | datetime: formatting.dateTimeMoment}}
                         </div>

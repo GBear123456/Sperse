@@ -85,7 +85,8 @@
         <crm-stars-list [selectedKeys]="selectedClientKeys"
                         [bulkUpdateMode]="true"
                         [filterModel]="filterModelStar"
-                        [hideButtons]="isBankCodeLayoutType">
+                        [hideButtons]="isBankCodeLayoutType"
+                        (onUpdated)="refresh()">
         </crm-stars-list>
         <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
@@ -135,7 +136,14 @@
                                          [allowUpdating]="true">
                             </dxo-editing>
                             <dxo-scrolling mode="infinite"></dxo-scrolling>
-                            <dxi-column cssClass="stars" [width]="40" [showInColumnChooser]="false" [allowExporting]="false"></dxi-column>
+                            <dxi-column caption=""
+                                        width="40px"
+                                        cssClass="stars"
+                                        cellTemplate="starCell"
+                                        [dataField]="leadFields.StarId"
+                                        [showInColumnChooser]="false"
+                                        [allowExporting]="false">
+                            </dxi-column>
                             <dxi-column [dataField]="leadFields.Id"
                                         [caption]="l('Id')"
                                         cssClass="tabular clipboard-holder"
@@ -307,6 +315,9 @@
                                         [visible]="false"
                                         cssClass="clipboard-holder">
                             </dxi-column>
+                            <ng-container *dxTemplate="let cellData of 'starCell'">
+                                <div class="star star-{{starsLookup[cellData.value] ? starsLookup[cellData.value].colorType.toLowerCase() : 'default'}}"></div>
+                            </ng-container>
                             <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                                 {{cellData.value | phone}}
                             </div>

@@ -10,6 +10,7 @@ export const ClientFields: KeysEnum<ContactDto> = {
     Phone: 'Phone',
     City: 'City',
     State: 'State',
+    StarId: 'StarId',
     IsActive: 'IsActive',
     IsProspective: 'IsProspective',
     ContactDate: 'ContactDate',

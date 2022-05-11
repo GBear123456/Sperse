@@ -10,6 +10,7 @@ export const PartnerFields: KeysEnum<PartnerDto> = {
     City: 'City',
     OrganizationId: 'OrganizationId',
     State: 'State',
+    StarId: 'StarId',
     IsActive: 'IsActive',
     IsProspective: 'IsProspective',
     ContactDate: 'ContactDate',

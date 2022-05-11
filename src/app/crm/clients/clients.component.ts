@@ -171,6 +171,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
     isMergeAllowed = this.isGranted(AppPermissions.CRMMerge);
     isOrdersMergeAllowed = this.isGranted(AppPermissions.CRMOrdersManage);
 
+    starsLookup = {};
     formatting = AppConsts.formatting;
     isCfoLinkOrVerifyEnabled = this.appService.isCfoLinkOrVerifyEnabled;
     canSendVerificationRequest = this.appService.canSendVerificationRequest();
@@ -280,7 +281,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         items: {
             element: new FilterCheckBoxesModel(
                 {
-                    dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
+                    dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars), tap(stars => {
+                        stars.forEach(star => {
+                            this.starsLookup[star.id] = star;
+                        });
+                    })),
                     nameField: 'name',
                     keyExpr: 'id',
                     templateFunc: (itemData) => {
@@ -291,7 +296,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     }
                 })
         }
-    });
+    });    
     contactStatus = ContactStatus;
     selectedClientKeys: any = [];
     get selectedClients(): Observable<ContactDto[]> {
@@ -730,7 +735,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                             this.clientFields.OrganizationId,
                             this.clientFields.UserId,
                             this.clientFields.Email,
-                            this.clientFields.Phone
+                            this.clientFields.Phone,
+                            this.clientFields.StarId
                         ]
                     );
 
