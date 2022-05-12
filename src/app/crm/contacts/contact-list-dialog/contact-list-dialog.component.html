@@ -2,6 +2,7 @@
     <h5 *ngIf="title" class="dialog-title">
         {{ title }}
         <a *ngIf="manageAllowed" (click)="addNewContact()" class="float-right add-new-contact">{{ addNewTitle }}</a>
+        <span class="close" (click)="close()"></span>    
     </h5>
     <div class="search-wrapper clearfix">
         <input type="text" id="search-contacts" class="search-contacts" placeholder="Search contacts..." (keyup)="search($event)">
