@@ -95,7 +95,7 @@
                 [(value)]="data.isActive">
             </dx-check-box>
             <dx-check-box
-                [text]="ls.l('ConfirmedContact')"
+                [text]="getConfirmationText()"
                 [disabled]="!isEditAllowed"
                 [(value)]="data.isConfirmed">
             </dx-check-box>

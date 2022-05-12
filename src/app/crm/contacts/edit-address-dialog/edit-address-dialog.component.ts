@@ -221,4 +221,13 @@ export class EditAddressDialog {
     getUsageTypeHint(item) {
         return item ? this.ls.l('ContactInformation_AddressTypeTooltip_' + item.id) : '';
     }
+
+    getConfirmationText() {
+        let date = this.data.confirmationDate;
+        return this.ls.l('ConfirmedContact') + (
+            this.data.isConfirmed && date ? 
+                ' at ' + date.format(AppConsts.formatting.dateMoment) +
+                ' by ' + (this.data.confirmedByUserFullName || this.ls.l('System')) : ''
+        );
+    }
 }

@@ -170,4 +170,13 @@ export class EditContactDialog {
         return item && (['emailAddress', 'phoneNumber'].indexOf(this.data.field) >= 0) ?
             this.ls.l('ContactInformation_' + capitalize(this.data.field.slice(0, 5)) + 'TypeTooltip_' + item.id) : '';
     }
+
+    getConfirmationText() {
+        let date = this.data.confirmationDate;
+        return this.ls.l('ConfirmedContact') + (
+            this.data.isConfirmed && date ? 
+                ' at ' + date.format(AppConsts.formatting.dateMoment) +
+                ' by ' + (this.data.confirmedByUserFullName || this.ls.l('System')) : ''
+        );
+    }
 }
