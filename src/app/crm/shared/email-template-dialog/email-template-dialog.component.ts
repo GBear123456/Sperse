@@ -140,6 +140,8 @@ export class EmailTemplateDialogComponent implements OnInit {
         { text: this.ls.l('SaveAsNew'), selected: false },
         { text: this.ls.l('SaveAndClose'), selected: false }
     ];
+    lastSelectedTemplateId: number;
+    customItem: any;
 
     constructor(
         private phonePipe: PhoneFormatPipe,
@@ -335,26 +337,30 @@ export class EmailTemplateDialogComponent implements OnInit {
     saveTemplateData() {
         this.forceValidationBypass = false;
         if (this.validator.instance.validate().isValid) {
-            let data = {
-                id: this.data.templateId,
-                name: this.getTemplateName(),
-                type: this.data.templateType,
-                subject: this.data.subject,
-                cc: this.data.cc,
-                bcc: this.data.bcc,
-                previewText: this.data.previewText,
-                body: this.data.body
-            };
+            let templateId = this.data.templateId || this.lastSelectedTemplateId,
+                isUpdating = templateId && !this.data.addMode && !this.isSaveAsNew(), 
+                data = {
+                    id: isUpdating ? templateId : undefined,
+                    name: this.getTemplateName(),
+                    type: this.data.templateType,
+                    subject: this.data.subject,
+                    cc: this.data.cc,
+                    bcc: this.data.bcc,
+                    previewText: this.data.previewText,
+                    body: this.data.body
+                };
 
             this.startLoading();
-            let request$: Observable<any> = this.data.templateId
-                && !this.data.addMode && !this.isSaveAsNew()
+            let request$: Observable<any> = isUpdating
                     ? this.emailTemplateProxy.update(new UpdateEmailTemplateRequest(data))
                     : this.emailTemplateProxy.create(new CreateEmailTemplateRequest(data));
 
             request$.pipe(finalize(() => this.finishLoading())).subscribe((id: number) => {
-                if (id)
+                if (id) {
                     this.data.templateId = id;
+                    if (this.customItem)
+                        this.customItem.id = id;
+                }
                 this.onSave.emit(this.data);
 
                 if (this.isSaveAndClose())
@@ -443,7 +449,8 @@ export class EmailTemplateDialogComponent implements OnInit {
     onTemplateChanged(event) {
         if (event.value)
             this.templateComponent.isValid = true;
-        this.data.templateId = event.value;
+        if (this.data.templateId = event.value)
+            this.customItem = undefined;
         if (event.value) {
             if (this.templateEditMode)
                 this.loadTemplateById(event.value);
@@ -536,8 +543,10 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onNewTemplate(event) {
+        this.lastSelectedTemplateId = this.data.templateId;
         if (event.text)
             this.templateComponent.isValid = true;
+        this.customItem = 
         event.customItem = { name: event.text, id: undefined };
     }
 
