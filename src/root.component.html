@@ -3,7 +3,7 @@
     [ngClass]="{'show-message': !hideMaintenanceMessage}"
     (click)="toogleMaintenanceMessage()">
     <div [hidden]="hideMaintenanceMessage" class="version">
-        {{maintenanceSettings?.releaseDate.format('LL')}}&nbsp;(v{{maintenanceSettings?.version}})
+        {{currentDate.format('LL')}}&nbsp;(v{{maintenanceSettings?.version}})
     </div>
     <b [hidden]="hideMaintenanceMessage" [innerHtml]="getMaintenanceMessageLink()"></b>
     <div [ngClass]="{'arrow-down': hideMaintenanceMessage, 'arrow-left': !hideMaintenanceMessage}"></div>
