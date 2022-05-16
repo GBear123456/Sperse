@@ -35,12 +35,18 @@ export class AppPermissionService {
 
     checkCGPermission(contactGroups: ContactGroup[] | ContactGroupInfo[], permission = 'Manage') {
         if (contactGroups && contactGroups.length) {
-            let groups: ContactGroup[] = [];
+            let activeGroups: ContactGroup[] = [], inactiveGroups: ContactGroup[] = [];
             contactGroups.forEach(group => {
-                if (group)
-                    groups.push(<ContactGroup>(group['groupId'] || group));
+                if (group) {
+                    if (!group['groupId'] || group['isActive'])
+                        activeGroups.push(<ContactGroup>(group['groupId'] || group));
+                    else
+                        inactiveGroups.push(<ContactGroup>(group['groupId']));
+                }
             });
-            return this.isGranted(this.getCGPermissionKey(groups , permission));
+            return this.isGranted(this.getCGPermissionKey(
+                activeGroups.length ? activeGroups : inactiveGroups, permission
+            ));
         }
         return false;
     }
