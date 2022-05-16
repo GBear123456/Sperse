@@ -8,7 +8,7 @@ import * as Push from 'push.js'; // if using ES6
 import * as moment from 'moment';
 
 /** Application imports */
-import { GuidEntityDto, NotificationServiceProxy, INotificationData } from '@shared/service-proxies/service-proxies';
+import { EntityDtoOfGuid, NotificationServiceProxy, INotificationData } from '@shared/service-proxies/service-proxies';
 import { NotificationSettingsModalComponent } from './notification-settings-modal/notification-settings-modal.component';
 
 export interface IFormattedUserNotification {
@@ -130,7 +130,7 @@ export class UserNotificationHelper {
     }
 
     setAsRead(userNotificationId: string, callback?: (userNotificationId: string) => void): void {
-        const input = new GuidEntityDto();
+        const input = new EntityDtoOfGuid();
         input.id = userNotificationId;
         this.notificationService.setNotificationAsRead(input).subscribe(() => {
             abp.event.trigger('app.notifications.read', userNotificationId);

@@ -1,14 +1,12 @@
 /** Core imports */
 import { APP_INITIALIZER, LOCALE_ID, Injector, NgModule, ErrorHandler } from '@angular/core';
-import { HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { APP_BASE_HREF, PlatformLocation, registerLocaleData } from '@angular/common';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { RouteReuseStrategy, Router } from '@angular/router';
 
 /** Third party imports */
-import { AbpModule } from '@abp/abp.module';
-import { GestureConfig } from '@angular/material';
+import { AbpModule } from 'abp-ng2-module';
 import { BugsnagErrorHandler } from '@bugsnag/plugin-angular';
 import { CacheService } from 'ng2-cache-service';
 import { CacheStorageAbstract } from 'ng2-cache-service/dist/src/services/storage/cache-storage-abstract.service';
@@ -29,7 +27,7 @@ import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
 import { ServiceProxyModule } from '@shared/service-proxies/service-proxy.module';
 import { AppPreBootstrap } from './AppPreBootstrap';
-import { RootComponent } from './root.components';
+import { RootComponent } from './root.component';
 import { RootRoutingModule, AppPreloadingStrategy } from './root-routing.module';
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { RootStoreModule } from '@root/store';
@@ -58,7 +56,8 @@ export function appInitializerFactory(
 ) {
     return () => {
         let appAuthService = injector.get(AppAuthService);
-        appAuthService.setCheckDomainToken();
+        if (appAuthService.setCheckDomainToken())
+            AppPreBootstrap.generalInfoClear();
         handleLogoutRequest(appAuthService);
         return new Promise<boolean>((resolve, reject) => {
             AppConsts.appBaseHref = getBaseHref(platformLocation);
@@ -216,10 +215,6 @@ function handleLogoutRequest(authService: AppAuthService) {
         {
             provide: RouteReuseStrategy,
             useClass: CustomReuseStrategy
-        },
-        {
-            provide: HAMMER_GESTURE_CONFIG,
-            useClass: GestureConfig
         },
         {
             provide: ErrorHandler,

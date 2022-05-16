@@ -1,5 +1,6 @@
 /** Core imports */
-import { Component, ChangeDetectionStrategy, EventEmitter, Output, Input } from '@angular/core';
+import { Component, ChangeDetectionStrategy, 
+    EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 
 /** Third party imports */
@@ -18,7 +19,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ CustomNumberPipe, NumberToWordsPipe ]
 })
-export class ECheckComponent {
+export class ECheckComponent implements OnInit {
     @Input() descriptionText = this.ls.l('eCheckDescription');
     @Input() paymentReceiver = this.ls.l('SperseLLC');
     @Input() price: number;
@@ -26,28 +27,7 @@ export class ECheckComponent {
     @Output() onSubmit: EventEmitter<ECheckDataModel> = new EventEmitter<ECheckDataModel>();
 
     currentDate = moment();
-    echeckForm = this.formBuilder.group({
-        paymentReceiver: { value: this.paymentReceiver, disabled: true },
-        amount: { value: this.price, disabled: true },
-        date: { value: this.currentDate, disabled: true },
-        paymentDescription: this.currentDate.format('MMMM YYYY') + ' ' + this.ls.l('SubscriptionPayment'),
-        routingNumber: ['',
-            [
-                Validators.required,
-                Validators.pattern('^[0-9]*$'),
-                Validators.minLength(9),
-                Validators.maxLength(9)
-            ]
-        ],
-        bankAccountNumber: ['',
-            [
-                Validators.required,
-                Validators.pattern('^[0-9]*$'),
-                Validators.minLength(4),
-                Validators.maxLength(17)
-            ]
-        ]
-    });
+    echeckForm: any;
 
     constructor(
         private formBuilder: FormBuilder,
@@ -55,6 +35,31 @@ export class ECheckComponent {
         private numberToWordsPipe: NumberToWordsPipe,
         public ls: AppLocalizationService
     ) {}
+
+    ngOnInit() {
+        this.echeckForm = this.formBuilder.group({
+            paymentReceiver: { value: this.paymentReceiver, disabled: true },
+            amount: { value: this.price, disabled: true },
+            date: { value: this.currentDate, disabled: true },
+            paymentDescription: this.currentDate.format('MMMM YYYY') + ' ' + this.ls.l('SubscriptionPayment'),
+            routingNumber: ['',
+                [
+                    Validators.required,
+                    Validators.pattern('^[0-9]*$'),
+                    Validators.minLength(9),
+                    Validators.maxLength(9)
+                ]
+            ],
+            bankAccountNumber: ['',
+                [
+                    Validators.required,
+                    Validators.pattern('^[0-9]*$'),
+                    Validators.minLength(4),
+                    Validators.maxLength(17)
+                ]
+            ]
+        });
+    }
 
     onKeyPress(e) {
         if (e.which < 48 || e.which > 57) {
@@ -74,5 +79,4 @@ export class ECheckComponent {
             this.onSubmit.next(this.echeckForm.getRawValue());
         }
     }
-
 }

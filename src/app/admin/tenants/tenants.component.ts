@@ -13,10 +13,9 @@ import * as moment from 'moment-timezone';
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ImpersonationService } from '@app/admin/users/impersonation.service';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
     CommonLookupServiceProxy,
-    Int64EntityDto,
+    EntityDtoOfInt64,
     NameValueDto,
     PermissionServiceProxy,
     TenantListDto,
@@ -44,12 +43,11 @@ import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 
 @Component({
     templateUrl: './tenants.component.html',
-    styleUrls: [ './tenants.component.less' ],
-    animations: [ appModuleAnimation() ]
+    styleUrls: [ './tenants.component.less' ]
 })
 export class TenantsComponent extends AppComponentBase implements OnDestroy, OnInit {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(ToolBarComponent, { static: false }) toolbarComponent: ToolBarComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(ToolBarComponent) toolbarComponent: ToolBarComponent;
 
     private editions: SubscribableEditionComboboxItemDto[] = [];
     private filters: FilterModel[];
@@ -342,7 +340,7 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
     }
 
     unlockUser(record: any): void {
-        this.tenantService.unlockTenantAdmin(new Int64EntityDto({ id: record.id })).subscribe(() => {
+        this.tenantService.unlockTenantAdmin(new EntityDtoOfInt64({ id: record.id })).subscribe(() => {
             this.notify.success(this.l('UnlockedTenandAdmin', record.name));
         });
     }

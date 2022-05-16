@@ -16,7 +16,6 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterItemModel } from '@shared/filters/models/filter-item.model';
 import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -40,15 +39,14 @@ import { ProductFields } from '@app/crm/products/products-fields.enum';
         '../shared/styles/grouped-action-menu.less',
         './products.component.less'
     ],
-    animations: [appModuleAnimation()],
     providers: [
         ProductServiceProxy,
         LifecycleSubjectsService
     ]
 })
 export class ProductsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
 
     private readonly dataSourceURI = 'Product';
     private rootComponent: any;

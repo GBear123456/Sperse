@@ -11,7 +11,6 @@ import { filter, first, takeUntil } from 'rxjs/operators';
 
 /** Application imports */
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { PortalDashboardComponent } from './dashboard/portal-dashboard.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { InstanceType, LayoutType } from '@shared/service-proxies/service-proxies';
@@ -29,11 +28,10 @@ export class AdDashboardHostDirective {
 @Component({
     selector: 'start',
     templateUrl: './start.component.html',
-    styleUrls: ['./start.component.less'],
-    animations: [appModuleAnimation()]
+    styleUrls: ['./start.component.less']
 })
 export class StartComponent extends CFOComponentBase implements AfterViewInit, OnDestroy, OnInit {
-    @ViewChild(AdDashboardHostDirective, { static: false }) adHostDirective: AdDashboardHostDirective;
+    @ViewChild(AdDashboardHostDirective) adHostDirective: AdDashboardHostDirective;
     private hostComponent: any;
     private hostClass: any = this._cfoService.hasStaticInstance || this.instanceId
         ? PortalDashboardComponent

@@ -84,11 +84,11 @@ import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignmen
 import { ValidationHelper } from '@shared/helpers/ValidationHelper';
 import { StringHelper } from '@shared/helpers/StringHelper';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ToolbarService } from '@app/shared/common/toolbar/toolbar.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
@@ -138,18 +138,18 @@ import { Country } from '@shared/AppEnums';
 })
 export class CreateEntityDialogComponent implements AfterViewInit, OnInit, OnDestroy {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('stagesList', { static: false }) stagesComponent: StaticListComponent;
-    @ViewChild('statusesList', { static: false }) statusComponent: StaticListComponent;
-    @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
-    @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
-    @ViewChild(TypesListComponent, { static: false }) partnerTypesComponent: TypesListComponent;
-    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
-    @ViewChild('propertyValidationGroup', { static: false }) propertyValidationGroup: DxValidationGroupComponent;
-    @ViewChild('propertyAddressComponent', { static: false }) propertyAddressComponent: AddressFieldsComponent;
+    @ViewChild('stagesList') stagesComponent: StaticListComponent;
+    @ViewChild('statusesList') statusComponent: StaticListComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
+    @ViewChild('propertyValidationGroup') propertyValidationGroup: DxValidationGroupComponent;
+    @ViewChild('propertyAddressComponent') propertyAddressComponent: AddressFieldsComponent;
     @ViewChildren('linksComponent') linkComponents: QueryList<DxTextBoxComponent>;
-    @ViewChild('dialogScroll', { static: false }) dialogScroll: DxScrollViewComponent;
+    @ViewChild('dialogScroll') dialogScroll: DxScrollViewComponent;
 
     showPropertyFields: boolean = this.data.entityTypeSysId === EntityTypeSys.PropertyAcquisition;
     showPropertiesDropdown: boolean = this.data.entityTypeSysId && this.data.entityTypeSysId.startsWith(EntityTypeSys.PropertyRentAndSale);

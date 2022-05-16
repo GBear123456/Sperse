@@ -3,6 +3,7 @@
                   [buttons]="headlineButtons"
                   [showToggleToolbarButton]="true"
                   [showToggleColumnSelectorButton]="section !== 'clicks' && !cfoService.hasStaticInstance"
+                  [showToggleLeftMenuButton]="true"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <dx-select-box *ngIf="section == 'clicks'"
             [items]="years"

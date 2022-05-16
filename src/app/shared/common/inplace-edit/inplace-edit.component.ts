@@ -21,7 +21,7 @@ import { ClipboardService } from 'ngx-clipboard';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { InplaceEditModel } from './inplace-edit.model';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 
 @Component({
     selector: 'inplace-edit',
@@ -31,9 +31,9 @@ import { NotifyService } from '@abp/notify/notify.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InplaceEditComponent extends AppComponentBase {
-    @ViewChild(DxTextBoxComponent, { static: false }) textBox: DxTextBoxComponent;
-    @ViewChild(DxTextAreaComponent, { static: false }) textArea: DxTextAreaComponent;
-    @ViewChild(DxNumberBoxComponent, { static: false }) numberBox: DxNumberBoxComponent;
+    @ViewChild(DxTextBoxComponent) textBox: DxTextBoxComponent;
+    @ViewChild(DxTextAreaComponent) textArea: DxTextAreaComponent;
+    @ViewChild(DxNumberBoxComponent) numberBox: DxNumberBoxComponent;
 
     @Input() set data(model: InplaceEditModel) {
         if (model && (!this._data || this._data.value != model.value)) {

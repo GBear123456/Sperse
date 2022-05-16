@@ -3,7 +3,7 @@ import { Component, Inject, OnInit, ViewChild } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /** Third party imports */
-import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 import { FileSystemFileEntry, NgxFileDropEntry } from 'ngx-file-drop';
 import { map, finalize, first } from 'rxjs/operators';
@@ -33,8 +33,8 @@ import { AppConsts } from '@shared/AppConsts';
     providers: [ BudgetServiceProxy ]
 })
 export class UploadBudgetDialogComponent implements OnInit {
-    @ViewChild(DxTreeListComponent, { static: false }) treeList: DxTreeListComponent;
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild(DxTreeListComponent) treeList: DxTreeListComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
 
     files = [];
     file: string;

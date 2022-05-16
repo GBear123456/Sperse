@@ -16,7 +16,7 @@ import {
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { BankCodeLettersEditorDialogComponent } from '@app/shared/common/bank-code-letters/bank-code-letters-editor-dialog/bank-code-letters-editor-dialog.component';
 import { BankCodeHistoryDialogComponent } from './bank-code-history-dialog/bank-code-history-dialog.component'
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';

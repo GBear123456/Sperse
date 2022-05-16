@@ -35,8 +35,8 @@ import range from 'lodash/range';
 import * as moment from 'moment-timezone';
 
 /** Application imports */
-import { NotifyService } from '@abp/notify/notify.service';
-import { RootComponent } from 'root.components';
+import { NotifyService } from 'abp-ng2-module';
+import { RootComponent } from 'root.component';
 import {
     CountryStateDto,
     CampaignProviderType,

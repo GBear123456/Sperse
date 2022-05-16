@@ -1711,7 +1711,7 @@ export class CashflowService {
 
     getEndingBalanceAdjustments(cell) {
         return this.zeroAdjustmentsList.filter(cashflowItem => {
-            return cashflowItem.adjustmentType === AdjustmentType._0 &&
+            return cashflowItem.adjustmentType === AdjustmentType.StartingBalance &&
                 (
                     cell.rowPath[1] === CategorizationPrefixes.AccountName + cashflowItem.accountId
                     || (cell.rowPath.length === 1 && cell.rowPath[0] === PT)
@@ -2090,7 +2090,7 @@ export class CashflowService {
 
     updateZeroAdjustmentsList() {
         this.zeroAdjustmentsList = this.adjustmentsList.filter(item => {
-            return item.adjustmentType === AdjustmentType._0;
+            return item.adjustmentType === AdjustmentType.StartingBalance;
         });
     }
 

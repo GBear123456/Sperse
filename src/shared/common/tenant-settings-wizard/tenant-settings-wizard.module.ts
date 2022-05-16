@@ -10,7 +10,6 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
-import { InlineSVGModule } from 'ng-inline-svg';
 import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
@@ -41,7 +40,6 @@ import { CountryPhoneNumberModule } from '@shared/common/phone-numbers/country-p
         MatSelectModule,
         DxCheckBoxModule,
         DxSelectBoxModule,
-        InlineSVGModule,
         MatInputModule,
         FormsModule,
         TimeZoneComboModule,

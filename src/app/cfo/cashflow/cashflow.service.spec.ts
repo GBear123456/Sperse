@@ -32,13 +32,13 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { UserPreferencesService } from '@app/cfo/cashflow/preferences-dialog/preferences.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { AbpMultiTenancyService } from 'abp-ng2-module';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppService } from '@app/app.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
+import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LayoutService } from '@app/shared/layout/layout.service';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';

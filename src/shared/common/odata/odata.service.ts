@@ -15,7 +15,7 @@ import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { InstanceModel } from '@shared/cfo/instance.model';
 import { Param } from '@shared/common/odata/param.model';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AsyncFilter } from '@shared/filters/models/async-filter.model';
 

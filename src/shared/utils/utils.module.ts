@@ -11,6 +11,11 @@ import { ValidationMessagesComponent } from './validation-messages.component';
 import { EqualValidator } from './validation/equal-validator.directive';
 import { MinValueValidator } from './validation/min-value-validator.directive';
 import { PasswordComplexityValidator } from './validation/password-complexity-validator.directive';
+import { ArrayToTreeConverterService } from './array-to-tree-converter.service';
+import { TreeDataHelperService } from './tree-data-helper.service';
+import { LuxonFormatPipe } from './luxon-format.pipe';
+import { DatePickerLuxonModifierDirective } from './date-time/date-picker-luxon-modifier.directive';
+import { DateRangePickerLuxonModifierDirective } from './date-time/date-range-picker-luxon-modifier.directive';
 
 @NgModule({
     imports: [
@@ -18,7 +23,9 @@ import { PasswordComplexityValidator } from './validation/password-complexity-va
     ],
     providers: [
         FileDownloadService,
-        LocalStorageService
+        LocalStorageService,
+        TreeDataHelperService,
+        ArrayToTreeConverterService
     ],
     declarations: [
         EqualValidator,
@@ -29,7 +36,10 @@ import { PasswordComplexityValidator } from './validation/password-complexity-va
         BusyIfDirective,
         FriendProfilePictureComponent,
         MomentFormatPipe,
-        ValidationMessagesComponent
+        ValidationMessagesComponent,
+        DatePickerLuxonModifierDirective,
+        DateRangePickerLuxonModifierDirective,
+        LuxonFormatPipe
     ],
     exports: [
         EqualValidator,
@@ -40,7 +50,10 @@ import { PasswordComplexityValidator } from './validation/password-complexity-va
         BusyIfDirective,
         FriendProfilePictureComponent,
         MomentFormatPipe,
-        ValidationMessagesComponent
+        ValidationMessagesComponent,
+        DatePickerLuxonModifierDirective,
+        DateRangePickerLuxonModifierDirective,
+        LuxonFormatPipe
     ]
 })
 export class UtilsModule { }

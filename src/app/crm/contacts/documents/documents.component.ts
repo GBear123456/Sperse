@@ -61,11 +61,11 @@ import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.
     providers: [ FileSizePipe, PrinterService ]
 })
 export class DocumentsComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(ImageViewerComponent, { static: false }) imageViewer: ImageViewerComponent;
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
-    @ViewChild('xmlContainer', { static: false }) xmlContainerElementRef: ElementRef;
-    @ViewChild('documentViewContainer', { static: false }) documentViewContainerElementRef: ElementRef;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
+    @ViewChild('xmlContainer') xmlContainerElementRef: ElementRef;
+    @ViewChild('documentViewContainer') documentViewContainerElementRef: ElementRef;
     private _frameHolderElementRef: HTMLElement;
     @ViewChildren('frameHolder') set frameHolderElements(elements: QueryList<ElementRef>) {
         this._frameHolderElementRef = elements.first && elements.first.nativeElement;
@@ -645,7 +645,7 @@ export class DocumentsComponent extends AppComponentBase implements AfterViewIni
 
     deleteDocument() {
         this.message.confirm(
-            this.l('DocumentDeleteWarningMessage', this.currentDocumentInfo.fileName),
+            this.l('DocumentDeleteWarningMessage', this.currentDocumentInfo.fileName), '',
             isConfirmed => {
                 if (isConfirmed) {
                     super.startLoading(true);

@@ -45,7 +45,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 export class CreditWizardPageComponent implements OnInit {
     @ViewChild(WizardComponent, { static: true }) mWizard: WizardComponent;
     @ViewChild(PaymentInfoComponent, { static: true }) paymentInfo: PaymentInfoComponent;
-    @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
+    @ViewChild('addressInput') addressInput: ElementRef;
 
     private readonly WIZARD_MEMBER_INFO_STEP_INDEX = 0;
     private readonly WIZARD_PAYMENT_STEP_INDEX = 1;

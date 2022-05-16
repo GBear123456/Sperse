@@ -4,13 +4,31 @@
     div.chart {
         height: @chartHeight*1px;
         width: 100%;
-        h3 small {
-            padding-left: 0 !important;
+
+        h3 {
+            small {
+                padding-left: 0px !important;
+            }
+        }
+    }
+
+    .primeNgDataTableTheme(@backgroundColor) {
+        thead th {
+            background-color: @backgroundColor !important;
+            color: white;
         }
     }
 
     .expiring-tenants-table {
-        color: green
+        .primeNgDataTableTheme(#e08283);
+    }
+
+    .recent-tenants-table {
+        .primeNgDataTableTheme(#8877a9);
+    }
+
+    .expiring-tenants-table {
+        color: green;
     }
 
     div.pie-chart-label {
@@ -35,7 +53,7 @@
         }
 
         div.portlet-body {
-            min-height: (@chartHeight + 70)*1px;
+            min-height: (@chartHeight + 70) * 1px;
         }
     }
 
@@ -54,72 +72,56 @@
         font-size: 11px;
     }
 
-    .m--bg-brand {
-        background-color: #6aa0ca !important
+    .m-subheader .m-subheader__daterange > .btn > i {
+        font-size: 22px !important;
     }
 
-    .progress.m-progress--sm {
-        height: 6px
+    .m-subheader .m-subheader__daterange .m-subheader__daterange-label {
+        padding: 0rem 0.75rem 0rem 0.75rem !important;
     }
 
-    .progress.m-progress--sm .progress-bar {
-        border-radius: 3px
-    }
+    @media (max-width: 768px) {
+        .m-subheader .m-subheader__daterange {
+            padding: 0px !important;
+        }
 
-    .progress.m-progress--lg {
-        height: 20px
-    }
-
-    .progress.m-progress--lg .progress-bar {
-        border-radius: 4px
-    }
-
-    .m--font-info {
-        color: #36a3f7 !important
-    }
-
-    .m--bg-brand {
-        background-color: #6aa0ca!important;
-    }
-
-    .m--bg-info {
-        background-color: #36a3f7!important;
-    }
-
-    .m--bg-danger {
-        background-color: #f4516c!important;
-    }
-
-    .m--bg-success {
-        background-color: #34bfa3!important;
-    }
-
-    .btn.m-btn--pill {
-        position: relative;
-        border-radius: 60px;
-    }
-
-    .m-btn--icon.m-btn--icon-only > i {
-        line-height: 0;
-        display: inline-block;
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%,-50%);
-    }
-
-    @media (min-width: 1025px) {
-        .m-portlet.m-portlet--full-height {
-            &.income-statistics,
-            &.edition-statistics {
-                .m-portlet__body {
-                    min-height: 470px;
-                }
+        .m-subheader__daterange.dashboard-report-range {
+            a.btn-primary {
+                padding: 19px !important;
             }
         }
     }
+}
 
-    ghost-list ul {
-        max-height: 417px;
+.income-statistics {
+    svg.ngx-charts {
+        margin-left: -40px;
+        margin-top: -20px;
+    }
+}
+
+.edition-statistics {
+    svg.ngx-charts {
+        margin-left: -40px;
+        margin-top: -30px;
+    }
+}
+
+.dashboard-report-range {
+    margin-left: 5px;
+}
+
+/** New Styles **/
+.dashboard-report-range {
+    color: #fff !important;
+}
+
+.kt-portlet__head-toolbar label.btn {
+    cursor: pointer;
+}
+
+.kt-subheader__wrapper {
+    .dashboard-report-range {
+        margin-right: -204px;
     }
 }

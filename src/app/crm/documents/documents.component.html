@@ -2,7 +2,7 @@
               [showReloadButton]="ui.showReload"
               (onReload)="refresh()">
 </app-headline>
-<div [@routerTransition]>
+<div>
     <div class="wrapper">
         <i class="layout-view dx-icon-{{layout == 'details' ? 'smalliconslayout' : 'contentlayout'}}" (click)="onLayoutToogle()"></i>
         <dx-file-manager

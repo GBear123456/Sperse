@@ -10,7 +10,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 })
 export class InquiriesComponent implements OnInit {
     @Input() creditReport: CreditReportDto;
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     inquiriesDataSource: InquiryData[] = [];
 
     constructor(

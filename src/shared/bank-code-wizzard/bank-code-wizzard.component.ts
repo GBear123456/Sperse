@@ -31,7 +31,6 @@ export class BankCodeWizzardComponent {
     data = {
         labels: ['Blueprint', 'Action', 'Nurturing', 'Knowledge'],
         datasets: [{
-            'data': this.scores,
             'label': 'BANK Score',
             'fill': true,
             'backgroundColor': ['#004a81', '#b70000', '#faa000', '#176826']
@@ -82,7 +81,7 @@ export class BankCodeWizzardComponent {
                             break;
                     }
                 }
-                this.scores = scores;
+                this.data.datasets[0].data = this.scores = scores;
             })
             .fail(function (response) {
                 console.log(response);
@@ -98,7 +97,6 @@ export class BankCodeWizzardComponent {
         const textForAnalyse = formData.value.textForAnalyse;
         this.categorizeText(textForAnalyse);
     }
-
 }
 
 function sortingResult(array, key) {

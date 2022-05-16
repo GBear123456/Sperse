@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { AppFeatures } from '@shared/AppFeatures';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import kebabCase from 'lodash/kebabCase';
 import { Router } from '@angular/router';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';

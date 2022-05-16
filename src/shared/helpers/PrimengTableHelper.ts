@@ -1,6 +1,7 @@
-import { LazyLoadEvent } from 'primeng/components/common/lazyloadevent';
-import { Paginator } from 'primeng/components/paginator/paginator';
-import { Table } from 'primeng/components/table/table';
+import { LazyLoadEvent } from 'primeng/api';
+import { Paginator } from 'primeng/paginator';
+import { Table } from 'primeng/table';
+import * as rtlDetect from 'rtl-detect';
 
 export class PrimengTableHelper {
     predefinedRecordsCountPerPage = [5, 10, 25, 50, 100, 250, 500];
@@ -30,13 +31,31 @@ export class PrimengTableHelper {
     }
 
     getSorting(table: Table): string {
-        let sorting;
-        if (table && table.sortField) {
-            sorting = table.sortField;
-            if (table.sortOrder === 1) {
-                sorting += ' ASC';
-            } else if (table.sortOrder === -1) {
-                sorting += ' DESC';
+        let sorting = '';
+
+        if (table.sortMode === 'multiple') {
+            if (table.multiSortMeta) {
+                for (let i = 0; i < table.multiSortMeta.length; i++) {
+                    const element = table.multiSortMeta[i];
+                    if (i > 0) {
+                        sorting += ',';
+                    }
+                    sorting += element.field;
+                    if (element.order === 1) {
+                        sorting += ' ASC';
+                    } else if (element.order === -1) {
+                        sorting += ' DESC';
+                    }
+                }
+            }
+        } else {
+            if (table.sortField) {
+                sorting = table.sortField;
+                if (table.sortOrder === 1) {
+                    sorting += ' ASC';
+                } else if (table.sortOrder === -1) {
+                    sorting += ' DESC';
+                }
             }
         }
 
@@ -44,7 +63,7 @@ export class PrimengTableHelper {
     }
 
     getMaxResultCount(paginator: Paginator, event: LazyLoadEvent): number {
-        if (paginator && paginator.rows) {
+        if (paginator.rows) {
             return paginator.rows;
         }
 
@@ -56,7 +75,7 @@ export class PrimengTableHelper {
     }
 
     getSkipCount(paginator: Paginator, event: LazyLoadEvent): number {
-        if (paginator && paginator.first) {
+        if (paginator.first) {
             return paginator.first;
         }
 
@@ -68,10 +87,24 @@ export class PrimengTableHelper {
     }
 
     shouldResetPaging(event: LazyLoadEvent): boolean {
-        if (!event /*|| event.sortField*/) { // if you want to reset after sorting, comment out parameter
+        if (!event /*|| event.sortField*/) {
+            // if you want to reset after sorting, comment out parameter
             return true;
         }
 
         return false;
+    }
+
+    adjustScroll(table: Table) {
+        const rtl = rtlDetect.isRtlLang(abp.localization.currentLanguage.name);
+        if (!rtl) {
+            return;
+        }
+
+        const body: HTMLElement = table.el.nativeElement.querySelector('.p-datatable-scrollable-body');
+        const header: HTMLElement = table.el.nativeElement.querySelector('.p-datatable-scrollable-header');
+        body.addEventListener('scroll', () => {
+            header.scrollLeft = body.scrollLeft;
+        });
     }
 }

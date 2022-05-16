@@ -112,12 +112,12 @@ import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dia
     providers: [OrderServiceProxy, CurrencyPipe, ProductServiceProxy]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('ordersGrid', { static: false }) ordersGrid: DxDataGridComponent;
-    @ViewChild('subscriptionsGrid', { static: false }) subscriptionsGrid: DxDataGridComponent;
-    @ViewChild(PipelineComponent, { static: false }) pipelineComponent: PipelineComponent;
-    @ViewChild(StaticListComponent, { static: false }) stagesComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent, { static: false }) pivotGridComponent: PivotGridComponent;
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
+    @ViewChild('ordersGrid') ordersGrid: DxDataGridComponent;
+    @ViewChild('subscriptionsGrid') subscriptionsGrid: DxDataGridComponent;
+    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
+    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
+    @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
 
     items: any;
     showOrdersPipeline = true;
@@ -141,7 +141,23 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     searchClear = false;
     searchValue = this._activatedRoute.snapshot.queryParams.search || '';
     manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
-    filterModelStages: FilterModel;
+    filterModelStages: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'orderStages',
+        items: {
+            element: new FilterCheckBoxesModel(
+                {
+                    dataSource$: this.store$.pipe(
+                        select(PipelinesStoreSelectors.getPipelineTreeSource(
+                            { purpose: AppConsts.PipelinePurposeIds.order })
+                        )
+                    ),
+                    nameField: 'name',
+                    parentExpr: 'parentId',
+                    keyExpr: 'id'
+                }),
+        }
+    });
     layoutTypes = DataLayoutType;
     private ordersDataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     public subscriptionsDataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
@@ -216,23 +232,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
             options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
-        this.filterModelStages = new FilterModel({
-            component: FilterCheckBoxesComponent,
-            caption: 'orderStages',
-            items: {
-                element: new FilterCheckBoxesModel(
-                    {
-                        dataSource$: this.store$.pipe(
-                            select(PipelinesStoreSelectors.getPipelineTreeSource(
-                                { purpose: AppConsts.PipelinePurposeIds.order })
-                            )
-                        ),
-                        nameField: 'name',
-                        parentExpr: 'parentId',
-                        keyExpr: 'id'
-                    }),
-            }
-        }),
+        this.filterModelStages,
         new FilterModel({
             component: FilterInputsComponent,
             options: { type: 'number' },
@@ -875,7 +875,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    get dataGrid() {
+    get dxDataGrid() {
         return this.selectedOrderType.value === OrderType.Order ? this.ordersGrid : this.subscriptionsGrid;
     }
 
@@ -936,7 +936,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         };
     }
 
-    get dataSource() {
+    get dxDataSource() {
         return this.selectedOrderType.value === OrderType.Order ? this.ordersDataSource : this.subscriptionsDataSource;
     }
 
@@ -1056,7 +1056,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         name: 'filters',
                         action: () => {
                             setTimeout(() => {
-                                this.dataGrid.instance.repaint();
+                                this.dxDataGrid.instance.repaint();
                             }, 1000);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
@@ -1224,7 +1224,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         name: 'filters',
                         action: () => {
                             setTimeout(() => {
-                                this.dataGrid.instance.repaint();
+                                this.dxDataGrid.instance.repaint();
                             }, 1000);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
@@ -1314,7 +1314,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                             );
                                             this.pivotGridComponent.dataGrid.instance.exportToExcel();
                                         } else if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
-                                            this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
+                                            this.dxDataGrid.instance.option('export.fileName', this.l('Subscriptions'));
                                             this.exportToXLS(options);
                                         }
                                     },
@@ -1323,7 +1323,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                 },
                                 {
                                     action: (options) => {
-                                        this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
+                                        this.dxDataGrid.instance.option('export.fileName', this.l('Subscriptions'));
                                         this.exportToCSV(options);
                                     },
                                     text: this.l('Export to CSV'),
@@ -1332,7 +1332,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                 },
                                 {
                                     action: (options) => {
-                                        this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
+                                        this.dxDataGrid.instance.option('export.fileName', this.l('Subscriptions'));
                                         this.exportToGoogleSheet(options);
                                     },
                                     text: this.l('Export to Google Sheets'),
@@ -1365,7 +1365,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.startLoading(true);
         if (this.showOrdersPipeline) {
             let importOption = 'all',
-                instance = this.dataGrid.instance,
+                instance = this.dxDataGrid.instance,
                 dataSource: any = instance && instance.getDataSource(),
                 checkExportOption = (dataSource, ignoreFilter = false) => {
                     if (options == importOption)
@@ -1380,7 +1380,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     () => dataSource.filter(null));
             } else {
                 instance.option('dataSource',
-                    dataSource = new DataSource(this.dataSource)
+                    dataSource = new DataSource(this.dxDataSource)
                 );
                 checkExportOption(dataSource);
                 this.exportCallback = () => {
@@ -1400,7 +1400,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         ) {
             this.pivotGridComponent.toggleFieldPanel();
         } else {
-            DataGridService.showColumnChooser(this.dataGrid);
+            DataGridService.showColumnChooser(this.dxDataGrid);
         }
     }
 
@@ -1413,7 +1413,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     toggleToolbar() {
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+        setTimeout(() => this.dxDataGrid.instance.repaint(), 0);
         this.filtersService.fixed = false;
         this.filtersService.disable();
     }
@@ -1428,10 +1428,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 if (!this.pipelineDataSource)
                     setTimeout(() => this.pipelineDataSource = this.getOrdersDataSourceConfig({ uri: this.ordersDataSourceURI }));
             } else
-                this.setDataGridInstance(this.dataGrid);
+                this.setDataGridInstance(this.dxDataGrid);
         } else if (this.selectedOrderType.value === OrderType.Subscription) {
             if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
-                this.setDataGridInstance(this.dataGrid);
+                this.setDataGridInstance(this.dxDataGrid);
             } else if (this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid) {
                 this.setPivotGridInstance();
             }
@@ -1441,7 +1441,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     setDataGridInstance(dataGrid: DxDataGridComponent) {
         let instance = dataGrid && dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
-            dataGrid.dataSource = this.dataSource;
+            dataGrid.dataSource = this.dxDataSource;
             if (!instance.option('paging.pageSize'))
                 instance.option('paging.pageSize', 20);
         } else
@@ -1454,6 +1454,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onContentReady(event) {
+        this.dataGrid = this.dxDataGrid;
         if (this.exportCallback)
             this.exportCallback();
         else {
@@ -1478,17 +1479,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     toggleOrdersDataLayout(dataLayoutType: DataLayoutType) {
-        if (this.dataGrid)
-            DataGridService.hideColumnChooser(this.dataGrid);
+        if (this.dxDataGrid)
+            DataGridService.hideColumnChooser(this.dxDataGrid);
         this.showOrdersPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType.next(this.ordersDataLayoutType = dataLayoutType);
         this.initDataSource();
         this.initOrdersToolbarConfig();
         if (this.showOrdersPipeline)
-            this.dataGrid.instance.deselectAll();
+            this.dxDataGrid.instance.deselectAll();
         else {
             this.pipelineComponent.deselectAllCards();
-            setTimeout(() => this.dataGrid.instance.repaint());
+            setTimeout(() => this.dxDataGrid.instance.repaint());
         }
         if (this.filterChanged) {
             this.filterChanged = false;
@@ -1500,10 +1501,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.subscriptionsDataLayoutType = dataLayouType;
         this.initDataSource();
         this.initSubscriptionsToolbarConfig();
-        if (this.dataGrid)
-            DataGridService.hideColumnChooser(this.dataGrid);
+        if (this.dxDataGrid)
+            DataGridService.hideColumnChooser(this.dxDataGrid);
         if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid)
-            this.dataGrid.instance.deselectAll();
+            this.dxDataGrid.instance.deselectAll();
 
         if (this.filterChanged) {
             this.filterChanged = false;
@@ -1540,8 +1541,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         if (this.showOrdersPipeline)
             this.pipelineService.toggleContactView();
         else {
-            DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
-            this.gridCompactView.next(DataGridService.isCompactView(this.dataGrid));
+            DataGridService.toggleCompactRowsHeight(this.dxDataGrid, true);
+            this.gridCompactView.next(DataGridService.isCompactView(this.dxDataGrid));
         }
     }
 
@@ -1653,7 +1654,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         this.onCardClick({
             entity: event.data,
-            entityStageDataSource: this.dataSource,
+            entityStageDataSource: this.dxDataSource,
             loadMethod: null,
             queryParams: {},
             section: section
@@ -1713,8 +1714,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onOrderStageChanged(order: OrderDto) {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.getVisibleRows().some((row) => {
+        if (this.dxDataGrid && this.dxDataGrid.instance)
+            this.dxDataGrid.instance.getVisibleRows().some((row) => {
                 const orderData: OrderDto = row.data;
                 if (order.Id == orderData.Id) {
                     orderData.Stage = order.Stage;
@@ -1737,7 +1738,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 if (this.showOrdersPipeline)
                     this.pipelineComponent.refresh();
                 else {
-                    let gridInstance = this.dataGrid && this.dataGrid.instance;
+                    let gridInstance = this.dxDataGrid && this.dxDataGrid.instance;
                     if (gridInstance && declinedList && declinedList.length)
                         gridInstance.selectRows(declinedList.map(item => item.Id), false);
                     else
@@ -1778,15 +1779,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             finalize(() => this.finishLoading())
         ).subscribe(() => {
             this.invalidate();
-            this.dataGrid.instance.deselectAll();
+            this.dxDataGrid.instance.deselectAll();
             this.notify.success(this.l('SuccessfullyDeleted'));
             this.filterChanged = true;
         });
     }
 
     onOrderTypeChanged(event) {
-        if (this.dataGrid)
-            DataGridService.hideColumnChooser(this.dataGrid);
+        if (this.dxDataGrid)
+            DataGridService.hideColumnChooser(this.dxDataGrid);
 
         if (event.value != this.selectedOrderType.value) {
             this.searchClear = true;
@@ -1795,8 +1796,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onContactGroupChanged(event) {
-        if (this.dataGrid)
-            DataGridService.hideColumnChooser(this.dataGrid);
+        if (this.dxDataGrid)
+            DataGridService.hideColumnChooser(this.dxDataGrid);
 
         if (event.itemData.value != this.selectedContactGroup.value) {
             this.selectedContactGroup.next(event.itemData.value);
@@ -1827,7 +1828,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         this.onCardClick({
             entity: event.data,
-            entityStageDataSource: event.dataSource || this.dataSource,
+            entityStageDataSource: event.dataSource || this.dxDataSource,
             loadMethod: event.loadMethod,
             queryParams: queryParams,
             section: section

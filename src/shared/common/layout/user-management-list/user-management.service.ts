@@ -27,15 +27,15 @@ import { UserHelper } from 'app/shared/helpers/UserHelper';
 import { AppSessionService } from 'shared/common/session/app-session.service';
 import { LinkedAccountService } from 'app/shared/layout/linked-accounts-modal/linked-account.service';
 import { Observable } from '@node_modules/rxjs';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { AbpSessionService } from '@abp/session/abp-session.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
+import { AbpSessionService } from 'abp-ng2-module';
 import { environment } from 'environments/environment';
 import { AppFeatures } from '@shared/AppFeatures';
 import { UserDropdownMenuItemType } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item-type';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { WizardRightSideComponent } from '@shared/offers-wizard/wizard-right-side/wizard-right-side.component';
 import { AppPermissions } from '@shared/AppPermissions';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { Router } from '@angular/router';
 import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
@@ -66,7 +66,7 @@ export class UserManagementService {
             id: 'ManageLinkedAccountsLink',
             onClick: (e) => this.showLinkedAccounts(e),
             submenuItems: {
-                items: this.recentlyLinkedUsers,
+                items: [],
                 id: 'RecentlyUsedLinkedUsers',
                 onItemClick: (linkedUser) => this.switchToLinkedUser(linkedUser),
                 onItemDisplay: (linkedUser) => this.getShownUserName(linkedUser)
@@ -141,7 +141,7 @@ export class UserManagementService {
             id: 'ManageLinkedAccountsLink',
             onClick: (e) => this.showLinkedAccounts(e),
             submenuItems: {
-                items: this.recentlyLinkedUsers,
+                items: [],
                 id: 'RecentlyUsedLinkedUsers',
                 onItemClick: (linkedUser) => this.switchToLinkedUser(linkedUser),
                 onItemDisplay: (linkedUser) => this.getShownUserName(linkedUser)
@@ -277,7 +277,9 @@ export class UserManagementService {
                         thumbnail: base64ThumbImage,
                         source: result.source
                     })).subscribe(thumbnailId => {
-                        this.handleProfilePictureChange(thumbnailId);
+                        this.appSession.init(true).then(() =>
+                            this.handleProfilePictureChange(thumbnailId)
+                        );
                     });
                 }
             });

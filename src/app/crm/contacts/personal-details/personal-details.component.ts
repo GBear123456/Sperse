@@ -6,14 +6,14 @@ import { MatDialog } from '@angular/material/dialog';
 import startCase from 'lodash/startCase';
 import { select, Store } from '@ngrx/store';
 import { Subscription } from 'rxjs';
-import { filter, first, map, debounceTime, takeUntil } from 'rxjs/operators';
+import { filter, first, map, takeUntil } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { CountriesStoreActions, CountriesStoreSelectors, RootStore, StatesStoreActions, StatesStoreSelectors } from '@root/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -24,7 +24,7 @@ import {
     Gender,
     LayoutType,
     MaritalStatus,
-    NameValueDtoListResultDto,
+    ListResultDtoOfNameValueDto,
     PersonContactInfoDto,
     PersonContactServiceProxy,
     PersonInfoDto,
@@ -153,7 +153,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
             }
         }, this.ident);
 
-        this.timingService.getTimezones(AppTimezoneScope.Application).subscribe((res: NameValueDtoListResultDto) => {
+        this.timingService.getTimezones(AppTimezoneScope.Application).subscribe((res: ListResultDtoOfNameValueDto) => {
             this.selectList.timeZone = res.items.map(item => ({ id: item.value, name: item.name }));
             this.changeDetector.markForCheck();
         });
@@ -165,8 +165,7 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
 
     ngAfterViewInit() {
         this.contactsService.settingsDialogOpened$.pipe(
-            takeUntil(this.lifeCycleService.destroy$),
-            debounceTime(1000)
+            takeUntil(this.lifeCycleService.destroy$)
         ).subscribe(opened => {
             let isOpened = this.contactInfo && this.contactInfo.parentId ? false : opened;
             this.personalDetailsService.togglePersonalDetailsDialog(this.settingsDialogId, isOpened);

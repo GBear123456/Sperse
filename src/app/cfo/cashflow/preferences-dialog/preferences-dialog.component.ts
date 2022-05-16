@@ -25,7 +25,7 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PreferencesDialogComponent implements OnInit {
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     GeneralScope = GeneralScope;
     model: CashFlowGridSettingsDto;
     active = false;

@@ -19,7 +19,7 @@ import {
     Permissions,
     UserServiceProxy,
     UserListDto,
-    UserListDtoListResultDto
+    ListResultDtoOfUserListDto
 } from 'shared/service-proxies/service-proxies';
 import { AccountPermission } from './account-permission.model';
 import { UsersDialogComponent } from './users-dialog/users-dialog.component';
@@ -29,10 +29,10 @@ import { AppPermissions } from '@shared/AppPermissions';
     selector: 'app-permissions',
     templateUrl: './permissions.component.html',
     styleUrls: ['./permissions.component.less'],
-    providers: [ BankAccountsServiceProxy, SecurityManagementServiceProxy, UserServiceProxy ]
+    providers: [BankAccountsServiceProxy, SecurityManagementServiceProxy, UserServiceProxy]
 })
 export class PermissionsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     private rootComponent: any;
     users: UserListDto[] = [];
     showenUsersIds: number[] = [];
@@ -109,7 +109,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         const instanceType = <any>this.instanceType;
         const usersObservable = this.userServiceProxy.getUsers(
             undefined,
-            [ AppPermissions.CFOMainInstanceAccess ],
+            [AppPermissions.CFOMainInstanceAccess],
             undefined,
             false,
             undefined,
@@ -125,7 +125,7 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
             bankAccountsObservable,
             usersPermissionsObservable
         ).subscribe(
-            ([ users, syncAccounts, usersPermissions ]: [ UserListDtoListResultDto, SyncAccountBankDto[], BankAccountUsers[]]) => {
+            ([users, syncAccounts, usersPermissions]: [ListResultDtoOfUserListDto, SyncAccountBankDto[], BankAccountUsers[]]) => {
                 this.users = users && users.items ? users.items : null;
                 this.syncAccounts = syncAccounts;
                 this.bankAccountsUsers = usersPermissions;
@@ -278,8 +278,8 @@ export class PermissionsComponent extends CFOComponentBase implements OnInit, Af
         const permission = e.newData[userId];
         const instanceType = <any>this.instanceType;
         let methodObservable = permission ?
-                               this.securityManagementServiceProxy.grantBankAccountPermissions(instanceType, this.instanceId, e.oldData.accountId, userId, Permissions.All) :
-                               this.securityManagementServiceProxy.revokeBankAccountPermissions(instanceType, this.instanceId, userId, [e.oldData.accountId]);
+            this.securityManagementServiceProxy.grantBankAccountPermissions(instanceType, this.instanceId, e.oldData.accountId, userId, Permissions.All) :
+            this.securityManagementServiceProxy.revokeBankAccountPermissions(instanceType, this.instanceId, userId, [e.oldData.accountId]);
         methodObservable.subscribe(() => {
             this.notify.success(this.ls('Platform', 'AppliedSuccessfully'));
         });

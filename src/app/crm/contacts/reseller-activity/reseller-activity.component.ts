@@ -27,7 +27,7 @@ import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -36,7 +36,7 @@ import { CommissionFields } from '@app/crm/commission-history/commission-fields.
 import { LedgerFields } from '@app/crm/commission-history/ledger-fields.enum';
 import { ClientFields } from '@app/crm/clients/client-fields.enum';
 import { AppPermissions } from '@shared/AppPermissions';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
@@ -46,11 +46,11 @@ import { AppFeatures } from '@shared/AppFeatures';
     providers: [ LifecycleSubjectsService ]
 })
 export class ResellerActivityComponent implements OnInit, OnDestroy {
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
-    @ViewChild('commissionDataGrid', {static: false}) commissionDataGrid: DxDataGridComponent;
-    @ViewChild('generatedCommissionDataGrid', {static: false}) generatedCommissionDataGrid: DxDataGridComponent;
-    @ViewChild('contactDataGrid', {static: false}) contactDataGrid: DxDataGridComponent;
-    @ViewChild('ledgerDataGrid', {static: false}) ledgerDataGrid: DxDataGridComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
+    @ViewChild('commissionDataGrid') commissionDataGrid: DxDataGridComponent;
+    @ViewChild('generatedCommissionDataGrid') generatedCommissionDataGrid: DxDataGridComponent;
+    @ViewChild('contactDataGrid') contactDataGrid: DxDataGridComponent;
+    @ViewChild('ledgerDataGrid') ledgerDataGrid: DxDataGridComponent;
 
     data = {
         contactInfo: new ContactInfoDto()

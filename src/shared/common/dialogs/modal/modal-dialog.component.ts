@@ -36,8 +36,8 @@ import { ContextMenuItem } from '@shared/common/dialogs/modal/context-menu-item.
     }
 })
 export class ModalDialogComponent implements OnInit, AfterViewInit {
-    @ViewChild('titleComponent', { static: false }) titleComponent: DxTextBoxComponent;
-    @ViewChild(DxContextMenuComponent, { static: false }) contextMenu: DxContextMenuComponent;
+    @ViewChild('titleComponent') titleComponent: DxTextBoxComponent;
+    @ViewChild(DxContextMenuComponent) contextMenu: DxContextMenuComponent;
 
     @Input() title: string;
     @Input() editTitle = false;

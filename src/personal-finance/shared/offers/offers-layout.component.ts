@@ -100,7 +100,7 @@ enum CreditCardCategory {
 })
 export class OffersLayoutComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild('offersList', { static: true }) offersListRef: ElementRef;
-    @ViewChild('filterScroll', { static: false }) filterScroll: DxScrollViewComponent;
+    @ViewChild('filterScroll') filterScroll: DxScrollViewComponent;
     offers$: Observable<any>;
     displayedOffers$: Observable<any>;
 

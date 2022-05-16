@@ -1,4 +1,4 @@
-<div [@routerTransition]>
+<div>
     <app-headline [names]="[ l('Tasks') ]"
                   icon="docs"
                   [showCompactView]="pipelineService.compactView$ | async"
@@ -59,7 +59,7 @@
             <div class="funnel-wrapper main-component-view">
                 <app-pipeline
                     totalsURI="ActivityCount"
-                    [dataSource]="pipelineDataSource"
+                    [source]="pipelineDataSource"
                     dragulaName="activityStages"
                     [selectFields]="['Id', 'Title', 'Description', 'StartDate', 'EndDate']"
                     [pipelinePurposeId]="pipelinePurposeId"

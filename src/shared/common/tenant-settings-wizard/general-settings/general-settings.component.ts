@@ -17,7 +17,8 @@ import { tap } from 'rxjs/operators';
 
 /** Application imports */
 import { AppPermissions } from '@shared/AppPermissions';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
+import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
     GeneralSettingsEditDto,
@@ -40,6 +41,7 @@ import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wiz
     selector: 'general-settings',
     templateUrl: 'general-settings.component.html',
     styleUrls: [ '../shared/styles/common.less', 'general-settings.component.less' ],
+    providers: [ PhoneNumberService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
@@ -49,6 +51,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     @ViewChild('tosUploader', { static: false }) tosUploader: UploaderComponent;
     @ViewChild('publicSiteUrl', { static: false }) publicSiteUrl: AbstractControlDirective;
     @ViewChild('publicPhoneNumber', { static: false }) publicPhoneNumber;
+
     @Output() onOptionChanged: EventEmitter<string> = new EventEmitter<string>();
     @Input() set settings(value: GeneralSettingsEditDto) {
         if (value) {
@@ -64,7 +67,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     private _settings: GeneralSettingsEditDto;
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     defaultTimezoneScope: SettingScopes = AppTimezoneScope.Tenant;
-    siteUrlRegexPattern = AppConsts.regexPatterns.siteUrl;
+    siteUrlRegexPattern = AppConsts.regexPatterns.url;
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
@@ -89,6 +92,7 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
 
     constructor(
         private appSession: AppSessionService,
+        private phoneNumberService: PhoneNumberService,
         private timingService: TimingServiceProxy,
         private permissionService: PermissionCheckerService,
         private tenantSettingsServiceProxy: TenantSettingsServiceProxy,
@@ -115,14 +119,16 @@ export class GeneralSettingsComponent implements ITenantSettingsStepComponent {
     }
 
     save(): Observable<any> {
-        if ((!this.publicSiteUrl || this.publicSiteUrl.valid) && this.publicPhoneNumber.isValid()) {
+        if ((!this.publicSiteUrl || this.publicSiteUrl.valid) && 
+            (!this.publicPhoneNumber || this.publicPhoneNumber.isValid())
+        ) {
             return forkJoin(
                 this.tenantSettingsServiceProxy.updateGeneralSettings(this.settings).pipe(tap(() => {
                     if (this.initialTimezone != this.settings.timezone)
                         this.onOptionChanged.emit('timezone');
                     if (this.initialCountry != this.settings.defaultCountryCode)
                         this.onOptionChanged.emit('defaultCountry');
-                    this.appSession.checkSetDefaultCountry(this.settings.defaultCountryCode);
+                    this.phoneNumberService.checkSetDefaultPhoneCodeByCountryCode(this.settings.defaultCountryCode);
                 })),
                 this.tenantPaymentSettingsProxy.updateInvoiceSettings(this.paymentSettings),
                 this.privacyPolicyUploader ? this.privacyPolicyUploader.uploadFile() : of(null),

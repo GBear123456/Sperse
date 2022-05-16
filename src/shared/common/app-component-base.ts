@@ -1,5 +1,5 @@
 /** Core imports */
-import { Injector, ApplicationRef, ElementRef, HostBinding, OnDestroy } from '@angular/core';
+import { Injector, ApplicationRef, ElementRef, HostBinding, OnDestroy, Directive } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 /** Third party imports */
@@ -11,12 +11,12 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { LocalizationService } from '@abp/localization/localization.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { NotifyService } from '@abp/notify/notify.service';
-import { SettingService } from '@abp/settings/setting.service';
-import { MessageService } from '@abp/message/message.service';
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { LocalizationService } from 'abp-ng2-module';
+import { FeatureCheckerService } from 'abp-ng2-module';
+import { NotifyService } from 'abp-ng2-module';
+import { SettingService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
+import { AbpMultiTenancyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { ExportService } from '@shared/common/export/export.service';
@@ -35,7 +35,9 @@ import { TitleService } from '@shared/common/title/title.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { InstanceModel } from '@shared/cfo/instance.model';
 import { Param } from '@shared/common/odata/param.model';
+import { UiCustomizationSettingsDto } from '@shared/service-proxies/service-proxies';
 
+@Directive()
 export abstract class AppComponentBase implements OnDestroy {
     @HostBinding('class.fullscreen') public isFullscreenMode;
     private destroySubject: Subject<boolean> = new Subject<boolean>();
@@ -76,6 +78,10 @@ export abstract class AppComponentBase implements OnDestroy {
         return this._exportService;
     }
 
+    get currentTheme(): UiCustomizationSettingsDto {
+        return this.appSession.theme;
+    }
+
     public searchClear = true;
     public searchValue: string;
     public searchColumns: any[];
@@ -90,6 +96,8 @@ export abstract class AppComponentBase implements OnDestroy {
     public cacheHelper: CacheHelper;
     public loadingService: LoadingService;
     public defaultGridPagerConfig = DataGridService.defaultGridPagerConfig;
+
+    eventSubscriptions: AbpEventSubscription[] = [];
 
     constructor(
         private _injector: Injector
@@ -275,8 +283,22 @@ export abstract class AppComponentBase implements OnDestroy {
         this.getRootComponent().overflowHidden();
     }
 
+    protected subscribeToEvent(eventName: string, callback: (...args: any[]) => void): void {
+        abp.event.on(eventName, callback);
+        this.eventSubscriptions.push({
+            eventName,
+            callback,
+        });
+    }
+
+    private unSubscribeAllEvents() {
+        this.eventSubscriptions.forEach((s) => abp.event.off(s.eventName, s.callback));
+        this.eventSubscriptions = [];
+    }
+
     ngOnDestroy() {
         this.destroySubject.next(true);
         this.destroySubject.unsubscribe();
+        this.unSubscribeAllEvents();
     }
 }

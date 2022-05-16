@@ -1,5 +1,4 @@
 import {Component, OnInit, Injector} from '@angular/core';
-import {appModuleAnimation} from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { finalize } from 'rxjs/operators';
 
@@ -9,7 +8,6 @@ import { CreditSimulatorServiceProxy, ScoreSimulatorDto, ScoreSimulatorInfoDto, 
     selector: 'app-credit-calculator',
     templateUrl: './credit-simulator.component.html',
     styleUrls: ['./credit-simulator.component.less'],
-    animations: [appModuleAnimation()],
     providers: [CreditSimulatorServiceProxy]
 })
 export class CreditSimulatorComponent extends AppComponentBase implements OnInit {

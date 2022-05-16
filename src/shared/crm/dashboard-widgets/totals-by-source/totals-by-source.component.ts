@@ -53,7 +53,7 @@ import { AppConsts } from '@shared/AppConsts';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TotalsBySourceComponent implements OnInit, OnDestroy {
-    @ViewChild(DxPieChartComponent, { static: false }) chartComponent: DxPieChartComponent;
+    @ViewChild(DxPieChartComponent) chartComponent: DxPieChartComponent;
     @Input() waitFor$: Observable<any> = of().pipe(
         publishReplay(), refCount()
     );

@@ -75,8 +75,8 @@ import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
     providers: [ AppStoreService, DialogService ]
 })
 export class ContactsComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(OperationsWidgetComponent, { static: false }) toolbarComponent: OperationsWidgetComponent;
-    @ViewChild(DetailsHeaderComponent, { static: false }) detailsHeaderComponent: DetailsHeaderComponent;
+    @ViewChild(OperationsWidgetComponent) toolbarComponent: OperationsWidgetComponent;
+    @ViewChild(DetailsHeaderComponent) detailsHeaderComponent: DetailsHeaderComponent;
 
     readonly RP_DEFAULT_ID   = RP_DEFAULT_ID;
     readonly RP_USER_INFO_ID = RP_USER_INFO_ID;
@@ -325,7 +325,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     initContextTypeByRoute() {
         this.detailsHeaderComponent.contextMenuInit$.pipe(first()).subscribe(() => {
             let section = this._activatedRoute.children[0].routeConfig.path;
-            this.updateContextType(this.navLinks.find(link => link.name == section));
+            this.updateContextType(this.navLinks.find(link => link.name == section), false);
         });
     }
 
@@ -587,9 +587,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
         return res$;
     }
 
-    updateContextType(navLink: NavLink): ContextType {
+    updateContextType(navLink: NavLink, closeDialogs = true): ContextType {
         let newSelectedContextType: ContextType;
-        this.closeEditDialogs();
         switch (navLink.name) {
             case 'documents': newSelectedContextType = ContextType.AddFiles;  break;
             case 'contact-information': newSelectedContextType = ContextType.AddContact;  break;
@@ -598,6 +597,8 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
             case 'lead-related-contacts': newSelectedContextType = ContextType.AddContact; break;
             case 'subscriptions': newSelectedContextType = ContextType.AddSubscription; break;
         }
+        if (closeDialogs)
+            this.closeEditDialogs();
         if (newSelectedContextType !== undefined) {
             setTimeout(() => {
                 this.detailsHeaderComponent.updateSaveOption(

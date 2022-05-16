@@ -13,7 +13,7 @@ import { SourceContact } from 'shared/common/source-contact-list/source-contact.
     styleUrls: ['./source-filter.component.less']
 })
 export class FilterSourceComponent {
-    @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
+    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
     items: {
         element: SourceFilterModelBase
     };

@@ -3,7 +3,7 @@ import { Component, Injector, OnInit, ViewChild } from '@angular/core';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
-import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 
 @Component({
   selector: 'category-delete-dialog',
@@ -11,7 +11,7 @@ import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
   styleUrls: ['category-delete-dialog.component.less']
 })
 export class CategoryDeleteDialogComponent extends ConfirmDialogComponent implements OnInit {
-    @ViewChild(DxTreeListComponent, { static: false }) categoryList: DxTreeListComponent;
+    @ViewChild(DxTreeListComponent) categoryList: DxTreeListComponent;
 
     constructor(
         injector: Injector,

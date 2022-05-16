@@ -70,8 +70,10 @@ export class UserPreferencesService {
 
     load() {
         this.cfoService.statusActive$.pipe(
-            filter(Boolean),
-            switchMap(() => this.cashflowService.getCashFlowGridSettings(InstanceType[this.cfoService.instanceType], this.cfoService.instanceId))
+            distinctUntilChanged(), filter(Boolean),            
+            switchMap(() => this.cashflowService.getCashFlowGridSettings(
+                InstanceType[this.cfoService.instanceType], this.cfoService.instanceId
+            ))
         ).subscribe((userPreferences: CashFlowGridSettingsDto) => {
             this._userPreferences.next(userPreferences);
         });

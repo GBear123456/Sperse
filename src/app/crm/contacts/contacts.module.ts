@@ -40,10 +40,7 @@ import { DxFileManagerModule } from 'devextreme-angular';
 
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { ImageViewerModule } from 'ng2-image-viewer';
-import { VgCoreModule } from 'videogular2/core';
-import { VgControlsModule } from 'videogular2/controls';
-import { VgOverlayPlayModule } from 'videogular2/overlay-play';
-import { VgBufferingModule } from 'videogular2/buffering';
+import { VgCoreModule, VgControlsModule, VgOverlayPlayModule, VgBufferingModule } from 'ngx-videogular';
 import { NgxMaskModule } from '@node_modules/ngx-mask';
 import { CKEditorModule } from 'ckeditor4-angular';
 

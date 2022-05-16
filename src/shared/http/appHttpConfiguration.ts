@@ -1,12 +1,12 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse } from '@angular/common/http';
 import { AppConsts } from '@shared/AppConsts';
-import { AbpHttpConfiguration } from '@abp/abpHttpInterceptor';
-import { MessageService } from '@abp/message/message.service';
-import { LogService } from '@abp/log/log.service';
+import { AbpHttpConfigurationService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
+import { LogService } from 'abp-ng2-module';
 
 @Injectable()
-export class AppHttpConfiguration extends AbpHttpConfiguration {
+export class AppHttpConfiguration extends AbpHttpConfigurationService {
     avoidErrorHandling = false;
     private readonly avoidErrorHandlingKeys = [
         'CRM/Dashboard/GetContactsByCompanySize',

@@ -58,8 +58,8 @@ type Contact = OrganizationShortInfo | PersonShortInfoDto | PropertyDto;
     providers: [ PhoneFormatPipe ]
 })
 export class NoteAddDialogComponent extends AppComponentBase implements OnInit, AfterViewInit {
-    @ViewChild('followUpDateBox', { static: false }) followUpDateBox: DxDateBoxComponent;
-    @ViewChild('currentDateBox', { static: false }) currentDateBox: DxDateBoxComponent;
+    @ViewChild('followUpDateBox') followUpDateBox: DxDateBoxComponent;
+    @ViewChild('currentDateBox') currentDateBox: DxDateBoxComponent;
     @Output() onSaved: EventEmitter<any> = new EventEmitter<any>();
 
     private slider: any;
@@ -144,7 +144,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
             this.applyOrdersFilter();
             this.initNoteData();
         });
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '75px',
                 right: '-100vw'
@@ -165,7 +165,7 @@ export class NoteAddDialogComponent extends AppComponentBase implements OnInit, 
     ngAfterViewInit() {
         setTimeout(() => {
             this.slider.classList.remove('hide');
-            this.dialogRef.updateSize(undefined, '100vh');
+            this.dialogRef.updateSize(undefined, 'calc(100vh - 75px)');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
                     top: '75px',

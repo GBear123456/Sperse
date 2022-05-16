@@ -8,7 +8,6 @@ import remove from 'lodash/remove';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ApiKeyServiceProxy, ApiKeyInfo, GenerateApiKeyInput } from '@shared/service-proxies/service-proxies';
 import { EditKeyDialog } from '@app/api/introduction/add-key-dialog/add-key-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -17,7 +16,6 @@ import { AppService } from '@app/app.service';
 @Component({
     templateUrl: './introduction.component.html',
     styleUrls: ['./introduction.component.less'],
-    animations: [appModuleAnimation()],
     providers: [ ApiKeyServiceProxy ]
 })
 export class IntroductionComponent extends AppComponentBase implements OnInit, OnDestroy {

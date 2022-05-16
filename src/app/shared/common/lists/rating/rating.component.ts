@@ -5,7 +5,7 @@ import { Component, Input, EventEmitter, Output, ViewChild } from '@angular/core
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppRatingComponent } from '@app/shared/common/rating/rating.component';
@@ -18,7 +18,7 @@ import { AppPermissions } from '@shared/AppPermissions';
   providers: [ContactRatingsServiceProxy]
 })
 export class RatingComponent {
-    @ViewChild(AppRatingComponent, { static: false }) ratingComponent: AppRatingComponent;
+    @ViewChild(AppRatingComponent) ratingComponent: AppRatingComponent;
     @Input() filterModel: any;
     @Input() selectedKeys: any;
     @Input() ratingValue: number;

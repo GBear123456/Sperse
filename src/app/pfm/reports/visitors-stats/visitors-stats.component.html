@@ -15,10 +15,9 @@
                 [calculateDisplayValue]="getVisitorFullName"
                 cssClass="clipboard-holder">
     </dxi-column>
-    <dxi-column [dataField]="visitorStatsFields.State"
+    <dxi-column [dataField]="visitorStatsFields.StateCode"
                 [caption]="l('State')"
                 [width]="160"
-                calculateSortValue="StateCode"
                 cssClass="clipboard-holder">
     </dxi-column>
     <dxi-column [dataField]="visitorStatsFields.Email"

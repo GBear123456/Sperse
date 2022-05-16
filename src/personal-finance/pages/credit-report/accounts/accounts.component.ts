@@ -10,7 +10,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['./accounts.component.less']
 })
 export class AccountsComponent implements AfterViewInit {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @Input() creditReport: CreditReportDto;
     selectionChangedRaised: boolean;
     creditReportId: any;

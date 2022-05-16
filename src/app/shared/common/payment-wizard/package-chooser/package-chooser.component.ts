@@ -22,7 +22,7 @@ import partition from 'lodash/partition';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import { PackageCardComponent } from '@app/shared/common/payment-wizard/package-chooser/package-card/package-card.component';
 import { PackageOptions } from '@app/shared/common/payment-wizard/models/package-options.model';
-import { AppConsts } from '@shared/AppConsts.ts';
+import { AppConsts } from '@shared/AppConsts';
 import {
     GetPackagesConfigOutput,
     PaymentPeriodType,
@@ -80,15 +80,16 @@ export class PackageChooserComponent implements OnInit {
     private defaultUsersAmount = 5;
     private currentPackage: PackageConfigDto;
     private currentEdition: PackageEditionConfigDto;
-    private freePackages: PackageConfigDto[];
     private enableSliderScalingChange = false;
+
+    public freePackages: PackageConfigDto[];
     packagesConfig$: Observable<GetPackagesConfigOutput>;
     configurator = 'billingPeriod';
     tenantSubscriptionIsTrial: boolean;
     tenantSubscriptionIsFree: boolean;
 
     constructor(
-        private localizationService: AppLocalizationService,
+        public localizationService: AppLocalizationService,
         private localizationResolver: LocalizationResolver,
         private packageServiceProxy: PackageServiceProxy,
         private changeDetectionRef: ChangeDetectorRef,

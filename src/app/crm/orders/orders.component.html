@@ -20,7 +20,7 @@
                   (onToggleCompactView)="toggleCompactView()"
                   (onToggleToolbar)="toggleToolbar()"
                   (onReload)="invalidate()"
-                  (onStateReset)="dataGrid.instance.state(null)"
+                  (onStateReset)="dxDataGrid.instance.state(null)"
                   (onToggleColumnSelector)="toggleColumnChooser()">
         <orders-header-dropdown
                         [totalCount]="totalCount"
@@ -171,7 +171,7 @@
                         <app-pipeline
                                 totalsURI="OrderCount"
                                 dragulaName="orderStages"
-                                [dataSource]="pipelineDataSource"
+                                [source]="pipelineDataSource"
                                 [selectFields]="['Id', 'ContactId', 'Name', 'CompanyName', 'OrderDate', 'PhotoPublicId', 'LeadId', 'ContactGroupId', 'Phone', 'Amount']"
                                 dateField="OrderDate"
                                 [actionMenuGroups]="actionMenuGroups"

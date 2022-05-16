@@ -24,7 +24,7 @@ import { ContactsService } from '../contacts.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ODataService } from '@shared/common/odata/odata.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
-import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
@@ -46,10 +46,10 @@ import { AppStore } from '@app/store';
     providers: [LifecycleSubjectsService]
 })
 export class LeadRelatedContactsComponent implements OnInit, OnDestroy {
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
-    @ViewChild('leadDataGrid', {static: false}) leadDataGrid: DxDataGridComponent;
-    @ViewChild('contactDataGrid', {static: false}) contactDataGrid: DxDataGridComponent;
-    @ViewChild('subContactDataGrid', {static: false}) subContactDataGrid: DxDataGridComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
+    @ViewChild('leadDataGrid') leadDataGrid: DxDataGridComponent;
+    @ViewChild('contactDataGrid') contactDataGrid: DxDataGridComponent;
+    @ViewChild('subContactDataGrid') subContactDataGrid: DxDataGridComponent;
 
     data = {
         contactInfo: new ContactInfoDto(),

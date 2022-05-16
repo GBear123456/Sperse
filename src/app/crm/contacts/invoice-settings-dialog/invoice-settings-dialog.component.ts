@@ -4,7 +4,7 @@ import { Component, ChangeDetectionStrategy, Inject, ChangeDetectorRef, ViewChil
 /** Third party imports */
 import { filter, finalize, first } from 'rxjs/operators';
 import { MatDialogRef, MatDialog } from '@angular/material/dialog';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 
 /** Application imports */
 import { DialogService } from '@app/shared/common/dialogs/dialog.service';
@@ -21,7 +21,7 @@ import { BankSettingsDialogComponent } from '@app/crm/shared/bank-settings-dialo
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissions } from '@shared/AppPermissions';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
@@ -34,8 +34,8 @@ import { SourceContactListComponent } from '@shared/common/source-contact-list/s
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class InvoiceSettingsDialogComponent implements AfterViewInit {
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
-    @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
 
     settings = new InvoiceSettingsDto();
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);

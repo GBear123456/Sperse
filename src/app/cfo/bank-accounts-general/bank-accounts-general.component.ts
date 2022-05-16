@@ -25,8 +25,8 @@ import { BankAccountsComponent } from '@shared/cfo/bank-accounts/bank-accounts.c
     providers: [ SyncAccountServiceProxy, LifecycleSubjectsService ]
 })
 export class BankAccountsGeneralComponent extends CFOComponentBase implements OnInit, AfterViewInit {
-    @ViewChild(SynchProgressComponent, { static: false }) syncComponent: SynchProgressComponent;
-    @ViewChild(BankAccountsComponent, { static: false }) bankAccountsComponent: BankAccountsComponent;
+    @ViewChild(SynchProgressComponent) syncComponent: SynchProgressComponent;
+    @ViewChild(BankAccountsComponent) bankAccountsComponent: BankAccountsComponent;
 
     private rootComponent: any;
     createAccountAvailable = false;

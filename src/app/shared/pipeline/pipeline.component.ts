@@ -103,10 +103,10 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     @Input() totalsURI: string;
     @Input() selectFields: string[];
     @Input() filterModelStages: any;
-    @Input('dataSource')
-    set dataSource(dataSource: DataSource) {
-        if (this._dataSource = dataSource)
-            this.dataSource$.next(dataSource);
+    @Input('source')
+    set source(source: DataSource) {
+        if (this._dataSource = source)
+            this.dataSource$.next(source);
     }
     @Input() pipelinePurposeId: string;
     @Input() pipelineId: number;
@@ -281,18 +281,18 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     private handleDragAndDrop() {
-        this.subscribers.push(this.dragulaService.drop.subscribe((value) => {
+        this.subscribers.push(this.dragulaService.drop(this.dragulaName).subscribe((value) => {
             setTimeout(() => this.detectChanges());
-            if (value[0] == this.dragulaName) {
-                let entityId = this.getAccessKey(value[1]),
-                    newStage: Stage = this.getStageByElement(value[2]),
+            if (value && value.name == this.dragulaName) {
+                let entityId = this.getAccessKey(value.el),
+                    newStage: Stage = this.getStageByElement(value.target),
                     reloadStageList: number[] = [newStage.stageIndex],
                     newSortOrder = this.pipelineService.getEntityNewSortOrder(
-                        this.getEntityById(this.getAccessKey(value[4]), newStage),
+                        this.getEntityById(this.getAccessKey(value.sibling), newStage),
                         newStage
                     );
                 this.pipelineService.resetIgnoreChecklist();
-                if (value[1].classList.contains('selected')) {
+                if (value.el.classList.contains('selected')) {
                     const checkReloadStages = (entity, stages?: Stage[]) => {
                         this.selectedEntities.splice(this.selectedEntities.indexOf(entity), 1);
                         if (!this.getSelectedEntities().length)
@@ -333,7 +333,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                         }
                     });
                 } else {
-                    let stage = this.getStageByElement(value[3]),
+                    let stage = this.getStageByElement(value.source),
                         targetEntity = this.getEntityById(entityId, stage);
                     targetEntity.SortOrder = newSortOrder;
                     if (!stage.entities.length)
@@ -360,13 +360,13 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                 }
             }
         }));
-        this.subscribers.push(this.dragulaService.dragend.subscribe((value) => {
-            if (value[0] == this.dragulaName)
+        this.subscribers.push(this.dragulaService.dragend(this.dragulaName).subscribe((value) => {
+            if (value.name == this.dragulaName)
                 this.hideStageHighlighting();
         }));
         const bag: any = this.dragulaService.find(this.dragulaName);
         if (bag !== undefined ) this.dragulaService.destroy(this.dragulaName);
-        this.dragulaService.setOptions(this.dragulaName, {
+        this.dragulaService.createGroup(this.dragulaName, {
             revertOnSpill: true,
             copySortSource: false,
             ignoreInputTextSelection: false,

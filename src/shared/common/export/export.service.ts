@@ -106,7 +106,7 @@ export class ExportService {
     exportTo(option, type, dataGrid: DxDataGridComponent = null, prefix?: string, showItemsInName?: boolean): Promise<any> {
         this.loadingService.startLoading();
         if (dataGrid && dataGrid.instance && dataGrid.instance.getDataSource().isLoading())
-            return new Promise((resolve) => {
+            return new Promise<any>((resolve) => {
                 dataGrid.instance.on('contentReady', () => {
                     dataGrid.instance.off('contentReady');
                     resolve(this.exportTo(option, type, dataGrid, prefix, showItemsInName));
@@ -154,7 +154,7 @@ export class ExportService {
     }
 
     private exportToCSVInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string, showItemsInName?: boolean) {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             this.getDataFromGrid(dataGrid, (data) => {
                 this.moveItemsToCSV(data, dataGrid, prefix, showItemsInName);
                 resolve();
@@ -163,7 +163,7 @@ export class ExportService {
     }
 
     private exportToGoogleSheetsInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string, showItemsInName?: boolean) {
-        return this.exportGoogleSheetService.export(new Promise((resolve) => {
+        return this.exportGoogleSheetService.export(new Promise<any>((resolve) => {
             this.getDataFromGrid(dataGrid, data => {
                 let visibleColumns: DevExpress.ui.dxDataGridColumn[] = dataGrid.instance.getVisibleColumns(),
                     rowData = this.exportGoogleSheetService.getHeaderRows(visibleColumns);
@@ -184,7 +184,7 @@ export class ExportService {
     }
 
     private exportToExcelInternal(dataGrid: DxDataGridComponent, exportAllData: boolean, prefix?: string, showItemsInName?: boolean) {
-        return new Promise(resolve => {
+        return new Promise<void>(resolve => {
             let instance = dataGrid.instance,
                 dataSource = instance.getDataSource(),
                 dataStore = dataSource.store(),
@@ -253,7 +253,7 @@ export class ExportService {
             });
             return result;
         }
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve) => {
             this.getDataFromGrid(
                 dataGrid,
                 (data) => {

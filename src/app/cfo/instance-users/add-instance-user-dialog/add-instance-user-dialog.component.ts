@@ -6,7 +6,7 @@ import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /** Application imports */
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ContactServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -15,7 +15,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
     styleUrls: ['add-instance-user-dialog.less']
 })
 export class AddInstanceUserDialogComponent {
-    @ViewChild(DxSelectBoxComponent, { static: false }) userComponent: DxSelectBoxComponent;
+    @ViewChild(DxSelectBoxComponent) userComponent: DxSelectBoxComponent;
     userId: number;
     contacts: any = [];
     sendInvitationEmail = false;

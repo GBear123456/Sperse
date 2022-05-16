@@ -18,7 +18,7 @@ import {
     CreateActivityDto,
     UpdateActivityDto,
     LayoutType,
-    ActivityDto,
+    ActivityDto,
     EntityContactInfo
 } from '@shared/service-proxies/service-proxies';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
@@ -27,13 +27,13 @@ import { ActivityAssignedUsersStoreSelectors } from '@app/store';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
-import { NotifyService } from '@abp/notify/notify.service';
-import { MessageService } from '@abp/message/message.service';
+import { NotifyService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { ActivityDto as InternalActivityDto } from '@app/crm/activity/activity-dto.interface';
 
@@ -49,13 +49,13 @@ import { ActivityDto as InternalActivityDto } from '@app/crm/activity/activity-d
 })
 export class CreateActivityDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('stagesList', { static: false }) stagesComponent: StaticListComponent;
-    @ViewChild('contactsList', { static: false }) contactsList: StaticListComponent;
-    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(DxContextMenuComponent, { static: false }) saveContextComponent: DxContextMenuComponent;
-    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
-    @ViewChild('startDateRef', { static: false }) startDateComponent: DxDateBoxComponent;
-    @ViewChild('endDateRef', { static: false }) endDateComponent: DxDateBoxComponent;
+    @ViewChild('stagesList') stagesComponent: StaticListComponent;
+    @ViewChild('contactsList') contactsList: StaticListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(DxContextMenuComponent) saveContextComponent: DxContextMenuComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild('startDateRef') startDateComponent: DxDateBoxComponent;
+    @ViewChild('endDateRef') endDateComponent: DxDateBoxComponent;
 
     private readonly LOOKUP_RECORDS_COUNT = 20;
     private listFilterTimeout: any;
@@ -414,9 +414,9 @@ export class CreateActivityDialogComponent implements OnInit {
 
             this.getAllByPhraseObserverable(value)
                 .subscribe(res => {
-                    this.contacts = res;
+                        this.contacts = res;
                     this.changeDetectorRef.detectChanges();
-                });
+            });
         }, 1000);
     }
 

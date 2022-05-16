@@ -82,8 +82,7 @@ import {
     CreateContactEmailInput,
     LayoutType
 } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
-import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { EditContactDialog } from '../contacts/edit-contact-dialog/edit-contact-dialog.component';
@@ -138,7 +137,6 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
         '../shared/styles/grouped-action-menu.less',
         './clients.component.less'
     ],
-    animations: [appModuleAnimation()],
     providers: [
         ClientService,
         ContactServiceProxy,
@@ -150,18 +148,18 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClientsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
-    @ViewChild('sourceList', { static: false }) sourceComponent: SourceContactListComponent;
-    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
-    @ViewChild(StaticListComponent, { static: false }) statusComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent, { static: false }) pivotGridComponent: PivotGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild('sourceList') sourceComponent: SourceContactListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild(StaticListComponent) statusComponent: StaticListComponent;
+    @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
-    @ViewChild(MapComponent, { static: false }) mapComponent: MapComponent;
-    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
+    @ViewChild(MapComponent) mapComponent: MapComponent;
+    @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
 
     private readonly dataSourceURI: string = 'Contact';
     private readonly totalDataSourceURI: string = 'Contact/$count';

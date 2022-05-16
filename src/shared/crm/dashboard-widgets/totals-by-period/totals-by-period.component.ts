@@ -15,7 +15,7 @@ import {
 import { DOCUMENT, DecimalPipe } from '@angular/common';
 
 /** Third party imports */
-import { AbpSessionService } from '@abp/session/abp-session.service';
+import { AbpSessionService } from 'abp-ng2-module';
 import { BehaviorSubject, Observable, Subject, combineLatest, fromEvent, of } from 'rxjs';
 import {
     catchError,

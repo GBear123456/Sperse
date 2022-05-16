@@ -33,7 +33,6 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { RootStore, StatesStoreActions } from '@root/store';
 import { DashboardServiceProxy, GetCRMStatusOutput, ModuleType, LayoutType } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -46,7 +45,7 @@ import { SourceContactFilterModel } from '../shared/filters/source-filter/source
 import { TotalsBySourceComponent } from '@shared/crm/dashboard-widgets/totals-by-source/totals-by-source.component';
 import { ClientsByRegionComponent } from '@shared/crm/dashboard-widgets/clients-by-region/clients-by-region.component';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
-import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -55,15 +54,14 @@ import { LeftMenuComponent } from '../shared/common/left-menu/left-menu.componen
 
 @Component({
     templateUrl: './dashboard.component.html',
-    animations: [appModuleAnimation()],
     styleUrls: ['./dashboard.component.less'],
     providers: [ DashboardWidgetsService, LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements AfterViewInit, OnInit {
-    @ViewChild(ClientsByRegionComponent, { static: false }) clientsByRegion: ClientsByRegionComponent;
-    @ViewChild(TotalsBySourceComponent, { static: false }) totalsBySource: TotalsBySourceComponent;
-    @ViewChild(LeftMenuComponent, { static: false }) leftMenu: LeftMenuComponent;
+    @ViewChild(ClientsByRegionComponent) clientsByRegion: ClientsByRegionComponent;
+    @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
+    @ViewChild(LeftMenuComponent) leftMenu: LeftMenuComponent;
 
     private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable();

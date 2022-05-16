@@ -1,6 +1,6 @@
 import { Location } from "@angular/common";
 import { Inject, Injectable, Injector, Optional, Renderer2, SkipSelf } from "@angular/core";
-import { MAT_DIALOG_SCROLL_STRATEGY, MatDialog, MatDialogConfig, MAT_DIALOG_DEFAULT_OPTIONS } from "@angular/material";
+import { MAT_DIALOG_SCROLL_STRATEGY, MatDialog, MatDialogConfig, MAT_DIALOG_DEFAULT_OPTIONS } from "@angular/material/dialog";
 import { DynamicOverlay } from "./dynamic-overlay";
 import { DynamicOverlayContainer } from "./dynamic-overlay-container";
 

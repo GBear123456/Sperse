@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 
 /** Application imports */
 import { AppPermissions } from '@shared/AppPermissions';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { CommissionServiceProxy, UpdateCommissionableAmountInput,
     InvoiceSettings } from '@shared/service-proxies/service-proxies';

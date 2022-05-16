@@ -19,6 +19,17 @@ declare var mApp: any; // Related to Metronic
 declare var mLayout: any; // Related to Metronic
 declare var mUtil: any; // Related to Metronic
 
+declare namespace abp {
+    namespace ui {
+        function setBusy(elm?: any, text?: any, optionsOrPromise?: any): void;
+    }
+}
+
+interface AbpEventSubscription {
+    eventName: string;
+    callback: (...args: any[]) => void;
+}
+
 interface JQuery {
     mOffcanvas(...any): any;
 }

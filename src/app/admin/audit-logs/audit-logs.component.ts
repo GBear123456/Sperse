@@ -19,11 +19,10 @@ import { takeUntil } from 'rxjs/operators';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AuditLogDetailModalComponent } from '@app/admin/audit-logs/audit-log-detail/audit-log-detail-modal.component';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import {
     AuditLogListDto,
-    AuditLogListDtoPagedResultDto,
+    PagedResultDtoOfAuditLogListDto,
     AuditLogServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { FileDownloadService } from '@shared/utils/file-download.service';
@@ -44,11 +43,10 @@ import { UrlHelper } from '@shared/helpers/UrlHelper';
 @Component({
     templateUrl: './audit-logs.component.html',
     styleUrls: ['./audit-logs.component.less'],
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    animations: [appModuleAnimation()]
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     private rootComponent: any;
     private filtersValues = {
         date: {
@@ -156,7 +154,7 @@ export class AuditLogsComponent extends AppComponentBase implements OnInit, OnDe
                 loadOptions.take,
                 loadOptions.skip
             ).toPromise().then(
-                (response: AuditLogListDtoPagedResultDto) => {
+                (response: PagedResultDtoOfAuditLogListDto) => {
                     this.finishLoading();
                     return {
                         data: response.items,

@@ -32,7 +32,7 @@ import { CountryDto, CountryStateDto, OrganizationContactInfoDto, OrganizationCo
     NoteType, OrganizationUnitShortDto, CreateOrgUnitForOrganizationInput } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -50,7 +50,7 @@ import { CompanySize } from '@app/crm/contacts/company-dialog/company-size.inter
 })
 export class CompanyDialogComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxDateBoxComponent, { static: false }) calendarComponent: DxDateBoxComponent;
+    @ViewChild(DxDateBoxComponent) calendarComponent: DxDateBoxComponent;
     @ViewChildren(DxValidatorComponent) validators: QueryList<DxValidatorComponent>;
     states$: Observable<CountryStateDto[]>;
     countries$: Observable<CountryDto[]> = this.store$.pipe(select(CountriesStoreSelectors.getCountries));
@@ -91,7 +91,8 @@ export class CompanyDialogComponent implements OnInit {
         rootOrganizationUnitId: null,
         departmentCode: null
     };
-    manageAllowed = this.permissionService.checkCGPermission(this.data.contactInfo.groups);
+    manageAllowed = this.permissionService.checkCGPermission(this.data.contactInfo.groups) ||
+        this.permissionService.isGranted(AppPermissions.CRMCompaniesManageAll);
     manageOrgUnits = this.permissionService.isGranted(AppPermissions.AdministrationOrganizationUnitsManageOrganizationTree);
     dunsRegex = AppConsts.regexPatterns.duns;
     einRegex = AppConsts.regexPatterns.ein;
@@ -212,7 +213,7 @@ export class CompanyDialogComponent implements OnInit {
 
     delete() {
         abp.message.confirm(
-            this.ls.l('CompanyRemovalConfirmationMessage', this.company.fullName),
+            this.ls.l('CompanyRemovalConfirmationMessage', this.company.fullName), '',
             (result) => {
                 if (result) {
                     let personOrgRelationId = this.data.contactInfo.personContactInfo.orgRelationId;

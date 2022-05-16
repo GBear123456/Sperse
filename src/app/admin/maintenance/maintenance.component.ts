@@ -6,23 +6,21 @@ import escape from 'lodash/escape';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
     CacheDto,
-    CacheDtoListResultDto,
+    ListResultDtoOfCacheDto,
     CachingServiceProxy,
-    StringEntityDto,
+    EntityDtoOfString,
     WebLogServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { FileDownloadService } from '@shared/utils/file-download.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 
 @Component({
     templateUrl: './maintenance.component.html',
-    styleUrls: [ '../../../shared/metronic/table.less', './maintenance.component.less' ],
-    animations: [ appModuleAnimation() ]
+    styleUrls: [ '../../../shared/metronic/table.less', './maintenance.component.less' ]
 })
 export class MaintenanceComponent implements OnInit, AfterViewInit {
 
@@ -62,13 +60,13 @@ export class MaintenanceComponent implements OnInit, AfterViewInit {
         this.loading = true;
         this.cacheService.getAllCaches()
             .pipe(finalize(() => { this.loading = false; }))
-            .subscribe((result: CacheDtoListResultDto) => {
+            .subscribe((result: ListResultDtoOfCacheDto) => {
                 this.caches = result.items;
             });
     }
 
     clearCache(cacheName): void {
-        const input = new StringEntityDto();
+        const input = new EntityDtoOfString();
         input.id = cacheName;
         this.cacheService.clearCache(input).subscribe(() => {
             this.notify.success(this.ls.l('CacheSuccessfullyCleared'));

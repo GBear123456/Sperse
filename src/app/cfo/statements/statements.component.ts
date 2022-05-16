@@ -60,8 +60,8 @@ import { CalendarService } from '@app/shared/common/calendar-button/calendar.ser
     providers: [ BankAccountsServiceProxy, CashFlowForecastServiceProxy, LifecycleSubjectsService ]
 })
 export class StatementsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
 
     private bankAccountCount = '';
     private filters: FilterModel[] = [];
@@ -341,7 +341,7 @@ export class StatementsComponent extends CFOComponentBase implements OnInit, Aft
         });
 
         this.cfoStore$.pipe(
-            select(ForecastModelsStoreSelectors.getSelectedForecastModelId, { defaultId: undefined })
+            select(ForecastModelsStoreSelectors.getSelectedForecastModelId)
         ).subscribe(
             (selectedForecastModelId: number) => this.selectedForecastModelId.next(selectedForecastModelId)
         );

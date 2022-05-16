@@ -29,7 +29,7 @@ import { Country } from '@shared/AppEnums';
 })
 export class PaymentInfoComponent {
     @Input() paymentAuthorizationRequired = true;
-    @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
+    @ViewChild('addressInput') addressInput: ElementRef;
 
     validationGroup: any;
     expirationDate: string;

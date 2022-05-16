@@ -12,17 +12,16 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import {
-    UserServiceProxy, UserListDto, Int64EntityDto, RoleServiceProxy,
-    PermissionServiceProxy, UserGroup
+    UserServiceProxy, UserListDto, EntityDtoOfInt64, RoleServiceProxy,
+    PermissionServiceProxy, UserGroup, GetRolesInput
 } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ContactGroup } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { TokenAuthServiceProxy } from '@shared/service-proxies/service-proxies';
 import { CreateUserDialogComponent } from './create-user-dialog/create-user-dialog.component';
 import { ImpersonationService } from './impersonation.service';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
@@ -41,9 +40,9 @@ import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
 import {
     FlatPermissionWithLevelDto,
-    FlatPermissionWithLevelDtoListResultDto,
+    ListResultDtoOfFlatPermissionWithLevelDto,
     RoleListDto,
-    RoleListDtoListResultDto
+    ListResultDtoOfRoleListDto
 } from '@shared/service-proxies/service-proxies';
 import { AppStoreService } from '@app/store/app-store.service';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
@@ -51,12 +50,11 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Component({
     templateUrl: './users.component.html',
-    styleUrls: ['./users.component.less'],
-    animations: [appModuleAnimation()]
+    styleUrls: ['./users.component.less']
 })
 export class UsersComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
 
     //Filters
     invalidateTimeout: any;
@@ -387,8 +385,8 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     initFilterConfig() {
         forkJoin(
             this.permissionService.getAllPermissions(false),
-            this.roleService.getRoles(undefined, undefined)
-        ).subscribe(([permissions, roles]: [FlatPermissionWithLevelDtoListResultDto, RoleListDtoListResultDto]) => {
+            this.roleService.getRoles(new GetRolesInput())
+        ).subscribe(([permissions, roles]: [ListResultDtoOfFlatPermissionWithLevelDto, ListResultDtoOfRoleListDto]) => {
             this.setupFilters(permissions.items, roles.items);
         });
 
@@ -515,7 +513,7 @@ export class UsersComponent extends AppComponentBase implements OnDestroy {
     }
 
     unlockUser(record): void {
-        this.userServiceProxy.unlockUser(new Int64EntityDto({ id: record.id })).subscribe(() => {
+        this.userServiceProxy.unlockUser(new EntityDtoOfInt64({ id: record.id })).subscribe(() => {
             this.notify.success(this.l('UnlockedTheUser', record.userName));
         });
     }

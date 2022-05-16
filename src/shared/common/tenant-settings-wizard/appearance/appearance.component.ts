@@ -25,7 +25,7 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { UploaderComponent } from '@shared/common/tenant-settings-wizard/general-settings/uploader/uploader.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
 import { FaviconService } from '@shared/common/favicon-service/favicon.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 
 @Component({
     selector: 'appearance',
@@ -37,11 +37,12 @@ import { NotifyService } from '@abp/notify/notify.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppearanceComponent implements ITenantSettingsStepComponent {
-    @ViewChild('logoUploader', { static: false }) logoUploader: UploaderComponent;
-    @ViewChild('cssUploader', { static: false }) cssUploader: UploaderComponent;
-    @ViewChild('loginCssUploader', { static: false }) loginCssUploader: UploaderComponent;
-    @ViewChild('portalCssUploader', { static: false }) portalCssUploader: UploaderComponent;
-    @ViewChild('faviconsUploader', { static: false }) faviconsUploader: UploaderComponent;
+    @ViewChild('logoUploader') logoUploader: UploaderComponent;
+    @ViewChild('cssUploader') cssUploader: UploaderComponent;
+    @ViewChild('loginCssUploader') loginCssUploader: UploaderComponent;
+    @ViewChild('portalCssUploader') portalCssUploader: UploaderComponent;
+    @ViewChild('faviconsUploader') faviconsUploader: UploaderComponent;
+
     tenant: TenantLoginInfoDto = this.appSession.tenant;
     remoteServiceBaseUrl = AppConsts.remoteServiceBaseUrl;
     maxCssFileSize = 1024 * 1024 /* 1MB */;

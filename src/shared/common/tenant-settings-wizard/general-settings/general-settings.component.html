@@ -4,8 +4,7 @@
         <label for="Timezone">{{ls.l("Timezone")}}</label>
         <timezone-combo id="Timezone"
             [(selectedTimeZone)]="settings.timezone"
-            [defaultTimezoneScope]="defaultTimezoneScope"
-            (selectedTimeZoneChange)="onTimeZoneChange($event)">
+            [defaultTimezoneScope]="defaultTimezoneScope">
         </timezone-combo>
     </div>
     <div class="form-group">

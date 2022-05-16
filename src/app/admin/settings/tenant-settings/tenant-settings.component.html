@@ -1,4 +1,4 @@
-<div [@routerTransition]>
+<div>
     <app-headline [names]="[ l('Settings') ]"
                   [buttons]="headlineButtons">
     </app-headline>
@@ -40,7 +40,7 @@
                                class="form-control"
                                [(ngModel)]="settings.general.publicSiteUrl"
                                maxlength="128"
-                               [pattern]="siteUrlRegexPattern"
+                               [pattern]="urlRegexPattern"
                                (change)="changeDetection.detectChanges()">
                     </div>
                     <div>

@@ -24,7 +24,7 @@ import {
 import { PermissionTreeComponent } from '../../shared/permission-tree.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 
 @Component({
@@ -33,7 +33,7 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
 })
 export class CreateOrEditRoleModalComponent implements AfterViewChecked, OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('permissionTree', { static: false }) permissionTree: PermissionTreeComponent;
+    @ViewChild('permissionTree') permissionTree: PermissionTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     active = false;

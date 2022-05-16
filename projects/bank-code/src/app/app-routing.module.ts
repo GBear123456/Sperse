@@ -6,16 +6,11 @@ const routes: Routes = [
     {
         path: '',
         component: HomeComponent
-    },
-    {
-        path: 'bank-pass',
-        loadChildren: () => import('./bank-pass/bank-pass-host.module').then(m => m.BankPassHostModule),
-        data: { localizationSource: 'Platform' }
     }
 ];
 
 @NgModule({
-  imports: [ RouterModule.forRoot(routes) ],
+  imports: [ RouterModule.forRoot(routes, { relativeLinkResolution: 'legacy' }) ],
   exports: [ RouterModule]
 })
 export class AppRoutingModule { }

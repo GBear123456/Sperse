@@ -20,8 +20,8 @@ import { BusinessEntityDto } from '../../../service-proxies/service-proxies';
     styleUrls: ['./business-entities-chooser.component.less']
 })
 export class BusinessEntitiesChooserComponent implements OnDestroy {
-    @ViewChild(DxTreeViewComponent, { static: false }) treeList: DxTreeViewComponent;
-    @ViewChild(DxDropDownBoxComponent, { static: false }) dropDown: DxDropDownBoxComponent;
+    @ViewChild(DxTreeViewComponent) treeList: DxTreeViewComponent;
+    @ViewChild(DxDropDownBoxComponent) dropDown: DxDropDownBoxComponent;
 
     private syncAccSub = this.bankAccountsService.syncAccounts$.subscribe(
         syncAccounts => this.syncAccounts = syncAccounts);

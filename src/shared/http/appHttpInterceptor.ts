@@ -1,17 +1,17 @@
 /** Core imports */
-import { Injectable } from '@angular/core';
+import { Injector, Injectable } from '@angular/core';
 import { HttpEvent, HttpRequest, HttpHandler, HttpHeaders, HttpParams } from '@angular/common/http';
 
 /** Third party imports */
-import { finalize } from 'rxjs/operators';
+import { finalize, map, switchMap, catchError, takeUntil, first } from 'rxjs/operators';
 import { Observable, Subject, throwError } from 'rxjs';
 
 /** Application imports */
-import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
+import { AbpHttpInterceptor } from 'abp-ng2-module';
 import { AppHttpConfiguration } from '@shared/http/appHttpConfiguration';
 import { AppConsts } from '@shared/AppConsts';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 
 @Injectable()
 export class AppHttpInterceptor extends AbpHttpInterceptor {
@@ -31,9 +31,12 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         'Profile_GetFriendProfilePictureById'
     ];
 
-    constructor(public configuration: AppHttpConfiguration,
-        public message: MessageService) {
-        super(configuration);
+    constructor(
+        private injector: Injector,
+        public configuration: AppHttpConfiguration,
+        public message: MessageService
+    ) {
+        super(configuration, injector);
     }
 
     intercept(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
@@ -44,12 +47,14 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
 
         let key = this.getKeyFromUrl(request);
 
-        if (this.EXCEPTION_KEYS.some(item => key.includes(item)))
+        if (this.EXCEPTION_KEYS.some(item => key.includes(item))) {
             return super.intercept(request, next);
+        }
 
         let poolRequest = this._poolRequests[key];
         if (!poolRequest) {
             poolRequest = this._poolRequests[key] = { request };
+            poolRequest.destroy$ = new Subject<boolean>();
             return poolRequest.subject = this.interceptInternal(request, next);
         }
 
@@ -65,6 +70,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
                     sub.unsubscribe();
                 });
             poolRequest.httpSubscriber.unsubscribe();
+            poolRequest.destroy$.next(true);
             poolRequest.subject.complete();
 
             this._poolRequests[key] = poolRequest;
@@ -75,17 +81,22 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
 
     private interceptInternal(request: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
         let key = this.getKeyFromUrl(request),
-            interceptObservable = new Subject<HttpEvent<any>>(),
-            modifiedRequest = this.normalizeRequestHeaders(request);
+            interceptObservable = new Subject<HttpEvent<any>>();
+            
+        this._poolRequests[key].httpSubscriber = next.handle(
+             this.normalizeRequestHeaders(request)
+        ).pipe(
+            takeUntil(this._poolRequests[key].destroy$),
+            finalize(() => delete this._poolRequests[key]),
+            catchError((error: any) => this.handleErrorResponseInternal(error)),
+            switchMap((event: HttpEvent<any>) => this.handleSuccessResponse(event))
+        ).subscribe(res => {
+            interceptObservable.next(res);
+        }, error => {
+            interceptObservable.error(error);
+        });
 
-        this._poolRequests[key].httpSubscriber = next.handle(modifiedRequest)
-            .pipe(finalize(() => delete this._poolRequests[key]))
-            .subscribe(
-                (event: HttpEvent<any>) => this.handleSuccessResponse(event, interceptObservable),
-                (error: any) => this.handleErrorResponse(error, interceptObservable)
-            );
-
-        return interceptObservable;
+        return interceptObservable.pipe(first());
     }
 
     private getKeyFromUrl(request: HttpRequest<any>): string {
@@ -122,7 +133,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
             error.error = new Blob([JSON.stringify(error.errorDetails || error)]);
         if (error.httpStatus)
             error.status = error.httpStatus;
-        return this.handleErrorResponse(error, new Subject());
+            return this.handleErrorResponseInternal(error);
     }
 
     protected normalizeRequestHeaders(request: HttpRequest<any>): HttpRequest<any> {
@@ -155,18 +166,16 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         }
     }
 
-    protected handleErrorResponse(response, interceptObservable: Subject<HttpEvent<any>>): Observable<any> {
+    protected handleErrorResponseInternal(response): Observable<any> {
         let keys = this.configuration['avoidErrorHandlingKeys'];
         if (this.configuration['avoidErrorHandling'] || (response.url &&
             keys && keys.some(key => response.url.toLowerCase().includes(key.toLowerCase()))
         )) {
-            this.configuration.blobToText(response.error).subscribe(error => {
-                interceptObservable.error(JSON.parse(error).error);
-                interceptObservable.complete();
-            });
-            return interceptObservable;
+            return this.configuration.blobToText(response.error).pipe(map(error => {
+                return JSON.parse(error).error;
+            }));
         } else {
-            return super.handleErrorResponse(response, interceptObservable);
+            return super.handleErrorResponse(response);
         }
     }
 }

@@ -7,11 +7,11 @@
                name="PackageId"
                [(ngModel)]="item.id">
         <button class="button" type="submit">
-            <span class="package-name">{{l(item.name)}} <span class="price">{{item.initialPaymentAmount | currency:'USD':true:'1.0-0'}}</span></span>
-            <span class="package-desc">{{l(item.description)}}</span>
-            <span class="package-trial">{{item.trialPeriodDays}}-{{l('DayTrialAccess')}}</span>
-            <span class="package-month">{{l('MonthlyPayment')}} {{item.monthlyPaymentAmount | currency:'USD':true:'1.0-0'}}<sup>/mo</sup></span>
-            <span *ngIf="item.isSimulatorEnabled">{{l('PackageSimulatorEnabled')}}</span>
+            <span class="package-name">{{ls.l(item.name)}} <span class="price">{{item.initialPaymentAmount | currency:'USD':true:'1.0-0'}}</span></span>
+            <span class="package-desc">{{ls.l(item.description)}}</span>
+            <span class="package-trial">{{item.trialPeriodDays}}-{{ls.l('DayTrialAccess')}}</span>
+            <span class="package-month">{{ls.l('MonthlyPayment')}} {{item.monthlyPaymentAmount | currency:'USD':true:'1.0-0'}}<sup>/mo</sup></span>
+            <span *ngIf="item.isSimulatorEnabled">{{ls.l('PackageSimulatorEnabled')}}</span>
         </button>
     </form>
 </ng-container>

@@ -41,10 +41,10 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     public static readonly NameSeparator = ' > ';
     public static readonly FieldLocalizationPrefix = 'Import';
 
-    @ViewChild(MatHorizontalStepper, { static: false }) stepper: MatHorizontalStepper;
-    @ViewChild('mapGrid', { static: false }) mapGrid: DxDataGridComponent;
-    @ViewChild('reviewGrid', { static: false }) reviewGrid: DxDataGridComponent;
-    @ViewChild(DxProgressBarComponent, { static: false }) reviewProgress: DxProgressBarComponent;
+    @ViewChild(MatHorizontalStepper) stepper: MatHorizontalStepper;
+    @ViewChild('mapGrid') mapGrid: DxDataGridComponent;
+    @ViewChild('reviewGrid') reviewGrid: DxDataGridComponent;
+    @ViewChild(DxProgressBarComponent) reviewProgress: DxProgressBarComponent;
 
     @Input() title: string;
     @Input() icon: string;
@@ -499,7 +499,7 @@ export class ImportWizardComponent extends AppComponentBase implements AfterView
     }
 
     buildMappingDataSource() {
-        return new Promise((resolve) => {
+        return new Promise<void>((resolve, reject) => {
             if (this.fileData && this.fileData.data && this.fileData.data.length) {
                 this.checkFileHeaderAvailability();
                 let createDataSourceInternal = (mappingSuggestions = []) => {

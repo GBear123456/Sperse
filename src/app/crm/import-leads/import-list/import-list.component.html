@@ -1,4 +1,4 @@
-<div [@routerTransition]>
+<div>
     <crm-left-menu [selectedItemIndex]="2"></crm-left-menu>
     <div class="margin-left" [ngClass]="{ expanded: leftMenuCollapsed$ | async }">
         <app-headline [names]="[ l('Import') ]"

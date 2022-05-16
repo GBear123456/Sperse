@@ -21,6 +21,7 @@ import { ContactLinkTypesStoreActions, ContactLinkTypesStoreSelectors } from '@a
 import { ContactsService } from '../contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
+import { AppPermissions } from '@shared/AppPermissions';
 import { LinkType } from '@shared/AppEnums';
 
 @Component({
@@ -33,7 +34,8 @@ export class SocialsComponent {
     @Input()
     set contactInfo(val: ContactInfoDto) {
         if ((this._contactInfo = val) && val.groups)
-            this.isEditAllowed = this.permissionService.checkCGPermission(val.groups);
+            this.isEditAllowed = this.permissionService.checkCGPermission(val.groups) ||
+                this.isCompany && this.permissionService.isGranted(AppPermissions.CRMCompaniesManageAll);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;
@@ -140,6 +142,7 @@ export class SocialsComponent {
             isConfirmed: Boolean(data && data.isConfirmed),
             isActive: Boolean(data ? data.isActive : true),
             comment: data && data.comment,
+            isCompany: this.isCompany,
             deleteItem: () => {
                 this.deleteLink(data.id);
             }

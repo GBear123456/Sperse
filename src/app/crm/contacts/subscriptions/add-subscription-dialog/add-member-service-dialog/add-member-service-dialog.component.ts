@@ -29,7 +29,7 @@ import { DateHelper } from '@shared/helpers/DateHelper';
 import { FeatureTreeEditModel, FeatureValuesDto } from '@app/shared/features/feature-tree-edit.model';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 
@@ -45,7 +45,7 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
-    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
+    @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     today = new Date();
     private slider: any;
     memberService: MemberServiceDto;
@@ -67,7 +67,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '75px',
                 right: '-100vw'
@@ -125,7 +125,7 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
 
     ngAfterViewInit() {
         this.slider.classList.remove('hide');
-        this.dialogRef.updateSize(undefined, '100vh');
+        this.dialogRef.updateSize(undefined, 'calc(100vh - 75px)');
         this.dialogRef.updatePosition({
             top: '75px',
             right: '0px'

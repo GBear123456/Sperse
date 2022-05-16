@@ -16,8 +16,8 @@ import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confi
     styleUrls: ['confirm-cancellation-dialog.component.less']
 })
 export class EntityCancelDialogComponent extends ConfirmDialogComponent {
-    @ViewChild(DxRadioGroupComponent, { static: false }) radioComponent: DxRadioGroupComponent;
-    @ViewChild(DxTextAreaComponent, { static: false }) textComponent: DxTextAreaComponent;
+    @ViewChild(DxRadioGroupComponent) radioComponent: DxRadioGroupComponent;
+    @ViewChild(DxTextAreaComponent) textComponent: DxTextAreaComponent;
     reasons: any = [];
     comment: string;
     reasonId: string;

@@ -1,5 +1,5 @@
 import { Component, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild } from '@angular/core';
-import { RoleListDto, RoleServiceProxy } from '@shared/service-proxies/service-proxies';
+import { GetRolesInput, RoleListDto, RoleServiceProxy } from '@shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'role-combo',
@@ -27,7 +27,7 @@ export class RoleComboComponent implements OnInit {
 
     ngOnInit(): void {
         const self = this;
-        this.roleService.getRoles(undefined, undefined).subscribe(result => {
+        this.roleService.getRoles(new GetRolesInput()).subscribe(result => {
             this.roles = result.items;
             setTimeout(() => {
                 $(self.roleComboboxElement.nativeElement).selectpicker('refresh');

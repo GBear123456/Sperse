@@ -1,5 +1,3 @@
-import { AbpHttpInterceptor } from '@abp/abpHttpInterceptor';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import * as ApiServiceProxies from './service-proxies';
 
@@ -37,15 +35,13 @@ import * as ApiServiceProxies from './service-proxies';
         ApiServiceProxies.PaymentServiceProxy,
         ApiServiceProxies.InvoiceServiceProxy,
         ApiServiceProxies.TenantPaymentSettingsServiceProxy,
-        ApiServiceProxies.UiCustomizationSettingsServiceProxy,
         ApiServiceProxies.LocalizationServiceProxy,
         ApiServiceProxies.PersonContactServiceProxy,
         ApiServiceProxies.MemberSubscriptionServiceProxy,
         ApiServiceProxies.MemberSettingsServiceProxy,
         ApiServiceProxies.CommissionServiceProxy,
         ApiServiceProxies.TenantHostServiceProxy,
-        ApiServiceProxies.EmailSmtpSettingsServiceProxy,
-        { provide: HTTP_INTERCEPTORS, useClass: AbpHttpInterceptor, multi: true }
+        ApiServiceProxies.EmailSmtpSettingsServiceProxy
     ]
 })
 export class ServiceProxyModule { }

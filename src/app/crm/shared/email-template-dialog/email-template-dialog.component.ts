@@ -17,9 +17,9 @@ import startCase from 'lodash/startCase';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppConsts } from '@shared/AppConsts';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -57,16 +57,16 @@ import { AppPermissions } from '@shared/AppPermissions';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EmailTemplateDialogComponent implements OnInit {
-    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxSelectBoxComponent, { static: false }) templateComponent: DxSelectBoxComponent;
-    @ViewChild(DxValidatorComponent, { static: false }) validator: DxValidatorComponent;
-    @ViewChild('scrollView', { static: false }) scrollView: DxScrollViewComponent;
-    @ViewChild('tagsButton', { static: false }) tagsButton: ElementRef;
+    @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild(DxSelectBoxComponent) templateComponent: DxSelectBoxComponent;
+    @ViewChild(DxValidatorComponent) validator: DxValidatorComponent;
+    @ViewChild('scrollView') scrollView: DxScrollViewComponent;
+    @ViewChild('tagsButton') tagsButton: ElementRef;
 
     ckEditor: any;
     templateLoaded: boolean;
-    emailSettingsSource: EmailSettingsSource;
+    fromDataSource = [];
     showCC = false;
     showBCC = false;
     tagLastValue: string;
@@ -81,7 +81,7 @@ export class EmailTemplateDialogComponent implements OnInit {
     @Output() onSave: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
     @Output() onTemplateCreate: EventEmitter<EmailTemplateData> = new EventEmitter<EmailTemplateData>();
     @Output() onTemplateChange: EventEmitter<number> = new EventEmitter<number>();
-    @Output() onTagItemClick: EventEmitter<number> = new EventEmitter<number>();
+    @Output() onTagItemClick: EventEmitter<string> = new EventEmitter<string>();
     @Output() onTemplateDelete: EventEmitter<number> = new EventEmitter<number>();
 
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
@@ -123,7 +123,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             '/',
             { name: 'basicstyles', items: [ 'Bold', 'Italic', 'Underline', 'Strikethrough', 'Subscript', 'Superscript', '-', 'CopyFormatting', 'RemoveFormat' ] },
             { name: 'paragraph', items: [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote', 'CreateDiv', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock', '-', 'BidiLtr', 'BidiRtl', 'Language' ] },
-            { name: 'insert', items: [ 'Image', 'Flash', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe', 'Mathjax' ] },
+            { name: 'insert', items: [ 'Image', 'Table', 'HorizontalRule', 'Smiley', 'SpecialChar', 'PageBreak', 'Iframe', 'Mathjax' ] },
             '/',
             { name: 'links', items: [ 'Link', 'Unlink', 'Anchor' ] },
             { name: 'styles', items: [ 'Styles', 'Format', 'Font', 'FontSize' ] },
@@ -131,7 +131,7 @@ export class EmailTemplateDialogComponent implements OnInit {
             { name: 'tools', items: [ 'Maximize', 'ShowBlocks' ] }
         ],
         removePlugins: 'elementspath',
-        extraPlugins: 'preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,flash,pagebreak,iframe,language,bidi,copyformatting',
+        extraPlugins: 'preview,colorbutton,font,div,justify,exportpdf,templates,print,pastefromword,pastetext,find,forms,tabletools,showblocks,showborders,smiley,specialchar,pagebreak,iframe,language,bidi,copyformatting',
         skin: 'moono-lisa' //kama,moono,moono-lisa
     };
 
@@ -180,7 +180,10 @@ export class EmailTemplateDialogComponent implements OnInit {
                 ).subscribe((res: GetEmailDataOutput) => {
                     this.data.tags = res.tags;
                     if (res.from && res.from.length)
-                        this.data.from = res.from;
+                        this.fromDataSource = res.from;
+                    else if (this.data.from)
+                        this.fromDataSource = this.data.from instanceof Array ? 
+                            this.data.from : [this.data.from];
                     this.initFromField();
                 });
             } else
@@ -204,15 +207,9 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     initFromField() {
-        if (this.data.from instanceof Array && this.data.from.length) {
-            let from = this.data.from.find(item => item.emailSettingsSource == EmailSettingsSource.User);
-            if (from) {
-                this.emailSettingsSource = from.emailSettingsSource;
-            } else {
-                from = this.data.from[0];
-                this.emailSettingsSource = from.emailSettingsSource;
-            }
-            this.data.emailSettingsSource = this.emailSettingsSource;
+        if (this.fromDataSource.length) {
+            let from = this.fromDataSource.find(item => item.emailSettingsSource == EmailSettingsSource.User);
+            this.data.emailSettingsSource = (from ? from : this.fromDataSource[0]).emailSettingsSource;
             this.checkUpdateCCFromEmail(from);
         }
     }
@@ -313,7 +310,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                     this.notifyService.error(rule.message);
                 });
 
-            if (!this.data.from)
+            if (!this.fromDataSource.length)
                 return this.notifyService.error(
                     this.ls.l('MailerSettingsAreNotConfigured', this.ls.l('SMTP')), 
                     this.ls.l('RequiredField', this.ls.l('From'))
@@ -488,13 +485,12 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     onFromChanged(event) {
-        let from = this.data.from.find(
+        let from = this.fromDataSource.find(
             item => item.emailSettingsSource == event.value
         );
         if (from) {
-            this.data.emailSettingsSource = from.emailSettingsSource;
             if (this.data.cc && this.data.cc.length)
-                this.data.from.forEach(item => {
+                this.fromDataSource.forEach(item => {
                     let index = this.data.cc.indexOf(item.ccEmailAddress);
                     if (index >= 0)
                         this.data.cc.splice(index, 1);                    
@@ -732,7 +728,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     deleteTemplate(event, template, component) {
         component.instance.option('opened', false);
-        abp.message.confirm(this.ls.l('DeleteItemConfirmation', template.name), (isConfimed) => {
+        abp.message.confirm(this.ls.l('DeleteItemConfirmation', template.name), '', (isConfimed) => {
             if (isConfimed) {
                 this.startLoading();
                 this.emailTemplateProxy.delete(template.id)

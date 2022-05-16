@@ -8,7 +8,6 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { filter } from 'rxjs/operators';
 
 /** Application imports */
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppService } from '@app/app.service';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { EditionListDto, EditionServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -23,11 +22,10 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 @Component({
     templateUrl: './editions.component.html',
     styleUrls: [ '../../../shared/metronic/dropdown-menu.less', './editions.component.less' ],
-    animations: [appModuleAnimation()],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EditionsComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     public actionMenuItems: ActionMenuItem[] = [
         {
             text: this.l('Edit'),

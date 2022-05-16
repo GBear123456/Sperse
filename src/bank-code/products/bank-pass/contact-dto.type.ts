@@ -1,11 +1,11 @@
 import { ContactDto } from '@app/crm/clients/contact.dto';
 
-interface ExtendedContactDto extends ContactDto{
+interface ExtendedContactDto extends ContactDto {
     BankCodeDate: string;
     CountryId: number;
 }
 
-export type ContactDto = Pick<ExtendedContactDto,
+export type BankPassContactDto = Pick<ExtendedContactDto,
     'PhotoPublicId'
     | 'Id'
     | 'Name'

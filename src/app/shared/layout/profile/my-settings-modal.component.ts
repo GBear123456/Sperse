@@ -14,6 +14,7 @@ import {
 import startCase from 'lodash/startCase';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
+import { finalize } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
@@ -25,12 +26,11 @@ import { GetCurrentUserProfileEditDto, CurrentUserProfileEditDto, SettingScopes,
 import { SmsVerificationModalComponent } from './sms-verification-modal.component';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
-import { SettingService } from '@abp/settings/setting.service';
-import { MessageService } from '@abp/message/message.service';
+import { NotifyService } from 'abp-ng2-module';
+import { SettingService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { finalize } from '@node_modules/rxjs/internal/operators';
 
 @Component({
     templateUrl: './my-settings-modal.component.html',
@@ -41,8 +41,8 @@ import { finalize } from '@node_modules/rxjs/internal/operators';
 })
 export class MySettingsModalComponent implements OnInit, AfterViewInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('smsVerificationModal', { static: false }) smsVerificationModal: SmsVerificationModalComponent;
-    @ViewChild(MatTabGroup, { static: false }) tabs: MatTabGroup;
+    @ViewChild('smsVerificationModal') smsVerificationModal: SmsVerificationModalComponent;
+    @ViewChild(MatTabGroup) tabs: MatTabGroup;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     ckConfig: any = {
@@ -238,7 +238,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         return new Promise((resolve, reject) => {
             if (this.currentTab == this.ls.l('Email')) {
                 if (this.isEmailSettingsChanged())
-                    this.messageService.confirm(this.ls.l('UnsavedChanges'), isConfirmed => {
+                    this.messageService.confirm(this.ls.l('UnsavedChanges'), '', isConfirmed => {
                         if (isConfirmed) {
                             this.userEmailSettings = cloneDeep(this._initialEmailSettings);
                             this.changeDetectorRef.detectChanges();
@@ -249,7 +249,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
                     resolve(true);
             } else if (this.currentTab == this.ls.l('Profile')) {
                 if (this.isUserSettingsChanged())
-                    this.messageService.confirm(this.ls.l('UnsavedChanges'), isConfirmed => {
+                    this.messageService.confirm(this.ls.l('UnsavedChanges'), '', isConfirmed => {
                         if (isConfirmed) {
                             this.user = cloneDeep(this._initialUserSettings);
                             this.changeDetectorRef.detectChanges();
@@ -272,7 +272,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     checkCloseAllowed = () => {
         return new Promise((resolve, reject) => {
             if (this.isUserSettingsChanged() || this.isEmailSettingsChanged())
-                this.messageService.confirm(this.ls.l('UnsavedChanges'), isConfirmed => {
+                this.messageService.confirm(this.ls.l('UnsavedChanges'), '', isConfirmed => {
                     resolve(isConfirmed);
                 });
             else

@@ -9,7 +9,7 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { MatVerticalStepper } from '@angular/material/stepper';
 import { MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
@@ -25,14 +25,14 @@ import {
     HostUserManagementSettingsEditDto,
     PasswordComplexitySettingsEditDto,
     SubscribableEditionComboboxItemDto,
-    SubscribableEditionComboboxItemDtoListResultDto,
+    ListResultDtoOfSubscribableEditionComboboxItemDto,
     TenantManagementSettingsEditDto,
     TenantSettingsServiceProxy,
     TenantUserManagementSettingsEditDto,
     TwoFactorLoginSettingsEditDto,
     UserLockOutSettingsEditDto
 } from '@shared/service-proxies/service-proxies';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppearanceComponent } from '@shared/common/tenant-settings-wizard/appearance/appearance.component';
 import { GeneralSettingsComponent } from '@shared/common/tenant-settings-wizard/general-settings/general-settings.component';
@@ -45,7 +45,7 @@ import { UserManagementComponent } from '@shared/common/tenant-settings-wizard/u
 import { SecurityComponent } from '@shared/common/tenant-settings-wizard/security/security.component';
 import { EmailComponent } from '@shared/common/tenant-settings-wizard/email/email.component';
 import { ITenantSettingsStepComponent } from '@shared/common/tenant-settings-wizard/tenant-settings-step-component.interface';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
@@ -56,13 +56,13 @@ import { AppFeatures } from '@shared/AppFeatures';
 })
 export class TenantSettingsWizardComponent implements AfterViewInit {
     @ViewChild(MatVerticalStepper, { static: true }) stepper: MatVerticalStepper;
-    @ViewChild(AppearanceComponent, { static: false }) appearanceComponent: AppearanceComponent;
-    @ViewChild(GeneralSettingsComponent, { static: false }) generalSettingsComponent: GeneralSettingsComponent;
-    @ViewChild(TenantManagementComponent, { static: false }) tenantManagementComponent: TenantManagementComponent;
-    @ViewChild(UserManagementComponent, { static: false }) userManagementComponent: UserManagementComponent;
-    @ViewChild(SecurityComponent, { static: false }) securityComponent: SecurityComponent;
-    @ViewChild(EmailComponent, { static: false }) emailComponent: EmailComponent;
-    @ViewChild(MemberPortalComponent, { static: false }) memberPortalComponent: MemberPortalComponent;
+    @ViewChild(AppearanceComponent) appearanceComponent: AppearanceComponent;
+    @ViewChild(GeneralSettingsComponent) generalSettingsComponent: GeneralSettingsComponent;
+    @ViewChild(TenantManagementComponent) tenantManagementComponent: TenantManagementComponent;
+    @ViewChild(UserManagementComponent) userManagementComponent: UserManagementComponent;
+    @ViewChild(SecurityComponent) securityComponent: SecurityComponent;
+    @ViewChild(EmailComponent) emailComponent: EmailComponent;
+    @ViewChild(MemberPortalComponent) memberPortalComponent: MemberPortalComponent;
     hasCustomizationsFeture = this.featureCheckerService.isEnabled(AppFeatures.AdminCustomizations);
     hasHostPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationHostSettings);
     hasTenantPermission = this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSettings);
@@ -77,7 +77,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
         : of(null);
     showTimezoneSelection: boolean = abp.clock.provider.supportsMultipleTimezone;
     editions$: Observable<SubscribableEditionComboboxItemDto[]> = this.commonLookupServiceProxy.getEditionsForCombobox(false).pipe(
-        map((result: SubscribableEditionComboboxItemDtoListResultDto) => {
+        map((result: ListResultDtoOfSubscribableEditionComboboxItemDto) => {
             const notAssignedEdition: any = {
                 value: null,
                 displayText: this.ls.l('NotAssigned')
@@ -113,7 +113,7 @@ export class TenantSettingsWizardComponent implements AfterViewInit {
                     window.location.reload();
                 });
             if (this.countryChanged)
-                this.messageService.info(this.ls.l('DefaultCountrySettingChangedRefreshPageNotification')).done(() => {
+                this.messageService.info(this.ls.l('DefaultSettingChangedRefreshPageNotification', this.ls.l('Country'))).done(() => {
                     window.location.reload();
             });
         });

@@ -12,42 +12,42 @@ import {
 import { AppPermissions } from '@shared/AppPermissions';
 
 export class AppChatMessageReadState {
-    static Unread: number = ChatMessageReadState._1;
-    static Read: number = ChatMessageReadState._2;
+    static Unread: number = ChatMessageReadState.Unread;
+    static Read: number = ChatMessageReadState.Read;
 }
 
 export class AppChatSide {
-    static Sender: number = ChatSide._1;
-    static Receiver: number = ChatSide._2;
+    static Sender: number = ChatSide.Sender;
+    static Receiver: number = ChatSide.Receiver;
 }
 
 export class AppFriendshipState {
-    static Accepted: number = FriendshipState._1;
-    static Blocked: number = FriendshipState._2;
+    static Accepted: number = FriendshipState.Accepted;
+    static Blocked: number = FriendshipState.Blocked;
 }
 
 
 export class AppTimezoneScope {
-    static Application: number = SettingScopes._1;
-    static Tenant: number = SettingScopes._2;
-    static User: number = SettingScopes._4;
+    static Application: number = SettingScopes.Application;
+    static Tenant: number = SettingScopes.Tenant;
+    static User: number = SettingScopes.User;
 }
 
 export class AppUserNotificationState {
-    static Unread: number = UserNotificationState._0;
-    static Read: number = UserNotificationState._1;
+    static Unread: number = UserNotificationState.Unread;
+    static Read: number = UserNotificationState.Read;
 }
 
 export class AppTenantAvailabilityState {
-    static Available: number = TenantAvailabilityState._1;
-    static InActive: number = TenantAvailabilityState._2;
-    static NotFound: number = TenantAvailabilityState._3;
+    static Available: number = TenantAvailabilityState.Available;
+    static InActive: number = TenantAvailabilityState.InActive;
+    static NotFound: number = TenantAvailabilityState.NotFound;
 }
 
 export class AppIncomeStatisticsDateInterval {
-    static Daily: number = ChartDateInterval._1;
-    static Weekly: number = ChartDateInterval._2;
-    static Monthly: number = ChartDateInterval._3;
+    static Daily: number = ChartDateInterval.Daily;
+    static Weekly: number = ChartDateInterval.Weekly;
+    static Monthly: number = ChartDateInterval.Monthly;
 }
 /*
 export class SubscriptionStartType {

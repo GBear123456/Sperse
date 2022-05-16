@@ -4,7 +4,7 @@
   "newProjectRoot": "projects",
   "projects": {
     "abp-zero-template": {
-      "root": "",
+      "root": "./",
       "sourceRoot": "src",
       "projectType": "application",
       "architect": {
@@ -16,7 +16,13 @@
             "main": "src/main.ts",
             "tsConfig": "src/tsconfig.json",
             "polyfills": "src/polyfills.ts",
-            "showCircularDependencies": true,
+            "allowedCommonJsDependencies": [
+                "underscore", "underscore.string", "lodash", "jspdf", "devextreme", "color",
+                "dragula", "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
+                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar", 
+                "hammerjs", "moment-timezone", "ng2-cache-service", "jquery-calendar", "@angularclass/hmr",
+                "uuid", "ng2-image-viewer", "iv-viewer", "safe-buffer", "@bugsnag/js", "buffer", "angular2-counto"
+            ],
             "assets": [
               "src/assets",
               "src/favicon.ico",
@@ -29,8 +35,8 @@
               "src/safari-pinned-tab.svg",
               {
                 "glob": "web.config",
-                "input": "",
-                "output": ""
+                "input": "./",
+                "output": "./"
               },
               {
                 "glob": "abp.signalr-client.js",
@@ -48,7 +54,7 @@
                 "output": "./assets/localization/jquery-timeago"
               },
               {
-                "glob": "/locale.properties",
+                "glob": "locale.properties",
                 "input": "node_modules/ngx-extended-pdf-viewer/assets/locale",
                 "output": "./assets/locale"
               }
@@ -84,26 +90,33 @@
               "node_modules/ngx-extended-pdf-viewer/assets/viewer-es5.js",
               "node_modules/ngx-extended-pdf-viewer/assets/pdf.worker-es5.js",
               "node_modules/jspdf/dist/jspdf.min.js"
-            ]
+            ],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "dev": {
-              "optimization": false,
-              "sourceMap": false,
-              "extractCss": true,
-              "aot": false,
-              "showCircularDependencies": true,
-              "vendorChunk": true,
-              "buildOptimizer": false
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2048kb"
+                }
+              ],
+              "sourceMap": false
             },
             "devstaging": {
-              "optimization": false,
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2048kb"
+                }
+              ],
               "sourceMap": false,
-              "extractCss": true,
-              "aot": false,
-              "showCircularDependencies": true,
-              "vendorChunk": true,
-              "buildOptimizer": false,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -116,13 +129,13 @@
               ]
             },
             "devbeta": {
-              "optimization": false,
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2048kb"
+                }
+              ],
               "sourceMap": false,
-              "extractCss": true,
-              "aot": false,
-              "showCircularDependencies": true,
-              "vendorChunk": true,
-              "buildOptimizer": false,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -135,16 +148,17 @@
               ]
             },
             "staging": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2048kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -157,16 +171,17 @@
               ]
             },
             "beta": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2048kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -179,16 +194,17 @@
               ]
             },
             "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2048kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
-              "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": true,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -200,7 +216,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -209,22 +226,13 @@
           },
           "configurations": {
             "dev": {
-              "browserTarget": "abp-zero-template:build:dev",
-              "optimization": false,
-              "sourceMap": false,
-              "aot": false
+              "browserTarget": "abp-zero-template:build:dev"
             },
             "devstaging": {
-              "browserTarget": "abp-zero-template:build:devstaging",
-              "optimization": false,
-              "sourceMap": false,
-              "aot": false
+              "browserTarget": "abp-zero-template:build:devstaging"
             },
             "devbeta": {
-              "browserTarget": "abp-zero-template:build:devbeta",
-              "optimization": false,
-              "sourceMap": false,
-              "aot": false
+              "browserTarget": "abp-zero-template:build:devbeta"
             }
           }
         },
@@ -347,6 +355,13 @@
             "main": "projects/package-chooser-widget/src/main.ts",
             "polyfills": "projects/package-chooser-widget/src/polyfills.ts",
             "tsConfig": "projects/package-chooser-widget/tsconfig.app.json",
+            "allowedCommonJsDependencies": [
+                "underscore", "underscore.string", "lodash", "jspdf", "devextreme", "color",
+                "dragula", "ng2-dragula", "primeng", "jszip", "rarjs", "xml-js", "angular2-chartjs",
+                "ngx-google-places-autocomplete", "angular-cc-library", "angular-svg-round-progressbar", 
+                "hammerjs", "moment-timezone", "ng2-cache-service", "jquery-calendar", "@angularclass/hmr",
+                "uuid", "ng2-image-viewer", "iv-viewer", "safe-buffer", "@bugsnag/js", "buffer", "angular2-counto"
+            ],
             "assets": [
               "projects/package-chooser-widget/src/favicon.ico"
             ],
@@ -359,27 +374,34 @@
               "node_modules/jquery/dist/jquery.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/abp.js",
               "node_modules/abp-web-resources/Abp/Framework/scripts/libs/abp.jquery.js"
-            ]
+            ],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "dev": {
-              "optimization": false,
-              "sourceMap": false,
-              "extractCss": false,
-              "aot": false,
-              "showCircularDependencies": true,
-              "buildOptimizer": false,
-              "vendorChunk": true
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2048kb"
+                }
+              ],
+              "sourceMap": false
             },
             "devstaging": {
-              "optimization": false,
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2048kb"
+                }
+              ],
               "sourceMap": false,
-              "extractCss": false,
-              "aot": false,
-              "showCircularDependencies": true,
-              "buildOptimizer": false,
               "extractLicenses": true,
-              "vendorChunk": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -392,14 +414,14 @@
               ]
             },
             "devbeta": {
-              "optimization": false,
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2048kb"
+                }
+              ],
               "sourceMap": false,
-              "extractCss": false,
-              "aot": false,
-              "showCircularDependencies": true,
-              "buildOptimizer": false,
               "extractLicenses": true,
-              "vendorChunk": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -412,15 +434,18 @@
               ]
             },
             "staging": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2048kb"
+                }
+              ],
               "optimization": true,
               "sourceMap": false,
-              "extractCss": false,
               "namedChunks": false,
               "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
               "buildOptimizer": true,
-              "vendorChunk": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -433,15 +458,18 @@
               ]
             },
             "beta": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2048kb"
+                }
+              ],
               "optimization": true,
               "sourceMap": false,
-              "extractCss": false,
               "namedChunks": false,
               "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
               "buildOptimizer": true,
-              "vendorChunk": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -454,15 +482,18 @@
               ]
             },
             "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2048kb"
+                }
+              ],
               "optimization": true,
               "sourceMap": false,
-              "extractCss": false,
               "namedChunks": false,
               "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
               "buildOptimizer": true,
-              "vendorChunk": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
@@ -474,7 +505,8 @@
                 }
               ]
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -534,7 +566,6 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "sourceMap": false,
             "outputPath": "dist/bank-code",
             "index": "projects/bank-code/src/index.html",
             "main": "projects/bank-code/src/main.ts",
@@ -547,22 +578,31 @@
             "styles": [
               "projects/bank-code/src/styles.css"
             ],
-            "scripts": []
+            "scripts": [],
+            "aot": false,
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
             "prod": {
+              "budgets": [
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "2048kb"
+                }
+              ],
               "optimization": true,
               "outputHashing": "all",
-              "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "aot": true,
-              "showCircularDependencies": true,
               "extractLicenses": true,
-              "vendorChunk": true,
               "buildOptimizer": true
             }
-          }
+          },
+          "defaultConfiguration": "development"
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
@@ -644,7 +684,7 @@
   "schematics": {
     "@schematics/angular:component": {
       "prefix": "app",
-      "styleext": "less"
+      "style": "less"
     },
     "@schematics/angular:directive": {
       "prefix": "app"

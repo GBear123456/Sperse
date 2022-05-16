@@ -27,7 +27,6 @@ import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ImportWizardComponent } from '@app/shared/common/import-wizard/import-wizard.component';
 import { Country } from '@shared/AppEnums';
 import { AppConsts } from '@shared/AppConsts';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
 import {
@@ -45,18 +44,17 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
 @Component({
     templateUrl: 'import-leads.component.html',
     styleUrls: ['import-leads.component.less'],
-    animations: [appModuleAnimation()],
     providers: [ ZipCodeFormatterPipe, PartnerServiceProxy ]
 })
 export class ImportLeadsComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    @ViewChild(ImportWizardComponent, { static: false }) wizard: ImportWizardComponent;
-    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
-    @ViewChild(TypesListComponent, { static: false }) partnerTypesComponent: TypesListComponent;
-    @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
-    @ViewChild('stagesList', { static: false }) stagesComponent: StaticListComponent;
+    @ViewChild(ImportWizardComponent) wizard: ImportWizardComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(TypesListComponent) partnerTypesComponent: TypesListComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild('stagesList') stagesComponent: StaticListComponent;
 
     private readonly MAX_REQUEST_SIZE = 55;
 
@@ -673,8 +671,8 @@ export class ImportLeadsComponent extends AppComponentBase implements AfterViewI
         let uri = (this.importType + 's').toLowerCase();
         this.totalCount = data.records.length;
         this.message.confirm(
-            this.l('LeadsImportComfirmation', this.totalCount, uri),
-            isConfirmed => {
+            this.l('LeadsImportComfirmation', this.totalCount, uri), '',
+            (isConfirmed) => {
                 if (isConfirmed) {
                     this.startLoading(true);
                     let leadsInput = this.createLeadsInput(data),

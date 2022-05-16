@@ -47,9 +47,9 @@ import { ReportPeriod } from './enums/reportPeriod.enum';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ReportsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
-    @ViewChild(ImageViewerComponent, { static: false }) imageViewer: ImageViewerComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
+    @ViewChild(ImageViewerComponent) imageViewer: ImageViewerComponent;
 
     headlineButtons: HeadlineButton[] = [
         {
@@ -539,7 +539,7 @@ export class ReportsComponent extends CFOComponentBase implements OnInit, AfterV
 
     deleteReport() {
         this.message.confirm(
-            this.l('ReportDeleteWarningMessage', this.currentReportInfo.FileName),
+            this.l('ReportDeleteWarningMessage', this.currentReportInfo.FileName), '',
             isConfirmed => {
                 if (isConfirmed) {
                     super.startLoading(true);

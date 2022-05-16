@@ -23,7 +23,7 @@ export class ActionMenuComponent {
     @Input() class = '';
     @Output() onItemClick: EventEmitter<any> = new EventEmitter<any>();
     @Output() onHidden: EventEmitter<any> = new EventEmitter<any>();
-    @ViewChild(DxTooltipComponent, { static: false }) actionsTooltip: DxTooltipComponent;
+    @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
 
     show(target: any) {
         if (this.actionsTooltip && this.actionsTooltip.instance) {

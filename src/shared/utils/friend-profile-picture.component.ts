@@ -38,7 +38,7 @@ export class FriendProfilePictureComponent implements AfterViewInit {
             return;
         }
 
-        this._profileService.getFriendProfilePictureById(this.profilePictureId, this.userId, this.tenantId).subscribe((result) => {
+        this._profileService.getFriendProfilePicture(this.userId, this.tenantId).subscribe((result) => {
             if (result && result.profilePicture) {
                 this.profilePicture = 'data:image/jpeg;base64,' + result.profilePicture;
             }

@@ -39,7 +39,7 @@ import { DxSwitchModule } from 'devextreme-angular/ui/switch';
 import { DxPopupModule } from 'devextreme-angular/ui/popup';
 import { DxSelectBoxModule } from 'devextreme-angular/ui/select-box';
 import { DxCalendarModule } from 'devextreme-angular/ui/calendar';
-import { ModalModule } from 'ngx-bootstrap';
+import { ModalModule } from 'ngx-bootstrap/modal';
 import { filter, map } from 'rxjs/operators';
 import { ImageViewerModule } from 'ng2-image-viewer';
 

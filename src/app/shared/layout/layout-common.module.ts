@@ -6,8 +6,13 @@ import { FormsModule } from '@angular/forms';
 
 /** Third party modules */
 import { CKEditorModule } from 'ckeditor4-angular';
-import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
-import { FileUploadModule as PrimeNgFileUploadModule, ProgressBarModule, PaginatorModule } from 'primeng/primeng';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { TabsModule } from 'ngx-bootstrap/tabs';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { PopoverModule } from 'ngx-bootstrap/popover';
+import { FileUploadModule as PrimeNgFileUploadModule } from 'primeng/fileupload';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { PaginatorModule } from 'primeng/paginator';
 import { TableModule } from 'primeng/table';
 import { MatTabsModule } from '@angular/material/tabs';
 import { FileUploadModule } from '@node_modules/ng2-file-upload';

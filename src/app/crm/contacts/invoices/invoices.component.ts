@@ -20,7 +20,6 @@ import startCase from 'lodash/startCase';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import {
@@ -48,13 +47,12 @@ import { AppFeatures } from '@shared/AppFeatures';
 @Component({
     templateUrl: './invoices.component.html',
     styleUrls: ['./invoices.component.less'],
-    animations: [appModuleAnimation()],
     providers: [ InvoiceServiceProxy ]
 })
 export class InvoicesComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxTooltipComponent, { static: false }) actionsTooltip: DxTooltipComponent;
-    @ViewChild('invoicesDataGrid', { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild('generatedCommissionDataGrid', {static: false}) generatedCommissionDataGrid: DxDataGridComponent;
+    @ViewChild(DxTooltipComponent) actionsTooltip: DxTooltipComponent;
+    @ViewChild('invoicesDataGrid') dataGrid: DxDataGridComponent;
+    @ViewChild('generatedCommissionDataGrid') generatedCommissionDataGrid: DxDataGridComponent;
 
     private actionRecordData: InvoiceDto;
     private settings = new InvoiceSettings();
@@ -282,7 +280,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
 
     deleteInvoice() {
         this.message.confirm(
-            this.l('InvoiceDeleteWarningMessage', this.actionRecordData.InvoiceNumber),
+            this.l('InvoiceDeleteWarningMessage', this.actionRecordData.InvoiceNumber), '',
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading(true);
@@ -435,7 +433,7 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                 stages$: this.stages$,
                 invoice: this.actionRecordData
             }
-        }).beforeClose().subscribe((successed: boolean) => {
+        }).beforeClosed().subscribe((successed: boolean) => {
             if (successed) {
                 this.notify.success(this.l('SuccessfullyUpdated'));
                 this.dataGrid.instance.refresh();

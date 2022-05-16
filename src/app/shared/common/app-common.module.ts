@@ -5,6 +5,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 /** Third party imports */
+import { GooglePlaceModule } from 'ngx-google-places-autocomplete';
 import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatInputModule } from '@angular/material/input';
@@ -46,16 +47,16 @@ import { DxPivotGridModule } from 'devextreme-angular/ui/pivot-grid';
 import { DxChartModule } from 'devextreme-angular/ui/chart';
 
 import { TableModule } from 'primeng/table';
-import { PaginatorModule } from 'primeng/primeng';
-import { ModalModule } from 'ngx-bootstrap';
+import { PaginatorModule } from 'primeng/paginator';
+import { ModalModule } from 'ngx-bootstrap/modal';
 import { NgxFileDropModule } from 'ngx-file-drop';
 import { PapaParseModule } from 'ngx-papaparse';
-import { ImageCropperModule } from 'ng2-img-cropper';
+import { ImageCropperModule } from 'ngx-image-cropper';
 import { CreditCardDirectivesModule } from 'angular-cc-library';
 import { TimeAgoPipe } from 'time-ago-pipe';
 
 /** Application imports */
-import { AbpModule } from '@abp/abp.module';
+import { AbpModule } from 'abp-ng2-module';
 import { UtilsModule } from '@shared/utils/utils.module';
 import { CommonModule } from '@shared/common/common.module';
 import { UploadPhotoDialogComponent } from './upload-photo-dialog/upload-photo-dialog.component';
@@ -91,7 +92,6 @@ import { InplaceEditModule } from '@app/shared/common/inplace-edit/inplace-edit.
 import { ModalDialogModule } from '@shared/common/dialogs/modal/modal-dialog.module';
 import { AppRatingModule } from './rating/app-rating.module';
 import { CalendarButtonComponent } from '@app/shared/common/calendar-button/calendar-button.component';
-import { GooglePlaceModule } from '@node_modules/ngx-google-places-autocomplete';
 import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.module';
 
 @NgModule({
@@ -226,7 +226,7 @@ import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.mo
     ]
 })
 export class AppCommonModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<AppCommonModule> {
         return {
             ngModule: AppCommonModule,
             providers: []

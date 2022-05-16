@@ -1,7 +1,7 @@
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
-import { ContactDto } from '@root/bank-code/products/bank-pass/contact-dto.type';
+import { BankPassContactDto } from '@root/bank-code/products/bank-pass/contact-dto.type';
 
-export const BankPassFields: KeysEnum<ContactDto> = {
+export const BankPassFields: KeysEnum<BankPassContactDto> = {
     PhotoPublicId: 'PhotoPublicId',
     Id: 'Id',
     Name: 'Name',

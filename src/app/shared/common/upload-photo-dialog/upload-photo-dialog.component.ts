@@ -11,7 +11,7 @@ import { FormControl, Validators } from '@angular/forms';
 
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { ImageCropperComponent, CropperSettings, Bounds } from 'ng2-img-cropper';
+import { ImageCropperComponent, ImageCroppedEvent } from 'ngx-image-cropper';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -19,7 +19,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
 import { DownloadPictureInput, ProfileServiceProxy } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
 
@@ -30,10 +30,8 @@ import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UploadPhotoDialogComponent implements AfterViewInit {
-    @ViewChild('cropper', { static: false }) cropper: ImageCropperComponent;
+    @ViewChild('cropper') cropper: ImageCropperComponent;
 
-    imageData: any = {};
-    cropperSettings: CropperSettings = this.getCropperSetting();
     croppedWidth: number;
     croppedHeight: number;
     fileUrlFormControl = new FormControl('', [
@@ -41,6 +39,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
         Validators.pattern(AppConsts.regexPatterns.url)
     ]);
     clearDisabled = true;
+    private imageData: string;
     private thumbData: string;
     title: string = this.data.title;
 
@@ -55,42 +54,16 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
     ) {}
 
     ngAfterViewInit() {
+        this.dialogRef.updateSize('700px', '560px');
         if (this.data.source) {
             let image: any = new Image();
             image.src = this.data.source;
             image.crossOrigin = 'Anonymous';
             image.onload = () => {
-                this.cropper.setImage(image);
+                this.cropper['loadImageFromURL'](image.src);
                 this.clearDisabled = false;
             };
-        } else {
-            let ctx = this.cropper.cropcanvas.nativeElement.getContext('2d');
-            ctx.fillStyle = '#FFFFFF';
-            ctx.fillRect(0, 0, 619, 300);
         }
-    }
-
-    getCropperSetting() {
-        let setting = new CropperSettings();
-        setting.width = 619;
-        setting.height = 200;
-        setting.croppedWidth = 100;
-        setting.croppedHeight = 100;
-        setting.canvasWidth = 619;
-        setting.canvasHeight = 300;
-        setting.minWidth = 1;
-        setting.minHeight = 1;
-        setting.rounded = false;
-        setting.keepAspect = false;
-        setting.noFileInput = true;
-        setting.preserveSize = true;
-        setting.compressRatio = 2;
-        setting.minWithRelativeToResolution = true;
-        setting.cropperDrawSettings.strokeColor = 'rgba(0,174,239,1)';
-        setting.cropperDrawSettings.strokeWidth = 2;
-        setting.cropperClass = 'cropper-canvas';
-
-        return setting;
     }
 
     fileSelected($event) {
@@ -98,8 +71,8 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
             this.fileDropped({ files: $event.target.files });
     }
 
-    imgResize(): Promise<any> {
-        return new Promise((resolve) => {
+    imgResize(): Promise<void> {
+        return new Promise<void>((resolve) => {
             let image = new Image(),
                 canvas = document.createElement('canvas'),
                 ctx = canvas.getContext('2d');
@@ -125,19 +98,20 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
 
                 resolve();
             };
-            image.src = this.imageData.image;
+            image.src = this.imageData;
             image.crossOrigin = 'Anonymous';
         });
     }
 
-    onCrop(bounds: Bounds) {
-        this.croppedHeight = bounds.bottom - bounds.top;
-        this.croppedWidth = bounds.right - bounds.left;
+    onCrop(bounds: ImageCroppedEvent) {
+        this.croppedHeight = bounds.height;
+        this.croppedWidth = bounds.width;
+        this.imageData = bounds.base64;
     }
 
     onSave() {
-        if (this.data.maxSizeBytes && this.imageData.image) {
-            const fileBytes = window.atob(StringHelper.getBase64(this.imageData.image)).length;
+        if (this.data.maxSizeBytes && this.imageData) {
+            const fileBytes = window.atob(StringHelper.getBase64(this.imageData)).length;
             if (fileBytes > this.data.maxSizeBytes) {
                 abp.message.error(
                     this.ls.l(
@@ -151,7 +125,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
 
         this.imgResize().then(() => {
             const uploadPhotoResult: UploadPhotoResult = {
-                origImage: this.imageData.image,
+                origImage: this.imageData,
                 thumbImage: this.thumbData,
                 source: this.fileUrlFormControl.value
             };
@@ -174,7 +148,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
             image.src = loadEvent.target.result;
             image.crossOrigin = 'Anonymous';
             image.onload = () => {
-                this.cropper.setImage(image);
+                this.cropper['loadImageFromURL'](image.src);
             };
         };
         reader.readAsDataURL(file);
@@ -204,7 +178,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
             image.src = this.fileUrlFormControl.value;
             image.crossOrigin = 'Anonymous';
             image.onload = () => {
-                this.cropper.setImage(image);
+                this.cropper['loadImageFromURL'](image.src);
                 this.changeDetectorRef.detectChanges();
                 this.loadingService.finishLoading();
             };
@@ -218,7 +192,7 @@ export class UploadPhotoDialogComponent implements AfterViewInit {
                             image.src = 'data:image/jpeg;base64,' + pictureBase64;
                             image.crossOrigin = 'Anonymous';
                             image.onload = () => {
-                                this.cropper.setImage(image);
+                                this.cropper['loadImageFromURL'](image.src);
                                 this.changeDetectorRef.detectChanges();
                                 this.loadingService.finishLoading();
                             };

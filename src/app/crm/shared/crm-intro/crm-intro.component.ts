@@ -7,15 +7,14 @@ import { MatHorizontalStepper } from '@angular/material/stepper';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ModuleType, RoleServiceProxy, UserServiceProxy } from 'shared/service-proxies/service-proxies';
 import { QuestionnaireComponent } from '@shared/shared-intro-steps/questionnaire/questionnaire.component';
 import { ImportUsersStepComponent } from '@shared/shared-intro-steps/import-users-step/import-users-step.component';
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 
@@ -26,13 +25,12 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
         '../../../../shared/common/styles/close-button.less',
         './crm-intro.component.less'
     ],
-    animations: [ appModuleAnimation() ],
     providers: [ RoleServiceProxy, UserServiceProxy ]
 })
 export class CrmIntroComponent implements OnInit {
     @ViewChild('stepper', { static: true }) stepper: MatHorizontalStepper;
-    @ViewChild(QuestionnaireComponent, { static: false }) questionnaire: QuestionnaireComponent;
-    @ViewChild(ImportUsersStepComponent, { static: false }) importUsersStepComponent: ImportUsersStepComponent;
+    @ViewChild(QuestionnaireComponent) questionnaire: QuestionnaireComponent;
+    @ViewChild(ImportUsersStepComponent) importUsersStepComponent: ImportUsersStepComponent;
     dialogRef: MatDialogRef<CrmIntroComponent, any>;
     readonly identifier = 'CRM-Setup';
     readonly moduleType = ModuleType.CRM;

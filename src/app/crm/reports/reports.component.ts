@@ -38,8 +38,7 @@ import {
     InvoiceSettings,
     ReportServiceProxy,
     SubscriberDailyStatsReportInfo,
-    PaymentServiceProxy,
-    LayoutType
+    PaymentServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterCheckBoxesComponent } from '@shared/filters/check-boxes/filter-check-boxes.component';

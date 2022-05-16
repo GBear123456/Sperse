@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { LayoutType } from '../service-proxies/service-proxies';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 
 @Component({

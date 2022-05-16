@@ -25,7 +25,7 @@
     </mat-tab-group>
     <ngx-file-drop (onFileDrop)="fileDropped($event)">
         <ng-template ngx-file-drop-content-tmp>
-            <img-cropper #cropper [image]="imageData" [settings]="cropperSettings" (onCrop)="onCrop($event)"></img-cropper>
+            <image-cropper #cropper (imageCropped)="onCrop($event)"></image-cropper>
         </ng-template>
     </ngx-file-drop>
 </mat-dialog-content>

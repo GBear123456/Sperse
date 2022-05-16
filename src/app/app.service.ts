@@ -24,8 +24,8 @@ import {
     GetUserInstanceInfoOutput
 } from '@shared/service-proxies/service-proxies';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
+import { NotifyService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
 import { AdminConfig } from '@admin/admin.config';
@@ -378,7 +378,8 @@ export class AppService extends AppServiceBase {
     }
 
     expiredModuleSubscribe(callback) {
-        this.expiredModule.asObservable().subscribe(callback);
+        if (this.expiredModule)
+            this.expiredModule.asObservable().subscribe(callback);
     }
 
     setContactInfoVisibility(value: boolean) {
@@ -392,7 +393,7 @@ export class AppService extends AppServiceBase {
     requestVerification(contactId: number): Observable<number> {
         return new Observable<number>((observer) => {
             abp.message.confirm(
-                'Please confirm user activation',
+                'Please confirm user activation', '',
                 (isConfirmed) => {
                     if (isConfirmed) {
                         let request = new RegisterMemberInput();

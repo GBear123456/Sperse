@@ -18,7 +18,7 @@ import {
     CreateRuleDto, ConditionAttributeDto, ConditionDto, TransactionTypesAndCategoriesDto, TransactionAttributeDto, GetKeyAttributeValuesInput } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppConsts } from '@shared/AppConsts';
@@ -40,9 +40,9 @@ export class RuleDialogComponent implements OnInit, AfterViewInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {}
-    @ViewChild(DxTreeViewComponent, { static: false }) transactionTypesList: DxTreeViewComponent;
-    @ViewChild('attributesComponent', { static: false }) attributeList: DxDataGridComponent;
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild(DxTreeViewComponent) transactionTypesList: DxTreeViewComponent;
+    @ViewChild('attributesComponent') attributeList: DxDataGridComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     showSelectedTransactions = false;
     minAmount: number;
     maxAmount: number;
