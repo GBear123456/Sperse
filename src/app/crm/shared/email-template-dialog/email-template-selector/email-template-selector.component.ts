@@ -9,7 +9,8 @@ import { startWith, switchMap, map } from 'rxjs/operators';
 import {
     EmailTemplateServiceProxy,
     GetTemplatesResponse,
-    EmailTemplateType
+    EmailTemplateType,
+    CloneEmailTemplateInput
 } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -27,6 +28,7 @@ export class EmailTemplateSelectorComponent {
     @Input() title: string = this.ls.l("UserRegistrationEmail");
     @Input() templateType: EmailTemplateType;
     @Input() showSystemDefault: boolean = true;
+    @Input() showCloneButton: boolean = false;
     @Input()
     get templateId(): number {
         return this.internalTemplateId == this.systemDefaultId ? null : this.internalTemplateId;
@@ -62,6 +64,16 @@ export class EmailTemplateSelectorComponent {
     showEmailTemplateDialog(createMode: boolean = false) {
         let id = createMode ? undefined : this.internalTemplateId;
         this.contactService.showEmailTemplateSelectorDialog(id, this.templateType, this.dialogSaveCallback.bind(this));
+    }
+
+    cloneEmailTemplate() {
+        this.emailTemplateProxy
+            .clone(new CloneEmailTemplateInput({ id: this.templateId }))
+            .subscribe((newTemplateId) => {
+                this._refresh.next();
+                this.contactService.showEmailTemplateSelectorDialog(newTemplateId, this.templateType, this.dialogSaveCallback.bind(this));
+                this.internalTemplateId = newTemplateId;
+            });
     }
 
     dialogSaveCallback(data) {
