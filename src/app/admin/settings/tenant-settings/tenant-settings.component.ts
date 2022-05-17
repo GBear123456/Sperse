@@ -216,7 +216,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                     this.rapidSettings
                 ] = results;
 
-                this.showCustomSmptSettings = !!this.settings.email.imapHost;
+                this.showCustomSmptSettings = !!this.settings.email.smtpHost;
                 if (this.settings.general) {
                     this.initialTimeZone = this.settings.general.timezone;
                     this.initialDefaultCountry = this.settings.general.defaultCountryCode;
