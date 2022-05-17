@@ -41,7 +41,7 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class CreditCardsComponent implements OnInit, OnDestroy {
     private _resultByCategory: ElementRef;
-    @ViewChild('resultByCategory', { static: false }) set resultByCategory (resultByCategory: ElementRef) {
+    @ViewChild('resultByCategory') set resultByCategory (resultByCategory: ElementRef) {
         this._resultByCategory = resultByCategory;
     }
     cardOffersList$: Observable<OfferDto[]>;

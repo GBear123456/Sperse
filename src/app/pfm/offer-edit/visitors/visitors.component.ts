@@ -34,7 +34,7 @@ import { FieldDependencies } from '@app/shared/common/data-grid.service/field-de
     styleUrls: ['./visitors.component.less']
 })
 export class VisitorsComponent extends AppComponentBase implements AfterViewInit, OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     @Input() dateFrom: moment;
     @Input() dateTo: moment;
@@ -89,6 +89,9 @@ export class VisitorsComponent extends AppComponentBase implements AfterViewInit
                         this.fieldsDependencies
                     );
                     request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             })
         });

@@ -6,12 +6,11 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import {
     TenantSslCertificateServiceProxy, TenantHostServiceProxy, TenantHostType,
     TenantSslBindingInfo, DictionaryServiceProxy, TenantSslCertificateInfo
 } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
@@ -26,13 +25,12 @@ import { AppService } from '@app/app.service';
     selector: 'system-settings',
     templateUrl: './system-settings.component.html',
     styleUrls: ['../../../shared/common/styles/checkbox-radio.less', './system-settings.component.less'],
-    animations: [appModuleAnimation()],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [ TenantSslCertificateServiceProxy, TenantHostServiceProxy ]
 })
 export class SystemSettingsComponent implements OnInit {
-    @ViewChild('customDomainsGrid', { static: false }) customDomainsGrid: DxDataGridComponent;
-    @ViewChild('sslGrid', { static: false }) sslGrid: DxDataGridComponent;
+    @ViewChild('customDomainsGrid') customDomainsGrid: DxDataGridComponent;
+    @ViewChild('sslGrid') sslGrid: DxDataGridComponent;
     public sslGridDataSource: TenantSslCertificateInfo[];
     public sslBindingsDataSource: TenantSslBindingInfo[];
 

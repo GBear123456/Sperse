@@ -4,7 +4,7 @@ import { Component, Input, OnDestroy } from '@angular/core';
 /** Application imports */
 import { ImportStatus } from '@shared/AppEnums';
 import { ImportWizardService } from '../import-wizard.service';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { AppLocalizationService } from '../../localization/app-localization.service';
 
 @Component({

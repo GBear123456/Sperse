@@ -21,7 +21,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
     styleUrls: ['./offer-stats.component.less']
 })
 export class OfferStatsComponent extends AppComponentBase {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @Output() onOfferClicksClick: EventEmitter<OfferStatsDto> = new EventEmitter<OfferStatsDto>();
     offersStaticFilter = { 'RequestCount': { gt: 0 } };
     readonly offerStatsFields: KeysEnum<OfferStatsDto> = OfferStatsFields;
@@ -34,6 +34,9 @@ export class OfferStatsComponent extends AppComponentBase {
                 this.isDataLoaded = false;
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                 request.params.$select = DataGridService.getSelectFields(this.dataGrid);
+            },
+            errorHandler: (error) => {
+                setTimeout(() => this.isDataLoaded = true);
             }
         }),
         sort: [

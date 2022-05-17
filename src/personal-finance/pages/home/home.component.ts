@@ -11,7 +11,7 @@ import {
 import { DOCUMENT } from '@angular/common';
 
 /** Application imports */
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { LendSpaceHomeComponent } from '@root/personal-finance/pages/home/layouts/lend-space/lend-space-home.component';

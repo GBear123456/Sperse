@@ -191,9 +191,9 @@ export class CellOptions {
     ]
 })
 export class CashflowComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxPivotGridComponent, { static: false }) pivotGrid: DxPivotGridComponent;
-    @ViewChild(DxDataGridComponent, { static: false }) cashFlowGrid: DxDataGridComponent;
-    @ViewChild(SynchProgressComponent, { static: false }) synchProgressComponent: SynchProgressComponent;
+    @ViewChild(DxPivotGridComponent) pivotGrid: DxPivotGridComponent;
+    @ViewChild(DxDataGridComponent) cashFlowGrid: DxDataGridComponent;
+    @ViewChild(SynchProgressComponent) synchProgressComponent: SynchProgressComponent;
     @HostBinding('class.toolbar-is-shown') toolbarIsShown;
     transactionId: any;
     selectedBankAccountsIds;
@@ -1330,7 +1330,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
     initFooterToolbar() {
         combineLatest(
             this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getForecastModels), filter(Boolean)),
-            this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex, filter(Boolean)))
+            this.cfoStore$.pipe(select(ForecastModelsStoreSelectors.getSelectedForecastModelIndex), filter(Boolean))
         ).pipe(
             first()
         ).subscribe(([forecastModels, selectedForecastModelIndex]) => {
@@ -1614,7 +1614,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.cashflowService.cashflowData && this.cashflowService.cashflowData.length) {
             this.cashflowService.cashflowData.slice().forEach(item => {
                 if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                    item.adjustmentType != AdjustmentType._2
+                    item.adjustmentType != AdjustmentType.StartDateBalance
                 ) {
                     this.cashflowService.cashflowData.splice(this.cashflowService.cashflowData.indexOf(item), 1);
                 }
@@ -1624,7 +1624,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         if (this.cashflowService.adjustmentsList && this.cashflowService.adjustmentsList.length) {
             this.cashflowService.adjustmentsList.slice().forEach(item => {
                 if (item.initialDate.format('MM.YYYY') === startDate.format('MM.YYYY') &&
-                    item.adjustmentType != AdjustmentType._2) {
+                    item.adjustmentType != AdjustmentType.StartDateBalance) {
                     this.cashflowService.adjustmentsList.splice(this.cashflowService.adjustmentsList.indexOf(item), 1);
                 }
             });
@@ -1778,8 +1778,8 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
             if (isAccountTransaction) {
                 /** @todo Remove adjustment list for the months and create another for days */
                 if (transactionObj.cashflowTypeId === StartedBalance) {
-                    this.cashflowService.adjustmentsList.push({...extendedTransaction});
-                    if (transactionObj.adjustmentType == AdjustmentType._0) {
+                    this.cashflowService.adjustmentsList.push({ ...extendedTransaction });
+                    if (transactionObj.adjustmentType == AdjustmentType.StartingBalance) {
                         extendedTransaction.cashflowTypeId = Total;
                     }
                 }
@@ -4363,7 +4363,7 @@ export class CashflowComponent extends CFOComponentBase implements OnInit, After
         dataGrid.endUpdate();
         this.changeTransactionGridEditMode = true;
 
-        let data: CashFlowStatsDetailDto = e.data;
+        let data: any = e.data;
 
         data.id = -1;
         data.forecastId = -1;

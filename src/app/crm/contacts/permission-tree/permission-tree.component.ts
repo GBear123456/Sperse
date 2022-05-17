@@ -15,8 +15,8 @@ import { UserServiceProxy, GrantPermissionInput, ProhibitPermissionInput } from 
 import { ContactsService } from '../contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
+import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppStoreService } from '@app/store/app-store.service';
 
@@ -26,7 +26,7 @@ import { AppStoreService } from '@app/store/app-store.service';
     styleUrls: ['./permission-tree.component.less']
 })
 export class PermissionTreeComponent implements OnInit, OnDestroy {
-    @ViewChild(DxTreeViewComponent, { static: false }) permissionsTree: DxTreeViewComponent;
+    @ViewChild(DxTreeViewComponent) permissionsTree: DxTreeViewComponent;
 
     public data: any;
     public permissionsDataSource: DataSource;

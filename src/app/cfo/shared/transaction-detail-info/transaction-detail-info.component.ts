@@ -20,10 +20,10 @@ import {
     CreateTransactionCommentThreadInput,
     UpdateCommentInput
 } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { finalize } from '@node_modules/rxjs/internal/operators';
+import { finalize } from 'rxjs/operators';
 import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
 
 @Component({
@@ -34,7 +34,7 @@ import { CfoPreferencesService } from '@app/cfo/cfo-preferences.service';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TransactionDetailInfoComponent implements OnInit, AfterViewInit {
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
 
     TRANSACTION_ACCOUNTING_TYPE_KEY: any;
     TRANSACTION_CATEGORY_ID: number;

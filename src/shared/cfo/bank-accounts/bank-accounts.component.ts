@@ -23,7 +23,7 @@ import { LeftMenuService } from '@app/cfo/shared/common/left-menu/left-menu.serv
     styleUrls: ['./bank-accounts.component.less']
 })
 export class BankAccountsComponent extends CFOComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(BankAccountsWidgetComponent, { static: false }) bankAccountsWidget: BankAccountsWidgetComponent;
+    @ViewChild(BankAccountsWidgetComponent) bankAccountsWidget: BankAccountsWidgetComponent;
     leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
     nameColumnWidth$: Observable<number> = this.leftMenuService.collapsed$.pipe(
         map((collapsed: boolean) => collapsed || window.innerWidth > 1400 ? null : 250)

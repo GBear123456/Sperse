@@ -1,7 +1,7 @@
 /* tslint:disable:no-unused-variable */
 
 import { APP_BASE_HREF } from '@angular/common';
-import { TestBed, async } from '@angular/core/testing';
+import { TestBed, waitForAsync } from '@angular/core/testing';
 import { API_BASE_URL } from '@shared/service-proxies/service-proxies';
 import { RootModule } from '../root.module';
 import { AppComponent } from './app.component';
@@ -11,7 +11,7 @@ export function getRemoteServiceBaseUrl(): string {
 }
 
 describe('App: Platform', () => {
-    beforeEach(async(() => {
+    beforeEach(waitForAsync(() => {
         TestBed.configureTestingModule({
             imports: [
                 RootModule
@@ -23,7 +23,7 @@ describe('App: Platform', () => {
         }).compileComponents();
     }));
 
-    it('should create the app', async(() => {
+    it('should create the app', waitForAsync(() => {
         const fixture = TestBed.createComponent(AppComponent);
         const app = fixture.debugElement.componentInstance;
         expect(app).toBeTruthy();

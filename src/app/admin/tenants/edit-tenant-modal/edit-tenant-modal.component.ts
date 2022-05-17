@@ -29,13 +29,13 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { TenantsService } from '@admin/tenants/tenants.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ModulesEditionsSelectComponent } from '../modules-edtions-select.component.ts/modules-editions-select.component';
 import { FeatureTreeComponent } from '@app/shared/features/feature-tree.component';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { StorageChangeDialog } from './storage-change-dialog/storage-change-dialog.component';
 
 @Component({
@@ -47,10 +47,10 @@ import { StorageChangeDialog } from './storage-change-dialog/storage-change-dial
 })
 export class EditTenantModalComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild('nameInput', { static: false }) nameInput: ElementRef;
-    @ViewChild('SubscriptionEndDateUtc', { static: false }) subscriptionEndDateUtc: ElementRef;
-    @ViewChild(ModulesEditionsSelectComponent, { static: false }) editionsSelect: ModulesEditionsSelectComponent;
-    @ViewChild(FeatureTreeComponent, { static: false }) featureTree: FeatureTreeComponent;
+    @ViewChild('nameInput') nameInput: ElementRef;
+    @ViewChild('SubscriptionEndDateUtc') subscriptionEndDateUtc: ElementRef;
+    @ViewChild(ModulesEditionsSelectComponent) editionsSelect: ModulesEditionsSelectComponent;
+    @ViewChild(FeatureTreeComponent) featureTree: FeatureTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     tenant: TenantEditDto;

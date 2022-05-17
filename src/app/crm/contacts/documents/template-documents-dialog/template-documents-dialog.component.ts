@@ -11,9 +11,9 @@ import { finalize, map } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { DocumentServiceProxy, UploadDocumentInput, DocumentInfo } from '@shared/service-proxies/service-proxies';
@@ -25,7 +25,7 @@ import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/templat
     styleUrls: ['template-documents-dialog.component.less']
 })
 export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
-    @ViewChild(DxFileManagerComponent, { static: false }) fileManager: DxFileManagerComponent;
+    @ViewChild(DxFileManagerComponent) fileManager: DxFileManagerComponent;
 
     files         = [];
     uploadedCount = 0;
@@ -91,7 +91,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: TemplateDocumentsDialogData,
     ) {
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: (this.data.fullHeight ? 0 : 75) + 'px',
                 right: '-100vw'
@@ -112,7 +112,7 @@ export class TemplateDocumentsDialogComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {
         setTimeout(() => {
             this.slider.classList.remove('hide');
-            this.dialogRef.updateSize(undefined, '100vh');
+            this.dialogRef.updateSize(undefined, this.data.fullHeight ? '100vh' : 'calc(100vh - 75px)');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
                     top: (this.data.fullHeight ? 0 : 75) + 'px',

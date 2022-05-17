@@ -17,7 +17,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 
 @Component({
@@ -26,7 +26,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     styleUrls: ['./organization-units-tree.component.less']
 })
 export class OrganizationUnitsTreeComponent implements OnDestroy {
-    @ViewChild(DxTreeViewComponent, { static: false }) organizationUnitsTree: DxTreeViewComponent;
+    @ViewChild(DxTreeViewComponent) organizationUnitsTree: DxTreeViewComponent;
     @Output() onFilterApplied: EventEmitter<any> = new EventEmitter();
     @Input() selectionMode = 'multiple';
     @Input() showFilterButton = false;

@@ -6,7 +6,7 @@ import { finalize } from 'rxjs/operators';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dialog';
 
 /** Application imports */
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
@@ -20,7 +20,7 @@ import { TenantPaymentSettingsServiceProxy, BankTransferSettings, BeneficiaryInf
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BankSettingsDialogComponent {
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
 
     settings = new BankTransferSettings({
         bankAccountNumber: undefined,

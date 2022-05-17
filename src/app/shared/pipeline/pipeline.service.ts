@@ -3,7 +3,7 @@ import { Injectable, Injector } from '@angular/core';
 import { RouteReuseStrategy } from '@angular/router';
 
 /** Third party imports */
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@node_modules/@ngrx/store';
 import { BehaviorSubject, ReplaySubject, Observable, Subject, of } from 'rxjs';
@@ -20,14 +20,14 @@ import {
 import { EntityCancelDialogComponent } from './confirm-cancellation-dialog/confirm-cancellation-dialog.component';
 import { LeadCompleteDialogComponent } from './complete-lead-dialog/complete-lead-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppConsts } from '@shared/AppConsts';
 import { ContactGroup } from '@shared/AppEnums';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
 import { Stage } from '@app/shared/pipeline/stage.model';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
 
 interface StageColor {
@@ -401,7 +401,7 @@ export class PipelineService {
                 this.lastIgnoreChecklist$ = subject.asObservable();
 
                 this.message.confirm(
-                    this.ls.l('ChecklistConfirmationMessage'),
+                    this.ls.l('ChecklistConfirmationMessage'), '',
                     isConfirmed => {
                         if (isConfirmed)
                             subject.next(true);

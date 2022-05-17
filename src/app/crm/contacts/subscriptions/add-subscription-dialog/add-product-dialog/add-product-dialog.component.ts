@@ -32,17 +32,15 @@ import {
     RecurringPaymentFrequency,
     ProductSubscriptionOptionInfo,
     ProductMeasurementUnit,
-
     SetProductImageInput
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
-import { SettingService } from 'abp-ng2-module/dist/src/settings/setting.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
@@ -60,7 +58,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddProductDialogComponent implements AfterViewInit, OnInit {
-    @ViewChild(DxValidationGroupComponent, { static: false }) validationGroup: DxValidationGroupComponent;
+    @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
     private slider: any;
     product: CreateProductInput | UpdateProductInput;
     amountFormat$: Observable<string> = this.invoicesService.settings$.pipe(filter(Boolean),
@@ -102,7 +100,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         private feature: FeatureCheckerService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: this.data.fullHeigth ? '0px' : '75px',
                 right: '-100vw'
@@ -156,7 +154,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     ngAfterViewInit() {
         this.slider.classList.remove('hide');
-        this.dialogRef.updateSize(undefined, '100vh');
+        this.dialogRef.updateSize(undefined, this.data.fullHeigth ? '100vh' : 'calc(100vh - 75px)');
             this.dialogRef.updatePosition({
                 top: this.data.fullHeigth ? '0px' : '75px',
                 right: '0px'

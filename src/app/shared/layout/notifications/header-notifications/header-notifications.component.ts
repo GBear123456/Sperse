@@ -15,7 +15,7 @@ import { NotificationsComponent } from '@app/shared/layout/notifications/notific
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { ConfigInterface } from '@app/shared/common/config.interface';
 
@@ -127,7 +127,7 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     loadNotifications(): void {
-        this.notificationService.getUserNotifications(UserNotificationState._0, 3, 0).subscribe((result: GetNotificationsOutput) => {
+        this.notificationService.getUserNotifications(UserNotificationState.Unread, undefined, undefined, 3, 0).subscribe((result: GetNotificationsOutput) => {
             this.unreadNotificationCount = result.items.length;
             this.notifications = [];
             $.each(result.items, (index, item: UserNotificationDto) => {
@@ -181,7 +181,7 @@ export class HeaderNotificationsComponent implements OnInit {
                 this.router.navigate(['app/crm/contact', notification.entityId]);
                 setTimeout(() => this.itemDetailsService.clearItemsSource());
             } else if (notification.entityTypeName == this.COMMUNICATION_MESSAGE_ENTITY_TYPE) {
-                this.router.navigate(['app/crm/contact', notification.entityId, 'user-inbox']);
+                this.userNotificationHelper.navigateToUserInbox(notification);
                 setTimeout(() => this.itemDetailsService.clearItemsSource());
             }
         } else if (notification.url) {

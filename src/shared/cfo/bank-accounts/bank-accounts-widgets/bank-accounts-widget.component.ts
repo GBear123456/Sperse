@@ -61,9 +61,9 @@ import { AddAccountButtonComponent } from '@shared/cfo/bank-accounts/add-account
     providers: [ DatePipe, BankAccountsServiceProxy, BusinessEntityServiceProxy, SyncAccountServiceProxy, SyncServiceProxy ]
 })
 export class BankAccountsWidgetComponent extends CFOComponentBase implements OnInit, OnChanges, OnDestroy {
-    @ViewChild(AddAccountButtonComponent, { static: false }) addButtonComponent: AddAccountButtonComponent;
-    @ViewChild('actionRequiredTooltip', { static: false }) actionRequiredTooltip: DxTooltipComponent;
-    @ViewChild(DxDataGridComponent, { static: false }) mainDataGrid: DxDataGridComponent;
+    @ViewChild(AddAccountButtonComponent) addButtonComponent: AddAccountButtonComponent;
+    @ViewChild('actionRequiredTooltip') actionRequiredTooltip: DxTooltipComponent;
+    @ViewChild(DxDataGridComponent) mainDataGrid: DxDataGridComponent;
     @ViewChild('header', { read: ElementRef, static: true }) header: ElementRef;
 
     @Input() showSyncDate = false;

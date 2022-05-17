@@ -3,7 +3,7 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { AppUrlService } from '@shared/common/nav/app-url.service';
 import { AccountServiceProxy, ImpersonateInput, ImpersonateOutput } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()

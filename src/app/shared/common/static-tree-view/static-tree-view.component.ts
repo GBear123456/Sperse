@@ -19,7 +19,7 @@ import { FilterModel } from '@shared/filters/models/filter.model';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class StaticTreeViewComponent {
-    @ViewChild('staticTreeView', { static: false }) dxTreeView: DxTreeViewComponent;
+    @ViewChild('staticTreeView') dxTreeView: DxTreeViewComponent;
     @ViewChild(DxTooltipComponent, { static: true }) dxTooltip: DxTooltipComponent;
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     @Input() width: string = '100%';

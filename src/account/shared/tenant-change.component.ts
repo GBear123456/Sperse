@@ -12,7 +12,7 @@ import { AppLocalizationService } from '../../app/shared/common/localization/app
     </span>`
 })
 export class TenantChangeComponent implements OnInit {
-    @ViewChild('tenantChangeModal', { static: false }) tenantChangeModal: TenantChangeModalComponent;
+    @ViewChild('tenantChangeModal') tenantChangeModal: TenantChangeModalComponent;
 
     tenancyName: string;
     name: string;

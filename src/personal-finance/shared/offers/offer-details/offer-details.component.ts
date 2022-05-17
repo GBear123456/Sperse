@@ -50,10 +50,10 @@ import { AppConsts } from '@shared/AppConsts';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OfferDetailsComponent implements OnInit, OnDestroy {
-    @ViewChild('availableCards', { static: false }) availableCardsRef: ElementRef;
+    @ViewChild('availableCards') availableCardsRef: ElementRef;
     @ViewChild('creditCardsList', { static: true }) creditCardsListRef: ElementRef;
     @ViewChild('detailsContainer', { static: true }) detailsContainerRef: ElementRef;
-    @ViewChild('offersList', { static: false }) offersListRef: ElementRef;
+    @ViewChild('offersList') offersListRef: ElementRef;
     creditCards$: Observable<OfferDto[]>;
     cardsAmount: number;
     selectedCardId: ReplaySubject<number> = new ReplaySubject<number>(1);

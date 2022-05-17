@@ -9,7 +9,7 @@ import { catchError, exhaustMap, map, withLatestFrom } from 'rxjs/operators';
 
 /** Application imports */
 import * as addressUsageTypesActions from './actions';
-import { AddressUsageTypeDtoListResultDto, ContactAddressServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ListResultDtoOfAddressUsageTypeDto, ContactAddressServiceProxy } from '@shared/service-proxies/service-proxies';
 import { State } from './state';
 import { getLoadedTime } from './selectors';
 import { AppConsts } from '@shared/AppConsts';
@@ -33,7 +33,7 @@ export class AddressUsageTypesStoreEffects {
 
             return this.injector.get(ContactAddressServiceProxy).getAddressUsageTypes()
                 .pipe(
-                    map((addressUsageTypes: AddressUsageTypeDtoListResultDto) => {
+                    map((addressUsageTypes: ListResultDtoOfAddressUsageTypeDto) => {
                         return new addressUsageTypesActions.LoadSuccessAction(addressUsageTypes.items);
                     }),
                     catchError(err => {

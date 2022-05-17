@@ -8,7 +8,6 @@ import DataSource from 'devextreme/data/data_source';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { NotificationServiceProxy, UserNotificationDto } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from './UserNotificationHelper';
@@ -22,20 +21,19 @@ import { DxDataGridComponent } from 'devextreme-angular';
     templateUrl: './notifications.component.html',
     styleUrls: ['./notifications.component.less'],
     encapsulation: ViewEncapsulation.None,
-    animations: [appModuleAnimation()],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class NotificationsComponent implements OnInit {
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     totalCount: number;
     readStateFilter: UserNotificationState;
     loading = false;
     selectBoxList = [
         { value: undefined, text: this.ls.l('All') },
-        { value: UserNotificationState._0, text: this.ls.l('Unread') },
-        { value: UserNotificationState._1, text: this.ls.l('Read') }
+        { value: UserNotificationState.Unread, text: this.ls.l('Unread') },
+        { value: UserNotificationState.Read, text: this.ls.l('Read') }
     ];
     notificationsDataSource = new DataSource({
         key: 'userNotificationId',
@@ -44,6 +42,8 @@ export class NotificationsComponent implements OnInit {
             this.processToalCountRequest();
             return this.notificationService.getUserNotifications(
                 this.readStateFilter,
+                undefined,
+                undefined,
                 loadOptions.take,
                 loadOptions.skip
             ).pipe(
@@ -101,7 +101,7 @@ export class NotificationsComponent implements OnInit {
                                           
         abp.event.on('app.notifications.read', (userNotificationId: number) => {
             /** If we show only unread - then reload list */
-            if (this.readStateFilter === UserNotificationState._0) {
+            if (this.readStateFilter === UserNotificationState.Unread) {
                 this.loadNotifications();
             } else {
                 /** Else just mark grid row as read */
@@ -117,7 +117,7 @@ export class NotificationsComponent implements OnInit {
     setAllNotificationsAsRead(e): void {
         this.userNotificationHelper.setAllAsRead(() => {
             this.dataGrid.instance.getVisibleRows().forEach(row => {
-                row.data.state = abp.notifications.getUserNotificationStateAsString(Number(UserNotificationState._1));
+                row.data.state = abp.notifications.getUserNotificationStateAsString(Number(UserNotificationState.Read));
                 row.data.isUnread = false;
             });
             this.dataGrid.instance.repaint();
@@ -138,14 +138,14 @@ export class NotificationsComponent implements OnInit {
     }
 
     notificationClick(e) {
-        let notification = e.data;
+        let notification: IFormattedUserNotification = e.data;
         if (notification.entityId) {
             if (notification.entityTypeName == this.CONTACT_ENTITY_TYPE) {
                 this.router.navigate(['app/crm/contact', notification.entityId]);
                 setTimeout(() => this.itemDetailsService.clearItemsSource());
                 this.dialog.closeAll();
             } else if (notification.entityTypeName == this.COMMUNICATION_MESSAGE_ENTITY_TYPE) {
-                this.router.navigate(['app/crm/contact', notification.entityId, 'user-inbox']);
+                this.userNotificationHelper.navigateToUserInbox(notification);
                 setTimeout(() => this.itemDetailsService.clearItemsSource());
                 this.dialog.closeAll();
             }

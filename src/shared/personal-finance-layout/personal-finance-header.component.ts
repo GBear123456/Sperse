@@ -8,11 +8,11 @@ import { Observable } from 'rxjs';
 /** Application imports */
 import { AppConsts } from 'shared/AppConsts';
 import { PersonalFinanceLayoutService } from './personal-finance-layout.service';
-import { AbpSessionService } from '@abp/session/abp-session.service';
+import { AbpSessionService } from 'abp-ng2-module';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { environment } from 'environments/environment';
 import { AppFeatures } from '@shared/AppFeatures';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { OffersService } from '@root/personal-finance/shared/offers/offers.service';
 import { LayoutType } from '../service-proxies/service-proxies';

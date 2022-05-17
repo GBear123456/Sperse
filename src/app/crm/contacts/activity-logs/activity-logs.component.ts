@@ -21,7 +21,7 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
     styleUrls: ['./activity-logs.component.less']
 })
 export class ActivityLogsComponent extends AppComponentBase {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     dataSource: any;
     private readonly dataSourceURI = 'PfmOfferRequest';
     readonly activityLogsFields: KeysEnum<ActivityLogsDto> = ActivityLogsFields;
@@ -39,6 +39,9 @@ export class ActivityLogsComponent extends AppComponentBase {
                 beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.params.$select = DataGridService.getSelectFields(this.dataGrid);
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             }),
             filter: [ 'ApplicantUserId', '=', +this.userService['data'].userId ]

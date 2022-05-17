@@ -15,9 +15,9 @@ import { AppStore, PartnerTypesStoreActions, PartnerTypesStoreSelectors } from '
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { PartnerTypeServiceProxy, PartnerServiceProxy } from '@shared/service-proxies/service-proxies';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PermissionCheckerService } from 'abp-ng2-module/dist/src/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 
 @Component({
     selector: 'types-list',
@@ -80,7 +80,7 @@ export class TypesListComponent implements OnInit {
                         this.ls.l(isRemove
                             ? 'RemoveFromTypeBulkUpdateConfirmation'
                             : 'AddToTypeUpdateConfirmation', this.selectedKeys.length, this.selectedItems[0].name
-                        ),
+                        ), '',
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process(isRemove);

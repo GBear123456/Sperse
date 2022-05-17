@@ -38,8 +38,8 @@ import { ArrayHelper } from '@shared/helpers/ArrayHelper';
     styleUrls: ['./notes.component.less']
 })
 export class NotesComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
 
     public formatting = AppConsts.formatting;
     private readonly ident = 'Notes';

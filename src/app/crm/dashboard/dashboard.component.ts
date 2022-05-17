@@ -13,8 +13,8 @@ import { RouteReuseStrategy, ActivatedRoute, Router } from '@angular/router';
 import { MatDialog, MatDialogConfig } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { CacheService } from 'ng2-cache-service';
-import { Observable, ReplaySubject } from 'rxjs';
-import { filter, first, takeUntil, map } from 'rxjs/operators';
+import { Observable, Subject, ReplaySubject, combineLatest } from 'rxjs';
+import { filter, first, takeUntil, map, delay } from 'rxjs/operators';
 
 /** Application imports */
 import { AppStore } from '@app/store';
@@ -33,7 +33,6 @@ import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PaymentWizardComponent } from '@app/shared/common/payment-wizard/payment-wizard.component';
 import { RootStore, StatesStoreActions } from '@root/store';
 import { DashboardServiceProxy, GetCRMStatusOutput, ModuleType, LayoutType } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { DashboardWidgetsService } from '@shared/crm/dashboard-widgets/dashboard-widgets.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
@@ -46,7 +45,7 @@ import { SourceContactFilterModel } from '../shared/filters/source-filter/source
 import { TotalsBySourceComponent } from '@shared/crm/dashboard-widgets/totals-by-source/totals-by-source.component';
 import { ClientsByRegionComponent } from '@shared/crm/dashboard-widgets/clients-by-region/clients-by-region.component';
 import { CrmIntroComponent } from '../shared/crm-intro/crm-intro.component';
-import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { PeriodService } from '@app/shared/common/period/period.service';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -55,15 +54,14 @@ import { LeftMenuComponent } from '../shared/common/left-menu/left-menu.componen
 
 @Component({
     templateUrl: './dashboard.component.html',
-    animations: [appModuleAnimation()],
     styleUrls: ['./dashboard.component.less'],
     providers: [ DashboardWidgetsService, LifecycleSubjectsService ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DashboardComponent implements AfterViewInit, OnInit {
-    @ViewChild(ClientsByRegionComponent, { static: false }) clientsByRegion: ClientsByRegionComponent;
-    @ViewChild(TotalsBySourceComponent, { static: false }) totalsBySource: TotalsBySourceComponent;
-    @ViewChild(LeftMenuComponent, { static: false }) leftMenu: LeftMenuComponent;
+    @ViewChild(ClientsByRegionComponent) clientsByRegion: ClientsByRegionComponent;
+    @ViewChild(TotalsBySourceComponent) totalsBySource: TotalsBySourceComponent;
+    @ViewChild(LeftMenuComponent) leftMenu: LeftMenuComponent;
 
     private showWelcomeSection: ReplaySubject<boolean> = new ReplaySubject<boolean>(1);
     showWelcomeSection$: Observable<boolean> = this.showWelcomeSection.asObservable();
@@ -81,6 +79,11 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     localization = AppConsts.localization.CRMLocalizationSourceName;
     leftMenuCollapsed$: Observable<boolean> = this.leftMenuService.collapsed$;
 
+    clientsByRegionLoad: Subject<any> = new Subject<any>();
+    totalsByPeriodLoad: Subject<any> = new Subject<any>();
+    totalsBySourceLoad: Subject<any> = new Subject<any>();
+    recentClientsLoad: Subject<any> = new Subject<any>();
+    
     filterModelContactGroup = new FilterModel({
         caption: 'ContactGroup',
         component: FilterRadioGroupComponent,
@@ -129,7 +132,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         private router: Router,
         private appService: AppService,
         private appSessionService: AppSessionService,
-        private dashboardWidgetsService: DashboardWidgetsService,
+        public dashboardWidgetsService: DashboardWidgetsService,
         private changeDetectorRef: ChangeDetectorRef,
         private periodService: PeriodService,
         private store$: Store<RootStore.State>,
@@ -162,6 +165,19 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     ngAfterViewInit(): void {
+        combineLatest(
+            this.dashboardWidgetsService.period$,
+            this.dashboardWidgetsService.contactId$,
+            this.dashboardWidgetsService.totalsData$,
+            this.dashboardWidgetsService.contactGroupId$,
+            this.dashboardWidgetsService.sourceOrgUnitIds$,
+            this.dashboardWidgetsService.refresh$
+        ).pipe(
+            delay(300), first()
+        ).subscribe(() => {
+            this.clientsByRegionLoad.next();
+        });
+
         this.activate();
     }
 
@@ -226,6 +242,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         this.dashboardServiceProxy.getStatus(this.filterModelContactGroup.items.element.value.toString(), undefined).subscribe((status: GetCRMStatusOutput) => {
             this.showWelcomeSection.next(!status.hasData);
             this.showLoadingSpinner = false;
+            this.changeDetectorRef.detectChanges();
         });
     }
 
@@ -271,7 +288,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
         this.ui.overflowHidden(true);
         this.appService.isClientSearchDisabled = true;
         this.appService.toolbarIsHidden.next(true);
-        this.changeDetectorRef.markForCheck();
+        this.changeDetectorRef.markForCheck()
     }
 
     subscribeToRefreshParam() {

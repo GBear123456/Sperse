@@ -15,6 +15,7 @@ import { Observable } from 'rxjs';
 import { pluck } from 'rxjs/operators';
 /** Application imports */
 import {
+    GetRolesInput,
     InviteUserInput,
     ModuleType,
     RoleListDto,
@@ -56,7 +57,11 @@ export class ImportUsersStepComponent implements DoCheck, OnInit {
 
     ngOnInit() {
         this.setImportUsers();
-        this.roles$ = this.roleService.getRoles(undefined, this.moduleType).pipe(
+        let input = new GetRolesInput({
+            permissions: [],
+            moduleType: this.moduleType
+        });
+        this.roles$ = this.roleService.getRoles(input).pipe(
             pluck('items')
         );
     }

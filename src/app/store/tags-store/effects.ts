@@ -2,7 +2,7 @@
 import { Injectable } from '@angular/core';
 
 /** Third party imports */
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Store, Action, select } from '@ngrx/store';
 import { Observable, of, empty } from 'rxjs';

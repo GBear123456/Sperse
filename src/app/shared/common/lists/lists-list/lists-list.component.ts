@@ -80,7 +80,7 @@ export class ListsListComponent extends AppComponentBase implements OnInit {
                 if (this.bulkUpdateMode)
                     this.message.confirm(
                         this.l(isRemove ? 'RemoveFromBulkUpdateConfirmation' : 'AddToListsBulkUpdateConfirmation',
-                            this.selectedKeys.length, this.selectedLists.length || this.l('all')),
+                            this.selectedKeys.length, this.selectedLists.length || this.l('all')), '',
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process(isRemove);

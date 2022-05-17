@@ -1,6 +1,6 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
-import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 
 @Component({
   selector: 'delete-and-reassign-dialog',

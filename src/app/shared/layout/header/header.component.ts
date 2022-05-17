@@ -10,7 +10,7 @@ import kebabCase from 'lodash/kebabCase';
 
 /** Application imports */
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
-import { AbpSessionService } from '@abp/session/abp-session.service';
+import { AbpSessionService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
 import {
     ChangeUserLanguageDto, ProfileServiceProxy, LayoutType, CommonUserInfoServiceProxy
@@ -21,7 +21,7 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { AppService } from '@app/app.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { UserDropdownMenuItemModel } from '@shared/common/layout/user-management-list/user-dropdown-menu/user-dropdown-menu-item.model';
 
 @Component({

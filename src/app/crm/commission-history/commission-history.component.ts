@@ -26,7 +26,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
@@ -73,18 +72,17 @@ import { CrmService } from '@app/crm/crm.service';
         '../shared/styles/grouped-action-menu.less',
         './commission-history.component.less'
     ],
-    animations: [appModuleAnimation()],
     providers: [
         ProductServiceProxy, LifecycleSubjectsService
     ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CommissionHistoryComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild('commissionDataGrid', { static: false }) commissionDataGrid: DxDataGridComponent;
-    @ViewChild('resellersDataGrid', { static: false }) resellersDataGrid: DxDataGridComponent;
-    @ViewChild('sourceList', { static: false }) sourceComponent: SourceContactListComponent;
-    @ViewChild('ledgerDataGrid', { static: false }) ledgerDataGrid: DxDataGridComponent;
-    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
+    @ViewChild('commissionDataGrid') commissionDataGrid: DxDataGridComponent;
+    @ViewChild('resellersDataGrid') resellersDataGrid: DxDataGridComponent;
+    @ViewChild('sourceList') sourceComponent: SourceContactListComponent;
+    @ViewChild('ledgerDataGrid') ledgerDataGrid: DxDataGridComponent;
+    @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
 
     private readonly commissionDataSourceURI: string = 'Commission';
     private readonly ledgerDataSourceURI: string = 'CommissionLedgerEntry';
@@ -185,6 +183,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                         this.commissionFields.ResellerContactId
                     ]
                 );
+            },
+            errorHandler: (error) => {
+                setTimeout(() => this.isDataLoaded = true);
             }
         })
     });
@@ -203,6 +204,9 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     this.ledgerDataGrid,
                     [this.ledgerFields.Id, this.ledgerFields.ContactId]
                 );
+            },
+            errorHandler: (error) => {
+                setTimeout(() => this.isDataLoaded = true);
             }
         })
     });
@@ -221,11 +225,14 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                     this.resellersDataGrid,
                     [this.resellersFields.Id]
                 );
+            },
+            errorHandler: (error) => {
+                setTimeout(() => this.isDataLoaded = true);
             }
         })
     });
 
-    get dataSource() {
+    get gridDataSource() {
         return [
             this.commissionDataSource,
             this.ledgerDataSource,
@@ -258,7 +265,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         })
     );
 
-    get dataGrid(): DxDataGridComponent {
+    get dxDataGrid(): DxDataGridComponent {
         return [
             this.commissionDataGrid,
             this.ledgerDataGrid,
@@ -494,7 +501,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     private handleDataGridUpdate(): void {
         this.listenForUpdate().pipe(skip(1)).subscribe(() => {
             this.selectedRecords = [];
-            this.dataGrid.instance.clearSelection();
+            this.dxDataGrid.instance.clearSelection();
             this.initToolbarConfig();
             this.processFilterInternal();
         });
@@ -556,6 +563,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     onContentReady(event) {
+        this.dataGrid = this.dxDataGrid;
         this.finishLoading();
         this.setGridDataLoaded();
         if (!this.rowsViewHeight)
@@ -827,21 +835,21 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
                             items: [
                                 {
                                     action: (options) => {
-                                        this.exportToXLS(options, this.dataGrid, this.viewTypes[this.selectedViewType].text, false);
+                                        this.exportToXLS(options, this.dxDataGrid, this.viewTypes[this.selectedViewType].text, false);
                                     },
                                     text: this.l('Export to Excel'),
                                     icon: 'xls'
                                 },
                                 {
                                     action: (options) => {
-                                        this.exportToCSV(options, this.dataGrid, this.viewTypes[this.selectedViewType].text, false);
+                                        this.exportToCSV(options, this.dxDataGrid, this.viewTypes[this.selectedViewType].text, false);
                                     },
                                     text: this.l('Export to CSV'),
                                     icon: 'sheet'
                                 },
                                 {
                                     action: (options) => {
-                                        this.exportToGoogleSheet(options, this.dataGrid, this.viewTypes[this.selectedViewType].text, false);
+                                        this.exportToGoogleSheet(options, this.dxDataGrid, this.viewTypes[this.selectedViewType].text, false);
                                     },
                                     text: this.l('Export to Google Sheets'),
                                     icon: 'sheet'
@@ -959,23 +967,23 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     toggleColumnChooser() {
-        DataGridService.showColumnChooser(this.dataGrid);
+        DataGridService.showColumnChooser(this.dxDataGrid);
     }
 
     repaintDataGrid(delay = 0) {
-        if (this.dataGrid) {
-            setTimeout(() => this.dataGrid.instance.repaint(), delay);
+        if (this.dxDataGrid) {
+            setTimeout(() => this.dxDataGrid.instance.repaint(), delay);
         }
     }
 
     toggleCompactView() {
-        DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
+        DataGridService.toggleCompactRowsHeight(this.dxDataGrid, true);
     }
 
     setDataGridInstance() {
-        let instance = this.dataGrid && this.dataGrid.instance;
+        let instance = this.dxDataGrid && this.dxDataGrid.instance;
         if (instance && !instance.option('dataSource')) {
-            instance.option('dataSource', this.dataSource);
+            instance.option('dataSource', this.gridDataSource);
             this.processFilterInternal();
             this.startLoading();
         } else if (this.searchValueChanged) {
@@ -996,12 +1004,12 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     }
 
     processFilterInternal() {
-        if (this.dataGrid && this.dataGrid.instance) {
+        if (this.dxDataGrid && this.dxDataGrid.instance) {
             this.selectedRecords = [];
-            this.dataGrid.instance.clearSelection();
+            this.dxDataGrid.instance.clearSelection();
 
             this.processODataFilter(
-                this.dataGrid.instance,
+                this.dxDataGrid.instance,
                 this.dataSourceURI,
                 this.filters.concat(this.reconciliationFilter),
                 this.filtersService.getCheckCustom
@@ -1059,7 +1067,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
     onViewTypeChanged(event) {
         if (this.selectedViewType != event.value) {
             this.selectedRecords = [];
-            this.dataGrid.instance.clearSelection();
+            this.dxDataGrid.instance.clearSelection();
             this.selectedViewType = event.value;
             this.initFilterConfig(true);
             this.setDataGridInstance();

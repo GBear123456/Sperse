@@ -15,7 +15,7 @@ import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { InstanceModel } from '@shared/cfo/instance.model';
 import { Param } from '@shared/common/odata/param.model';
 import { ODataRequestValues } from '@shared/common/odata/odata-request-values.interface';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AsyncFilter } from '@shared/filters/models/async-filter.model';
 
@@ -41,6 +41,7 @@ export class ODataService {
                 };
             let key = (options.url.match(/odata\/([\w|\/|\$]+)[\?|$]?/) || []).pop() +
                 ((options.headers && options.headers.context) || '');
+            options.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             return (this.dxRequestPool[key] = dxAjax.sendRequest(options));
         });
     }

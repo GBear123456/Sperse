@@ -9,7 +9,6 @@ import { forkJoin, Observable } from 'rxjs';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FileSizePipe } from '@shared/common/pipes/file-size.pipe';
 import { GetFileUrlOutput, ImportServiceProxy } from '@shared/service-proxies/service-proxies';
@@ -24,11 +23,10 @@ import { ImportListFields } from '@app/crm/import-leads/import-list/import-list.
 @Component({
     templateUrl: './import-list.component.html',
     styleUrls: ['./import-list.component.less'],
-    animations: [appModuleAnimation()],
     providers: [ FileSizePipe ]
 })
 export class ImportListComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private rootComponent: any;
     private readonly dataSourceURI = 'Import';
@@ -59,6 +57,9 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
                 beforeSend: (request) => {
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.params.$select = DataGridService.getSelectFields(this.dataGrid, [this.importListFields.Id]);
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 },
                 key: this.importListFields.Id
             })
@@ -154,7 +155,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     deleteImport() {
         this.message.confirm(
-            this.l('LeadsDeleteComfirmation', [this.selectedRowIds.length]),
+            this.l('LeadsDeleteComfirmation', [this.selectedRowIds.length]), '',
             isConfirmed => {
                 if (isConfirmed)
                     forkJoin(
@@ -169,7 +170,7 @@ export class ImportListComponent extends AppComponentBase implements AfterViewIn
 
     cancelImport() {
         this.message.confirm(
-            this.l('LeadsCancelComfirmation', [this.selectedRowIds.length]),
+            this.l('LeadsCancelComfirmation', [this.selectedRowIds.length]), '',
             isConfirmed => {
                 if (isConfirmed)
                   forkJoin(

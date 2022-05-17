@@ -4,7 +4,7 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Third party imports */
-import { IAjaxResponse } from '@abp/abpHttpInterceptor';
+import { IAjaxResponse } from 'abp-ng2-module';
 import { FileUploader, FileUploaderOptions } from 'ng2-file-upload';
 import { Observable, forkJoin, of, throwError } from 'rxjs';
 import { finalize, tap, first, map, delay, catchError } from 'rxjs/operators';
@@ -12,10 +12,9 @@ import { MatDialog } from '@angular/material/dialog';
 import kebabCase from 'lodash/kebabCase';
 
 /** Application imports */
-import { TokenService } from '@abp/auth/token.service';
+import { TokenService } from 'abp-ng2-module';
 import { AppConsts } from '@shared/AppConsts';
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
@@ -49,25 +48,28 @@ import { HeadlineButton } from '@app/shared/common/headline/headline-button.mode
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppService } from '@app/app.service';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
+import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
     templateUrl: './tenant-settings.component.html',
-    animations: [appModuleAnimation()],
     styleUrls: ['../../../shared/common/styles/checkbox-radio.less', './tenant-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
     providers: [
+        PhoneNumberService,
         TenantSettingsCreditReportServiceProxy,
         TenantPaymentSettingsServiceProxy,
         TenantOfferProviderSettingsServiceProxy
     ]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild('tabGroup', { static: false }) tabGroup: ElementRef;
-    @ViewChild('privacyInput', { static: false }) privacyInput: ElementRef;
-    @ViewChild('tosInput', { static: false }) tosInput: ElementRef;
-    @ViewChild('logoInput', { static: false }) logoInput: ElementRef;
-    @ViewChild('faviconInput', { static: false }) faviconInput: ElementRef;
+    @ViewChild('tabGroup') tabGroup: ElementRef;
+    @ViewChild('privacyInput') privacyInput: ElementRef;
+    @ViewChild('tosInput') tosInput: ElementRef;
+    @ViewChild('logoInput') logoInput: ElementRef;
+    @ViewChild('cssInput') cssInput: ElementRef;
+    @ViewChild('faviconInput') faviconInput: ElementRef;
+
     usingDefaultTimeZone = false;
     initialTimeZone: string;
     initialDefaultCountry: string;
@@ -127,6 +129,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
+        private phoneNumberService: PhoneNumberService, 
         private tenantSettingsService: TenantSettingsServiceProxy,
         private tenantCustomizationService: TenantCustomizationServiceProxy,
         private tenantSettingsCreditReportService: TenantSettingsCreditReportServiceProxy,
@@ -391,7 +394,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         this.smtpProviderErrorLink = undefined;
         let requests: Observable<any>[] = [
             this.tenantSettingsService.updateAllSettings(this.settings).pipe(tap(() => {
-                this.appSessionService.checkSetDefaultCountry(this.settings.general.defaultCountryCode);
+                this.phoneNumberService.checkSetDefaultPhoneCodeByCountryCode(this.settings.general.defaultCountryCode);
             }),
             catchError(error => {
                 this.checkHandlerErrorWarning(true);
@@ -425,7 +428,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
             if (this.initialDefaultCountry !== this.settings.general.defaultCountryCode) {
-                this.message.info(this.l('DefaultCountrySettingChangedRefreshPageNotification')).done(() => {
+                this.message.info(this.l('DefaultSettingChangedRefreshPageNotification', this.l('Country'))).done(() => {
                     window.location.reload();
                 });
             }

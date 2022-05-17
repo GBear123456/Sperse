@@ -11,7 +11,7 @@ import { ClipboardService } from 'ngx-clipboard';
 /** Application imports */
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { environment } from '@root/environments/environment';
 
 @Component({

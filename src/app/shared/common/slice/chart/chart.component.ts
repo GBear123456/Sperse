@@ -45,7 +45,7 @@ export class ChartComponent implements OnInit, OnChanges {
     @Input() width: number;
     @Input() height: number;
     @Input() infoItems: InfoItem[];
-    @ViewChild(DxChartComponent, { static: false }) chart: DxChartComponent;
+    @ViewChild(DxChartComponent) chart: DxChartComponent;
     chartHeight: number;
     chartWidth: number;
     summaryBy: BehaviorSubject<SummaryBy> = new BehaviorSubject<SummaryBy>(SummaryBy.Month);

@@ -13,7 +13,6 @@ import * as _ from 'underscore';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { BankAccountsService } from '@shared/cfo/bank-accounts/helpers/bank-accounts.service';
 import { BusinessEntityServiceProxy, BusinessEntityUpdateBankAccountsInput, InstanceType } from 'shared/service-proxies/service-proxies';
 import { BusinessEntityEditDialogComponent } from './business-entity-edit-dialog/business-entity-edit-dialog.component';
@@ -30,12 +29,11 @@ import { FieldDependencies } from '@app/shared/common/data-grid.service/field-de
 @Component({
     selector: 'business-entities',
     templateUrl: './business-entities.component.html',
-    animations: [appModuleAnimation()],
     styleUrls: ['./business-entities.component.less'],
     providers: [ BusinessEntityServiceProxy ]
 })
 export class BusinessEntitiesComponent extends CFOComponentBase implements OnInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     private rootComponent: any;
     private readonly dataSourceURI = 'BusinessEntity';
     private isAddButtonDisabled = !this.isInstanceAdmin;
@@ -91,6 +89,9 @@ export class BusinessEntitiesComponent extends CFOComponentBase implements OnIni
                         ],
                         this.fieldsDependencies
                     );
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             })
         });

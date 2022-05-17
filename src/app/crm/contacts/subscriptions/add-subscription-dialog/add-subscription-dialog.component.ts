@@ -10,7 +10,7 @@ import {
 import { getCurrencySymbol } from '@angular/common';
 
 /** Third party imports */
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { MAT_DIALOG_DATA, MatDialogRef, MatDialog } from '@angular/material/dialog';
 import { finalize, map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
@@ -30,7 +30,7 @@ import {
     ProductType
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { OrderDropdownComponent } from '@app/crm/shared/order-dropdown/order-dropdown.component';
@@ -55,9 +55,9 @@ import { AppPermissions } from '@shared/AppPermissions';
     providers: [MemberServiceServiceProxy, ProductServiceProxy]
 })
 export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
-    @ViewChild('productGroup', { static: false }) validationProductGroup: DxValidationGroupComponent;
-    @ViewChild('serviceGroup', { static: false }) validationServiceGroup: DxValidationGroupComponent;
-    @ViewChild(OrderDropdownComponent, { static: false }) orderDropdownComponent: OrderDropdownComponent;
+    @ViewChild('productGroup') validationProductGroup: DxValidationGroupComponent;
+    @ViewChild('serviceGroup') validationServiceGroup: DxValidationGroupComponent;
+    @ViewChild(OrderDropdownComponent) orderDropdownComponent: OrderDropdownComponent;
     today = new Date();
     private slider: any;
     selectedTabIndex: number;
@@ -115,7 +115,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
         public dialog: MatDialog,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '75px',
                 right: '-100vw'
@@ -147,7 +147,7 @@ export class AddSubscriptionDialogComponent implements AfterViewInit, OnInit {
             this.orderDropdownComponent.initOrderDataSource();
 
         this.slider.classList.remove('hide');
-        this.dialogRef.updateSize(undefined, '100vh');
+        this.dialogRef.updateSize(undefined, 'calc(100vh - 75px)');
         this.dialogRef.updatePosition({
             top: '75px',
             right: '0px'

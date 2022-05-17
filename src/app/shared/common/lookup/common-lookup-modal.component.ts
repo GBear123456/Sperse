@@ -47,7 +47,8 @@ export class CommonLookupModalComponent {
                 filter: this.data.filterText || undefined,
                 maxResultCount: loadOptions.take,
                 skipCount: loadOptions.skip,
-                tenantId: this.data.tenantId
+                tenantId: this.data.tenantId,
+                excludeCurrentUser: false
             })).toPromise().then(response => {
                 return {
                     data: response.items,

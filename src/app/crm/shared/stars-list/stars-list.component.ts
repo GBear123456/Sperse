@@ -13,8 +13,7 @@ import { FiltersService } from '@shared/filters/filters.service';
 import { ContactStarsServiceProxy, MarkContactInput, MarkContactsInput, LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppStore, StarsStoreSelectors } from '@app/store';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { MessageService } from '@abp/message/message.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { MessageService, NotifyService } from 'abp-ng2-module';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
@@ -28,6 +27,7 @@ export class StarsListComponent implements OnInit {
     @Input() selectedKeys: any;
     @Input() bulkUpdateMode = false;
     @Input() hideButtons = false;
+    @Input() selectionMode = 'none';
     @Input() managePermission = AppPermissions.CRMCustomersManage;
     @Input() set selectedItemKey(value) {
         if (value != undefined)
@@ -73,7 +73,7 @@ export class StarsListComponent implements OnInit {
             if (this.selectedKeys && this.selectedKeys.length) {
                 if (this.bulkUpdateMode)
                     this.messageService.confirm(
-                        this.ls.l('BulkUpdateConfirmation', this.selectedKeys.length),
+                        this.ls.l('BulkUpdateConfirmation', this.selectedKeys.length), '',
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process();

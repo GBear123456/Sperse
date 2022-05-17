@@ -1,7 +1,8 @@
-import { Injectable, Injector } from '@angular/core';
+import { Injectable, Injector, Directive } from '@angular/core';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { HubConnection } from '@aspnet/signalr';
 
+@Directive()
 @Injectable()
 export class ChatSignalrService extends AppComponentBase {
 

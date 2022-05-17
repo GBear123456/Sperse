@@ -4,7 +4,7 @@ import {
     UserServiceProxy,
     UserLoginServiceProxy,
     UserLoginAttemptDto,
-    UserLoginAttemptDtoListResultDto
+    ListResultDtoOfUserLoginAttemptDto
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
@@ -43,7 +43,7 @@ export class LoginAttemptsComponent implements OnInit, OnDestroy {
 
     loadData(userId: number) {
         this.userLoginService.getRecentLoginAttemptsForOtherUser(userId)
-            .subscribe((result: UserLoginAttemptDtoListResultDto) => {
+            .subscribe((result: ListResultDtoOfUserLoginAttemptDto) => {
                 this.userLoginAttempts = result.items;
             });
     }

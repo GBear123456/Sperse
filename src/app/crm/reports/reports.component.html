@@ -196,13 +196,14 @@
             </dxo-selection>
             <dxo-sorting mode="multiple"></dxo-sorting>
             <dxo-paging [pageSize]="20"></dxo-paging>
-            <dxi-column alignment="center"
+            <dxi-column width="120px"
+                        alignment="center"
                         dataField="date"
                         sortOrder="desc"
                         dataType="date"
                         [caption]="ls.l('Date')"
                         [calculateDisplayValue]="customizeDateCell"
-                        cssClass="clipboard-holder">
+                        cssClass="subscribers-date clipboard-holder">
             </dxi-column>
             <dxi-column [caption]="ls.l('Contacts')" alignment="center">
                 <dxi-column alignment="center"

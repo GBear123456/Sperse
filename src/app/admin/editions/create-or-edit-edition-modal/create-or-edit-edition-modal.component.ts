@@ -22,14 +22,15 @@ import { DxNumberBoxComponent } from 'devextreme-angular/ui/number-box';
 import {
     ComboboxItemDto,
     CommonLookupServiceProxy,
-    CreateOrUpdateEditionDto,
+    CreateEditionDto,
     EditionEditDto,
     EditionServiceProxy,
     GetEditionEditOutput,
-    SubscribableEditionComboboxItemDtoListResultDto
+    ListResultDtoOfSubscribableEditionComboboxItemDto,
+    UpdateEditionDto
 } from '@shared/service-proxies/service-proxies';
 import { FeatureTreeComponent } from '@app/shared/features/feature-tree.component';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
@@ -44,11 +45,11 @@ import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnInit {
-    @ViewChild('editionNameInput', { static: false }) editionNameInput: ElementRef;
-    @ViewChild('monthlyPriceInput', { static: false }) monthlyPriceInput: DxNumberBoxComponent;
-    @ViewChild('annualPriceInput', { static: false }) annualPriceInput: DxNumberBoxComponent;
+    @ViewChild('editionNameInput') editionNameInput: ElementRef;
+    @ViewChild('monthlyPriceInput') monthlyPriceInput: DxNumberBoxComponent;
+    @ViewChild('annualPriceInput') annualPriceInput: DxNumberBoxComponent;
     @ViewChild(ModalDialogComponent, { static: true }) modalDialog: ModalDialogComponent;
-    @ViewChild(FeatureTreeComponent, { static: false }) featureTree: FeatureTreeComponent;
+    @ViewChild(FeatureTreeComponent) featureTree: FeatureTreeComponent;
     @Output() modalSave: EventEmitter<any> = new EventEmitter<any>();
 
     saving = false;
@@ -79,12 +80,12 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
         private changeDetector: ChangeDetectorRef,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) private data: any
-    ) {}
+    ) { }
 
     ngOnInit() {
         this.modalDialog.startLoading();
         this.commonLookupService.getEditionsForCombobox(true).pipe(
-            tap((editionsResult: SubscribableEditionComboboxItemDtoListResultDto) => {
+            tap((editionsResult: ListResultDtoOfSubscribableEditionComboboxItemDto) => {
                 this.expiringEditions = editionsResult.items;
                 this.expiringEditions.unshift(new ComboboxItemDto({
                     value: null,
@@ -101,7 +102,7 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
                 })
             ))
         ).subscribe(
-        (editionResult: GetEditionEditOutput) => {
+            (editionResult: GetEditionEditOutput) => {
                 this.edition = editionResult.edition;
                 this.title = this.data.editionId ? this.ls.l('EditEdition') + ' ' + this.edition.displayName : this.ls.l('CreateNewEdition');
                 this.editData = editionResult;
@@ -138,14 +139,18 @@ export class CreateOrEditEditionModalComponent implements AfterViewChecked, OnIn
         if (!this.isFree && (!this.edition.monthlyPrice || !this.edition.annualPrice)) {
             this.checkSetFieldValid(this.monthlyPriceInput);
             this.checkSetFieldValid(this.annualPriceInput);
-            return ;
+            return;
         }
 
-        const input = new CreateOrUpdateEditionDto();
+        const input = this.data.editionId ? new UpdateEditionDto() : new CreateEditionDto();
         input.edition = this.edition;
         input.featureValues = this.featureTree.getGrantedFeatures();
         this.modalDialog.startLoading();
-        this.editionService.createOrUpdateEdition(input)
+        let apiMethod = this.data.editionId ?
+            this.editionService.updateEdition(input) :
+            this.editionService.createEdition(input);
+
+        apiMethod
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
                 this.notifyService.info(this.ls.l('SavedSuccessfully'));

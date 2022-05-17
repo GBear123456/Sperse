@@ -5,9 +5,17 @@ import * as ngCommon from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 /** Third party modules */
-import { ModalModule, TabsModule, TooltipModule, PopoverModule } from 'ngx-bootstrap';
+import { ModalModule } from 'ngx-bootstrap/modal';
+import { TabsModule } from 'ngx-bootstrap/tabs';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { PopoverModule } from 'ngx-bootstrap/popover';
+
 import { TableModule } from 'primeng/table';
-import { AutoCompleteModule, EditorModule, FileUploadModule as PrimeNgFileUploadModule, InputMaskModule, PaginatorModule } from 'primeng/primeng';
+import { PaginatorModule } from 'primeng/paginator';
+import { FileUploadModule as PrimeNgFileUploadModule } from 'primeng/fileupload';
+import { AutoCompleteModule} from 'primeng/autocomplete';
+import { EditorModule } from 'primeng/editor';
+import { InputMaskModule } from 'primeng/inputmask';
 
 /** Application imports */
 import { LayoutCommonModule } from '@app/shared/layout/layout-common.module';

@@ -8,7 +8,7 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { LeadServiceProxy, OrderServiceProxy, UpdateOrderStagePointInput,
     UpdateLeadStagePointInput } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -21,7 +21,7 @@ import { EntityCheckListData } from '@app/crm/shared/entity-check-list-dialog/en
     styleUrls: ['./entity-check-list-dialog.component.less']
 })
 export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private slider: any;
     private isUpdated = false;
@@ -53,7 +53,7 @@ export class EntityCheckListDialogComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {
         setTimeout(() => {
             this.slider.classList.remove('hide');
-            this.dialogRef.updateSize(undefined, '100vh');
+            this.dialogRef.updateSize(undefined, 'calc(100vh - 75px)');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
                     top: '75px',

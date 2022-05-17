@@ -12,11 +12,11 @@ import {
     PermissionServiceProxy,
     RoleServiceProxy,
     RoleListDto,
-    ModuleType
+    ModuleType,
+    GetRolesInput
 } from '@shared/service-proxies/service-proxies';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { CreateOrEditRoleModalComponent } from './create-or-edit-role-modal/create-or-edit-role-modal.component';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
 import { FilterRadioGroupComponent } from '@shared/filters/radio-group/filter-radio-group.component';
@@ -32,11 +32,10 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 
 @Component({
     templateUrl: './roles.component.html',
-    styleUrls: ['./roles.component.less'],
-    animations: [appModuleAnimation()]
+    styleUrls: ['./roles.component.less']
 })
 export class RolesComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private filters: FilterModel[];
     private selectedPermission: string;
@@ -94,9 +93,12 @@ export class RolesComponent extends AppComponentBase implements OnDestroy {
         this.dataSource = new DataSource({
             key: 'id',
             load: () => {
+                let input = new GetRolesInput({
+                    permissions: [this.selectedPermission],
+                    moduleType: this.selectedModule
+                });
                 return this.roleService.getRoles(
-                    this.selectedPermission,
-                    this.selectedModule
+                    input
                 ).toPromise().then(response => {
                     return {
                         data: response.items,

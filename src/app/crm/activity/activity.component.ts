@@ -28,14 +28,13 @@ import { AppConsts } from '@shared/AppConsts';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { DataLayoutType } from '@app/shared/layout/data-layout-type';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ActivityServiceProxy, ActivityType, PipelineDto, StageDto } from '@shared/service-proxies/service-proxies';
 import { CreateActivityDialogComponent } from './create-activity-dialog/create-activity-dialog.component';
 import { FiltersService } from '@shared/filters/filters.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
 import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { ActivityDto } from '@app/crm/activity/activity-dto.interface';
@@ -44,13 +43,12 @@ import { ActivityFields } from '@app/crm/activity/activity-fields.enum';
 @Component({
     templateUrl: './activity.component.html',
     styleUrls: ['./activity.component.less'],
-    animations: [appModuleAnimation()],
     providers: [ ActivityServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActivityComponent extends AppComponentBase implements AfterViewInit, OnDestroy {
-    @ViewChild(DxSchedulerComponent, { static: false }) schedulerComponent: DxSchedulerComponent;
-    @ViewChild(PipelineComponent, { static: false }) pipelineComponent: PipelineComponent;
+    @ViewChild(DxSchedulerComponent) schedulerComponent: DxSchedulerComponent;
+    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
     schedulerHeight$: Observable<number> = combineLatest(
         this.appService.toolbarIsHidden$,
         this.fullScreenService.isFullScreenMode$
@@ -208,6 +206,9 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
                         });
                         this.changeDetectorRef.detectChanges();
                     }
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             })
         });
@@ -480,7 +481,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
 
     deleteTasks() {
         this.message.confirm(
-            this.l('TasksDeleteWarningMessage'),
+            this.l('TasksDeleteWarningMessage'), '',
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading();

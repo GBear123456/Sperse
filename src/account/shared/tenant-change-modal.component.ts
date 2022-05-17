@@ -1,9 +1,9 @@
 import { Component, ElementRef, ViewChild } from '@angular/core';
 import { AppTenantAvailabilityState } from '@shared/AppEnums';
 import { AccountServiceProxy, IsTenantAvailableInput, IsTenantAvailableOutput } from '@shared/service-proxies/service-proxies';
-import { ModalDirective } from 'ngx-bootstrap';
+import { ModalDirective } from 'ngx-bootstrap/modal';
 import { finalize } from 'rxjs/operators';
-import { MessageService } from 'abp-ng2-module/dist/src/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { AppLocalizationService } from '../../app/shared/common/localization/app-localization.service';
 
 @Component({
@@ -11,8 +11,8 @@ import { AppLocalizationService } from '../../app/shared/common/localization/app
     templateUrl: './tenant-change-modal.component.html'
 })
 export class TenantChangeModalComponent {
-    @ViewChild('tenantChangeModal', { static: false }) modal: ModalDirective;
-    @ViewChild('tenancyNameInput', { static: false }) tenancyNameInput: ElementRef;
+    @ViewChild('tenantChangeModal') modal: ModalDirective;
+    @ViewChild('tenancyNameInput') tenancyNameInput: ElementRef;
 
     tenancyName = '';
     active = false;

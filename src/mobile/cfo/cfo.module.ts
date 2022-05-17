@@ -8,7 +8,7 @@ import { AccountsComponent } from './accounts/accounts.component';
 import { StartComponent } from './start/start.component';
 import { SetupComponent } from './start/setup/setup.component';
 
-import { ModalModule } from 'ngx-bootstrap';
+import { ModalModule } from 'ngx-bootstrap/modal';
 
 import { InstanceServiceProxy } from '@shared/service-proxies/service-proxies';
 

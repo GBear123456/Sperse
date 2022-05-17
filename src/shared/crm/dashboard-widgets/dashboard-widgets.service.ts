@@ -107,7 +107,6 @@ export class DashboardWidgetsService  {
         ).subscribe((totalData: GetTotalsOutput) => {
             this._totalsData.next(totalData);
         });
-
     }
 
     refresh() {

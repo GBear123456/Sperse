@@ -109,7 +109,7 @@ import { DocumentServiceProxy } from '@shared/service-proxies/service-proxies';
     ]
 })
 export class FiltersModule {
-    static forRoot(): ModuleWithProviders {
+    static forRoot(): ModuleWithProviders<FiltersModule> {
         return {
             ngModule: FiltersModule,
             providers: [

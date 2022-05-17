@@ -11,7 +11,7 @@ import {
 
 /** Third party imports */
 import { of } from 'rxjs';
-import { ModalDirective } from 'ngx-bootstrap';
+import { ModalDirective } from 'ngx-bootstrap/modal';
 import { finalize, map, tap } from 'rxjs/operators';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
@@ -23,7 +23,7 @@ import {
     TenantSslCertificateInfo, UpdateSslBindingInput,
     CheckHostNameDnsMappingInput, TenantHostType
 } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
@@ -37,9 +37,9 @@ import { environment } from '@root/environments/environment';
     providers: [TenantHostServiceProxy, TenantSslCertificateServiceProxy ]
 })
 export class AddOrEditSSLBindingModalComponent {
-    @ViewChild('createOrEditModal', { static: false }) modal: ModalDirective;
-    @ViewChild('DomainName', { static: false }) domainComponent: DxTextBoxComponent;
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild('createOrEditModal') modal: ModalDirective;
+    @ViewChild('DomainName') domainComponent: DxTextBoxComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
 
     public readonly HostType_PlatformApp = TenantHostType.PlatformApp;
 
@@ -158,9 +158,12 @@ export class AddOrEditSSLBindingModalComponent {
                 this.closeSuccess();
             });
         } else {
-            if (!this.domainComponent.instance.option('isValid'))
+            if (!this.domainComponent.instance.option('isValid')) {
+                this.saving = false;
+                this.finishLoading();
+                this.changeDetection.detectChanges();
                 return this.notify.error(this.ls.l('HostName_NotMapped'));
-
+            }
             this.tenantHostService.addSslBinding(new AddSslBindingInput({
                 ...this.model,
                 organizationUnitId: this.model.organizationUnitId == -1

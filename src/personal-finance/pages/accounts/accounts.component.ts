@@ -13,7 +13,7 @@ import {
     SyncServiceProxy,
     InstanceServiceProxy,
 } from '@shared/service-proxies/service-proxies';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { PfmIntroComponent } from '@root/personal-finance/shared/pfm-intro/pfm-intro.component';
 import { AppFeatures } from '@shared/AppFeatures';
 

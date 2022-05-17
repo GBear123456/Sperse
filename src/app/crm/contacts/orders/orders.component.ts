@@ -17,7 +17,6 @@ import { first, filter } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ContactServiceProxy, OrderServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
 import { HistoryListDialogComponent } from './history-list-dialog/history-list-dialog.component';
@@ -31,7 +30,6 @@ import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.
 @Component({
     templateUrl: './orders.component.html',
     styleUrls: ['./orders.component.less'],
-    animations: [appModuleAnimation()],
     providers: [ CurrencyPipe, OrderServiceProxy ]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, OnDestroy {
@@ -95,6 +93,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, OnDestr
                 onLoaded: () => {
                     this.dataGrid.instance.cancelEditData();
                     this.dataGrid.instance.endCustomLoading();
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 },
                 deserializeDates: false
             })

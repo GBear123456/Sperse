@@ -4,16 +4,14 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser';
 
 /** Third party imports */
-import { GestureConfig } from '@angular/material';
 import { MatSlider, MatSliderModule } from '@angular/material/slider';
 import { MatSlideToggle, MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 /** Application imports */
-import { CountryService } from '@root/node_modules/ngx-international-phone-number/src/country.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PackageChooserComponent } from '@app/shared/common/payment-wizard/package-chooser/package-chooser.component';
 import { PackageCardComponent } from '@app/shared/common/payment-wizard/package-chooser/package-card/package-card.component';
-import { AbpModule } from '@abp/abp.module';
+import { AbpModule } from 'abp-ng2-module';
 import { AppHttpInterceptor } from '@shared/http/appHttpInterceptor';
 import {
     API_BASE_URL,
@@ -29,7 +27,7 @@ import { AppConsts } from '@shared/AppConsts';
 import { WidgetsService } from '../../../widgets.service';
 import { CustomNumberPipe } from '@shared/common/pipes/custom-number/custom-number.pipe';
 import { LocalizationResolver } from '@shared/common/localization-resolver';
-import { AbpMultiTenancyService } from '@abp/multi-tenancy/abp-multi-tenancy.service';
+import { AbpMultiTenancyService } from 'abp-ng2-module';
 import { StatesService } from '@root/store/states-store/states.service';
 import { createCustomElement } from '@angular/elements';
 import { RootStoreModule } from '@root/store';
@@ -62,7 +60,6 @@ export function initialize(widgetsService: WidgetsService, injector: Injector) {
     ],
     providers: [
         StatesService,
-        CountryService,
         AppSessionService,
         AppLocalizationService,
         AppHttpConfiguration,
@@ -80,10 +77,6 @@ export function initialize(widgetsService: WidgetsService, injector: Injector) {
             useFactory: initialize,
             deps: [ WidgetsService, Injector ],
             multi: true
-        },
-        {
-            provide: HAMMER_GESTURE_CONFIG,
-            useClass: GestureConfig
         }
     ],
     entryComponents: [ MatSlider, MatSlideToggle, PackageChooserWidgetComponent, PackageCardComponent ],

@@ -2,11 +2,14 @@
 import {
     ChangeDetectionStrategy,
     ChangeDetectorRef,
+    EventEmitter,
     Component,
     ElementRef,
     OnDestroy,
     OnInit,
-    ViewChild
+    ViewChild,
+    Input,
+    Output
 } from '@angular/core';
 
 /** Third party imports */
@@ -15,6 +18,7 @@ import { BehaviorSubject, Observable, combineLatest, of } from 'rxjs';
 import {
     catchError,
     finalize,
+    first,
     publishReplay,
     refCount,
     switchMap,
@@ -49,7 +53,12 @@ import { AppConsts } from '@shared/AppConsts';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TotalsBySourceComponent implements OnInit, OnDestroy {
-    @ViewChild(DxPieChartComponent, { static: false }) chartComponent: DxPieChartComponent;
+    @ViewChild(DxPieChartComponent) chartComponent: DxPieChartComponent;
+    @Input() waitFor$: Observable<any> = of().pipe(
+        publishReplay(), refCount()
+    );
+    @Output() loadComplete: EventEmitter<any> = new EventEmitter();
+
     data$: Observable<any[]>;
     totalCount$: Observable<number>;
     totalCount: string;
@@ -128,12 +137,12 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             }]
         )
     ];
-    selectedTotal: BehaviorSubject<ITotalOption> = new BehaviorSubject<ITotalOption>(
-        this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.LendSpace
-            || this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode
-        ? this.totalsOptions.find(option => option.key === 'star')
-        : this.totalsOptions.find(option => option.key === 'companySize')
-    );
+    lastSelectedTotal: ITotalOption = 
+        this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.LendSpace ||
+        this.appSession.tenant && this.appSession.tenant.customLayoutType === LayoutType.BankCode ?
+            this.totalsOptions.find(option => option.key === 'star') :
+            this.totalsOptions.find(option => option.key === 'companySize');
+    selectedTotal: BehaviorSubject<ITotalOption> = new BehaviorSubject<ITotalOption>(this.lastSelectedTotal);
     selectedTotal$: Observable<ITotalOption> = this.selectedTotal.asObservable();
     selectedArgumentField$: Observable<string> = this.selectedTotal$.pipe(pluck('argumentField'));
     selectedValueField$: Observable<string> = this.selectedTotal$.pipe(pluck('valueField'));
@@ -169,13 +178,19 @@ export class TotalsBySourceComponent implements OnInit, OnDestroy {
             }),
             switchMap(([selectedTotal, period, groupId, contactId, orgUnitIds, ]: [ITotalOption, PeriodModel, string, number, number[], null]) => {
                 this.pipelineService.getPipelineDefinitionObservable(AppConsts.PipelinePurposeIds.lead, this.selectedContactGroupId = groupId).subscribe();
-                return selectedTotal.method.call(
-                    this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'),
-                    period && period.to || new Date(), groupId, contactId, orgUnitIds
-                ).pipe(
-                    catchError(() => of([])),
-                    finalize(() => this.loadingService.finishLoading(this.elementRef.nativeElement))
-                );
+                return (this.lastSelectedTotal != selectedTotal ? of(selectedTotal) : this.waitFor$).pipe(first(), switchMap(() =>
+                    selectedTotal.method.call(
+                        this.dashboardServiceProxy, period && period.from || new Date('2000-01-01'),
+                        period && period.to || new Date(), groupId, contactId, orgUnitIds
+                    ).pipe(
+                        catchError(() => of([])),
+                        finalize(() => {
+                            this.loadComplete.next();
+                            this.lastSelectedTotal = selectedTotal;
+                            this.loadingService.finishLoading(this.elementRef.nativeElement);
+                        })
+                    )
+                ));
             }),
             map((data: any[]) => {
                 this.rawData = data;

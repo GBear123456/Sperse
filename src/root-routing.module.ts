@@ -1,4 +1,4 @@
-import { NgModule, ApplicationRef, Injector, Injectable, AfterViewInit } from '@angular/core';
+import { NgModule, ApplicationRef, Injector, Injectable, AfterViewInit, Directive } from '@angular/core';
 import { RouterModule, Route, Router, Routes, NavigationEnd, PreloadingStrategy } from '@angular/router';
 import { Observable, of } from 'rxjs';
 import { RouteGuard } from '@shared/common/auth/route-guard';
@@ -29,17 +29,17 @@ const routes: Routes = [
                 loadChildren: () => import('account/account.module').then(m => m.AccountModule), //Lazy load account module
             },
             {
-                path: 'personal-finance',
-                loadChildren: () => import('personal-finance/personal-finance.module').then(m => m.PersonalFinanceModule), //Lazy load account module
-                data: { feature: 'PFM', localizationSource: 'PFM' }
-            },
-            {
                 path: 'code-breaker',
                 loadChildren: () => import('bank-code/bank-code.module').then(m => m.BankCodeModule), //Lazy load bank code module
                 data: {
                     localizationSource: 'Platform',
                     layoutType: LayoutType.BankCode
                 }
+            },
+            {
+                path: 'personal-finance',
+                loadChildren: () => import('personal-finance/personal-finance.module').then(m => m.PersonalFinanceModule), //Lazy load account module
+                data: { feature: 'PFM', localizationSource: 'PFM' }
             },
             {
                 path: 'app',
@@ -68,7 +68,8 @@ const routes: Routes = [
 @NgModule({
     imports: [
         RouterModule.forRoot(routes, {
-            preloadingStrategy: AppPreloadingStrategy
+            preloadingStrategy: AppPreloadingStrategy,
+            relativeLinkResolution: 'legacy'
         })
     ],
     exports: [
@@ -76,7 +77,6 @@ const routes: Routes = [
     ],
     providers: [LocalizationResolver]
 })
-
 export class RootRoutingModule implements AfterViewInit {
     constructor(
         private injector: Injector,

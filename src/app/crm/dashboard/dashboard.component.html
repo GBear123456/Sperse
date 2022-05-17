@@ -9,7 +9,7 @@
     <import-progress-bar></import-progress-bar>
     <calendar-button></calendar-button>
 </app-headline>
-<div [@routerTransition]>
+<div>
   <crm-left-menu [showIntroductionTour]="true"
                  [currentContactGroup]="filterModelContactGroup.items.element.value"
                  (openIntro)="openDialog()"
@@ -39,20 +39,34 @@
           </div>
           <dx-scroll-view *ngIf="showDefaultSection$ | async" showScrollbar="onHover">
               <div class="dashboard-widgets">
-                  <counts-and-totals *ngIf="hasAnyCGPermission || isGrantedOrders"></counts-and-totals>
+                  <counts-and-totals 
+                      *ngIf="hasAnyCGPermission || isGrantedOrders"
+                      (loadComplete)="clientsByRegionLoad.next()">
+                  </counts-and-totals>
                   <div class="analytics-wrap">
                       <div class="left-side col-xl-4">
                           <new-items-totals *ngIf="hasAnyCGPermission || isGrantedOrders"></new-items-totals>
-                          <totals-by-source *ngIf="hasAnyCGPermission"></totals-by-source>
+                          <totals-by-source *ngIf="hasAnyCGPermission"
+                              [waitFor$]="totalsBySourceLoad.asObservable()"
+                              (loadComplete)="recentClientsLoad.next()">
+                          </totals-by-source>
                       </div>
                       <div class="right-side col-xl-8">
                           <ng-container *ngIf="hasAnyCGPermission">
-                              <totals-by-period></totals-by-period>
-                              <recent-clients></recent-clients>
+                              <totals-by-period 
+                                  [waitFor$]="totalsByPeriodLoad.asObservable()"
+                                  (loadComplete)="totalsBySourceLoad.next()">
+                              </totals-by-period>
+                              <recent-clients 
+                                  [waitFor$]="recentClientsLoad.asObservable()">
+                              </recent-clients>
                           </ng-container>
                       </div>
                   </div>
-                  <clients-by-region *ngIf="hasAnyCGPermission"></clients-by-region>
+                  <clients-by-region *ngIf="hasAnyCGPermission" 
+                      [waitFor$]="clientsByRegionLoad.asObservable()"
+                      (loadComplete)="totalsByPeriodLoad.next()">
+                  </clients-by-region>
               </div>
           </dx-scroll-view>
           <loading-spinner *ngIf="showLoadingSpinner"></loading-spinner>

@@ -10,8 +10,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
 
 /** Application imports */
+import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
 import { AppTimezoneScope, Country } from '@shared/AppEnums';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import {
@@ -30,13 +30,12 @@ import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
     templateUrl: './host-settings.component.html',
-    animations: [appModuleAnimation()],
     styleUrls: ['../../../shared/common/styles/checkbox-radio.less', './host-settings.component.less'],
     changeDetection: ChangeDetectionStrategy.OnPush,
-    providers: [TenantPaymentSettingsServiceProxy]
+    providers: [PhoneNumberService, TenantPaymentSettingsServiceProxy]
 })
 export class HostSettingsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('tabGroup', { static: false }) tabGroup: ElementRef;
+    @ViewChild('tabGroup') tabGroup: ElementRef;
 
     loading = false;
     hostSettings: HostSettingsEditDto;
@@ -79,6 +78,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
     constructor(
         injector: Injector,
         private route: ActivatedRoute,
+        private phoneService: PhoneNumberService,
         private hostSettingService: HostSettingsServiceProxy,
         private commonLookupService: CommonLookupServiceProxy,
         private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
@@ -182,7 +182,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
         this.smtpProviderErrorLink = undefined;
         forkJoin(
             this.hostSettingService.updateAllSettings(this.hostSettings).pipe(tap(() => {
-                this.appSessionService.checkSetDefaultCountry(this.hostSettings.general.defaultCountryCode);
+                this.phoneService.checkSetDefaultPhoneCodeByCountryCode(this.hostSettings.general.defaultCountryCode);
             }),
             catchError(error => {
                 this.checkHandlerErrorWarning(true);
@@ -198,7 +198,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
         ).subscribe(() => {
             this.notify.info(this.l('SavedSuccessfully'));
             if (this.initialDefaultCountry !== this.hostSettings.general.defaultCountryCode) {
-                this.message.info(this.l('DefaultCountrySettingChangedRefreshPageNotification')).done(function () {
+                this.message.info(this.l('DefaultSettingChangedRefreshPageNotification', this.l('Country'))).done(function () {
                     window.location.reload();
                 });
             }

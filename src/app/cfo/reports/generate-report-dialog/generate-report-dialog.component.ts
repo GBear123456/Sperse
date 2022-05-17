@@ -4,7 +4,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 /** Third party imports */
 import moment from 'moment-timezone';
-import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { DxTreeListComponent } from 'devextreme-angular/ui/tree-list';
 import { DxTextBoxComponent } from 'devextreme-angular';
 import { forkJoin, Observable } from 'rxjs';
@@ -34,7 +34,7 @@ import { GenerateReportStep } from './generate-report-step.enum';
 import { RootStore, CurrenciesStoreSelectors } from '@root/store';
 import { CFOService } from '@shared/cfo/cfo.service';
 import { AppConsts } from '@shared/AppConsts';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
 import { ReportType } from '../enums/reportType.enum';
 import { GenerateReportItem } from './generate-report-item';
@@ -49,10 +49,10 @@ import { ReportPeriod } from '../enums/reportPeriod.enum';
     providers: [DepartmentsServiceProxy, ReportsServiceProxy, BudgetServiceProxy]
 })
 export class GenerateReportDialogComponent implements OnInit {
-    @ViewChild('beTreeList', { static: false }) beTreeList: DxTreeListComponent;
-    @ViewChild('templatesTreeList', { static: false }) templatesTreeList: DxTreeListComponent;
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
-    @ViewChild('notificationToEmailTextBox', { static: false }) notificationToEmailTextBox: DxTextBoxComponent;
+    @ViewChild('beTreeList') beTreeList: DxTreeListComponent;
+    @ViewChild('templatesTreeList') templatesTreeList: DxTreeListComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
+    @ViewChild('notificationToEmailTextBox') notificationToEmailTextBox: DxTextBoxComponent;
 
     title = this.ls.l('SelectReportTemplate');
     initButtons: IDialogButton[] = [

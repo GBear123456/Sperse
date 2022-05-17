@@ -1,4 +1,4 @@
-<div [@routerTransition]>
+<div>
     <app-headline [names]="[ l('Customers') ]"
                   icon="people"
                   [buttons]="headlineButtons"
@@ -223,7 +223,7 @@
                                     </span>
                                 </ng-container>
                                 <ng-template #verify>
-                                    <span *ngIf="canSendVerificationRequest && data.data.StatusId === contactStatus.Active">
+                                    <span *ngIf="canSendVerificationRequest && data.data.IsActive">
                                         <a class="link link-request-verification" (click)="requestVerification(data.data)"><div class="verify-icon"></div>{{l('ClientDetails_RequestVerification') | uppercase}}</a>
                                     </span>
                                 </ng-template>

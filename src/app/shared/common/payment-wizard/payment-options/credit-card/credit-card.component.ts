@@ -4,7 +4,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 
 /** Third party imports */
 import { Store, select } from '@ngrx/store';
-import { CreditCardValidator } from 'angular-cc-library';
+import { CreditCardValidators } from 'angular-cc-library';
 import { Observable } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import * as _ from 'underscore';
@@ -39,12 +39,12 @@ export class CreditCardComponent implements OnInit {
     cvvMaxLength = 3;
     lastYearRegexItem: any;
     patterns = {
-        yearPattern: `^(201[8-9]|202[0-9]|${this.lastYearRegexItem})$`
+        yearPattern: `^(201[8-9]|202[0-9])$`
     };
 
     creditCardData = this.formBuilder.group({
         holderName: ['', [<any>Validators.required]],
-        cardNumber: ['', [<any>CreditCardValidator.validateCCNumber]],
+        cardNumber: ['', [<any>CreditCardValidators.validateCCNumber]],
         expirationMonth: ['', [<any>Validators.required]],
         expirationYear: ['', [<any>Validators.required]],
         cvv: ['', [<any>Validators.required, <any>Validators.minLength(3), <any>Validators.maxLength(4)]],
@@ -71,6 +71,7 @@ export class CreditCardComponent implements OnInit {
         let maxExpYear = (new Date()).getFullYear() + 15;
         let stringMaxExpYear = maxExpYear.toString();
         this.lastYearRegexItem = stringMaxExpYear.slice(0, -1) + '[0-' + stringMaxExpYear[stringMaxExpYear.length - 1] + ']';
+        this.patterns.yearPattern = `^(201[8-9]|202[0-9]|${this.lastYearRegexItem})$`;
     }
 
     private filterCountry(name: string): Country[] {

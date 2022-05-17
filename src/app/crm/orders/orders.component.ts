@@ -12,12 +12,14 @@ import { CurrencyPipe } from '@angular/common';
 import { Params } from '@angular/router';
 
 /** Third party imports */
+import moment from 'moment-timezone';
 import { MatDialog } from '@angular/material/dialog';
 import { select, Store } from '@ngrx/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import { BehaviorSubject, combineLatest, concat, forkJoin, Observable, of } from 'rxjs';
+import { Subject, BehaviorSubject, combineLatest, 
+    concat, forkJoin, Observable, of } from 'rxjs';
 import {
     catchError,
     distinctUntilChanged,
@@ -110,12 +112,12 @@ import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dia
     providers: [OrderServiceProxy, CurrencyPipe, ProductServiceProxy]
 })
 export class OrdersComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('ordersGrid', { static: false }) ordersGrid: DxDataGridComponent;
-    @ViewChild('subscriptionsGrid', { static: false }) subscriptionsGrid: DxDataGridComponent;
-    @ViewChild(PipelineComponent, { static: false }) pipelineComponent: PipelineComponent;
-    @ViewChild(StaticListComponent, { static: false }) stagesComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent, { static: false }) pivotGridComponent: PivotGridComponent;
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
+    @ViewChild('ordersGrid') ordersGrid: DxDataGridComponent;
+    @ViewChild('subscriptionsGrid') subscriptionsGrid: DxDataGridComponent;
+    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
+    @ViewChild(StaticListComponent) stagesComponent: StaticListComponent;
+    @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
 
     items: any;
     showOrdersPipeline = true;
@@ -139,7 +141,23 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     searchClear = false;
     searchValue = this._activatedRoute.snapshot.queryParams.search || '';
     manageDisabled = !this.isGranted(AppPermissions.CRMOrdersManage);
-    filterModelStages: FilterModel;
+    filterModelStages: FilterModel = new FilterModel({
+        component: FilterCheckBoxesComponent,
+        caption: 'orderStages',
+        items: {
+            element: new FilterCheckBoxesModel(
+                {
+                    dataSource$: this.store$.pipe(
+                        select(PipelinesStoreSelectors.getPipelineTreeSource(
+                            { purpose: AppConsts.PipelinePurposeIds.order })
+                        )
+                    ),
+                    nameField: 'name',
+                    parentExpr: 'parentId',
+                    keyExpr: 'id'
+                }),
+        }
+    });
     layoutTypes = DataLayoutType;
     private ordersDataLayoutType: DataLayoutType = DataLayoutType.Pipeline;
     public subscriptionsDataLayoutType: DataLayoutType = DataLayoutType.DataGrid;
@@ -159,7 +177,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     private orderSubscriptionStatusFilter = this.getSubscriptionsFilter();
     private subscriptionStatusFilter = this.getSubscriptionsFilter();
     public selectedOrderType: BehaviorSubject<OrderType> = new BehaviorSubject(+(this._activatedRoute.snapshot.queryParams.orderType || OrderType.Order));
-    public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || undefined);
+    public selectedContactGroup: BehaviorSubject<ContactGroup> = new BehaviorSubject(this._activatedRoute.snapshot.queryParams.contactGroup || ContactGroup.Client);
     showCompactView$: Observable<Boolean> = combineLatest(
         this.dataLayoutType$,
         this.pipelineService.compactView$,
@@ -214,23 +232,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             items: { from: new FilterItemModel(), to: new FilterItemModel() },
             options: { method: 'getFilterByDate', params: { useUserTimezone: true }, allowFutureDates: true }
         }),
-        this.filterModelStages = new FilterModel({
-            component: FilterCheckBoxesComponent,
-            caption: 'orderStages',
-            items: {
-                element: new FilterCheckBoxesModel(
-                    {
-                        dataSource$: this.store$.pipe(
-                            select(PipelinesStoreSelectors.getPipelineTreeSource(
-                                { purpose: AppConsts.PipelinePurposeIds.order })
-                            )
-                        ),
-                        nameField: 'name',
-                        parentExpr: 'parentId',
-                        keyExpr: 'id'
-                    }),
-            }
-        }),
+        this.filterModelStages,
         new FilterModel({
             component: FilterInputsComponent,
             options: { type: 'number' },
@@ -293,6 +295,14 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             }
         })
     ];
+    subscriptionStatuses = Object.keys(SubscriptionsStatus).filter(status => 
+        ![SubscriptionsStatus.Upgraded, SubscriptionsStatus.Draft].includes(SubscriptionsStatus[status])
+    ).map(status => {
+        return {
+            id: SubscriptionsStatus[status],
+            name: startCase(status)
+        };
+    });
     private subscriptionsFilters: FilterModel[] = [
         new FilterModel({
             component: FilterCalendarComponent,
@@ -326,10 +336,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             items: {
                 element: new FilterCheckBoxesModel(
                     {
-                        dataSource: Object.keys(SubscriptionsStatus).map((status: string) => ({
-                            id: SubscriptionsStatus[status],
-                            name: startCase(status)
-                        })),
+                        dataSource: this.subscriptionStatuses,
                         value: [SubscriptionsStatus.CurrentActive],
                         nameField: 'name',
                         keyExpr: 'id'
@@ -427,6 +434,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             beforeSend: (request) => {
                 request.params.contactGroupId = this.selectedContactGroup.value; 
                 request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
+                request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                 request.params.$select = DataGridService.getSelectFields(
                     this.subscriptionsGrid,
                     [
@@ -439,6 +447,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             onLoaded: (records) => {
                 if (records instanceof Array)
                     this.subscriptionsDataSource['entities'] = (this.subscriptionsDataSource['entities'] || []).concat(records);
+                this.loadTotalsRequest.next();
+            },
+            errorHandler: (error) => {
+                setTimeout(() => this.isDataLoaded = true);
             }
         })
     });
@@ -446,11 +458,11 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     subscriptionGroupDataSourceURI = 'SubscriptionSlice';
     pivotGridDataIsLoading: boolean;
-    private refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
-    refresh$: Observable<null> = this.refresh.asObservable();
     filterChanged$: Observable<FilterModel[]> = this.filtersService.filtersChanged$.pipe(
         filter(() => this.componentIsActivated)
     );
+    loadTotalsRequest: Subject<ODataRequestValues> = new Subject<ODataRequestValues>(); 
+    loadTotalsRequest$: Observable<ODataRequestValues> = this.loadTotalsRequest.asObservable();
     ordersODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Order);
     subscriptionsODataRequestValues$: Observable<ODataRequestValues> = this.getODataRequestValues(OrderType.Subscription);
     private search: BehaviorSubject<string> = new BehaviorSubject<string>(this.searchValue);
@@ -558,8 +570,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     ordersSum: number;
     ordersSummary$: Observable<OrderStageSummary> = combineLatest(
         this.ordersODataRequestValues$,
-        this.search$,
-        this.refresh$
+        this.search$
     ).pipe(
         debounceTime(600),
         takeUntil(this.destroy$),
@@ -567,7 +578,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.selectedOrderType.value === OrderType.Order && 
             this.dataLayoutType.value === DataLayoutType.DataGrid
         ),
-        map(([oDataRequestValues, search, refresh]: [ODataRequestValues, string, any]) => {
+        map(([oDataRequestValues, search]: [ODataRequestValues, string]) => {
             return this.getODataUrl(this.orderCountDataSourceURI, oDataRequestValues.filter, null,
                 [...this.getSubscriptionsParams(), ...oDataRequestValues.params]);
         }),
@@ -598,39 +609,40 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     subscriptionsTotalOrderAmount: number;
     subscriptionsSummary$: Observable<any> = combineLatest(
         this.subscriptionsODataRequestValues$,
-        this.search$,
-        this.refresh$
+        this.search$
     ).pipe(
         debounceTime(600),
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated && 
             this.selectedOrderType.value === OrderType.Subscription
         ),
-        map(([oDataRequestValues, search, refresh]: [ODataRequestValues, string, any]) => {
-            return this.getODataUrl(
-                this.subscriptionGroupDataSourceURI,
-                oDataRequestValues.filter,
-                null,
-                [
-                    ...this.getSubscriptionsParams(),
-                    ...oDataRequestValues.params,
-                    {
-                        name: 'totalSummary',
-                        value: JSON.stringify([
-                            { 'summaryType': 'count' },
-                            { 'selector': 'OrderAmount', 'summaryType': 'sum' },
-                            { 'selector': 'Fee', 'summaryType': 'sum' }
-                        ])
-                    },
-                    {
-                        name: 'take',
-                        value: 1
-                    },
-                    {
-                        name: 'select',
-                        value: '["Id"]'
-                    }
-                ]
+        switchMap(([oDataRequestValues, search]: [ODataRequestValues, string]) => {
+            return (this.subscriptionsDataSource.isLoading() ? this.loadTotalsRequest$: of(oDataRequestValues)).pipe(
+                first(), map(() => this.getODataUrl(
+                    this.subscriptionGroupDataSourceURI,
+                    oDataRequestValues.filter,
+                    null,
+                    [
+                        ...this.getSubscriptionsParams(),
+                        ...oDataRequestValues.params,
+                        {
+                            name: 'totalSummary',
+                            value: JSON.stringify([
+                                { 'summaryType': 'count' },
+                                { 'selector': 'OrderAmount', 'summaryType': 'sum' },
+                                { 'selector': 'Fee', 'summaryType': 'sum' }
+                            ])
+                        },
+                        {
+                            name: 'take',
+                            value: 1
+                        },
+                        {
+                            name: 'select',
+                            value: '["Id"]'
+                        }
+                    ]
+                ))
             );
         }),
         filter((totalUrl: string) => this.oDataService.requestLengthIsValid(totalUrl)),
@@ -813,14 +825,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.ordersSummary$.subscribe((ordersSummary: OrderStageSummary) => {
             this.ordersSum = ordersSummary.sum;
             this.ordersDataSource['total'] = this.totalCount = ordersSummary.count;
+            if (this.ordersGrid)
+                this.ordersGrid.instance.repaint();
         });
         this.subscriptionsSummary$.subscribe((data) => {
             this.subscriptionsDataSource['total'] = this.totalCount = data.summary[0];
             this.subscriptionsTotalOrderAmount = data.summary[1];
             this.subscriptionsTotalFee = data.summary[2];
-            if (this.subscriptionsGrid) {
+            if (this.subscriptionsGrid)
                 this.subscriptionsGrid.instance.repaint();
-            }
         });
         this.selectedOrderType$.subscribe((selectedOrderType: OrderType) => {
             this.changeOrderType(selectedOrderType);
@@ -862,7 +875,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         });
     }
 
-    get dataGrid() {
+    get dxDataGrid() {
         return this.selectedOrderType.value === OrderType.Order ? this.ordersGrid : this.subscriptionsGrid;
     }
 
@@ -899,6 +912,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 version: AppConsts.ODataVersion,
                 deserializeDates: false,
                 beforeSend: (request) => {
+                    request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
                     request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
                     request.params.$select = DataGridService.getSelectFields(
                         this.ordersGrid,
@@ -914,12 +928,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     let dataSource = this.showOrdersPipeline ? this.pipelineDataSource : this.ordersDataSource;
                     if (records instanceof Array)
                         dataSource['entities'] = (dataSource['entities'] || []).concat(records);
+                },
+                errorHandler: (error) => {
+                    setTimeout(() => this.isDataLoaded = true);
                 }
             }
         };
     }
 
-    get dataSource() {
+    get dxDataSource() {
         return this.selectedOrderType.value === OrderType.Order ? this.ordersDataSource : this.subscriptionsDataSource;
     }
 
@@ -1039,7 +1056,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         name: 'filters',
                         action: () => {
                             setTimeout(() => {
-                                this.dataGrid.instance.repaint();
+                                this.dxDataGrid.instance.repaint();
                             }, 1000);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
@@ -1207,7 +1224,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                         name: 'filters',
                         action: () => {
                             setTimeout(() => {
-                                this.dataGrid.instance.repaint();
+                                this.dxDataGrid.instance.repaint();
                             }, 1000);
                             this.filtersService.fixed = !this.filtersService.fixed;
                         },
@@ -1297,7 +1314,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                             );
                                             this.pivotGridComponent.dataGrid.instance.exportToExcel();
                                         } else if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
-                                            this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
+                                            this.dxDataGrid.instance.option('export.fileName', this.l('Subscriptions'));
                                             this.exportToXLS(options);
                                         }
                                     },
@@ -1306,7 +1323,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                 },
                                 {
                                     action: (options) => {
-                                        this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
+                                        this.dxDataGrid.instance.option('export.fileName', this.l('Subscriptions'));
                                         this.exportToCSV(options);
                                     },
                                     text: this.l('Export to CSV'),
@@ -1315,7 +1332,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                                 },
                                 {
                                     action: (options) => {
-                                        this.dataGrid.instance.option('export.fileName', this.l('Subscriptions'));
+                                        this.dxDataGrid.instance.option('export.fileName', this.l('Subscriptions'));
                                         this.exportToGoogleSheet(options);
                                     },
                                     text: this.l('Export to Google Sheets'),
@@ -1348,7 +1365,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.startLoading(true);
         if (this.showOrdersPipeline) {
             let importOption = 'all',
-                instance = this.dataGrid.instance,
+                instance = this.dxDataGrid.instance,
                 dataSource: any = instance && instance.getDataSource(),
                 checkExportOption = (dataSource, ignoreFilter = false) => {
                     if (options == importOption)
@@ -1363,7 +1380,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                     () => dataSource.filter(null));
             } else {
                 instance.option('dataSource',
-                    dataSource = new DataSource(this.dataSource)
+                    dataSource = new DataSource(this.dxDataSource)
                 );
                 checkExportOption(dataSource);
                 this.exportCallback = () => {
@@ -1383,7 +1400,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         ) {
             this.pivotGridComponent.toggleFieldPanel();
         } else {
-            DataGridService.showColumnChooser(this.dataGrid);
+            DataGridService.showColumnChooser(this.dxDataGrid);
         }
     }
 
@@ -1396,7 +1413,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     toggleToolbar() {
-        setTimeout(() => this.dataGrid.instance.repaint(), 0);
+        setTimeout(() => this.dxDataGrid.instance.repaint(), 0);
         this.filtersService.fixed = false;
         this.filtersService.disable();
     }
@@ -1411,10 +1428,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 if (!this.pipelineDataSource)
                     setTimeout(() => this.pipelineDataSource = this.getOrdersDataSourceConfig({ uri: this.ordersDataSourceURI }));
             } else
-                this.setDataGridInstance(this.dataGrid);
+                this.setDataGridInstance(this.dxDataGrid);
         } else if (this.selectedOrderType.value === OrderType.Subscription) {
             if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid) {
-                this.setDataGridInstance(this.dataGrid);
+                this.setDataGridInstance(this.dxDataGrid);
             } else if (this.subscriptionsDataLayoutType === DataLayoutType.PivotGrid) {
                 this.setPivotGridInstance();
             }
@@ -1424,7 +1441,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     setDataGridInstance(dataGrid: DxDataGridComponent) {
         let instance = dataGrid && dataGrid.instance;
         if (instance && !instance.option('dataSource')) {
-            dataGrid.dataSource = this.dataSource;
+            dataGrid.dataSource = this.dxDataSource;
             if (!instance.option('paging.pageSize'))
                 instance.option('paging.pageSize', 20);
         } else
@@ -1437,6 +1454,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onContentReady(event) {
+        this.dataGrid = this.dxDataGrid;
         if (this.exportCallback)
             this.exportCallback();
         else {
@@ -1456,23 +1474,22 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
     invalidate() {
         this.selectedOrders = [];
-        this.processFilterInternal();
-        this.refresh.next(null);
+        this.filtersService.change([]);
         this.filterChanged = true;
     }
 
     toggleOrdersDataLayout(dataLayoutType: DataLayoutType) {
-        if (this.dataGrid)
-            DataGridService.hideColumnChooser(this.dataGrid);
+        if (this.dxDataGrid)
+            DataGridService.hideColumnChooser(this.dxDataGrid);
         this.showOrdersPipeline = dataLayoutType == DataLayoutType.Pipeline;
         this.dataLayoutType.next(this.ordersDataLayoutType = dataLayoutType);
         this.initDataSource();
         this.initOrdersToolbarConfig();
         if (this.showOrdersPipeline)
-            this.dataGrid.instance.deselectAll();
+            this.dxDataGrid.instance.deselectAll();
         else {
             this.pipelineComponent.deselectAllCards();
-            setTimeout(() => this.dataGrid.instance.repaint());
+            setTimeout(() => this.dxDataGrid.instance.repaint());
         }
         if (this.filterChanged) {
             this.filterChanged = false;
@@ -1484,10 +1501,10 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.subscriptionsDataLayoutType = dataLayouType;
         this.initDataSource();
         this.initSubscriptionsToolbarConfig();
-        if (this.dataGrid)
-            DataGridService.hideColumnChooser(this.dataGrid);
+        if (this.dxDataGrid)
+            DataGridService.hideColumnChooser(this.dxDataGrid);
         if (this.subscriptionsDataLayoutType === DataLayoutType.DataGrid)
-            this.dataGrid.instance.deselectAll();
+            this.dxDataGrid.instance.deselectAll();
 
         if (this.filterChanged) {
             this.filterChanged = false;
@@ -1524,8 +1541,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         if (this.showOrdersPipeline)
             this.pipelineService.toggleContactView();
         else {
-            DataGridService.toggleCompactRowsHeight(this.dataGrid, true);
-            this.gridCompactView.next(DataGridService.isCompactView(this.dataGrid));
+            DataGridService.toggleCompactRowsHeight(this.dxDataGrid, true);
+            this.gridCompactView.next(DataGridService.isCompactView(this.dxDataGrid));
         }
     }
 
@@ -1535,6 +1552,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             let context: any = this;
             let grid: any;
 
+            this.initDataSource();
             if (this.selectedOrderType.value === OrderType.Order) {
                 grid = this.ordersGrid;
                 this.ordersDataSource['entities'] = this.ordersDataSource['total'] = undefined;
@@ -1636,7 +1654,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         this.onCardClick({
             entity: event.data,
-            entityStageDataSource: this.dataSource,
+            entityStageDataSource: this.dxDataSource,
             loadMethod: null,
             queryParams: {},
             section: section
@@ -1696,8 +1714,8 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onOrderStageChanged(order: OrderDto) {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dataGrid.instance.getVisibleRows().some((row) => {
+        if (this.dxDataGrid && this.dxDataGrid.instance)
+            this.dxDataGrid.instance.getVisibleRows().some((row) => {
                 const orderData: OrderDto = row.data;
                 if (order.Id == orderData.Id) {
                     orderData.Stage = order.Stage;
@@ -1720,7 +1738,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 if (this.showOrdersPipeline)
                     this.pipelineComponent.refresh();
                 else {
-                    let gridInstance = this.dataGrid && this.dataGrid.instance;
+                    let gridInstance = this.dxDataGrid && this.dxDataGrid.instance;
                     if (gridInstance && declinedList && declinedList.length)
                         gridInstance.selectRows(declinedList.map(item => item.Id), false);
                     else
@@ -1761,15 +1779,15 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             finalize(() => this.finishLoading())
         ).subscribe(() => {
             this.invalidate();
-            this.dataGrid.instance.deselectAll();
+            this.dxDataGrid.instance.deselectAll();
             this.notify.success(this.l('SuccessfullyDeleted'));
             this.filterChanged = true;
         });
     }
 
     onOrderTypeChanged(event) {
-        if (this.dataGrid)
-            DataGridService.hideColumnChooser(this.dataGrid);
+        if (this.dxDataGrid)
+            DataGridService.hideColumnChooser(this.dxDataGrid);
 
         if (event.value != this.selectedOrderType.value) {
             this.searchClear = true;
@@ -1778,12 +1796,12 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
     }
 
     onContactGroupChanged(event) {
-        if (this.dataGrid)
-            DataGridService.hideColumnChooser(this.dataGrid);
+        if (this.dxDataGrid)
+            DataGridService.hideColumnChooser(this.dxDataGrid);
 
         if (event.itemData.value != this.selectedContactGroup.value) {
             this.selectedContactGroup.next(event.itemData.value);
-            this.processFilterInternal();
+            this.filtersService.change([this.contactGroupFilter]);
         }
     }
 
@@ -1798,10 +1816,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
             this.initOrdersToolbarConfig();
         else
             this.initSubscriptionsToolbarConfig();
-        setTimeout(() => {
-            this.initDataSource();
-            this.invalidate();
-        });
+        setTimeout(() => this.invalidate());
     }
 
     showContactDetails(event, section?: string, queryParams?: Params) {
@@ -1813,7 +1828,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
 
         this.onCardClick({
             entity: event.data,
-            entityStageDataSource: event.dataSource || this.dataSource,
+            entityStageDataSource: event.dataSource || this.dxDataSource,
             loadMethod: event.loadMethod,
             queryParams: queryParams,
             section: section
@@ -1852,6 +1867,17 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
         this.searchClear = false;
         this.filtersService.unsubscribe();
         this.hideHostElement();
+    }
+
+    calculateStatusDisplayValue = (data) => {
+        if (data.StatusId == SubscriptionsStatus.CurrentActive)
+            return this.l(moment().diff(data.EndDate) > 0 ? 'Expired' : 'Active');
+        else if (data.StatusId == SubscriptionsStatus.Cancelled)
+            return this.l('Cancelled');
+        else if (data.StatusId == SubscriptionsStatus.Upgraded)
+            return this.l('Upgraded');
+        else
+            return this.l('Draft');
     }
 
     ngOnDestroy() {

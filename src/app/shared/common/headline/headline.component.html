@@ -4,7 +4,7 @@
     </ng-container>
     <div class="headline-title">
         <i *ngIf="icon" class="icon-{{icon}}"></i>
-        <div class="title-icon" *ngIf="iconSrc" [inlineSVG]="iconSrc"></div>
+        <img class="title-icon" *ngIf="iconSrc" [src]="iconSrc">
         <div class="header-names">
             <ng-template ngFor let-item [ngForOf]="names" let-i="index">
                 <span class="header-name">{{item}}</span>

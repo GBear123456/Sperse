@@ -17,26 +17,24 @@ import { forkJoin } from 'rxjs';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { DocumentTemplatesServiceProxy, GetFileUrlDto } from '@shared/service-proxies/service-proxies';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { AppConsts } from '@shared/AppConsts';
-import { NotifyService } from '@abp/notify/notify.service';
-import { MessageService } from '@abp/message/message.service';
+import { NotifyService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
 
 @Component({
     templateUrl: './documents.component.html',
-    animations: [appModuleAnimation()],
     styleUrls: ['./documents.component.less'],
     providers: [ LifecycleSubjectsService, DocumentTemplatesServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DocumentsComponent {
-    @ViewChild(DxFileManagerComponent, { static: false }) fileManager: DxFileManagerComponent;
+    @ViewChild(DxFileManagerComponent) fileManager: DxFileManagerComponent;
 
     private readonly VIEW_MODE_DETAILS    = 'details';
     private readonly VIEW_MODE_THUMBNAILS = 'thumbnails';

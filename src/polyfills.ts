@@ -15,6 +15,6 @@ import 'core-js/es6/set';
 import 'core-js/es6/string';
 import 'core-js/es6/symbol';
 import 'dom4/build/dom4.js';
-import 'zone.js/dist/zone';
+import 'zone.js';
 
 (window as any).global = window;

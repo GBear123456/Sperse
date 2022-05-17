@@ -52,7 +52,7 @@ export class AddressFieldsComponent implements OnInit {
     @Output() onCityChanged: EventEmitter<any> = new EventEmitter<string>();
     @Output() onStateChanged: EventEmitter<any> = new EventEmitter<string>();
     @Output() onZipChanged: EventEmitter<any> = new EventEmitter<string>();
-    @ViewChild('addressInput', { static: false }) addressInput: ElementRef;
+    @ViewChild('addressInput') addressInput: ElementRef;
     countries$: Observable<CountryDto[]> = this.store$.pipe(select(CountriesStoreSelectors.getCountries));
 
     constructor(

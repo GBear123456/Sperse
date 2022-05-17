@@ -8,8 +8,8 @@ import { CFOComponentBase } from 'shared/cfo/cfo-component-base';
     styleUrls: ['./calculator-widget.component.less']
 })
 export class CalculatorComponent extends CFOComponentBase implements OnChanges {
-    @ViewChild('calculatorInput', { static: false }) calculatorInputControl: ElementRef;
-    @ViewChild('calculatorHistoryEdit', { static: false }) calculatorHistoryEditControl: ElementRef;
+    @ViewChild('calculatorInput') calculatorInputControl: ElementRef;
+    @ViewChild('calculatorHistoryEdit') calculatorHistoryEditControl: ElementRef;
     @Input() parentEquation: string;
     input = '';
     historyEquation = '';

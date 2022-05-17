@@ -4,7 +4,7 @@ import { hmrBootstrap } from './hmr';
 import { environment } from './environments/environment';
 import { RootModule } from './root.module';
 
-import './polyfills.ts';
+import './polyfills';
 import 'hammerjs';
 
 if (environment.production) {
@@ -27,9 +27,5 @@ if (environment.hmr) {
         console.log('Are you using the --hmr flag for ng serve?');
     }
 } else {
-    let loginPageHandler = window['loginPageHandler'];
-    if (loginPageHandler) {
-        loginPageHandler(this, bootstrap, environment);
-    } else
-        bootstrap(); //Regular bootstrap
+    bootstrap(); //Regular bootstrap
 }

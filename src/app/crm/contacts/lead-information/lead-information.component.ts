@@ -5,7 +5,7 @@ import { CurrencyPipe } from '@angular/common';
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { Store, select } from '@ngrx/store';
-import { finalize, filter, takeUntil, first, debounceTime } from 'rxjs/operators';
+import { finalize, filter, takeUntil, first } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import startCase from 'lodash/startCase';
 import upperCase from 'lodash/upperCase';
@@ -28,8 +28,8 @@ import { SourceContactListComponent } from '@shared/common/source-contact-list/s
 import { OrganizationUnitsDialogComponent } from '@shared/common/organization-units-tree/organization-units-dialog/organization-units-dialog.component';
 import { InplaceEditModel } from '@app/shared/common/inplace-edit/inplace-edit.model';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from '@abp/notify/notify.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { NotifyService } from 'abp-ng2-module';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
@@ -45,9 +45,9 @@ import { OrganizationUnitsDialogData } from '@shared/common/organization-units-t
     providers: [ ApplicationServiceProxy, LifecycleSubjectsService, CurrencyPipe ]
 })
 export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
-    @ViewChild('loaderWrapper', { static: false }) loaderWrapper: ElementRef;
+    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
+    @ViewChild('loaderWrapper') loaderWrapper: ElementRef;
 
     data = {
         contactInfo: new ContactInfoDto(),
@@ -88,7 +88,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
                 icon: 'c-info',
                 items: [
                     { name: 'stage', readonly: true },
-                    { name: 'dealAmount', type: { style: 'currency', useGrouping: true } },
+                    { name: 'dealAmount', type: { useGrouping: true } },
                     { name: 'creationDate', readonly: true },
                     { name: 'modificationDate', readonly: true }
                 ]
@@ -217,8 +217,7 @@ export class LeadInformationComponent implements OnInit, AfterViewInit, OnDestro
 
     ngAfterViewInit() {
         this.contactsService.settingsDialogOpened$.pipe(
-            takeUntil(this.lifeCycleService.destroy$),
-            debounceTime(1000)
+            takeUntil(this.lifeCycleService.destroy$)
         ).subscribe(opened => {
             this.toggleOrgUnitsDialog(opened);
         });

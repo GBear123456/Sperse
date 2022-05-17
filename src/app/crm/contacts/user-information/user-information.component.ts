@@ -7,8 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { Observable } from 'rxjs';
-import { finalize, filter, takeUntil,
-    debounceTime, first, map, startWith } from 'rxjs/operators';
+import { finalize, filter, takeUntil, first, map, startWith } from 'rxjs/operators';
 import { ClipboardService } from 'ngx-clipboard';
 import extend from 'lodash/extend';
 import clone from 'lodash/clone';
@@ -42,10 +41,10 @@ import { ContactGroup, ContactStatus } from '@root/shared/AppEnums';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppRoles } from '@shared/AppRoles';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { MessageService } from '@abp/message/message.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
+import { MessageService } from 'abp-ng2-module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { AppStoreService } from '@app/store/app-store.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { OrganizationUnitsDialogData } from '@shared/common/organization-units-tree/organization-units-dialog/organization-units-dialog-data.interface';
@@ -57,9 +56,9 @@ import { OrganizationUnitsDialogData } from '@shared/common/organization-units-t
     providers: [ PhoneFormatPipe, LifecycleSubjectsService ]
 })
 export class UserInformationComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild('emailAddress', { static: false }) emailAddressComponent: DxSelectBoxComponent;
-    @ViewChild('phoneNumber', { static: false }) phoneNumberComponent: DxSelectBoxComponent;
-    @ViewChild('inviteValidationGroup', { static: false }) inviteValidationComponent: DxValidationGroupComponent;
+    @ViewChild('emailAddress') emailAddressComponent: DxSelectBoxComponent;
+    @ViewChild('phoneNumber') phoneNumberComponent: DxSelectBoxComponent;
+    @ViewChild('inviteValidationGroup') inviteValidationComponent: DxValidationGroupComponent;
     data: any;
 
     readonly GENERAL_TAB_INDEX        = 0;
@@ -177,8 +176,7 @@ export class UserInformationComponent implements OnInit, AfterViewInit, OnDestro
 
     ngAfterViewInit() {
         this.contactsService.settingsDialogOpened$.pipe(
-            takeUntil(this.lifecycleSubjectService.destroy$),
-            debounceTime(1000)
+            takeUntil(this.lifecycleSubjectService.destroy$)
         ).subscribe(opened => {
             this.toggleOrgUnitsDialog(opened);
         });

@@ -17,7 +17,7 @@ import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 
 /** Application imports */
 import { DateHelper } from '@shared/helpers/DateHelper';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { ODataService } from '@shared/common/odata/odata.service';
@@ -46,8 +46,8 @@ import { ItemDetailsService } from '@shared/common/item-details-layout/item-deta
 import { AffiliateHistoryDialogComponent } from './affiliate-history-dialog/affiliate-history-dialog.component';
 import { CrmService } from '@app/crm/crm.service';
 import { ContactGroup } from '@shared/AppEnums';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
 
 @Component({
@@ -55,8 +55,8 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
     styleUrls: ['personal-details-dialog.less']
 })
 export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(SourceContactListComponent, { static: false }) sourceComponent: SourceContactListComponent;
-    @ViewChild('checklistScroll', {static: false}) checklistScroll: DxScrollViewComponent;
+    @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
+    @ViewChild('checklistScroll') checklistScroll: DxScrollViewComponent;
     showOverviewTab = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     verificationChecklist: VerificationChecklistItem[];
     contactInfo: ContactInfoDto;
@@ -169,7 +169,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         public appSession: AppSessionService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '157px',
                 right: '-100vw'
@@ -258,7 +258,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     ngAfterViewInit() {
         setTimeout(() => {
             this.slider.classList.remove('hide');
-            this.dialogRef.updateSize('425px', '100vh');
+            this.dialogRef.updateSize('425px', 'calc(100vh - 218px)');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
                     top: '218px',
@@ -567,7 +567,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     }
 
     close() {
-        this.dialogRef.close(true);
+        this.contactsService.closeSettingsDialog();
     }
 
     getThumbnailSrc(thumbnailId?: string) {

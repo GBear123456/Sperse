@@ -19,7 +19,7 @@ import { IBankAccountsSelectDialogData } from '@app/cfo/shared/bank-accounts-sel
     providers: [ BankAccountsServiceProxy, BusinessEntityServiceProxy ]
 })
 export class BankAccountsSelectDialogComponent implements OnInit {
-    @ViewChild(ModalDialogComponent, { static: false }) modalDialog: ModalDialogComponent;
+    @ViewChild(ModalDialogComponent) modalDialog: ModalDialogComponent;
     @Output() onApply: EventEmitter<any> = new EventEmitter();
     tooltipVisible: boolean;
     businessEntities = [];
@@ -48,7 +48,7 @@ export class BankAccountsSelectDialogComponent implements OnInit {
                 disabled: this.data && this.data.applyDisabled
             }
         ];
-        this.dialogRef.afterOpen().subscribe(() => {
+        this.dialogRef.afterOpened().subscribe(() => {
             this.bankAccountsService.clearTempState();
         });
         this.dialogRef.afterClosed().subscribe((isApply: boolean) => {

@@ -8,7 +8,7 @@ import { DxNumberBoxComponent } from 'devextreme-angular/ui/number-box';
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AppPermissions } from '@shared/AppPermissions';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { ConfirmDialogComponent } from '@app/shared/common/dialogs/confirm/confirm-dialog.component';
 import { CommissionServiceProxy, UpdateCommissionRateInput } from '@shared/service-proxies/service-proxies';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
@@ -20,7 +20,7 @@ import { ContactsHelper } from '@shared/crm/helpers/contacts-helper';
     styleUrls: ['update-rate-dialog.component.less']
 })
 export class UpdateCommissionRateDialogComponent extends ConfirmDialogComponent {
-    @ViewChild(DxNumberBoxComponent, { static: false }) rateComponent: DxNumberBoxComponent;
+    @ViewChild(DxNumberBoxComponent) rateComponent: DxNumberBoxComponent;
 
     affiliateRate: number = 0;
     affiliateRateValidationRules = [

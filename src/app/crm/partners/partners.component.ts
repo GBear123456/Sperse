@@ -8,7 +8,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import 'devextreme/data/odata/store';
 import { select, Store } from '@ngrx/store';
-import { BehaviorSubject, combineLatest, concat, merge, Observable, of, forkJoin, from } from 'rxjs';
+import { Subject, BehaviorSubject, combineLatest, concat, 
+    merge, Observable, of, forkJoin, from } from 'rxjs';
 import {
     filter,
     first,
@@ -69,7 +70,6 @@ import {
     PartnerServiceProxy,
     PartnerTypeServiceProxy
 } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { ClientService } from '@app/crm/clients/clients.service';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
@@ -119,7 +119,6 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
         '../shared/styles/grouped-action-menu.less',
         './partners.component.less'
     ],
-    animations: [appModuleAnimation()],
     providers: [
         ClientService,
         ContactServiceProxy,
@@ -130,20 +129,20 @@ import { AppAuthService } from '@shared/common/auth/app-auth.service';
     ]
 })
 export class PartnersComponent extends AppComponentBase implements OnInit, OnDestroy {
-    @ViewChild(PipelineComponent, {static: false}) pipelineComponent: PipelineComponent;
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
-    @ViewChild(TagsListComponent, { static: false }) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, { static: false }) listsComponent: ListsListComponent;
-    @ViewChild(TypesListComponent, { static: false }) typesComponent: TypesListComponent;
-    @ViewChild('sourceList', { static: false }) sourceComponent: SourceContactListComponent;
-    @ViewChild(UserAssignmentComponent, { static: false }) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(RatingComponent, { static: false }) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent, { static: false }) starsListComponent: StarsListComponent;
-    @ViewChild('statusesList', { static: false }) statusComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent, { static: false }) pivotGridComponent: PivotGridComponent;
+    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(TypesListComponent) typesComponent: TypesListComponent;
+    @ViewChild('sourceList') sourceComponent: SourceContactListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild('statusesList') statusComponent: StaticListComponent;
+    @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent, { static: true }) chartComponent: ChartComponent;
-    @ViewChild(MapComponent, { static: false }) mapComponent: MapComponent;
-    @ViewChild(ToolBarComponent, { static: false }) toolbar: ToolBarComponent;
+    @ViewChild(MapComponent) mapComponent: MapComponent;
+    @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
 
     private isSlice = this.appService.getModule() === 'slice';
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
@@ -398,6 +397,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         },
         onChanged: () => {
             this.pivotGridDataIsLoading = false;
+            this.loadTotalsRequest.next();
         },
         fields: [
             {
@@ -504,6 +504,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 })
             ).toPromise().then((result: any) => {
                 this.chartDataUrl = null;
+                this.loadTotalsRequest.next();
                 if (result) {
                     result = this.crmService.parseChartData(result);
                     this.chartInfoItems = result.infoItems;
@@ -527,6 +528,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     totalErrorMsg: string;
     toolbarConfig: ToolbarGroupModel[];
     private filters: FilterModel[] = this.getFilters();
+    loadTotalsRequest: Subject<ODataRequestValues> = new Subject<ODataRequestValues>(); 
+    loadTotalsRequest$: Observable<ODataRequestValues> = this.loadTotalsRequest.asObservable();
     odataRequestValues$: Observable<ODataRequestValues> = concat(
         this.oDataService.getODataFilter(this.filters, this.filtersService.getCheckCustom),
         this.filterChanged$.pipe(
@@ -581,6 +584,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         onLoaded: (records) => {
             if (records instanceof Array)
                 this.dataSource['entities'] = (this.dataSource['entities'] || []).concat(records);
+            this.loadTotalsRequest.next();
+        },
+        errorHandler: (error) => {
+            setTimeout(() => this.isDataLoaded = true);
         }
     };
 
@@ -720,8 +727,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
             this.odataRequestValues$,
             this.refresh$
         ).pipe(
-            takeUntil(this.lifeCycleSubjectsService.destroy$)
-        ).subscribe(([odataRequestValues, ]: [ODataRequestValues, null]) => {
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            switchMap(([odataRequestValues, ]: [ODataRequestValues, null]) => {
+                return this.loadTotalsRequest$.pipe(first(), map(() => odataRequestValues));
+            })
+        ).subscribe((odataRequestValues: ODataRequestValues) => {
             let url = this.getODataUrl(
                 this.totalDataSourceURI,
                 odataRequestValues.filter,

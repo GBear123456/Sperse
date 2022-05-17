@@ -15,9 +15,8 @@ import { DeleteAndReassignDialogComponent } from '..//delete-and-reassign-dialog
 import { FiltersService } from '@shared/filters/filters.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { ContactTagsServiceProxy, ContactTagInfoDto, ContactTagInput, UntagContactsInput } from '@shared/service-proxies/service-proxies';
-import { MessageService } from 'abp-ng2-module/dist/src/message/message.service';
+import { MessageService, NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { NotifyService } from 'abp-ng2-module/dist/src/notify/notify.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 
 @Component({
@@ -84,7 +83,7 @@ export class TagsListComponent implements OnInit {
                 if (this.bulkUpdateMode)
                     this.messageService.confirm(
                         this.ls.l(isRemove ? 'UntagBulkUpdateConfirmation' : 'TagBulkUpdateConfirmation',
-                            this.selectedKeys.length),
+                            this.selectedKeys.length), '',
                         isConfirmed => {
                             if (isConfirmed)
                                 this.process(isRemove);

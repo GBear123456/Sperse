@@ -10,7 +10,7 @@ import { zip, of } from 'rxjs';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { CrmStore, PipelinesStoreActions, PipelinesStoreSelectors } from '@app/crm/store';
 import { StageChecklistServiceProxy, CreateStageChecklistPointInput, UpdateStageChecklistPointSortOrderInput,
     RenameStageChecklistPointInput, StageChecklistPointDto, PipelineDto } from '@shared/service-proxies/service-proxies';
@@ -24,7 +24,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
     providers: [StageChecklistServiceProxy]
 })
 export class CheckListDialogComponent implements OnInit, AfterViewInit {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
 
     private slider: any;
     dataSource: any[] = [];
@@ -59,7 +59,7 @@ export class CheckListDialogComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {
         setTimeout(() => {
             this.slider.classList.remove('hide');
-            this.dialogRef.updateSize(undefined, '100vh');
+            this.dialogRef.updateSize(undefined, 'calc(100vh - 75px)');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
                     top: '75px',

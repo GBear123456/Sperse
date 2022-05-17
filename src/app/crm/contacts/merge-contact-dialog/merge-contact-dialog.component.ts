@@ -29,10 +29,10 @@ import {
     PrimaryContactInfo,
     GetContactInfoForMergeOutput
 } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { PhoneFormatPipe } from '@shared/common/pipes/phone-format/phone-format.pipe';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -537,9 +537,9 @@ export class MergeContactDialogComponent implements AfterViewInit {
     }
 
     getPreferredProperties() {
-        return (this.isFieldSelected(this.CONTACT_FULL_NAME_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties._1 : 0)
-            | (this.isFieldSelected(this.CONTACT_DATE_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties._2 : 0)
-            | (this.isFieldSelected(this.CONTACT_BANK_CODE, this.COLUMN_SOURCE_FIELD) ? PreferredProperties._4 : 0);
+        return (this.isFieldSelected(this.CONTACT_FULL_NAME_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.FullName : 0)
+            | (this.isFieldSelected(this.CONTACT_DATE_FIELD, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.ContactDate : 0)
+            | (this.isFieldSelected(this.CONTACT_BANK_CODE, this.COLUMN_SOURCE_FIELD) ? PreferredProperties.BANKCode : 0);
     }
 
     getMergeContactInput() {

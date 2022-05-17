@@ -2,7 +2,7 @@
 import { Component, Input } from '@angular/core';
 
 /** Third party imports  */
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
 import capitalize from 'underscore.string/capitalize';
@@ -35,7 +35,8 @@ export class ContactsAreaComponent {
     @Input()
     set contactInfo(val: ContactInfoDto) {
         if ((this._contactInfo = val) && val.groups)
-            this.isEditAllowed = this.permissionService.checkCGPermission(val.groups);
+            this.isEditAllowed = this.permissionService.checkCGPermission(val.groups) ||
+                this.isCompany && this.permissionService.isGranted(AppPermissions.CRMCompaniesManageAll);
     }
     get contactInfo(): ContactInfoDto {
         return this._contactInfo;

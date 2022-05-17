@@ -50,8 +50,8 @@ export class AppAuthService implements OnDestroy {
             }) + '; path=/; domain=' + this.getTopLevelDomain();
     }
 
-    setCheckDomainToken() { //!!VP this necessary to provide login from top domain level
-        document.cookie.split(';').some((data) => {
+    setCheckDomainToken(): boolean { //!!VP this necessary to provide login from top domain level
+        return document.cookie.split(';').some((data) => {
             let parts = data.split('=');
             if ((parts[0].trim() == this.REDIRECT_AUTH_DATA) && parts[1]) {
                 let authData = JSON.parse(parts[1]);

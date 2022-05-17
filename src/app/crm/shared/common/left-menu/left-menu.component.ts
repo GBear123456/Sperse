@@ -2,15 +2,15 @@
 import { ChangeDetectionStrategy, Component, Output, Input, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
 
 /** Third party imports */
-import { MatDialog } from '@angular/material';
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
-import { PermissionCheckerService } from '@abp/auth/permission-checker.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LeftMenuItem } from '@app/shared/common/left-menu/left-menu-item.interface';
 import { AppFeatures } from '@shared/AppFeatures';

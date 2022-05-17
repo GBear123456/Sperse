@@ -12,7 +12,7 @@ import { ContactServiceProxy, AffiliateInfoHistoryInfo } from '@shared/service-p
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({

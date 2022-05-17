@@ -19,7 +19,7 @@ export class OrganizationUnitsDialogComponent implements OnInit, AfterViewInit {
         public dialogRef: MatDialogRef<OrganizationUnitsDialogComponent>,
         @Inject(MAT_DIALOG_DATA) public data: OrganizationUnitsDialogData
     ) {
-        this.dialogRef.beforeClose().subscribe(() => {
+        this.dialogRef.beforeClosed().subscribe(() => {
             this.dialogRef.updatePosition({
                 top: '157px',
                 right: '-100vw'
@@ -40,7 +40,7 @@ export class OrganizationUnitsDialogComponent implements OnInit, AfterViewInit {
     ngAfterViewInit() {
         setTimeout(() => {
             this.slider.classList.remove('hide');
-            this.dialogRef.updateSize('425px', '100vh');
+            this.dialogRef.updateSize('425px', 'calc(100vh - 218px)');
             setTimeout(() => {
                 this.dialogRef.updatePosition({
                     top: '218px',

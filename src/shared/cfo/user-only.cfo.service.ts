@@ -6,15 +6,11 @@ import { BehaviorSubject } from 'rxjs';
 
 @Injectable()
 export class UserOnlyCFOService extends CFOServiceBase {
-    get instanceType(): InstanceType {
-        return InstanceType.User;
-    }
-    set instanceType(val: InstanceType) { }
-
     constructor(
     ) {
         super();
 
+        this.instanceType = InstanceType.User;
         this.hasStaticInstance = true;
         this.isForUser = true;
 

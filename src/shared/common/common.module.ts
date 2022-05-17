@@ -9,8 +9,6 @@ import { MatProgressBarModule } from '@angular/material/progress-bar';
 import { MatDialogModule } from '@angular/material/dialog';
 import { DxTextBoxModule } from 'devextreme-angular/ui/text-box';
 import { DxCheckBoxModule } from 'devextreme-angular/ui/check-box';
-import { InlineSVGModule } from 'ng-inline-svg';
-import { InlineSVGConfig } from 'ng-inline-svg/lib/inline-svg.config';
 
 /** Application imports */
 import { ZipCodeFormatterPipe } from '@shared/common/pipes/zip-code-formatter/zip-code-formatter.pipe';
@@ -67,7 +65,6 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
         DxDataGridDirective,
         ConditionsModalComponent,
         NoDataModule,
-        InlineSVGModule,
         GhostListModule,
         DateTimePipe,
         CountryPhoneNumberModule
@@ -98,8 +95,4 @@ import { DateTimePipe } from '@shared/common/pipes/datetime/datetime.pipe';
         PrimengTableHelper
     ]
 })
-export class CommonModule {
-    constructor(private inlineSVGConfig: InlineSVGConfig) {
-        this.inlineSVGConfig.baseUrl = AppConsts.appBaseHref;
-    }
-}
+export class CommonModule {}

@@ -10,6 +10,7 @@ import ODataStore from 'devextreme/data/odata/store';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { select, Store } from '@ngrx/store';
 import {
+    Subject,
     BehaviorSubject,
     combineLatest,
     concat,
@@ -84,7 +85,6 @@ import {
     StageDto,
     UpdateLeadSourceContactsInput
 } from '@shared/service-proxies/service-proxies';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { CreateEntityDialogComponent } from '@shared/common/create-entity-dialog/create-entity-dialog.component';
 import { PipelineComponent } from '@app/shared/pipeline/pipeline.component';
 import { PipelineService } from '@app/shared/pipeline/pipeline.service';
@@ -94,7 +94,7 @@ import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignmen
 import { RatingComponent } from '@app/shared/common/lists/rating/rating.component';
 import { StarsListComponent } from '../shared/stars-list/stars-list.component';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service.ts';
+import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
 import { ItemTypeEnum } from '@shared/common/item-details-layout/item-type.enum';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
@@ -131,7 +131,7 @@ import { LeadDto } from '@app/crm/leads/lead-dto.interface';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
 import { LeadFields } from '@app/crm/leads/lead-fields.enum';
 import { SummaryBy } from '@app/shared/common/slice/chart/summary-by.enum';
-import { MessageService } from '@abp/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-list-dialog/entity-check-list-dialog.component';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { TypeItem } from '@app/crm/shared/types-dropdown/type-item.interface';
@@ -146,23 +146,22 @@ import { UrlHelper } from '@shared/helpers/UrlHelper';
         '../shared/styles/grouped-action-menu.less',
         './leads.component.less'
     ],
-    providers: [LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, MapService],
-    animations: [appModuleAnimation()]
+    providers: [LeadServiceProxy, ContactServiceProxy, LifecycleSubjectsService, MapService]
 })
 export class LeadsComponent extends AppComponentBase implements OnInit, AfterViewInit, OnDestroy {
-    @ViewChild(DxDataGridComponent, {static: false}) dataGrid: DxDataGridComponent;
-    @ViewChild(PipelineComponent, {static: false}) pipelineComponent: PipelineComponent;
-    @ViewChild(TagsListComponent, {static: false}) tagsComponent: TagsListComponent;
-    @ViewChild(ListsListComponent, {static: false}) listsComponent: ListsListComponent;
-    @ViewChild(UserAssignmentComponent, {static: false}) userAssignmentComponent: UserAssignmentComponent;
-    @ViewChild(RatingComponent, {static: false}) ratingComponent: RatingComponent;
-    @ViewChild(StarsListComponent, {static: false}) starsListComponent: StarsListComponent;
-    @ViewChild('stageList', {static: false}) stagesComponent: StaticListComponent;
-    @ViewChild(PivotGridComponent, {static: false}) pivotGridComponent: PivotGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
+    @ViewChild(PipelineComponent) pipelineComponent: PipelineComponent;
+    @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
+    @ViewChild(ListsListComponent) listsComponent: ListsListComponent;
+    @ViewChild(UserAssignmentComponent) userAssignmentComponent: UserAssignmentComponent;
+    @ViewChild(RatingComponent) ratingComponent: RatingComponent;
+    @ViewChild(StarsListComponent) starsListComponent: StarsListComponent;
+    @ViewChild('stageList') stagesComponent: StaticListComponent;
+    @ViewChild(PivotGridComponent) pivotGridComponent: PivotGridComponent;
     @ViewChild(ChartComponent, {static: true}) chartComponent: ChartComponent;
-    @ViewChild(MapComponent, {static: false}) mapComponent: MapComponent;
-    @ViewChild(ToolBarComponent, {static: false}) toolbar: ToolBarComponent;
-    @ViewChild('sourceList', { static: false }) sourceComponent: SourceContactListComponent;
+    @ViewChild(MapComponent) mapComponent: MapComponent;
+    @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
+    @ViewChild('sourceList') sourceComponent: SourceContactListComponent;
 
     private readonly dataSourceURI = 'Lead';
     private readonly totalDataSourceURI = 'Lead/$count';
@@ -190,147 +189,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     );
     actionEvent: any;
     pipelinePurposeId = AppConsts.PipelinePurposeIds.lead;
-    actionMenuGroups: ActionMenuGroup[] = [
-        {
-            key: '',
-            visible: true,
-            items: [
-                {
-                    text: this.l('SMS'),
-                    class: 'sms fa fa-commenting-o',
-                    action: (data?) => {
-                        this.contactService.showSMSDialog({
-                            phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
-                        });
-                    },
-                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
-                },
-                {
-                    text: this.l('SendEmail'),
-                    class: 'email',
-                    action: (data?) => {
-                        this.contactService.showEmailDialog({
-                            contactId: (data || this.actionEvent.data || this.actionEvent).CustomerId
-                        }).subscribe();
-                    },
-                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
-                },
-            ]
-        },
-        {
-            key: '',
-            visible: true,
-            items: [
-                {
-                    text: this.l('LoginAsThisUser'),
-                    class: 'login',
-                    checkVisible: (lead: LeadDto) => {
-                        return !!lead.UserId && (
-                            this.impersonationIsGranted ||
-                            this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
-                        );
-                    },
-                    action: (data?) => {
-                        const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
-                        this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId);
-                    }
-                },
-                {
-                    text: this.l('LoginToPortal'),
-                    class: 'login',
-                    checkVisible: (lead: LeadDto) => !!lead.UserId && !!AppConsts.appMemberPortalUrl
-                        && (
-                            this.impersonationIsGranted ||
-                            this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
-                        ),
-                    action: (data?) => {
-                        const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
-                        this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl);
-                    }
-                },
-                {
-                    text: this.l('NotesAndCallLog'),
-                    class: 'notes',
-                    action: (data?) => {
-                        this.showLeadDetails({ data: data || this.actionEvent }, 'notes');
-                    },
-                    button: {
-                        text: '+' + this.l('Add'),
-                        action: (data?) => {
-                            this.showLeadDetails({ data: data || this.actionEvent }, 'notes', {
-                                addNew: true
-                            });
-                        },
-                        checkVisible: () => this.permission.checkCGPermission([this.selectedContactGroup])
-                    }
-                },
-                {
-                    text: this.l('Appointment'),
-                    class: 'appointment',
-                    disabled: true,
-                    action: () => {}
-                },
-                {
-                    text: this.l('Orders'),
-                    class: 'orders',
-                    action: (data?) => {
-                        this.showLeadDetails({ data: data || this.actionEvent }, 'invoices');
-                    }
-                },
-                {
-                    text: this.l('Notifications'),
-                    class: 'notifications',
-                    disabled: true,
-                    action: () => {}
-                },
-                {
-                    getText: (lead: LeadDto) => {
-                        const stage: StageDto = this.pipelineService.getStageByName(
-                            this.pipelinePurposeId,
-                            lead.Stage,
-                            this.selectedContactGroup,
-                            this.selectedPipelineId
-                        );
-                        return this.l('Checklist') + ' (' + lead.StageChecklistPointDoneCount + '/' + stage.checklistPoints.length + ')';
-                    },
-                    class: 'checklist',
-                    checkVisible: (lead: LeadDto) => {
-                        const stage = this.pipelineService.getStageByName(
-                            this.pipelinePurposeId,
-                            lead.Stage,
-                            this.selectedContactGroup,
-                            this.selectedPipelineId
-                        );
-                        return !!(!stage.isFinal && stage.checklistPoints && stage.checklistPoints.length);
-                    },
-                    action: (data?) => {
-                        this.openEntityChecklistDialog(data);
-                    }
-                }
-            ]
-        },
-        {
-            key: '',
-            visible: true,
-            items: [
-                {
-                    text: this.l('Delete'),
-                    class: 'delete',
-                    disabled: false,
-                    action: (data?) => {
-                        this.deleteLeads([(data || this.actionEvent.data || this.actionEvent).Id]);
-                    },
-                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup])
-                },
-                {
-                    text: this.l('EditRow'),
-                    class: 'edit',
-                    action: (data?) => this.showLeadDetails({ data: data || this.actionEvent }),
-                    checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup])
-                }
-            ]
-        }
-    ];
+    actionMenuGroups: ActionMenuGroup[];
     /** Get all leads pipelines */
     pipelines$: Observable<PipelineDto[]> = this.store$.pipe(
         select(PipelinesStoreSelectors.getPipelines({
@@ -637,6 +496,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         filter(() => this.componentIsActivated)
     );
     odataRequestValues$: Observable<ODataRequestValues>;
+    loadTotalsRequest: Subject<ODataRequestValues> = new Subject<ODataRequestValues>(); 
+    loadTotalsRequest$: Observable<ODataRequestValues> = this.loadTotalsRequest.asObservable();
     private _refresh: BehaviorSubject<null> = new BehaviorSubject<null>(null);
     private refresh$: Observable<null> = this._refresh.asObservable();
     mapDataIsLoading = false;
@@ -647,10 +508,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     contentWidth$: Observable<number> = this.crmService.contentWidth$;
     contentHeight$: Observable<number> = this.crmService.contentHeight$;
     mapHeight$: Observable<number> = this.crmService.mapHeight$;
-    isSmsAndEmailSendingAllowed: boolean = this.permission.checkCGPermission(
-        [this.selectedContactGroup],
-        'ViewCommunicationHistory.SendSMSAndEmail'
-    );
+    isSmsAndEmailSendingAllowed: boolean = false;
     readonly leadFields: KeysEnum<LeadDto> = LeadFields;
     pipelineSelectFields: string[] = [
         this.leadFields.Id,
@@ -664,9 +522,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         this.leadFields.Email,
         this.leadFields.Phone,
         this.leadFields.Amount
-    ].concat(
-        this.isSmsAndEmailSendingAllowed ? [ this.leadFields.Phone ] : []
-    );
+    ]; 
+    loadAssignUsersList: Subject<any> = new Subject<null>();
     private queryParams$: Observable<Params> = this._activatedRoute.queryParams.pipe(
         takeUntil(this.destroy$),
         filter(() => this.componentIsActivated)
@@ -750,6 +607,10 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         let dataSource = this.showPipeline ? this.pipelineDataSource : this.dataSource;
                         if (records instanceof Array)
                             dataSource['entities'] = (dataSource['entities'] || []).concat(records);
+                        this.loadTotalsRequest.next();
+                    },
+                    errorHandler: (error) => {
+                        setTimeout(() => this.isDataLoaded = true);
                     },
                     deserializeDates: false
                 }
@@ -812,6 +673,158 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         });
     }
 
+    private initContactGroupRelatedProperties() {
+        this.isSmsAndEmailSendingAllowed = this.permission.checkCGPermission(
+            [this.selectedContactGroup],
+            'ViewCommunicationHistory.SendSMSAndEmail'
+        );
+
+        if (this.isSmsAndEmailSendingAllowed)
+            this.pipelineSelectFields.push(this.leadFields.Phone);
+
+        this.actionMenuGroups = [
+            {
+                key: '',
+                visible: true,
+                items: [
+                    {
+                        text: this.l('SMS'),
+                        class: 'sms fa fa-commenting-o',
+                        action: (data?) => {
+                            this.contactService.showSMSDialog({
+                                phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
+                            });
+                        },
+                        checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
+                    },
+                    {
+                        text: this.l('SendEmail'),
+                        class: 'email',
+                        action: (data?) => {
+                            this.contactService.showEmailDialog({
+                                contactId: (data || this.actionEvent.data || this.actionEvent).CustomerId
+                            }).subscribe();
+                        },
+                        checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
+                    },
+                ]
+            },
+            {
+                key: '',
+                visible: true,
+                items: [
+                    {
+                        text: this.l('LoginAsThisUser'),
+                        class: 'login',
+                        checkVisible: (lead: LeadDto) => {
+                            return !!lead.UserId && (
+                                this.impersonationIsGranted ||
+                                this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
+                            );
+                        },
+                        action: (data?) => {
+                            const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
+                            this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId);
+                        }
+                    },
+                    {
+                        text: this.l('LoginToPortal'),
+                        class: 'login',
+                        checkVisible: (lead: LeadDto) => !!lead.UserId && !!AppConsts.appMemberPortalUrl
+                            && (
+                                this.impersonationIsGranted ||
+                                this.permission.checkCGPermission([this.selectedContactGroup], 'UserInformation.AutoLogin')
+                            ),
+                        action: (data?) => {
+                            const lead: LeadDto = data || this.actionEvent.data || this.actionEvent;
+                            this.impersonationService.impersonate(lead.UserId, this.appSession.tenantId, AppConsts.appMemberPortalUrl);
+                        }
+                    },
+                    {
+                        text: this.l('NotesAndCallLog'),
+                        class: 'notes',
+                        action: (data?) => {
+                            this.showLeadDetails({ data: data || this.actionEvent }, 'notes');
+                        },
+                        button: {
+                            text: '+' + this.l('Add'),
+                            action: (data?) => {
+                                this.showLeadDetails({ data: data || this.actionEvent }, 'notes', {
+                                    addNew: true
+                                });
+                            },
+                            checkVisible: () => this.permission.checkCGPermission([this.selectedContactGroup])
+                        }
+                    },
+                    {
+                        text: this.l('Appointment'),
+                        class: 'appointment',
+                        disabled: true,
+                        action: () => {}
+                    },
+                    {
+                        text: this.l('Orders'),
+                        class: 'orders',
+                        action: (data?) => {
+                            this.showLeadDetails({ data: data || this.actionEvent }, 'invoices');
+                        }
+                    },
+                    {
+                        text: this.l('Notifications'),
+                        class: 'notifications',
+                        disabled: true,
+                        action: () => {}
+                    },
+                    {
+                        getText: (lead: LeadDto) => {
+                            const stage: StageDto = this.pipelineService.getStageByName(
+                                this.pipelinePurposeId,
+                                lead.Stage,
+                                this.selectedContactGroup,
+                                this.selectedPipelineId
+                            );
+                            return this.l('Checklist') + ' (' + lead.StageChecklistPointDoneCount + '/' + stage.checklistPoints.length + ')';
+                        },
+                        class: 'checklist',
+                        checkVisible: (lead: LeadDto) => {
+                            const stage = this.pipelineService.getStageByName(
+                                this.pipelinePurposeId,
+                                lead.Stage,
+                                this.selectedContactGroup,
+                                this.selectedPipelineId
+                            );
+                            return !!(!stage.isFinal && stage.checklistPoints && stage.checklistPoints.length);
+                        },
+                        action: (data?) => {
+                            this.openEntityChecklistDialog(data);
+                        }
+                    }
+                ]
+            },
+            {
+                key: '',
+                visible: true,
+                items: [
+                    {
+                        text: this.l('Delete'),
+                        class: 'delete',
+                        disabled: false,
+                        action: (data?) => {
+                            this.deleteLeads([(data || this.actionEvent.data || this.actionEvent).Id]);
+                        },
+                        checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup])
+                    },
+                    {
+                        text: this.l('EditRow'),
+                        class: 'edit',
+                        action: (data?) => this.showLeadDetails({ data: data || this.actionEvent }),
+                        checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup])
+                    }
+                ]
+            }
+        ];
+    }
+
     private handleUserGroupTextUpdate() {
         this.userGroupText$.pipe(takeUntil(this.lifeCycleSubjectsService.destroy$))
             .subscribe((userGroupText: string) => {
@@ -847,6 +860,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             takeUntil(this.lifeCycleSubjectsService.destroy$),
         ).subscribe((selectedContactGroup: ContactGroup) => {
             this.selectedContactGroup = selectedContactGroup;
+            this.initContactGroupRelatedProperties();
         });
     }
 
@@ -894,10 +908,13 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
             this.odataRequestValues$,
             this.refresh$
         ).pipe(
-            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            debounceTime(300),
             filter(() => !this.showPipeline),
-            debounceTime(300)
-        ).subscribe(([odataRequestValues, ]) => {
+            takeUntil(this.lifeCycleSubjectsService.destroy$),
+            switchMap(([odataRequestValues, ]: [ODataRequestValues, null]) => {
+                return this.loadTotalsRequest$.pipe(first(), map(() => odataRequestValues));
+            })
+        ).subscribe((odataRequestValues: ODataRequestValues) => {
             let url = this.getODataUrl(this.totalDataSourceURI,
                 odataRequestValues.filter, null, odataRequestValues.params);
             if (url && this.oDataService.requestLengthIsValid(url)) {
@@ -2270,6 +2287,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
 
     onTotalChange(totalCount: number) {
         this.totalCount = totalCount;
+        this.loadAssignUsersList.next();
     }
 
     openEntityChecklistDialog(data?) {

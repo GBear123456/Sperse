@@ -6,11 +6,11 @@ import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from 
 /** Application imports */
 import { AppFeatures } from '@shared/AppFeatures';
 import { HtmlHelper } from '@shared/helpers/HtmlHelper';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BANKCodeServiceProxy, GetBankCodeInput } from '@shared/service-proxies/service-proxies';
-import { NotifyService } from '@abp/notify/notify.service';
+import { NotifyService } from 'abp-ng2-module';
 
 @Component({
     selector: 'bank-code-decode',

@@ -1,9 +1,10 @@
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { OnDestroy, Injector } from '@angular/core';
+import { OnDestroy, Injector, Directive } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { InstanceType } from '@shared/service-proxies/service-proxies';
 import { CFOService } from '../../cfo.service';
 
+@Directive()
 export abstract class CFOComponentBase extends AppComponentBase implements OnDestroy {
     instanceId: number;
     instanceType: InstanceType;

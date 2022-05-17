@@ -32,7 +32,7 @@ import 'assets/metronic/src/js/framework/components/general/dropdown.js';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppFeatures } from '@shared/AppFeatures';
 import { BankCodeService } from '@app/shared/common/bank-code/bank-code.service';
-import { FeatureCheckerService } from '@abp/features/feature-checker.service';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { BankCodeLetter } from '@app/shared/common/bank-code-letters/bank-code-letter.enum';
 import { BankCodeLettersComponent } from '@app/shared/common/bank-code-letters/bank-code-letters.component';
@@ -51,8 +51,8 @@ import { AppConsts } from '@shared/AppConsts';
     providers: [ CommonUserInfoServiceProxy, MemberSettingsServiceProxy, ImpersonationService, ]
 })
 export class UserDropdownMenuComponent implements AfterViewInit, OnInit {
-    @ViewChild('topBarUserProfile', { static: false }) topBarUserProfile: ElementRef;
-    @ViewChild(BankCodeLettersComponent, { static: false }) bankCodeLetters: BankCodeLettersComponent;
+    @ViewChild('topBarUserProfile') topBarUserProfile: ElementRef;
+    @ViewChild(BankCodeLettersComponent) bankCodeLetters: BankCodeLettersComponent;
     @Input() subtitle: string;
     @Input() dropdownMenuItems: UserDropdownMenuItemModel[] = this.getDropDownItems();
     private impersonationService: ImpersonationService;

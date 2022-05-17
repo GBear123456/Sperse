@@ -9,11 +9,10 @@ import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { FiltersService } from '@shared/filters/filters.service';
-import { AbpSessionService } from '@abp/session/abp-session.service';
+import { AbpSessionService } from 'abp-ng2-module';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { ApplicationLanguageListDto, LanguageServiceProxy, SetDefaultLanguageInput } from '@shared/service-proxies/service-proxies';
 import { CreateOrEditLanguageModalComponent } from './create-or-edit-language-modal/create-or-edit-language-modal.component';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { AppPermissions } from '@shared/AppPermissions';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { HeadlineButton } from '@app/shared/common/headline/headline-button.model';
@@ -23,11 +22,10 @@ import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.se
 
 @Component({
     templateUrl: './languages.component.html',
-    styleUrls: ['./languages.component.less'],
-    animations: [appModuleAnimation()]
+    styleUrls: ['./languages.component.less']
 })
 export class LanguagesComponent extends AppComponentBase implements OnDestroy {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     dataSource: DataSource = new DataSource({
         key: 'id',
         load: () => {
@@ -86,7 +84,7 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
             {
                 text: this.l('SetAsDefaultLanguage'),
                 class: 'set-as-default-language',
-                visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesChangeTexts),
+                visible: this.permission.isGranted(AppPermissions.AdministrationLanguagesChangeDefaultLanguage),
                 action: () => {
                     this.setAsDefaultLanguage(this.actionRecord);
                 }
@@ -175,6 +173,9 @@ export class LanguagesComponent extends AppComponentBase implements OnDestroy {
         this.languageService.setDefaultLanguage(input).subscribe(() => {
             this.invalidate();
             this.notify.success(this.l('SuccessfullySaved'));
+            this.message.info(this.l('DefaultSettingChangedRefreshPageNotification', this.l('Language'))).done(() => {
+                window.location.reload();
+            });
         });
     }
 

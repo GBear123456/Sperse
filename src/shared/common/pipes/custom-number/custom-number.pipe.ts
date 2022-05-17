@@ -9,8 +9,10 @@ import { DecimalPipe } from '@angular/common';
  * See spec for usage examples
  */
 export class CustomNumberPipe extends DecimalPipe implements PipeTransform {
-    transform(value: any, digitsInfo?: string): string | null {
-        let result = super.transform(value, digitsInfo);
+    transform(value: number | string, digitsInfo?: string, locale?: string): string | null;
+    transform(value: null | undefined, digitsInfo?: string, locale?: string): null;
+    transform(value: number | string | null | undefined, digitsInfo?: string, locale?: string): string | null {
+        let result: any = super.transform(value, digitsInfo, locale);
         if (value !== undefined && digitsInfo) {
             const [minIntegerDigits, minFractionDigits, maxFractionDigits] = digitsInfo.split(/[.-]+/).map(digit => +digit);
             value = +value;

@@ -24,9 +24,9 @@ import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/paym
 import { ModuleType, PackageServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
 import { StatusInfo } from './models/status-info';
 import { AppPermissions } from '@shared/AppPermissions';
-import { PermissionCheckerService } from 'abp-ng2-module/dist/src/auth/permission-checker.service';
+import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppLocalizationService } from '../localization/app-localization.service';
-import { MessageService } from 'abp-ng2-module/dist/src/message/message.service';
+import { MessageService } from 'abp-ng2-module';
 
 @Component({
     selector: 'payment-wizard',
@@ -37,8 +37,8 @@ import { MessageService } from 'abp-ng2-module/dist/src/message/message.service'
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentWizardComponent implements OnInit {
-    @ViewChild('stepper', { static: false }) stepper: MatStepper;
-    @ViewChild('wizard', { static: false }) wizardRef: ElementRef;
+    @ViewChild('stepper') stepper: MatStepper;
+    @ViewChild('wizard') wizardRef: ElementRef;
     plan$: Observable<PackageOptions> = this.paymentService.plan$;
     paymentStatus: PaymentStatusEnum;
     paymentStatusData: StatusInfo;

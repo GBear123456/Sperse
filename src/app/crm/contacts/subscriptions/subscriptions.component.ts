@@ -50,8 +50,8 @@ import { AppService } from '@app/app.service';
     styleUrls: ['./subscriptions.component.less']
 })
 export class SubscriptionsComponent implements OnInit, OnDestroy {
-    @ViewChild(ActionMenuComponent, { static: false }) actionMenu: ActionMenuComponent;
-    @ViewChild('mainGrid', { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(ActionMenuComponent) actionMenu: ActionMenuComponent;
+    @ViewChild('mainGrid') dataGrid: DxDataGridComponent;
     public data: {
         contactInfo: ContactInfoDto,
         leadInfo: LeadInfoDto

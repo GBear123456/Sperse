@@ -14,19 +14,17 @@ import zipObject from 'lodash/zipObject';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { appModuleAnimation } from '@shared/animations/routerTransition';
 import { OfferServiceProxy, GroupByPeriod } from 'shared/service-proxies/service-proxies';
 
 @Component({
     selector: 'pfm-click-stats',
     templateUrl: './click-stats.component.html',
     styleUrls: ['./click-stats.component.less'],
-    animations: [appModuleAnimation()],
     providers: [OfferServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClickStatsComponent extends AppComponentBase implements OnInit {
-    @ViewChild(DxDataGridComponent, { static: false }) dataGrid: DxDataGridComponent;
+    @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @Output() onStatsClick: EventEmitter<any> = new EventEmitter<any>();
     @Input() refresh$: Observable<null>;
     @Input() campaignId;
