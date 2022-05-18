@@ -49189,6 +49189,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
     creationTime!: moment.Moment;
     userId!: number;
     userName!: string | undefined;
+    paths!: string | undefined;
 
     constructor(data?: IApiKeyInfo) {
         if (data) {
@@ -49208,6 +49209,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
             this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
             this.userId = _data["userId"];
             this.userName = _data["userName"];
+            this.paths = _data["paths"];
         }
     }
 
@@ -49227,6 +49229,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["userId"] = this.userId;
         data["userName"] = this.userName;
+        data["paths"] = this.paths;
         return data;
     }
 }
@@ -49239,6 +49242,7 @@ export interface IApiKeyInfo {
     creationTime: moment.Moment;
     userId: number;
     userName: string | undefined;
+    paths: string | undefined;
 }
 
 export enum Appliances {
@@ -64600,6 +64604,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
     name!: string;
     expirationDate!: moment.Moment | undefined;
     userId!: number | undefined;
+    paths!: string | undefined;
 
     constructor(data?: IGenerateApiKeyInput) {
         if (data) {
@@ -64615,6 +64620,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
             this.name = _data["name"];
             this.expirationDate = _data["expirationDate"] ? moment(_data["expirationDate"].toString()) : <any>undefined;
             this.userId = _data["userId"];
+            this.paths = _data["paths"];
         }
     }
 
@@ -64630,6 +64636,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
         data["name"] = this.name;
         data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
         data["userId"] = this.userId;
+        data["paths"] = this.paths;
         return data;
     }
 }
@@ -64638,6 +64645,7 @@ export interface IGenerateApiKeyInput {
     name: string;
     expirationDate: moment.Moment | undefined;
     userId: number | undefined;
+    paths: string | undefined;
 }
 
 export class GenerateBalanceSheetReportInput implements IGenerateBalanceSheetReportInput {
@@ -93060,6 +93068,7 @@ export class UpdateApiKeyInput implements IUpdateApiKeyInput {
     name!: string;
     expirationDate!: moment.Moment | undefined;
     userId!: number | undefined;
+    paths!: string | undefined;
 
     constructor(data?: IUpdateApiKeyInput) {
         if (data) {
@@ -93076,6 +93085,7 @@ export class UpdateApiKeyInput implements IUpdateApiKeyInput {
             this.name = _data["name"];
             this.expirationDate = _data["expirationDate"] ? moment(_data["expirationDate"].toString()) : <any>undefined;
             this.userId = _data["userId"];
+            this.paths = _data["paths"];
         }
     }
 
@@ -93092,6 +93102,7 @@ export class UpdateApiKeyInput implements IUpdateApiKeyInput {
         data["name"] = this.name;
         data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
         data["userId"] = this.userId;
+        data["paths"] = this.paths;
         return data;
     }
 }
@@ -93101,6 +93112,7 @@ export interface IUpdateApiKeyInput {
     name: string;
     expirationDate: moment.Moment | undefined;
     userId: number | undefined;
+    paths: string | undefined;
 }
 
 export class UpdateBankAccountDto implements IUpdateBankAccountDto {
