@@ -208,11 +208,13 @@ export class AddressesComponent implements OnInit, OnDestroy {
                 streetAddress: address && address.streetAddress,
                 neighborhood: address && address.neighborhood,
                 usageTypeId: address && address.usageTypeId,
+                confirmationDate: address.confirmationDate,
+                confirmedByUserFullName: address.confirmedByUserFullName,
                 zip: address && address.zip,
                 isDeleteAllowed: this.isDeleteAllowed,
                 showType: this.showType,
                 showNeighborhood: this.showNeighborhood,
-                editDialogTitle: this.editDialogTitle
+                editDialogTitle: this.editDialogTitle                
             };
             this.dialog.closeAll();
             this.dialog.open(EditAddressDialog, {

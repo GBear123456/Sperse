@@ -779,11 +779,12 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     }
 
     showContactPersons(event) {
-        this.dialog.closeAll();
+        this.closeEditDialogs();
         this.dialog.open(ContactPersonsDialogComponent, {
             data: this.contactInfo,
             hasBackdrop: false,
             minWidth: 420,
+            closeOnNavigation: true,
             position: this.getDialogPosition(event, -182, 89),
             panelClass: ['related-contacts']
         }).afterClosed().subscribe(result => {

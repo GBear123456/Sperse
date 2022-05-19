@@ -7,6 +7,7 @@ export interface PartnerDto {
     City: string;
     OrganizationId: number;
     State: string;
+    StarId: number;
     IsActive: boolean;
     IsProspective: boolean;
     ContactDate: string;

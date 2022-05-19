@@ -121,7 +121,9 @@ export class SocialsComponent {
                 contactId: this.contactInfoData.contactId,
                 id: undefined,
                 isConfirmed: undefined,
-                confirmationDate: undefined
+                confirmationDate: undefined,
+                confirmedByUserId: undefined,
+                confirmedByUserFullName: undefined
             }));
         }
     }
