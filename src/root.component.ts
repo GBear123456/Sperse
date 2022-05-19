@@ -4,6 +4,7 @@ import { NavigationEnd, Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 
 /** Third party imports */
+import * as moment from 'moment-timezone';
 import kebabCase from 'lodash/kebabCase';
 import startCase from 'lodash/startCase';
 import * as _ from 'underscore';
@@ -27,6 +28,7 @@ import { LoadingService } from '@shared/common/loading-service/loading.service';
 export class RootComponent implements OnInit, AfterViewInit {    
     maintenanceSettings: MaintenanceSettingsDto;
     hideMaintenanceMessage: Boolean = false;
+    currentDate = moment();
 
     constructor(
         private router: Router,
