@@ -68,7 +68,7 @@ export class EmailTemplateSelectorComponent {
 
     cloneEmailTemplate() {
         this.emailTemplateProxy
-            .clone(new CloneEmailTemplateInput({ id: this.templateId }))
+            .clone(new CloneEmailTemplateInput({ id: this.templateId, emailTemplateType: this.templateType }))
             .subscribe((newTemplateId) => {
                 this._refresh.next();
                 this.contactService.showEmailTemplateSelectorDialog(newTemplateId, this.templateType, this.dialogSaveCallback.bind(this));

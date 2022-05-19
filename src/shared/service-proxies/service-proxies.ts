@@ -53223,6 +53223,7 @@ export interface ICheckHostNameDnsMappingOutput {
 
 export class CloneEmailTemplateInput implements ICloneEmailTemplateInput {
     id!: number | undefined;
+    emailTemplateType!: EmailTemplateType | undefined;
 
     constructor(data?: ICloneEmailTemplateInput) {
         if (data) {
@@ -53236,6 +53237,7 @@ export class CloneEmailTemplateInput implements ICloneEmailTemplateInput {
     init(_data?: any) {
         if (_data) {
             this.id = _data["id"];
+            this.emailTemplateType = _data["emailTemplateType"];
         }
     }
 
@@ -53249,12 +53251,14 @@ export class CloneEmailTemplateInput implements ICloneEmailTemplateInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["id"] = this.id;
+        data["emailTemplateType"] = this.emailTemplateType;
         return data;
     }
 }
 
 export interface ICloneEmailTemplateInput {
     id: number | undefined;
+    emailTemplateType: EmailTemplateType | undefined;
 }
 
 export class ComboboxItemDto implements IComboboxItemDto {
