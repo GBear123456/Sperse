@@ -138,6 +138,8 @@ export class SocialsComponent {
             contactId: data && data.contactId
             || this.contactInfoData && this.contactInfoData.contactId,
             url: data && data.url,
+            confirmationDate: data && data.confirmationDate,
+            confirmedByUserFullName: data && data.confirmedByUserFullName,
             usageTypeId: data
                 ? data.linkTypeId || AppConsts.otherLinkTypeId :
                 (this.isCompany ? LinkType.Website : LinkType.Facebook),
