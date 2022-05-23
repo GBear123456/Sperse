@@ -17,7 +17,6 @@
             <div class="dx-field-value">
                 <dx-date-box name="expirationDate"
                              type="datetime"
-                             [min]="minCalendarDate"
                              [max]="maxCalendarDate"
                              [(value)]="model.expirationDate">
                     <dx-validator></dx-validator>
@@ -39,6 +38,17 @@
                     (onInput)="contactLookupItems($event)"
                     (onFocusIn)="lookupFocusIn($event)">
                 </dx-select-box>
+            </div>
+        </div>
+        <div class="dx-field d-flex align-items-center">
+            <div class="dx-field-label">{{l('ApiKey_Paths')}}</div>
+            <div class="dx-field-value">
+                <dx-text-box 
+                    name="paths"
+                    [maxLength]="500"
+                    [hint]="l('SpecifyAllowedPathHint')"
+                    [(value)]="model.paths">
+                </dx-text-box>
             </div>
         </div>
     </dx-validation-group>
