@@ -17,6 +17,7 @@
             <div class="dx-field-value">
                 <dx-date-box name="expirationDate"
                              type="datetime"
+                             [min]="minCalendarDate"
                              [max]="maxCalendarDate"
                              [(value)]="model.expirationDate">
                     <dx-validator></dx-validator>

@@ -22,6 +22,7 @@ export class EditKeyDialog extends AppComponentBase {
 
     isValid = false;
     validator: any;
+    minCalendarDate = new Date();
     maxCalendarDate = new Date(2038, 0, 19);
     model: GenerateApiKeyInput | UpdateApiKeyInput;
     latestSearchPhrase: string;
@@ -39,6 +40,8 @@ export class EditKeyDialog extends AppComponentBase {
         public dialogRef: MatDialogRef<EditKeyDialog>
     ) {
         super(injector);
+        this.minCalendarDate.setFullYear(
+            this.minCalendarDate.getFullYear() - 1);
         if (this.hasAccessAll)
             this.contactLookupRequest();
 
