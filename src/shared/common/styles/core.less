@@ -735,8 +735,10 @@ body > .blockUI.blockOverlay{
 .star-knowledge,
 .star-unknown {
     -webkit-mask-image: none;
-    font-size: 18px;
+    font-size: 17px;
     text-align: center;
+    display: table-cell;
+    border: 1px solid #fff;
 }
 
 .star-blueprint {
@@ -774,7 +776,7 @@ body > .blockUI.blockOverlay{
 .star-unknown {
     background-color: #fff;
     color: #333333;
-    border: 1px solid #333333;
+    border: 1px solid #333333!important;
     &::before {
         content: '?'
     }
