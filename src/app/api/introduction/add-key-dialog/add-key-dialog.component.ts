@@ -4,10 +4,11 @@ import { Component, Inject, Injector, ViewChild } from '@angular/core';
 /** Third party imports */
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DxSelectBoxComponent } from 'devextreme-angular/ui/select-box';
+import * as moment from 'moment-timezone';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { GenerateApiKeyInput, ContactServiceProxy } from '@shared/service-proxies/service-proxies';
+import { GenerateApiKeyInput, ContactServiceProxy, UpdateApiKeyInput } from '@shared/service-proxies/service-proxies';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { DateHelper } from '@shared/helpers/DateHelper';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -21,13 +22,9 @@ export class EditKeyDialog extends AppComponentBase {
 
     isValid = false;
     validator: any;
-    minCalendarDate = DateHelper.addTimezoneOffset(new Date(), true);
+    minCalendarDate = new Date();
     maxCalendarDate = new Date(2038, 0, 19);
-    model: GenerateApiKeyInput = new GenerateApiKeyInput({
-        name: '',
-        userId: undefined,
-        expirationDate: this.minCalendarDate
-    });
+    model: GenerateApiKeyInput | UpdateApiKeyInput;
     latestSearchPhrase: string;
     contacts: any = [];
     lookupTimeout: any;
@@ -43,15 +40,41 @@ export class EditKeyDialog extends AppComponentBase {
         public dialogRef: MatDialogRef<EditKeyDialog>
     ) {
         super(injector);
-        this.model.expirationDate.setTime(this.minCalendarDate.getTime() + this.ONE_HOUR_MILISECONDS);
+        this.minCalendarDate.setFullYear(
+            this.minCalendarDate.getFullYear() - 1);
         if (this.hasAccessAll)
             this.contactLookupRequest();
+
+        if (data && data.id) {
+            this.model = new UpdateApiKeyInput({
+                id: data.id,
+                name: data.name,
+                paths: data.paths,
+                userId: undefined,
+                expirationDate: data.expirationDate && 
+                    DateHelper.addTimezoneOffset(data.expirationDate.toDate(), true)
+            });
+        } else {
+            this.model = new GenerateApiKeyInput({
+                name: '',
+                paths: '',
+                userId: undefined,
+                expirationDate: (new Date()).setTime(
+                    Date.now() + this.ONE_HOUR_MILISECONDS),
+            });
+        }
     }
 
     contactLookupRequest(phrase = '', callback?) {
         this.contactProxy.getAllByPhrase(phrase, 10, true, [], false, false).subscribe(res => {
             if (!phrase || phrase == this.latestSearchPhrase) {
                 this.contacts = res;
+                if (!callback && this.data && this.data.userId && 
+                    this.contacts.every(item => item.userId != this.data.userId)
+                )  {
+                    this.contacts.push(<any>{userId: this.data.userId, name: this.data.userName});
+                    this.model.userId = this.data.userId;
+                }
                 callback && callback(res);
             }
         });
@@ -87,7 +110,8 @@ export class EditKeyDialog extends AppComponentBase {
 
     onSave(event) {
         if (this.validator.validate().isValid) {
-            this.model.expirationDate = DateHelper.removeTimezoneOffset(this.model.expirationDate, true);
+            this.model.expirationDate = moment(
+                DateHelper.removeTimezoneOffset(this.model.expirationDate, true));
             this.dialogRef.close(this.model);
         }
     }
