@@ -13,7 +13,7 @@
             </div>
         </div>
         <div class="dx-field d-flex align-items-center">
-            <div class="dx-field-label">{{l('ApiKey_ExpirationDate')}}</div>
+            <div class="dx-field-label">{{l('ApiKey_ExpirationDate')}} (UTC)</div>
             <div class="dx-field-value">
                 <dx-date-box name="expirationDate"
                              type="datetime"
@@ -42,14 +42,16 @@
             </div>
         </div>
         <div class="dx-field d-flex align-items-center">
-            <div class="dx-field-label">{{l('ApiKey_Paths')}}</div>
+            <div class="dx-field-label">{{l('ApiKey_Paths')}}<i class="info-tooltip fa fa-info" [title]="l('SpecifyAllowedPathHint')"></i></div>
             <div class="dx-field-value">
-                <dx-text-box 
+                <dx-text-area 
                     name="paths"
                     [maxLength]="500"
+                    valueChangeEvent="keyup"
                     [hint]="l('SpecifyAllowedPathHint')"
+                    (onEnterKey)="onPathsEnterKey($event)"
                     [(value)]="model.paths">
-                </dx-text-box>
+                </dx-text-area>
             </div>
         </div>
     </dx-validation-group>

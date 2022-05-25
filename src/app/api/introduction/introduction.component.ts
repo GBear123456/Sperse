@@ -50,6 +50,7 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
                                     item.paths = result.paths;
                                 }
                             });
+                            this.loadApiKeys();
                             abp.notify.success(this.l('SuccessfullySaved'));
                         });
                     else
