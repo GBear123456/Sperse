@@ -35,15 +35,17 @@
                 <div *ngIf="apiKeys">
                     <dx-data-grid id="gridContainer"
                                   keyExpr="id"
+                                  accessKey="API_DataGrid"
+                                  [scrolling]="{showScrollbar:'never'}"
                                   [dataSource]="apiKeys">
                         <dxi-column dataField="name" [caption]="l('ApiKey_Name')" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column dataField="key" [caption]="l('ApiKey_Key')" cellTemplate="keyTemplate" width="410px"></dxi-column>
+                        <dxi-column dataField="key" [caption]="l('ApiKey_Key')" cellTemplate="keyTemplate" width="420px"></dxi-column>
                         <dxi-column dataField="expirationDate" [caption]="l('ApiKey_ExpirationDate')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="creationTime" [caption]="l('CreationTime')" cellTemplate="dateCell" cssClass="tabular"></dxi-column>
                         <dxi-column dataField="userName" [caption]="l('UserName')" width="150px" cssClass="clipboard-holder"></dxi-column>
-                        <dxi-column [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" [visible]="canManageApiKeys" cellTemplate="editDeleteTemplate"></dxi-column>
+                        <dxi-column width="100px" [allowFiltering]="false" [allowSorting]="false" [allowReordering]="false" [visible]="canManageApiKeys" cellTemplate="editDeleteTemplate"></dxi-column>
                         <div *dxTemplate="let data of 'editDeleteTemplate'">
-                            <a class="dx-link" (click)="addUpdateApiKey(data.data)">{{l('Update')}}</a>&nbsp;<a class="dx-link" (click)="deleteApiKey(data)">{{l('Delete')}}</a>
+                            <a class="dx-link" (click)="addUpdateApiKey(data.data)">{{l('Edit')}}</a>&nbsp;<a class="dx-link" (click)="deleteApiKey(data)">{{l('Delete')}}</a>
                         </div>
                         <div *dxTemplate="let data of 'keyTemplate'" class="key-container" [title]="data.data.key">
                             <span>{{getMaskedKey(data.data.key)}}<i class="save-to-clipboard" (click)="copyToClipboard(data.data.key)"></i></span>

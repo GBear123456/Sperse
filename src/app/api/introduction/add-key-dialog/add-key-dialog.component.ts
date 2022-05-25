@@ -29,8 +29,6 @@ export class EditKeyDialog extends AppComponentBase {
     contacts: any = [];
     lookupTimeout: any;
 
-    private readonly ONE_HOUR_MILISECONDS = 3600000;
-
     hasAccessAll = this.permissionChecker.isGranted(AppPermissions.APIManageKeysAccessAll);
 
     constructor(injector: Injector,
@@ -51,7 +49,7 @@ export class EditKeyDialog extends AppComponentBase {
                 name: data.name,
                 paths: data.paths,
                 userId: undefined,
-                expirationDate: data.expirationDate && 
+                expirationDate: data.expirationDate &&
                     DateHelper.addTimezoneOffset(data.expirationDate.toDate(), true)
             });
         } else {
@@ -59,8 +57,8 @@ export class EditKeyDialog extends AppComponentBase {
                 name: '',
                 paths: '',
                 userId: undefined,
-                expirationDate: (new Date()).setTime(
-                    Date.now() + this.ONE_HOUR_MILISECONDS),
+                expirationDate: DateHelper.addTimezoneOffset(
+                    moment.utc().add(1, 'days').toDate(), true)
             });
         }
     }
@@ -73,8 +71,8 @@ export class EditKeyDialog extends AppComponentBase {
                     this.contacts.every(item => item.userId != this.data.userId)
                 )  {
                     this.contacts.push(<any>{userId: this.data.userId, name: this.data.userName});
-                    this.model.userId = this.data.userId;
                 }
+                this.model.userId = this.data.userId;
                 callback && callback(res);
             }
         });
@@ -110,7 +108,9 @@ export class EditKeyDialog extends AppComponentBase {
 
     onSave(event) {
         if (this.validator.validate().isValid) {
-            this.model.expirationDate = moment(
+            let paths = this.model.paths;
+            this.model.paths = paths && paths.trim() ? paths.replace(/\n/gm, '') : null;
+            this.model.expirationDate = this.model.expirationDate && moment(
                 DateHelper.removeTimezoneOffset(this.model.expirationDate, true));
             this.dialogRef.close(this.model);
         }
@@ -118,5 +118,11 @@ export class EditKeyDialog extends AppComponentBase {
 
     initValidationGroup(event) {
         this.validator = event.component;
+    }
+
+    onPathsEnterKey(event) {
+        this.model.paths = (this.model.paths || '').split('\n').reduce((acc, val) => {            
+            return acc.concat(val.trim().split(',').filter(Boolean));
+        }, []).join(',\n') + ',\n';
     }
 }
