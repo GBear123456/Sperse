@@ -36481,6 +36481,73 @@ export class RoleServiceProxy {
 }
 
 @Injectable()
+export class SalesTalkServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getLead(leadId: number): Observable<SalesTalkLeadInfo> {
+        let url_ = this.baseUrl + "/api/services/CRM/SalesTalk/GetLead?";
+        if (leadId === undefined || leadId === null)
+            throw new Error("The parameter 'leadId' must be defined and cannot be null.");
+        else
+            url_ += "leadId=" + encodeURIComponent("" + leadId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetLead(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetLead(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SalesTalkLeadInfo>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SalesTalkLeadInfo>;
+        }));
+    }
+
+    protected processGetLead(response: HttpResponseBase): Observable<SalesTalkLeadInfo> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SalesTalkLeadInfo.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SalesTalkLeadInfo>(null as any);
+    }
+}
+
+@Injectable()
 export class SecurityManagementServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -38694,6 +38761,121 @@ export class TenantServiceProxy {
     }
 
     protected processUnlockTenantAdmin(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+}
+
+@Injectable()
+export class TenantCRMIntegrationSettingsServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getSalesTalkSettings(): Observable<SalesTalkSettings> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantCRMIntegrationSettings/GetSalesTalkSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSalesTalkSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSalesTalkSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SalesTalkSettings>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SalesTalkSettings>;
+        }));
+    }
+
+    protected processGetSalesTalkSettings(response: HttpResponseBase): Observable<SalesTalkSettings> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SalesTalkSettings.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SalesTalkSettings>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateSalesTalkSettings(body: SalesTalkSettingsInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/TenantCRMIntegrationSettings/UpdateSalesTalkSettings";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateSalesTalkSettings(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateSalesTalkSettings(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdateSalesTalkSettings(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -86244,6 +86426,250 @@ export enum SalesSummaryDatePeriod {
     Daily = 1,
     Weekly = 2,
     Monthly = 3,
+}
+
+export class SalesTalkLeadInfo implements ISalesTalkLeadInfo {
+    leadId!: number;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    email!: string | undefined;
+    mobilePhone!: string | undefined;
+    homePhone!: string | undefined;
+    workPhone!: string | undefined;
+    tollPhone!: string | undefined;
+    faxPhone!: string | undefined;
+    homeAddress!: string | undefined;
+    homeCity!: string | undefined;
+    homeState!: string | undefined;
+    homeCountry!: string | undefined;
+    homeZip!: string | undefined;
+    officeAddress!: string | undefined;
+    officeCity!: string | undefined;
+    officeState!: string | undefined;
+    officeCountry!: string | undefined;
+    officeZip!: string | undefined;
+    companyId!: number | undefined;
+    companyName!: string | undefined;
+    companyDescription!: string | undefined;
+    companyAnnualRevenue!: number | undefined;
+    companyEmployeeCount!: number | undefined;
+    companyIndustry!: string | undefined;
+    companyTickerSymbol!: string | undefined;
+    companyWebSite!: string | undefined;
+    title!: string | undefined;
+    leadStage!: string | undefined;
+    source!: string | undefined;
+    timezone!: string | undefined;
+
+    constructor(data?: ISalesTalkLeadInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.leadId = _data["leadId"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.email = _data["email"];
+            this.mobilePhone = _data["mobilePhone"];
+            this.homePhone = _data["homePhone"];
+            this.workPhone = _data["workPhone"];
+            this.tollPhone = _data["tollPhone"];
+            this.faxPhone = _data["faxPhone"];
+            this.homeAddress = _data["homeAddress"];
+            this.homeCity = _data["homeCity"];
+            this.homeState = _data["homeState"];
+            this.homeCountry = _data["homeCountry"];
+            this.homeZip = _data["homeZip"];
+            this.officeAddress = _data["officeAddress"];
+            this.officeCity = _data["officeCity"];
+            this.officeState = _data["officeState"];
+            this.officeCountry = _data["officeCountry"];
+            this.officeZip = _data["officeZip"];
+            this.companyId = _data["companyId"];
+            this.companyName = _data["companyName"];
+            this.companyDescription = _data["companyDescription"];
+            this.companyAnnualRevenue = _data["companyAnnualRevenue"];
+            this.companyEmployeeCount = _data["companyEmployeeCount"];
+            this.companyIndustry = _data["companyIndustry"];
+            this.companyTickerSymbol = _data["companyTickerSymbol"];
+            this.companyWebSite = _data["companyWebSite"];
+            this.title = _data["title"];
+            this.leadStage = _data["leadStage"];
+            this.source = _data["source"];
+            this.timezone = _data["timezone"];
+        }
+    }
+
+    static fromJS(data: any): SalesTalkLeadInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new SalesTalkLeadInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["leadId"] = this.leadId;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["email"] = this.email;
+        data["mobilePhone"] = this.mobilePhone;
+        data["homePhone"] = this.homePhone;
+        data["workPhone"] = this.workPhone;
+        data["tollPhone"] = this.tollPhone;
+        data["faxPhone"] = this.faxPhone;
+        data["homeAddress"] = this.homeAddress;
+        data["homeCity"] = this.homeCity;
+        data["homeState"] = this.homeState;
+        data["homeCountry"] = this.homeCountry;
+        data["homeZip"] = this.homeZip;
+        data["officeAddress"] = this.officeAddress;
+        data["officeCity"] = this.officeCity;
+        data["officeState"] = this.officeState;
+        data["officeCountry"] = this.officeCountry;
+        data["officeZip"] = this.officeZip;
+        data["companyId"] = this.companyId;
+        data["companyName"] = this.companyName;
+        data["companyDescription"] = this.companyDescription;
+        data["companyAnnualRevenue"] = this.companyAnnualRevenue;
+        data["companyEmployeeCount"] = this.companyEmployeeCount;
+        data["companyIndustry"] = this.companyIndustry;
+        data["companyTickerSymbol"] = this.companyTickerSymbol;
+        data["companyWebSite"] = this.companyWebSite;
+        data["title"] = this.title;
+        data["leadStage"] = this.leadStage;
+        data["source"] = this.source;
+        data["timezone"] = this.timezone;
+        return data;
+    }
+}
+
+export interface ISalesTalkLeadInfo {
+    leadId: number;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    email: string | undefined;
+    mobilePhone: string | undefined;
+    homePhone: string | undefined;
+    workPhone: string | undefined;
+    tollPhone: string | undefined;
+    faxPhone: string | undefined;
+    homeAddress: string | undefined;
+    homeCity: string | undefined;
+    homeState: string | undefined;
+    homeCountry: string | undefined;
+    homeZip: string | undefined;
+    officeAddress: string | undefined;
+    officeCity: string | undefined;
+    officeState: string | undefined;
+    officeCountry: string | undefined;
+    officeZip: string | undefined;
+    companyId: number | undefined;
+    companyName: string | undefined;
+    companyDescription: string | undefined;
+    companyAnnualRevenue: number | undefined;
+    companyEmployeeCount: number | undefined;
+    companyIndustry: string | undefined;
+    companyTickerSymbol: string | undefined;
+    companyWebSite: string | undefined;
+    title: string | undefined;
+    leadStage: string | undefined;
+    source: string | undefined;
+    timezone: string | undefined;
+}
+
+export class SalesTalkSettings implements ISalesTalkSettings {
+    isEnabled!: boolean;
+    url!: string | undefined;
+    apiKey!: string | undefined;
+
+    constructor(data?: ISalesTalkSettings) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isEnabled = _data["isEnabled"];
+            this.url = _data["url"];
+            this.apiKey = _data["apiKey"];
+        }
+    }
+
+    static fromJS(data: any): SalesTalkSettings {
+        data = typeof data === 'object' ? data : {};
+        let result = new SalesTalkSettings();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isEnabled"] = this.isEnabled;
+        data["url"] = this.url;
+        data["apiKey"] = this.apiKey;
+        return data;
+    }
+}
+
+export interface ISalesTalkSettings {
+    isEnabled: boolean;
+    url: string | undefined;
+    apiKey: string | undefined;
+}
+
+export class SalesTalkSettingsInput implements ISalesTalkSettingsInput {
+    isEnabled!: boolean;
+    url!: string | undefined;
+    apiKey!: string | undefined;
+
+    constructor(data?: ISalesTalkSettingsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isEnabled = _data["isEnabled"];
+            this.url = _data["url"];
+            this.apiKey = _data["apiKey"];
+        }
+    }
+
+    static fromJS(data: any): SalesTalkSettingsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SalesTalkSettingsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isEnabled"] = this.isEnabled;
+        data["url"] = this.url;
+        data["apiKey"] = this.apiKey;
+        return data;
+    }
+}
+
+export interface ISalesTalkSettingsInput {
+    isEnabled: boolean;
+    url: string | undefined;
+    apiKey: string | undefined;
 }
 
 export class SavePageInput implements ISavePageInput {
