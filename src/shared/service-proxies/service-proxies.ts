@@ -3380,14 +3380,29 @@ export class BANKCodeServiceProxy {
 
     /**
      * @param aiGeneratedOnly (optional) 
+     * @param startDate (optional) 
+     * @param endDate (optional) 
+     * @param sourceOrganizationUnitIds (optional) 
      * @return Success
      */
-    getLeaderBoard(aiGeneratedOnly: boolean | undefined): Observable<GetLeaderBoardOutput> {
+    getLeaderBoard(aiGeneratedOnly: boolean | undefined, startDate: moment.Moment | undefined, endDate: moment.Moment | undefined, sourceOrganizationUnitIds: number[] | undefined): Observable<GetLeaderBoardOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/BANKCode/GetLeaderBoard?";
         if (aiGeneratedOnly === null)
             throw new Error("The parameter 'aiGeneratedOnly' cannot be null.");
         else if (aiGeneratedOnly !== undefined)
-            url_ += "aiGeneratedOnly=" + encodeURIComponent("" + aiGeneratedOnly) + "&";
+            url_ += "AiGeneratedOnly=" + encodeURIComponent("" + aiGeneratedOnly) + "&";
+        if (startDate === null)
+            throw new Error("The parameter 'startDate' cannot be null.");
+        else if (startDate !== undefined)
+            url_ += "StartDate=" + encodeURIComponent(startDate ? "" + startDate.toISOString() : "") + "&";
+        if (endDate === null)
+            throw new Error("The parameter 'endDate' cannot be null.");
+        else if (endDate !== undefined)
+            url_ += "EndDate=" + encodeURIComponent(endDate ? "" + endDate.toISOString() : "") + "&";
+        if (sourceOrganizationUnitIds === null)
+            throw new Error("The parameter 'sourceOrganizationUnitIds' cannot be null.");
+        else if (sourceOrganizationUnitIds !== undefined)
+            sourceOrganizationUnitIds && sourceOrganizationUnitIds.forEach(item => { url_ += "SourceOrganizationUnitIds=" + encodeURIComponent("" + item) + "&"; });
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -33789,6 +33804,109 @@ export class ProfilePersonServiceProxy {
     constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
         this.http = http;
         this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getPersonInfo(): Observable<PersonInfo> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePerson/GetPersonInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetPersonInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetPersonInfo(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<PersonInfo>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<PersonInfo>;
+        }));
+    }
+
+    protected processGetPersonInfo(response: HttpResponseBase): Observable<PersonInfo> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = PersonInfo.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<PersonInfo>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updatePersonInfo(body: PersonInfo | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ProfilePerson/UpdatePersonInfo";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdatePersonInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdatePersonInfo(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdatePersonInfo(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
     }
 
     /**
@@ -80090,6 +80208,54 @@ export interface IPersonHistoryDto {
     monthlyGoal: number | undefined;
 }
 
+export class PersonInfo implements IPersonInfo {
+    fullName!: string | undefined;
+    email!: string | undefined;
+    companyName!: string | undefined;
+    jobTitle!: string | undefined;
+
+    constructor(data?: IPersonInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.fullName = _data["fullName"];
+            this.email = _data["email"];
+            this.companyName = _data["companyName"];
+            this.jobTitle = _data["jobTitle"];
+        }
+    }
+
+    static fromJS(data: any): PersonInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new PersonInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["fullName"] = this.fullName;
+        data["email"] = this.email;
+        data["companyName"] = this.companyName;
+        data["jobTitle"] = this.jobTitle;
+        return data;
+    }
+}
+
+export interface IPersonInfo {
+    fullName: string | undefined;
+    email: string | undefined;
+    companyName: string | undefined;
+    jobTitle: string | undefined;
+}
+
 export class PersonInfoDto implements IPersonInfoDto {
     namePrefix!: string | undefined;
     middleName!: string | undefined;
@@ -83384,6 +83550,8 @@ export interface IPublicRecordDto {
 export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
     fullName!: string | undefined;
     email!: string | undefined;
+    companyName!: string | undefined;
+    jobTitle!: string | undefined;
     profileSummary!: string | undefined;
     calendlyUrl!: string | undefined;
     emails!: ProfileEmail[] | undefined;
@@ -83405,6 +83573,8 @@ export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
         if (_data) {
             this.fullName = _data["fullName"];
             this.email = _data["email"];
+            this.companyName = _data["companyName"];
+            this.jobTitle = _data["jobTitle"];
             this.profileSummary = _data["profileSummary"];
             this.calendlyUrl = _data["calendlyUrl"];
             if (Array.isArray(_data["emails"])) {
@@ -83446,6 +83616,8 @@ export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
         data = typeof data === 'object' ? data : {};
         data["fullName"] = this.fullName;
         data["email"] = this.email;
+        data["companyName"] = this.companyName;
+        data["jobTitle"] = this.jobTitle;
         data["profileSummary"] = this.profileSummary;
         data["calendlyUrl"] = this.calendlyUrl;
         if (Array.isArray(this.emails)) {
@@ -83480,6 +83652,8 @@ export class PublishedPersonProfileInfo implements IPublishedPersonProfileInfo {
 export interface IPublishedPersonProfileInfo {
     fullName: string | undefined;
     email: string | undefined;
+    companyName: string | undefined;
+    jobTitle: string | undefined;
     profileSummary: string | undefined;
     calendlyUrl: string | undefined;
     emails: ProfileEmail[] | undefined;
@@ -99228,8 +99402,7 @@ export enum YardPatioEnum {
 
 export class YTelSettingsEditDto implements IYTelSettingsEditDto {
     isEnabled!: boolean;
-    userName!: string | undefined;
-    password!: string | undefined;
+    authToken!: string | undefined;
     from!: string | undefined;
     inboundSmsKey!: string | undefined;
 
@@ -99245,8 +99418,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
     init(_data?: any) {
         if (_data) {
             this.isEnabled = _data["isEnabled"];
-            this.userName = _data["userName"];
-            this.password = _data["password"];
+            this.authToken = _data["authToken"];
             this.from = _data["from"];
             this.inboundSmsKey = _data["inboundSmsKey"];
         }
@@ -99262,8 +99434,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isEnabled"] = this.isEnabled;
-        data["userName"] = this.userName;
-        data["password"] = this.password;
+        data["authToken"] = this.authToken;
         data["from"] = this.from;
         data["inboundSmsKey"] = this.inboundSmsKey;
         return data;
@@ -99272,8 +99443,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
 
 export interface IYTelSettingsEditDto {
     isEnabled: boolean;
-    userName: string | undefined;
-    password: string | undefined;
+    authToken: string | undefined;
     from: string | undefined;
     inboundSmsKey: string | undefined;
 }
