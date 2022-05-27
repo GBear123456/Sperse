@@ -72,8 +72,10 @@ export class EditKeyDialog extends AppComponentBase {
                 )  {
                     this.contacts.push(<any>{userId: this.data.userId, name: this.data.userName});
                 }
-                this.model.userId = this.data.userId;
-                callback && callback(res);
+                if (callback)
+                    callback(res);
+                else
+                    this.model.userId = this.data.userId;
             }
         });
     }
@@ -86,6 +88,7 @@ export class EditKeyDialog extends AppComponentBase {
         event.component.option('opened', true);
         event.component.option('noDataText', this.l('LookingForItems'));
 
+        this.model.userId = undefined;
         clearTimeout(this.lookupTimeout);
         this.lookupTimeout = setTimeout(() => {
             event.component.option('opened', true);
