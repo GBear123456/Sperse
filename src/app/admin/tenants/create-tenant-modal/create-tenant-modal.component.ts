@@ -30,7 +30,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { NotifyService } from 'abp-ng2-module';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
-import { ModulesEditionsSelectComponent } from '../modules-edtions-select.component.ts/modules-editions-select.component';
+import { ModulesEditionsSelectComponent } from '../modules-edtions-select/modules-editions-select.component';
 
 //!!VP should be reimplemnted to use Dx text box instead of inputs
 @Component({
