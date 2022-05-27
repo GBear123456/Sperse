@@ -154,6 +154,7 @@
                         <dxi-column [dataField]="clientFields.CompanyName" [caption]="l('Customer.CompanyName')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular" [renderAsync]="true"></dxi-column>
+                        <dxi-column *ngIf="isBankCodeLayoutType" [dataField]="clientFields.StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.Xref" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
