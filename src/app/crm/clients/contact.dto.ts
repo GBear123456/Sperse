@@ -20,6 +20,7 @@ export interface ContactDto {
     SourceContactId: number;
     ParentId: number;
     GroupId: string;
+    StreetAddress: string;
     AffiliateContactName: string;
     AffiliateContactEmailAddress: string;
     AffiliateContactAffiliateCode: string;
