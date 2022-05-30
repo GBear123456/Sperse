@@ -51,4 +51,8 @@ export class ContactListDialogComponent {
                 ? this.profileService.getContactPhotoUrl(contact.photoPublicId)
                 : this.profileService.getPhoto(contact.thumbnail, this.photoType);
     }
+
+    close() {
+        this.dialogRef.close();
+    }
 }

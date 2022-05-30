@@ -1,9 +1,15 @@
 ﻿:host {
-    //display: block;
     position: relative;
     height: 100%;
 
-    ::ng-deep .dx-datagrid-rowsview .dx-row {
-        cursor: pointer;
+    ::ng-deep dx-data-grid {
+        .dx-datagrid-rowsview .dx-row {
+            cursor: pointer;
+        }
+        .dx-datagrid-headers {
+            .dx-datagrid-table td.stars:before {
+                right: 0px!important;                
+            }
+        }
     }
 }

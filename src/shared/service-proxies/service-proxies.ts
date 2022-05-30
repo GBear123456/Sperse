@@ -53740,6 +53740,8 @@ export class ContactAddressDto implements IContactAddressDto {
     id!: number;
     isConfirmed!: boolean;
     confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    confirmedByUserFullName!: string | undefined;
 
     constructor(data?: IContactAddressDto) {
         if (data) {
@@ -53767,6 +53769,8 @@ export class ContactAddressDto implements IContactAddressDto {
             this.id = _data["id"];
             this.isConfirmed = _data["isConfirmed"];
             this.confirmationDate = _data["confirmationDate"] ? moment(_data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = _data["confirmedByUserId"];
+            this.confirmedByUserFullName = _data["confirmedByUserFullName"];
         }
     }
 
@@ -53794,6 +53798,8 @@ export class ContactAddressDto implements IContactAddressDto {
         data["id"] = this.id;
         data["isConfirmed"] = this.isConfirmed;
         data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUserFullName"] = this.confirmedByUserFullName;
         return data;
     }
 }
@@ -53814,6 +53820,8 @@ export interface IContactAddressDto {
     id: number;
     isConfirmed: boolean;
     confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    confirmedByUserFullName: string | undefined;
 }
 
 export class ContactAddressInfo implements IContactAddressInfo {
@@ -54045,6 +54053,8 @@ export class ContactEmailDto implements IContactEmailDto {
     id!: number;
     isConfirmed!: boolean;
     confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    confirmedByUserFullName!: string | undefined;
 
     constructor(data?: IContactEmailDto) {
         if (data) {
@@ -54065,6 +54075,8 @@ export class ContactEmailDto implements IContactEmailDto {
             this.id = _data["id"];
             this.isConfirmed = _data["isConfirmed"];
             this.confirmationDate = _data["confirmationDate"] ? moment(_data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = _data["confirmedByUserId"];
+            this.confirmedByUserFullName = _data["confirmedByUserFullName"];
         }
     }
 
@@ -54085,6 +54097,8 @@ export class ContactEmailDto implements IContactEmailDto {
         data["id"] = this.id;
         data["isConfirmed"] = this.isConfirmed;
         data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUserFullName"] = this.confirmedByUserFullName;
         return data;
     }
 }
@@ -54098,6 +54112,8 @@ export interface IContactEmailDto {
     id: number;
     isConfirmed: boolean;
     confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    confirmedByUserFullName: string | undefined;
 }
 
 export class ContactEmailInfo implements IContactEmailInfo {
@@ -54718,6 +54734,8 @@ export class ContactLinkDto implements IContactLinkDto {
     id!: number;
     isConfirmed!: boolean;
     confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    confirmedByUserFullName!: string | undefined;
 
     constructor(data?: IContactLinkDto) {
         if (data) {
@@ -54739,6 +54757,8 @@ export class ContactLinkDto implements IContactLinkDto {
             this.id = _data["id"];
             this.isConfirmed = _data["isConfirmed"];
             this.confirmationDate = _data["confirmationDate"] ? moment(_data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = _data["confirmedByUserId"];
+            this.confirmedByUserFullName = _data["confirmedByUserFullName"];
         }
     }
 
@@ -54760,6 +54780,8 @@ export class ContactLinkDto implements IContactLinkDto {
         data["id"] = this.id;
         data["isConfirmed"] = this.isConfirmed;
         data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUserFullName"] = this.confirmedByUserFullName;
         return data;
     }
 }
@@ -54774,6 +54796,8 @@ export interface IContactLinkDto {
     id: number;
     isConfirmed: boolean;
     confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    confirmedByUserFullName: string | undefined;
 }
 
 export class ContactLinkTypeDto implements IContactLinkTypeDto {
@@ -54978,6 +55002,8 @@ export class ContactPhoneDto implements IContactPhoneDto {
     id!: number;
     isConfirmed!: boolean;
     confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    confirmedByUserFullName!: string | undefined;
 
     constructor(data?: IContactPhoneDto) {
         if (data) {
@@ -54999,6 +55025,8 @@ export class ContactPhoneDto implements IContactPhoneDto {
             this.id = _data["id"];
             this.isConfirmed = _data["isConfirmed"];
             this.confirmationDate = _data["confirmationDate"] ? moment(_data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = _data["confirmedByUserId"];
+            this.confirmedByUserFullName = _data["confirmedByUserFullName"];
         }
     }
 
@@ -55020,6 +55048,8 @@ export class ContactPhoneDto implements IContactPhoneDto {
         data["id"] = this.id;
         data["isConfirmed"] = this.isConfirmed;
         data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUserFullName"] = this.confirmedByUserFullName;
         return data;
     }
 }
@@ -55034,6 +55064,8 @@ export interface IContactPhoneDto {
     id: number;
     isConfirmed: boolean;
     confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    confirmedByUserFullName: string | undefined;
 }
 
 export class ContactPhoneInfo implements IContactPhoneInfo {

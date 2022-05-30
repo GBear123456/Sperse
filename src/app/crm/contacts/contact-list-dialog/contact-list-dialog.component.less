@@ -5,6 +5,7 @@
 
     header {
         .dialog-title {
+            position: relative;
             margin-bottom: 24px;
             font-size: 12px;
             text-transform: uppercase;
@@ -36,8 +37,8 @@
                 content: '';
                 background: url(../../../../assets/common/icons/search-icon.svg) 50% 50%;
                 background-size: contain;
-                width: 16px;
-                height: 16px;
+                width: 15px;
+                height: 15px;
                 left: 8px;
                 top: 50%;
                 transform: translateY(-50%);
@@ -49,6 +50,34 @@
                 padding-left: 34px;
                 border: 1px solid #dadee1;
                 border-radius: 3px;
+            }
+        }
+
+        .close {
+            position: absolute;
+            width: 40px;
+            height: 40px;
+            top: 0;
+            bottom: 0;
+            margin: auto;
+            right: -10px;
+            cursor: pointer;
+            display: block;
+            background-color: #FFF;
+            &:after, &:before {
+                position: absolute;
+                top: 10px;
+                left: 20px;
+                content: ' ';
+                height: 20px;
+                width: 2px;
+                background-color: #202b35;
+            }
+            &:before {
+                transform: rotate(45deg);
+            }
+            &:after {
+                transform: rotate(-45deg);
             }
         }
     }

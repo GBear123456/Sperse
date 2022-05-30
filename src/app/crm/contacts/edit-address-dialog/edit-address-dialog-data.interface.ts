@@ -1,4 +1,5 @@
 import { ContactGroupInfo } from '@shared/service-proxies/service-proxies';
+import * as moment from 'moment-timezone';
 
 export interface EditAddressDialogData {
     id: number;
@@ -23,4 +24,6 @@ export interface EditAddressDialogData {
     showNeighborhood: boolean;
     editDialogTitle: string;
     formattedAddress?: string;
+    confirmationDate: moment;
+    confirmedByUserFullName: string;
 }
