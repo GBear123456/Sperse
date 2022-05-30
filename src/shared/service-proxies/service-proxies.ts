@@ -1657,6 +1657,58 @@ export class ApiKeyServiceProxy {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    update(body: UpdateApiKeyInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/ApiKey/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
      * @param id (optional) 
      * @return Success
      */
@@ -49194,6 +49246,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
     creationTime!: moment.Moment;
     userId!: number;
     userName!: string | undefined;
+    paths!: string | undefined;
 
     constructor(data?: IApiKeyInfo) {
         if (data) {
@@ -49213,6 +49266,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
             this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
             this.userId = _data["userId"];
             this.userName = _data["userName"];
+            this.paths = _data["paths"];
         }
     }
 
@@ -49232,6 +49286,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["userId"] = this.userId;
         data["userName"] = this.userName;
+        data["paths"] = this.paths;
         return data;
     }
 }
@@ -49244,6 +49299,7 @@ export interface IApiKeyInfo {
     creationTime: moment.Moment;
     userId: number;
     userName: string | undefined;
+    paths: string | undefined;
 }
 
 export enum Appliances {
@@ -64681,6 +64737,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
     name!: string;
     expirationDate!: moment.Moment | undefined;
     userId!: number | undefined;
+    paths!: string | undefined;
 
     constructor(data?: IGenerateApiKeyInput) {
         if (data) {
@@ -64696,6 +64753,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
             this.name = _data["name"];
             this.expirationDate = _data["expirationDate"] ? moment(_data["expirationDate"].toString()) : <any>undefined;
             this.userId = _data["userId"];
+            this.paths = _data["paths"];
         }
     }
 
@@ -64711,6 +64769,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
         data["name"] = this.name;
         data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
         data["userId"] = this.userId;
+        data["paths"] = this.paths;
         return data;
     }
 }
@@ -64719,6 +64778,7 @@ export interface IGenerateApiKeyInput {
     name: string;
     expirationDate: moment.Moment | undefined;
     userId: number | undefined;
+    paths: string | undefined;
 }
 
 export class GenerateBalanceSheetReportInput implements IGenerateBalanceSheetReportInput {
@@ -93134,6 +93194,58 @@ export class UpdateAffiliateIsAdvisorInput implements IUpdateAffiliateIsAdvisorI
 export interface IUpdateAffiliateIsAdvisorInput {
     contactId: number;
     isAdvisor: boolean;
+}
+
+export class UpdateApiKeyInput implements IUpdateApiKeyInput {
+    id!: number;
+    name!: string;
+    expirationDate!: moment.Moment | undefined;
+    userId!: number | undefined;
+    paths!: string | undefined;
+
+    constructor(data?: IUpdateApiKeyInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.expirationDate = _data["expirationDate"] ? moment(_data["expirationDate"].toString()) : <any>undefined;
+            this.userId = _data["userId"];
+            this.paths = _data["paths"];
+        }
+    }
+
+    static fromJS(data: any): UpdateApiKeyInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateApiKeyInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
+        data["paths"] = this.paths;
+        return data;
+    }
+}
+
+export interface IUpdateApiKeyInput {
+    id: number;
+    name: string;
+    expirationDate: moment.Moment | undefined;
+    userId: number | undefined;
+    paths: string | undefined;
 }
 
 export class UpdateBankAccountDto implements IUpdateBankAccountDto {

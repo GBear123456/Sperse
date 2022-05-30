@@ -8,7 +8,7 @@ import remove from 'lodash/remove';
 
 /** Application imports */
 import { AppComponentBase } from '@shared/common/app-component-base';
-import { ApiKeyServiceProxy, ApiKeyInfo, GenerateApiKeyInput } from '@shared/service-proxies/service-proxies';
+import { ApiKeyServiceProxy, ApiKeyInfo, GenerateApiKeyInput, UpdateApiKeyInput } from '@shared/service-proxies/service-proxies';
 import { EditKeyDialog } from '@app/api/introduction/add-key-dialog/add-key-dialog.component';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppService } from '@app/app.service';
@@ -35,16 +35,30 @@ export class IntroductionComponent extends AppComponentBase implements OnInit, O
         super(injector);
     }
 
-    addApiKey() {
-        this.dialog.open(EditKeyDialog, {})
+    addUpdateApiKey(data?) {
+        this.dialog.open(EditKeyDialog, {data})
             .afterClosed()
-            .subscribe((result: GenerateApiKeyInput) => {
+            .subscribe((result: GenerateApiKeyInput | UpdateApiKeyInput) => {
                 if (result) {
-                    this.apiKeyService.generate(result).subscribe(result => {
-                        if (!this.apiKeys) this.apiKeys = [];
-                        this.apiKeys.unshift(result);
-                        abp.notify.success(this.l('SuccessfullySaved'));
-                    });
+                    if (result instanceof UpdateApiKeyInput)
+                        this.apiKeyService.update(<UpdateApiKeyInput>result).subscribe(() => {
+                            this.apiKeys.some(item => {
+                                if (item.id == (<UpdateApiKeyInput>result).id) {
+                                    item.name = result.name;
+                                    item.expirationDate = result.expirationDate;
+                                    item.userId = result.userId;
+                                    item.paths = result.paths;
+                                }
+                            });
+                            this.loadApiKeys();
+                            abp.notify.success(this.l('SuccessfullySaved'));
+                        });
+                    else
+                        this.apiKeyService.generate(<GenerateApiKeyInput>result).subscribe(result => {
+                            if (!this.apiKeys) this.apiKeys = [];
+                            this.apiKeys.unshift(result);
+                            abp.notify.success(this.l('SuccessfullySaved'));
+                        });
                 }
             });
     }
