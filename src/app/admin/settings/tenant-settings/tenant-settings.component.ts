@@ -49,6 +49,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppService } from '@app/app.service';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
+import { SalesTalkComponent } from './sales-talk/sales-talk.component';
 import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
@@ -63,6 +64,7 @@ import { DomHelper } from '@shared/helpers/DomHelper';
     ]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @ViewChild(SalesTalkComponent) salesTalkComponent: SalesTalkComponent;
     @ViewChild('tabGroup') tabGroup: ElementRef;
     @ViewChild('privacyInput') privacyInput: ElementRef;
     @ViewChild('tosInput') tosInput: ElementRef;
@@ -84,6 +86,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     isTenantHosts: boolean = this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
+    isCRMConfigureAllowed: boolean = abp.features.isEnabled(AppFeatures.CRMSalesTalk) 
+        && this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFM) && abp.features.isEnabled(AppFeatures.PFMApplications);
     isRapidTenantLayout: boolean = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.Rapid;
     isPerformancePartner: boolean = this.appSession.isPerformancePartnerTenant;
@@ -421,6 +425,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             requests.push(this.tenantSettingsService.updateIAgeSettings(this.iageSettings));
         if (this.isRapidTenantLayout)
             requests.push(this.tenantSettingsService.updateRapidSettings(this.rapidSettings));
+        if (this.isCRMConfigureAllowed)
+            requests.push(this.salesTalkComponent.save());
 
         this.startLoading();
         forkJoin(requests).pipe(

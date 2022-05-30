@@ -743,6 +743,9 @@
                     </div>
                 </dx-scroll-view>
             </mat-tab>
+            <mat-tab [label]="l('Sales Talk')" *ngIf="isCRMConfigureAllowed">
+                <sales-talk></sales-talk>
+            </mat-tab>
         </mat-tab-group>
     </div>
 </div>
