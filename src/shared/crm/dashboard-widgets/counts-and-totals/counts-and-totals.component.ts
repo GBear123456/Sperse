@@ -47,13 +47,11 @@ export class CountsAndTotalsComponent implements AfterViewInit, OnDestroy {
                     totalsData[field.name]
                 );
             });
-            this.loadComplete.emit();
+            setTimeout(() => this.loadComplete.emit(), 600);
             this.changeDetectorRef.detectChanges();
         });
 
-        this.totalsDataLoading$.pipe(
-            takeUntil(this.lifeCycleService.destroy$)
-        ).subscribe((loading: boolean) => {
+        this.totalsDataLoading$.subscribe((loading: boolean) => {
             loading
                 ? this.loadingService.startLoading(this.elementRef.nativeElement)
                 : this.loadingService.finishLoading(this.elementRef.nativeElement);
