@@ -174,7 +174,9 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     }
 
     initSalesTalkApiLink() {
-        if (!this.appService.isHostTenant) {
+        if (!this.appService.isHostTenant && this.customerType != ContactGroup.Employee
+            && abp.features.isEnabled(AppFeatures.CRMSalesTalk)
+        ) {
             let storageKey = 'salesTalkApiLink' + this.appSession.tenantId;
             this.salesTalkApiLink = sessionStorage.getItem(storageKey);
             if (this.salesTalkApiLink == null)
