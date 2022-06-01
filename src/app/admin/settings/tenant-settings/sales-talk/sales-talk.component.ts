@@ -7,9 +7,10 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
-import { Subscription } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 /** Application imports */
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { TenantCRMIntegrationSettingsServiceProxy, SalesTalkSettings, 
     SalesTalkSettingsInput } from '@shared/service-proxies/service-proxies';
@@ -29,6 +30,7 @@ export class SalesTalkComponent {
     url: string;
 
     constructor(
+        private appSession: AppSessionService,
         private settingsProxy: TenantCRMIntegrationSettingsServiceProxy,
         public ls: AppLocalizationService
     ) {
@@ -44,6 +46,8 @@ export class SalesTalkComponent {
             isEnabled: this.isEnabled,
             apiKey: this.apiKey,
             url: this.url
+        })).pipe(tap(() => {
+            sessionStorage.removeItem('salesTalkApiLink' + this.appSession.tenantId);
         }));
     }
 }
