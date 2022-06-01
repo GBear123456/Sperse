@@ -1610,15 +1610,14 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.selectedClientKeys.length || this.selectedClientKeys.length > 1 || !this.isSmsAndEmailSendingAllowed,
+                        disabled: !this.selectedClientKeys.length || !this.isSmsAndEmailSendingAllowed,
                         options: {
                             items: [
                                 {
                                     text: this.l('Email'),
-                                    disabled: this.selectedClientKeys.length > 1,
                                     action: () => {
                                         this.contactService.showEmailDialog({
-                                            contactId: this.selectedClientKeys[0],
+                                            contactIds: this.selectedClientKeys,
                                             to: this.selectedLeads.map(lead => lead.Email).filter(Boolean)
                                         }).subscribe();
                                     }
