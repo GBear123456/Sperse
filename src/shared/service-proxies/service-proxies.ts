@@ -11778,6 +11778,110 @@ export class ContactCommunicationServiceProxy {
      * @param body (optional) 
      * @return Success
      */
+    bulkEmailSend(body: BulkSendEmailInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/BulkEmailSend";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processBulkEmailSend(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processBulkEmailSend(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processBulkEmailSend(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    storeEmail(body: StoreEmailInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/StoreEmail";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processStoreEmail(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processStoreEmail(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processStoreEmail(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
     sendSMS(body: SendSMSInput | undefined): Observable<number> {
         let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/SendSMS";
         url_ = url_.replace(/[?&]$/, "");
@@ -51665,6 +51769,118 @@ export interface IBugsnagSettingsDto {
     uiApiKey: string | undefined;
 }
 
+export class BulkSendEmailInput implements IBulkSendEmailInput {
+    contactIds!: number[] | undefined;
+    emailSettingsSource!: EmailSettingsSource;
+    subject!: string;
+    previewText!: string | undefined;
+    saveAttachmentsToDocuments!: boolean;
+    attachments!: FileInfo[] | undefined;
+    replyTo!: string[] | undefined;
+    cc!: string[] | undefined;
+    bcc!: string[] | undefined;
+    body!: string;
+
+    constructor(data?: IBulkSendEmailInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["contactIds"])) {
+                this.contactIds = [] as any;
+                for (let item of _data["contactIds"])
+                    this.contactIds!.push(item);
+            }
+            this.emailSettingsSource = _data["emailSettingsSource"];
+            this.subject = _data["subject"];
+            this.previewText = _data["previewText"];
+            this.saveAttachmentsToDocuments = _data["saveAttachmentsToDocuments"];
+            if (Array.isArray(_data["attachments"])) {
+                this.attachments = [] as any;
+                for (let item of _data["attachments"])
+                    this.attachments!.push(FileInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["replyTo"])) {
+                this.replyTo = [] as any;
+                for (let item of _data["replyTo"])
+                    this.replyTo!.push(item);
+            }
+            if (Array.isArray(_data["cc"])) {
+                this.cc = [] as any;
+                for (let item of _data["cc"])
+                    this.cc!.push(item);
+            }
+            if (Array.isArray(_data["bcc"])) {
+                this.bcc = [] as any;
+                for (let item of _data["bcc"])
+                    this.bcc!.push(item);
+            }
+            this.body = _data["body"];
+        }
+    }
+
+    static fromJS(data: any): BulkSendEmailInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new BulkSendEmailInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.contactIds)) {
+            data["contactIds"] = [];
+            for (let item of this.contactIds)
+                data["contactIds"].push(item);
+        }
+        data["emailSettingsSource"] = this.emailSettingsSource;
+        data["subject"] = this.subject;
+        data["previewText"] = this.previewText;
+        data["saveAttachmentsToDocuments"] = this.saveAttachmentsToDocuments;
+        if (Array.isArray(this.attachments)) {
+            data["attachments"] = [];
+            for (let item of this.attachments)
+                data["attachments"].push(item.toJSON());
+        }
+        if (Array.isArray(this.replyTo)) {
+            data["replyTo"] = [];
+            for (let item of this.replyTo)
+                data["replyTo"].push(item);
+        }
+        if (Array.isArray(this.cc)) {
+            data["cc"] = [];
+            for (let item of this.cc)
+                data["cc"].push(item);
+        }
+        if (Array.isArray(this.bcc)) {
+            data["bcc"] = [];
+            for (let item of this.bcc)
+                data["bcc"].push(item);
+        }
+        data["body"] = this.body;
+        return data;
+    }
+}
+
+export interface IBulkSendEmailInput {
+    contactIds: number[] | undefined;
+    emailSettingsSource: EmailSettingsSource;
+    subject: string;
+    previewText: string | undefined;
+    saveAttachmentsToDocuments: boolean;
+    attachments: FileInfo[] | undefined;
+    replyTo: string[] | undefined;
+    cc: string[] | undefined;
+    bcc: string[] | undefined;
+    body: string;
+}
+
 export class BulkUpdatePartnerTypeInput implements IBulkUpdatePartnerTypeInput {
     partnerIds!: number[];
     typeName!: string | undefined;
@@ -62036,6 +62252,7 @@ export interface IEmailSettingsEditDto {
 export enum EmailSettingsSource {
     Tenant = "Tenant",
     User = "User",
+    External = "External",
 }
 
 export class EmailSmtpSettings implements IEmailSmtpSettings {
@@ -86863,17 +87080,17 @@ export interface ISendEmailActivationLinkInput {
 
 export class SendEmailInput implements ISendEmailInput {
     contactId!: number;
+    to!: string[];
     replyToId!: number | undefined;
     emailSettingsSource!: EmailSettingsSource;
-    to!: string[];
+    subject!: string;
+    previewText!: string | undefined;
+    saveAttachmentsToDocuments!: boolean;
+    attachments!: FileInfo[] | undefined;
     replyTo!: string[] | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
-    subject!: string;
-    previewText!: string | undefined;
     body!: string;
-    saveAttachmentsToDocuments!: boolean;
-    attachments!: FileInfo[] | undefined;
 
     constructor(data?: ISendEmailInput) {
         if (data) {
@@ -86890,12 +87107,20 @@ export class SendEmailInput implements ISendEmailInput {
     init(_data?: any) {
         if (_data) {
             this.contactId = _data["contactId"];
-            this.replyToId = _data["replyToId"];
-            this.emailSettingsSource = _data["emailSettingsSource"];
             if (Array.isArray(_data["to"])) {
                 this.to = [] as any;
                 for (let item of _data["to"])
                     this.to!.push(item);
+            }
+            this.replyToId = _data["replyToId"];
+            this.emailSettingsSource = _data["emailSettingsSource"];
+            this.subject = _data["subject"];
+            this.previewText = _data["previewText"];
+            this.saveAttachmentsToDocuments = _data["saveAttachmentsToDocuments"];
+            if (Array.isArray(_data["attachments"])) {
+                this.attachments = [] as any;
+                for (let item of _data["attachments"])
+                    this.attachments!.push(FileInfo.fromJS(item));
             }
             if (Array.isArray(_data["replyTo"])) {
                 this.replyTo = [] as any;
@@ -86912,15 +87137,7 @@ export class SendEmailInput implements ISendEmailInput {
                 for (let item of _data["bcc"])
                     this.bcc!.push(item);
             }
-            this.subject = _data["subject"];
-            this.previewText = _data["previewText"];
             this.body = _data["body"];
-            this.saveAttachmentsToDocuments = _data["saveAttachmentsToDocuments"];
-            if (Array.isArray(_data["attachments"])) {
-                this.attachments = [] as any;
-                for (let item of _data["attachments"])
-                    this.attachments!.push(FileInfo.fromJS(item));
-            }
         }
     }
 
@@ -86934,12 +87151,20 @@ export class SendEmailInput implements ISendEmailInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["contactId"] = this.contactId;
-        data["replyToId"] = this.replyToId;
-        data["emailSettingsSource"] = this.emailSettingsSource;
         if (Array.isArray(this.to)) {
             data["to"] = [];
             for (let item of this.to)
                 data["to"].push(item);
+        }
+        data["replyToId"] = this.replyToId;
+        data["emailSettingsSource"] = this.emailSettingsSource;
+        data["subject"] = this.subject;
+        data["previewText"] = this.previewText;
+        data["saveAttachmentsToDocuments"] = this.saveAttachmentsToDocuments;
+        if (Array.isArray(this.attachments)) {
+            data["attachments"] = [];
+            for (let item of this.attachments)
+                data["attachments"].push(item.toJSON());
         }
         if (Array.isArray(this.replyTo)) {
             data["replyTo"] = [];
@@ -86956,32 +87181,24 @@ export class SendEmailInput implements ISendEmailInput {
             for (let item of this.bcc)
                 data["bcc"].push(item);
         }
-        data["subject"] = this.subject;
-        data["previewText"] = this.previewText;
         data["body"] = this.body;
-        data["saveAttachmentsToDocuments"] = this.saveAttachmentsToDocuments;
-        if (Array.isArray(this.attachments)) {
-            data["attachments"] = [];
-            for (let item of this.attachments)
-                data["attachments"].push(item.toJSON());
-        }
         return data;
     }
 }
 
 export interface ISendEmailInput {
     contactId: number;
+    to: string[];
     replyToId: number | undefined;
     emailSettingsSource: EmailSettingsSource;
-    to: string[];
+    subject: string;
+    previewText: string | undefined;
+    saveAttachmentsToDocuments: boolean;
+    attachments: FileInfo[] | undefined;
     replyTo: string[] | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
-    subject: string;
-    previewText: string | undefined;
     body: string;
-    saveAttachmentsToDocuments: boolean;
-    attachments: FileInfo[] | undefined;
 }
 
 export class SendEmailToContactConfiguration implements ISendEmailToContactConfiguration {
@@ -88711,6 +88928,189 @@ export enum Status {
     Partial = "Partial",
     Projected = "Projected",
     Completed = "Completed",
+}
+
+export class StoreEmailAttachment implements IStoreEmailAttachment {
+    name!: string;
+    file!: string | undefined;
+    fileUrl!: string | undefined;
+
+    constructor(data?: IStoreEmailAttachment) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.name = _data["name"];
+            this.file = _data["file"];
+            this.fileUrl = _data["fileUrl"];
+        }
+    }
+
+    static fromJS(data: any): StoreEmailAttachment {
+        data = typeof data === 'object' ? data : {};
+        let result = new StoreEmailAttachment();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["name"] = this.name;
+        data["file"] = this.file;
+        data["fileUrl"] = this.fileUrl;
+        return data;
+    }
+}
+
+export interface IStoreEmailAttachment {
+    name: string;
+    file: string | undefined;
+    fileUrl: string | undefined;
+}
+
+export class StoreEmailInput implements IStoreEmailInput {
+    to!: string[];
+    contactId!: number | undefined;
+    contactXref!: string | undefined;
+    xref!: string | undefined;
+    parentEmailXref!: string | undefined;
+    fromEmailAddress!: string | undefined;
+    fromDisplayName!: string | undefined;
+    subject!: string | undefined;
+    isInbound!: boolean;
+    messageDate!: moment.Moment | undefined;
+    saveAttachmentsToDocuments!: boolean;
+    attachments!: StoreEmailAttachment[] | undefined;
+    replyTo!: string[] | undefined;
+    cc!: string[] | undefined;
+    bcc!: string[] | undefined;
+    body!: string;
+
+    constructor(data?: IStoreEmailInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+        if (!data) {
+            this.to = [];
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["to"])) {
+                this.to = [] as any;
+                for (let item of _data["to"])
+                    this.to!.push(item);
+            }
+            this.contactId = _data["contactId"];
+            this.contactXref = _data["contactXref"];
+            this.xref = _data["xref"];
+            this.parentEmailXref = _data["parentEmailXref"];
+            this.fromEmailAddress = _data["fromEmailAddress"];
+            this.fromDisplayName = _data["fromDisplayName"];
+            this.subject = _data["subject"];
+            this.isInbound = _data["isInbound"];
+            this.messageDate = _data["messageDate"] ? moment(_data["messageDate"].toString()) : <any>undefined;
+            this.saveAttachmentsToDocuments = _data["saveAttachmentsToDocuments"];
+            if (Array.isArray(_data["attachments"])) {
+                this.attachments = [] as any;
+                for (let item of _data["attachments"])
+                    this.attachments!.push(StoreEmailAttachment.fromJS(item));
+            }
+            if (Array.isArray(_data["replyTo"])) {
+                this.replyTo = [] as any;
+                for (let item of _data["replyTo"])
+                    this.replyTo!.push(item);
+            }
+            if (Array.isArray(_data["cc"])) {
+                this.cc = [] as any;
+                for (let item of _data["cc"])
+                    this.cc!.push(item);
+            }
+            if (Array.isArray(_data["bcc"])) {
+                this.bcc = [] as any;
+                for (let item of _data["bcc"])
+                    this.bcc!.push(item);
+            }
+            this.body = _data["body"];
+        }
+    }
+
+    static fromJS(data: any): StoreEmailInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new StoreEmailInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.to)) {
+            data["to"] = [];
+            for (let item of this.to)
+                data["to"].push(item);
+        }
+        data["contactId"] = this.contactId;
+        data["contactXref"] = this.contactXref;
+        data["xref"] = this.xref;
+        data["parentEmailXref"] = this.parentEmailXref;
+        data["fromEmailAddress"] = this.fromEmailAddress;
+        data["fromDisplayName"] = this.fromDisplayName;
+        data["subject"] = this.subject;
+        data["isInbound"] = this.isInbound;
+        data["messageDate"] = this.messageDate ? this.messageDate.toISOString() : <any>undefined;
+        data["saveAttachmentsToDocuments"] = this.saveAttachmentsToDocuments;
+        if (Array.isArray(this.attachments)) {
+            data["attachments"] = [];
+            for (let item of this.attachments)
+                data["attachments"].push(item.toJSON());
+        }
+        if (Array.isArray(this.replyTo)) {
+            data["replyTo"] = [];
+            for (let item of this.replyTo)
+                data["replyTo"].push(item);
+        }
+        if (Array.isArray(this.cc)) {
+            data["cc"] = [];
+            for (let item of this.cc)
+                data["cc"].push(item);
+        }
+        if (Array.isArray(this.bcc)) {
+            data["bcc"] = [];
+            for (let item of this.bcc)
+                data["bcc"].push(item);
+        }
+        data["body"] = this.body;
+        return data;
+    }
+}
+
+export interface IStoreEmailInput {
+    to: string[];
+    contactId: number | undefined;
+    contactXref: string | undefined;
+    xref: string | undefined;
+    parentEmailXref: string | undefined;
+    fromEmailAddress: string | undefined;
+    fromDisplayName: string | undefined;
+    subject: string | undefined;
+    isInbound: boolean;
+    messageDate: moment.Moment | undefined;
+    saveAttachmentsToDocuments: boolean;
+    attachments: StoreEmailAttachment[] | undefined;
+    replyTo: string[] | undefined;
+    cc: string[] | undefined;
+    bcc: string[] | undefined;
+    body: string;
 }
 
 export class StripeSettings implements IStripeSettings {
