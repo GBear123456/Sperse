@@ -24,6 +24,7 @@ export enum AppFeatures {
     CRMMaxUserCount = 'CRM.MaxUserCount',
     CRMSalesTalk = 'CRM.SalesTalk',
     HUB = 'HUB',
+    InboundOutboundSMS = 'InboundOutboundSMS',
     MaxSpaceGB = 'MaxSpaceGB',
     Notification = 'Notification',
     PFM = 'PFM',

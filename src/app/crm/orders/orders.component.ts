@@ -102,6 +102,7 @@ import { EntityCheckListDialogComponent } from '@app/crm/shared/entity-check-lis
 import { ActionMenuComponent } from '@app/shared/common/action-menu/action-menu.component';
 import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 import { InvoiceSettingsDialogComponent } from '../contacts/invoice-settings-dialog/invoice-settings-dialog.component';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './orders.component.html',
@@ -683,6 +684,9 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 {
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
+                    checkVisible: () => {
+                        return abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
+                    },
                     action: (data?) => {
                         let entity = data || this.actionEvent.data || this.actionEvent;
                         this.contactsService.showSMSDialog({

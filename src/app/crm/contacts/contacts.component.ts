@@ -68,6 +68,7 @@ import { GroupStatus } from '@app/crm/contacts/operations-widget/status.interfac
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './contacts.component.html',
@@ -274,6 +275,7 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
     manageAllowed = false;
 
+    isInboundOutboundSMSAllowed = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
     isCommunicationHistoryAllowed = false;
     isSendSmsAndEmailAllowed = false;
 
