@@ -72,7 +72,8 @@
         <crm-stars-list [selectedKeys]="selectedClientKeys"
                         [bulkUpdateMode]="true"
                         [filterModel]="filterModelStar"
-                        [hideButtons]="isBankCodeLayoutType">
+                        [hideButtons]="isBankCodeLayoutType"
+                        (onUpdated)="refresh()">
         </crm-stars-list>
         <div [hidden]="hideDataGrid$ | async" class="portlet light no-padding margin-bottom-0">
             <div class="portlet-body">
@@ -94,7 +95,7 @@
                                   [loadPanel]="{ enabled: false }"
                                   [hoverStateEnabled]="true"
                                   [columnChooser]="{
-                                    height: rowsViewHeight
+                                      height: rowsViewHeight
                                   }"
                                   [twoWayBindingEnabled]="false"
                                   [remoteOperations]="{
@@ -112,17 +113,20 @@
                                   (onDataErrorOccurred)="httpInterceptor.handleError($event.error)">
                         <dxo-pager [visible]="true"></dxo-pager>
                         <dxo-selection selectAllMode="page"
-                                       showCheckBoxesMode="always"
-                                       mode="multiple">
+                                    showCheckBoxesMode="always"
+                                    mode="multiple">
                         </dxo-selection>
                         <dxo-editing mode="popup"
-                            [texts]="{ editRow: '' }"
-                            [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
-                            [allowUpdating]="true">
+                                    [texts]="{ editRow: '' }"
+                                    [popup]="{ onShowing: onShowingPopup, height: '0px', width: '0px' }"
+                                    [allowUpdating]="true">
                         </dxo-editing>
                         <dxo-scrolling mode="infinite"></dxo-scrolling>
-                        <dxi-column cssClass="stars"
-                                    [width]="40"
+                        <dxi-column caption=""
+                                    width="40px"
+                                    cssClass="stars"
+                                    cellTemplate="starCell"
+                                    [dataField]="clientFields.StarId"
                                     [showInColumnChooser]="false"
                                     [allowExporting]="false">
                         </dxi-column>
@@ -150,6 +154,7 @@
                         <dxi-column [dataField]="clientFields.CompanyName" [caption]="l('Customer.CompanyName')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.Email" [caption]="l('Contact.Email')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.Phone" [caption]="l('Contact.Phone')" cellTemplate="phoneCell" cssClass="tabular" [renderAsync]="true"></dxi-column>
+                        <dxi-column *ngIf="isBankCodeLayoutType" [dataField]="clientFields.StreetAddress" [caption]="l('Contact.StreetAddress')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.City" [caption]="l('Contact.City')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.State" [caption]="l('State')" cssClass="clipboard-holder"></dxi-column>
                         <dxi-column [dataField]="clientFields.Xref" [caption]="l('Xref')" [visible]="false" cssClass="clipboard-holder"></dxi-column>
@@ -232,6 +237,9 @@
                         <div *dxTemplate="let cellData of 'dateCell'" class="clipboard-holder">
                             {{cellData.value | datetime: formatting.dateTimeMoment }}
                         </div>
+                        <ng-container *dxTemplate="let cellData of 'starCell'">
+                            <div class="star star-{{starsLookup[cellData.value] ? starsLookup[cellData.value].colorType.toLowerCase() : 'default'}}"></div>
+                        </ng-container>
                         <div *dxTemplate="let cellData of 'phoneCell'" class="clipboard-holder">
                             {{cellData.value | phone}}
                         </div>

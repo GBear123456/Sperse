@@ -145,6 +145,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
     @ViewChild(MapComponent) mapComponent: MapComponent;
     @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
 
+    starsLookup = {};
     private isSlice = this.appService.getModule() === 'slice';
     private dataLayoutType: BehaviorSubject<DataLayoutType> = new BehaviorSubject(
         this.isSlice ? DataLayoutType.PivotGrid : DataLayoutType.DataGrid
@@ -580,7 +581,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     this.partnerFields.OrganizationId,
                     this.partnerFields.Email,
                     this.partnerFields.Phone,
-                    this.partnerFields.UserId
+                    this.partnerFields.UserId,
+                    this.partnerFields.StarId
                 ]
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -1103,7 +1105,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 items: {
                     element: new FilterCheckBoxesModel(
                         {
-                            dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
+                            dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars), tap(stars => {
+                                stars.forEach(star => {
+                                    this.starsLookup[star.id] = star;
+                                });
+                            })),
                             nameField: 'name',
                             keyExpr: 'id',
                             templateFunc: (itemData) => {

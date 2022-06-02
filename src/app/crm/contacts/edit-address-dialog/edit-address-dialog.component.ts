@@ -32,6 +32,7 @@ import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { EditAddressDialogData } from '@app/crm/contacts/edit-address-dialog/edit-address-dialog-data.interface';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { ContactsService } from '../contacts.service';
 
 @Component({
     selector: 'edit-address-dialog',
@@ -66,6 +67,7 @@ export class EditAddressDialog {
         private sessionService: AppSessionService,
         private permissionService: AppPermissionService,
         public dialogRef: MatDialogRef<EditAddressDialog>,
+        public contactsService: ContactsService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: EditAddressDialogData
     ) {

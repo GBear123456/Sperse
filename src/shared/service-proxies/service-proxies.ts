@@ -1657,6 +1657,58 @@ export class ApiKeyServiceProxy {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    update(body: UpdateApiKeyInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/ApiKey/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
      * @param id (optional) 
      * @return Success
      */
@@ -18465,6 +18517,63 @@ export class EmailTemplateServiceProxy {
     }
 
     protected processCreate(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    clone(body: CloneEmailTemplateInput | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/EmailTemplate/Clone";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processClone(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processClone(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processClone(response: HttpResponseBase): Observable<number> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -49255,6 +49364,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
     creationTime!: moment.Moment;
     userId!: number;
     userName!: string | undefined;
+    paths!: string | undefined;
 
     constructor(data?: IApiKeyInfo) {
         if (data) {
@@ -49274,6 +49384,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
             this.creationTime = _data["creationTime"] ? moment(_data["creationTime"].toString()) : <any>undefined;
             this.userId = _data["userId"];
             this.userName = _data["userName"];
+            this.paths = _data["paths"];
         }
     }
 
@@ -49293,6 +49404,7 @@ export class ApiKeyInfo implements IApiKeyInfo {
         data["creationTime"] = this.creationTime ? this.creationTime.toISOString() : <any>undefined;
         data["userId"] = this.userId;
         data["userName"] = this.userName;
+        data["paths"] = this.paths;
         return data;
     }
 }
@@ -49305,6 +49417,7 @@ export interface IApiKeyInfo {
     creationTime: moment.Moment;
     userId: number;
     userName: string | undefined;
+    paths: string | undefined;
 }
 
 export enum Appliances {
@@ -53282,6 +53395,46 @@ export interface ICheckHostNameDnsMappingOutput {
     hostNameDnsMapped: boolean;
 }
 
+export class CloneEmailTemplateInput implements ICloneEmailTemplateInput {
+    id!: number | undefined;
+    emailTemplateType!: EmailTemplateType | undefined;
+
+    constructor(data?: ICloneEmailTemplateInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.emailTemplateType = _data["emailTemplateType"];
+        }
+    }
+
+    static fromJS(data: any): CloneEmailTemplateInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CloneEmailTemplateInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["emailTemplateType"] = this.emailTemplateType;
+        return data;
+    }
+}
+
+export interface ICloneEmailTemplateInput {
+    id: number | undefined;
+    emailTemplateType: EmailTemplateType | undefined;
+}
+
 export class ComboboxItemDto implements IComboboxItemDto {
     value!: string | undefined;
     displayText!: string | undefined;
@@ -53858,6 +54011,8 @@ export class ContactAddressDto implements IContactAddressDto {
     id!: number;
     isConfirmed!: boolean;
     confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    confirmedByUserFullName!: string | undefined;
 
     constructor(data?: IContactAddressDto) {
         if (data) {
@@ -53885,6 +54040,8 @@ export class ContactAddressDto implements IContactAddressDto {
             this.id = _data["id"];
             this.isConfirmed = _data["isConfirmed"];
             this.confirmationDate = _data["confirmationDate"] ? moment(_data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = _data["confirmedByUserId"];
+            this.confirmedByUserFullName = _data["confirmedByUserFullName"];
         }
     }
 
@@ -53912,6 +54069,8 @@ export class ContactAddressDto implements IContactAddressDto {
         data["id"] = this.id;
         data["isConfirmed"] = this.isConfirmed;
         data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUserFullName"] = this.confirmedByUserFullName;
         return data;
     }
 }
@@ -53932,6 +54091,8 @@ export interface IContactAddressDto {
     id: number;
     isConfirmed: boolean;
     confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    confirmedByUserFullName: string | undefined;
 }
 
 export class ContactAddressInfo implements IContactAddressInfo {
@@ -54163,6 +54324,8 @@ export class ContactEmailDto implements IContactEmailDto {
     id!: number;
     isConfirmed!: boolean;
     confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    confirmedByUserFullName!: string | undefined;
 
     constructor(data?: IContactEmailDto) {
         if (data) {
@@ -54183,6 +54346,8 @@ export class ContactEmailDto implements IContactEmailDto {
             this.id = _data["id"];
             this.isConfirmed = _data["isConfirmed"];
             this.confirmationDate = _data["confirmationDate"] ? moment(_data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = _data["confirmedByUserId"];
+            this.confirmedByUserFullName = _data["confirmedByUserFullName"];
         }
     }
 
@@ -54203,6 +54368,8 @@ export class ContactEmailDto implements IContactEmailDto {
         data["id"] = this.id;
         data["isConfirmed"] = this.isConfirmed;
         data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUserFullName"] = this.confirmedByUserFullName;
         return data;
     }
 }
@@ -54216,6 +54383,8 @@ export interface IContactEmailDto {
     id: number;
     isConfirmed: boolean;
     confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    confirmedByUserFullName: string | undefined;
 }
 
 export class ContactEmailInfo implements IContactEmailInfo {
@@ -54836,6 +55005,8 @@ export class ContactLinkDto implements IContactLinkDto {
     id!: number;
     isConfirmed!: boolean;
     confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    confirmedByUserFullName!: string | undefined;
 
     constructor(data?: IContactLinkDto) {
         if (data) {
@@ -54857,6 +55028,8 @@ export class ContactLinkDto implements IContactLinkDto {
             this.id = _data["id"];
             this.isConfirmed = _data["isConfirmed"];
             this.confirmationDate = _data["confirmationDate"] ? moment(_data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = _data["confirmedByUserId"];
+            this.confirmedByUserFullName = _data["confirmedByUserFullName"];
         }
     }
 
@@ -54878,6 +55051,8 @@ export class ContactLinkDto implements IContactLinkDto {
         data["id"] = this.id;
         data["isConfirmed"] = this.isConfirmed;
         data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUserFullName"] = this.confirmedByUserFullName;
         return data;
     }
 }
@@ -54892,6 +55067,8 @@ export interface IContactLinkDto {
     id: number;
     isConfirmed: boolean;
     confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    confirmedByUserFullName: string | undefined;
 }
 
 export class ContactLinkTypeDto implements IContactLinkTypeDto {
@@ -55096,6 +55273,8 @@ export class ContactPhoneDto implements IContactPhoneDto {
     id!: number;
     isConfirmed!: boolean;
     confirmationDate!: moment.Moment | undefined;
+    confirmedByUserId!: number | undefined;
+    confirmedByUserFullName!: string | undefined;
 
     constructor(data?: IContactPhoneDto) {
         if (data) {
@@ -55117,6 +55296,8 @@ export class ContactPhoneDto implements IContactPhoneDto {
             this.id = _data["id"];
             this.isConfirmed = _data["isConfirmed"];
             this.confirmationDate = _data["confirmationDate"] ? moment(_data["confirmationDate"].toString()) : <any>undefined;
+            this.confirmedByUserId = _data["confirmedByUserId"];
+            this.confirmedByUserFullName = _data["confirmedByUserFullName"];
         }
     }
 
@@ -55138,6 +55319,8 @@ export class ContactPhoneDto implements IContactPhoneDto {
         data["id"] = this.id;
         data["isConfirmed"] = this.isConfirmed;
         data["confirmationDate"] = this.confirmationDate ? this.confirmationDate.toISOString() : <any>undefined;
+        data["confirmedByUserId"] = this.confirmedByUserId;
+        data["confirmedByUserFullName"] = this.confirmedByUserFullName;
         return data;
     }
 }
@@ -55152,6 +55335,8 @@ export interface IContactPhoneDto {
     id: number;
     isConfirmed: boolean;
     confirmationDate: moment.Moment | undefined;
+    confirmedByUserId: number | undefined;
+    confirmedByUserFullName: string | undefined;
 }
 
 export class ContactPhoneInfo implements IContactPhoneInfo {
@@ -61765,6 +61950,7 @@ export interface IEmailFromSettings {
 }
 
 export class EmailSettingsEditDto implements IEmailSettingsEditDto {
+    defaultReplyTo!: string | undefined;
     smtpHost!: string | undefined;
     smtpPort!: number | undefined;
     smtpEnableSsl!: boolean;
@@ -61789,6 +61975,7 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
 
     init(_data?: any) {
         if (_data) {
+            this.defaultReplyTo = _data["defaultReplyTo"];
             this.smtpHost = _data["smtpHost"];
             this.smtpPort = _data["smtpPort"];
             this.smtpEnableSsl = _data["smtpEnableSsl"];
@@ -61813,6 +62000,7 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["defaultReplyTo"] = this.defaultReplyTo;
         data["smtpHost"] = this.smtpHost;
         data["smtpPort"] = this.smtpPort;
         data["smtpEnableSsl"] = this.smtpEnableSsl;
@@ -61830,6 +62018,7 @@ export class EmailSettingsEditDto implements IEmailSettingsEditDto {
 }
 
 export interface IEmailSettingsEditDto {
+    defaultReplyTo: string | undefined;
     smtpHost: string | undefined;
     smtpPort: number | undefined;
     smtpEnableSsl: boolean;
@@ -64666,6 +64855,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
     name!: string;
     expirationDate!: moment.Moment | undefined;
     userId!: number | undefined;
+    paths!: string | undefined;
 
     constructor(data?: IGenerateApiKeyInput) {
         if (data) {
@@ -64681,6 +64871,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
             this.name = _data["name"];
             this.expirationDate = _data["expirationDate"] ? moment(_data["expirationDate"].toString()) : <any>undefined;
             this.userId = _data["userId"];
+            this.paths = _data["paths"];
         }
     }
 
@@ -64696,6 +64887,7 @@ export class GenerateApiKeyInput implements IGenerateApiKeyInput {
         data["name"] = this.name;
         data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
         data["userId"] = this.userId;
+        data["paths"] = this.paths;
         return data;
     }
 }
@@ -64704,6 +64896,7 @@ export interface IGenerateApiKeyInput {
     name: string;
     expirationDate: moment.Moment | undefined;
     userId: number | undefined;
+    paths: string | undefined;
 }
 
 export class GenerateBalanceSheetReportInput implements IGenerateBalanceSheetReportInput {
@@ -93177,6 +93370,58 @@ export interface IUpdateAffiliateIsAdvisorInput {
     isAdvisor: boolean;
 }
 
+export class UpdateApiKeyInput implements IUpdateApiKeyInput {
+    id!: number;
+    name!: string;
+    expirationDate!: moment.Moment | undefined;
+    userId!: number | undefined;
+    paths!: string | undefined;
+
+    constructor(data?: IUpdateApiKeyInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.name = _data["name"];
+            this.expirationDate = _data["expirationDate"] ? moment(_data["expirationDate"].toString()) : <any>undefined;
+            this.userId = _data["userId"];
+            this.paths = _data["paths"];
+        }
+    }
+
+    static fromJS(data: any): UpdateApiKeyInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateApiKeyInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["name"] = this.name;
+        data["expirationDate"] = this.expirationDate ? this.expirationDate.toISOString() : <any>undefined;
+        data["userId"] = this.userId;
+        data["paths"] = this.paths;
+        return data;
+    }
+}
+
+export interface IUpdateApiKeyInput {
+    id: number;
+    name: string;
+    expirationDate: moment.Moment | undefined;
+    userId: number | undefined;
+    paths: string | undefined;
+}
+
 export class UpdateBankAccountDto implements IUpdateBankAccountDto {
     id!: number;
     name!: string | undefined;
@@ -99254,8 +99499,7 @@ export enum YardPatioEnum {
 
 export class YTelSettingsEditDto implements IYTelSettingsEditDto {
     isEnabled!: boolean;
-    userName!: string | undefined;
-    password!: string | undefined;
+    authToken!: string | undefined;
     from!: string | undefined;
     inboundSmsKey!: string | undefined;
 
@@ -99271,8 +99515,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
     init(_data?: any) {
         if (_data) {
             this.isEnabled = _data["isEnabled"];
-            this.userName = _data["userName"];
-            this.password = _data["password"];
+            this.authToken = _data["authToken"];
             this.from = _data["from"];
             this.inboundSmsKey = _data["inboundSmsKey"];
         }
@@ -99288,8 +99531,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["isEnabled"] = this.isEnabled;
-        data["userName"] = this.userName;
-        data["password"] = this.password;
+        data["authToken"] = this.authToken;
         data["from"] = this.from;
         data["inboundSmsKey"] = this.inboundSmsKey;
         return data;
@@ -99298,8 +99540,7 @@ export class YTelSettingsEditDto implements IYTelSettingsEditDto {
 
 export interface IYTelSettingsEditDto {
     isEnabled: boolean;
-    userName: string | undefined;
-    password: string | undefined;
+    authToken: string | undefined;
     from: string | undefined;
     inboundSmsKey: string | undefined;
 }

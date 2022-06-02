@@ -24,6 +24,7 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppPermissions } from '@shared/AppPermissions';
+import { ContactsService } from '../contacts.service';
 
 @Component({
     templateUrl: 'edit-contact-dialog.html',
@@ -55,6 +56,7 @@ export class EditContactDialog {
         private store$: Store<AppStore.State>,
         private permissionService: AppPermissionService,
         public dialogRef: MatDialogRef<EditContactDialog>,
+        public contactsService: ContactsService,
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any,
     ) {
@@ -169,5 +171,4 @@ export class EditContactDialog {
     getUsageTypeHint(item) {
         return item && (['emailAddress', 'phoneNumber'].indexOf(this.data.field) >= 0) ?
             this.ls.l('ContactInformation_' + capitalize(this.data.field.slice(0, 5)) + 'TypeTooltip_' + item.id) : '';
-    }
-}
+    }}

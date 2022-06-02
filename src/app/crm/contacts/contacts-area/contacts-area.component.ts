@@ -120,6 +120,8 @@ export class ContactsAreaComponent {
             phoneNumber: data && data.phoneNumber,
             phoneExtension: data && data.phoneExtension,
             usageTypeId: data && data.usageTypeId,
+            confirmationDate: data && data.confirmationDate,
+            confirmedByUserFullName: data && data.confirmedByUserFullName,
             isConfirmed: Boolean(data && data.isConfirmed),
             isActive: Boolean(data ? data.isActive : true),
             comment: data && data.comment,

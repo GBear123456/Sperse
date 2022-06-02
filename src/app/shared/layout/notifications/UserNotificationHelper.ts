@@ -12,6 +12,7 @@ import { EntityDtoOfGuid, NotificationServiceProxy, INotificationData } from '@s
 import { NotificationSettingsModalComponent } from './notification-settings-modal/notification-settings-modal.component';
 
 export interface IFormattedUserNotification {
+    notificationName: string;
     entityId: string;
     entityTypeName: string;
     userNotificationId: string;
@@ -75,6 +76,7 @@ export class UserNotificationHelper {
 
     format(userNotification: abp.notifications.IUserNotification, truncateText?: boolean): IFormattedUserNotification {
         let formatted: IFormattedUserNotification = {
+            notificationName: userNotification.notification.notificationName,
             userNotificationId: userNotification.id,
             entityId: userNotification.notification.entityId,
             entityTypeName: userNotification.notification.entityTypeName,
@@ -159,6 +161,10 @@ export class UserNotificationHelper {
             navExtras.queryParams = {
                 messageId: messageId
             };
+
+            let isSms = notification.notificationName == "CRM.SMSReceivedForUser";
+            if (isSms)
+                navExtras.queryParams.sms = 1;
         }
         this.router.navigate(['app/crm/contact', notification.entityId, 'user-inbox'], navExtras);
     }

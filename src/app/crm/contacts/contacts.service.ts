@@ -67,6 +67,7 @@ import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-p
 import { NoteAddDialogData } from '@app/crm/contacts/notes/note-add-dialog/note-add-dialog-data.interface';
 import { TemplateDocumentsDialogData } from '@app/crm/contacts/documents/template-documents-dialog/template-documents-dialog-data.interface';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
+import { AppConsts } from '@shared/AppConsts';
 
 @Injectable()
 export class ContactsService {
@@ -843,5 +844,14 @@ export class ContactsService {
                 isLockoutEnabled: null,
                 isTwoFactorEnabled: null
             }));
+    }
+
+    getConfirmedContactText(data: any) {
+        let date = data.confirmationDate;
+        return this.ls.l('ConfirmedContact') + (
+            data.isConfirmed && date ? 
+                ' at ' + date.format(AppConsts.formatting.dateMoment) +
+                ' by ' + (data.confirmedByUserFullName || this.ls.l('System')) : ''
+        );
     }
 }

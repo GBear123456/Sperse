@@ -7,6 +7,7 @@ export interface PartnerDto {
     City: string;
     OrganizationId: number;
     State: string;
+    StarId: number;
     IsActive: boolean;
     IsProspective: boolean;
     ContactDate: string;
@@ -15,6 +16,7 @@ export interface PartnerDto {
     Xref: string;
     AffiliateCode: string;
     UserId: number;
+    StreetAddress: string;
     AffiliateContactName: string;
     AffiliateContactEmailAddress: string;
     AffiliateContactAffiliateCode: string;

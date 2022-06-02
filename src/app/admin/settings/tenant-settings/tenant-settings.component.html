@@ -395,80 +395,96 @@
                     <div class="form-group">
                         <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
                         <input id="DefaultFromAddress" type="email" name="DefaultFromAddress"
-                            class="form-control"
-                            [ngClass]="{'edited':settings.email.defaultFromAddress}"
-                            (change)="sendGridSettings.defaultFromAddress = $event.target.value"
-                            [(ngModel)]="settings.email.defaultFromAddress" maxlength="128">
+                               class="form-control"
+                               [ngClass]="{'edited':settings.email.defaultFromAddress}"
+                               (change)="sendGridSettings.defaultFromAddress = $event.target.value"
+                               [(ngModel)]="settings.email.defaultFromAddress" maxlength="100">
                     </div>
                     <div class="form-group">
                         <label for="DefaultFromDisplayName">{{l("DefaultFromDisplayName")}}</label>
                         <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName"
                                class="form-control" [ngClass]="{'edited':settings.email.defaultFromDisplayName}"
                                (change)="sendGridSettings.defaultFromDisplayName = $event.target.value"
-                               [(ngModel)]="settings.email.defaultFromDisplayName" maxlength="128">
+                               [(ngModel)]="settings.email.defaultFromDisplayName" maxlength="100">
                     </div>
                     <div class="form-group">
-                        <label for="SmtpHost">{{l("SmtpHost")}}</label>
-                        <input id="SmtpHost" type="text" name="SmtpHost" class="form-control" [ngClass]="{'edited':settings.email.smtpHost}" [(ngModel)]="settings.email.smtpHost" maxlength="64">
-                    </div>
-                    <div class="form-group">
-                        <label for="SmtpPort">{{l("SmtpPort")}}</label>
-                        <input id="SmtpPort" type="number" name="SmtpPort" class="form-control" [ngClass]="{'edited':settings.email.smtpPort}" [(ngModel)]="settings.email.smtpPort" maxlength="5">
+                        <label for="DefaultReplyTo">{{l("DefaultReplyTo")}}</label>
+                        <input id="DefaultReplyTo" type="text" name="DefaultReplyTo"
+                               class="form-control" [ngClass]="{'edited':settings.email.defaultReplyTo}"
+                               [(ngModel)]="settings.email.defaultReplyTo" maxlength="100" [attr.disabled]="showCustomSmptSettings ? '' : null">
                     </div>
                     <div class="m-checkbox-list">
-                        <label for="Settings_SmtpEnableSsl" class="m-checkbox">
-                            <input id="Settings_SmtpEnableSsl" type="checkbox" name="SmtpEnableSsl" [(ngModel)]="settings.email.smtpEnableSsl">
-                            {{l("UseSsl")}}
+                        <label for="ShowCustomSmtp" class="m-checkbox">
+                            <input id="ShowCustomSmtp" type="checkbox" name="ShowCustomSmtp" [checked]="showCustomSmptSettings" (change)="showCustomSmptSettings = !showCustomSmptSettings">
+                            <h5>{{l("Show SMTP settings")}}</h5>
                             <span></span>
                         </label>
                     </div>
-                    <div class="form-group">
-                        <label for="SmtpDomainName">{{l("DomainName")}}</label>
-                        <input id="SmtpDomainName" type="text" name="SmtpDomainName" class="form-control" [ngClass]="{'edited':settings.email.smtpDomain}" [(ngModel)]="settings.email.smtpDomain" maxlength="128">
-                    </div>
-                    <div class="form-group">
-                        <label for="SmtpUserName">{{l("UserName")}}</label>
-                        <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control" [ngClass]="{'edited':settings.email.smtpUserName}" [(ngModel)]="settings.email.smtpUserName" maxlength="128">
-                    </div>
-                    <div class="form-group">
-                        <label for="SmtpPassword">{{l("Password")}}</label>
-                        <input type="text" class="hidden-field">
-                        <input type="password" class="hidden-field">
-                        <input id="SmtpPassword" type="password" name="SmtpPassword" class="form-control" [ngClass]="{'edited':settings.email.smtpPassword}" [(ngModel)]="settings.email.smtpPassword"
-                               maxlength="128" autocomplete="off">
-                    </div>
-                    <h5>{{l("TestEmailSettingsHeader")}}</h5>
-                    <div class="row">
-                        <div class="form-group col-md-4">
-                            <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
+                    <div [hidden]="!showCustomSmptSettings">
+                        <br />
+                        <div class="form-group">
+                            <label for="SmtpHost">{{l("SmtpHost")}}</label>
+                            <input id="SmtpHost" type="text" name="SmtpHost" class="form-control" [ngClass]="{'edited':settings.email.smtpHost}" [(ngModel)]="settings.email.smtpHost" maxlength="64">
                         </div>
-                        <div class="form-group col-md-2">
-                            <button class="btn btn-primary" type="button" (click)="sendTestEmail()">{{l("SendTestEmail")}}</button>
+                        <div class="form-group">
+                            <label for="SmtpPort">{{l("SmtpPort")}}</label>
+                            <input id="SmtpPort" type="number" name="SmtpPort" class="form-control" [ngClass]="{'edited':settings.email.smtpPort}" [(ngModel)]="settings.email.smtpPort" maxlength="5">
                         </div>
-                    </div>
-                    <br />
-                    <div class="m-checkbox-list">
-                        <label for="Settings_Imap_IsEnabled" class="m-checkbox">
-                            <input id="Settings_Imap_IsEnabled" type="checkbox" name="ImapIsEnabled" [(ngModel)]="settings.email.isImapEnabled">
-                            <h5>{{l("AllowImapSynchronization")}}</h5>
-                            <span></span>
-                        </label>
-                    </div>
-                    <br />
-                    <div class="form-group" [hidden]="!settings.email.isImapEnabled">
-                        <label for="ImapHost">{{l("ImapHost")}}</label>
-                        <input id="ImapHost" type="text" name="ImapHost" class="form-control" [ngClass]="{'edited':settings.email.imapHost}" [(ngModel)]="settings.email.imapHost" maxlength="128">
-                    </div>
-                    <div class="form-group" [hidden]="!settings.email.isImapEnabled">
-                        <label for="ImapPort">{{l("ImapPort")}}</label>
-                        <input id="ImapPort" type="number" name="ImapPort" class="form-control" [ngClass]="{'edited':settings.email.imapPort}" [(ngModel)]="settings.email.imapPort" maxlength="5">
-                    </div>
-                    <div class="m-checkbox-list" [hidden]="!settings.email.isImapEnabled">
-                        <label for="Settings_Imap_UseSsl" class="m-checkbox">
-                            <input id="Settings_Imap_UseSsl" type="checkbox" name="ImapUseSsl" [(ngModel)]="settings.email.imapUseSsl">
-                            {{l("ImapUseSsl")}}
-                            <span></span>
-                        </label>
+                        <div class="m-checkbox-list">
+                            <label for="Settings_SmtpEnableSsl" class="m-checkbox">
+                                <input id="Settings_SmtpEnableSsl" type="checkbox" name="SmtpEnableSsl" [(ngModel)]="settings.email.smtpEnableSsl">
+                                {{l("UseSsl")}}
+                                <span></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label for="SmtpDomainName">{{l("DomainName")}}</label>
+                            <input id="SmtpDomainName" type="text" name="SmtpDomainName" class="form-control" [ngClass]="{'edited':settings.email.smtpDomain}" [(ngModel)]="settings.email.smtpDomain" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="SmtpUserName">{{l("UserName")}}</label>
+                            <input id="SmtpUserName" type="text" name="SmtpUserName" class="form-control" [ngClass]="{'edited':settings.email.smtpUserName}" [(ngModel)]="settings.email.smtpUserName" maxlength="128">
+                        </div>
+                        <div class="form-group">
+                            <label for="SmtpPassword">{{l("Password")}}</label>
+                            <input type="text" class="hidden-field">
+                            <input type="password" class="hidden-field">
+                            <input id="SmtpPassword" type="password" name="SmtpPassword" class="form-control" [ngClass]="{'edited':settings.email.smtpPassword}" [(ngModel)]="settings.email.smtpPassword"
+                                   maxlength="128" autocomplete="off">
+                        </div>
+                        <h5>{{l("TestEmailSettingsHeader")}}</h5>
+                        <div class="row">
+                            <div class="form-group col-md-4">
+                                <input type="text" class="form-control input-mini" [(ngModel)]="testEmailAddress">
+                            </div>
+                            <div class="form-group col-md-2">
+                                <button class="btn btn-primary" type="button" (click)="sendTestEmail()">{{l("SendTestEmail")}}</button>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="m-checkbox-list">
+                            <label for="Settings_Imap_IsEnabled" class="m-checkbox">
+                                <input id="Settings_Imap_IsEnabled" type="checkbox" name="ImapIsEnabled" [(ngModel)]="settings.email.isImapEnabled">
+                                <h5>{{l("AllowImapSynchronization")}}</h5>
+                                <span></span>
+                            </label>
+                        </div>
+                        <br />
+                        <div class="form-group" [hidden]="!settings.email.isImapEnabled">
+                            <label for="ImapHost">{{l("ImapHost")}}</label>
+                            <input id="ImapHost" type="text" name="ImapHost" class="form-control" [ngClass]="{'edited':settings.email.imapHost}" [(ngModel)]="settings.email.imapHost" maxlength="128">
+                        </div>
+                        <div class="form-group" [hidden]="!settings.email.isImapEnabled">
+                            <label for="ImapPort">{{l("ImapPort")}}</label>
+                            <input id="ImapPort" type="number" name="ImapPort" class="form-control" [ngClass]="{'edited':settings.email.imapPort}" [(ngModel)]="settings.email.imapPort" maxlength="5">
+                        </div>
+                        <div class="m-checkbox-list" [hidden]="!settings.email.isImapEnabled">
+                            <label for="Settings_Imap_UseSsl" class="m-checkbox">
+                                <input id="Settings_Imap_UseSsl" type="checkbox" name="ImapUseSsl" [(ngModel)]="settings.email.imapUseSsl">
+                                {{l("ImapUseSsl")}}
+                                <span></span>
+                            </label>
+                        </div>
                     </div>
                 </dx-scroll-view>
             </mat-tab>
@@ -477,12 +493,12 @@
                     <div class="form-group">
                         <label for="DefaultFromAddress">{{l("DefaultFromAddress")}}</label>
                         <input id="DefaultFromAddress" type="email" name="DefaultFromAddress" class="form-control"
-                               (change)="settings.email.defaultFromAddress = $event.target.value" [(ngModel)]="sendGridSettings.defaultFromAddress" maxlength="128">
+                               (change)="settings.email.defaultFromAddress = $event.target.value" [(ngModel)]="sendGridSettings.defaultFromAddress" maxlength="100">
                     </div>
                     <div class="form-group">
                         <label for="DefaultFromDisplayName">{{l("DefaultFromDisplayName")}}</label>
                         <input id="DefaultFromDisplayName" type="text" name="DefaultFromDisplayName" class="form-control"
-                               (change)="settings.email.defaultFromDisplayName = $event.target.value" [(ngModel)]="sendGridSettings.defaultFromDisplayName" maxlength="128">
+                               (change)="settings.email.defaultFromDisplayName = $event.target.value" [(ngModel)]="sendGridSettings.defaultFromDisplayName" maxlength="100">
                     </div>
                     <div class="form-group">
                         <label for="SendGridApiKey">{{l("SendGridApiKey")}}</label>
@@ -522,14 +538,8 @@
                     </div>
                     <div>
                         <div class="form-group">
-                            <label for="YTelUserName">{{l("YTelUserName")}}</label>
-                            <input id="YTelUserName" type="text" name="YTelUserName" class="form-control" [(ngModel)]="yTelSettings.userName" maxlength="128">
-                        </div>
-                    </div>
-                    <div>
-                        <div class="form-group">
-                            <label for="YTelPassword">{{l("YTelPassword")}}</label>
-                            <input id="YTelPassword" type="text" name="YTelPassword" class="form-control" [(ngModel)]="yTelSettings.password" maxlength="128">
+                            <label for="YTelAuthToken">{{l("YTelAuthToken")}}</label>
+                            <input id="YTelAuthToken" type="text" name="YTelAuthToken" class="form-control" [(ngModel)]="yTelSettings.authToken" maxlength="800">
                         </div>
                     </div>
                     <div>

@@ -169,6 +169,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private readonly groupDataSourceURI = 'LeadSlice';
     private readonly dateField = 'LeadDate';
     private _selectedLeads: LeadDto[];
+
+    starsLookup = {};
     rowsViewHeight: number;
     get selectedLeads(): LeadDto[] {
         return this._selectedLeads || [];
@@ -599,7 +601,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 this.leadFields.OrganizationId,
                                 this.leadFields.UserId,
                                 this.leadFields.Email,
-                                this.leadFields.Phone
+                                this.leadFields.Phone,
+                                this.leadFields.StarId
                             ]
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -1427,7 +1430,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
+                                dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars), tap(stars => {
+                                    stars.forEach(star => {
+                                        this.starsLookup[star.id] = star;
+                                    });
+                                })),
                                 nameField: 'name',
                                 keyExpr: 'id',
                                 templateFunc: (itemData) => {

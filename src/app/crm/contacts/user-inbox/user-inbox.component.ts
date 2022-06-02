@@ -19,8 +19,10 @@ import { NotifyService } from 'abp-ng2-module';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
 import { ProfileService } from '@shared/common/profile-service/profile.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
-import { CommunicationMessageDeliveryType, ContactCommunicationServiceProxy, AttachmentDto, MessageListDto, 
-    CommunicationMessageSendingStatus, MessageDto, ContactInfoDto, FileInfo } from '@shared/service-proxies/service-proxies';
+import {
+    CommunicationMessageDeliveryType, ContactCommunicationServiceProxy, AttachmentDto, MessageListDto,
+    CommunicationMessageSendingStatus, MessageDto, ContactInfoDto, FileInfo
+} from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '../contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -107,17 +109,36 @@ export class UserInboxComponent implements OnDestroy {
                 this.isSendSmsAndEmailAllowed = this.permission.checkCGPermission(
                     contactInfo.groups, 'ViewCommunicationHistory.SendSMSAndEmail');
                 this.activeMessage = undefined;
-                if (!this.dataSource || contactId != this.contactId)
+                if (!this.dataSource || contactId != this.contactId) {
+                    var isSms = this.activatedRoute.snapshot.queryParamMap.get('sms');
+                    if (isSms) {
+                        this.deliveryType = CommunicationMessageDeliveryType.SMS;
+                        this.initMainToolbar();
+                    }
                     this.initDataSource();
-                else
+                }
+                else {
                     this.initMainToolbar();
+                }
             }
         }, this.ident);
         activatedRoute.queryParamMap.pipe().subscribe((paramsMap: ParamMap) => {
             let messageId = paramsMap.get('messageId');
             let contactId = this.activatedRoute.parent.snapshot.paramMap.get('contactId');
             if (messageId && this.contactId && this.contactId.toString() == contactId && this.dataSource && this.dataSource.isLoaded()) {
+                if (this.deliveryType) {
+                    let isSms = this.activatedRoute.snapshot.queryParamMap.get('sms');
+                    let paramDeliveryType = isSms ? CommunicationMessageDeliveryType.SMS : CommunicationMessageDeliveryType.Email;
+                    if (this.deliveryType != paramDeliveryType) {
+                        this.deliveryType = paramDeliveryType;
+                        this.initMainToolbar();
+                        this.dataSource.reload();
+                        return;
+                    }
+                }
+
                 this.clearQueryMessageParams();
+
                 let record = this.dataSource.items().find(item => item.id == messageId);
                 if (record)
                     this.initActiveMessage(record);
@@ -152,72 +173,49 @@ export class UserInboxComponent implements OnDestroy {
                         onSelectionChanged: event => {
                             if (event.addedItems.length || event.removedItems.length)
                                 this.activeMessage = undefined;
+                                this.status = event.value || undefined;
                                 this.dataSource.reload();
-                        },
-                        onOptionChanged: event => {
-                            this.deliveryType = event.value.length > 1 ? undefined : event.value;
+                            },
+                            inputAttr: { view: 'headline' }
                         }
-                    }
+                    }]
                 }, {
-                    widget: 'dxSelectBox',
-                    options: {
-                        width: '180px',
-                        valueExpr: 'id',
-                        displayExpr: 'name',
-                        value: this.status,
-                        showClearButton: true,
-                        placeholder: this.ls.l('Status'),
-                        dataSource: this.statuses,
-                        onValueChanged: event => {
-                            this.activeMessage = undefined;
-                            this.status = event.value || undefined;
-                            this.dataSource.reload();
-                        },
-                        inputAttr: {view: 'headline'}
-                    }
-                }]
-            }, {
-                location: 'after',
-                items: [{
-                    widget: 'dxTextBox',
-                    options: {
-                        value: '1 - ' + visibleCount + ' of ' + this.dataSource.totalCount(),
-                        inputAttr: {view: 'headline'},
-                        visible: visibleCount,
-                        readOnly: true
-                    }
-                }]
-            },
-            {
-                location: 'after',
-                items: [
-                    {
-                        name: 'prev',
-                        action: (e) => this.contactsService.prev.next(e),
-                        disabled: this.contactsService.isPrevDisabled
-                    },
-                    {
-                        name: 'next',
-                        action: (e) => this.contactsService.next.next(e),
-                        disabled: this.contactsService.isNextDisabled
-                    }
-                ]
-            },
-            {
-                location: 'after',
-                items: [
-                    {
-                        widget: 'dxButton',
+                    location: 'after',
+                    items: [{
+                        widget: 'dxTextBox',
                         options: {
-                            text: '+ ' + this.ls.l('NewEmail')
+                            value: '1 - ' + visibleCount + ' of ' + this.dataSource.totalCount(),
+                            inputAttr: { view: 'headline' },
+                            visible: visibleCount,
+                            readOnly: true
+                        }
+                    }]
+                },
+                {
+                    location: 'after',
+                    items: [
+                        {
+                            name: 'prev',
+                            action: (e) => this.contactsService.prev.next(e),
+                            disabled: this.contactsService.isPrevDisabled
                         },
-                        visible: this.isSendSmsAndEmailAllowed && (!this.deliveryType || isEmail),
-                        action: () => this.showNewEmailDialog()
-                    },
-                    {
-                        widget: 'dxButton',
-                        options: {
-                            text: '+ ' + this.ls.l('NewSms')
+                        {
+                            name: 'next',
+                            action: (e) => this.contactsService.next.next(e),
+                            disabled: this.contactsService.isNextDisabled
+                        }
+                    ]
+                },
+                {
+                    location: 'after',
+                    items: [
+                        {
+                            widget: 'dxButton',
+                            options: {
+                                text: '+ ' + this.ls.l('NewEmail')
+                            },
+                            visible: this.isSendSmsAndEmailAllowed && (!this.deliveryType || isEmail),
+                            action: () => this.showNewEmailDialog()
                         },
                         visible: abp.features.isEnabled(AppFeatures.InboundOutboundSMS) && 
                             this.isSendSmsAndEmailAllowed && (!this.deliveryType || !isEmail),
@@ -256,7 +254,7 @@ export class UserInboxComponent implements OnDestroy {
                 {
                     name: 'prev',
                     action: this.moveSelectedItem.bind(this, -1),
-                    disabled: this.isNotListedMessage ||  this.isActiveFirstItem()
+                    disabled: this.isNotListedMessage || this.isActiveFirstItem()
                 },
                 {
                     name: 'next',
@@ -394,7 +392,7 @@ export class UserInboxComponent implements OnDestroy {
                             item => item.id == childMessage.id);
                     }
 
-                    this.setActiveMessage(record, message);                    
+                    this.setActiveMessage(record, message);
                 });
             }
             return true;
@@ -403,7 +401,7 @@ export class UserInboxComponent implements OnDestroy {
 
     setActiveMessage(record, message) {
         this.activeMessage = record.message = message;
-        this.isNotListedMessage = false;            
+        this.isNotListedMessage = false;
         this.checkExpandRecord(record);
         if (this.isActiveEmilType)
             this.showEmailContent();
@@ -440,7 +438,7 @@ export class UserInboxComponent implements OnDestroy {
 
     clearQueryMessageParams() {
         this.router.navigate([], {
-            queryParams: { 'messageId': null },
+            queryParams: { 'messageId': null, 'sms': null },
             queryParamsHandling: 'merge'
         })
     }
@@ -472,7 +470,7 @@ export class UserInboxComponent implements OnDestroy {
 
     isActiveFirstItem(): boolean {
         let items = this.getVisibleList();
-        return this.activeMessage && items[0] && 
+        return this.activeMessage && items[0] &&
             this.activeMessage.id == items[0].id;
     }
 
@@ -499,23 +497,23 @@ export class UserInboxComponent implements OnDestroy {
     }
 
     reply(forAll = false) {
-        let ccList = forAll ? (this.activeMessage.cc ? this.activeMessage.cc.split(','): []) : [];
+        let ccList = forAll ? (this.activeMessage.cc ? this.activeMessage.cc.split(',') : []) : [];
         if (this.activeMessage.isInbound)
             ccList.push(this.activeMessage.to);
-        this.showNewEmailDialog(forAll ? 'ReplyToAll' : 'Reply', {                          
+        this.showNewEmailDialog(forAll ? 'ReplyToAll' : 'Reply', {
             ...this.activeMessage,
-            to: [this.activeMessage.isInbound ? 
+            to: [this.activeMessage.isInbound ?
                 (this.activeMessage.fromUserName || '') + ' <' + this.activeMessage.from + '>' :
                 this.activeMessage.to
             ],
             cc: ccList,
             bcc: this.activeMessage.bcc ? this.activeMessage.bcc.split(',') : [],
-            subject: (this.activeMessage.subject.startsWith('Re:')  ? '' : 'Re: ') + this.activeMessage.subject,
-            body: '<br><br><div dir="ltr">On ' + 
-                this.activeMessage.creationTime.format('ddd, MMM Do YYYY, h:mm:ss A') + ' ' + (this.activeMessage.fromUserName || '') + 
+            subject: (this.activeMessage.subject.startsWith('Re:') ? '' : 'Re: ') + this.activeMessage.subject,
+            body: '<br><br><div dir="ltr">On ' +
+                this.activeMessage.creationTime.format('ddd, MMM Do YYYY, h:mm:ss A') + ' ' + (this.activeMessage.fromUserName || '') +
                 '&lt;<a href="' + this.activeMessage.from + '">' + this.activeMessage.from + '</a>&gt;' +
-                ' wrote:<br></div><blockquote style="margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">' + 
-                this.activeMessage.body + 
+                ' wrote:<br></div><blockquote style="margin:0px 0px 0px 0.8ex;border-left:1px solid rgb(204,204,204);padding-left:1ex">' +
+                this.activeMessage.body +
                 '</blockquote>',
             attachments: []
         });
@@ -531,7 +529,7 @@ export class UserInboxComponent implements OnDestroy {
             subject: (this.activeMessage.subject.startsWith('Fwd:') ? '' : 'Fwd: ') + this.activeMessage.subject,
             body: '<br><br><div dir="ltr">---------- Forwarded message ---------<br>' +
                 'From: <strong class="sendername" dir="auto">' + (this.activeMessage.fromUserName || '') + '</strong>' +
-                '<span dir="auto">&lt;<a href="' + this.activeMessage.from + '">' + this.activeMessage.from + '</a>&gt;</span><br>' + 
+                '<span dir="auto">&lt;<a href="' + this.activeMessage.from + '">' + this.activeMessage.from + '</a>&gt;</span><br>' +
                 'Date: ' + this.activeMessage.creationTime.format('ddd, MMM Do YYYY, h:mm:ss A') + '<br>' +
                 'Subject: ' + this.activeMessage.subject + '<br>' +
                 'To: ' + this.activeMessage.to + '<br></div><br><br>' + this.activeMessage.body
@@ -589,10 +587,10 @@ export class UserInboxComponent implements OnDestroy {
         let parentId = this.activeMessage.parentId || this.activeMessage.id;
 
         this.contactsService.sendSMS({
-                contactId: this.contactId,
-                parentId: parentId,
-                message: this.instantMessageText,
-                phoneNumber: this.activeMessage.isInbound ? this.activeMessage.from : this.activeMessage.to
+            contactId: this.contactId,
+            parentId: parentId,
+            message: this.instantMessageText,
+            phoneNumber: this.activeMessage.isInbound ? this.activeMessage.from : this.activeMessage.to
         }).subscribe(res => {
             if (!isNaN(res)) {
                 this.invalidate();

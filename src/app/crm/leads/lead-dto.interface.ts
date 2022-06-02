@@ -10,6 +10,7 @@ export interface LeadDto {
     State: string;
     StageId: number;
     Stage: string;
+    StarId: number;
     LeadDate: string;
     OrganizationId: number;
     UserId: number;
