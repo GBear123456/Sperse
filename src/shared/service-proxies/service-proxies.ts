@@ -11549,6 +11549,64 @@ export class ContactCommunicationServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getSupportedEmailFromAddresses(): Observable<EmailFromInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/ContactCommunication/GetSupportedEmailFromAddresses";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSupportedEmailFromAddresses(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSupportedEmailFromAddresses(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<EmailFromInfo[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<EmailFromInfo[]>;
+        }));
+    }
+
+    protected processGetSupportedEmailFromAddresses(response: HttpResponseBase): Observable<EmailFromInfo[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(EmailFromInfo.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<EmailFromInfo[]>(null as any);
+    }
+
+    /**
      * @param file (optional) 
      * @return Success
      */
@@ -66757,7 +66815,6 @@ export interface IGetEditionTenantStatisticsOutput {
 }
 
 export class GetEmailDataOutput implements IGetEmailDataOutput {
-    from!: EmailFromInfo[] | undefined;
     subject!: string | undefined;
     cc!: string[] | undefined;
     bcc!: string[] | undefined;
@@ -66777,11 +66834,6 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
 
     init(_data?: any) {
         if (_data) {
-            if (Array.isArray(_data["from"])) {
-                this.from = [] as any;
-                for (let item of _data["from"])
-                    this.from!.push(EmailFromInfo.fromJS(item));
-            }
             this.subject = _data["subject"];
             if (Array.isArray(_data["cc"])) {
                 this.cc = [] as any;
@@ -66819,11 +66871,6 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        if (Array.isArray(this.from)) {
-            data["from"] = [];
-            for (let item of this.from)
-                data["from"].push(item.toJSON());
-        }
         data["subject"] = this.subject;
         if (Array.isArray(this.cc)) {
             data["cc"] = [];
@@ -66854,7 +66901,6 @@ export class GetEmailDataOutput implements IGetEmailDataOutput {
 }
 
 export interface IGetEmailDataOutput {
-    from: EmailFromInfo[] | undefined;
     subject: string | undefined;
     cc: string[] | undefined;
     bcc: string[] | undefined;
