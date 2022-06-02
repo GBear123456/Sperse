@@ -27,6 +27,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { CacheService } from 'ng2-cache-service';
 import {
+    EmailFromInfo,
     EmailTemplateServiceProxy,
     GetTemplatesResponse,
     CreateEmailTemplateRequest,
@@ -66,7 +67,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     ckEditor: any;
     templateLoaded: boolean;
-    fromDataSource = [];
+    fromDataSource: EmailFromInfo[] = [];
     showCC = false;
     showBCC = false;
     tagLastValue: string;
@@ -181,11 +182,6 @@ export class EmailTemplateDialogComponent implements OnInit {
                     finalize(() => this.finishLoading())
                 ).subscribe((res: GetEmailDataOutput) => {
                     this.data.tags = res.tags;
-                    if (res.from && res.from.length)
-                        this.fromDataSource = res.from;
-                    else if (this.data.from)
-                        this.fromDataSource = this.data.from instanceof Array ? 
-                            this.data.from : [this.data.from];
                     this.initFromField();
                 });
             } else
@@ -209,6 +205,23 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     initFromField() {
+        let storageKey = 'SupportedFrom' + this.sessionService.userId,
+            supportedFrom: any = sessionStorage.getItem(storageKey);
+        if (supportedFrom)
+            this.initFromDataSource(JSON.parse(supportedFrom));
+        else
+            this.communicationProxy.getSupportedEmailFromAddresses().subscribe((fromEmails: EmailFromInfo[]) => {
+                sessionStorage.setItem(storageKey, JSON.stringify(fromEmails));
+                this.initFromDataSource(fromEmails);
+            });
+    }
+
+    initFromDataSource(fromEmails: EmailFromInfo[]) {
+        if (fromEmails && fromEmails.length)
+            this.fromDataSource = fromEmails;
+        else if (this.data.from)
+            this.fromDataSource = this.data.from instanceof Array ? 
+                this.data.from : [this.data.from];
         if (this.fromDataSource.length) {
             let from = this.fromDataSource.find(item => item.emailSettingsSource == EmailSettingsSource.User);
             this.data.emailSettingsSource = (from ? from : this.fromDataSource[0]).emailSettingsSource;
@@ -609,6 +622,10 @@ export class EmailTemplateDialogComponent implements OnInit {
         let value = this.data.tags && this.data.tags[name];
         if (name == EmailTags.SenderPhone && value)
             value = this.phonePipe.transform(value);
+
+        if (!value && this.data.contactIds)
+            value = '#' + name + '#';
+
         return value;
     }
 

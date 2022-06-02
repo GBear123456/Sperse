@@ -3,6 +3,7 @@ import { EmailTemplateType, ContactInfoDto, EmailFromInfo, EmailSettingsSource }
 
 export interface EmailTemplateData {
     contactId: number;
+    contactIds: number[];
     contact: ContactInfoDto;
     title: string;
     saveTitle: string;

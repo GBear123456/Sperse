@@ -1306,8 +1306,11 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                     text: this.l('Email'),                                    
                                     action: () => {
                                         this.contactService.showEmailDialog({
-                                            contactIds: this.selectedPartnerKeys,
-                                            to: this.selectedPartners.map(lead => lead.Email).filter(Boolean)
+                                            to: this.selectedPartners.map(lead => lead.Email).filter(Boolean),
+                                            ...(this.selectedPartnerKeys.length > 1 ? 
+                                                {contactIds: this.selectedPartnerKeys} : 
+                                                {contactId: this.selectedPartnerKeys[0]}
+                                            )
                                         }).subscribe();
                                     }
                                 },

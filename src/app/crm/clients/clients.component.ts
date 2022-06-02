@@ -1418,8 +1418,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     action: () => {
                                         this.selectedClients.subscribe((clients: ContactDto[]) => {
                                             this.contactService.showEmailDialog({
-                                                contactIds: this.selectedClientKeys,
-                                                to: clients.map(lead => lead.Email).filter(Boolean)
+                                                to: clients.map(lead => lead.Email).filter(Boolean),
+                                                ...(clients.length > 1 ? 
+                                                    {contactIds: this.selectedClientKeys} : 
+                                                    {contactId: this.selectedClientKeys[0]}
+                                                )
                                             }).subscribe();
                                         });
                                     }

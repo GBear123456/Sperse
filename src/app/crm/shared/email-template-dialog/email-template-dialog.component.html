@@ -4,14 +4,14 @@
               [editTitle]="false"
               (onContextItemChanged)="save()">
     <ng-container headerContent>
-        <dx-select-box  #templateSelector
+        <dx-select-box #templateSelector
             name="template"
             width="380px"
             height="40px"
             displayExpr="name"
             valueExpr="id"
             [placeholder]="ls.l(data.addMode ? 'TemplateName' : 'SelectTemplate')"            
-            [disabled]="templateEditMode && isManageUnallowed || onTemplateCreate.observers.length && !data.contact"
+            [disabled]="templateEditMode && isManageUnallowed || onTemplateCreate.observers.length && !(data.contact || data.contactIds)"
             [value]="data.templateId"
             [showClearButton]="!data.addMode && templateEditMode"
             [dataSource]="templates$ | async"

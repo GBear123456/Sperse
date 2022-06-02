@@ -183,6 +183,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
         forkJoin(
             this.hostSettingService.updateAllSettings(this.hostSettings).pipe(tap(() => {
                 this.phoneService.checkSetDefaultPhoneCodeByCountryCode(this.hostSettings.general.defaultCountryCode);
+                sessionStorage.removeItem('SupportedFrom' + this.appSessionService.userId);
             }),
             catchError(error => {
                 this.checkHandlerErrorWarning(true);
