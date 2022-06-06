@@ -70,7 +70,7 @@ export class UserInboxComponent implements OnDestroy {
         return this.activeMessage && this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email;
     }
     isSendSmsAndEmailAllowed = false;
-    deliveryType = CommunicationMessageDeliveryType.Email;
+    deliveryType: CommunicationMessageDeliveryType = CommunicationMessageDeliveryType.Email;
     deliveryTypes = Object.keys(CommunicationMessageDeliveryType).map(item => {
         return {
             id: CommunicationMessageDeliveryType[item],
@@ -78,8 +78,8 @@ export class UserInboxComponent implements OnDestroy {
             hint: this.ls.l(item),
             text: this.ls.l(item),
             icon: this.ls.l(item) === 'Email' ? 'fa fa-envelope-o' : 'fa fa-commenting-o',
-            visible: CommunicationMessageDeliveryType[item] == CommunicationMessageDeliveryType.SMS
-                && abp.features.isEnabled(AppFeatures.InboundOutboundSMS)
+            visible: CommunicationMessageDeliveryType[item] != CommunicationMessageDeliveryType.SMS
+                || abp.features.isEnabled(AppFeatures.InboundOutboundSMS)
         };
     });
     userTimezone = DateHelper.getUserTimezone();
@@ -173,49 +173,72 @@ export class UserInboxComponent implements OnDestroy {
                         onSelectionChanged: event => {
                             if (event.addedItems.length || event.removedItems.length)
                                 this.activeMessage = undefined;
-                                this.status = event.value || undefined;
-                                this.dataSource.reload();
-                            },
-                            inputAttr: { view: 'headline' }
-                        }
-                    }]
-                }, {
-                    location: 'after',
-                    items: [{
-                        widget: 'dxTextBox',
-                        options: {
-                            value: '1 - ' + visibleCount + ' of ' + this.dataSource.totalCount(),
-                            inputAttr: { view: 'headline' },
-                            visible: visibleCount,
-                            readOnly: true
-                        }
-                    }]
-                },
-                {
-                    location: 'after',
-                    items: [
-                        {
-                            name: 'prev',
-                            action: (e) => this.contactsService.prev.next(e),
-                            disabled: this.contactsService.isPrevDisabled
+                            this.dataSource.reload();
                         },
-                        {
-                            name: 'next',
-                            action: (e) => this.contactsService.next.next(e),
-                            disabled: this.contactsService.isNextDisabled
+                        onOptionChanged: event => {
+                            this.deliveryType = event.value.length > 1 ? undefined : event.value[0];
                         }
-                    ]
-                },
-                {
-                    location: 'after',
-                    items: [
-                        {
-                            widget: 'dxButton',
-                            options: {
-                                text: '+ ' + this.ls.l('NewEmail')
-                            },
-                            visible: this.isSendSmsAndEmailAllowed && (!this.deliveryType || isEmail),
-                            action: () => this.showNewEmailDialog()
+                    }
+                }, {
+                    widget: 'dxSelectBox',
+                    options: {
+                        width: '180px',
+                        valueExpr: 'id',
+                        displayExpr: 'name',
+                        value: this.status,
+                        showClearButton: true,
+                        placeholder: this.ls.l('Status'),
+                        dataSource: this.statuses,
+                        onValueChanged: event => {
+                            this.activeMessage = undefined;
+                            this.status = event.value || undefined;
+                            this.dataSource.reload();
+                        },
+                        inputAttr: { view: 'headline' }
+                    }
+                }]
+            }, {
+                location: 'after',
+                items: [{
+                    widget: 'dxTextBox',
+                    options: {
+                        value: '1 - ' + visibleCount + ' of ' + this.dataSource.totalCount(),
+                        inputAttr: { view: 'headline' },
+                        visible: visibleCount,
+                        readOnly: true
+                    }
+                }]
+            },
+            {
+                location: 'after',
+                items: [
+                    {
+                        name: 'prev',
+                        action: (e) => this.contactsService.prev.next(e),
+                        disabled: this.contactsService.isPrevDisabled
+                    },
+                    {
+                        name: 'next',
+                        action: (e) => this.contactsService.next.next(e),
+                        disabled: this.contactsService.isNextDisabled
+                    }
+                ]
+            },
+            {
+                location: 'after',
+                items: [
+                    {
+                        widget: 'dxButton',
+                        options: {
+                            text: '+ ' + this.ls.l('NewEmail')
+                        },
+                        visible: this.isSendSmsAndEmailAllowed && (!this.deliveryType || isEmail),
+                        action: () => this.showNewEmailDialog()
+                    },
+                    {
+                        widget: 'dxButton',
+                        options: {
+                            text: '+ ' + this.ls.l('NewSms')
                         },
                         visible: abp.features.isEnabled(AppFeatures.InboundOutboundSMS) && 
                             this.isSendSmsAndEmailAllowed && (!this.deliveryType || !isEmail),
