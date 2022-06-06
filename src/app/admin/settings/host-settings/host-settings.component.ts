@@ -4,7 +4,7 @@ import { Component, Injector, OnInit, AfterViewInit, ViewChild, ElementRef,
 import { ActivatedRoute, Params } from '@angular/router';
 
 /** Third party imports */
-import { Observable, forkJoin, throwError } from 'rxjs';
+import { Observable, forkJoin, throwError, of } from 'rxjs';
 import { finalize, tap, first, map, delay, catchError } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ClipboardService } from 'ngx-clipboard';
@@ -71,6 +71,7 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
     EmailTemplateType = EmailTemplateType;
     tabIndex: Observable<number>;
 
+    isInboundOutboundSMSEnabled: boolean = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
     isTenantHosts: boolean = this.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
     smtpProviderErrorLink: string;
@@ -102,7 +103,8 @@ export class HostSettingsComponent extends AppComponentBase implements OnInit, A
             this.tenantPaymentSettingsService.getACHWorksSettings(),
             this.tenantPaymentSettingsService.getStripeSettings(),
             this.tenantPaymentSettingsService.getRecurlyPaymentSettings(),
-            this.hostSettingService.getYTelSettings()
+            this.isInboundOutboundSMSEnabled ?
+                this.hostSettingService.getYTelSettings() : of(<any>{isEnabled: false})
         ).pipe(
             finalize(() => { this.changeDetection.detectChanges(); })
         ).subscribe(([allSettings, payPalSettings, achWorksSettings, stripeSettings, recurlySettings, yTelSettings]) => {

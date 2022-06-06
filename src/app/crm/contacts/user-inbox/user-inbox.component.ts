@@ -70,6 +70,8 @@ export class UserInboxComponent implements OnDestroy {
         return this.activeMessage && this.activeMessage.deliveryType == CommunicationMessageDeliveryType.Email;
     }
     isSendSmsAndEmailAllowed = false;
+    isInboundOutboundSMSEnabled = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
+    isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
     deliveryType: CommunicationMessageDeliveryType = CommunicationMessageDeliveryType.Email;
     deliveryTypes = Object.keys(CommunicationMessageDeliveryType).map(item => {
         return {
@@ -78,8 +80,8 @@ export class UserInboxComponent implements OnDestroy {
             hint: this.ls.l(item),
             text: this.ls.l(item),
             icon: this.ls.l(item) === 'Email' ? 'fa fa-envelope-o' : 'fa fa-commenting-o',
-            visible: CommunicationMessageDeliveryType[item] != CommunicationMessageDeliveryType.SMS
-                || abp.features.isEnabled(AppFeatures.InboundOutboundSMS)
+            visible: CommunicationMessageDeliveryType[item] != CommunicationMessageDeliveryType.SMS || this.isInboundOutboundSMSEnabled,
+            disabled: this.isSMSIntegrationDisabled
         };
     });
     userTimezone = DateHelper.getUserTimezone();
@@ -168,7 +170,7 @@ export class UserInboxComponent implements OnDestroy {
                         width: '240px',
                         selectedItemKeys: this.deliveryType ? this.deliveryType : [
                             CommunicationMessageDeliveryType.Email, 
-                            abp.features.isEnabled(AppFeatures.InboundOutboundSMS) && CommunicationMessageDeliveryType.SMS
+                            this.isInboundOutboundSMSEnabled && CommunicationMessageDeliveryType.SMS
                         ].filter(Boolean),
                         onSelectionChanged: event => {
                             if (event.addedItems.length || event.removedItems.length)
@@ -240,7 +242,8 @@ export class UserInboxComponent implements OnDestroy {
                         options: {
                             text: '+ ' + this.ls.l('NewSms')
                         },
-                        visible: abp.features.isEnabled(AppFeatures.InboundOutboundSMS) && 
+                        disabled: this.isSMSIntegrationDisabled,
+                        visible: this.isInboundOutboundSMSEnabled && 
                             this.isSendSmsAndEmailAllowed && (!this.deliveryType || !isEmail),
                         action: () => this.showNewSMSDialog()
                     }
@@ -594,7 +597,7 @@ export class UserInboxComponent implements OnDestroy {
                 to: this.activeMessage.to['join'] ?
                     this.activeMessage.to : [this.activeMessage.to]
             });
-        else if (abp.features.isEnabled(AppFeatures.InboundOutboundSMS))
+        else if (this.isInboundOutboundSMSEnabled && !this.isSMSIntegrationDisabled)
             this.contactsService.showSMSDialog({
                 parentId: this.activeMessage.parentId || this.activeMessage.id,
                 body: this.instantMessageText,

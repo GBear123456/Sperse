@@ -548,6 +548,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         })
     );
 
+    isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
+
     constructor(
         injector: Injector,
         private authService: AppAuthService,
@@ -699,6 +701,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
                             });
                         },
+                        disabled: this.isSMSIntegrationDisabled,
                         checkVisible: (lead: LeadDto) => {
                             return abp.features.isEnabled(AppFeatures.InboundOutboundSMS) &&
                                 this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
@@ -1630,7 +1633,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 {
                                     text: this.l('SMS'),
                                     visible: abp.features.isEnabled(AppFeatures.InboundOutboundSMS),
-                                    disabled: this.selectedClientKeys.length > 1,
+                                    disabled: this.isSMSIntegrationDisabled || this.selectedClientKeys.length > 1,
                                     action: () => {
                                         const selectedLeads = this.selectedLeads;
                                         const contact = selectedLeads && selectedLeads[selectedLeads.length - 1];
