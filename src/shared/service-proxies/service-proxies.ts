@@ -36421,6 +36421,62 @@ export class SalesTalkServiceProxy {
         }
         return _observableOf<SalesTalkLeadInfo>(null as any);
     }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    updateLead(body: SalesTalkUpdateLeadInfo | undefined): Observable<SalesTalkUpdateLeadOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/SalesTalk/UpdateLead";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdateLead(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdateLead(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<SalesTalkUpdateLeadOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<SalesTalkUpdateLeadOutput>;
+        }));
+    }
+
+    protected processUpdateLead(response: HttpResponseBase): Observable<SalesTalkUpdateLeadOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = SalesTalkUpdateLeadOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<SalesTalkUpdateLeadOutput>(null as any);
+    }
 }
 
 @Injectable()
@@ -77656,6 +77712,7 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
     id!: number;
     fullName!: string | undefined;
     userId!: number | undefined;
+    primaryEmailId!: number | undefined;
     primaryPhoneId!: number | undefined;
     primaryAddressId!: number | undefined;
     primaryPhoto!: string | undefined;
@@ -77683,6 +77740,7 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
             this.id = _data["id"];
             this.fullName = _data["fullName"];
             this.userId = _data["userId"];
+            this.primaryEmailId = _data["primaryEmailId"];
             this.primaryPhoneId = _data["primaryPhoneId"];
             this.primaryAddressId = _data["primaryAddressId"];
             this.primaryPhoto = _data["primaryPhoto"];
@@ -77710,6 +77768,7 @@ export class OrganizationContactInfoDto implements IOrganizationContactInfoDto {
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["userId"] = this.userId;
+        data["primaryEmailId"] = this.primaryEmailId;
         data["primaryPhoneId"] = this.primaryPhoneId;
         data["primaryAddressId"] = this.primaryAddressId;
         data["primaryPhoto"] = this.primaryPhoto;
@@ -77726,6 +77785,7 @@ export interface IOrganizationContactInfoDto {
     id: number;
     fullName: string | undefined;
     userId: number | undefined;
+    primaryEmailId: number | undefined;
     primaryPhoneId: number | undefined;
     primaryAddressId: number | undefined;
     primaryPhoto: string | undefined;
@@ -80030,6 +80090,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     id!: number;
     fullName!: string | undefined;
     userId!: number | undefined;
+    primaryEmailId!: number | undefined;
     primaryPhoneId!: number | undefined;
     primaryAddressId!: number | undefined;
     primaryPhoto!: string | undefined;
@@ -80065,6 +80126,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
             this.id = _data["id"];
             this.fullName = _data["fullName"];
             this.userId = _data["userId"];
+            this.primaryEmailId = _data["primaryEmailId"];
             this.primaryPhoneId = _data["primaryPhoneId"];
             this.primaryAddressId = _data["primaryAddressId"];
             this.primaryPhoto = _data["primaryPhoto"];
@@ -80100,6 +80162,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
         data["id"] = this.id;
         data["fullName"] = this.fullName;
         data["userId"] = this.userId;
+        data["primaryEmailId"] = this.primaryEmailId;
         data["primaryPhoneId"] = this.primaryPhoneId;
         data["primaryAddressId"] = this.primaryAddressId;
         data["primaryPhoto"] = this.primaryPhoto;
@@ -80124,6 +80187,7 @@ export interface IPersonContactInfoDto {
     id: number;
     fullName: string | undefined;
     userId: number | undefined;
+    primaryEmailId: number | undefined;
     primaryPhoneId: number | undefined;
     primaryAddressId: number | undefined;
     primaryPhoto: string | undefined;
@@ -86221,7 +86285,9 @@ export enum SalesSummaryDatePeriod {
 }
 
 export class SalesTalkLeadInfo implements ISalesTalkLeadInfo {
+    companyId!: number | undefined;
     leadId!: number;
+    salutation!: string | undefined;
     firstName!: string | undefined;
     lastName!: string | undefined;
     email!: string | undefined;
@@ -86230,17 +86296,16 @@ export class SalesTalkLeadInfo implements ISalesTalkLeadInfo {
     workPhone!: string | undefined;
     tollPhone!: string | undefined;
     faxPhone!: string | undefined;
-    homeAddress!: string | undefined;
+    homeAddress1!: string | undefined;
     homeCity!: string | undefined;
     homeState!: string | undefined;
     homeCountry!: string | undefined;
     homeZip!: string | undefined;
-    officeAddress!: string | undefined;
+    officeAddress1!: string | undefined;
     officeCity!: string | undefined;
     officeState!: string | undefined;
     officeCountry!: string | undefined;
     officeZip!: string | undefined;
-    companyId!: number | undefined;
     companyName!: string | undefined;
     companyDescription!: string | undefined;
     companyAnnualRevenue!: number | undefined;
@@ -86264,7 +86329,9 @@ export class SalesTalkLeadInfo implements ISalesTalkLeadInfo {
 
     init(_data?: any) {
         if (_data) {
+            this.companyId = _data["companyId"];
             this.leadId = _data["leadId"];
+            this.salutation = _data["salutation"];
             this.firstName = _data["firstName"];
             this.lastName = _data["lastName"];
             this.email = _data["email"];
@@ -86273,17 +86340,16 @@ export class SalesTalkLeadInfo implements ISalesTalkLeadInfo {
             this.workPhone = _data["workPhone"];
             this.tollPhone = _data["tollPhone"];
             this.faxPhone = _data["faxPhone"];
-            this.homeAddress = _data["homeAddress"];
+            this.homeAddress1 = _data["homeAddress1"];
             this.homeCity = _data["homeCity"];
             this.homeState = _data["homeState"];
             this.homeCountry = _data["homeCountry"];
             this.homeZip = _data["homeZip"];
-            this.officeAddress = _data["officeAddress"];
+            this.officeAddress1 = _data["officeAddress1"];
             this.officeCity = _data["officeCity"];
             this.officeState = _data["officeState"];
             this.officeCountry = _data["officeCountry"];
             this.officeZip = _data["officeZip"];
-            this.companyId = _data["companyId"];
             this.companyName = _data["companyName"];
             this.companyDescription = _data["companyDescription"];
             this.companyAnnualRevenue = _data["companyAnnualRevenue"];
@@ -86307,7 +86373,9 @@ export class SalesTalkLeadInfo implements ISalesTalkLeadInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["companyId"] = this.companyId;
         data["leadId"] = this.leadId;
+        data["salutation"] = this.salutation;
         data["firstName"] = this.firstName;
         data["lastName"] = this.lastName;
         data["email"] = this.email;
@@ -86316,17 +86384,16 @@ export class SalesTalkLeadInfo implements ISalesTalkLeadInfo {
         data["workPhone"] = this.workPhone;
         data["tollPhone"] = this.tollPhone;
         data["faxPhone"] = this.faxPhone;
-        data["homeAddress"] = this.homeAddress;
+        data["homeAddress1"] = this.homeAddress1;
         data["homeCity"] = this.homeCity;
         data["homeState"] = this.homeState;
         data["homeCountry"] = this.homeCountry;
         data["homeZip"] = this.homeZip;
-        data["officeAddress"] = this.officeAddress;
+        data["officeAddress1"] = this.officeAddress1;
         data["officeCity"] = this.officeCity;
         data["officeState"] = this.officeState;
         data["officeCountry"] = this.officeCountry;
         data["officeZip"] = this.officeZip;
-        data["companyId"] = this.companyId;
         data["companyName"] = this.companyName;
         data["companyDescription"] = this.companyDescription;
         data["companyAnnualRevenue"] = this.companyAnnualRevenue;
@@ -86343,7 +86410,9 @@ export class SalesTalkLeadInfo implements ISalesTalkLeadInfo {
 }
 
 export interface ISalesTalkLeadInfo {
+    companyId: number | undefined;
     leadId: number;
+    salutation: string | undefined;
     firstName: string | undefined;
     lastName: string | undefined;
     email: string | undefined;
@@ -86352,17 +86421,16 @@ export interface ISalesTalkLeadInfo {
     workPhone: string | undefined;
     tollPhone: string | undefined;
     faxPhone: string | undefined;
-    homeAddress: string | undefined;
+    homeAddress1: string | undefined;
     homeCity: string | undefined;
     homeState: string | undefined;
     homeCountry: string | undefined;
     homeZip: string | undefined;
-    officeAddress: string | undefined;
+    officeAddress1: string | undefined;
     officeCity: string | undefined;
     officeState: string | undefined;
     officeCountry: string | undefined;
     officeZip: string | undefined;
-    companyId: number | undefined;
     companyName: string | undefined;
     companyDescription: string | undefined;
     companyAnnualRevenue: number | undefined;
@@ -86462,6 +86530,210 @@ export interface ISalesTalkSettingsInput {
     isEnabled: boolean;
     url: string | undefined;
     apiKey: string | undefined;
+}
+
+export class SalesTalkUpdateLeadInfo implements ISalesTalkUpdateLeadInfo {
+    userEmail!: string | undefined;
+    leadId!: number;
+    salutation!: string | undefined;
+    firstName!: string | undefined;
+    lastName!: string | undefined;
+    email!: string | undefined;
+    mobilePhone!: string | undefined;
+    homePhone!: string | undefined;
+    workPhone!: string | undefined;
+    tollPhone!: string | undefined;
+    faxPhone!: string | undefined;
+    homeAddress1!: string | undefined;
+    homeCity!: string | undefined;
+    homeState!: string | undefined;
+    homeCountry!: string | undefined;
+    homeZip!: string | undefined;
+    officeAddress1!: string | undefined;
+    officeCity!: string | undefined;
+    officeState!: string | undefined;
+    officeCountry!: string | undefined;
+    officeZip!: string | undefined;
+    companyName!: string | undefined;
+    companyDescription!: string | undefined;
+    companyAnnualRevenue!: number | undefined;
+    companyEmployeeCount!: number | undefined;
+    companyIndustry!: string | undefined;
+    companyTickerSymbol!: string | undefined;
+    companyWebSite!: string | undefined;
+    title!: string | undefined;
+    leadStage!: string | undefined;
+    source!: string | undefined;
+    timezone!: string | undefined;
+
+    constructor(data?: ISalesTalkUpdateLeadInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.userEmail = _data["userEmail"];
+            this.leadId = _data["leadId"];
+            this.salutation = _data["salutation"];
+            this.firstName = _data["firstName"];
+            this.lastName = _data["lastName"];
+            this.email = _data["email"];
+            this.mobilePhone = _data["mobilePhone"];
+            this.homePhone = _data["homePhone"];
+            this.workPhone = _data["workPhone"];
+            this.tollPhone = _data["tollPhone"];
+            this.faxPhone = _data["faxPhone"];
+            this.homeAddress1 = _data["homeAddress1"];
+            this.homeCity = _data["homeCity"];
+            this.homeState = _data["homeState"];
+            this.homeCountry = _data["homeCountry"];
+            this.homeZip = _data["homeZip"];
+            this.officeAddress1 = _data["officeAddress1"];
+            this.officeCity = _data["officeCity"];
+            this.officeState = _data["officeState"];
+            this.officeCountry = _data["officeCountry"];
+            this.officeZip = _data["officeZip"];
+            this.companyName = _data["companyName"];
+            this.companyDescription = _data["companyDescription"];
+            this.companyAnnualRevenue = _data["companyAnnualRevenue"];
+            this.companyEmployeeCount = _data["companyEmployeeCount"];
+            this.companyIndustry = _data["companyIndustry"];
+            this.companyTickerSymbol = _data["companyTickerSymbol"];
+            this.companyWebSite = _data["companyWebSite"];
+            this.title = _data["title"];
+            this.leadStage = _data["leadStage"];
+            this.source = _data["source"];
+            this.timezone = _data["timezone"];
+        }
+    }
+
+    static fromJS(data: any): SalesTalkUpdateLeadInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new SalesTalkUpdateLeadInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["userEmail"] = this.userEmail;
+        data["leadId"] = this.leadId;
+        data["salutation"] = this.salutation;
+        data["firstName"] = this.firstName;
+        data["lastName"] = this.lastName;
+        data["email"] = this.email;
+        data["mobilePhone"] = this.mobilePhone;
+        data["homePhone"] = this.homePhone;
+        data["workPhone"] = this.workPhone;
+        data["tollPhone"] = this.tollPhone;
+        data["faxPhone"] = this.faxPhone;
+        data["homeAddress1"] = this.homeAddress1;
+        data["homeCity"] = this.homeCity;
+        data["homeState"] = this.homeState;
+        data["homeCountry"] = this.homeCountry;
+        data["homeZip"] = this.homeZip;
+        data["officeAddress1"] = this.officeAddress1;
+        data["officeCity"] = this.officeCity;
+        data["officeState"] = this.officeState;
+        data["officeCountry"] = this.officeCountry;
+        data["officeZip"] = this.officeZip;
+        data["companyName"] = this.companyName;
+        data["companyDescription"] = this.companyDescription;
+        data["companyAnnualRevenue"] = this.companyAnnualRevenue;
+        data["companyEmployeeCount"] = this.companyEmployeeCount;
+        data["companyIndustry"] = this.companyIndustry;
+        data["companyTickerSymbol"] = this.companyTickerSymbol;
+        data["companyWebSite"] = this.companyWebSite;
+        data["title"] = this.title;
+        data["leadStage"] = this.leadStage;
+        data["source"] = this.source;
+        data["timezone"] = this.timezone;
+        return data;
+    }
+}
+
+export interface ISalesTalkUpdateLeadInfo {
+    userEmail: string | undefined;
+    leadId: number;
+    salutation: string | undefined;
+    firstName: string | undefined;
+    lastName: string | undefined;
+    email: string | undefined;
+    mobilePhone: string | undefined;
+    homePhone: string | undefined;
+    workPhone: string | undefined;
+    tollPhone: string | undefined;
+    faxPhone: string | undefined;
+    homeAddress1: string | undefined;
+    homeCity: string | undefined;
+    homeState: string | undefined;
+    homeCountry: string | undefined;
+    homeZip: string | undefined;
+    officeAddress1: string | undefined;
+    officeCity: string | undefined;
+    officeState: string | undefined;
+    officeCountry: string | undefined;
+    officeZip: string | undefined;
+    companyName: string | undefined;
+    companyDescription: string | undefined;
+    companyAnnualRevenue: number | undefined;
+    companyEmployeeCount: number | undefined;
+    companyIndustry: string | undefined;
+    companyTickerSymbol: string | undefined;
+    companyWebSite: string | undefined;
+    title: string | undefined;
+    leadStage: string | undefined;
+    source: string | undefined;
+    timezone: string | undefined;
+}
+
+export class SalesTalkUpdateLeadOutput implements ISalesTalkUpdateLeadOutput {
+    validationErrors!: string[] | undefined;
+
+    constructor(data?: ISalesTalkUpdateLeadOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["validationErrors"])) {
+                this.validationErrors = [] as any;
+                for (let item of _data["validationErrors"])
+                    this.validationErrors!.push(item);
+            }
+        }
+    }
+
+    static fromJS(data: any): SalesTalkUpdateLeadOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SalesTalkUpdateLeadOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.validationErrors)) {
+            data["validationErrors"] = [];
+            for (let item of this.validationErrors)
+                data["validationErrors"].push(item);
+        }
+        return data;
+    }
+}
+
+export interface ISalesTalkUpdateLeadOutput {
+    validationErrors: string[] | undefined;
 }
 
 export class SavePageInput implements ISavePageInput {
