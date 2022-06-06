@@ -274,8 +274,9 @@ export class ContactsComponent extends AppComponentBase implements OnDestroy {
     private targetEntity: BehaviorSubject<TargetDirectionEnum> = new BehaviorSubject<TargetDirectionEnum>(TargetDirectionEnum.Current);
     public targetEntity$: Observable<TargetDirectionEnum> = this.targetEntity.asObservable();
     manageAllowed = false;
-
-    isInboundOutboundSMSAllowed = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
+    
+    isInboundOutboundSMSAllowed = abp.features.isEnabled(AppFeatures.InboundOutboundSMS)
+        && abp.setting.get('Integrations:YTel:IsEnabled') == 'True';
     isCommunicationHistoryAllowed = false;
     isSendSmsAndEmailAllowed = false;
 

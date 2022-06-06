@@ -326,6 +326,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         AppPermissions.AdministrationUsersImpersonation
     );
 
+    isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
+
     actionEvent: any;
     actionMenuGroups: ActionMenuGroup[] = [
         {
@@ -335,6 +337,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
+                    disabled: this.isSMSIntegrationDisabled,
                     checkVisible: () => {
                         return abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
                     },
@@ -1430,6 +1433,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 },
                                 {
                                     text: this.l('SMS'),
+                                    disabled: this.isSMSIntegrationDisabled,
                                     visible: abp.features.isEnabled(AppFeatures.InboundOutboundSMS),
                                     action: () => {
                                         this.selectedClients.subscribe((clients: ContactDto[]) => {

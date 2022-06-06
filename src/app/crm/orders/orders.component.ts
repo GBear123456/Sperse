@@ -684,6 +684,7 @@ export class OrdersComponent extends AppComponentBase implements OnInit, AfterVi
                 {
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
+                    disabled: abp.setting.get('Integrations:YTel:IsEnabled') == 'False',
                     checkVisible: () => {
                         return abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
                     },
