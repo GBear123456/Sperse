@@ -129,6 +129,7 @@ import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/models/create-entity-dialog-data.interface';
 import { AddSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-subscription-dialog.component';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './clients.component.html',
@@ -325,6 +326,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
         AppPermissions.AdministrationUsersImpersonation
     );
 
+    isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
+
     actionEvent: any;
     actionMenuGroups: ActionMenuGroup[] = [
         {
@@ -334,6 +337,10 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                 {
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
+                    disabled: this.isSMSIntegrationDisabled,
+                    checkVisible: () => {
+                        return abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
+                    },
                     action: () => {
                         this.contactService.showSMSDialog({
                             phoneNumber: (this.actionEvent.data || this.actionEvent).Phone
@@ -1426,6 +1433,8 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                 },
                                 {
                                     text: this.l('SMS'),
+                                    disabled: this.isSMSIntegrationDisabled,
+                                    visible: abp.features.isEnabled(AppFeatures.InboundOutboundSMS),
                                     action: () => {
                                         this.selectedClients.subscribe((clients: ContactDto[]) => {
                                             const contact = clients && clients[clients.length - 1];

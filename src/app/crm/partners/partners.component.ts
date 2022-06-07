@@ -111,6 +111,7 @@ import { FilterHelpers } from '@app/crm/shared/helpers/filter.helper';
 import { ActionMenuGroup } from '@app/shared/common/action-menu/action-menu-group.interface';
 import { Status } from '@app/crm/contacts/operations-widget/status.interface';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './partners.component.html',
@@ -180,6 +181,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
         AppPermissions.AdministrationUsersImpersonation
     );
 
+    isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
+
     actionEvent: any;
     actionMenuGroups: ActionMenuGroup[] = [
         {
@@ -189,6 +192,10 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                 {
                     text: this.l('SMS'),
                     class: 'sms fa fa-commenting-o',
+                    disabled: this.isSMSIntegrationDisabled,
+                    checkVisible: () => {
+                        return abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
+                    },
                     action: () => {
                         this.contactService.showSMSDialog({
                             phoneNumber: (this.actionEvent.data || this.actionEvent).Phone
@@ -1314,7 +1321,8 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                                 },
                                 {
                                     text: this.l('SMS'),
-                                    disabled: this.selectedPartnerKeys.length > 1,
+                                    visible: abp.features.isEnabled(AppFeatures.InboundOutboundSMS),
+                                    disabled: this.isSMSIntegrationDisabled || this.selectedPartnerKeys.length > 1,
                                     action: () => {
                                         const selectedPartners = this.selectedPartners;
                                         const contact = selectedPartners && selectedPartners[selectedPartners.length - 1];
