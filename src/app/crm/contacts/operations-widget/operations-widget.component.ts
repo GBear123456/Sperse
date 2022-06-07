@@ -466,12 +466,14 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             action: () => {
                                 if (this.salesTalkApiLink) {
                                     let userEmail = (environment.production ? this.appSession.user.emailAddress : 'sperse@test.com'),
-                                        leadEmail: any = this.contactInfo.personContactInfo.details.emails[0];
+                                        leadEmail: any = this.contactInfo.personContactInfo.details.emails.find(
+                                            email => email.id == this.contactInfo.personContactInfo.primaryEmailId);
+                                    leadEmail = leadEmail && leadEmail[0];
                                     leadEmail = leadEmail ? leadEmail.emailAddress : '';
                                     window.open(this.salesTalkApiLink
                                         + '&leadId=' + this.leadId
                                         + '&userEmail=' + userEmail
-                                        //+ '&leadEmail=' + leadEmail
+                                        + '&leadEmail=' + leadEmail
                                     );
                                 }
                             },
