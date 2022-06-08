@@ -83,6 +83,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     stripePaymentSettings: StripeSettings = new StripeSettings();
     isTenantHosts: boolean = this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
+    isInboundOutboundSMSEnabled: boolean = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFM) && abp.features.isEnabled(AppFeatures.PFMApplications);
     isRapidTenantLayout: boolean = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.Rapid;
@@ -187,8 +188,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null),
-            this.tenantSettingsService.getSendGridSettings(),
-            this.tenantSettingsService.getYTelSettings(),
+            this.tenantSettingsService.getSendGridSettings(),            
+            this.isInboundOutboundSMSEnabled ?
+                this.tenantSettingsService.getYTelSettings() : of(<any>{isEnabled: false}),
             this.isRapidTenantLayout ? this.tenantSettingsService.getRapidSettings() : of<RapidSettingsDto>(<any>null)
         ];
         if (this.isPFMApplicationsFeatureEnabled) {
