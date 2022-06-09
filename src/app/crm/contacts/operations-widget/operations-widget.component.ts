@@ -465,10 +465,9 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             },
                             action: () => {
                                 if (this.salesTalkApiLink) {
-                                    let userEmail = (environment.production ? this.appSession.user.emailAddress : 'sperse@test.com'),
-                                        leadEmail: any = this.contactInfo.personContactInfo.details.emails.find(
+                                    let userEmail = (['staging', 'beta', 'production'].includes(environment.releaseStage) ? this.appSession.user.emailAddress : 'sperse@test.com'),
+                                        leadEmail: any = (this.contactInfo.personContactInfo.details.emails || []).find(
                                             email => email.id == this.contactInfo.personContactInfo.primaryEmailId);
-                                    leadEmail = leadEmail && leadEmail[0];
                                     leadEmail = leadEmail ? leadEmail.emailAddress : '';
                                     window.open(this.salesTalkApiLink
                                         + '&leadId=' + this.leadId
@@ -477,9 +476,11 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                                     );
                                 }
                             },
-                            disabled: !this.permission.checkCGPermission(this.contactInfo.groups, ''),
-                            visible: !this.appService.isHostTenant && this.customerType != ContactGroup.Employee 
-                                && this.salesTalkApiLink && abp.features.isEnabled(AppFeatures.CRMSalesTalk)
+                            disabled: !this.salesTalkApiLink ||
+                                !this.permission.checkCGPermission(this.contactInfo.groups, ''),
+                            visible: !this.appService.isHostTenant 
+                                && this.customerType != ContactGroup.Employee 
+                                 && abp.features.isEnabled(AppFeatures.CRMSalesTalk)
                         }
                     ]
                 },
