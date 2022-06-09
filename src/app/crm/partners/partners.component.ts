@@ -1305,17 +1305,19 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.selectedPartnerKeys.length || this.selectedPartnerKeys.length > 1 || 
+                        disabled: !this.selectedPartnerKeys.length ||
                             !this.permission.checkCGPermission([this.partnerContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [
                                 {
-                                    text: this.l('Email'),
-                                    disabled: this.selectedPartnerKeys.length > 1,
+                                    text: this.l('Email'),                                    
                                     action: () => {
                                         this.contactService.showEmailDialog({
-                                            contactId: this.selectedPartnerKeys[0],
-                                            to: this.selectedPartners.map(lead => lead.Email).filter(Boolean)
+                                            to: this.selectedPartners.map(lead => lead.Email).filter(Boolean),
+                                            ...(this.selectedPartnerKeys.length > 1 ? 
+                                                {contactIds: this.selectedPartnerKeys} : 
+                                                {contactId: this.selectedPartnerKeys[0]}
+                                            )
                                         }).subscribe();
                                     }
                                 },
