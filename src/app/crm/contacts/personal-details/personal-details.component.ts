@@ -352,6 +352,8 @@ export class PersonalDetailsComponent implements AfterViewInit, OnDestroy {
     ngOnDestroy() {
         this.contactsService.toolbarUpdate();
         this.contactsService.unsubscribe(this.ident);
+        this.personalDetailsService.togglePersonalDetailsDialog(
+            this.settingsDialogId, false);
         this.lifeCycleService.destroy.next();
     }
 }

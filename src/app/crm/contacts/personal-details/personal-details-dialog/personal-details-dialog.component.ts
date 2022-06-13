@@ -568,6 +568,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
 
     close() {
         this.contactsService.closeSettingsDialog();
+        setTimeout(() => this.dialogRef.close(), 100);
     }
 
     getThumbnailSrc(thumbnailId?: string) {
