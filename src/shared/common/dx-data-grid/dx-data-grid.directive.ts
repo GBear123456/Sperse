@@ -181,7 +181,7 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
                     if (instance.option('dataSource') == initialDataSource) {
                         if (!(initialDataSource instanceof Array))
                             instance.option('dataSource', instance.getDataSource().items());
-                        instance.option('remoteOperations', '{filtering: false}');
+                        instance.option('remoteOperations', {filtering: false});
                     }
                     searchByTextTimeout = setTimeout(() => {
                         instance.searchByText(phrase);
@@ -211,7 +211,6 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
         let hint = this.component.instance.option('hint');
         this.component.instance.option('stateStoring', {
             enabled: true,
-            ignoreColumnOptionNames: [],
             storageKey: this.cacheHelper.getCacheKey(
                 [
                     this.getLocationPath(),

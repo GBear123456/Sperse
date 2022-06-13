@@ -32,6 +32,7 @@ export class ODataService {
         private messageService: MessageService,
         private ls: AppLocalizationService
     ) {
+/*
         dxAjax.setStrategy((options) => {
             options.responseType = 'application/json';
             if (!options.headers || !options.headers['Authorization'])
@@ -44,6 +45,7 @@ export class ODataService {
             options.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             return (this.dxRequestPool[key] = dxAjax.sendRequest(options));
         });
+*/
     }
 
     loadDataSource(dataSource, uri: string, url?: string): Promise<any> {

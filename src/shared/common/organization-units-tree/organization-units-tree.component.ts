@@ -62,7 +62,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
                         event.event.preventDefault();
 
                         this.sortTreeDesc = !this.sortTreeDesc;
-                        this.oranizationUnitsDataSource.sort({ getter: 'displayName', desc: this.sortTreeDesc });
+                        this.oranizationUnitsDataSource.sort({ selector: 'displayName', desc: this.sortTreeDesc });
                         this.oranizationUnitsDataSource.load();
                     }
                 },
@@ -122,7 +122,7 @@ export class OrganizationUnitsTreeComponent implements OnDestroy {
             item['expanded'] = true;
         });
         this.oranizationUnitsDataSource = new DataSource(this.organizationUnitsData);
-        this.oranizationUnitsDataSource.sort({ getter: 'displayName', desc: this.sortTreeDesc });
+        this.oranizationUnitsDataSource.sort({ selector: 'displayName', desc: this.sortTreeDesc });
     }
 
     getSelectedOrganizationUnits(): number[] {

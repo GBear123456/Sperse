@@ -10,7 +10,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { Store } from '@ngrx/store';
 import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
-import oDataUtils from 'devextreme/data/odata/utils';
+import * as oDataUtils from 'devextreme/data/odata/utils';
 import dxTooltip from 'devextreme/ui/tooltip';
 import { Observable, Subject, from, of, forkJoin } from 'rxjs';
 import { filter, finalize, delayWhen, map, mergeMap, switchMap, takeUntil, tap } from 'rxjs/operators';

@@ -255,7 +255,7 @@ export class CommissionHistoryComponent extends AppComponentBase implements OnIn
         text: this.l('Resellers')
     }];
 
-    currencyFormat$: Observable<DevExpress.ui.format> = this.invoicesService.settings$.pipe(
+    currencyFormat$: Observable<DevExpress.ui.Format> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => {
             return {
                 type: 'currency',

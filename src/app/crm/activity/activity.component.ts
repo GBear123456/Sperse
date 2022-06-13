@@ -642,7 +642,7 @@ export class ActivityComponent extends AppComponentBase implements AfterViewInit
     }
 
     deleteAppointment(appointment: ActivityDto) {
-        this.schedulerComponent.instance.deleteAppointment(appointment);
+        this.schedulerComponent.instance.deleteAppointment(<any>appointment);
     }
 
     getDateWithTimezone(value) {

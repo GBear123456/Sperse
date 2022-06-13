@@ -94,7 +94,7 @@ export class ResellerActivityComponent implements OnInit, OnDestroy {
     isCommissionsAllowed = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions)
         && this.permissionService.isGranted(AppPermissions.CRMAffiliatesCommissions);
 
-    currencyFormat$: Observable<DevExpress.ui.format> = this.invoicesService.settings$.pipe(
+    currencyFormat$: Observable<DevExpress.ui.Format> = this.invoicesService.settings$.pipe(
         map((settings: InvoiceSettings) => {
             return {
                 type: 'currency',

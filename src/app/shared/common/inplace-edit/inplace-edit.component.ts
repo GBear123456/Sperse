@@ -133,7 +133,9 @@ export class InplaceEditComponent extends AppComponentBase {
     }
 
     updateItem() {
-        if (this.multiline || (this.textBox || this.numberBox).instance.option('isValid')) {
+        let elm: any = this.textBox || this.numberBox,
+            instance = elm && elm.instance;
+        if (this.multiline || instance && instance.option('isValid')) {
             if (this.value != this.valueOriginal && this.valueChanged)
                 this.valueChanged.emit(this.valueOriginal);
             this.isEditModeEnabled = false;

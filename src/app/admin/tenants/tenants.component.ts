@@ -144,13 +144,17 @@ export class TenantsComponent extends AppComponentBase implements OnDestroy, OnI
         this.dataSource = new DataSource({
             key: 'id',
             load: (loadOptions) => {
+                let sortOption = [];
+                if (loadOptions.sort)
+                    sortOption = loadOptions.sort instanceof Array 
+                        ? loadOptions.sort : [loadOptions.sort];
                 return this.tenantService.getTenants(
                     this.searchValue || this.tenantName || undefined,
                     this.creationDateStart || undefined,
                     this.creationDateEnd || undefined,
                     this.productId ? parseInt(this.productId) : undefined,
                     !this.productId || parseInt(this.productId) >= 0,
-                    (loadOptions.sort || []).map((item) => {
+                    sortOption.map(item => {
                         return item.selector + ' ' + (item.desc ? 'DESC' : 'ASC');
                     }).join(','),
                     loadOptions.take || 10000,

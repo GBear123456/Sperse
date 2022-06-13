@@ -36,7 +36,7 @@ import {
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
-import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
+import { DxValidationGroupComponent } from 'devextreme-angular';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';

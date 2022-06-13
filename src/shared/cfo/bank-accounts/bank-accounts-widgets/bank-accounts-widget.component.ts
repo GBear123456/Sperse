@@ -1,4 +1,4 @@
-/** Core imports */
+/** Core imports */                 
 import {
     Component,
     Injector,
@@ -443,13 +443,18 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
 
     selectAll(e) {
         if (e.event) {
-            this.mainDataGrid.instance.getVisibleRows().forEach(row => {
-                row.isSelected = e.value;
-                row.data.selected = e.value;
-                row.data.bankAccounts.forEach(account => {
-                    account.selected = e.value;
+            let instance = this.mainDataGrid.instance,
+                keys = instance.getVisibleRows().map(row => {
+                    row.data.selected = e.value;
+                    row.data.bankAccounts.forEach(account => {
+                        account.selected = e.value;
+                    });
+                    return row.key;
                 });
-            });
+            if (e.value)
+                instance.selectRows(keys, true);
+            else
+                instance.deselectRows(keys);
             this.selectedAccountsChanged();
         }
     }
@@ -495,9 +500,11 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
     detailContentReady() {
         if (this.dxFormInstance) {
             this.dxFormInstance.option('items').forEach(item => {
+/* !!VP Should be considered
                 if (!item.column.allowEditing) {
                     item.visible = true;
                 }
+*/
             });
             this.dxFormInstance = null;
         }
@@ -514,9 +521,11 @@ export class BankAccountsWidgetComponent extends CFOComponentBase implements OnI
             this.dxFormInstance = <any>Form.getInstance(formController);
             /** For each column set visible false if it's not allowing editing */
             this.dxFormInstance.option('items').forEach(item => {
+/*  !!VP Should be considered
                 if (!item.column.allowEditing) {
                     item.visible = false;
                 }
+*/
             });
             let scrollWidget = e.component.$element().find('.dx-scrollable').last().dxScrollable('instance');
 
