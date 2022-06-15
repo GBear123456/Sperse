@@ -11,7 +11,7 @@ import DataSource from 'devextreme/data/data_source';
 import ODataStore from 'devextreme/data/odata/store';
 import { MatDialog } from '@angular/material/dialog';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
-import { Observable, ReplaySubject, BehaviorSubject, combineLatest } from 'rxjs';
+import { Observable, ReplaySubject, BehaviorSubject, combineLatest, of } from 'rxjs';
 import { first, map, takeUntil, finalize, switchMap, distinctUntilChanged, filter } from 'rxjs/operators';
 import { DxScrollViewComponent } from 'devextreme-angular/ui/scroll-view';
 
@@ -28,7 +28,8 @@ import {
     UpdateLeadStagePointInput, UpdateOrderStagePointInput, LeadServiceProxy, OrderServiceProxy,
     ContactServiceProxy, ContactInfoDto, LeadInfoDto, ContactLastModificationInfoDto, PipelineDto,
     UpdateContactAffiliateCodeInput, UpdateContactXrefInput, UpdateContactCustomFieldsInput, StageDto,
-    GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput, CommissionTier, UpdateAffiliateIsAdvisorInput
+    GetSourceContactInfoOutput, UpdateAffiliateContactInput, InvoiceSettings, UpdateContactAffiliateRateInput, 
+    CommissionTier, UpdateAffiliateIsAdvisorInput, TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
@@ -81,6 +82,8 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
     contactXref$: Observable<string> = this.contactXref.asObservable().pipe(
         map((contactXref: string) => (contactXref || '').trim())
     );
+    private stripeCustomerId: ReplaySubject<string> = new ReplaySubject(1);
+    stripeCustomerId$: Observable<string> = this.stripeCustomerId.asObservable();
     private isAdvisor: ReplaySubject<boolean> = new ReplaySubject(null);
     isAdvisor$: Observable<boolean> = this.isAdvisor.asObservable();
     affiliateValidationRules = [
@@ -159,6 +162,7 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
         private itemDetailsService: ItemDetailsService,
         private featureCheckerService: FeatureCheckerService,
         private permissionCheckerService: PermissionCheckerService,
+        private tenantPaymentSettingsService: TenantPaymentSettingsServiceProxy,
         public invoicesService: InvoicesService,
         public permissionChecker: AppPermissionService,
         public ls: AppLocalizationService,
@@ -194,7 +198,12 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                     this.contactInfo.affiliateRateTier2 === null ? null : this.contactInfo.affiliateRateTier2;
                 this.manageAllowed = this.permissionChecker.checkCGPermission(contactInfo.groups);
                 this.affiliateCode.next(contactInfo.affiliateCode);
-                this.contactXref.next(contactInfo.personContactInfo.xref);
+                if (contactInfo.personContactInfo.xref)
+                    this.contactXref.next(contactInfo.personContactInfo.xref);
+                this.getCheckStripeSettings().subscribe((isEnabled: boolean) => {
+                    if (isEnabled)
+                        this.stripeCustomerId.next(contactInfo.personContactInfo.stripeCustomerId);
+                });
                 this.contactProxy.getContactLastModificationInfo(
                     contactInfo.id
                 ).subscribe((lastModificationInfo: ContactLastModificationInfoDto) => {
@@ -266,6 +275,18 @@ export class PersonalDetailsDialogComponent implements OnInit, AfterViewInit, On
                 });
             }, 100);
         });
+    }
+
+    getCheckStripeSettings(): Observable<boolean> {
+        let storageKey = 'stripeApiKey' + this.appSession.tenantId,
+            stripeApiKey = sessionStorage.getItem(storageKey);
+        if (stripeApiKey != null)
+            return of(!!stripeApiKey);
+        else
+            return this.tenantPaymentSettingsService.getStripeSettings().pipe(map(res => {
+                sessionStorage.setItem(storageKey, res.apiKey || '');
+                return !!res.apiKey;
+            }));
     }
 
     updateAffiliateRate(value: number, valueProp, valueInitialProp, tier) {
