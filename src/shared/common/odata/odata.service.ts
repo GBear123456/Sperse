@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import buildQuery from 'odata-query';
-import * as dxAjax from 'devextreme/core/utils/ajax';
+import dxAjax from 'devextreme/core/utils/ajax';
 import { Observable, forkJoin, of } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 
@@ -32,7 +32,6 @@ export class ODataService {
         private messageService: MessageService,
         private ls: AppLocalizationService
     ) {
-/*
         dxAjax.setStrategy((options) => {
             options.responseType = 'application/json';
             if (!options.headers || !options.headers['Authorization'])
@@ -45,7 +44,6 @@ export class ODataService {
             options.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
             return (this.dxRequestPool[key] = dxAjax.sendRequest(options));
         });
-*/
     }
 
     loadDataSource(dataSource, uri: string, url?: string): Promise<any> {

@@ -30,7 +30,6 @@
 <div class="chart-wrapper" *ngIf="totalsData && totalsData.length">
     <dx-chart
         id="bar"
-        [barWidth]="1"
         [series]="allSeries$ | async"
         [dataSource]="totalsData">
         <!-- common settings for charts -->
