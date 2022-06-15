@@ -58,6 +58,7 @@ export class RootComponent implements OnInit, AfterViewInit {
     }
 
     ngOnInit() {
+        sessionStorage.clear();
         if (abp && abp.setting && abp.setting.values && abp.setting.values['Integrations:Google:MapsJavascriptApiKey'] && this.SS.userId)
             this.addScriptLink(AppConsts.googleMapsApiUrl.replace('{KEY}', abp.setting.values['Integrations:Google:MapsJavascriptApiKey']));
 

@@ -22,7 +22,7 @@ export class PersonalDetailsService {
                 dialog = this.dialog.open(PersonalDetailsDialogComponent, {
                     id: dialogId,
                     panelClass: ['slider'],
-                    disableClose: false,
+                    disableClose: true,
                     hasBackdrop: false,
                     closeOnNavigation: true,
                     data: {}

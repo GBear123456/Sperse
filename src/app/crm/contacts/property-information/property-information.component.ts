@@ -248,7 +248,9 @@ export class PropertyInformationComponent implements OnInit {
                 confirmationDate: null,
                 countryId: addr.countryId,
                 countryName: addr.countryName,
-                id: null
+                id: null,
+                confirmedByUserId: undefined,
+                confirmedByUserFullName: undefined
             })
         ];
     }
@@ -294,7 +296,9 @@ export class PropertyInformationComponent implements OnInit {
                     confirmationDate: null,
                     countryId: dialogData.countryId,
                     countryName: dialogData.countryName,
-                    id: null
+                    id: null,
+                    confirmedByUserId: undefined,
+                    confirmedByUserFullName: undefined
                 })
             ];
             this.changeDetectorRef.detectChanges();

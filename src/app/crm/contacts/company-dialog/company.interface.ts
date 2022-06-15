@@ -3,7 +3,7 @@ export interface Company {
     fullName: string;
     shortName: string;
     typeId: string;
-    sizeId: string;
+    sizeId: number;
     annualRevenue: number;
     formedStateId: string;
     formedCountryId: string;

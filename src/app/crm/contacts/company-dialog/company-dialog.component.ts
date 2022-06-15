@@ -98,6 +98,7 @@ export class CompanyDialogComponent implements OnInit {
     einRegex = AppConsts.regexPatterns.ein;
     affiliateRegex = AppConsts.regexPatterns.affiliateCode;
     maxAffiliateCodeLength = AppConsts.maxAffiliateCodeLength;
+    initialSize: CompanySize;
     currentDate = new Date();
     title: string;
     buttons: IDialogButton[] = [];
@@ -129,15 +130,14 @@ export class CompanyDialogComponent implements OnInit {
             ...company.organization
         };
         this.company.id = company.id;
-        if (this.company.sizeId === null) {
-            let size = _.find(
-                this.companySizes,
-                (size: CompanySize) => {
-                    return size.to === company.organization.sizeTo && size.from === company.organization.sizeFrom;
-                }
-            );
-            this.company.sizeId = size ? size.id : null;
-        }
+        this.initialSize = _.find(
+            this.companySizes,
+            (size: CompanySize) => {
+                return size.to === company.organization.sizeTo && size.from === company.organization.sizeFrom
+                    || (company.organization.sizeTo >= size.from && company.organization.sizeTo <= size.to);
+            }
+        );
+        this.company.sizeId = this.initialSize ? this.initialSize.id : null;
         this.company.primaryPhoto = company.primaryPhoto;
         this.loadOrganizationUnits();
         this.loadOrganizationTypes();
@@ -184,9 +184,12 @@ export class CompanyDialogComponent implements OnInit {
         }));
         input.formedDate = this.company.formedDate ? this.getMomentFromDateWithoutTime(this.company.formedDate) : null;
         let size = _.find(this.companySizes, item => item.id === this.company.sizeId);
-        if (size) {
+        if (size && size.id != this.initialSize.id) {
             input.sizeFrom = size.from;
             input.sizeTo = size.to;
+        } else {
+            input.sizeFrom = this.data.company.organization.sizeFrom;
+            input.sizeTo = this.data.company.organization.sizeTo;
         }
         this.organizationContactServiceProxy.updateOrganizationInfo(input)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
@@ -194,7 +197,7 @@ export class CompanyDialogComponent implements OnInit {
                 this.contactService.invalidateUserData();
                 this.notifyService.success(this.ls.l('SavedSuccessfully'));
                 this.modalDialog.close(true, {
-                    company: this.company
+                    company: input
                 });
             });
         if (this.company.notes) {

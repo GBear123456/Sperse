@@ -139,6 +139,7 @@ import { CreateEntityDialogData } from '@shared/common/create-entity-dialog/mode
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
 import { EntityTypeSys } from '@app/crm/leads/entity-type-sys.enum';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     templateUrl: './leads.component.html',
@@ -168,6 +169,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
     private readonly groupDataSourceURI = 'LeadSlice';
     private readonly dateField = 'LeadDate';
     private _selectedLeads: LeadDto[];
+
+    starsLookup = {};
     rowsViewHeight: number;
     get selectedLeads(): LeadDto[] {
         return this._selectedLeads || [];
@@ -545,6 +548,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
         })
     );
 
+    isSMSIntegrationDisabled = abp.setting.get('Integrations:YTel:IsEnabled') == 'False';
+
     constructor(
         injector: Injector,
         private authService: AppAuthService,
@@ -598,7 +603,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 this.leadFields.OrganizationId,
                                 this.leadFields.UserId,
                                 this.leadFields.Email,
-                                this.leadFields.Phone
+                                this.leadFields.Phone,
+                                this.leadFields.StarId
                             ]
                         );
                         request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
@@ -695,7 +701,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 phoneNumber: (data || this.actionEvent.data || this.actionEvent).Phone
                             });
                         },
-                        checkVisible: (lead: LeadDto) => this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
+                        disabled: this.isSMSIntegrationDisabled,
+                        checkVisible: (lead: LeadDto) => {
+                            return abp.features.isEnabled(AppFeatures.InboundOutboundSMS) &&
+                                this.permission.checkCGPermission([this.selectedContactGroup], 'ViewCommunicationHistory.SendSMSAndEmail')
+                        }
                     },
                     {
                         text: this.l('SendEmail'),
@@ -1423,7 +1433,11 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                     items: {
                         element: new FilterCheckBoxesModel(
                             {
-                                dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars)),
+                                dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars), tap(stars => {
+                                    stars.forEach(star => {
+                                        this.starsLookup[star.id] = star;
+                                    });
+                                })),
                                 nameField: 'name',
                                 keyExpr: 'id',
                                 templateFunc: (itemData) => {
@@ -1618,7 +1632,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                                 },
                                 {
                                     text: this.l('SMS'),
-                                    disabled: this.selectedClientKeys.length > 1,
+                                    visible: abp.features.isEnabled(AppFeatures.InboundOutboundSMS),
+                                    disabled: this.isSMSIntegrationDisabled || this.selectedClientKeys.length > 1,
                                     action: () => {
                                         const selectedLeads = this.selectedLeads;
                                         const contact = selectedLeads && selectedLeads[selectedLeads.length - 1];

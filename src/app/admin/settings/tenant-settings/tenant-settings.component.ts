@@ -49,6 +49,7 @@ import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppService } from '@app/app.service';
 import { EmailSmtpSettingsService } from '@shared/common/settings/email-smtp-settings.service';
 import { PhoneNumberService } from '@shared/common/phone-numbers/phone-number.service';
+import { SalesTalkComponent } from './sales-talk/sales-talk.component';
 import { DomHelper } from '@shared/helpers/DomHelper';
 
 @Component({
@@ -63,6 +64,7 @@ import { DomHelper } from '@shared/helpers/DomHelper';
     ]
 })
 export class TenantSettingsComponent extends AppComponentBase implements OnInit, OnDestroy {
+    @ViewChild(SalesTalkComponent) salesTalkComponent: SalesTalkComponent;
     @ViewChild('tabGroup') tabGroup: ElementRef;
     @ViewChild('privacyInput') privacyInput: ElementRef;
     @ViewChild('tosInput') tosInput: ElementRef;
@@ -83,7 +85,10 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     stripePaymentSettings: StripeSettings = new StripeSettings();
     isTenantHosts: boolean = this.permission.isGranted(AppPermissions.AdministrationTenantHosts);
     isAdminCustomizations: boolean = abp.features.isEnabled(AppFeatures.AdminCustomizations);
+    isInboundOutboundSMSEnabled: boolean = abp.features.isEnabled(AppFeatures.InboundOutboundSMS);
     isCreditReportFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFMCreditReport);
+    isCRMConfigureAllowed: boolean = abp.features.isEnabled(AppFeatures.CRMSalesTalk) 
+        && this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
     isPFMApplicationsFeatureEnabled: boolean = abp.features.isEnabled(AppFeatures.PFM) && abp.features.isEnabled(AppFeatures.PFMApplications);
     isRapidTenantLayout: boolean = this.appSession.tenant && this.appSession.tenant.customLayoutType == LayoutType.Rapid;
     isPerformancePartner: boolean = this.appSession.isPerformancePartnerTenant;
@@ -123,6 +128,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
     EmailTemplateType = EmailTemplateType;
     CustomCssType = CustomCssType;
     tabIndex: Observable<number>;
+    showCustomSmptSettings = false;
     smtpProviderErrorLink: string;
 
     constructor(
@@ -186,8 +192,9 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getEPCVIPMailerSettings() : of<EPCVIPMailerSettingsEditDto>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getOngageSettings() : of<OngageSettingsEditDto>(<any>null),
             this.isPFMApplicationsFeatureEnabled ? this.tenantSettingsService.getIAgeSettings() : of<IAgeSettingsEditDto>(<any>null),
-            this.tenantSettingsService.getSendGridSettings(),
-            this.tenantSettingsService.getYTelSettings(),
+            this.tenantSettingsService.getSendGridSettings(),            
+            this.isInboundOutboundSMSEnabled ?
+                this.tenantSettingsService.getYTelSettings() : of(<any>{isEnabled: false}),
             this.isRapidTenantLayout ? this.tenantSettingsService.getRapidSettings() : of<RapidSettingsDto>(<any>null)
         ];
         if (this.isPFMApplicationsFeatureEnabled) {
@@ -215,6 +222,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                     this.rapidSettings
                 ] = results;
 
+                this.showCustomSmptSettings = !!this.settings.email.smtpHost;
                 if (this.settings.general) {
                     this.initialTimeZone = this.settings.general.timezone;
                     this.initialDefaultCountry = this.settings.general.defaultCountryCode;
@@ -419,6 +427,8 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
             requests.push(this.tenantSettingsService.updateIAgeSettings(this.iageSettings));
         if (this.isRapidTenantLayout)
             requests.push(this.tenantSettingsService.updateRapidSettings(this.rapidSettings));
+        if (this.isCRMConfigureAllowed)
+            requests.push(this.salesTalkComponent.save());
 
         this.startLoading();
         forkJoin(requests).pipe(

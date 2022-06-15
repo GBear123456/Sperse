@@ -594,14 +594,17 @@ body > .blockUI.blockOverlay{
 }
 
 .star {
-    display: inline-block;
+    display: block;
     min-width: 25px;
     height: 25px;
-    margin-right: 10px;
-    margin-bottom: 2px;
+    margin: auto;
     -webkit-mask-image: url(../../../assets/common/icons/star-icon.svg);
     -webkit-mask-repeat: no-repeat;
     -webkit-mask-size: 25px;
+}
+
+.star-default {    
+    background: #686F76;
 }
 
 .star-green {
@@ -649,14 +652,19 @@ body > .blockUI.blockOverlay{
 .star-nurturing,
 .star-knowledge,
 .star-unknown {
+    width: 20px;
+    height: 20px;
+    min-width: 20px!important;
     -webkit-mask-image: none;
-    font-size: 18px;
+    font-size: 16px;
     text-align: center;
+    line-height: 1.2;
 }
 
 .star-blueprint {
     background-color: rgb(16, 69, 121);
     color: rgb(113, 158, 202);
+    border: 1px solid rgb(16, 69, 121);
     &::before {
         content: 'B'
     }
@@ -665,6 +673,7 @@ body > .blockUI.blockOverlay{
 .star-action {
     background-color: rgb(173, 29, 33);
     color: rgb(222, 102, 105);
+    border: 1px solid rgb(173, 29, 33);
     &::before {
         content: 'A'
     }
@@ -673,6 +682,7 @@ body > .blockUI.blockOverlay{
 .star-nurturing {
     background-color: rgb(243, 158, 28);
     color: rgb(228, 200, 156);
+    border: 1px solid rgb(243, 158, 28);
     &::before {
         content: 'N'
     }
@@ -681,6 +691,7 @@ body > .blockUI.blockOverlay{
 .star-knowledge {
     background-color: rgb(24, 100, 52);
     color: rgb(62, 156, 97);
+    border: 1px solid rgb(24, 100, 52);
     &::before {
         content: 'K'
     }
@@ -689,7 +700,7 @@ body > .blockUI.blockOverlay{
 .star-unknown {
     background-color: #fff;
     color: #333333;
-    border: 1px solid #333333;
+    border: 1px solid #333333!important;
     &::before {
         content: '?'
     }

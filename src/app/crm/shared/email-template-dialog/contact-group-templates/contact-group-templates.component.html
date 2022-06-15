@@ -13,6 +13,7 @@
             <email-template-selector class="email-temlate-select"
                                      [templateId]="templateItem.templateId"
                                      [templateType]="templateType"
+                                     [showCloneButton]="true"
                                      (templateIdChange)="onTemplateIdValueChanged($event, templateItem)"
                                      title="">
             </email-template-selector>

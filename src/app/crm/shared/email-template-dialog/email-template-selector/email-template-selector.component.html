@@ -10,5 +10,6 @@
     <div class="buttons">
         <i class="create-template" [title]="ls.l('CreateTemplate')" (click)="showEmailTemplateDialog(true)"></i>
         <i *ngIf="templateId" [title]="ls.l('EditTemplate')" class="edit-template fa fa-pencil" (click)="showEmailTemplateDialog()"></i>
+        <i *ngIf="showCloneButton" [title]="ls.l('CloneTemplate')" class="clone-template fa fa-clone" (click)="cloneEmailTemplate()"></i>
     </div>
 </div>

@@ -208,17 +208,23 @@ export class DxDataGridDirective implements OnInit, AfterViewInit, OnDestroy {
     }
 
     initStateStoring() {
-        let hint = this.component.instance.option('hint');
+        let hint = this.component.instance.option('hint'),
+            accessKey = this.component.instance.option('accessKey');
         this.component.instance.option('stateStoring', {
             enabled: true,
             storageKey: this.cacheHelper.getCacheKey(
                 [
                     this.getLocationPath(),
-                    hint ? hint.toLowerCase().replace(/\s/g, '_') : undefined
+                    this.getKeyPartByString(accessKey),
+                    this.getKeyPartByString(hint)
                 ].filter(Boolean).join('_'),
                 'DataGridState'
             )
         });
+    }
+
+    getKeyPartByString(value): string {
+        return value && value.toLowerCase().replace(/\s/g, '_');
     }
 
     getLocationPath() {

@@ -7,6 +7,7 @@ export interface ContactDto {
     Phone: string;
     City: string;
     State: string;
+    StarId: number;
     IsActive: boolean;
     IsProspective: boolean;
     ContactDate: string;
@@ -19,10 +20,11 @@ export interface ContactDto {
     SourceContactId: number;
     ParentId: number;
     GroupId: string;
+    StreetAddress: string;
     AffiliateContactName: string;
     AffiliateContactEmailAddress: string;
     AffiliateContactAffiliateCode: string;
     AffiliateContactId: number;
     AffiliateRate: number;
-    AffiliateRateTier2: number;
+    AffiliateRateTier2: number;    
 }
