@@ -28,8 +28,8 @@ import { UserAssignmentComponent } from '@app/shared/common/lists/user-assignmen
 import { RatingComponent } from '@app/shared/common/lists/rating/rating.component';
 import { StarsListComponent } from '@app/crm/shared/stars-list/stars-list.component';
 import { StaticListComponent } from '@app/shared/common/static-list/static-list.component';
-import { ContactInfoDto, LayoutType, UserServiceProxy, 
-    ContactServiceProxy, ContactGroupDto } from '@shared/service-proxies/service-proxies';
+import { ContactInfoDto, LayoutType, UserServiceProxy, TenantCRMIntegrationSettingsServiceProxy,
+    SalesTalkSettings, ContactServiceProxy, ContactGroupDto } from '@shared/service-proxies/service-proxies';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { ContactGroup, ContactStatus } from '@shared/AppEnums';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -42,11 +42,14 @@ import { UserManagementService } from '@shared/common/layout/user-management-lis
 import { AppConsts } from '@shared/AppConsts';
 import { GroupStatus } from '@app/crm/contacts/operations-widget/status.interface';
 import { AppAuthService } from '@shared/common/auth/app-auth.service';
+import { environment } from '@root/environments/environment';
+import { AppFeatures } from '@shared/AppFeatures';
 
 @Component({
     selector: 'operations-widget',
     templateUrl: './operations-widget.component.html',
-    styleUrls: ['./operations-widget.component.less']
+    styleUrls: ['./operations-widget.component.less'],
+    providers: [TenantCRMIntegrationSettingsServiceProxy]
 })
 export class OperationsWidgetComponent extends AppComponentBase implements AfterViewInit, OnChanges {
     @ViewChild(TagsListComponent) tagsComponent: TagsListComponent;
@@ -132,6 +135,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
     activeGroupIds: string[];
     contactGroupKeys = invert(ContactGroup);
     contactGroups: ContactGroupDto[];
+    salesTalkApiLink: string;
 
     constructor(
         injector: Injector,
@@ -144,6 +148,7 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
         private impersonationService: ImpersonationService,
         private crmService: CrmService,
         private userManagementService: UserManagementService,
+        private settingsProxy: TenantCRMIntegrationSettingsServiceProxy,
         private contactProxy: ContactServiceProxy,
         private renderer: Renderer2
     ) {
@@ -164,7 +169,22 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                 this.contactGroups = res;
                 this.updateActiveGroups();
             }
-        );
+        );                                                                
+        this.initSalesTalkApiLink();        
+    }
+
+    initSalesTalkApiLink() {
+        if (!this.appService.isHostTenant && this.customerType != ContactGroup.Employee
+            && abp.features.isEnabled(AppFeatures.CRMSalesTalk)
+        ) {
+            let storageKey = 'salesTalkApiLink' + this.appSession.tenantId;
+            this.salesTalkApiLink = sessionStorage.getItem(storageKey);
+            if (this.salesTalkApiLink == null)
+                this.settingsProxy.getSalesTalkSettings().subscribe((data: SalesTalkSettings) => {
+                    this.salesTalkApiLink = data.isEnabled ? data.url + '?type=Lead-Sperse&api-key=' + data.apiKey : '';
+                    sessionStorage.setItem(storageKey, this.salesTalkApiLink);
+                });
+        }
     }
 
     ngAfterViewInit() {
@@ -432,6 +452,35 @@ export class OperationsWidgetComponent extends AppComponentBase implements After
                             action: this.toggleStars.bind(this),
                             visible: !this.isBankCodeLayout,
                             disabled: !this.permission.checkCGPermission(this.contactInfo.groups, '')
+                        }
+                    ]
+                },
+                {
+                    location: 'before',
+                    locateInMenu: 'auto',
+                    items: [
+                        {
+                            options: {
+                                text: this.l('SalesTalk')
+                            },
+                            action: () => {
+                                if (this.salesTalkApiLink) {
+                                    let userEmail = (['staging', 'beta', 'production'].includes(environment.releaseStage) ? this.appSession.user.emailAddress : 'sperse@test.com'),
+                                        leadEmail: any = (this.contactInfo.personContactInfo.details.emails || []).find(
+                                            email => email.id == this.contactInfo.personContactInfo.primaryEmailId);
+                                    leadEmail = leadEmail ? leadEmail.emailAddress : '';
+                                    window.open(this.salesTalkApiLink
+                                        + '&leadId=' + this.leadId
+                                        + '&userEmail=' + userEmail
+                                        + '&leadEmail=' + leadEmail
+                                    );
+                                }
+                            },
+                            disabled: !this.salesTalkApiLink ||
+                                !this.permission.checkCGPermission(this.contactInfo.groups, ''),
+                            visible: !this.appService.isHostTenant 
+                                && this.customerType != ContactGroup.Employee 
+                                 && abp.features.isEnabled(AppFeatures.CRMSalesTalk)
                         }
                     ]
                 },
