@@ -229,7 +229,7 @@
                         </ngx-file-drop>
                     </div>
                     <div class="field-area attachments" *ngIf="!templateEditMode">
-                        <div *ngFor="let attachment of attachments; let i = index" class="attachment" [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}">
+                        <div *ngFor="let attachment of attachments; let i = index" class="attachment" [ngClass]="{'progress': !!attachment.loader}" [ngStyle]="{'background-size': (attachment.progress || 0) + '%'}">
                             <a target="_blank" [download]="attachment.name" [href]="attachment.url" (click)="attachmentClick($event, attachment)" class="name">{{attachment.name}}</a>&nbsp;<span class="size">({{attachment.size | filesize}})</span><i (click)="removeAttachment(attachment, i)" aria-hidden="true" class="delete fa fa-times"></i>
                         </div>
                     </div>

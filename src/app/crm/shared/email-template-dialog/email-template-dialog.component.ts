@@ -686,8 +686,10 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (attachment.id) {
             if (attachment.hasOwnProperty('loader'))
                 this.communicationProxy.deleteAttachment(attachment.id).subscribe();
-        } else
+        } else {
             attachment.loader.unsubscribe();
+            attachment.xhr.abort();
+        }
     }
 
     uploadFile(file) {
@@ -700,7 +702,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         };
 
         attachment.url = this.domSanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(file));
-        attachment.loader = this.sendAttachment(file).subscribe((res: any) => {
+        attachment.loader = this.sendAttachment(file, attachment).subscribe((res: any) => {
             if (res) {
                 if (res.result)
                     attachment.id = res.result;
@@ -716,11 +718,12 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.changeDetectorRef.markForCheck();
         }, () => {
             attachment.loader = undefined;
+            this.changeDetectorRef.markForCheck();
         });
         this.attachments.push(attachment);
     }
 
-    sendAttachment(file) {
+    sendAttachment(file, attachment) {
         return new Observable(subscriber => {
             let xhr = new XMLHttpRequest(),
                 formData = new FormData();
@@ -740,6 +743,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                     subscriber.error(responce);
                 subscriber.complete();
             });
+            attachment.xhr = xhr;
             xhr.send(formData);
         });
     }
