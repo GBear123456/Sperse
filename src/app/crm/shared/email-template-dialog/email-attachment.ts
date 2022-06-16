@@ -4,6 +4,7 @@ import { SafeResourceUrl } from '@angular/platform-browser';
 
 export class EmailAttachment extends AttachmentDto {
     progress!: number;
+    xhr!: XMLHttpRequest;
     loader!: Subscription;
     url!: SafeResourceUrl;
 }
