@@ -401,6 +401,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
         let requests: Observable<any>[] = [
             this.tenantSettingsService.updateAllSettings(this.settings).pipe(tap(() => {
                 this.phoneNumberService.checkSetDefaultPhoneCodeByCountryCode(this.settings.general.defaultCountryCode);
+                sessionStorage.removeItem('SupportedFrom' + this.appSessionService.userId);
             }),
             catchError(error => {
                 this.checkHandlerErrorWarning(true);
@@ -444,7 +445,7 @@ export class TenantSettingsComponent extends AppComponentBase implements OnInit,
                 this.message.info(this.l('TimeZoneSettingChangedRefreshPageNotification')).done(() => {
                     window.location.reload();
                 });
-            }
+            }        
         });
     }
 

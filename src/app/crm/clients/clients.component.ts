@@ -1416,7 +1416,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                     {
                         name: 'message',
                         widget: 'dxDropDownMenu',
-                        disabled: !this.selectedClientKeys.length || this.selectedClientKeys.length > 1 || 
+                        disabled: !this.selectedClientKeys.length ||
                             !this.permission.checkCGPermission([ContactGroup.Client], 'ViewCommunicationHistory.SendSMSAndEmail'),
                         options: {
                             items: [
@@ -1425,8 +1425,11 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
                                     action: () => {
                                         this.selectedClients.subscribe((clients: ContactDto[]) => {
                                             this.contactService.showEmailDialog({
-                                                contactId: this.selectedClientKeys[0],
-                                                to: clients.map(lead => lead.Email).filter(Boolean)
+                                                to: clients.map(lead => lead.Email).filter(Boolean),
+                                                ...(clients.length > 1 ? 
+                                                    {contactIds: this.selectedClientKeys} : 
+                                                    {contactId: this.selectedClientKeys[0]}
+                                                )
                                             }).subscribe();
                                         });
                                     }

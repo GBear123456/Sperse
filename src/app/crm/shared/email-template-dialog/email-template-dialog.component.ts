@@ -27,6 +27,7 @@ import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interf
 import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
 import { CacheService } from 'ng2-cache-service';
 import {
+    EmailFromInfo,
     EmailTemplateServiceProxy,
     GetTemplatesResponse,
     CreateEmailTemplateRequest,
@@ -66,7 +67,7 @@ export class EmailTemplateDialogComponent implements OnInit {
 
     ckEditor: any;
     templateLoaded: boolean;
-    fromDataSource = [];
+    fromDataSource: EmailFromInfo[] = [];
     showCC = false;
     showBCC = false;
     tagLastValue: string;
@@ -181,11 +182,6 @@ export class EmailTemplateDialogComponent implements OnInit {
                     finalize(() => this.finishLoading())
                 ).subscribe((res: GetEmailDataOutput) => {
                     this.data.tags = res.tags;
-                    if (res.from && res.from.length)
-                        this.fromDataSource = res.from;
-                    else if (this.data.from)
-                        this.fromDataSource = this.data.from instanceof Array ? 
-                            this.data.from : [this.data.from];
                     this.initFromField();
                 });
             } else
@@ -209,6 +205,23 @@ export class EmailTemplateDialogComponent implements OnInit {
     }
 
     initFromField() {
+        let storageKey = 'SupportedFrom' + this.sessionService.userId,
+            supportedFrom: any = sessionStorage.getItem(storageKey);
+        if (supportedFrom)
+            this.initFromDataSource(JSON.parse(supportedFrom));
+        else
+            this.communicationProxy.getSupportedEmailFromAddresses().subscribe((fromEmails: EmailFromInfo[]) => {
+                sessionStorage.setItem(storageKey, JSON.stringify(fromEmails));
+                this.initFromDataSource(fromEmails);
+            });
+    }
+
+    initFromDataSource(fromEmails: EmailFromInfo[]) {
+        if (fromEmails && fromEmails.length)
+            this.fromDataSource = fromEmails;
+        else if (this.data.from)
+            this.fromDataSource = this.data.from instanceof Array ? 
+                this.data.from : [this.data.from];
         if (this.fromDataSource.length) {
             let from = this.fromDataSource.find(item => item.emailSettingsSource == EmailSettingsSource.User);
             this.data.emailSettingsSource = (from ? from : this.fromDataSource[0]).emailSettingsSource;
@@ -609,6 +622,10 @@ export class EmailTemplateDialogComponent implements OnInit {
         let value = this.data.tags && this.data.tags[name];
         if (name == EmailTags.SenderPhone && value)
             value = this.phonePipe.transform(value);
+
+        if (!value && this.data.contactIds)
+            value = '#' + name + '#';
+
         return value;
     }
 
@@ -669,8 +686,10 @@ export class EmailTemplateDialogComponent implements OnInit {
         if (attachment.id) {
             if (attachment.hasOwnProperty('loader'))
                 this.communicationProxy.deleteAttachment(attachment.id).subscribe();
-        } else
+        } else {
             attachment.loader.unsubscribe();
+            attachment.xhr.abort();
+        }
     }
 
     uploadFile(file) {
@@ -683,7 +702,7 @@ export class EmailTemplateDialogComponent implements OnInit {
         };
 
         attachment.url = this.domSanitizer.bypassSecurityTrustResourceUrl(URL.createObjectURL(file));
-        attachment.loader = this.sendAttachment(file).subscribe((res: any) => {
+        attachment.loader = this.sendAttachment(file, attachment).subscribe((res: any) => {
             if (res) {
                 if (res.result)
                     attachment.id = res.result;
@@ -699,11 +718,12 @@ export class EmailTemplateDialogComponent implements OnInit {
             this.changeDetectorRef.markForCheck();
         }, () => {
             attachment.loader = undefined;
+            this.changeDetectorRef.markForCheck();
         });
         this.attachments.push(attachment);
     }
 
-    sendAttachment(file) {
+    sendAttachment(file, attachment) {
         return new Observable(subscriber => {
             let xhr = new XMLHttpRequest(),
                 formData = new FormData();
@@ -723,6 +743,7 @@ export class EmailTemplateDialogComponent implements OnInit {
                     subscriber.error(responce);
                 subscriber.complete();
             });
+            attachment.xhr = xhr;
             xhr.send(formData);
         });
     }

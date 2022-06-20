@@ -14,7 +14,7 @@ import {
 import startCase from 'lodash/startCase';
 import { MatDialog } from '@angular/material/dialog';
 import { MatTabGroup } from '@angular/material/tabs';
-import { finalize } from 'rxjs/operators';
+import { finalize, tap } from 'rxjs/operators';
 import cloneDeep from 'lodash/cloneDeep';
 
 /** Application imports */
@@ -196,8 +196,9 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
     save(): void {
         this.modalDialog.startLoading();
         (this.currentTab == this.ls.l('Email') ?
-            this.profileService.updateEmailSettings(this.userEmailSettings) :
-            this.profileService.updateCurrentUserProfile(CurrentUserProfileEditDto.fromJS(this.user))
+            this.profileService.updateEmailSettings(this.userEmailSettings).pipe(tap(() => {
+                sessionStorage.removeItem('SupportedFrom' + this.appSessionService.userId);
+            })) : this.profileService.updateCurrentUserProfile(CurrentUserProfileEditDto.fromJS(this.user))
         ).pipe(finalize(() => this.modalDialog.finishLoading())).subscribe(() => {
             this.appSessionService.user.name = this.user.name;
             this.appSessionService.user.surname = this.user.surname;

@@ -21,6 +21,9 @@ import {
     UserServiceProxy,
     ContactServiceProxy,
     ContactCommunicationServiceProxy,
+    EmailTemplateServiceProxy,
+    IBulkSendEmailInput,
+    BulkSendEmailInput,
     ISendEmailInput,
     SendEmailInput,
     ISendSMSInput,
@@ -111,6 +114,7 @@ export class ContactsService {
         private leadService: LeadServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
         private documentProxy: DocumentServiceProxy,
+        private emailTemplateProxy: EmailTemplateServiceProxy,
         private communicationProxy: ContactCommunicationServiceProxy,
         private permission: AppPermissionService,
         private userService: UserServiceProxy,
@@ -461,13 +465,32 @@ export class ContactsService {
         dialogComponent.onTemplateChange.pipe(
             switchMap((templateId: number) => {
                 dialogComponent.startLoading();
-                return (onTemplateChange ? onTemplateChange(templateId, emailData) :
-                    this.communicationProxy.getEmailData(templateId, emailData['contactId']).pipe(
+
+                let dataLoader$: Observable<any>;
+                if (onTemplateChange)
+                    dataLoader$ = onTemplateChange(templateId, emailData);
+                else {
+                    if (data.contactIds)
+                        dataLoader$ = this.emailTemplateProxy.getTemplate(templateId).pipe(map(res => {
+                            return <GetEmailDataOutput>{
+                                subject: res.subject,
+                                cc: res.cc,
+                                bcc: res.bcc,
+                                previewText: res.previewText,
+                                body: res.body
+                            };
+                        }));
+                    else
+                        dataLoader$ = this.communicationProxy.getEmailData(templateId, emailData['contactId'])
+
+                    dataLoader$ = dataLoader$.pipe(
                         map((data: GetEmailDataOutput) => {
                             Object.assign(emailData, data);
                         })
-                    )
-                ).pipe(
+                    );
+                }
+
+                return dataLoader$.pipe(
                     finalize(() => dialogComponent.finishLoading())
                 );
             })
@@ -485,10 +508,12 @@ export class ContactsService {
                         });
                     });
                 }
-                return this.sendEmail(res, () => {dialogComponent.finishLoading()});
+                return data.contactIds ? 
+                    this.sendBulkEmail(res, () => {dialogComponent.finishLoading()}) :
+                    this.sendEmail(res, () => {dialogComponent.finishLoading()});
             }),
             tap((res: number) => {
-                if (!isNaN(res)) {
+                if (data.contactIds && !res || !isNaN(res)) {
                     this.notifyService.info(this.ls.l('MailSent'));
                     dialogComponent.close();
                 }
@@ -524,6 +549,16 @@ export class ContactsService {
         }
 
         return dialogComponent;
+    }
+
+    sendBulkEmail(input: IBulkSendEmailInput, finalizeMethod: () => void): Observable<any> {
+        return new Observable<any>((observer) => {
+            this.communicationProxy.bulkEmailSend(new BulkSendEmailInput(input)).pipe(
+                finalize(() => finalizeMethod())
+            ).subscribe(() => {
+                observer.next();
+            }, err => {observer.next(err)});
+        });
     }
 
     sendEmail(input: ISendEmailInput, finalizeMethod: () => void): Observable<number> {
