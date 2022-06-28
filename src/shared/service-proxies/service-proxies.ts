@@ -1527,6 +1527,289 @@ export class ActivityServiceProxy {
 }
 
 @Injectable()
+export class AffiliateLinkServiceProxy {
+    private http: HttpClient;
+    private baseUrl: string;
+    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
+
+    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
+        this.http = http;
+        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
+    }
+
+    /**
+     * @return Success
+     */
+    getAll(): Observable<AffiliateLinkInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/AffiliateLink/GetAll";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetAll(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetAll(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<AffiliateLinkInfo[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<AffiliateLinkInfo[]>;
+        }));
+    }
+
+    protected processGetAll(response: HttpResponseBase): Observable<AffiliateLinkInfo[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(AffiliateLinkInfo.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<AffiliateLinkInfo[]>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    create(body: CreateAffiliateLinkInput | undefined): Observable<number> {
+        let url_ = this.baseUrl + "/api/services/CRM/AffiliateLink/Create";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCreate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCreate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<number>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<number>;
+        }));
+    }
+
+    protected processCreate(response: HttpResponseBase): Observable<number> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<number>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    update(body: UpdateAffiliateLinkInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/AffiliateLink/Update";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("put", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processUpdate(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processUpdate(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processUpdate(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
+    setAffiliateLinkImage(body: SetAffiliateLinkImageInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/AffiliateLink/SetAffiliateLinkImage";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processSetAffiliateLinkImage(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processSetAffiliateLinkImage(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processSetAffiliateLinkImage(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    delete(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/AffiliateLink/Delete?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processDelete(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processDelete(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processDelete(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+}
+
+@Injectable()
 export class ApiKeyServiceProxy {
     private http: HttpClient;
     private baseUrl: string;
@@ -24966,180 +25249,6 @@ export class LearningResourceServiceProxy {
     }
 
     protected processDeleteGroup(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(null as any);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(null as any);
-    }
-}
-
-@Injectable()
-export class LinkTrackingServiceProxy {
-    private http: HttpClient;
-    private baseUrl: string;
-    protected jsonParseReviver: ((key: string, value: any) => any) | undefined = undefined;
-
-    constructor(@Inject(HttpClient) http: HttpClient, @Optional() @Inject(API_BASE_URL) baseUrl?: string) {
-        this.http = http;
-        this.baseUrl = baseUrl !== undefined && baseUrl !== null ? baseUrl : "";
-    }
-
-    /**
-     * @return Success
-     */
-    getAll(): Observable<LinkTrackingOutput[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/LinkTracking/GetAll";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetAll(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetAll(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<LinkTrackingOutput[]>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<LinkTrackingOutput[]>;
-        }));
-    }
-
-    protected processGetAll(response: HttpResponseBase): Observable<LinkTrackingOutput[]> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            if (Array.isArray(resultData200)) {
-                result200 = [] as any;
-                for (let item of resultData200)
-                    result200!.push(LinkTrackingOutput.fromJS(item));
-            }
-            else {
-                result200 = <any>null;
-            }
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<LinkTrackingOutput[]>(null as any);
-    }
-
-    /**
-     * @param id (optional) 
-     * @return Success
-     */
-    delete(id: number | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/LinkTracking/Delete?";
-        if (id === null)
-            throw new Error("The parameter 'id' cannot be null.");
-        else if (id !== undefined)
-            url_ += "id=" + encodeURIComponent("" + id) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("delete", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processDelete(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processDelete(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<void>;
-        }));
-    }
-
-    protected processDelete(response: HttpResponseBase): Observable<void> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return _observableOf<void>(null as any);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<void>(null as any);
-    }
-
-    /**
-     * @param url (optional) 
-     * @return Success
-     */
-    addLink(url: string | undefined): Observable<void> {
-        let url_ = this.baseUrl + "/api/services/CRM/LinkTracking/AddLink?";
-        if (url === null)
-            throw new Error("The parameter 'url' cannot be null.");
-        else if (url !== undefined)
-            url_ += "url=" + encodeURIComponent("" + url) + "&";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-            })
-        };
-
-        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processAddLink(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processAddLink(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<void>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<void>;
-        }));
-    }
-
-    protected processAddLink(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -49638,6 +49747,62 @@ export interface IAffiliateInfoHistoryInfo {
     userPhotoPublicId: string | undefined;
 }
 
+export class AffiliateLinkInfo implements IAffiliateLinkInfo {
+    category!: string | undefined;
+    companyName!: string | undefined;
+    phoneNumber!: string | undefined;
+    url!: string | undefined;
+    suggestedCopy!: string | undefined;
+    imageUrl!: string | undefined;
+
+    constructor(data?: IAffiliateLinkInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.category = _data["category"];
+            this.companyName = _data["companyName"];
+            this.phoneNumber = _data["phoneNumber"];
+            this.url = _data["url"];
+            this.suggestedCopy = _data["suggestedCopy"];
+            this.imageUrl = _data["imageUrl"];
+        }
+    }
+
+    static fromJS(data: any): AffiliateLinkInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new AffiliateLinkInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["category"] = this.category;
+        data["companyName"] = this.companyName;
+        data["phoneNumber"] = this.phoneNumber;
+        data["url"] = this.url;
+        data["suggestedCopy"] = this.suggestedCopy;
+        data["imageUrl"] = this.imageUrl;
+        return data;
+    }
+}
+
+export interface IAffiliateLinkInfo {
+    category: string | undefined;
+    companyName: string | undefined;
+    phoneNumber: string | undefined;
+    url: string | undefined;
+    suggestedCopy: string | undefined;
+    imageUrl: string | undefined;
+}
+
 export enum AffiliateServiceStatus {
     Unavailable = "Unavailable",
     Available = "Available",
@@ -56571,6 +56736,58 @@ export interface ICreateActivityDto {
     leadId: number | undefined;
     contactId: number | undefined;
     sortOrder: number | undefined;
+}
+
+export class CreateAffiliateLinkInput implements ICreateAffiliateLinkInput {
+    category!: string | undefined;
+    companyName!: string | undefined;
+    phoneNumber!: string | undefined;
+    url!: string;
+    suggestedCopy!: string | undefined;
+
+    constructor(data?: ICreateAffiliateLinkInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.category = _data["category"];
+            this.companyName = _data["companyName"];
+            this.phoneNumber = _data["phoneNumber"];
+            this.url = _data["url"];
+            this.suggestedCopy = _data["suggestedCopy"];
+        }
+    }
+
+    static fromJS(data: any): CreateAffiliateLinkInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CreateAffiliateLinkInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["category"] = this.category;
+        data["companyName"] = this.companyName;
+        data["phoneNumber"] = this.phoneNumber;
+        data["url"] = this.url;
+        data["suggestedCopy"] = this.suggestedCopy;
+        return data;
+    }
+}
+
+export interface ICreateAffiliateLinkInput {
+    category: string | undefined;
+    companyName: string | undefined;
+    phoneNumber: string | undefined;
+    url: string;
+    suggestedCopy: string | undefined;
 }
 
 export class CreateBusinessEntityDto implements ICreateBusinessEntityDto {
@@ -74037,50 +74254,6 @@ export interface ILinkToUserInput {
     password: string;
 }
 
-export class LinkTrackingOutput implements ILinkTrackingOutput {
-    id!: number;
-    url!: string | undefined;
-    created!: moment.Moment;
-
-    constructor(data?: ILinkTrackingOutput) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.id = _data["id"];
-            this.url = _data["url"];
-            this.created = _data["created"] ? moment(_data["created"].toString()) : <any>undefined;
-        }
-    }
-
-    static fromJS(data: any): LinkTrackingOutput {
-        data = typeof data === 'object' ? data : {};
-        let result = new LinkTrackingOutput();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["id"] = this.id;
-        data["url"] = this.url;
-        data["created"] = this.created ? this.created.toISOString() : <any>undefined;
-        return data;
-    }
-}
-
-export interface ILinkTrackingOutput {
-    id: number;
-    url: string | undefined;
-    created: moment.Moment;
-}
-
 export class ListResultDtoOfAddressOwnershipTypeDto implements IListResultDtoOfAddressOwnershipTypeDto {
     items!: AddressOwnershipTypeDto[] | undefined;
 
@@ -88464,6 +88637,46 @@ export interface ISessionTimeOutSettingsEditDto {
     showLockScreenWhenTimedOut: boolean;
 }
 
+export class SetAffiliateLinkImageInput implements ISetAffiliateLinkImageInput {
+    affiliateLinkId!: number;
+    image!: string | undefined;
+
+    constructor(data?: ISetAffiliateLinkImageInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.affiliateLinkId = _data["affiliateLinkId"];
+            this.image = _data["image"];
+        }
+    }
+
+    static fromJS(data: any): SetAffiliateLinkImageInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new SetAffiliateLinkImageInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["affiliateLinkId"] = this.affiliateLinkId;
+        data["image"] = this.image;
+        return data;
+    }
+}
+
+export interface ISetAffiliateLinkImageInput {
+    affiliateLinkId: number;
+    image: string | undefined;
+}
+
 export class SetAmountInfo implements ISetAmountInfo {
     orderId!: number;
     amount!: number;
@@ -94512,6 +94725,62 @@ export class UpdateAffiliateIsAdvisorInput implements IUpdateAffiliateIsAdvisorI
 export interface IUpdateAffiliateIsAdvisorInput {
     contactId: number;
     isAdvisor: boolean;
+}
+
+export class UpdateAffiliateLinkInput implements IUpdateAffiliateLinkInput {
+    id!: number;
+    category!: string | undefined;
+    companyName!: string | undefined;
+    phoneNumber!: string | undefined;
+    url!: string;
+    suggestedCopy!: string | undefined;
+
+    constructor(data?: IUpdateAffiliateLinkInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.category = _data["category"];
+            this.companyName = _data["companyName"];
+            this.phoneNumber = _data["phoneNumber"];
+            this.url = _data["url"];
+            this.suggestedCopy = _data["suggestedCopy"];
+        }
+    }
+
+    static fromJS(data: any): UpdateAffiliateLinkInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new UpdateAffiliateLinkInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["category"] = this.category;
+        data["companyName"] = this.companyName;
+        data["phoneNumber"] = this.phoneNumber;
+        data["url"] = this.url;
+        data["suggestedCopy"] = this.suggestedCopy;
+        return data;
+    }
+}
+
+export interface IUpdateAffiliateLinkInput {
+    id: number;
+    category: string | undefined;
+    companyName: string | undefined;
+    phoneNumber: string | undefined;
+    url: string;
+    suggestedCopy: string | undefined;
 }
 
 export class UpdateApiKeyInput implements IUpdateApiKeyInput {
