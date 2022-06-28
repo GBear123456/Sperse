@@ -49748,6 +49748,7 @@ export interface IAffiliateInfoHistoryInfo {
 }
 
 export class AffiliateLinkInfo implements IAffiliateLinkInfo {
+    id!: number;
     category!: string | undefined;
     companyName!: string | undefined;
     phoneNumber!: string | undefined;
@@ -49766,6 +49767,7 @@ export class AffiliateLinkInfo implements IAffiliateLinkInfo {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.category = _data["category"];
             this.companyName = _data["companyName"];
             this.phoneNumber = _data["phoneNumber"];
@@ -49784,6 +49786,7 @@ export class AffiliateLinkInfo implements IAffiliateLinkInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["category"] = this.category;
         data["companyName"] = this.companyName;
         data["phoneNumber"] = this.phoneNumber;
@@ -49795,6 +49798,7 @@ export class AffiliateLinkInfo implements IAffiliateLinkInfo {
 }
 
 export interface IAffiliateLinkInfo {
+    id: number;
     category: string | undefined;
     companyName: string | undefined;
     phoneNumber: string | undefined;
