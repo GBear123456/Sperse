@@ -283,7 +283,7 @@ export class ClientsComponent extends AppComponentBase implements OnInit, OnDest
             element: new FilterCheckBoxesModel(
                 {
                     dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars), tap(stars => {
-                        stars.forEach(star => {
+                        stars && stars.forEach(star => {
                             this.starsLookup[star.id] = star;
                         });
                     })),

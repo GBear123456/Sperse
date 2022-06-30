@@ -1434,7 +1434,7 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                         element: new FilterCheckBoxesModel(
                             {
                                 dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars), tap(stars => {
-                                    stars.forEach(star => {
+                                    stars && stars.forEach(star => {
                                         this.starsLookup[star.id] = star;
                                     });
                                 })),

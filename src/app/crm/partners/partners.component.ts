@@ -1109,7 +1109,7 @@ export class PartnersComponent extends AppComponentBase implements OnInit, OnDes
                     element: new FilterCheckBoxesModel(
                         {
                             dataSource$: this.store$.pipe(select(StarsStoreSelectors.getStars), tap(stars => {
-                                stars.forEach(star => {
+                                stars && stars.forEach(star => {
                                     this.starsLookup[star.id] = star;
                                 });
                             })),
