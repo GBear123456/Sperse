@@ -30,5 +30,10 @@ export enum AppFeatures {
     PFM = 'PFM',
     PFMApplications = 'PFM.Applications',
     PFMCreditReport = 'PFM.CreditReport',
-    PFMMaxUserCount = 'PFM.MaxUserCount'
+    PFMMaxUserCount = 'PFM.MaxUserCount',
+    Portal = 'Portal',
+    PortalDashboard = 'Portal.Dashboard',
+    PortalInvoices = 'Portal.Invoices',
+    PortalLeads = 'Portal.Leads',
+    PortalReseller = 'Portal.Reseller'
 }
