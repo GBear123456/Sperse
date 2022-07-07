@@ -306,13 +306,40 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                                 })
                             ).subscribe(() => this.detectChanges());
                     };
-                    this.getSelectedEntities().forEach(entity => {
-                        let oldStage = this.stages.find(stage => stage.id == entity.StageId);
-                        if (oldStage.isFinal) {
-                            return checkReloadStages(entity, [oldStage]);
-                        }
-
+        
+                    let selectedEntities = this.getSelectedEntities();
+                    if (selectedEntities.length > 1) {
+                        selectedEntities.forEach(entity => {
+                            entity.SortOrder = newSortOrder;
+                            let oldStage = this.stages.find(
+                                stage => stage.id == entity.StageId
+                            );
+                            newStage.isLoading = oldStage.isLoading = true;
+                            reloadStageList.push(oldStage.stageIndex);
+                            this.detectChanges();
+                        });
+                        this.pipelineService.updateEntitiesStage(
+                            this.pipelinePurposeId,
+                            selectedEntities,
+                            newStage.name,
+                            this.contactGroupId,
+                            this.pipelineId
+                        ).subscribe(declinedList => {
+                            selectedEntities.forEach(entity => {
+                                if (!declinedList.some(item => item.Id == entity.Id)) {
+                                    this.onEntityStageChanged && this.onEntityStageChanged.emit(entity);
+                                    entity.selected = false;
+                                }
+                            });
+                            this.reloadStagesInternal(reloadStageList).subscribe(() => this.detectChanges());
+                        });
+                    } else {
+                        let entity = selectedEntities[0];
                         if (entity) {
+                            let oldStage = this.stages.find(stage => stage.id == entity.StageId);
+                            if (oldStage.isFinal) {
+                                return checkReloadStages(entity, [oldStage]);
+                            }
                             entity.SortOrder = newSortOrder;
                             this.updateEntityStage(entity, newStage, oldStage, (cancelled: boolean) => {
                                 entity.selected = false;
@@ -331,7 +358,7 @@ export class PipelineComponent extends AppComponentBase implements OnInit, OnDes
                                 }
                             }, true);
                         }
-                    });
+                    }
                 } else {
                     let stage = this.getStageByElement(value.source),
                         targetEntity = this.getEntityById(entityId, stage);
