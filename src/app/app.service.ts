@@ -54,7 +54,7 @@ export class AppService extends AppServiceBase {
     private toolbarSubject: Subject<undefined>;
     private expiredModule: Subject<string>;
     public moduleSubscriptions$: Observable<ModuleSubscriptionInfoDto[]>;
-    private moduleSubscriptions: ModuleSubscriptionInfoDto[];
+    public moduleSubscriptions: ModuleSubscriptionInfoDto[];
     public subscriptionIsFree$: Observable<boolean>;
     private permission: AppPermissionService;
     public feature: FeatureCheckerService;
