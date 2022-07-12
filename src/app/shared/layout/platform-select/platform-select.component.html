@@ -10,9 +10,6 @@
                         <a (click)="onItemClick(item)"
                            [class]="isDisabled(item.name) || item.isComingSoon || (item.name == 'CFO' && !permission.isGranted(permissions.CFOMainInstanceAccess)) ? 'top__link disabled' : 'top__link'">
                             <h2 class="top__item_title">
-                                <img src="./assets/common/images/platform-select/{{ item.name | lowercase }}.svg"
-                                     class="top__item_title-image"
-                                     [alt]="item.name">
                                 {{item.name}}
                             </h2>
                             <div class="top__item_descr">
@@ -34,7 +31,7 @@
             </div>
             <div class="menu-row">
                 <ul class="menu__items">
-                    <li class="menu__item {{item.code | lowercase }}" *ngFor="let item of modules.items">
+                    <li class="menu__item {{item.code | lowercase }}" *ngFor="let item of modules.items" [hidden]="isDisabled(item.name) || item.isComingSoon">
                         <a (click)="onItemClick(item)"
                            [class]="isDisabled(item.name) || item.isComingSoon ? 'menu__link disabled' : 'menu__link'">
                             <h2 class="menu__item_title">{{item.name}}</h2>
@@ -48,7 +45,7 @@
                     </li>
                 </ul>
             </div>
-            <footer>
+            <footer *ngIf="modules.footerItems.length">
                 <ul class="footer__items">
                     <li class="footer__item {{item.code | lowercase }}" *ngFor="let item of modules.footerItems">
                         <a class="footer__link" (click)="onItemClick(item)">
