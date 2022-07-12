@@ -77,7 +77,7 @@ export class AppComponent implements OnInit {
                         this.router.navigate(['app/admin/users']);
                     }
                     paymentDialogTimeout = setTimeout(() => {
-                        if (appService.moduleSubscriptions.every(sub => sub.statusId == 'D'))
+                        if (appService.moduleSubscriptions.length && appService.moduleSubscriptions.every(sub => sub.statusId == 'D'))
                             abp.message.info(this.ls.l('SubscriptionDraftMessage'), this.ls.l('SubscriptionDraftTitle'));
                         else if (!this.dialog.getDialogById('payment-wizard')) {
                             const sub = appService.getModuleSubscription(name);
