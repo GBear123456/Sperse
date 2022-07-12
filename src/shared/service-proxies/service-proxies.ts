@@ -60620,6 +60620,7 @@ export class CreateTenantInput implements ICreateTenantInput {
     adminLastName!: string | undefined;
     shouldChangePasswordOnNextLogin!: boolean;
     sendActivationEmail!: boolean;
+    products!: TenantProductInfo[] | undefined;
     tenancyName!: string;
     name!: string;
     connectionString!: string | undefined;
@@ -60647,6 +60648,11 @@ export class CreateTenantInput implements ICreateTenantInput {
             this.adminLastName = _data["adminLastName"];
             this.shouldChangePasswordOnNextLogin = _data["shouldChangePasswordOnNextLogin"];
             this.sendActivationEmail = _data["sendActivationEmail"];
+            if (Array.isArray(_data["products"])) {
+                this.products = [] as any;
+                for (let item of _data["products"])
+                    this.products!.push(TenantProductInfo.fromJS(item));
+            }
             this.tenancyName = _data["tenancyName"];
             this.name = _data["name"];
             this.connectionString = _data["connectionString"];
@@ -60678,6 +60684,11 @@ export class CreateTenantInput implements ICreateTenantInput {
         data["adminLastName"] = this.adminLastName;
         data["shouldChangePasswordOnNextLogin"] = this.shouldChangePasswordOnNextLogin;
         data["sendActivationEmail"] = this.sendActivationEmail;
+        if (Array.isArray(this.products)) {
+            data["products"] = [];
+            for (let item of this.products)
+                data["products"].push(item.toJSON());
+        }
         data["tenancyName"] = this.tenancyName;
         data["name"] = this.name;
         data["connectionString"] = this.connectionString;
@@ -60702,6 +60713,7 @@ export interface ICreateTenantInput {
     adminLastName: string | undefined;
     shouldChangePasswordOnNextLogin: boolean;
     sendActivationEmail: boolean;
+    products: TenantProductInfo[] | undefined;
     tenancyName: string;
     name: string;
     connectionString: string | undefined;
@@ -72637,6 +72649,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
     commissionableAmount!: number | undefined;
     description!: string | undefined;
     sortOrder!: number;
+    productId!: number | undefined;
     productCode!: string | undefined;
     productName!: string | undefined;
     productType!: ProductType | undefined;
@@ -72662,6 +72675,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
             this.commissionableAmount = _data["commissionableAmount"];
             this.description = _data["description"];
             this.sortOrder = _data["sortOrder"];
+            this.productId = _data["productId"];
             this.productCode = _data["productCode"];
             this.productName = _data["productName"];
             this.productType = _data["productType"];
@@ -72687,6 +72701,7 @@ export class InvoiceLineInfo implements IInvoiceLineInfo {
         data["commissionableAmount"] = this.commissionableAmount;
         data["description"] = this.description;
         data["sortOrder"] = this.sortOrder;
+        data["productId"] = this.productId;
         data["productCode"] = this.productCode;
         data["productName"] = this.productName;
         data["productType"] = this.productType;
@@ -72705,6 +72720,7 @@ export interface IInvoiceLineInfo {
     commissionableAmount: number | undefined;
     description: string | undefined;
     sortOrder: number;
+    productId: number | undefined;
     productCode: string | undefined;
     productName: string | undefined;
     productType: ProductType | undefined;
@@ -76578,6 +76594,7 @@ export interface IModuleSubscriptionInfoExtended {
 }
 
 export enum ModuleType {
+    None = "None",
     CFO = "CFO",
     CRM = "CRM",
     CFO_CRM = "CFO_CRM",
@@ -78962,50 +78979,6 @@ export class PackageEditionConfigFeatureDto implements IPackageEditionConfigFeat
 export interface IPackageEditionConfigFeatureDto {
     definition: PricingTableFeatureDefinition | undefined;
     value: string | undefined;
-}
-
-export class PackageInfoDto implements IPackageInfoDto {
-    module!: ModuleType;
-    packageName!: string;
-    seatCount!: number;
-
-    constructor(data?: IPackageInfoDto) {
-        if (data) {
-            for (var property in data) {
-                if (data.hasOwnProperty(property))
-                    (<any>this)[property] = (<any>data)[property];
-            }
-        }
-    }
-
-    init(_data?: any) {
-        if (_data) {
-            this.module = _data["module"];
-            this.packageName = _data["packageName"];
-            this.seatCount = _data["seatCount"];
-        }
-    }
-
-    static fromJS(data: any): PackageInfoDto {
-        data = typeof data === 'object' ? data : {};
-        let result = new PackageInfoDto();
-        result.init(data);
-        return result;
-    }
-
-    toJSON(data?: any) {
-        data = typeof data === 'object' ? data : {};
-        data["module"] = this.module;
-        data["packageName"] = this.packageName;
-        data["seatCount"] = this.seatCount;
-        return data;
-    }
-}
-
-export interface IPackageInfoDto {
-    module: ModuleType;
-    packageName: string;
-    seatCount: number;
 }
 
 export class Page implements IPage {
@@ -90639,8 +90612,7 @@ export interface ISubmitRequestOutput {
 
 export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
     companyName!: string | undefined;
-    paymentPeriodType!: PaymentPeriodType | undefined;
-    packages!: PackageInfoDto[] | undefined;
+    products!: TenantProductInfo[] | undefined;
     website!: string | undefined;
     city!: string | undefined;
     state!: string | undefined;
@@ -90670,11 +90642,10 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
     init(_data?: any) {
         if (_data) {
             this.companyName = _data["companyName"];
-            this.paymentPeriodType = _data["paymentPeriodType"];
-            if (Array.isArray(_data["packages"])) {
-                this.packages = [] as any;
-                for (let item of _data["packages"])
-                    this.packages!.push(PackageInfoDto.fromJS(item));
+            if (Array.isArray(_data["products"])) {
+                this.products = [] as any;
+                for (let item of _data["products"])
+                    this.products!.push(TenantProductInfo.fromJS(item));
             }
             this.website = _data["website"];
             this.city = _data["city"];
@@ -90705,11 +90676,10 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["companyName"] = this.companyName;
-        data["paymentPeriodType"] = this.paymentPeriodType;
-        if (Array.isArray(this.packages)) {
-            data["packages"] = [];
-            for (let item of this.packages)
-                data["packages"].push(item.toJSON());
+        if (Array.isArray(this.products)) {
+            data["products"] = [];
+            for (let item of this.products)
+                data["products"].push(item.toJSON());
         }
         data["website"] = this.website;
         data["city"] = this.city;
@@ -90733,8 +90703,7 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
 
 export interface ISubmitTenancyRequestInput {
     companyName: string | undefined;
-    paymentPeriodType: PaymentPeriodType | undefined;
-    packages: PackageInfoDto[] | undefined;
+    products: TenantProductInfo[] | undefined;
     website: string | undefined;
     city: string | undefined;
     state: string | undefined;
@@ -92516,6 +92485,50 @@ export class TenantOtherSettingsEditDto implements ITenantOtherSettingsEditDto {
 
 export interface ITenantOtherSettingsEditDto {
     isQuickThemeSelectEnabled: boolean;
+}
+
+export class TenantProductInfo implements ITenantProductInfo {
+    productId!: number;
+    paymentPeriodType!: PaymentPeriodType;
+    quantity!: number;
+
+    constructor(data?: ITenantProductInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.productId = _data["productId"];
+            this.paymentPeriodType = _data["paymentPeriodType"];
+            this.quantity = _data["quantity"];
+        }
+    }
+
+    static fromJS(data: any): TenantProductInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new TenantProductInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
+        data["paymentPeriodType"] = this.paymentPeriodType;
+        data["quantity"] = this.quantity;
+        return data;
+    }
+}
+
+export interface ITenantProductInfo {
+    productId: number;
+    paymentPeriodType: PaymentPeriodType;
+    quantity: number;
 }
 
 export class TenantSettingsEditDto implements ITenantSettingsEditDto {
