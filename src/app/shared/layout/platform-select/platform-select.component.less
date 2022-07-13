@@ -1,5 +1,8 @@
+@cfo-color: linear-gradient(221deg, #f59a60, #f77623);
 @pfm-color: linear-gradient(221deg, #48d8bd, #129064);
 @api-color: linear-gradient(221deg, #91f7c8, #0cab2a);
+@crm-color: linear-gradient(221deg, #C86DD7, #3023AE);
+@admin-color: linear-gradient(221deg, #cae4cf, #538da9);
 
 ::ng-deep platform-select, .module-select-item {
     &.admin input {
@@ -254,16 +257,17 @@
 
     .top,
     .menu {
-
-        &-row {
+        &-row {            
             @media (min-width: 768px) {
                 padding: 0 15px;
             }
         }
 
         &__items {
+            width: 100%;
             display: flex;
             list-style-type: none;
+            justify-content: space-around;    
         }
 
         &__item {
@@ -298,17 +302,6 @@
                 }
             }
 
-            &.cfo {
-                [class$="title"] {
-                    color: #f77623;
-                }
-            }
-
-            &.crm {
-                [class$="title"] {
-                    color: #663dbc;
-                }
-            }
 
             &.slice {
                 [class$="title"] {
@@ -316,7 +309,7 @@
                 }
             }
 
-            &.api,
+            &.cfo,
             &.pfm,
             &.hub {
                 [class$="title"] {
@@ -337,16 +330,65 @@
                 }
             }
 
-            &.api {
+            &.api,
+            &.admin,
+            &.crm {
                 [class$="title"] {
                     &::before {
+                        content: '';
+                        color: #fff;
+                        font-size: 8px;
+                        line-height: 33px;
+                        width: 33px;
+                        height: 33px;
+                        margin-right: 7px;
+                        border-radius: 50%;
+                    }
+                }
+            }
+
+            &.api {
+                [class$="title"] {
+                    color: #0cab2a;
+                    &::before {
+                        content: 'API';
                         background-image: @api-color;
+                    }
+                }
+            }
+
+            &.crm {
+                [class$="title"] {
+                    color: #663dbc;
+                    &::before {
+                        content: 'CRM';
+                        background-image: @crm-color;
+                    }
+                }
+            }
+
+            &.admin {
+                [class$="title"] {
+                    color: #538da9;
+                    &::before {
+                        content: 'Admin';
+                        background-image: @admin-color;
+                    }
+                }
+            }
+
+            &.cfo {
+                [class$="title"] {
+                    color: #f77623;
+                    &::before {
+                        background-image: linear-gradient(221deg, #f76b1c, #fad961);
                     }
                 }
             }
 
             &.pfm {
                 [class$="title"] {
+                    color: #129064;
                     &::before {
                         background-image: @pfm-color;
                     }
@@ -355,6 +397,7 @@
 
             &.hub {
                 [class$="title"] {
+                    color: #2beccf;
                     &::before {
                         background-image: linear-gradient(41deg, #34aee0, #2beccf),
                             linear-gradient(to bottom, rgba(0, 255, 255, 0), rgba(0, 255, 255, 0));
@@ -403,6 +446,7 @@
         flex: 1;
         display: flex;
         align-items: center;
+        padding: 0px 15px 30px 15px!important;
     }
 
     .footer {
@@ -447,9 +491,9 @@
     }
 
     @media (min-width: 768px) {
-        min-height: 490px;
         .top__item_descr {
             margin-bottom: 10px;
+            min-height: 50px;
         }
     }
 }

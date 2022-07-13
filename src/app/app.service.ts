@@ -80,14 +80,13 @@ export class AppService extends AppServiceBase {
                     name: 'Admin',
                     showDescription: true,
                     showInDropdown: true,
-                    footerItem: true,
+                    focusItem: true,
                     isComingSoon: false
                 },
                 {
                     name: 'CFO',
                     showDescription: true,
                     showInDropdown: true,
-                    focusItem: true,
                     uri: 'main',
                     isComingSoon: false
                 },
@@ -117,6 +116,7 @@ export class AppService extends AppServiceBase {
                     name: 'API',
                     showDescription: true,
                     showInDropdown: true,
+                    focusItem: true,
                     isComingSoon: false
                 },
                 {
@@ -160,7 +160,8 @@ export class AppService extends AppServiceBase {
                     name: 'Slice',
                     showDescription: false,
                     showInDropdown: true,
-                    focusItem: true
+                    isComingSoon: true,
+                    focusItem: false
                 },
                 {
                     name: 'Store',

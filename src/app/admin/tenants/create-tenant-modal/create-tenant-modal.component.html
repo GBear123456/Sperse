@@ -74,10 +74,46 @@
                                     <li [hidden]="tenantCreateForm.controls['adminPasswordRepeat'].valid">{{ls.l("PasswordsDontMatch")}}</li>
                                 </ul>
                             </div>
-                            <modules-editions-select *ngIf="(editionsGroups$ | async) as editionsGroups"
-                                                     [editionsGroups]="editionsGroups"
-                                                     [(editionsModels)]="editionsModels">
-                            </modules-editions-select>
+                            <br />
+                            <tabset class="tab-container tabbable-line">
+                                <tab [heading]="ls.l('Products')">
+                                    <ng-container>
+                                        <div class="row">
+                                            <div class="col-sm-4">
+                                                <dx-select-box
+                                                    name="products"
+                                                    displayExpr="name"
+                                                    valueExpr="id"
+                                                    [(value)]="productId"
+                                                    [dataSource]="products"
+                                                    placeholder="Product"
+                                                    (onValueChanged)="onProductChanged($event)"
+                                                    [showClearButton]="true">
+                                                </dx-select-box>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <dx-select-box [dataSource]="paymentPeriodTypes"
+                                                            [(value)]="paymentPeriodType"
+                                                            placeholder="Payment type"
+                                                            [showClearButton]="true">
+                                                </dx-select-box>
+                                            </div>
+                                            <div class="col-sm-4">
+                                                <dx-text-box name="quantity" 
+                                                            [(value)]="quantity"placeholder="Quantity"
+                                                            mode="number">
+                                                </dx-text-box>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </tab>
+                                <tab [heading]="ls.l('Editions')">
+                                    <modules-editions-select *ngIf="(editionsGroups$ | async) as editionsGroups"
+                                                            [editionsGroups]="editionsGroups"
+                                                            [(editionsModels)]="editionsModels">
+                                    </modules-editions-select>
+                                </tab>
+                            </tabset>
                             <dx-check-box [text]="ls.l('ShouldChangePasswordOnNextLogin')" [(value)]="tenant.shouldChangePasswordOnNextLogin"></dx-check-box>
                             <dx-check-box [text]="ls.l('SendActivationEmail')" [(value)]="tenant.sendActivationEmail"></dx-check-box>
                             <dx-check-box [text]="ls.l('Active')" [(value)]="tenant.isActive"></dx-check-box>
