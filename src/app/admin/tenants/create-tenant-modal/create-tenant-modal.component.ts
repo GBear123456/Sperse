@@ -63,7 +63,6 @@ export class CreateTenantModalComponent implements OnInit {
     products: ProductDto[];
     paymentPeriodType: RecurringPaymentFrequency;
     paymentPeriodTypes: RecurringPaymentFrequency[];
-    quantity: number;
     nameRegEx = AppConsts.regexPatterns.fullName;
     emailRegEx = AppConsts.regexPatterns.email;
     title = this.ls.l('CreateNewTenant');
@@ -125,7 +124,7 @@ export class CreateTenantModalComponent implements OnInit {
             : [ new TenantProductInfo({ 
                 productId: this.productId,
                 paymentPeriodType: this.mapRecurringPaymentFrequencyToPaymentPeriodType(this.paymentPeriodType),
-                quantity: this.quantity
+                quantity: 1
         }) ];
         this.tenantService.createTenant(this.tenant)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
@@ -139,7 +138,6 @@ export class CreateTenantModalComponent implements OnInit {
     onProductChanged(event) {
         if (!event.value) {
             this.paymentPeriodTypes = [];
-            this.quantity = undefined;
             return;
         }
 
@@ -147,9 +145,6 @@ export class CreateTenantModalComponent implements OnInit {
         this.productId = selectedItem.id;
         this.paymentPeriodTypes = selectedItem.paymentPeriodTypes;
         this.paymentPeriodType = undefined;
-        if (this.quantity == undefined) {
-            this.quantity = 1;
-        }
     }
 
     mapRecurringPaymentFrequencyToPaymentPeriodType(recurringPaymentFrequency: RecurringPaymentFrequency): PaymentPeriodType {

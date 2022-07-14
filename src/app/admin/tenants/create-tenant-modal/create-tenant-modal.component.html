@@ -79,7 +79,7 @@
                                 <tab [heading]="ls.l('Products')">
                                     <ng-container>
                                         <div class="row">
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-6">
                                                 <dx-select-box
                                                     name="products"
                                                     displayExpr="name"
@@ -91,18 +91,12 @@
                                                     [showClearButton]="true">
                                                 </dx-select-box>
                                             </div>
-                                            <div class="col-sm-4">
+                                            <div class="col-sm-6">
                                                 <dx-select-box [dataSource]="paymentPeriodTypes"
                                                             [(value)]="paymentPeriodType"
                                                             placeholder="Payment type"
                                                             [showClearButton]="true">
                                                 </dx-select-box>
-                                            </div>
-                                            <div class="col-sm-4">
-                                                <dx-text-box name="quantity" 
-                                                            [(value)]="quantity"placeholder="Quantity"
-                                                            mode="number">
-                                                </dx-text-box>
                                             </div>
                                         </div>
                                     </ng-container>
