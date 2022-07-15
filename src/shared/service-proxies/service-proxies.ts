@@ -80530,6 +80530,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
     customField3!: string | undefined;
     customField4!: string | undefined;
     customField5!: string | undefined;
+    stripeCustomerId!: string | undefined;
     orgRelations!: PersonOrgRelationShortInfo[] | undefined;
     id!: number;
     fullName!: string | undefined;
@@ -80562,6 +80563,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
             this.customField3 = _data["customField3"];
             this.customField4 = _data["customField4"];
             this.customField5 = _data["customField5"];
+            this.stripeCustomerId = _data["stripeCustomerId"];
             if (Array.isArray(_data["orgRelations"])) {
                 this.orgRelations = [] as any;
                 for (let item of _data["orgRelations"])
@@ -80598,6 +80600,7 @@ export class PersonContactInfoDto implements IPersonContactInfoDto {
         data["customField3"] = this.customField3;
         data["customField4"] = this.customField4;
         data["customField5"] = this.customField5;
+        data["stripeCustomerId"] = this.stripeCustomerId;
         if (Array.isArray(this.orgRelations)) {
             data["orgRelations"] = [];
             for (let item of this.orgRelations)
@@ -80627,6 +80630,7 @@ export interface IPersonContactInfoDto {
     customField3: string | undefined;
     customField4: string | undefined;
     customField5: string | undefined;
+    stripeCustomerId: string | undefined;
     orgRelations: PersonOrgRelationShortInfo[] | undefined;
     id: number;
     fullName: string | undefined;
