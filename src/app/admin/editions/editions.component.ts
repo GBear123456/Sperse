@@ -95,7 +95,7 @@ export class EditionsComponent extends AppComponentBase implements OnDestroy {
                             value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Products').toLowerCase() + ' by name',
+                            placeholder: this.l('Search') + ' ' + this.l('Editions').toLowerCase() + ' by name',
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }

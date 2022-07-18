@@ -132,6 +132,12 @@
         .field {
             line-height: 30px;
             padding: 10px 0;
+            
+            &.stripe {
+                &, & .span {
+                    white-space: nowrap;
+                }            
+            }
 
             ::ng-deep inplace-edit {
                 .inplace-edit-edit-mode {

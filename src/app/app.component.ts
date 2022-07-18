@@ -79,7 +79,8 @@ export class AppComponent implements OnInit {
                     paymentDialogTimeout = setTimeout(() => {
                         if (appService.moduleSubscriptions.length && appService.moduleSubscriptions.every(sub => sub.statusId == 'D'))
                             abp.message.info(this.ls.l('SubscriptionDraftMessage'), this.ls.l('SubscriptionDraftTitle'));
-                        else if (!this.dialog.getDialogById('payment-wizard')) {
+                        //is not supported for now
+                        /*else if (!this.dialog.getDialogById('payment-wizard')) {
                             const sub = appService.getModuleSubscription(name);
                             this.dialog.open(PaymentWizardComponent, {
                                 height: '800px',
@@ -96,7 +97,7 @@ export class AppComponent implements OnInit {
                                     )
                                 }
                             });
-                        }
+                        }*/
                     }, 2000);
                 }
             });
