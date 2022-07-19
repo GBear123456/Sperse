@@ -32319,6 +32319,68 @@ export class ProductServiceProxy {
     }
 
     /**
+     * @return Success
+     */
+    getSubscriptionProductsByGroupName(groupName: string): Observable<ProductInfo[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Product/GetSubscriptionProductsByGroupName?";
+        if (groupName === undefined || groupName === null)
+            throw new Error("The parameter 'groupName' must be defined and cannot be null.");
+        else
+            url_ += "groupName=" + encodeURIComponent("" + groupName) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetSubscriptionProductsByGroupName(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetSubscriptionProductsByGroupName(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ProductInfo[]>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ProductInfo[]>;
+        }));
+    }
+
+    protected processGetSubscriptionProductsByGroupName(response: HttpResponseBase): Observable<ProductInfo[]> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            if (Array.isArray(resultData200)) {
+                result200 = [] as any;
+                for (let item of resultData200)
+                    result200!.push(ProductInfo.fromJS(item));
+            }
+            else {
+                result200 = <any>null;
+            }
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ProductInfo[]>(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -54390,6 +54452,7 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
     emailAddress!: string | undefined;
     isEmailConfirmationRequired!: boolean;
     loginLink!: string | undefined;
+    paymentLink!: string | undefined;
 
     constructor(data?: ICompleteTenantRegistrationOutput) {
         if (data) {
@@ -54409,6 +54472,7 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
             this.emailAddress = _data["emailAddress"];
             this.isEmailConfirmationRequired = _data["isEmailConfirmationRequired"];
             this.loginLink = _data["loginLink"];
+            this.paymentLink = _data["paymentLink"];
         }
     }
 
@@ -54428,6 +54492,7 @@ export class CompleteTenantRegistrationOutput implements ICompleteTenantRegistra
         data["emailAddress"] = this.emailAddress;
         data["isEmailConfirmationRequired"] = this.isEmailConfirmationRequired;
         data["loginLink"] = this.loginLink;
+        data["paymentLink"] = this.paymentLink;
         return data;
     }
 }
@@ -54440,6 +54505,7 @@ export interface ICompleteTenantRegistrationOutput {
     emailAddress: string | undefined;
     isEmailConfirmationRequired: boolean;
     loginLink: string | undefined;
+    paymentLink: string | undefined;
 }
 
 export class CompleteWithdrawalInput implements ICompleteWithdrawalInput {
@@ -76771,7 +76837,6 @@ export interface IModuleSubscriptionInfoExtended {
 }
 
 export enum ModuleType {
-    None = "None",
     CFO = "CFO",
     CRM = "CRM",
     CFO_CRM = "CFO_CRM",
