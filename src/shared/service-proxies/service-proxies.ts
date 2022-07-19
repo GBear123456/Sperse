@@ -81800,6 +81800,7 @@ export interface IProductGroupInfo {
 }
 
 export class ProductInfo implements IProductInfo {
+    id!: number;
     code!: string | undefined;
     name!: string | undefined;
     description!: string | undefined;
@@ -81825,6 +81826,7 @@ export class ProductInfo implements IProductInfo {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.code = _data["code"];
             this.name = _data["name"];
             this.description = _data["description"];
@@ -81858,6 +81860,7 @@ export class ProductInfo implements IProductInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["code"] = this.code;
         data["name"] = this.name;
         data["description"] = this.description;
@@ -81884,6 +81887,7 @@ export class ProductInfo implements IProductInfo {
 }
 
 export interface IProductInfo {
+    id: number;
     code: string | undefined;
     name: string | undefined;
     description: string | undefined;
