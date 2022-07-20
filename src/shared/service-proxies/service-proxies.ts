@@ -47160,6 +47160,65 @@ export class UserInvoiceServiceProxy {
         }
         return _observableOf<string>(null as any);
     }
+
+    /**
+     * @return Success
+     */
+    getInvoiceReceiptInfo(tenantId: number, publicId: string): Observable<GetInvoiceReceiptInfoOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserInvoice/GetInvoiceReceiptInfo?";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
+        else
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&";
+        if (publicId === undefined || publicId === null)
+            throw new Error("The parameter 'publicId' must be defined and cannot be null.");
+        else
+            url_ += "publicId=" + encodeURIComponent("" + publicId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetInvoiceReceiptInfo(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetInvoiceReceiptInfo(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<GetInvoiceReceiptInfoOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<GetInvoiceReceiptInfoOutput>;
+        }));
+    }
+
+    protected processGetInvoiceReceiptInfo(response: HttpResponseBase): Observable<GetInvoiceReceiptInfoOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = GetInvoiceReceiptInfoOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<GetInvoiceReceiptInfoOutput>(null as any);
+    }
 }
 
 @Injectable()
@@ -67560,6 +67619,70 @@ export class GetIncomeStatisticsDataOutput implements IGetIncomeStatisticsDataOu
 
 export interface IGetIncomeStatisticsDataOutput {
     incomeStatistics: IncomeStastistic[] | undefined;
+}
+
+export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput {
+    tenantName!: string | undefined;
+    tenantLogoUrl!: string | undefined;
+    invoiceNumber!: string | undefined;
+    invoiceAmount!: number;
+    invoiceStatus!: InvoiceStatus;
+    paymentDate!: moment.Moment | undefined;
+    paymentMethod!: string | undefined;
+    downloadInvoiceUrl!: string | undefined;
+
+    constructor(data?: IGetInvoiceReceiptInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.tenantName = _data["tenantName"];
+            this.tenantLogoUrl = _data["tenantLogoUrl"];
+            this.invoiceNumber = _data["invoiceNumber"];
+            this.invoiceAmount = _data["invoiceAmount"];
+            this.invoiceStatus = _data["invoiceStatus"];
+            this.paymentDate = _data["paymentDate"] ? moment(_data["paymentDate"].toString()) : <any>undefined;
+            this.paymentMethod = _data["paymentMethod"];
+            this.downloadInvoiceUrl = _data["downloadInvoiceUrl"];
+        }
+    }
+
+    static fromJS(data: any): GetInvoiceReceiptInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetInvoiceReceiptInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["tenantName"] = this.tenantName;
+        data["tenantLogoUrl"] = this.tenantLogoUrl;
+        data["invoiceNumber"] = this.invoiceNumber;
+        data["invoiceAmount"] = this.invoiceAmount;
+        data["invoiceStatus"] = this.invoiceStatus;
+        data["paymentDate"] = this.paymentDate ? this.paymentDate.toISOString() : <any>undefined;
+        data["paymentMethod"] = this.paymentMethod;
+        data["downloadInvoiceUrl"] = this.downloadInvoiceUrl;
+        return data;
+    }
+}
+
+export interface IGetInvoiceReceiptInfoOutput {
+    tenantName: string | undefined;
+    tenantLogoUrl: string | undefined;
+    invoiceNumber: string | undefined;
+    invoiceAmount: number;
+    invoiceStatus: InvoiceStatus;
+    paymentDate: moment.Moment | undefined;
+    paymentMethod: string | undefined;
+    downloadInvoiceUrl: string | undefined;
 }
 
 export class GetKeyAttributeValuesInput implements IGetKeyAttributeValuesInput {

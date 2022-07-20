@@ -55,6 +55,10 @@ const routes: Routes = [
                 path: 'shared/why-they-buy',
                 loadChildren: () => import('public/why-they-buy-host/why-they-buy-host.module').then(m => m.WhyTheyBuyHostModule),
                 data: { localizationSource: 'Platform' }
+            },
+            {
+                path: 'receipt',
+                loadChildren: () => import('public/receipt/receipt.module').then(m => m.ReceiptModule)
             }
         ]
     },
