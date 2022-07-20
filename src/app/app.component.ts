@@ -77,8 +77,19 @@ export class AppComponent implements OnInit {
                         this.router.navigate(['app/admin/users']);
                     }
                     paymentDialogTimeout = setTimeout(() => {
-                        if (appService.moduleSubscriptions.length && appService.moduleSubscriptions.every(sub => sub.statusId == 'D'))
-                            abp.message.info(this.ls.l('SubscriptionDraftMessage'), this.ls.l('SubscriptionDraftTitle'));
+                        if (appService.moduleSubscriptions.length && appService.moduleSubscriptions.every(sub => sub.statusId == 'D')) {
+                            abp.message.confirm(
+                                this.ls.l('SubscriptionDraftMessage'),
+                                this.ls.l('SubscriptionDraftTitle'),
+                                isConfirmed => {
+                                    if (isConfirmed) {
+                                        appService.paymentLink$.subscribe((paymentLink) => {
+                                            window.location.href = paymentLink;
+                                        });
+                                    }
+                                }
+                            );
+                        }
                         //is not supported for now
                         /*else if (!this.dialog.getDialogById('payment-wizard')) {
                             const sub = appService.getModuleSubscription(name);

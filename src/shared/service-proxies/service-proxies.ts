@@ -43968,6 +43968,58 @@ export class TenantSubscriptionServiceProxy {
         }
         return _observableOf<PayPalSettingsDto>(null as any);
     }
+
+    /**
+     * @return Success
+     */
+    getStripePaymentLinkForFirstInvoice(): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetStripePaymentLinkForFirstInvoice";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetStripePaymentLinkForFirstInvoice(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetStripePaymentLinkForFirstInvoice(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
+    }
+
+    protected processGetStripePaymentLinkForFirstInvoice(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(null as any);
+    }
 }
 
 @Injectable()
@@ -81977,6 +82029,7 @@ export interface IProductGroupInfo {
 }
 
 export class ProductInfo implements IProductInfo {
+    id!: number;
     code!: string | undefined;
     name!: string | undefined;
     description!: string | undefined;
@@ -82002,6 +82055,7 @@ export class ProductInfo implements IProductInfo {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.code = _data["code"];
             this.name = _data["name"];
             this.description = _data["description"];
@@ -82035,6 +82089,7 @@ export class ProductInfo implements IProductInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["code"] = this.code;
         data["name"] = this.name;
         data["description"] = this.description;
@@ -82061,6 +82116,7 @@ export class ProductInfo implements IProductInfo {
 }
 
 export interface IProductInfo {
+    id: number;
     code: string | undefined;
     name: string | undefined;
     description: string | undefined;
