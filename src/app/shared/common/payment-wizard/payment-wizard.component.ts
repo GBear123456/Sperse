@@ -18,10 +18,10 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
-import { PackageOptions } from '@app/shared/common/payment-wizard/models/package-options.model';
+import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
-import { ModuleType, PackageServiceProxy, TenantSubscriptionServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ModuleType, PackageServiceProxy, TenantSubscriptionServiceProxy, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
 import { StatusInfo } from './models/status-info';
 import { AppPermissions } from '@shared/AppPermissions';
 import { PermissionCheckerService } from 'abp-ng2-module';
@@ -33,13 +33,13 @@ import { MessageService } from 'abp-ng2-module';
     templateUrl: './payment-wizard.component.html',
     styleUrls: ['./payment-wizard.component.less'],
     encapsulation: ViewEncapsulation.None,
-    providers: [ PaymentService, PackageServiceProxy ],
+    providers: [ PaymentService, PackageServiceProxy, ProductServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentWizardComponent implements OnInit {
     @ViewChild('stepper') stepper: MatStepper;
     @ViewChild('wizard') wizardRef: ElementRef;
-    plan$: Observable<PackageOptions> = this.paymentService.plan$;
+    plan$: Observable<PaymentOptions> = this.paymentService.plan$;
     paymentStatus: PaymentStatusEnum;
     paymentStatusData: StatusInfo;
     refreshAfterClose = false;

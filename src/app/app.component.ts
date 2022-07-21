@@ -52,13 +52,9 @@ export class AppComponent implements OnInit {
     isChatEnabled = this.appService.feature.isEnabled(AppFeatures.AppChatFeature);
 
     public constructor(
-        private ngZone: NgZone,
         private router: Router,
         private chatSignalrService: ChatSignalrService,
         private fullScreenService: FullScreenService,
-        private cacheService: CacheService,
-        private cacheHelper: CacheHelper,
-        private userManagementService: UserManagementService,
         private permissionCheckerService: PermissionCheckerService,
         public ls: AppLocalizationService,
         public appSession: AppSessionService,
@@ -90,8 +86,7 @@ export class AppComponent implements OnInit {
                                 }
                             );
                         }
-                        //is not supported for now
-                        /*else if (!this.dialog.getDialogById('payment-wizard')) {
+                        else if (!this.dialog.getDialogById('payment-wizard')) {
                             const sub = appService.getModuleSubscription(name);
                             this.dialog.open(PaymentWizardComponent, {
                                 height: '800px',
@@ -103,12 +98,12 @@ export class AppComponent implements OnInit {
                                     title: ls.ls(
                                         'Platform',
                                         'ModuleExpired',
-                                        appService.getSubscriptionName(name),
+                                        sub.productName,
                                         appService.getSubscriptionStatusBySubscription(sub)
                                     )
                                 }
                             });
-                        }*/
+                        }
                     }, 2000);
                 }
             });
