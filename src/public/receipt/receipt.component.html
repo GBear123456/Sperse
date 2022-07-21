@@ -1,0 +1,54 @@
+<div *ngIf="loading; else mainContainer" class="loading-container">
+    Waiting payment information
+</div>
+<ng-template #mainContainer>
+    <div class="main-container">
+        <div class="header">
+            <img src="{{invoiceInfo.tenantLogoUrl}}">
+            <div class="tenant-name">{{invoiceInfo.tenantName}}</div>
+        </div>
+        <div class="content">
+            <div class="summary">
+                <div class="icon">
+                    <i class="fa fa-file-text file"></i>
+                    <i class="fa fa-check-circle-o check"></i>
+                </div>
+                <div class="gray">Invoice paid</div>
+                <div class="amount">${{invoiceInfo.invoiceAmount}}</div>
+            </div>
+            <div class="details">
+                <div class="row">
+                    <div class="col-sm-6 gray">Invoice number</div>
+                    <div class="col-sm-6 text-right">{{invoiceInfo.invoiceNumber}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 gray">Payment date</div>
+                    <div class="col-sm-6 text-right">{{invoiceInfo.paymentDate | date}}</div>
+                </div>
+                <div class="row">
+                    <div class="col-sm-6 gray">Payment method</div>
+                    <div class="col-sm-6 text-right">{{invoiceInfo.paymentMethod}}</div>
+                </div>
+                <div class="row buttons-row">
+                    <div class="col-sm-6">
+                        <a role="button" class="btn btn-secondary" href="{{invoiceInfo.downloadInvoiceUrl}}" target="_blank">
+                            Download invoice
+                        </a>
+                    </div>
+                    <div class="col-sm-6 text-right">
+                        <button type="button" class="btn btn-secondary" disabled>Download receipt</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer gray">
+            <div class="powered-by">
+                Powered by Sperse
+            </div>
+            <div class="links">
+                <a>Terms</a>
+                <a>Privacy</a>
+            </div>
+        </div>
+    </div>
+</ng-template>
