@@ -43703,6 +43703,61 @@ export class TenantSubscriptionServiceProxy {
     /**
      * @return Success
      */
+    requestStripePaymentForInvoice(invoiceId: number): Observable<RequestStripePaymentOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestStripePaymentForInvoice?";
+        if (invoiceId === undefined || invoiceId === null)
+            throw new Error("The parameter 'invoiceId' must be defined and cannot be null.");
+        else
+            url_ += "invoiceId=" + encodeURIComponent("" + invoiceId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRequestStripePaymentForInvoice(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRequestStripePaymentForInvoice(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<RequestStripePaymentOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<RequestStripePaymentOutput>;
+        }));
+    }
+
+    protected processRequestStripePaymentForInvoice(response: HttpResponseBase): Observable<RequestStripePaymentOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = RequestStripePaymentOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<RequestStripePaymentOutput>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
     getModuleSubscriptions(): Observable<ModuleSubscriptionInfoDto[]> {
         let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetModuleSubscriptions";
         url_ = url_.replace(/[?&]$/, "");
@@ -43914,58 +43969,6 @@ export class TenantSubscriptionServiceProxy {
             }));
         }
         return _observableOf<PayPalSettingsDto>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    getStripePaymentLinkForFirstInvoice(): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetStripePaymentLinkForFirstInvoice";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetStripePaymentLinkForFirstInvoice(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetStripePaymentLinkForFirstInvoice(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<string>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<string>;
-        }));
-    }
-
-    protected processGetStripePaymentLinkForFirstInvoice(response: HttpResponseBase): Observable<string> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<string>(null as any);
     }
 }
 
@@ -76787,6 +76790,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     trackingCode!: string | undefined;
     hasRecurringBilling!: boolean;
     isUpgradable!: boolean;
+    invoiceId!: number | undefined;
 
     constructor(data?: IModuleSubscriptionInfoDto) {
         if (data) {
@@ -76811,6 +76815,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.trackingCode = _data["trackingCode"];
             this.hasRecurringBilling = _data["hasRecurringBilling"];
             this.isUpgradable = _data["isUpgradable"];
+            this.invoiceId = _data["invoiceId"];
         }
     }
 
@@ -76835,6 +76840,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["trackingCode"] = this.trackingCode;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         data["isUpgradable"] = this.isUpgradable;
+        data["invoiceId"] = this.invoiceId;
         return data;
     }
 }
@@ -76852,6 +76858,7 @@ export interface IModuleSubscriptionInfoDto {
     trackingCode: string | undefined;
     hasRecurringBilling: boolean;
     isUpgradable: boolean;
+    invoiceId: number | undefined;
 }
 
 export class ModuleSubscriptionInfoExtended implements IModuleSubscriptionInfoExtended {

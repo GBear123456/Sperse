@@ -77,14 +77,15 @@ export class AppComponent implements OnInit {
                                     this.ls.l('SubscriptionDraftTitle'),
                                     isConfirmed => {
                                         if (isConfirmed) {
-                                            appService.paymentLink$.subscribe((paymentLink) => {
-                                                window.location.href = paymentLink;
+                                            let draftSubscription = appService.moduleSubscriptions[0];
+                                            appService.tenantSubscriptionProxy.requestStripePaymentForInvoice(draftSubscription.invoiceId).subscribe((response) => {
+                                                window.location.href = response.paymentLink;
                                             });
                                         }
                                     }
                                 );
                             }
-                            else if (!this.dialog.getDialogById('payment-wizard')) {
+                            else if (!appService.moduleSubscriptions.some(sub => sub.statusId = 'A') && !this.dialog.getDialogById('payment-wizard')) {
                                 const sub = appService.getModuleSubscription(name);
                                 this.dialog.open(PaymentWizardComponent, {
                                     height: '800px',
