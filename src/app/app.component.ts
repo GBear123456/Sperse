@@ -15,9 +15,6 @@ import { SignalRHelper } from 'shared/helpers/SignalRHelper';
 import { AppService } from './app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
-import { CacheService } from '@node_modules/ng2-cache-service';
-import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
-import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -73,36 +70,38 @@ export class AppComponent implements OnInit {
                         this.router.navigate(['app/admin/users']);
                     }
                     paymentDialogTimeout = setTimeout(() => {
-                        if (appService.moduleSubscriptions.length && appService.moduleSubscriptions.every(sub => sub.statusId == 'D')) {
-                            abp.message.confirm(
-                                this.ls.l('SubscriptionDraftMessage'),
-                                this.ls.l('SubscriptionDraftTitle'),
-                                isConfirmed => {
-                                    if (isConfirmed) {
-                                        appService.paymentLink$.subscribe((paymentLink) => {
-                                            window.location.href = paymentLink;
-                                        });
+                        if (this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement)) {
+                            if (appService.moduleSubscriptions.length && appService.moduleSubscriptions.every(sub => sub.statusId == 'D')) {
+                                abp.message.confirm(
+                                    this.ls.l('SubscriptionDraftMessage'),
+                                    this.ls.l('SubscriptionDraftTitle'),
+                                    isConfirmed => {
+                                        if (isConfirmed) {
+                                            appService.paymentLink$.subscribe((paymentLink) => {
+                                                window.location.href = paymentLink;
+                                            });
+                                        }
                                     }
-                                }
-                            );
-                        }
-                        else if (!this.dialog.getDialogById('payment-wizard')) {
-                            const sub = appService.getModuleSubscription(name);
-                            this.dialog.open(PaymentWizardComponent, {
-                                height: '800px',
-                                width: '1200px',
-                                id: 'payment-wizard',
-                                panelClass: ['payment-wizard', 'setup'],
-                                data: {
-                                    module: sub.module,
-                                    title: ls.ls(
-                                        'Platform',
-                                        'ModuleExpired',
-                                        sub.productName,
-                                        appService.getSubscriptionStatusBySubscription(sub)
-                                    )
-                                }
-                            });
+                                );
+                            }
+                            else if (!this.dialog.getDialogById('payment-wizard')) {
+                                const sub = appService.getModuleSubscription(name);
+                                this.dialog.open(PaymentWizardComponent, {
+                                    height: '800px',
+                                    width: '1200px',
+                                    id: 'payment-wizard',
+                                    panelClass: ['payment-wizard', 'setup'],
+                                    data: {
+                                        module: sub.module,
+                                        title: ls.ls(
+                                            'Platform',
+                                            'ModuleExpired',
+                                            sub.productName,
+                                            appService.getSubscriptionStatusBySubscription(sub)
+                                        )
+                                    }
+                                });
+                            }
                         }
                     }, 2000);
                 }
