@@ -314,6 +314,10 @@ export class AppService extends AppServiceBase {
 
     subscriptionInGracePeriod(name?: string): boolean {
         let sub = this.getModuleSubscription(name);
+        return this.subscriptionInGracePeriodBySubscription(sub)
+    }
+
+    subscriptionInGracePeriodBySubscription(sub: ModuleSubscriptionInfoDto): boolean {
         if (this.hasRecurringBilling(sub))
             return false;
 
