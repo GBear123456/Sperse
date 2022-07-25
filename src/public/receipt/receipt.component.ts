@@ -17,6 +17,10 @@ export class ReceiptComponent implements OnInit {
     loading: boolean = true;
     invoiceInfo: GetInvoiceReceiptInfoOutput;
 
+    static maxRetryCount: number = 10;
+    currentRetryCount: number = 0;
+    failedToLoad: boolean = false;
+
     constructor(
         private route: ActivatedRoute,
         private userInvoiceService: UserInvoiceServiceProxy
@@ -37,7 +41,15 @@ export class ReceiptComponent implements OnInit {
             .subscribe(result => {
                 if (result.invoiceStatus != InvoiceStatus.Paid)
                 {
-                    setTimeout(() => this.getInvoiceInfo(tenantId, publicId), 3000);
+                    this.currentRetryCount++;
+                    if (this.currentRetryCount >= ReceiptComponent.maxRetryCount) {
+                        abp.ui.clearBusy();
+                        this.failedToLoad = true;
+                    }
+                    else {
+                        setTimeout(() => this.getInvoiceInfo(tenantId, publicId), 4000);
+                    }
+
                     return;
                 }
                 this.invoiceInfo = result;

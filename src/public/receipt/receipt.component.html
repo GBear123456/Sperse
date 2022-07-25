@@ -1,5 +1,10 @@
 <div *ngIf="loading; else mainContainer" class="loading-container">
-    Waiting for payment information
+    <div *ngIf="!failedToLoad; else failBlock" class="wait-message">
+        Waiting for payment information
+    </div>
+    <ng-template #failBlock>
+        <div>Failed to load payment information. Please refresh the page or try again later.</div>
+    </ng-template>
 </div>
 <ng-template #mainContainer>
     <div class="main-container">
