@@ -140,7 +140,7 @@ export class PackageChooserComponent implements OnInit {
             refCount()
         );
         this.packagesConfig$.subscribe((products: ProductInfo[]) => {
-            this.packages = products
+            this.packages = products;
             this.preselectPackage();
             // this.splitPackagesForFreeAndNotFree(packagesConfig);
             // this.getCurrentSubscriptionInfo(packagesConfig.currentSubscriptionInfo);

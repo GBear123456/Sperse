@@ -55,7 +55,6 @@ export class AppService extends AppServiceBase {
     private expiredModule: Subject<string>;
     public moduleSubscriptions$: Observable<ModuleSubscriptionInfoDto[]>;
     public moduleSubscriptions: ModuleSubscriptionInfoDto[];
-    public paymentLink$: Observable<string>;
     public subscriptionIsFree$: Observable<boolean>;
     private permission: AppPermissionService;
     public feature: FeatureCheckerService;
@@ -63,7 +62,7 @@ export class AppService extends AppServiceBase {
     private personContactServiceProxy: PersonContactServiceProxy;
     private notify: NotifyService;
     private appLocalizationService: AppLocalizationService;
-    private tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
+    public tenantSubscriptionProxy: TenantSubscriptionServiceProxy;
     private subscriptionBarsClosed = {};
     private subscriptionBarVisible: Boolean;
     public isCfoLinkOrVerifyEnabled: boolean;
@@ -227,8 +226,6 @@ export class AppService extends AppServiceBase {
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
             map(subscriptions => this.checkSubscriptionIsFree(null, subscriptions))
         );
-
-        this.paymentLink$ = this.tenantSubscriptionProxy.getStripePaymentLinkForFirstInvoice();
     }
 
     checkAllSubscriptionsExpired() {
