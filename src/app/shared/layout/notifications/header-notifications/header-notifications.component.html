@@ -33,8 +33,8 @@
                                 <span>{{subscriptionInfoText}}</span>
                             </div>
                         </div>
-                        <div class="upgrade-button" (click)="openPaymentWizardDialog($event)">
-                            <div class="">{{ls.l("Upgrade").toUpperCase()}}</div>
+                        <div *ngIf="prolongButtonVisible()" class="upgrade-button" (click)="openPaymentWizardDialog($event)">
+                            <div class="">{{ls.l("Prolong").toUpperCase()}}</div>
                             <div class="">{{ls.l("Today")}}</div>
                         </div>
                     </div>
