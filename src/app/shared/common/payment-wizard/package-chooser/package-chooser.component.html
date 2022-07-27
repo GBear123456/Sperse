@@ -19,22 +19,25 @@
 </div>
 <ng-container *ngIf="packagesConfig$ | async">
     <ng-container *ngIf="packages && packages.length">
-        <div class="packages">
-            <ng-container *ngFor="let package of packages; let i = index;">
-                <package-card
-                    [productInfo]="package"
-                    [billingPeriod]="selectedBillingPeriod"
-                    [isActive]="currentProductId == undefined || currentProductId == package.id"
-                    [ngClass]="{
-                        'selected': selectedPackageIndex === i,
-                        'large': packages.length < 3,
-                        'last': i === packages.length - 1,
-                        'heightFitContent' : packages.length > 2
-                    }"
-                    (click)="selectPackage(i)">
-                </package-card>
-            </ng-container>
-        </div>
+        <dx-scroll-view showScrollbar="onHover" direction="horizontal">
+            <div class="packages">
+                <ng-container *ngFor="let package of packages; let i = index;">
+                    <package-card
+                        [productInfo]="package"
+                        [billingPeriod]="selectedBillingPeriod"
+                        [isActive]="currentProductId == undefined || currentProductId == package.id"
+                        [ngClass]="{
+                            'selected': selectedPackageIndex === i,
+                            'large': packages.length < 3,
+                            'last': i === packages.length - 1,
+                            'heightFitContent' : packages.length > 2
+                        }"
+                        (click)="selectPackage(i)">
+                    </package-card>
+                </ng-container>
+            </div>
+        </dx-scroll-view>
+
         <div class="footer" [ngClass]="'nextButtonPosition-' + nextButtonPosition">
             <button [disabled]="nextButtonDisabled" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
         </div>

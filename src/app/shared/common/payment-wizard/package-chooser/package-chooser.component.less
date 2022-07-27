@@ -19,9 +19,15 @@
     }
 
     .packageHeader {
-        text-align: center;
         z-index: 1;
+        text-align: center;
         position: relative;
+
+        ::ng-deep mat-slide-toggle {
+            .mat-slide-toggle-thumb {
+                background-color: #4caf50!important;
+            }
+        }
 
         .title {
             font-size: 36px;
@@ -255,7 +261,7 @@
         display: flex;
         min-height: 350px;
         justify-content: center;
-        margin-bottom: 35px;
+        margin-bottom: 15px;
         align-items: flex-start;
         @media (max-width: 768px) {
             flex-flow: column wrap;
