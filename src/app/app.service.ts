@@ -67,6 +67,7 @@ export class AppService extends AppServiceBase {
     private subscriptionBarVisible: Boolean;
     public isCfoLinkOrVerifyEnabled: boolean;
     public isClientSearchDisabled = true;
+    public defaultSubscriptionModule = ModuleType.CRM;
 
     constructor(
         injector: Injector,
@@ -241,21 +242,38 @@ export class AppService extends AppServiceBase {
         });
     }
 
-    getModuleSubscription(name?: string, moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions): ModuleSubscriptionInfoDto {
-        let module = (name || this.getModule()).toUpperCase();
-        if (moduleSubscriptions && ModuleType[module])
-            return _.find(moduleSubscriptions, (subscription: ModuleSubscriptionInfoDto) => {
-                return subscription.module.includes(module)
-                    || (module === 'CRM' && subscription.module === ModuleType.CFO_Partner);
-            }) || { module: module, endDate: moment(new Date(0)) };
+    getModuleSubscription(
+        name: string = this.defaultSubscriptionModule, 
+        moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions
+    ): ModuleSubscriptionInfoDto {
+        let module = (name || this.getModule()).toUpperCase(), subscription;
+        if (moduleSubscriptions && moduleSubscriptions.length && ModuleType[module]) {
+            subscription = _.find(moduleSubscriptions, (subscription: ModuleSubscriptionInfoDto) => {
+                return subscription.module.includes(module) && subscription.statusId == 'A';
+            });
+            if (!subscription)
+                subscription = _.find(moduleSubscriptions, (subscription: ModuleSubscriptionInfoDto) => {
+                    return subscription.module.includes(module) && subscription.statusId == 'D';
+                });
+            if (!subscription)
+                subscription = _.find(moduleSubscriptions, (subscription: ModuleSubscriptionInfoDto) => {
+                    return subscription.module.includes(module) && subscription.statusId == 'C';
+                });
+        }
+        return subscription || { 
+            module: module, 
+            productName: module, 
+            endDate: moment(new Date(0)),
+            statusId: 'C'
+        };
     }
 
-    getSubscriptionName(module?: string) {
+    getSubscriptionName(module: string = this.defaultSubscriptionModule) {
         let sub = this.getModuleSubscription(module);
-        return sub && sub.module.replace('_', ' & ') || '';
+        return sub && sub.productName;
     }
 
-    getSubscriptionStatusByModuleName(moduleName: string) {
+    getSubscriptionStatusByModuleName(moduleName: string = this.defaultSubscriptionModule) {
         return this.getSubscriptionStatusBySubscription(this.getModuleSubscription(moduleName));
     }
 
@@ -265,19 +283,14 @@ export class AppService extends AppServiceBase {
                 : this.appLocalizationService.l('subscription');
     }
 
-    subscriptionIsLocked(name?: string) {
+    subscriptionIsLocked(name: string = this.defaultSubscriptionModule) {
         const subscription = this.getModuleSubscription(name);
         return subscription && subscription.isLocked;
     }
 
-    getSubscriptionTrackingCode(name?: string) {
+    getSubscriptionTrackingCode(name: string = this.defaultSubscriptionModule) {
         const subscription = this.getModuleSubscription(name);
         return subscription && subscription.trackingCode;
-    }
-
-    checkModuleSubscriptionEnabled() {
-        let module = this.getModule();
-        return Boolean(ModuleType[module.toUpperCase()]);
     }
 
     subscriptionStatusBarIsHidden(): boolean {
@@ -292,7 +305,7 @@ export class AppService extends AppServiceBase {
         return this.subscriptionBarsClosed[module] || !this.subscriptionBarVisible;
     }
 
-    subscriptionIsExpiringSoon(name?: string): boolean {
+    subscriptionIsExpiringSoon(name: string = this.defaultSubscriptionModule): boolean {
         let sub = this.getModuleSubscription(name);
         if (this.hasRecurringBilling(sub))
             return false;
@@ -304,12 +317,23 @@ export class AppService extends AppServiceBase {
         return false;
     }
 
-    checkSubscriptionIsFree(name?: string, moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions): boolean {
+    checkSubscriptionIsFree(
+        name: string = this.defaultSubscriptionModule, 
+        moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions
+    ): boolean {
         let sub = this.getModuleSubscription(name, moduleSubscriptions);
         return sub && !sub.endDate;
     }
 
-    subscriptionInGracePeriod(name?: string): boolean {
+    checkSubscriptionIsTrial(
+        name: string = this.defaultSubscriptionModule, 
+        moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions
+    ): boolean {
+        let sub = this.getModuleSubscription(name, moduleSubscriptions);
+        return sub && sub.isTrial;
+    }
+
+    subscriptionInGracePeriod(name: string = this.defaultSubscriptionModule): boolean {
         let sub = this.getModuleSubscription(name);
         return this.subscriptionInGracePeriodBySubscription(sub)
     }
@@ -333,19 +357,19 @@ export class AppService extends AppServiceBase {
             ) + AppConsts.subscriptionGracePeriod;
     }
 
-    getSubscriptionExpiringDayCount(name?: string): number {
+    getSubscriptionExpiringDayCount(name: string = this.defaultSubscriptionModule): number {
         let sub = this.getModuleSubscription(name);
         return sub && sub.endDate && Math.round(moment(sub.endDate)
             .diff(moment().utc(), 'days', true));
     }
 
-    getGracePeriodDayCount(name?: string) {
+    getGracePeriodDayCount(name: string = this.defaultSubscriptionModule) {
         let sub = this.getModuleSubscription(name);
         return sub && !sub.isLocked && sub.endDate && Math.round(moment(sub.endDate)
             .add(AppConsts.subscriptionGracePeriod, 'days').diff(moment().utc(), 'days', true));
     }
 
-    hasModuleSubscription(name?: string) {
+    hasModuleSubscription(name: string = this.defaultSubscriptionModule) {
         name = (name || this.getModule()).toUpperCase();
         let module = this.getModuleSubscription(name);
 
@@ -361,10 +385,10 @@ export class AppService extends AppServiceBase {
             AppConsts.subscriptionRecurringBillingPeriod, 'days') > moment().utc());
     }
 
-    checkModuleExpired(name?: string) {
+    checkModuleExpired(name: string = this.defaultSubscriptionModule) {
         name = name || this.getModule();
         let expired = !this.hasModuleSubscription(name);
-        if (expired)
+        if (expired && this.expiredModule)
             this.expiredModule.next(name);
 
         return expired;

@@ -1,13 +1,12 @@
 :host {
     padding: 20px 26px;
     width: 30%;
-    border-radius: 6px;
+    border-radius: 18px;
     box-shadow: 0 0 30px 0 rgba(0, 0, 0, 0.1);
     display: block;
     position: relative;
     margin: 0 10px;
     cursor: default;
-    background: #eee;
     height: 100%;
     border: 3px solid transparent;
     filter: blur(1px);
@@ -44,16 +43,21 @@
     .cardHeader {
         //display: flex;
         //justify-content: space-between;
+        text-align: center;
         margin-bottom: 19px;
         .title {
             min-width: 120px;
             display: inline-block;
-            font-size: 13px;
-            font-weight: 700;
+            font-family: auto;
+            font-size: 33px;
+            font-weight: 500;
             letter-spacing: 1.2px;
-            text-transform: uppercase;
+            text-transform: capitalize;
             margin-bottom: 8px;
-            color: #0bb1f0;
+            color: #fff;
+            img {
+                vertical-align: bottom;
+            }
         }
 
         sup {
@@ -61,12 +65,15 @@
         }
 
         .price-block {
+            flex-direction: column;
             margin-top: 10px;
             display: flex;
 
+            .saveAmountPerMonth,
             .amountPerMonth {
-                font-size: 24px;
+                font-size: 14px;
                 line-height: 1;
+                margin: auto;
 
                 .currency-symbol {
                     position: relative;
@@ -77,19 +84,28 @@
                     font-size: 30px;
                     line-height: 1;
                     font-weight: 600;
-                    color: #424c56;
+                    color: #fff;
                 }
             }
         }
 
         .includesUsers,
         .amountPerUser,
-        .amountPerMonth {
+        .amountPerMonth,
+        .saveAmountPerMonth {
             font-size: 11px;
             font-weight: 500;
-            color: #686f76;
+            color: #fff;
             display: flex;
             white-space: nowrap;
+        }
+
+        .saveAmountPerMonth {
+            margin-bottom: 10px!important;
+            .number {
+                font-size: 18px!important;
+                text-decoration: line-through;
+            }
         }
 
         .includesUsers {
@@ -106,7 +122,7 @@
 
             .bottom {
                 font-size: 11px;
-                color: #bfbfbf;
+                color: #fff;
             }
         }
 
@@ -115,17 +131,18 @@
             flex-direction: column;
             font-size: 11px;
             justify-content: space-around;
-            color: #bfbfbf;
+            color: #fff;
 
             .decimal {
-                color: #989898;
+                color: #fff;
+                text-align: left;
             }
         }
     }
     .planFeatures {
         font-size: 13px;
         font-weight: 400;
-        color: #969696;
+        color: #fff;
         ul {
             list-style: none;
             padding-left: 0;
@@ -145,13 +162,44 @@
             }
         }
     }
-}
 
-:host(.last) {
-    width: 34%;
-
-    .title {
-        font-size: 16px !important;
+    .features {
+        ul {
+            margin-top: 15px;
+            font-weight: 300;
+            line-height: 1.5;
+            margin-bottom: auto;
+            padding: 26px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            li {
+                display: flex;
+                gap: 8px;
+                padding: 0;
+                margin: 0;
+                box-sizing: border-box;
+                white-space: nowrap;
+                font-size: 16px;
+                color: #fff;
+                span {
+                    flex-shrink: 0;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    background-color: #4caf50;
+                    background-image: url(../../../../../../assets/common/icons/included.svg);
+                    background-repeat: no-repeat;
+                    background-position: 50%;
+                    background-size: auto;
+                    margin-top: 2px;
+                    &.excluded {
+                        background-color: rgba(0,0,0,.4)!important;
+                        background-image: url(../../../../../../assets/common/icons/excluded.svg)!important;
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -168,7 +216,6 @@
 
 :host(.isActive) {
     cursor: pointer;
-    background: #fff;
     filter: blur(0px);
     .cardHeader {
         .left .title {
@@ -187,7 +234,6 @@
 }
 
 :host(.selected.isActive) {
-    background: #fcfafb;
     border: solid 3px #60d956;
     &:after {
         content: '';

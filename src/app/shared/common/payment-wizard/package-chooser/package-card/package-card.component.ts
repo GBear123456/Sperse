@@ -29,16 +29,64 @@ export class PackageCardComponent implements OnChanges {
     @Input() module: ModuleType;
     @HostBinding('class.isActive') @Input() public isActive: boolean;
     @HostBinding('class.bestValue') @Input() bestValue = false;
+    @HostBinding('style.background') background;
+
+    saveAmountPerMonth: number;
     baseUrl = AppConsts.appBaseHref;
     selectedEdition: PackageEditionConfigDto;
     price: number;
 
+    features;
+    products = {
+        Startup: {
+            saveAmount: 159,
+            background: '#a0bc51',
+            features: {
+                included: ['Single Team Admin User', '2,000 Leads & Contacts', 'Customer Relationship Manager', 'Sales Management'],
+                excluded: ['Affiliate Tracking System', 'Member Portal & Management', 'Developer Features & API Access', 'Custom Branding & Domain']
+            }
+        },
+        Launch: {
+            saveAmount: 759,
+            background: '#eb8a2e',
+            features: {
+                included: ['Up to 5 Team Admin & Users', '10,000 Leads & Contacts', 'Customer Relationship Manager', 'Sales Management', 'Affiliate Tracking System', 'Member Portal & Management'],
+                excluded: ['Developer Features & API Access', 'Custom Branding & Domain']
+            }
+        },
+        Growth: {
+            saveAmount: 3795,
+            background: '#79519a',
+            features: {
+                included: ['Up to 25 Team Admin & Users', '50,000 Leads & Contacts', 'Customer Relationship Manager', 'Sales Management', 'Affiliate Tracking System', 'Member Portal & Management', 'Developer Features & API Access', 'Custom Branding & Domain'],
+                excluded: []
+            }
+        },
+        Fortune: {
+            saveAmount: 5995,
+            background: '#d73061',
+            features: {
+                included: ['Up to 50 Team Admin & Users', '100,000 Leads & Contacts', 'Customer Relationship Manager', 'Sales Management', 'Affiliate Tracking System', 'Member Portal & Management', 'Developer Features & API Access', 'Custom Branding & Domain'],
+                excluded: []
+            }
+        }
+    }
+
     constructor(
         private decimalPipe: DecimalPipe,
         public ls: AppLocalizationService
-    ) {}
+    ) {
+        setTimeout(() => console.log(this.productInfo));
+    }
 
     ngOnChanges(changes) {
+        let product = this.products[this.productInfo.code];
+        if (product) {
+            this.saveAmountPerMonth = product.saveAmount;
+            this.background = product.background;
+            this.features = product.features;
+        }
+
         //this.selectedEdition = this.getSelectedEdition();
         //this.isActive = this.editions && !!this.selectedEdition;
     }
@@ -66,7 +114,7 @@ export class PackageCardComponent implements OnChanges {
     get pricePerMonth(): number {
         return this.billingPeriod === BillingPeriod.Monthly
             ? this.productInfo.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Monthly).fee
-            : this.productInfo.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Annual).fee
+            : Math.round(this.productInfo.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Annual).fee / 12)
     }
 
     // get editionPricePerMonth(): number {

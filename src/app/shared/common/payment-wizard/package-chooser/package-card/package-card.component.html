@@ -1,7 +1,19 @@
 <div class="bestValue" *ngIf="bestValue"><span>{{ ls.l('BestValue') }}</span></div>
 <div class="cardHeader">
-    <h3 class="title">{{ productInfo.name }}</h3>
+    <h3 class="title">
+        <img *ngIf="productInfo.imageUrl" [src]="productInfo.imageUrl">
+        {{ productInfo.name }}
+    </h3>
     <div class="price-block">
+        <div class="saveAmountPerMonth">
+            <span class="number">
+                {{ currencySymbol }}{{ saveAmountPerMonth | customNumber: '1.0-0' | currency: 'USD' : '' : '1.0-0' }}
+            </span>
+            <div class="number-info">
+                <span class="decimal">{{ saveAmountPerMonth | customNumber: '0.2-2' }}</span>
+                <span>/{{ ls.l('priceMonthly') }}</span>
+            </div>
+        </div>
         <div class="amountPerMonth">
             <span class="currency-symbol">{{ currencySymbol }}</span>
             <span class="number">
@@ -9,9 +21,18 @@
             </span>
             <div class="number-info">
                 <span class="decimal">{{ pricePerMonth | customNumber: '0.2-2' }}</span>
-                <span>{{ billingPeriod === 0 ? ls.l('priceMonthly') : ls.l('priceAnnually') }}</span>
+                <span>/{{ billingPeriod === 0 ? ls.l('priceMonthly') : ls.l('priceAnnually') }}</span>
             </div>
         </div>
     </div>
+    <div *ngIf="features" class="features">
+        <ul>
+          <li *ngFor="let feature of features.included">
+            <span class="included"></span>{{feature}}
+          </li>
+          <li *ngFor="let feature of features.excluded">
+            <span class="excluded"></span>{{feature}}
+          </li>
+        </ul>
+    </div>
 </div>
-
