@@ -66,14 +66,12 @@ export class HeaderNotificationsComponent implements OnInit {
 
         setInterval(() => this.loadNotifications(), 1000 * 60 * 15 /*Reload every 15min*/);
 
-        if (this.appService.moduleSubscriptions$) {
-            this.appService.subscribeModuleChange((config: ConfigInterface) => this.getSubscriptionInfo(config.name));
+        if (this.appService.moduleSubscriptions$)
             this.appService.moduleSubscriptions$.subscribe(() => this.getSubscriptionInfo());
-        }
         this.getSubscriptionInfo();
     }
 
-    getSubscriptionInfo(module = null) {
+    getSubscriptionInfo() {
         let subscriptionName = this.appService.getSubscriptionName();
         if (this.appService.checkSubscriptionIsTrial()) {
             let dayCount = this.appService.getSubscriptionExpiringDayCount();
