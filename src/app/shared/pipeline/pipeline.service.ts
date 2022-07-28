@@ -229,7 +229,7 @@ export class PipelineService {
             complete && complete();
     }
 
-    updateEntitiesStage(pipelinePurposeId: string, entities, targetStageName: string, contactGroupId: ContactGroup): Observable<any> {
+    updateEntitiesStage(pipelinePurposeId: string, entities, targetStageName: string, contactGroupId: ContactGroup, pipelineId?: number): Observable<any> {
         let subject = new Subject<any>();
         this.updateEntitiesStageInternal(
             pipelinePurposeId,
@@ -240,14 +240,14 @@ export class PipelineService {
             (declinedList) => {
                 this.resetIgnoreChecklist();
                 subject.next(declinedList);
-            }, []
+            }, [], pipelineId
         );
 
         return subject.asObservable();
     }
 
     private updateEntitiesStageInternal(pipelinePurposeId: string, contactGroupId: ContactGroup,
-        entities, targetStageName: string, data, complete, declinedList
+        entities, targetStageName: string, data, complete, declinedList, pipelineId?: number
     ) {
         let entity = entities.pop();
         if (entity) {
@@ -256,8 +256,8 @@ export class PipelineService {
             if (
                 !this.updateEntityStage(
                     entity,
-                    this.getStageByName(pipelinePurposeId, entity.Stage || entity.stage, contactGroupId),
-                    this.getStageByName(pipelinePurposeId, targetStageName, contactGroupId),
+                    this.getStageByName(pipelinePurposeId, entity.Stage || entity.stage, contactGroupId, pipelineId),
+                    this.getStageByName(pipelinePurposeId, targetStageName, contactGroupId, pipelineId),
                     (data) => {
                         this.updateEntitiesStageInternal(
                             pipelinePurposeId,
@@ -266,7 +266,8 @@ export class PipelineService {
                             targetStageName,
                             data || entity.data,
                             complete,
-                            declinedList
+                            declinedList,
+                            pipelineId
                         );
                         delete entity.data;
                     }, true

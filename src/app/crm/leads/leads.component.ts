@@ -2044,7 +2044,8 @@ export class LeadsComponent extends AppComponentBase implements OnInit, AfterVie
                 this.selectedLeads.filter(lead =>
                     lead.Stage != $event.name),
                 $event.name,
-                this.selectedContactGroup
+                this.selectedContactGroup,
+                this.selectedPipelineId
             ).subscribe(declinedList => {
                 if (this.showDataGrid) {
                     let gridInstance = this.dataGrid && this.dataGrid.instance;
