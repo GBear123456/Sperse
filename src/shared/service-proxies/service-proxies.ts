@@ -43645,6 +43645,117 @@ export class TenantSubscriptionServiceProxy {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    requestStripePayment(body: RequestStripePaymentInput | undefined): Observable<RequestStripePaymentOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestStripePayment";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRequestStripePayment(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRequestStripePayment(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<RequestStripePaymentOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<RequestStripePaymentOutput>;
+        }));
+    }
+
+    protected processRequestStripePayment(response: HttpResponseBase): Observable<RequestStripePaymentOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = RequestStripePaymentOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<RequestStripePaymentOutput>(null as any);
+    }
+
+    /**
+     * @return Success
+     */
+    requestStripePaymentForInvoice(invoiceId: number): Observable<RequestStripePaymentOutput> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/RequestStripePaymentForInvoice?";
+        if (invoiceId === undefined || invoiceId === null)
+            throw new Error("The parameter 'invoiceId' must be defined and cannot be null.");
+        else
+            url_ += "invoiceId=" + encodeURIComponent("" + invoiceId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processRequestStripePaymentForInvoice(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processRequestStripePaymentForInvoice(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<RequestStripePaymentOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<RequestStripePaymentOutput>;
+        }));
+    }
+
+    protected processRequestStripePaymentForInvoice(response: HttpResponseBase): Observable<RequestStripePaymentOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = RequestStripePaymentOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<RequestStripePaymentOutput>(null as any);
+    }
+
+    /**
      * @return Success
      */
     getModuleSubscriptions(): Observable<ModuleSubscriptionInfoDto[]> {
@@ -43858,58 +43969,6 @@ export class TenantSubscriptionServiceProxy {
             }));
         }
         return _observableOf<PayPalSettingsDto>(null as any);
-    }
-
-    /**
-     * @return Success
-     */
-    getStripePaymentLinkForFirstInvoice(): Observable<string> {
-        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/GetStripePaymentLinkForFirstInvoice";
-        url_ = url_.replace(/[?&]$/, "");
-
-        let options_ : any = {
-            observe: "response",
-            responseType: "blob",
-            headers: new HttpHeaders({
-                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
-            })
-        };
-
-        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetStripePaymentLinkForFirstInvoice(response_);
-        })).pipe(_observableCatch((response_: any) => {
-            if (response_ instanceof HttpResponseBase) {
-                try {
-                    return this.processGetStripePaymentLinkForFirstInvoice(response_ as any);
-                } catch (e) {
-                    return _observableThrow(e) as any as Observable<string>;
-                }
-            } else
-                return _observableThrow(response_) as any as Observable<string>;
-        }));
-    }
-
-    protected processGetStripePaymentLinkForFirstInvoice(response: HttpResponseBase): Observable<string> {
-        const status = response.status;
-        const responseBlob =
-            response instanceof HttpResponse ? response.body :
-            (response as any).error instanceof Blob ? (response as any).error : undefined;
-
-        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
-        if (status === 200) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            let result200: any = null;
-            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-                result200 = resultData200 !== undefined ? resultData200 : <any>null;
-    
-            return _observableOf(result200);
-            }));
-        } else if (status !== 200 && status !== 204) {
-            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
-            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
-            }));
-        }
-        return _observableOf<string>(null as any);
     }
 }
 
@@ -76721,6 +76780,9 @@ export interface IModuleSubscriptionInfo {
 export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     module!: ModuleType;
     statusId!: string | undefined;
+    productId!: number | undefined;
+    productName!: string | undefined;
+    paymentPeriodType!: PaymentPeriodType | undefined;
     endDate!: moment.Moment | undefined;
     editionName!: string | undefined;
     isTrial!: boolean;
@@ -76728,6 +76790,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     trackingCode!: string | undefined;
     hasRecurringBilling!: boolean;
     isUpgradable!: boolean;
+    invoiceId!: number | undefined;
 
     constructor(data?: IModuleSubscriptionInfoDto) {
         if (data) {
@@ -76742,6 +76805,9 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         if (_data) {
             this.module = _data["module"];
             this.statusId = _data["statusId"];
+            this.productId = _data["productId"];
+            this.productName = _data["productName"];
+            this.paymentPeriodType = _data["paymentPeriodType"];
             this.endDate = _data["endDate"] ? moment(_data["endDate"].toString()) : <any>undefined;
             this.editionName = _data["editionName"];
             this.isTrial = _data["isTrial"];
@@ -76749,6 +76815,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.trackingCode = _data["trackingCode"];
             this.hasRecurringBilling = _data["hasRecurringBilling"];
             this.isUpgradable = _data["isUpgradable"];
+            this.invoiceId = _data["invoiceId"];
         }
     }
 
@@ -76763,6 +76830,9 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data = typeof data === 'object' ? data : {};
         data["module"] = this.module;
         data["statusId"] = this.statusId;
+        data["productId"] = this.productId;
+        data["productName"] = this.productName;
+        data["paymentPeriodType"] = this.paymentPeriodType;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["editionName"] = this.editionName;
         data["isTrial"] = this.isTrial;
@@ -76770,6 +76840,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["trackingCode"] = this.trackingCode;
         data["hasRecurringBilling"] = this.hasRecurringBilling;
         data["isUpgradable"] = this.isUpgradable;
+        data["invoiceId"] = this.invoiceId;
         return data;
     }
 }
@@ -76777,6 +76848,9 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
 export interface IModuleSubscriptionInfoDto {
     module: ModuleType;
     statusId: string | undefined;
+    productId: number | undefined;
+    productName: string | undefined;
+    paymentPeriodType: PaymentPeriodType | undefined;
     endDate: moment.Moment | undefined;
     editionName: string | undefined;
     isTrial: boolean;
@@ -76784,6 +76858,7 @@ export interface IModuleSubscriptionInfoDto {
     trackingCode: string | undefined;
     hasRecurringBilling: boolean;
     isUpgradable: boolean;
+    invoiceId: number | undefined;
 }
 
 export class ModuleSubscriptionInfoExtended implements IModuleSubscriptionInfoExtended {
@@ -86426,6 +86501,86 @@ export interface IRequestPaymentResult {
 export enum RequestPaymentType {
     PayPal = "PayPal",
     ManualBankTransfer = "ManualBankTransfer",
+}
+
+export class RequestStripePaymentInput implements IRequestStripePaymentInput {
+    productId!: number;
+    paymentPeriodType!: PaymentPeriodType;
+    quantity!: number;
+
+    constructor(data?: IRequestStripePaymentInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.productId = _data["productId"];
+            this.paymentPeriodType = _data["paymentPeriodType"];
+            this.quantity = _data["quantity"];
+        }
+    }
+
+    static fromJS(data: any): RequestStripePaymentInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RequestStripePaymentInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["productId"] = this.productId;
+        data["paymentPeriodType"] = this.paymentPeriodType;
+        data["quantity"] = this.quantity;
+        return data;
+    }
+}
+
+export interface IRequestStripePaymentInput {
+    productId: number;
+    paymentPeriodType: PaymentPeriodType;
+    quantity: number;
+}
+
+export class RequestStripePaymentOutput implements IRequestStripePaymentOutput {
+    paymentLink!: string | undefined;
+
+    constructor(data?: IRequestStripePaymentOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.paymentLink = _data["paymentLink"];
+        }
+    }
+
+    static fromJS(data: any): RequestStripePaymentOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new RequestStripePaymentOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["paymentLink"] = this.paymentLink;
+        return data;
+    }
+}
+
+export interface IRequestStripePaymentOutput {
+    paymentLink: string | undefined;
 }
 
 export class RequestWithdrawalInput implements IRequestWithdrawalInput {

@@ -76,36 +76,31 @@ export class HeaderNotificationsComponent implements OnInit {
 
     getSubscriptionInfo(module = null) {
         this.subscriptionExpiringDayCount = -1;
-        module = module || this.appService.getModule().toUpperCase();
-        let subscriptionName = this.appService.getSubscriptionName(module);
-        if (this.appService.checkSubscriptionIsFree(module)) {
-            this.subscriptionInfoTitle = this.ls.l('YouAreUsingTheFreePlan', subscriptionName);
-            this.subscriptionInfoText = this.ls.l('UpgradeToUnlockAllOurFeatures');
-        } else if (this.appService.subscriptionInGracePeriod(module)) {
-            let dayCount = this.appService.getGracePeriodDayCount(module);
-            this.subscriptionInfoTitle = this.ls.l('ModuleExpired', subscriptionName, this.appService.getSubscriptionStatusByModuleName(module));
+        let subscriptionName = this.appService.getSubscriptionName();
+        if (this.appService.checkSubscriptionIsTrial()) {
+            this.subscriptionInfoTitle = this.ls.l('YouAreUsingPlan', this.ls.l('Trial'));
+        } else if (this.appService.subscriptionInGracePeriod()) {
+            let dayCount = this.appService.getGracePeriodDayCount();
+            this.subscriptionInfoTitle = this.ls.l('ModuleExpired', subscriptionName, this.appService.getSubscriptionStatusByModuleName());
             this.subscriptionInfoText = this.ls.l('GracePeriodNotification', (
                 dayCount
                 ? dayCount === 1 ? this.ls.l('Tomorrow') : this.ls.l('PeriodDescription', dayCount.toString(), this.ls.l('Periods_Day_plural'))
                 : this.ls.l('Today')
             ).toLowerCase());
-        } else if (!this.appService.hasModuleSubscription(module)) {
-            this.subscriptionInfoTitle = this.ls.l('ModuleExpired', subscriptionName, this.appService.getSubscriptionStatusByModuleName(module));
-            this.subscriptionInfoText = this.ls.l('ChoosePlanToContinueService');
+        } else if (!this.appService.hasModuleSubscription()) {
+            this.subscriptionInfoTitle = this.ls.l('ModuleExpired', subscriptionName, this.appService.getSubscriptionStatusByModuleName());
         } else {
-            let dayCount = this.appService.getSubscriptionExpiringDayCount(module);
+            let dayCount = this.appService.getSubscriptionExpiringDayCount();
             if (!dayCount && dayCount !== 0) {
                 this.subscriptionExpiringDayCount = null;
             } else {
                 if (dayCount >= 0 && dayCount <= 15) {
-                    this.subscriptionInfoText = this.ls.l('ChoosePlanThatsRightForYou');
                     this.subscriptionInfoTitle = this.ls.l('YourTrialWillExpire', subscriptionName) + ' '
                         + (!dayCount ? this.ls.l('Today') : (dayCount === 1 ? this.ls.l('Tomorrow') : ('in ' + dayCount.toString() + ' ' + this.ls.l('Periods_Day_plural')))).toLowerCase()
                         + '!';
                 } else {
-                    const subscription = this.appService.getModuleSubscription(module);
+                    const subscription = this.appService.getModuleSubscription();
                     if (subscription) {
-                        this.subscriptionInfoText = this.ls.l('UpgradOrChangeYourPlanAnyTime');
                         this.subscriptionInfoTitle = this.ls.l(
                             'YouAreUsingPlan',
                             subscription.editionName
@@ -116,7 +111,7 @@ export class HeaderNotificationsComponent implements OnInit {
                 }
             }
         }
-        if (this.appService.subscriptionIsLocked(module)) {
+        if (this.appService.subscriptionIsLocked()) {
             this.subscriptionInfoText = this.ls.l('SubscriptionWillBeRenewed');
         }
         return this.subscriptionInfoTitle;
@@ -191,8 +186,12 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     subscriptionStatusBarVisible(): boolean {
-        const moduleSubscription = this.appService.getModuleSubscription();
-        return this.appService.checkModuleSubscriptionEnabled() && this.subscriptionExpiringDayCount && this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement) && moduleSubscription && moduleSubscription.isUpgradable && !this.appService.hasRecurringBilling(moduleSubscription);
+        return this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement);            
+    }
+
+    prolongButtonVisible(): boolean {
+        let subscription = this.appService.getModuleSubscription();
+        return !subscription || subscription.statusId == 'C';
     }
 
     hideDropDown() {
