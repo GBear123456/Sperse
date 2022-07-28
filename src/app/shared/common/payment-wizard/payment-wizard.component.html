@@ -3,7 +3,7 @@
         <mat-horizontal-stepper #stepper>
             <mat-step>
                 <package-chooser
-                    *ngIf="!subscriptionIsLocked"
+                    *ngIf="!subscriptionIsDraft"
                     [widgettitle]="data?.title"
                     [subtitle]="data?.subtitle"
                     [module]="module"
@@ -12,10 +12,10 @@
                     (onPlanChosen)="changePlan($event)"
                     (moveToNextStep)="moveToPaymentOptionsStep()">
                 </package-chooser>
-                <div *ngIf="subscriptionIsLocked" class="rejectSubscriptionBlock">
-                    <h2 class="title">{{ ls.l('ManualBankTransferIsNotConfirmed') }}</h2>
-                    <h3 *ngIf="trackingCode">{{ ls.l('YourTrackingCodeIs') }}: {{ trackingCode }}</h3>
-                    <button (click)="rejectPendingPayment()" class="btn btn-layout">{{ ls.l('ManualSubscriptionReject') }}</button>
+                <div *ngIf="subscriptionIsDraft" class="rejectSubscriptionBlock">
+                    <h2 class="title">{{ ls.l('SubscriptionDraftTitle') }}</h2>
+                    <h3 class="message">{{ ls.l('SubscriptionDraftMessage') }}</h3>
+                    <button (click)="processPayment()" class="btn btn-layout">{{ ls.l('Pay Now') }}</button>
                 </div>
             </mat-step>
             <mat-step>

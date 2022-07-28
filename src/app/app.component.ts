@@ -71,26 +71,13 @@ export class AppComponent implements OnInit {
                     }
                     paymentDialogTimeout = setTimeout(() => {
                         if (this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement)) {
-                            if (appService.moduleSubscriptions.length && appService.moduleSubscriptions.every(sub => sub.statusId == 'D')) {
-                                abp.message.confirm(
-                                    this.ls.l('SubscriptionDraftMessage'),
-                                    this.ls.l('SubscriptionDraftTitle'),
-                                    isConfirmed => {
-                                        if (isConfirmed) {
-                                            let draftSubscription = appService.moduleSubscriptions[0];
-                                            appService.tenantSubscriptionProxy.requestStripePaymentForInvoice(draftSubscription.invoiceId).subscribe((response) => {
-                                                window.location.href = response.paymentLink;
-                                            });
-                                        }
-                                    }
-                                );
-                            }
-                            else if (!appService.moduleSubscriptions.some(sub => sub.statusId = 'A') && !this.dialog.getDialogById('payment-wizard')) {
+                            if (!appService.moduleSubscriptions.some(sub => sub.statusId == 'A') && !this.dialog.getDialogById('payment-wizard')) {
                                 const sub = appService.getModuleSubscription(name);
                                 this.dialog.open(PaymentWizardComponent, {
                                     height: '800px',
                                     width: '1200px',
                                     id: 'payment-wizard',
+                                    disableClose: appService.moduleSubscriptions.every(sub => sub.statusId == 'D'),
                                     panelClass: ['payment-wizard', 'setup'],
                                     data: {
                                         module: sub.module,
