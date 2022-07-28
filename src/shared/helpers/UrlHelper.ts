@@ -82,8 +82,4 @@ export class UrlHelper {
     static isPublicUrl(url) {
         return url && UrlHelper.getQueryParameters()['user-key'] && UrlHelper.publicUrls.some(publicUrl => url.indexOf(publicUrl) >= 0);
     }
-
-    static isReceiptUrl(url): boolean {
-        return url && /^\/?receipt/.test(url);
-    }
 }

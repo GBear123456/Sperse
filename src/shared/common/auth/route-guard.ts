@@ -36,7 +36,7 @@ export class RouteGuard implements CanActivate, CanActivateChild {
             isStateRoot = stateUrl == '/';
 
         if (state && (UrlHelper.isInstallUrl(stateUrl) || UrlHelper.isAccountModuleUrl(stateUrl) || UrlHelper.isPFMUrl(stateUrl))
-            || UrlHelper.isPublicUrl(stateUrl) || UrlHelper.isReceiptUrl(stateUrl)
+            || UrlHelper.isPublicUrl(stateUrl)
         ) {
             return true;
         }
