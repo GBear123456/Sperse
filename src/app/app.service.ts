@@ -213,10 +213,9 @@ export class AppService extends AppServiceBase {
     loadModuleSubscriptions() {
         this.moduleSubscriptions$ = this.tenantSubscriptionProxy.getModuleSubscriptions()
             .pipe(map(subs => {
-                if (subs.every(sub => sub.statusId == 'C'))
-                    return subs.filter(sub => sub.isUpgradable);
-                else
+                if (subs.some(sub => sub.statusId !== 'C'))
                     return subs.filter(sub => sub.statusId != 'C');
+                return subs;
             }), publishReplay(), refCount());
         this.moduleSubscriptions$.subscribe((res: ModuleSubscriptionInfoDto[]) => {
             this.moduleSubscriptions = res.sort((left: ModuleSubscriptionInfoDto, right: ModuleSubscriptionInfoDto) => {

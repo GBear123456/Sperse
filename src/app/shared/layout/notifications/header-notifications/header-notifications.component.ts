@@ -42,7 +42,6 @@ export class HeaderNotificationsComponent implements OnInit {
     userName = '';
     subscriptionInfoTitle: string;
     subscriptionInfoText: string;
-    subscriptionExpiringDayCount = null;
 
     private readonly CONTACT_ENTITY_TYPE = 'Sperse.CRM.Contacts.Entities.Contact';
     private readonly COMMUNICATION_MESSAGE_ENTITY_TYPE = 'Sperse.CRM.Contacts.Communication.CommunicationMessage';
@@ -75,10 +74,12 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     getSubscriptionInfo(module = null) {
-        this.subscriptionExpiringDayCount = -1;
         let subscriptionName = this.appService.getSubscriptionName();
         if (this.appService.checkSubscriptionIsTrial()) {
-            this.subscriptionInfoTitle = this.ls.l('YouAreUsingPlan', this.ls.l('Trial'));
+            let dayCount = this.appService.getSubscriptionExpiringDayCount();
+            this.subscriptionInfoTitle = this.ls.l('YourTrialWillExpire', subscriptionName) + ' '
+                + (!dayCount ? this.ls.l('Today') : (dayCount === 1 ? this.ls.l('Tomorrow') : ('in ' + dayCount.toString() + ' ' + this.ls.l('Periods_Day_plural')))).toLowerCase()
+                + '!';
         } else if (this.appService.subscriptionInGracePeriod()) {
             let dayCount = this.appService.getGracePeriodDayCount();
             this.subscriptionInfoTitle = this.ls.l('ModuleExpired', subscriptionName, this.appService.getSubscriptionStatusByModuleName());
@@ -90,29 +91,10 @@ export class HeaderNotificationsComponent implements OnInit {
         } else if (!this.appService.hasModuleSubscription()) {
             this.subscriptionInfoTitle = this.ls.l('ModuleExpired', subscriptionName, this.appService.getSubscriptionStatusByModuleName());
         } else {
-            let dayCount = this.appService.getSubscriptionExpiringDayCount();
-            if (!dayCount && dayCount !== 0) {
-                this.subscriptionExpiringDayCount = null;
-            } else {
-                if (dayCount >= 0 && dayCount <= 15) {
-                    this.subscriptionInfoTitle = this.ls.l('YourTrialWillExpire', subscriptionName) + ' '
-                        + (!dayCount ? this.ls.l('Today') : (dayCount === 1 ? this.ls.l('Tomorrow') : ('in ' + dayCount.toString() + ' ' + this.ls.l('Periods_Day_plural')))).toLowerCase()
-                        + '!';
-                } else {
-                    const subscription = this.appService.getModuleSubscription();
-                    if (subscription) {
-                        this.subscriptionInfoTitle = this.ls.l(
-                            'YouAreUsingPlan',
-                            subscription.editionName
-                        );
-                    } else {
-                        this.subscriptionExpiringDayCount = null;
-                    }
-                }
-            }
-        }
-        if (this.appService.subscriptionIsLocked()) {
-            this.subscriptionInfoText = this.ls.l('SubscriptionWillBeRenewed');
+            this.subscriptionInfoTitle = this.ls.l(
+                'YouAreUsingPlan',
+                subscriptionName
+            );
         }
         return this.subscriptionInfoTitle;
     }
