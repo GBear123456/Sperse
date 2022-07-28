@@ -395,13 +395,6 @@ export class AppService extends AppServiceBase {
 
     switchModule(name: string, params = {}) {
         this.subscriptionBarVisible = undefined;
-        if (this.checkModuleExpired(name)
-            && !this.subscriptionInGracePeriod(name)
-        ) {
-            name = this.getDefaultModule();
-            params = {};
-        }
-
         super.switchModule(name, params);
     }
 
