@@ -29029,6 +29029,62 @@ export class OrderSubscriptionServiceProxy {
      * @param body (optional) 
      * @return Success
      */
+    cancelMany(body: CancelOrderSubscriptionsInput | undefined): Observable<CancelManyOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/CancelMany";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelMany(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelMany(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CancelManyOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CancelManyOutput>;
+        }));
+    }
+
+    protected processCancelMany(response: HttpResponseBase): Observable<CancelManyOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CancelManyOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CancelManyOutput>(null as any);
+    }
+
+    /**
+     * @param body (optional) 
+     * @return Success
+     */
     cancelAll(body: CancelAllInput | undefined): Observable<void> {
         let url_ = this.baseUrl + "/api/services/CRM/OrderSubscription/CancelAll";
         url_ = url_.replace(/[?&]$/, "");
@@ -32047,7 +32103,7 @@ export class ProductServiceProxy {
      * @param id (optional) 
      * @return Success
      */
-    getProductInfo(id: number | undefined): Observable<ProductInfo> {
+    getProductInfo(id: number | undefined): Observable<GetProductInfoOutput> {
         let url_ = this.baseUrl + "/api/services/CRM/Product/GetProductInfo?";
         if (id === null)
             throw new Error("The parameter 'id' cannot be null.");
@@ -32070,14 +32126,14 @@ export class ProductServiceProxy {
                 try {
                     return this.processGetProductInfo(response_ as any);
                 } catch (e) {
-                    return _observableThrow(e) as any as Observable<ProductInfo>;
+                    return _observableThrow(e) as any as Observable<GetProductInfoOutput>;
                 }
             } else
-                return _observableThrow(response_) as any as Observable<ProductInfo>;
+                return _observableThrow(response_) as any as Observable<GetProductInfoOutput>;
         }));
     }
 
-    protected processGetProductInfo(response: HttpResponseBase): Observable<ProductInfo> {
+    protected processGetProductInfo(response: HttpResponseBase): Observable<GetProductInfoOutput> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -32088,7 +32144,7 @@ export class ProductServiceProxy {
             return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
             let result200: any = null;
             let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
-            result200 = ProductInfo.fromJS(resultData200);
+            result200 = GetProductInfoOutput.fromJS(resultData200);
             return _observableOf(result200);
             }));
         } else if (status !== 200 && status !== 204) {
@@ -32096,7 +32152,7 @@ export class ProductServiceProxy {
             return throwException("An unexpected server error occurred.", status, _responseText, _headers);
             }));
         }
-        return _observableOf<ProductInfo>(null as any);
+        return _observableOf<GetProductInfoOutput>(null as any);
     }
 
     /**
@@ -43979,6 +44035,58 @@ export class TenantSubscriptionServiceProxy {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    cancelSubscription(body: CancelSubscriptionInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/CancelSubscription";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelSubscription(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelSubscription(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processCancelSubscription(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
      * @return Success
      */
     getBankTransferSettings(): Observable<BankTransferSettingsDto> {
@@ -53177,6 +53285,50 @@ export interface ICancelLeadInput {
     sortOrder: number | undefined;
 }
 
+export class CancelManyOutput implements ICancelManyOutput {
+    successCount!: number;
+    failedCount!: number;
+    message!: string | undefined;
+
+    constructor(data?: ICancelManyOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.successCount = _data["successCount"];
+            this.failedCount = _data["failedCount"];
+            this.message = _data["message"];
+        }
+    }
+
+    static fromJS(data: any): CancelManyOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelManyOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["successCount"] = this.successCount;
+        data["failedCount"] = this.failedCount;
+        data["message"] = this.message;
+        return data;
+    }
+}
+
+export interface ICancelManyOutput {
+    successCount: number;
+    failedCount: number;
+    message: string | undefined;
+}
+
 export class CancelOrderInfo implements ICancelOrderInfo {
     orderId!: number;
     comment!: string;
@@ -53259,6 +53411,94 @@ export class CancelOrderSubscriptionInput implements ICancelOrderSubscriptionInp
 export interface ICancelOrderSubscriptionInput {
     subscriptionId: number;
     cancelationReason: string | undefined;
+}
+
+export class CancelOrderSubscriptionsInput implements ICancelOrderSubscriptionsInput {
+    subscriptionIds!: number[] | undefined;
+    cancelationReason!: string | undefined;
+
+    constructor(data?: ICancelOrderSubscriptionsInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            if (Array.isArray(_data["subscriptionIds"])) {
+                this.subscriptionIds = [] as any;
+                for (let item of _data["subscriptionIds"])
+                    this.subscriptionIds!.push(item);
+            }
+            this.cancelationReason = _data["cancelationReason"];
+        }
+    }
+
+    static fromJS(data: any): CancelOrderSubscriptionsInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelOrderSubscriptionsInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        if (Array.isArray(this.subscriptionIds)) {
+            data["subscriptionIds"] = [];
+            for (let item of this.subscriptionIds)
+                data["subscriptionIds"].push(item);
+        }
+        data["cancelationReason"] = this.cancelationReason;
+        return data;
+    }
+}
+
+export interface ICancelOrderSubscriptionsInput {
+    subscriptionIds: number[] | undefined;
+    cancelationReason: string | undefined;
+}
+
+export class CancelSubscriptionInput implements ICancelSubscriptionInput {
+    id!: number;
+    cancellationReason!: string | undefined;
+
+    constructor(data?: ICancelSubscriptionInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.cancellationReason = _data["cancellationReason"];
+        }
+    }
+
+    static fromJS(data: any): CancelSubscriptionInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelSubscriptionInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["cancellationReason"] = this.cancellationReason;
+        return data;
+    }
+}
+
+export interface ICancelSubscriptionInput {
+    id: number;
+    cancellationReason: string | undefined;
 }
 
 export enum CardNetwork {
@@ -68857,6 +69097,118 @@ export interface IGetPlatformAppUrlOutput {
     isCustom: boolean;
 }
 
+export class GetProductInfoOutput implements IGetProductInfoOutput {
+    stripeXref!: string | undefined;
+    hasIncompletedInvoices!: boolean;
+    id!: number;
+    code!: string | undefined;
+    name!: string | undefined;
+    description!: string | undefined;
+    groupId!: number | undefined;
+    type!: ProductType;
+    price!: number;
+    commissionableAmount!: number | undefined;
+    maxCommissionRate!: number | undefined;
+    maxCommissionRateTier2!: number | undefined;
+    unit!: ProductMeasurementUnit | undefined;
+    imageUrl!: string | undefined;
+    productServices!: ProductServiceInfo[] | undefined;
+    productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+
+    constructor(data?: IGetProductInfoOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.stripeXref = _data["stripeXref"];
+            this.hasIncompletedInvoices = _data["hasIncompletedInvoices"];
+            this.id = _data["id"];
+            this.code = _data["code"];
+            this.name = _data["name"];
+            this.description = _data["description"];
+            this.groupId = _data["groupId"];
+            this.type = _data["type"];
+            this.price = _data["price"];
+            this.commissionableAmount = _data["commissionableAmount"];
+            this.maxCommissionRate = _data["maxCommissionRate"];
+            this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
+            this.unit = _data["unit"];
+            this.imageUrl = _data["imageUrl"];
+            if (Array.isArray(_data["productServices"])) {
+                this.productServices = [] as any;
+                for (let item of _data["productServices"])
+                    this.productServices!.push(ProductServiceInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productSubscriptionOptions"])) {
+                this.productSubscriptionOptions = [] as any;
+                for (let item of _data["productSubscriptionOptions"])
+                    this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+        }
+    }
+
+    static fromJS(data: any): GetProductInfoOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new GetProductInfoOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["stripeXref"] = this.stripeXref;
+        data["hasIncompletedInvoices"] = this.hasIncompletedInvoices;
+        data["id"] = this.id;
+        data["code"] = this.code;
+        data["name"] = this.name;
+        data["description"] = this.description;
+        data["groupId"] = this.groupId;
+        data["type"] = this.type;
+        data["price"] = this.price;
+        data["commissionableAmount"] = this.commissionableAmount;
+        data["maxCommissionRate"] = this.maxCommissionRate;
+        data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
+        data["unit"] = this.unit;
+        data["imageUrl"] = this.imageUrl;
+        if (Array.isArray(this.productServices)) {
+            data["productServices"] = [];
+            for (let item of this.productServices)
+                data["productServices"].push(item.toJSON());
+        }
+        if (Array.isArray(this.productSubscriptionOptions)) {
+            data["productSubscriptionOptions"] = [];
+            for (let item of this.productSubscriptionOptions)
+                data["productSubscriptionOptions"].push(item.toJSON());
+        }
+        return data;
+    }
+}
+
+export interface IGetProductInfoOutput {
+    stripeXref: string | undefined;
+    hasIncompletedInvoices: boolean;
+    id: number;
+    code: string | undefined;
+    name: string | undefined;
+    description: string | undefined;
+    groupId: number | undefined;
+    type: ProductType;
+    price: number;
+    commissionableAmount: number | undefined;
+    maxCommissionRate: number | undefined;
+    maxCommissionRateTier2: number | undefined;
+    unit: ProductMeasurementUnit | undefined;
+    imageUrl: string | undefined;
+    productServices: ProductServiceInfo[] | undefined;
+    productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+}
+
 export class GetProfilePictureOutput implements IGetProfilePictureOutput {
     profilePicture!: string | undefined;
 
@@ -76955,10 +77307,13 @@ export interface IModuleSubscriptionInfo {
 }
 
 export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
+    id!: number;
     module!: ModuleType;
     statusId!: string | undefined;
     productId!: number | undefined;
     productName!: string | undefined;
+    productGroup!: string | undefined;
+    productImageUrl!: string | undefined;
     paymentPeriodType!: PaymentPeriodType | undefined;
     endDate!: moment.Moment | undefined;
     editionName!: string | undefined;
@@ -76980,10 +77335,13 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.module = _data["module"];
             this.statusId = _data["statusId"];
             this.productId = _data["productId"];
             this.productName = _data["productName"];
+            this.productGroup = _data["productGroup"];
+            this.productImageUrl = _data["productImageUrl"];
             this.paymentPeriodType = _data["paymentPeriodType"];
             this.endDate = _data["endDate"] ? moment(_data["endDate"].toString()) : <any>undefined;
             this.editionName = _data["editionName"];
@@ -77005,10 +77363,13 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["module"] = this.module;
         data["statusId"] = this.statusId;
         data["productId"] = this.productId;
         data["productName"] = this.productName;
+        data["productGroup"] = this.productGroup;
+        data["productImageUrl"] = this.productImageUrl;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["editionName"] = this.editionName;
@@ -77023,10 +77384,13 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
 }
 
 export interface IModuleSubscriptionInfoDto {
+    id: number;
     module: ModuleType;
     statusId: string | undefined;
     productId: number | undefined;
     productName: string | undefined;
+    productGroup: string | undefined;
+    productImageUrl: string | undefined;
     paymentPeriodType: PaymentPeriodType | undefined;
     endDate: moment.Moment | undefined;
     editionName: string | undefined;
