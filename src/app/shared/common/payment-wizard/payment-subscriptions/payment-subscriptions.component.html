@@ -1,7 +1,7 @@
 <h2>{{ l('MySubscriptions') }}</h2>
 <dx-data-grid
     class="alone main-component-view"
-    keyExpr="productId"
+    keyExpr="id"
     [pager]="{visible: false}"
     [paging]="{enabled: false}"
     [dataSource]="appService.moduleSubscriptions"
@@ -25,7 +25,7 @@
     <dxi-column [allowResizing]="false" caption="" cellTemplate="actionCell"></dxi-column>
 
     <div *dxTemplate="let cellData of 'imageTemplate'" class="product-icon">
-        <img width="auto" height="64px" [src]="getProductImage(cellData.data)" onerror="this.src='assets/common/images/product.png'">
+        <img width="auto" height="64px" [src]="cellData.data.imageUrl" onerror="this.src='assets/common/images/product.png'">
     </div>
 
     <div *dxTemplate="let cellData of 'dateTimeTemplate'" class="date-box">
