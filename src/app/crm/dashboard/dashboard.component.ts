@@ -268,12 +268,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
             data: {
-                module: this.appService.getModuleSubscription(ModuleType.CRM).module,
-                title: this.ls.ls(
-                    AppConsts.localization.defaultLocalizationSourceName,
-                    'UpgradeYourSubscription',
-                    this.appService.getSubscriptionName(ModuleType.CRM)
-                )
+                showSubscriptions: true
             }
         });
     }

@@ -1,40 +1,43 @@
-<div id="paymentWizardComponent" #wizard>
-    <mat-dialog-content>
-        <mat-horizontal-stepper #stepper>
-            <mat-step>
-                <package-chooser
-                    *ngIf="!subscriptionIsDraft"
-                    [widgettitle]="data?.title"
-                    [subtitle]="data?.subtitle"
-                    [module]="module"
-                    [showBackground]="true"
-                    [showDowngradeLink]="!subscriptionIsFree"
-                    (onPlanChosen)="changePlan($event)"
-                    (moveToNextStep)="moveToPaymentOptionsStep()">
-                </package-chooser>
-                <div *ngIf="subscriptionIsDraft" class="rejectSubscriptionBlock">
-                    <h2 class="title">{{ ls.l('SubscriptionDraftTitle') }}</h2>
-                    <h3 class="message">{{ ls.l('SubscriptionDraftMessage') }}</h3>
-                    <button (click)="processPayment()" class="btn btn-layout">{{ ls.l('Pay Now') }}</button>
-                </div>
-            </mat-step>
-            <mat-step>
-                <ng-container *ngIf="(plan$ | async) as plan">
-                    <payment-options
-                        *ngIf="stepper.selectedIndex != 0"
-                        [plan]="plan"
-                        (onChangeStep)="stepper.selectedIndex = $event"
-                        (onClose)="close()"
-                        (onStatusChange)="changeStatus($event)"
-                        (refreshAfterClose)="setRefreshAfterClose()">
-                    </payment-options>
-                </ng-container>
-            </mat-step>
-            <mat-step>
-                <ng-container *ngIf="paymentStatusData">
-                    <payment-status [paymentStatusData]="paymentStatusData" (onClose)="close()"></payment-status>
-                </ng-container>
-            </mat-step>
-        </mat-horizontal-stepper>
-    </mat-dialog-content>
-</div>
+<payment-subscriptions *ngIf="data.showSubscriptions; else paymentWizard"></payment-subscriptions>
+<ng-template #paymentWizard>
+    <div id="paymentWizardComponent" #wizard>
+        <mat-dialog-content>
+            <mat-horizontal-stepper #stepper>
+                <mat-step>
+                    <package-chooser
+                        *ngIf="!subscriptionIsDraft"
+                        [widgettitle]="data?.title"
+                        [subtitle]="data?.subtitle"
+                        [module]="module"
+                        [showBackground]="true"
+                        [showDowngradeLink]="!subscriptionIsFree"
+                        (onPlanChosen)="changePlan($event)"
+                        (moveToNextStep)="moveToPaymentOptionsStep()">
+                    </package-chooser>
+                    <div *ngIf="subscriptionIsDraft" class="rejectSubscriptionBlock">
+                        <h2 class="title">{{ ls.l('SubscriptionDraftTitle') }}</h2>
+                        <h3 class="message">{{ ls.l('SubscriptionDraftMessage') }}</h3>
+                        <button (click)="processPayment()" class="btn btn-layout">{{ ls.l('Pay Now') }}</button>
+                    </div>
+                </mat-step>
+                <mat-step>
+                    <ng-container *ngIf="(plan$ | async) as plan">
+                        <payment-options
+                            *ngIf="stepper.selectedIndex != 0"
+                            [plan]="plan"
+                            (onChangeStep)="stepper.selectedIndex = $event"
+                            (onClose)="close()"
+                            (onStatusChange)="changeStatus($event)"
+                            (refreshAfterClose)="setRefreshAfterClose()">
+                        </payment-options>
+                    </ng-container>
+                </mat-step>
+                <mat-step>
+                    <ng-container *ngIf="paymentStatusData">
+                        <payment-status [paymentStatusData]="paymentStatusData" (onClose)="close()"></payment-status>
+                    </ng-container>
+                </mat-step>
+            </mat-horizontal-stepper>
+        </mat-dialog-content>
+    </div>
+</ng-template>

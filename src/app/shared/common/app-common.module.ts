@@ -76,6 +76,7 @@ import { DatePickerDirective } from './timing/date-picker.component';
 import { PeriodComponent } from './period/period.component';
 import { InplaceSelectBoxComponent } from '@app/shared/common/inplace-select-box/inplace-select-box.component';
 import { ImportWizardService } from '@app/shared/common/import-wizard/import-wizard.service';
+import { PaymentSubscriptionsComponent } from './payment-wizard/payment-subscriptions/payment-subscriptions.component';
 import { PaymentWizardComponent } from './payment-wizard/payment-wizard.component';
 import { PackageCardComponent } from './payment-wizard/package-chooser/package-card/package-card.component';
 import { PackageChooserComponent } from './payment-wizard/package-chooser/package-chooser.component';
@@ -186,6 +187,7 @@ import { TimeZoneComboModule } from '@app/shared/common/timing/timezone-combo.mo
         PaymentStatusComponent,
         PaymentOptionsComponent,
         PaymentOptionsFooterComponent,
+        PaymentSubscriptionsComponent,
         CreditCardComponent,
         PayPalComponent,
         BankTransferComponent,
