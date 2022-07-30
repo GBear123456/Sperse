@@ -4,7 +4,6 @@ import { Component, ChangeDetectionStrategy, OnInit, ViewChild, ElementRef, OnDe
 /** Third party imports */
 import { BehaviorSubject, Subscription, Observable, of, combineLatest } from 'rxjs';
 import {
-    distinctUntilChanged,
     publishReplay,
     refCount,
     tap,
@@ -22,6 +21,7 @@ import { ContactsService } from '../contacts.service';
 import {
     ContactServiceProxy,
     ShortPaymentInfo,
+    BankCardShortInfo,
     PaymentMethodInfo,
     PaymentInfoType,
     PaymentServiceProxy,
@@ -168,9 +168,12 @@ export class PaymentInformationComponent implements OnInit, OnDestroy {
 
     removePaymentMethod() {}
 
-    getCardTypeFromNumber(cardNumber: string): string {
-        let cardInfo = CreditCard.cardFromNumber(cardNumber);
-        return cardInfo && cardInfo.type || 'credit-card';
+    getCardType(cardInfo: BankCardShortInfo): string {
+        if (cardInfo.network)
+            return cardInfo.network;
+
+        let numberInfo = CreditCard.cardFromNumber(cardInfo.cardNumber);
+        return numberInfo && numberInfo.type || 'credit-card';
     }
 
     paymentsScrollHeight() {
