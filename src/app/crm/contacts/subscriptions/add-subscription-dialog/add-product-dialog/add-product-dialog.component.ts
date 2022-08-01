@@ -380,6 +380,19 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         });
     }
 
+    checkShowAmountChangeWarrning() {
+        let product = this.data.product,
+            message = '';
+        if (product && product.stripeXref)
+            message = this.ls.l('StripeRefferenceWarning') + '\n';
+
+        if (product && product.hasIncompletedInvoices)
+            message += '\n' + this.ls.l('IncompletedInvoicesWarning');
+
+        if (message)
+            abp.message.warn(message, this.ls.l('Important'));
+    }
+
     detectChanges() {
         this.changeDetection.markForCheck();
     }

@@ -51758,6 +51758,7 @@ export interface IBankCardInput {
 
 export class BankCardShortInfo implements IBankCardShortInfo {
     cardNumber!: string | undefined;
+    network!: string | undefined;
     expirationMonth!: string | undefined;
     expirationYear!: string | undefined;
 
@@ -51773,6 +51774,7 @@ export class BankCardShortInfo implements IBankCardShortInfo {
     init(_data?: any) {
         if (_data) {
             this.cardNumber = _data["cardNumber"];
+            this.network = _data["network"];
             this.expirationMonth = _data["expirationMonth"];
             this.expirationYear = _data["expirationYear"];
         }
@@ -51788,6 +51790,7 @@ export class BankCardShortInfo implements IBankCardShortInfo {
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
         data["cardNumber"] = this.cardNumber;
+        data["network"] = this.network;
         data["expirationMonth"] = this.expirationMonth;
         data["expirationYear"] = this.expirationYear;
         return data;
@@ -51796,6 +51799,7 @@ export class BankCardShortInfo implements IBankCardShortInfo {
 
 export interface IBankCardShortInfo {
     cardNumber: string | undefined;
+    network: string | undefined;
     expirationMonth: string | undefined;
     expirationYear: string | undefined;
 }
@@ -68056,7 +68060,8 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
     invoiceAmount!: number;
     invoiceStatus!: InvoiceStatus;
     paymentDate!: moment.Moment | undefined;
-    paymentMethod!: string | undefined;
+    paymentCardNumber!: string | undefined;
+    paymentCardNetwork!: string | undefined;
     downloadInvoiceUrl!: string | undefined;
 
     constructor(data?: IGetInvoiceReceiptInfoOutput) {
@@ -68076,7 +68081,8 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
             this.invoiceAmount = _data["invoiceAmount"];
             this.invoiceStatus = _data["invoiceStatus"];
             this.paymentDate = _data["paymentDate"] ? moment(_data["paymentDate"].toString()) : <any>undefined;
-            this.paymentMethod = _data["paymentMethod"];
+            this.paymentCardNumber = _data["paymentCardNumber"];
+            this.paymentCardNetwork = _data["paymentCardNetwork"];
             this.downloadInvoiceUrl = _data["downloadInvoiceUrl"];
         }
     }
@@ -68096,7 +68102,8 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
         data["invoiceAmount"] = this.invoiceAmount;
         data["invoiceStatus"] = this.invoiceStatus;
         data["paymentDate"] = this.paymentDate ? this.paymentDate.toISOString() : <any>undefined;
-        data["paymentMethod"] = this.paymentMethod;
+        data["paymentCardNumber"] = this.paymentCardNumber;
+        data["paymentCardNetwork"] = this.paymentCardNetwork;
         data["downloadInvoiceUrl"] = this.downloadInvoiceUrl;
         return data;
     }
@@ -68109,7 +68116,8 @@ export interface IGetInvoiceReceiptInfoOutput {
     invoiceAmount: number;
     invoiceStatus: InvoiceStatus;
     paymentDate: moment.Moment | undefined;
-    paymentMethod: string | undefined;
+    paymentCardNumber: string | undefined;
+    paymentCardNetwork: string | undefined;
     downloadInvoiceUrl: string | undefined;
 }
 

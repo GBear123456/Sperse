@@ -85,11 +85,12 @@ export class AppComponent implements OnInit {
                                     }
                                 );
                             }
-                            else if (!appService.moduleSubscriptions.some(sub => sub.statusId = 'A') && !this.dialog.getDialogById('payment-wizard')) {
+                            else if (!appService.moduleSubscriptions.some(sub => sub.statusId == 'A') && !this.dialog.getDialogById('payment-wizard')) {
                                 const sub = appService.getModuleSubscription(name);
                                 this.dialog.open(PaymentWizardComponent, {
                                     height: '800px',
                                     width: '1200px',
+                                    disableClose: appService.moduleSubscriptions.every(sub => sub.statusId == 'C'), 
                                     id: 'payment-wizard',
                                     panelClass: ['payment-wizard', 'setup'],
                                     data: {

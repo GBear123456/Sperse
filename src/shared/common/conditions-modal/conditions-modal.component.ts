@@ -15,6 +15,7 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
+import { ContditionsModalData } from './conditions-modal-data'
 
 @Component({
     selector: 'conditions-modal',
@@ -58,7 +59,7 @@ export class ConditionsModalComponent implements OnInit {
         private sanitizer: DomSanitizer,
         private ls: AppLocalizationService,
         private appSession: AppSessionService,
-        @Inject(MAT_DIALOG_DATA) private data: any
+        @Inject(MAT_DIALOG_DATA) private data: ContditionsModalData
     ) {}
 
     ngOnInit() {
@@ -105,7 +106,7 @@ export class ConditionsModalComponent implements OnInit {
     }
 
     isTenantDocumentAvailable() {
-        return this.appSession.tenant && this.appSession.tenant[this.conditionsOptions[this.data.type].tenantProperty];
+        return !this.data.onlyHost && this.appSession.tenant && this.appSession.tenant[this.conditionsOptions[this.data.type].tenantProperty];
     }
 
     printContent() {
