@@ -329,7 +329,7 @@ export class AppService extends AppServiceBase {
         moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions
     ): boolean {
         let sub = this.getModuleSubscription(name, moduleSubscriptions);
-        return sub && sub.isTrial;
+        return sub && sub.statusId != 'C' && sub.isTrial;
     }
 
     subscriptionInGracePeriod(name: string = this.defaultSubscriptionModule): boolean {
