@@ -12,8 +12,8 @@ import { finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { 
-    CancelOrderSubscriptionInput, 
-    OrderSubscriptionServiceProxy 
+    CancelSubscriptionInput, 
+    TenantSubscriptionServiceProxy 
 } from '@shared/service-proxies/service-proxies';
 import { CancelSubscriptionDialogComponent } from '@app/crm/contacts/subscriptions/cancel-subscription-dialog/cancel-subscription-dialog.component';
 import { AppComponentBase } from '@shared/common/app-component-base';
@@ -24,20 +24,31 @@ import { AppConsts } from '@shared/AppConsts';
     selector: 'payment-subscriptions',
     templateUrl: './payment-subscriptions.component.html',
     styleUrls: ['./payment-subscriptions.component.less'],
-    providers: [OrderSubscriptionServiceProxy],
+    providers: [TenantSubscriptionServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PaymentSubscriptionsComponent extends AppComponentBase {
     formatting = AppConsts.formatting;
+    moduleSubscriptions = this.getDistinctList(this.appService.moduleSubscriptions);
 
     constructor(
         injector: Injector,
         public appService: AppService,
         private dialog: MatDialog,
-        private subscriptionProxy: OrderSubscriptionServiceProxy,
+        private subscriptionProxy: TenantSubscriptionServiceProxy,
         private changeDetectionRef: ChangeDetectorRef
     ) {
         super(injector);
+    }
+
+    getDistinctList(list) {
+        let flags = [], output = [];
+        for(let i = 0; i < list.length; i++)
+            if (!flags[list[i].id]) {
+                flags[list[i].id] = true;
+                output.push(list[i]);
+            }
+        return output;
     }
 
     cancelSubscription(data) {
@@ -50,9 +61,9 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
             if (result) {
                 this.startLoading();
                 this.subscriptionProxy
-                    .cancel(new CancelOrderSubscriptionInput({
-                        subscriptionId: data.id,
-                        cancelationReason: result.cancellationReason
+                    .cancelSubscription(new CancelSubscriptionInput({
+                        id: data.id,
+                        cancellationReason: result.cancellationReason
                     })).pipe(finalize(() => this.finishLoading())).subscribe(() => {
                         data.statusId = 'C';
                         abp.notify.success(this.l('Cancelled'));

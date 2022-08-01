@@ -219,7 +219,15 @@ export class AppService extends AppServiceBase {
             }), publishReplay(), refCount());
         this.moduleSubscriptions$.subscribe((res: ModuleSubscriptionInfoDto[]) => {
             this.moduleSubscriptions = res.sort((left: ModuleSubscriptionInfoDto, right: ModuleSubscriptionInfoDto) => {
-                return left.endDate > right.endDate ? -1 : 1;
+                const isLeftSignupGroup = left.productGroup && left.productGroup.toLowerCase() == 'signup',
+                    isRightSignupGroup = right.productGroup && right.productGroup.toLowerCase() == 'signup';
+                if (isLeftSignupGroup && isRightSignupGroup ||
+                    !isLeftSignupGroup && !isRightSignupGroup
+                ) return left.endDate > right.endDate ? -1 : 1;
+                else if (isLeftSignupGroup)
+                    return -1;
+                else
+                    return 1;
             });
             this.checkModuleExpired();
         });

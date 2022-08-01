@@ -4,7 +4,7 @@
     keyExpr="id"
     [pager]="{visible: false}"
     [paging]="{enabled: false}"
-    [dataSource]="appService.moduleSubscriptions"
+    [dataSource]="moduleSubscriptions"
     [allowColumnReordering]="false"
     [columnAutoWidth]="true"
     [allowColumnResizing]="false">
@@ -13,6 +13,8 @@
     <dxi-column caption="" cellTemplate="imageTemplate" width="80px"></dxi-column>
 
     <dxi-column dataField="productName" [caption]="l('ProductName')"></dxi-column>
+
+    <dxi-column dataField="productGroup" [caption]="l('Group')"></dxi-column>
 
     <dxi-column dataField="paymentPeriodType" [caption]="l('PaymentPeriod')"></dxi-column>
 
@@ -25,14 +27,14 @@
     <dxi-column [allowResizing]="false" caption="" cellTemplate="actionCell"></dxi-column>
 
     <div *dxTemplate="let cellData of 'imageTemplate'" class="product-icon">
-        <img width="auto" height="64px" [src]="cellData.data.imageUrl" onerror="this.src='assets/common/images/product.png'">
+        <img width="auto" height="64px" [src]="cellData.data.productImageUrl" onerror="this.src='assets/common/images/product.png'">
     </div>
 
     <div *dxTemplate="let cellData of 'dateTimeTemplate'" class="date-box">
         <span class="date-time" title="{{cellData.value | datetime: formatting.dateTimeMoment}}">{{cellData.value | datetime: formatting.dateMoment}}</span>
     </div>
 
-    <div *dxTemplate="let cellData of 'statusCell'">
+    <div *dxTemplate="let cellData of 'statusCell'" class="status {{cellData.value}}">
         {{cellData.value == 'A' ? l('Active') : (cellData.value == 'D' ? l('Draft') : l('Cancelled'))}}
     </div>
 
