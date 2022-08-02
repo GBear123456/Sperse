@@ -37,7 +37,7 @@
                         {{invoiceInfo.paymentCardNumber}}
                     </div>
                 </div>
-                <div class="row buttons-row">
+                <div class="row top-indent">
                     <div class="col-6">
                         <a role="button" class="btn btn-secondary" href="{{invoiceInfo.downloadInvoiceUrl}}" target="_blank">
                             Download invoice
@@ -48,6 +48,9 @@
                             Download receipt
                         </a>
                     </div>
+                </div>
+                <div *ngIf="invoiceInfo.loginLink" class="row top-indent login-row">
+                    <a href="{{invoiceInfo.loginLink}}">Login to System</a>
                 </div>
             </div>
         </div>
