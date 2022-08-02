@@ -44035,6 +44035,58 @@ export class TenantSubscriptionServiceProxy {
     }
 
     /**
+     * @param body (optional) 
+     * @return Success
+     */
+    cancelSubscription(body: CancelSubscriptionInput | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/Platform/TenantSubscription/CancelSubscription";
+        url_ = url_.replace(/[?&]$/, "");
+
+        const content_ = JSON.stringify(body);
+
+        let options_ : any = {
+            body: content_,
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Content-Type": "application/json;odata.metadata=minimal;odata.streaming=true",
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processCancelSubscription(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processCancelSubscription(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processCancelSubscription(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
      * @return Success
      */
     getBankTransferSettings(): Observable<BankTransferSettingsDto> {
@@ -53411,6 +53463,46 @@ export class CancelOrderSubscriptionsInput implements ICancelOrderSubscriptionsI
 export interface ICancelOrderSubscriptionsInput {
     subscriptionIds: number[] | undefined;
     cancelationReason: string | undefined;
+}
+
+export class CancelSubscriptionInput implements ICancelSubscriptionInput {
+    id!: number;
+    cancellationReason!: string | undefined;
+
+    constructor(data?: ICancelSubscriptionInput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.id = _data["id"];
+            this.cancellationReason = _data["cancellationReason"];
+        }
+    }
+
+    static fromJS(data: any): CancelSubscriptionInput {
+        data = typeof data === 'object' ? data : {};
+        let result = new CancelSubscriptionInput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
+        data["cancellationReason"] = this.cancellationReason;
+        return data;
+    }
+}
+
+export interface ICancelSubscriptionInput {
+    id: number;
+    cancellationReason: string | undefined;
 }
 
 export enum CardNetwork {
@@ -77227,10 +77319,13 @@ export interface IModuleSubscriptionInfo {
 }
 
 export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
+    id!: number;
     module!: ModuleType;
     statusId!: string | undefined;
     productId!: number | undefined;
     productName!: string | undefined;
+    productGroup!: string | undefined;
+    productImageUrl!: string | undefined;
     paymentPeriodType!: PaymentPeriodType | undefined;
     endDate!: moment.Moment | undefined;
     editionName!: string | undefined;
@@ -77252,10 +77347,13 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
 
     init(_data?: any) {
         if (_data) {
+            this.id = _data["id"];
             this.module = _data["module"];
             this.statusId = _data["statusId"];
             this.productId = _data["productId"];
             this.productName = _data["productName"];
+            this.productGroup = _data["productGroup"];
+            this.productImageUrl = _data["productImageUrl"];
             this.paymentPeriodType = _data["paymentPeriodType"];
             this.endDate = _data["endDate"] ? moment(_data["endDate"].toString()) : <any>undefined;
             this.editionName = _data["editionName"];
@@ -77277,10 +77375,13 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
+        data["id"] = this.id;
         data["module"] = this.module;
         data["statusId"] = this.statusId;
         data["productId"] = this.productId;
         data["productName"] = this.productName;
+        data["productGroup"] = this.productGroup;
+        data["productImageUrl"] = this.productImageUrl;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
         data["editionName"] = this.editionName;
@@ -77295,10 +77396,13 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
 }
 
 export interface IModuleSubscriptionInfoDto {
+    id: number;
     module: ModuleType;
     statusId: string | undefined;
     productId: number | undefined;
     productName: string | undefined;
+    productGroup: string | undefined;
+    productImageUrl: string | undefined;
     paymentPeriodType: PaymentPeriodType | undefined;
     endDate: moment.Moment | undefined;
     editionName: string | undefined;

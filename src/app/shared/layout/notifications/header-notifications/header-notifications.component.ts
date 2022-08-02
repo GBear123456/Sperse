@@ -180,7 +180,7 @@ export class HeaderNotificationsComponent implements OnInit {
         dropDown && dropDown.hide();
     }
 
-    openPaymentWizardDialog(e) {
+    openPaymentWizardDialog(e, showSubscriptions = false) {
         this.hideDropDown();
         this.dialog.open(PaymentWizardComponent, {
             height: '800px',
@@ -188,6 +188,7 @@ export class HeaderNotificationsComponent implements OnInit {
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
             data: {
+                showSubscriptions: showSubscriptions,
                 module: this.appService.getModuleSubscription().module,
                 title: this.subscriptionInfoTitle,
                 subtitle: this.subscriptionInfoText
