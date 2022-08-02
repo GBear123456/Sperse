@@ -75,9 +75,7 @@ export class PackageCardComponent implements OnChanges {
     constructor(
         private decimalPipe: DecimalPipe,
         public ls: AppLocalizationService
-    ) {
-        setTimeout(() => console.log(this.productInfo));
-    }
+    ) {}
 
     ngOnChanges(changes) {
         let product = this.products[this.productInfo.code];

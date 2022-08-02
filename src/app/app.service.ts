@@ -232,7 +232,7 @@ export class AppService extends AppServiceBase {
             this.checkModuleExpired();
         });
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
-            map(subscriptions => this.checkSubscriptionIsFree(null, subscriptions))
+            map(subscriptions => this.checkSubscriptionIsFree())
         );
     }
 
@@ -251,9 +251,12 @@ export class AppService extends AppServiceBase {
 
     getModuleSubscription(
         name: string = this.defaultSubscriptionModule, 
-        moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions
+        productGroup: string = 'signup'
     ): ModuleSubscriptionInfoDto {
-        let module = (name || this.getModule()).toUpperCase(), subscription;
+        let module = (name || this.getModule()).toUpperCase(), 
+            moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions && 
+                this.moduleSubscriptions.filter(item => item.productGroup == productGroup),
+            subscription;
         if (moduleSubscriptions && moduleSubscriptions.length && ModuleType[module]) {
             subscription = _.find(moduleSubscriptions, (subscription: ModuleSubscriptionInfoDto) => {
                 return subscription.module.includes(module) && subscription.statusId == 'A';
@@ -325,18 +328,16 @@ export class AppService extends AppServiceBase {
     }
 
     checkSubscriptionIsFree(
-        name: string = this.defaultSubscriptionModule, 
-        moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions
+        name: string = this.defaultSubscriptionModule
     ): boolean {
-        let sub = this.getModuleSubscription(name, moduleSubscriptions);
+        let sub = this.getModuleSubscription(name);
         return sub && !sub.endDate;
     }
 
     checkSubscriptionIsTrial(
-        name: string = this.defaultSubscriptionModule, 
-        moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions
+        name: string = this.defaultSubscriptionModule
     ): boolean {
-        let sub = this.getModuleSubscription(name, moduleSubscriptions);
+        let sub = this.getModuleSubscription(name);
         return sub && sub.isTrial;
     }
 
@@ -383,8 +384,8 @@ export class AppService extends AppServiceBase {
         if (module && module.statusId == 'C')
             return false;
 
-        return this.isHostTenant || !module || !module.endDate ||
-            this.hasRecurringBilling(module) || (module.endDate > moment().utc());
+        return this.isHostTenant || !module || !module.endDate 
+            || (module.endDate > moment().utc());
     }
 
     hasRecurringBilling(module: ModuleSubscriptionInfoDto): boolean {

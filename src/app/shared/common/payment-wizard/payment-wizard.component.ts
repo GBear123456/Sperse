@@ -13,14 +13,15 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { Observable } from 'rxjs';
-import { finalize } from 'rxjs/operators';
+import { first, finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
 import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
-import { ModuleType, PackageServiceProxy, TenantSubscriptionServiceProxy, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
+import { ModuleType, PackageServiceProxy, RecurringPaymentFrequency, 
+    TenantSubscriptionServiceProxy, ProductInfo, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
 import { StatusInfo } from './models/status-info';
 import { AppPermissions } from '@shared/AppPermissions';
 import { PermissionCheckerService } from 'abp-ng2-module';
@@ -39,13 +40,18 @@ export class PaymentWizardComponent {
     @ViewChild('stepper') stepper: MatStepper;
     @ViewChild('wizard') wizardRef: ElementRef;
     plan$: Observable<PaymentOptions> = this.paymentService.plan$;
+    packagesConfig$: Observable<ProductInfo[]> = this.paymentService.packagesConfig$;
     paymentStatus: PaymentStatusEnum;
     paymentStatusData: StatusInfo;
     refreshAfterClose = false;
-    module: ModuleType = this.data.module;
-    subscriptionIsDraft: boolean = this.appService.moduleSubscriptions.length && 
-        this.appService.moduleSubscriptions.every(sub => sub.statusId == 'D');
-    subscriptionIsFree: boolean = this.appService.checkSubscriptionIsFree(this.module);
+    subscriptionIsDraft: boolean = this.data.subscription && 
+        this.data.subscription.statusId == 'D';
+    subscriptionIsFree: boolean = this.appService.checkSubscriptionIsFree();
+    subscriptionIsTrialExpired: boolean = this.data.subscription &&
+        this.data.subscription.isTrial && !this.appService.hasModuleSubscription();
+    subscriptionIsActiveExpired: boolean = this.data.subscription && !this.data.subscription.isTrial &&
+        this.data.subscription.statusId == 'A' && !this.appService.hasModuleSubscription();
+    productName = this.data.subscription && this.data.subscription.productName;
     trackingCode: string;
 
     constructor(
@@ -82,6 +88,24 @@ export class PaymentWizardComponent {
             draftSubscription.invoiceId
         ).subscribe((response) => {
             window.location.href = response.paymentLink;
+        });
+    }
+
+    activateSubscription() {
+        this.packagesConfig$.pipe(first()).subscribe((products: ProductInfo[]) => {
+            let product = products.find(item => item.id == this.data.subscription.productId),
+                pricePerMonth = product ? (this.data.subscription.paymentPeriodType === 'Monthly' ?
+                    product.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Monthly).fee :
+                    Math.round(product.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Annual).fee / 12)
+                ) : 0;
+
+            this.changePlan({
+                productId: this.data.subscription.productId,
+                productName: this.data.subscription.productName,
+                paymentPeriodType: this.data.subscription.paymentPeriodType,
+                total: pricePerMonth
+            });
+            setTimeout(() => this.moveToPaymentOptionsStep());
         });
     }
 
