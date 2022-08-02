@@ -68063,6 +68063,7 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
     paymentCardNumber!: string | undefined;
     paymentCardNetwork!: string | undefined;
     downloadInvoiceUrl!: string | undefined;
+    downloadReceiptUrl!: string | undefined;
 
     constructor(data?: IGetInvoiceReceiptInfoOutput) {
         if (data) {
@@ -68084,6 +68085,7 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
             this.paymentCardNumber = _data["paymentCardNumber"];
             this.paymentCardNetwork = _data["paymentCardNetwork"];
             this.downloadInvoiceUrl = _data["downloadInvoiceUrl"];
+            this.downloadReceiptUrl = _data["downloadReceiptUrl"];
         }
     }
 
@@ -68105,6 +68107,7 @@ export class GetInvoiceReceiptInfoOutput implements IGetInvoiceReceiptInfoOutput
         data["paymentCardNumber"] = this.paymentCardNumber;
         data["paymentCardNetwork"] = this.paymentCardNetwork;
         data["downloadInvoiceUrl"] = this.downloadInvoiceUrl;
+        data["downloadReceiptUrl"] = this.downloadReceiptUrl;
         return data;
     }
 }
@@ -68119,6 +68122,7 @@ export interface IGetInvoiceReceiptInfoOutput {
     paymentCardNumber: string | undefined;
     paymentCardNetwork: string | undefined;
     downloadInvoiceUrl: string | undefined;
+    downloadReceiptUrl: string | undefined;
 }
 
 export class GetKeyAttributeValuesInput implements IGetKeyAttributeValuesInput {

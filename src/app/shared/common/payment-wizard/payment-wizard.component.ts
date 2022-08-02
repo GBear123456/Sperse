@@ -3,7 +3,6 @@ import {
     Component,
     ChangeDetectionStrategy,
     ChangeDetectorRef,
-    OnInit,
     ViewChild,
     ViewEncapsulation,
     Inject,
@@ -36,7 +35,7 @@ import { MessageService } from 'abp-ng2-module';
     providers: [ PaymentService, PackageServiceProxy, ProductServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PaymentWizardComponent implements OnInit {
+export class PaymentWizardComponent {
     @ViewChild('stepper') stepper: MatStepper;
     @ViewChild('wizard') wizardRef: ElementRef;
     plan$: Observable<PaymentOptions> = this.paymentService.plan$;
@@ -44,8 +43,8 @@ export class PaymentWizardComponent implements OnInit {
     paymentStatusData: StatusInfo;
     refreshAfterClose = false;
     module: ModuleType = this.data.module;
-    subscriptionIsLocked: boolean = this.appService.subscriptionIsLocked(this.module) && 
-        this.appService.getModuleSubscription(this.module).statusId != 'C';
+    subscriptionIsDraft: boolean = this.appService.moduleSubscriptions.length && 
+        this.appService.moduleSubscriptions.every(sub => sub.statusId == 'D');
     subscriptionIsFree: boolean = this.appService.checkSubscriptionIsFree(this.module);
     trackingCode: string;
 
@@ -60,12 +59,6 @@ export class PaymentWizardComponent implements OnInit {
         public ls: AppLocalizationService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {}
-
-    ngOnInit() {
-        if (this.subscriptionIsLocked) {
-            this.trackingCode = this.appService.getSubscriptionTrackingCode(this.module);
-        }
-    }
 
     moveToPaymentOptionsStep() {
         if (this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement))
@@ -83,15 +76,13 @@ export class PaymentWizardComponent implements OnInit {
         this.paymentStatusData = statusInfo;
     }
 
-    rejectPendingPayment() {
-        abp.ui.setBusy(this.wizardRef.nativeElement);
-        this.tenantSubscriptionService.rejectPendingPayment(<any>this.module)
-                                      .pipe(finalize(() => abp.ui.clearBusy(this.wizardRef.nativeElement)))
-                                      .subscribe(() => {
-                                          this.subscriptionIsLocked = false;
-                                          this.appService.loadModuleSubscriptions();
-                                          this.changeDetectorRef.detectChanges();
-                                      });
+    processPayment() {
+        let draftSubscription = this.appService.moduleSubscriptions[0];
+        this.tenantSubscriptionService.requestStripePaymentForInvoice(
+            draftSubscription.invoiceId
+        ).subscribe((response) => {
+            window.location.href = response.paymentLink;
+        });
     }
 
     setRefreshAfterClose() {
