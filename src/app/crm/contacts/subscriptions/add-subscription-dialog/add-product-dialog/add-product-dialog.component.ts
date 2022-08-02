@@ -32,15 +32,16 @@ import {
     RecurringPaymentFrequency,
     ProductSubscriptionOptionInfo,
     ProductMeasurementUnit,
-    SetProductImageInput
+    SetProductImageInput,
+    TenantPaymentSettingsServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { InvoicesService, } from '@app/crm/contacts/invoices/invoices.service';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
-import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
+import { FeatureCheckerService } from 'abp-ng2-module';
 import { UploadPhotoDialogComponent } from '@app/shared/common/upload-photo-dialog/upload-photo-dialog.component';
 import { UploadPhotoData } from '@app/shared/common/upload-photo-dialog/upload-photo-data.interface';
 import { UploadPhotoResult } from '@app/shared/common/upload-photo-dialog/upload-photo-result.interface';
@@ -54,7 +55,7 @@ import { StringHelper } from '@shared/helpers/StringHelper';
         '../../../../../shared/common/styles/form.less',
         './add-product-dialog.component.less'
     ],
-    providers: [ProductServiceProxy, ProductGroupServiceProxy, MemberServiceServiceProxy],
+    providers: [ProductServiceProxy, ProductGroupServiceProxy, MemberServiceServiceProxy, TenantPaymentSettingsServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AddProductDialogComponent implements AfterViewInit, OnInit {
@@ -93,10 +94,10 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         private invoicesService: InvoicesService,
         private changeDetection: ChangeDetectorRef,
         memberServiceProxy: MemberServiceServiceProxy,
+        private tenantPaymentSettingsProxy: TenantPaymentSettingsServiceProxy,
         public dialogRef: MatDialogRef<AddProductDialogComponent>,
         public ls: AppLocalizationService,
         public dialog: MatDialog,
-        private setting: SettingService,
         private feature: FeatureCheckerService,
         @Inject(MAT_DIALOG_DATA) public data: any
     ) {
@@ -129,7 +130,10 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
             this.detectChanges();
         });
 
-        this.gracePeriodDefaultValue = this.setting.getInt('App.OrderSubscription.DefaultSubscriptionGracePeriodDayCount');
+        this.tenantPaymentSettingsProxy.getSubscriptionSettings().subscribe((settings) => {
+            this.gracePeriodDefaultValue = settings.defaultSubscriptionGracePeriodDayCount;
+            this.detectChanges();
+        });
     }
 
     ngOnInit() {
