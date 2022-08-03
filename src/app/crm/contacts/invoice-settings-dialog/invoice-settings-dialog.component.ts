@@ -14,6 +14,7 @@ import {
     TenantPaymentSettingsServiceProxy,
     InvoiceSettings,
     InvoiceSettingsDto,
+    SubscriptionSettings,
     Tier2CommissionSource,
     CommissionAffiliateAssignmentMode
 } from '@shared/service-proxies/service-proxies';
@@ -26,6 +27,8 @@ import { AppFeatures } from '@shared/AppFeatures';
 import { IDialogButton } from '@shared/common/dialogs/modal/dialog-button.interface';
 import { ModalDialogComponent } from '@shared/common/dialogs/modal/modal-dialog.component';
 import { SourceContactListComponent } from '@shared/common/source-contact-list/source-contact-list.component';
+import { Observable } from 'rxjs/internal/Observable';
+import { forkJoin } from 'rxjs';
 
 @Component({
     templateUrl: 'invoice-settings-dialog.component.html',
@@ -38,6 +41,7 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
     @ViewChild(SourceContactListComponent) sourceComponent: SourceContactListComponent;
 
     settings = new InvoiceSettingsDto();
+    subscriptionSettings = new SubscriptionSettings();
     hasCommissionsFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMCommissions);
     hasBankCodeFeature: boolean = this.featureCheckerService.isEnabled(AppFeatures.CRMBANKCode);
     isManageUnallowed = !this.permission.isGranted(AppPermissions.CRMSettingsConfigure);
@@ -87,12 +91,20 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
 
     ngAfterViewInit() {
         this.modalDialog.startLoading();
-        this.invoicesService.settings$.pipe(filter(Boolean), first(),
-            finalize(() => this.modalDialog.finishLoading())
-        ).subscribe((res: InvoiceSettingsDto) => {
-            this.settings = new InvoiceSettingsDto(res);
+        let requests: Observable<any>[] = [
+            this.invoicesService.settings$.pipe(filter(Boolean), first()),
+            this.tenantPaymentSettingsProxy.getSubscriptionSettings()
+        ];
+        forkJoin(requests)
+        .pipe(
+            finalize(() => {
+                this.modalDialog.finishLoading();
+            })
+        ).subscribe((results) => {
+            this.settings = new InvoiceSettingsDto(results[0]);
             this.settings.defaultAffiliateRate = this.convertFromPercent(this.settings.defaultAffiliateRate);
             this.settings.defaultAffiliateRateTier2 = this.convertFromPercent(this.settings.defaultAffiliateRateTier2);
+            this.subscriptionSettings = new SubscriptionSettings(results[1])
             this.changeDetectorRef.markForCheck();
         });
         this.changeDetectorRef.detectChanges();
@@ -105,8 +117,15 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         this.modalDialog.startLoading();
         this.settings.defaultAffiliateRate = this.convertToPercent(this.settings.defaultAffiliateRate);
         this.settings.defaultAffiliateRateTier2 = this.convertToPercent(this.settings.defaultAffiliateRateTier2);
-        this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings)).pipe(
-            finalize(() => this.modalDialog.finishLoading())
+        let requests: Observable<any>[] = [
+            this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings)),
+            this.tenantPaymentSettingsProxy.updateSubscriptionSettings(new SubscriptionSettings(this.subscriptionSettings))
+        ];
+        forkJoin(requests)
+        .pipe(
+            finalize(() => {
+                this.modalDialog.finishLoading();
+            })
         ).subscribe(() => {
             this.notifyService.info(this.ls.l('SavedSuccessfully'));
             this.invoicesService.invalidateSettings(this.settings);
