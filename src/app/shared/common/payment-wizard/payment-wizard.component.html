@@ -22,11 +22,13 @@
                         <h2 class="title">{{ ls.l('SubscriptionTrialExpiredTitle') }}</h2>
                         <h3 class="message">{{ ls.l('SubscriptionTrialExpiredMessage', productName) }}</h3>
                         <button (click)="activateSubscription()" class="btn btn-layout">{{ ls.l('Activate') }}</button>
+                        <span class="bottom-message">{{ ls.l('SubscriptionCancellationMessage', cancellationDayCount) }}</span>
                     </div>
                     <div *ngIf="subscriptionIsActiveExpired" class="rejectSubscriptionBlock">
                         <h2 class="title">{{ ls.l('SubscriptionActiveExpiredTitle') }}</h2>
                         <h3 class="message">{{ ls.l('SubscriptionActiveExpiredMessage', productName) }}</h3>
                         <button (click)="close()" class="btn btn-layout">{{ ls.l('Close') }}</button>
+                        <span class="bottom-message">{{ ls.l('SubscriptionCancellationMessage', cancellationDayCount) }}</span>
                     </div>
                 </mat-step>
                 <mat-step>

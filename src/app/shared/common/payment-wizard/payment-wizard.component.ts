@@ -10,12 +10,14 @@ import {
 } from '@angular/core';
 
 /** Third party imports */
+import * as moment from 'moment-timezone';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { MatStepper } from '@angular/material/stepper';
 import { Observable } from 'rxjs';
 import { first, finalize } from 'rxjs/operators';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
 import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
@@ -52,6 +54,8 @@ export class PaymentWizardComponent {
     subscriptionIsActiveExpired: boolean = this.data.subscription && !this.data.subscription.isTrial &&
         this.data.subscription.statusId == 'A' && !this.appService.hasModuleSubscription();
     productName = this.data.subscription && this.data.subscription.productName;
+    cancellationDayCount = this.data.subscription ? 
+        this.data.subscription.endDate.diff(moment(), 'days') + AppConsts.subscriptionGracePeriod : 0;
     trackingCode: string;
 
     constructor(
