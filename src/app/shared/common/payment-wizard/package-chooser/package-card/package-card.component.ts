@@ -110,9 +110,11 @@ export class PackageCardComponent implements OnChanges {
     // }
 
     get pricePerMonth(): number {
-        return this.billingPeriod === BillingPeriod.Monthly
-            ? this.productInfo.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Monthly).fee
-            : Math.round(this.productInfo.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Annual).fee / 12)
+        let productMonthly = this.productInfo.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Monthly),
+            productAnnual = this.productInfo.productSubscriptionOptions.find(x => x.frequency == RecurringPaymentFrequency.Annual);
+        return this.billingPeriod === BillingPeriod.Monthly 
+            ? (productMonthly ? productMonthly.fee : 0)
+            : (productAnnual ? Math.round(productAnnual.fee / 12) : 0)
     }
 
     // get editionPricePerMonth(): number {
