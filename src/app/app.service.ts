@@ -221,24 +221,11 @@ export class AppService extends AppServiceBase {
             this.moduleSubscriptions = res.sort((left: ModuleSubscriptionInfoDto, right: ModuleSubscriptionInfoDto) => {
                 return left.endDate > right.endDate ? -1 : 1;
             });
-            this.checkModuleExpired();
+            setTimeout(() => this.checkModuleExpired());
         });
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
             map(subscriptions => this.checkSubscriptionIsFree(null, subscriptions))
         );
-    }
-
-    checkAllSubscriptionsExpired() {
-        this.moduleSubscriptions$.pipe(first()).subscribe((subs: ModuleSubscriptionInfoDto[]) => {
-            if (!subs.filter(sub => sub.isUpgradable).some(sub => this.hasModuleSubscription(sub.module))) {
-                if (!subs.length || subs.some(sub => sub.module == ModuleType.CFO_CRM))
-                    this.expiredModule.next(ModuleType.CFO_CRM);
-                else if (subs.some(sub => sub.module.includes(ModuleType.CRM)))
-                    this.expiredModule.next(ModuleType.CRM);
-                else if (subs.some(sub => sub.module.includes(ModuleType.CFO)))
-                    this.expiredModule.next(ModuleType.CFO);
-            }
-        });
     }
 
     getModuleSubscription(
@@ -375,8 +362,7 @@ export class AppService extends AppServiceBase {
         if (module && module.statusId == 'C')
             return false;
 
-        return this.isHostTenant || !module || !module.endDate ||
-            this.hasRecurringBilling(module) || (module.endDate > moment().utc());
+        return this.isHostTenant || !module || !module.endDate || (module.endDate > moment().utc());
     }
 
     hasRecurringBilling(module: ModuleSubscriptionInfoDto): boolean {

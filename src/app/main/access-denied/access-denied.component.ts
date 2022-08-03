@@ -12,6 +12,5 @@ export class AccessDeniedComponent extends AppComponentBase {
         public appService: AppService
     ) {
         super(injector);
-        this.appService.checkAllSubscriptionsExpired();
     }
 }

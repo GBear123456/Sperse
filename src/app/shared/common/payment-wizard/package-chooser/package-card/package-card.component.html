@@ -1,7 +1,7 @@
 <div class="bestValue" *ngIf="bestValue"><span>{{ ls.l('BestValue') }}</span></div>
 <div class="cardHeader">
     <h3 class="title">
-        <img *ngIf="productInfo.imageUrl" [src]="productInfo.imageUrl">
+        <img *ngIf="productInfo.imageUrl" width="64" height="auto" [src]="productInfo.imageUrl">
         {{ productInfo.name }}
     </h3>
     <div class="price-block">
