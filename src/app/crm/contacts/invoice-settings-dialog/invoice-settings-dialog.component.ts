@@ -117,6 +117,8 @@ export class InvoiceSettingsDialogComponent implements AfterViewInit {
         this.modalDialog.startLoading();
         this.settings.defaultAffiliateRate = this.convertToPercent(this.settings.defaultAffiliateRate);
         this.settings.defaultAffiliateRateTier2 = this.convertToPercent(this.settings.defaultAffiliateRateTier2);
+        if (this.subscriptionSettings.defaultSubscriptionGracePeriodDayCount == undefined)
+            this.subscriptionSettings.defaultSubscriptionGracePeriodDayCount = 0
         let requests: Observable<any>[] = [
             this.tenantPaymentSettingsProxy.updateInvoiceSettings(new InvoiceSettings(this.settings)),
             this.tenantPaymentSettingsProxy.updateSubscriptionSettings(new SubscriptionSettings(this.subscriptionSettings))
