@@ -63,7 +63,7 @@
                 <p class="phoneNumber">{{ phoneNumber }}</p>
             </div>
         </div>
-        <button (click)="close()"></button>
+        <!-- button (click)="close()"></button -->
     </div>
     <div class="paymentMethods">
         <mat-tab-group *ngIf="plan.total" [(selectedIndex)]="selectedGateway" (selectedTabChange)="selectedTabChange($event)">

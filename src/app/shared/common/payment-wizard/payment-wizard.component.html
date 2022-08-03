@@ -5,10 +5,9 @@
             <mat-horizontal-stepper #stepper>
                 <mat-step>
                     <package-chooser
-                        *ngIf="!subscriptionIsDraft"
+                        *ngIf="!subscriptionIsDraft && !subscriptionIsTrialExpired && !subscriptionIsActiveExpired"
                         [widgettitle]="data?.title"
                         [subtitle]="data?.subtitle"
-                        [module]="module"
                         [showBackground]="true"
                         [showDowngradeLink]="!subscriptionIsFree"
                         (onPlanChosen)="changePlan($event)"
@@ -18,6 +17,16 @@
                         <h2 class="title">{{ ls.l('SubscriptionDraftTitle') }}</h2>
                         <h3 class="message">{{ ls.l('SubscriptionDraftMessage') }}</h3>
                         <button (click)="processPayment()" class="btn btn-layout">{{ ls.l('Pay Now') }}</button>
+                    </div>
+                    <div *ngIf="subscriptionIsTrialExpired" class="rejectSubscriptionBlock">
+                        <h2 class="title">{{ ls.l('SubscriptionTrialExpiredTitle') }}</h2>
+                        <h3 class="message">{{ ls.l('SubscriptionTrialExpiredMessage', productName) }}</h3>
+                        <button (click)="activateSubscription()" class="btn btn-layout">{{ ls.l('Activate') }}</button>
+                    </div>
+                    <div *ngIf="subscriptionIsActiveExpired" class="rejectSubscriptionBlock">
+                        <h2 class="title">{{ ls.l('SubscriptionActiveExpiredTitle') }}</h2>
+                        <h3 class="message">{{ ls.l('SubscriptionActiveExpiredMessage', productName) }}</h3>
+                        <button (click)="close()" class="btn btn-layout">{{ ls.l('Close') }}</button>
                     </div>
                 </mat-step>
                 <mat-step>

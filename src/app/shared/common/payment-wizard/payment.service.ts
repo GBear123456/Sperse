@@ -1,13 +1,29 @@
+/** Application imports */
 import { Injectable } from '@angular/core';
 
-import { Subject } from 'rxjs';
+/** Third party imports */
+import { Observable, Subject } from 'rxjs';
+import { publishReplay, refCount } from 'rxjs/operators';
 
+/** Application imports */
 import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
-import { Observable } from '@node_modules/rxjs';
+import {
+    ProductInfo,
+    ProductServiceProxy
+} from '@shared/service-proxies/service-proxies';
 
 @Injectable()
 export class PaymentService {
     _plan: Subject<PaymentOptions> = new Subject();
     plan$: Observable<PaymentOptions> = this._plan.asObservable();
-    constructor() {}
+    packagesConfig$: Observable<ProductInfo[]> = this.productServiceProxy.getSubscriptionProductsByGroupName(
+        'signup'
+    ).pipe(
+        publishReplay(),
+        refCount()
+    );
+
+    constructor(
+        private productServiceProxy: ProductServiceProxy
+    ) {}
 }
