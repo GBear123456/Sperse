@@ -1,21 +1,29 @@
 /** Core imports */
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { GetInvoiceReceiptInfoOutput, InvoiceStatus, UserInvoiceServiceProxy } from '@root/shared/service-proxies/service-proxies';
 
 /** Third party imports */
+import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
+import { ConditionsType } from '@shared/AppEnums';
+import { ConditionsModalComponent } from '@shared/common/conditions-modal/conditions-modal.component';
+import { ContditionsModalData } from '../../shared/common/conditions-modal/conditions-modal-data';
 
 @Component({
     selector: 'public-receipt',
     templateUrl: 'receipt.component.html',
     styleUrls: [
+        '../../shared/common/styles/core.less',
         './receipt.component.less'
-    ]})
+    ],
+    encapsulation: ViewEncapsulation.None})
 export class ReceiptComponent implements OnInit {
     loading: boolean = true;
     invoiceInfo: GetInvoiceReceiptInfoOutput;
+    currentYear: number = new Date().getFullYear();
+    conditions = ConditionsType;
 
     static maxRetryCount: number = 10;
     currentRetryCount: number = 0;
@@ -23,7 +31,8 @@ export class ReceiptComponent implements OnInit {
 
     constructor(
         private route: ActivatedRoute,
-        private userInvoiceService: UserInvoiceServiceProxy
+        private userInvoiceService: UserInvoiceServiceProxy,
+        private dialog: MatDialog
     ) {
     }
 
@@ -56,5 +65,15 @@ export class ReceiptComponent implements OnInit {
                 this.loading = false;
                 abp.ui.clearBusy();
             });
+    }
+
+    openConditionsDialog(type: ConditionsType) {
+        this.dialog.open<ConditionsModalComponent, ContditionsModalData>(ConditionsModalComponent, {
+            panelClass: ['slider', 'footer-slider'],
+            data: {
+                type: type,
+                onlyHost: true
+            }
+        });
     }
 }

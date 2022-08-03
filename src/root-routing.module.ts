@@ -60,7 +60,9 @@ const routes: Routes = [
     },
     {
         path: 'receipt',
-        loadChildren: () => import('public/receipt/receipt.module').then(m => m.ReceiptModule)
+        canActivate: [ LocalizationResolver ],
+        loadChildren: () => import('public/receipt/receipt.module').then(m => m.ReceiptModule),
+        data: { localizationSource: 'Platform' }
     },
     {
         path: '**',

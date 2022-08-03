@@ -45,7 +45,7 @@
                         <div [ngSwitch]="paymentMethod.type">
                             <ng-container *ngSwitchCase="paymentMethodsTypes.BankCard">
                                 <div [ngClass]="{'active': paymentMethod.active}" class="paymentMethodIcon">
-                                    <img [src]="'./assets/common/images/payments/card-logo/' + getCardTypeFromNumber(paymentMethod.bankCardInfo.cardNumber) + '.svg'">
+                                    <img [src]="'./assets/common/images/payments/card-logo/' + getCardType(paymentMethod.bankCardInfo) + '.svg'">
                                 </div>
                                 <div>
                                     <p class="paymentName">{{ paymentMethod.bankCardInfo.cardNumber }}</p>

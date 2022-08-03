@@ -75,7 +75,7 @@ export class AppComponent implements OnInit {
                             if ((sub.statusId != 'A' || !appService.hasModuleSubscription())  && !this.dialog.getDialogById('payment-wizard')) {
                                 this.dialog.open(PaymentWizardComponent, {
                                     height: '800px',
-                                    width: '1200px',
+                                    width: '1200px',                                                              
                                     id: 'payment-wizard',
                                     disableClose: true,
                                     panelClass: ['payment-wizard', 'setup'],

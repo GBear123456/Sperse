@@ -229,24 +229,11 @@ export class AppService extends AppServiceBase {
                 else
                     return 1;
             });
-            this.checkModuleExpired();
+            setTimeout(() => this.checkModuleExpired());
         });
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
             map(subscriptions => this.checkSubscriptionIsFree())
         );
-    }
-
-    checkAllSubscriptionsExpired() {
-        this.moduleSubscriptions$.pipe(first()).subscribe((subs: ModuleSubscriptionInfoDto[]) => {
-            if (!subs.filter(sub => sub.isUpgradable).some(sub => this.hasModuleSubscription(sub.module))) {
-                if (!subs.length || subs.some(sub => sub.module == ModuleType.CFO_CRM))
-                    this.expiredModule.next(ModuleType.CFO_CRM);
-                else if (subs.some(sub => sub.module.includes(ModuleType.CRM)))
-                    this.expiredModule.next(ModuleType.CRM);
-                else if (subs.some(sub => sub.module.includes(ModuleType.CFO)))
-                    this.expiredModule.next(ModuleType.CFO);
-            }
-        });
     }
 
     getModuleSubscription(
@@ -338,7 +325,7 @@ export class AppService extends AppServiceBase {
         name: string = this.defaultSubscriptionModule
     ): boolean {
         let sub = this.getModuleSubscription(name);
-        return sub && sub.isTrial;
+        return sub && sub.statusId != 'C' && sub.isTrial;
     }
 
     subscriptionInGracePeriod(name: string = this.defaultSubscriptionModule): boolean {
