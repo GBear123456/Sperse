@@ -305,8 +305,6 @@ export class AppService extends AppServiceBase {
 
     subscriptionIsExpiringSoon(name: string = this.defaultSubscriptionModule): boolean {
         let sub = this.getModuleSubscription(name);
-        if (this.hasRecurringBilling(sub))
-            return false;
 
         if (!this.isHostTenant && sub && sub.endDate) {
             let diff = sub.endDate.diff(moment().utc(), 'days', true);
@@ -358,7 +356,7 @@ export class AppService extends AppServiceBase {
     getGracePeriodDayCount(name: string = this.defaultSubscriptionModule) {
         let sub = this.getModuleSubscription(name);
         return sub && !sub.isLocked && sub.endDate && Math.round(moment(sub.endDate)
-            .add(AppConsts.subscriptionGracePeriod, 'days').diff(moment().utc(), 'days', true));
+            .add(this.getGracePeriod(), 'days').diff(moment().utc(), 'days', true));
     }
 
     hasModuleSubscription(
@@ -373,11 +371,6 @@ export class AppService extends AppServiceBase {
 
         return this.isHostTenant || !module || !module.endDate 
             || (module.endDate > moment().utc());
-    }
-
-    hasRecurringBilling(module: ModuleSubscriptionInfoDto): boolean {
-        return module && module.hasRecurringBilling && !module.isLocked && (moment(module.endDate).add(
-            AppConsts.subscriptionRecurringBillingPeriod, 'days') > moment().utc());
     }
 
     checkModuleExpired(name: string = this.defaultSubscriptionModule) {
