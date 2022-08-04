@@ -7,7 +7,10 @@ import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
-import { InstanceServiceProxy, NotificationServiceProxy, TenantSubscriptionServiceProxy, UserNotificationDto, UserNotificationState, GetNotificationsOutput } from '@shared/service-proxies/service-proxies';
+import { 
+    LayoutType, InstanceServiceProxy, NotificationServiceProxy, 
+    TenantSubscriptionServiceProxy, UserNotificationDto, 
+    UserNotificationState, GetNotificationsOutput } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from '../UserNotificationHelper';
 import { PaymentWizardComponent } from '../../../common/payment-wizard/payment-wizard.component';
 import { AppService } from '@app/app.service';
@@ -166,7 +169,8 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement);            
+        return this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement)
+            && (!this.appSession.tenant.customLayoutType || this.appSession.tenant.customLayoutType == LayoutType.Default);
     }
 
     prolongButtonVisible(): boolean {
