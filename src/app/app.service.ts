@@ -242,7 +242,7 @@ export class AppService extends AppServiceBase {
     ): ModuleSubscriptionInfoDto {
         let module = (name || this.getModule()).toUpperCase(), 
             moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions && 
-                this.moduleSubscriptions.filter(item => item.productGroup == productGroup),
+                this.moduleSubscriptions.filter(item => item.productGroup.toLowerCase() == productGroup),
             subscription;
         if (moduleSubscriptions && moduleSubscriptions.length && ModuleType[module]) {
             subscription = _.find(moduleSubscriptions, (subscription: ModuleSubscriptionInfoDto) => {
