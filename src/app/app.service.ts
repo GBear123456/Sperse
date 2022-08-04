@@ -219,20 +219,31 @@ export class AppService extends AppServiceBase {
             }), publishReplay(), refCount());
         this.moduleSubscriptions$.subscribe((res: ModuleSubscriptionInfoDto[]) => {
             this.moduleSubscriptions = res.sort((left: ModuleSubscriptionInfoDto, right: ModuleSubscriptionInfoDto) => {
-                return left.endDate > right.endDate ? -1 : 1;
+                const isLeftSignupGroup = left.productGroup && left.productGroup.toLowerCase() == 'signup',
+                    isRightSignupGroup = right.productGroup && right.productGroup.toLowerCase() == 'signup';
+                if (isLeftSignupGroup && isRightSignupGroup ||
+                    !isLeftSignupGroup && !isRightSignupGroup
+                ) return left.endDate > right.endDate ? -1 : 1;
+                else if (isLeftSignupGroup)
+                    return -1;
+                else
+                    return 1;
             });
             setTimeout(() => this.checkModuleExpired());
         });
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
-            map(subscriptions => this.checkSubscriptionIsFree(null, subscriptions))
+            map(subscriptions => this.checkSubscriptionIsFree())
         );
     }
 
     getModuleSubscription(
         name: string = this.defaultSubscriptionModule, 
-        moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions
+        productGroup: string = 'signup'
     ): ModuleSubscriptionInfoDto {
-        let module = (name || this.getModule()).toUpperCase(), subscription;
+        let module = (name || this.getModule()).toUpperCase(), 
+            moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions && 
+                this.moduleSubscriptions.filter(item => !productGroup || item.productGroup && item.productGroup.toLowerCase() == productGroup),
+            subscription;
         if (moduleSubscriptions && moduleSubscriptions.length && ModuleType[module]) {
             subscription = _.find(moduleSubscriptions, (subscription: ModuleSubscriptionInfoDto) => {
                 return subscription.module.includes(module) && subscription.statusId == 'A';
@@ -304,18 +315,16 @@ export class AppService extends AppServiceBase {
     }
 
     checkSubscriptionIsFree(
-        name: string = this.defaultSubscriptionModule, 
-        moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions
+        name: string = this.defaultSubscriptionModule
     ): boolean {
-        let sub = this.getModuleSubscription(name, moduleSubscriptions);
+        let sub = this.getModuleSubscription(name);
         return sub && !sub.endDate;
     }
 
     checkSubscriptionIsTrial(
-        name: string = this.defaultSubscriptionModule, 
-        moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions
+        name: string = this.defaultSubscriptionModule
     ): boolean {
-        let sub = this.getModuleSubscription(name, moduleSubscriptions);
+        let sub = this.getModuleSubscription(name);
         return sub && sub.statusId != 'C' && sub.isTrial;
     }
 
@@ -362,7 +371,8 @@ export class AppService extends AppServiceBase {
         if (module && module.statusId == 'C')
             return false;
 
-        return this.isHostTenant || !module || !module.endDate || (module.endDate > moment().utc());
+        return this.isHostTenant || !module || !module.endDate 
+            || (module.endDate > moment().utc());
     }
 
     hasRecurringBilling(module: ModuleSubscriptionInfoDto): boolean {

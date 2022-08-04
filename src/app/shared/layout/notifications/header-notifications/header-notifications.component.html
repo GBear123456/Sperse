@@ -28,7 +28,7 @@
                     <div class="subscription-info">
                         <div class="details">
                             <div class="vertical-align">
-                                <span class="title">{{subscriptionInfoTitle}}</span>
+                                <span class="title" (click)="openPaymentWizardDialog($event, true)">{{subscriptionInfoTitle}}</span>
                                 <br />
                                 <span>{{subscriptionInfoText}}</span>
                             </div>

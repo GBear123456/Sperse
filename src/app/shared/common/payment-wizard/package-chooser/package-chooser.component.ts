@@ -15,10 +15,11 @@ import {
 /** Third party imports */
 import { MatSliderChange, MatSlider } from '@angular/material/slider';
 import { Observable, forkJoin } from 'rxjs';
-import { concatAll, map, max, pluck, publishReplay, refCount } from 'rxjs/operators';
+import { first, concatAll, map, max, pluck, publishReplay, refCount } from 'rxjs/operators';
 import partition from 'lodash/partition';
 
 /** Application imports */
+import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { BillingPeriod } from '@app/shared/common/payment-wizard/models/billing-period.enum';
 import { PackageCardComponent } from '@app/shared/common/payment-wizard/package-chooser/package-card/package-card.component';
 import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
@@ -47,7 +48,6 @@ import { AppService } from '@app/app.service';
 export class PackageChooserComponent implements OnInit {
     @ViewChildren(PackageCardComponent) packageCardComponents: QueryList<PackageCardComponent>;
     @ViewChildren(MatSlider) slider: MatSlider;
-    @Input() module: ModuleType;
     @Input() widgettitle: string;
     @Input() subtitle = this.ls.l('ChoosePlan');
     @Input() yearDiscount = 20;
@@ -85,7 +85,7 @@ export class PackageChooserComponent implements OnInit {
     private enableSliderScalingChange = false;
 
     public freePackages: PackageConfigDto[];
-    packagesConfig$: Observable<ProductInfo[]>;
+    packagesConfig$: Observable<ProductInfo[]> = this.paymentService.packagesConfig$;
     configurator = 'billingPeriod';
     tenantSubscriptionIsTrial: boolean;
     tenantSubscriptionIsFree: boolean;
@@ -94,7 +94,7 @@ export class PackageChooserComponent implements OnInit {
         public localizationService: AppLocalizationService,
         private localizationResolver: LocalizationResolver,
         private packageServiceProxy: PackageServiceProxy,
-        private productServiceProxy: ProductServiceProxy,
+        private paymentService: PaymentService,
         private changeDetectionRef: ChangeDetectorRef,
         private appService: AppService,
         public ls: AppLocalizationService
@@ -135,11 +135,7 @@ export class PackageChooserComponent implements OnInit {
     }
 
     loadPackages() {
-        this.packagesConfig$ = this.productServiceProxy.getSubscriptionProductsByGroupName('signup').pipe(
-            publishReplay(),
-            refCount()
-        );
-        this.packagesConfig$.subscribe((products: ProductInfo[]) => {
+        this.packagesConfig$.pipe(first()).subscribe((products: ProductInfo[]) => {
             this.packages = products;
             this.preselectPackage();
             // this.splitPackagesForFreeAndNotFree(packagesConfig);

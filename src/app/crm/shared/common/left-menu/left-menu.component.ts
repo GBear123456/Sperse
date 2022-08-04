@@ -54,6 +54,13 @@ export class LeftMenuComponent implements OnInit {
     initMenuItems() {
         this.leftMenuItems = [
             {
+                caption: this.ls.l('MySubscriptions'),
+                visible: !this.appService.isHostTenant,
+                iconSrc: 'assets/common/icons/similar-contacts.svg',
+                isModalDialog: true,
+                onClick: () => this.openPaymentWizard.emit()
+            },
+            {
                 caption: this.ls.l('CRMDashboardMenu_ManageClients'),
                 component: '/clients',
                 showPlus: true,

@@ -1,0 +1,44 @@
+<h2>{{ l('MySubscriptions') }}</h2>
+<dx-data-grid
+    class="alone main-component-view"
+    keyExpr="id"
+    [pager]="{visible: false}"
+    [paging]="{enabled: false}"
+    [dataSource]="moduleSubscriptions"
+    [allowColumnReordering]="false"
+    [columnAutoWidth]="true"
+    [allowColumnResizing]="false">
+    <dxo-scrolling mode="infinite"></dxo-scrolling>
+
+    <dxi-column caption="" cellTemplate="imageTemplate" width="80px"></dxi-column>
+
+    <dxi-column dataField="productName" [caption]="l('ProductName')"></dxi-column>
+
+    <dxi-column dataField="productGroup" [caption]="l('Group')"></dxi-column>
+
+    <dxi-column dataField="paymentPeriodType" [caption]="l('PaymentPeriod')"></dxi-column>
+
+    <dxi-column dataField="isTrial" [caption]="l('Trial')" dataType="boolean"></dxi-column>
+
+    <dxi-column dataField="statusId" [allowResizing]="false" [caption]="l('Status')" cellTemplate="statusCell" width="130px"></dxi-column>
+
+    <dxi-column dataField="endDate" [allowResizing]="false" cellTemplate="dateTimeTemplate" width="150px" cssClass="tabular"></dxi-column>
+
+    <dxi-column [allowResizing]="false" caption="" cellTemplate="actionCell"></dxi-column>
+
+    <div *dxTemplate="let cellData of 'imageTemplate'" class="product-icon">
+        <img width="auto" height="64px" [src]="cellData.data.productImageUrl" onerror="this.src='assets/common/images/product.png'">
+    </div>
+
+    <div *dxTemplate="let cellData of 'dateTimeTemplate'" class="date-box">
+        <span class="date-time" title="{{cellData.value | datetime: formatting.dateTimeMoment}}">{{cellData.value | datetime: formatting.dateMoment}}</span>
+    </div>
+
+    <div *dxTemplate="let cellData of 'statusCell'" class="status {{isExpired(cellData) ? 'E' : cellData.value}}">
+        {{cellData.value == 'A' ? l(isExpired(cellData) ? 'Expired' : 'Active') : (cellData.value == 'D' ? l('Draft') : l('Cancelled'))}}
+    </div>
+
+    <div *dxTemplate="let cellData of 'actionCell'">
+        <a *ngIf="cellData.data.statusId == 'A'" href="javascript:void(0)" (click)="cancelSubscription(cellData.data)">{{l('Cancel')}}</a>
+    </div>
+</dx-data-grid>

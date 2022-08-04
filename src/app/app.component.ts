@@ -71,16 +71,16 @@ export class AppComponent implements OnInit {
                     }
                     paymentDialogTimeout = setTimeout(() => {
                         if (this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement)) {
-                            if (!appService.moduleSubscriptions.some(sub => sub.statusId == 'A') && !this.dialog.getDialogById('payment-wizard')) {
-                                const sub = appService.getModuleSubscription(name);
+                            let sub = appService.getModuleSubscription();
+                            if ((sub.statusId != 'A' || !appService.hasModuleSubscription())  && !this.dialog.getDialogById('payment-wizard')) {
                                 this.dialog.open(PaymentWizardComponent, {
                                     height: '800px',
                                     width: '1200px',                                                              
-                                    disableClose: appService.moduleSubscriptions.every(sub => sub.statusId == 'C' || sub.statusId == 'D'), 
                                     id: 'payment-wizard',
+                                    disableClose: true,
                                     panelClass: ['payment-wizard', 'setup'],
                                     data: {
-                                        module: sub.module,
+                                        subscription: sub,
                                         title: ls.ls(
                                             'Platform',
                                             'ModuleExpired',
