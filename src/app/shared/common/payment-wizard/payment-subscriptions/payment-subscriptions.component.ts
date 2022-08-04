@@ -11,6 +11,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { finalize } from 'rxjs/operators';
 
 /** Application imports */
+import * as moment from 'moment-timezone';
 import { 
     CancelSubscriptionInput, 
     TenantSubscriptionServiceProxy 
@@ -49,6 +50,10 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
                 output.push(list[i]);
             }
         return output;
+    }
+
+    isExpired(cell) {
+        return moment(cell.data.endDate).diff(moment(), 'minutes') <= 0;
     }
 
     cancelSubscription(data) {

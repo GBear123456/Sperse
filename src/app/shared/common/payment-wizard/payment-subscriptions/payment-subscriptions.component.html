@@ -34,8 +34,8 @@
         <span class="date-time" title="{{cellData.value | datetime: formatting.dateTimeMoment}}">{{cellData.value | datetime: formatting.dateMoment}}</span>
     </div>
 
-    <div *dxTemplate="let cellData of 'statusCell'" class="status {{cellData.value}}">
-        {{cellData.value == 'A' ? l('Active') : (cellData.value == 'D' ? l('Draft') : l('Cancelled'))}}
+    <div *dxTemplate="let cellData of 'statusCell'" class="status {{isExpired(cellData) ? 'E' : cellData.value}}">
+        {{cellData.value == 'A' ? l(isExpired(cellData) ? 'Expired' : 'Active') : (cellData.value == 'D' ? l('Draft') : l('Cancelled'))}}
     </div>
 
     <div *dxTemplate="let cellData of 'actionCell'">
