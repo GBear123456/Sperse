@@ -13,7 +13,7 @@ import { filter, first, takeUntil } from 'rxjs/operators';
 import { CFOComponentBase } from '@shared/cfo/cfo-component-base';
 import { PortalDashboardComponent } from './dashboard/portal-dashboard.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
-import { InstanceType, LayoutType } from '@shared/service-proxies/service-proxies';
+import { InstanceType, LayoutType, ModuleType } from '@shared/service-proxies/service-proxies';
 import { AppService } from '@app/app.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { CfoIntroComponent } from '@app/cfo/shared/cfo-intro/cfo-intro.component';
@@ -50,7 +50,7 @@ export class StartComponent extends CFOComponentBase implements AfterViewInit, O
     }
 
     ngOnInit() {
-        if (this.appService.hasModuleSubscription() && this.instanceType == InstanceType.Main) {
+        if (this.appService.hasModuleSubscription(ModuleType.CFO, '') && this.instanceType == InstanceType.Main) {
             const introAcceptedCache = this.cacheService.get(this.introAcceptedCacheKey);
             /** Show crm wizard if there is no cache for it */
             if (!introAcceptedCache || introAcceptedCache === 'false') {

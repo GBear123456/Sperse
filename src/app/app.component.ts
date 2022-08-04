@@ -7,6 +7,7 @@ import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ChatSignalrService } from 'app/shared/layout/chat/chat-signalr.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -62,17 +63,16 @@ export class AppComponent implements OnInit {
         if (!appService.isHostTenant) {
             let paymentDialogTimeout;
             appService.expiredModuleSubscribe((name) => {
-                let moduleName = name.toLowerCase();
+                let isCustomLayout = appSession.tenant.customLayoutType && appSession.tenant.customLayoutType !== LayoutType.Default,                    
+                    moduleName = isCustomLayout ? '' : name.toLowerCase(),
+                    productGroup = isCustomLayout ? '' : 'signup';
                 if (moduleName != appService.getDefaultModule()) {
                     clearTimeout(paymentDialogTimeout);
-                    if (!appService.subscriptionInGracePeriod(moduleName)) {
-                        this.dialog.closeAll();
-                        this.router.navigate(['app/admin/users']);
-                    }
                     paymentDialogTimeout = setTimeout(() => {
                         if (this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement)) {
-                            let sub = appService.getModuleSubscription();
-                            if ((sub.statusId != 'A' || !appService.hasModuleSubscription())  && !this.dialog.getDialogById('payment-wizard')) {
+                            let hasSubscription = appService.hasModuleSubscription(moduleName, productGroup),
+                                sub = appService.getModuleSubscription(moduleName, productGroup);
+                            if ((sub.statusId != 'A' || !hasSubscription) && !this.dialog.getDialogById('payment-wizard')) {
                                 this.dialog.open(PaymentWizardComponent, {
                                     height: '800px',
                                     width: '1200px',                                                              

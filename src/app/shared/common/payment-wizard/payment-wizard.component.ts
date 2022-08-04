@@ -17,7 +17,6 @@ import { Observable } from 'rxjs';
 import { first, finalize } from 'rxjs/operators';
 
 /** Application imports */
-import { AppConsts } from '@shared/AppConsts';
 import { AppService } from '@app/app.service';
 import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
@@ -46,16 +45,15 @@ export class PaymentWizardComponent {
     paymentStatus: PaymentStatusEnum;
     paymentStatusData: StatusInfo;
     refreshAfterClose = false;
-    subscriptionIsDraft: boolean = this.data.subscription && 
-        this.data.subscription.statusId == 'D';
+    subscriptionIsDraft: boolean = this.data.subscription && this.data.subscription.statusId == 'D';
     subscriptionIsFree: boolean = this.appService.checkSubscriptionIsFree();
-    subscriptionIsTrialExpired: boolean = this.data.subscription &&
+    subscriptionIsTrialExpired: boolean = this.data.subscription && this.data.subscription.statusId == 'A' &&
         this.data.subscription.isTrial && !this.appService.hasModuleSubscription();
     subscriptionIsActiveExpired: boolean = this.data.subscription && !this.data.subscription.isTrial &&
         this.data.subscription.statusId == 'A' && !this.appService.hasModuleSubscription();
     productName = this.data.subscription && this.data.subscription.productName;
-    cancellationDayCount = this.data.subscription ? 
-        this.data.subscription.endDate.diff(moment(), 'days') + AppConsts.subscriptionGracePeriod : 0;
+    cancellationDayCount = this.data.subscription && this.data.subscription.endDate ? 
+        this.data.subscription.endDate.diff(moment(), 'days') + this.appService.getGracePeriod() : 0;
     trackingCode: string;
 
     constructor(

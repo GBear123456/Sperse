@@ -240,11 +240,12 @@ export class AppService extends AppServiceBase {
         name: string = this.defaultSubscriptionModule, 
         productGroup: string = 'signup'
     ): ModuleSubscriptionInfoDto {
-        let module = (name || this.getModule()).toUpperCase(), 
-            moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions && 
-                this.moduleSubscriptions.filter(item => !productGroup || item.productGroup && item.productGroup.toLowerCase() == productGroup),
+        let module = name.toUpperCase(), 
+            moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions && productGroup ?
+                this.moduleSubscriptions.filter(item => item.productGroup && item.productGroup.toLowerCase() == productGroup) :
+                this.moduleSubscriptions,
             subscription;
-        if (moduleSubscriptions && moduleSubscriptions.length && ModuleType[module]) {
+        if (moduleSubscriptions && moduleSubscriptions.length) {
             subscription = _.find(moduleSubscriptions, (subscription: ModuleSubscriptionInfoDto) => {
                 return subscription.module.includes(module) && subscription.statusId == 'A';
             });
@@ -328,28 +329,24 @@ export class AppService extends AppServiceBase {
         return sub && sub.statusId != 'C' && sub.isTrial;
     }
 
-    subscriptionInGracePeriod(name: string = this.defaultSubscriptionModule): boolean {
-        let sub = this.getModuleSubscription(name);
-        return this.subscriptionInGracePeriodBySubscription(sub)
+    subscriptionInGracePeriod(
+        name: string = this.defaultSubscriptionModule,
+        productGroup?: string
+    ): boolean {
+        let sub = this.getModuleSubscription(name, productGroup);
+        return this.subscriptionInGracePeriodBySubscription(sub);
     }
 
     subscriptionInGracePeriodBySubscription(sub: ModuleSubscriptionInfoDto): boolean {
-        if (this.hasRecurringBilling(sub))
-            return false;
-
         if (!this.isHostTenant && sub && !sub.isLocked && sub.endDate) {
             let diff = moment().utc().diff(sub.endDate, 'days', true);
-            return (diff > 0) && (diff <= this.getGracePeriod(sub));
+            return (diff > 0) && (diff <= this.getGracePeriod());
         }
         return false;
     }
 
-    getGracePeriod(subscription: ModuleSubscriptionInfoDto) {
-        return subscription.isLocked ? 0 :
-            (subscription && subscription.hasRecurringBilling
-              ? AppConsts.subscriptionRecurringBillingPeriod
-              : 0
-            ) + AppConsts.subscriptionGracePeriod;
+    getGracePeriod() {
+        return parseInt(abp.setting.get('App.OrderSubscription.DefaultSubscriptionGracePeriodDayCount')) || 0;
     }
 
     getSubscriptionExpiringDayCount(name: string = this.defaultSubscriptionModule): number {
@@ -364,11 +361,14 @@ export class AppService extends AppServiceBase {
             .add(AppConsts.subscriptionGracePeriod, 'days').diff(moment().utc(), 'days', true));
     }
 
-    hasModuleSubscription(name: string = this.defaultSubscriptionModule) {
-        name = (name || this.getModule()).toUpperCase();
-        let module = this.getModuleSubscription(name);
+    hasModuleSubscription(
+        name: string = this.defaultSubscriptionModule,
+        productGroup?: string
+    ) {
+        name = name && name.toUpperCase();
+        let module = this.getModuleSubscription(name, productGroup);
 
-        if (module && module.statusId == 'C')
+        if (module && ['D', 'C'].includes(module.statusId))
             return false;
 
         return this.isHostTenant || !module || !module.endDate 
