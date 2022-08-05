@@ -5,6 +5,7 @@ import { RouterModule } from '@angular/router';
 /** Application imports */
 import { ClientsComponent } from './clients/clients.component';
 import { ProductsComponent } from './products/products.component';
+import { CouponsComponent } from './coupons/coupons.component';
 import { PartnersComponent } from './partners/partners.component';
 import { LeadsComponent } from './leads/leads.component';
 import { OrdersComponent } from './orders/orders.component';
@@ -30,6 +31,7 @@ import { CrmContactGroupGuard } from '@app/crm/crm-contact-group-guard'
                     { path: 'documents', component: DocumentsComponent, data: { permission: AppPermissions.CRMFileStorageTemplates, reuse: true } },
                     { path: 'clients', component: ClientsComponent, data: { permission: AppPermissions.CRMCustomers, reuse: true } },
                     { path: 'products', component: ProductsComponent, data: { permission: AppPermissions.CRMProducts, reuse: true } },
+                    { path: 'coupons', component: CouponsComponent, data: { permission: AppPermissions.CRMProducts, reuse: true } },
                     { path: 'partners', component: PartnersComponent, data: { permission: AppPermissions.CRMPartners, reuse: true } },
                     { path: 'leads', component: LeadsComponent, data: { reuse: true, reuseComponent: true }, canActivate: [CrmContactGroupGuard] },
                     { path: 'orders', component: OrdersComponent, data: { permission: AppPermissions.CRMOrders, reuse: true } },
