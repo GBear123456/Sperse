@@ -80837,6 +80837,7 @@ export enum PaymentPeriodType {
     Monthly = "Monthly",
     Annual = "Annual",
     LifeTime = "LifeTime",
+    OneTime = "OneTime",
 }
 
 export class PaymentRequestInfoDto implements IPaymentRequestInfoDto {
@@ -82825,6 +82826,7 @@ export enum ProductMeasurementUnit {
     Unit = "Unit",
     Year = "Year",
     Zone = "Zone",
+    OneTime = "OneTime",
 }
 
 export class ProductPaymentOptionInfo implements IProductPaymentOptionInfo {
@@ -83026,6 +83028,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
     fee!: number;
     commissionableFeeAmount!: number | undefined;
     trialDayCount!: number;
+    activeDayCount!: number | undefined;
     gracePeriodDayCount!: number | undefined;
 
     constructor(data?: IProductSubscriptionOptionInfo) {
@@ -83045,6 +83048,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
             this.fee = _data["fee"];
             this.commissionableFeeAmount = _data["commissionableFeeAmount"];
             this.trialDayCount = _data["trialDayCount"];
+            this.activeDayCount = _data["activeDayCount"];
             this.gracePeriodDayCount = _data["gracePeriodDayCount"];
         }
     }
@@ -83064,6 +83068,7 @@ export class ProductSubscriptionOptionInfo implements IProductSubscriptionOption
         data["fee"] = this.fee;
         data["commissionableFeeAmount"] = this.commissionableFeeAmount;
         data["trialDayCount"] = this.trialDayCount;
+        data["activeDayCount"] = this.activeDayCount;
         data["gracePeriodDayCount"] = this.gracePeriodDayCount;
         return data;
     }
@@ -83076,6 +83081,7 @@ export interface IProductSubscriptionOptionInfo {
     fee: number;
     commissionableFeeAmount: number | undefined;
     trialDayCount: number;
+    activeDayCount: number | undefined;
     gracePeriodDayCount: number | undefined;
 }
 
@@ -86044,6 +86050,7 @@ export enum RecurringPaymentFrequency {
     Monthly = "Monthly",
     Annual = "Annual",
     LifeTime = "LifeTime",
+    OneTime = "OneTime",
 }
 
 export class RefreshTokenResult implements IRefreshTokenResult {

@@ -69,27 +69,25 @@ export class AppComponent implements OnInit {
                 if (moduleName != appService.getDefaultModule()) {
                     clearTimeout(paymentDialogTimeout);
                     paymentDialogTimeout = setTimeout(() => {
-                        if (this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement)) {
-                            let hasSubscription = appService.hasModuleSubscription(moduleName, productGroup),
-                                sub = appService.getModuleSubscription(moduleName, productGroup);
-                            if ((sub.statusId != 'A' || !hasSubscription) && !this.dialog.getDialogById('payment-wizard')) {
-                                this.dialog.open(PaymentWizardComponent, {
-                                    height: '800px',
-                                    width: '1200px',                                                              
-                                    id: 'payment-wizard',
-                                    disableClose: true,
-                                    panelClass: ['payment-wizard', 'setup'],
-                                    data: {
-                                        subscription: sub,
-                                        title: ls.ls(
-                                            'Platform',
-                                            'ModuleExpired',
-                                            sub.productName,
-                                            appService.getSubscriptionStatusBySubscription(sub)
-                                        )
-                                    }
-                                });
-                            }
+                        let hasSubscription = appService.hasModuleSubscription(moduleName, productGroup),
+                            sub = appService.getModuleSubscription(moduleName, productGroup);
+                        if ((sub.statusId != 'A' || !hasSubscription) && !this.dialog.getDialogById('payment-wizard')) {
+                            this.dialog.open(PaymentWizardComponent, {
+                                height: '800px',
+                                width: '1200px',                                                              
+                                id: 'payment-wizard',
+                                disableClose: true,
+                                panelClass: ['payment-wizard', 'setup'],
+                                data: {
+                                    subscription: sub,
+                                    title: ls.ls(
+                                        'Platform',
+                                        'ModuleExpired',
+                                        sub.productName,
+                                        appService.getSubscriptionStatusBySubscription(sub)
+                                    )
+                                }
+                            });
                         }
                     }, 2000);
                 }

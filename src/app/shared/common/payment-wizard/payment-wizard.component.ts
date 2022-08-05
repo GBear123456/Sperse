@@ -54,6 +54,7 @@ export class PaymentWizardComponent {
     productName = this.data.subscription && this.data.subscription.productName;
     cancellationDayCount = this.data.subscription && this.data.subscription.endDate ? 
         this.data.subscription.endDate.diff(moment(), 'days') + this.appService.getGracePeriod() : 0;
+    isSubscriptionManagementAllowed = this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement);
     trackingCode: string;
 
     constructor(
@@ -69,7 +70,7 @@ export class PaymentWizardComponent {
     ) {}
 
     moveToPaymentOptionsStep() {
-        if (this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement))
+        if (this.isSubscriptionManagementAllowed)
             this.stepper.next();
         else
             this.messageService.info(this.ls.l('SubscriptionManagementPermissionRequired'));
