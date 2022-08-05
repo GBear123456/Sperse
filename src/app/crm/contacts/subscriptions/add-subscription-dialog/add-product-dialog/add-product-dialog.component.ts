@@ -84,6 +84,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     isReadOnly = true;
     image: string = null;
     imageChanged: boolean = false;
+    isOneTime = false;
 
     constructor(
         private elementRef: ElementRef,
@@ -263,11 +264,22 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     getFrequencies(selected) {
-        let options = this.product.productSubscriptionOptions;
-        return options ? this.frequencies.filter(item => {
+        let options = this.product.productSubscriptionOptions,
+            frequencies = options ? this.frequencies.filter(item => {
             return selected.frequency == item ||
                 !options.some(option => option.frequency == item);
         }) : this.frequencies;
+
+        if (options.length > 1)
+            return frequencies.filter(item => item != RecurringPaymentFrequency.OneTime);
+
+        return frequencies;
+    }
+
+    checkOneTimeOption(event) {
+        this.isOneTime = event.value == RecurringPaymentFrequency.OneTime;
+        this.product.productSubscriptionOptions[0].activeDayCount = undefined;
+        this.detectChanges();
     }
 
     onServiceChanged(event, service) {
@@ -339,6 +351,12 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     validateTrialDayCount(option) {
         return (event) => {
             return !option.signupFee || event.value && event.value > 0;
+        };
+    }
+
+    validatePeriodDayCount(option) {
+        return (event) => {
+            return !this.isOneTime || event.value && event.value > 0;
         };
     }
 
