@@ -112,6 +112,11 @@ export class PaymentWizardComponent {
         });
     }
 
+    showSubscriptionProducts() {
+        this.data.showSubscriptions = false;
+        this.changeDetectorRef.detectChanges();
+    }
+
     setRefreshAfterClose() {
         this.refreshAfterClose = true;
         this.dialogRef.afterClosed().subscribe(() => {

@@ -3,7 +3,9 @@ import {
     Component,     
     ChangeDetectionStrategy,
     ChangeDetectorRef, 
-    Injector
+    EventEmitter,
+    Injector,
+    Output
 } from '@angular/core';
 
 /** Third party imports */
@@ -13,6 +15,7 @@ import { finalize } from 'rxjs/operators';
 /** Application imports */
 import * as moment from 'moment-timezone';
 import { 
+    PaymentPeriodType,
     CancelSubscriptionInput, 
     TenantSubscriptionServiceProxy 
 } from '@shared/service-proxies/service-proxies';
@@ -31,6 +34,7 @@ import { AppConsts } from '@shared/AppConsts';
 export class PaymentSubscriptionsComponent extends AppComponentBase {
     formatting = AppConsts.formatting;
     moduleSubscriptions = this.getDistinctList(this.appService.moduleSubscriptions);
+    @Output() onShowProducts: EventEmitter<any> = new EventEmitter<any>();
 
     constructor(
         injector: Injector,
@@ -54,6 +58,14 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
 
     isExpired(cell) {
         return moment(cell.data.endDate).diff(moment(), 'minutes') <= 0;
+    }
+
+    isOneTime(cell) {
+        return cell.data.statusId == 'A' && cell.data.paymentPeriodType == PaymentPeriodType.OneTime && !this.isExpired(cell);
+    }
+
+    activateSubscription(data) {
+        this.onShowProducts.emit();
     }
 
     cancelSubscription(data) {

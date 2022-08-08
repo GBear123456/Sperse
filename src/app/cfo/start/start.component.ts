@@ -50,7 +50,7 @@ export class StartComponent extends CFOComponentBase implements AfterViewInit, O
     }
 
     ngOnInit() {
-        if (this.appService.hasModuleSubscription(ModuleType.CFO, '') && this.instanceType == InstanceType.Main) {
+        if (this.appService.hasModuleSubscription(ModuleType.CFO, []) && this.instanceType == InstanceType.Main) {
             const introAcceptedCache = this.cacheService.get(this.introAcceptedCacheKey);
             /** Show crm wizard if there is no cache for it */
             if (!introAcceptedCache || introAcceptedCache === 'false') {
