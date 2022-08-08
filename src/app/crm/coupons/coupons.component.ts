@@ -62,7 +62,6 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
             text: this.l('Edit'),
             class: 'edit',
             action: () => {
-                console.log(this.actionEvent);
                 this.editCoupon(this.actionEvent.Id);
             }
         },

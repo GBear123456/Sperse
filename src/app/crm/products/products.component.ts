@@ -213,8 +213,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     navigateToCoupons(event) {
-        console.log(this.activeHeaderOption);
-        console.log(event);
         if (event.value != this.headerOptions[0]) {
             setTimeout(() => {
                 this.activeHeaderOption = this.headerOptions[0];
