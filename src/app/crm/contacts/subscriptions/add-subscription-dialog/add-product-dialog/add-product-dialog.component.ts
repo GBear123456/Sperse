@@ -114,6 +114,9 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         if (data.product && data.product.id) {
             this.image = data.product.imageUrl;
             this.product = new UpdateProductInput(data.product);
+            let options = data.product.productSubscriptionOptions;
+            if (options && options[0])
+                this.checkOneTimeOption({value: options[0].frequency});
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
