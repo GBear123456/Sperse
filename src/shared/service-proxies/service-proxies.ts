@@ -14214,10 +14214,20 @@ export class CouponServiceProxy {
     }
 
     /**
+     * @param searchPhrase (optional) 
+     * @param topCount (optional) 
      * @return Success
      */
-    getCoupons(): Observable<CouponDto[]> {
-        let url_ = this.baseUrl + "/api/services/CRM/Coupon/GetCoupons";
+    getCouponsByPhrase(searchPhrase: string | undefined, topCount: number | undefined): Observable<CouponDto[]> {
+        let url_ = this.baseUrl + "/api/services/CRM/Coupon/GetCouponsByPhrase?";
+        if (searchPhrase === null)
+            throw new Error("The parameter 'searchPhrase' cannot be null.");
+        else if (searchPhrase !== undefined)
+            url_ += "searchPhrase=" + encodeURIComponent("" + searchPhrase) + "&";
+        if (topCount === null)
+            throw new Error("The parameter 'topCount' cannot be null.");
+        else if (topCount !== undefined)
+            url_ += "topCount=" + encodeURIComponent("" + topCount) + "&";
         url_ = url_.replace(/[?&]$/, "");
 
         let options_ : any = {
@@ -14229,11 +14239,11 @@ export class CouponServiceProxy {
         };
 
         return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
-            return this.processGetCoupons(response_);
+            return this.processGetCouponsByPhrase(response_);
         })).pipe(_observableCatch((response_: any) => {
             if (response_ instanceof HttpResponseBase) {
                 try {
-                    return this.processGetCoupons(response_ as any);
+                    return this.processGetCouponsByPhrase(response_ as any);
                 } catch (e) {
                     return _observableThrow(e) as any as Observable<CouponDto[]>;
                 }
@@ -14242,7 +14252,7 @@ export class CouponServiceProxy {
         }));
     }
 
-    protected processGetCoupons(response: HttpResponseBase): Observable<CouponDto[]> {
+    protected processGetCouponsByPhrase(response: HttpResponseBase): Observable<CouponDto[]> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -59414,6 +59424,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
     number!: string | undefined;
     date!: moment.Moment;
     dueDate!: moment.Moment | undefined;
+    couponCode!: string | undefined;
     grandTotal!: number;
     discountTotal!: number | undefined;
     shippingTotal!: number | undefined;
@@ -59445,6 +59456,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
             this.number = _data["number"];
             this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
             this.dueDate = _data["dueDate"] ? moment(_data["dueDate"].toString()) : <any>undefined;
+            this.couponCode = _data["couponCode"];
             this.grandTotal = _data["grandTotal"];
             this.discountTotal = _data["discountTotal"];
             this.shippingTotal = _data["shippingTotal"];
@@ -59480,6 +59492,7 @@ export class CreateInvoiceInput implements ICreateInvoiceInput {
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["couponCode"] = this.couponCode;
         data["grandTotal"] = this.grandTotal;
         data["discountTotal"] = this.discountTotal;
         data["shippingTotal"] = this.shippingTotal;
@@ -59508,6 +59521,7 @@ export interface ICreateInvoiceInput {
     number: string | undefined;
     date: moment.Moment;
     dueDate: moment.Moment | undefined;
+    couponCode: string | undefined;
     grandTotal: number;
     discountTotal: number | undefined;
     shippingTotal: number | undefined;
@@ -73955,6 +73969,7 @@ export class InvoiceInfo implements IInvoiceInfo {
     number!: string | undefined;
     date!: moment.Moment;
     dueDate!: moment.Moment | undefined;
+    couponId!: number | undefined;
     grandTotal!: number;
     discountTotal!: number | undefined;
     shippingTotal!: number | undefined;
@@ -73984,6 +73999,7 @@ export class InvoiceInfo implements IInvoiceInfo {
             this.number = _data["number"];
             this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
             this.dueDate = _data["dueDate"] ? moment(_data["dueDate"].toString()) : <any>undefined;
+            this.couponId = _data["couponId"];
             this.grandTotal = _data["grandTotal"];
             this.discountTotal = _data["discountTotal"];
             this.shippingTotal = _data["shippingTotal"];
@@ -74017,6 +74033,7 @@ export class InvoiceInfo implements IInvoiceInfo {
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["couponId"] = this.couponId;
         data["grandTotal"] = this.grandTotal;
         data["discountTotal"] = this.discountTotal;
         data["shippingTotal"] = this.shippingTotal;
@@ -74043,6 +74060,7 @@ export interface IInvoiceInfo {
     number: string | undefined;
     date: moment.Moment;
     dueDate: moment.Moment | undefined;
+    couponId: number | undefined;
     grandTotal: number;
     discountTotal: number | undefined;
     shippingTotal: number | undefined;
@@ -98039,6 +98057,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
     number!: string | undefined;
     date!: moment.Moment;
     dueDate!: moment.Moment | undefined;
+    couponCode!: string | undefined;
     grandTotal!: number;
     discountTotal!: number | undefined;
     shippingTotal!: number | undefined;
@@ -98066,6 +98085,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
             this.number = _data["number"];
             this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
             this.dueDate = _data["dueDate"] ? moment(_data["dueDate"].toString()) : <any>undefined;
+            this.couponCode = _data["couponCode"];
             this.grandTotal = _data["grandTotal"];
             this.discountTotal = _data["discountTotal"];
             this.shippingTotal = _data["shippingTotal"];
@@ -98097,6 +98117,7 @@ export class UpdateInvoiceInput implements IUpdateInvoiceInput {
         data["number"] = this.number;
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["dueDate"] = this.dueDate ? this.dueDate.toISOString() : <any>undefined;
+        data["couponCode"] = this.couponCode;
         data["grandTotal"] = this.grandTotal;
         data["discountTotal"] = this.discountTotal;
         data["shippingTotal"] = this.shippingTotal;
@@ -98121,6 +98142,7 @@ export interface IUpdateInvoiceInput {
     number: string | undefined;
     date: moment.Moment;
     dueDate: moment.Moment | undefined;
+    couponCode: string | undefined;
     grandTotal: number;
     discountTotal: number | undefined;
     shippingTotal: number | undefined;
