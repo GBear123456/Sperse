@@ -264,7 +264,7 @@
                                    [disabled]="isReadOnly">
                     </dx-number-box>
                 </div>
-                <div class="field" *ngIf="option.frequency && option.frequency != recurringPaymentFrequency.LifeTime && !isOneTime">
+                <div class="field">
                     <label class="wide gracePeriodDayCount" for="gracePeriodDayCount">{{ls.l('GracePeriodDayCount')}}</label>
                     <dx-number-box name="gracePeriodDayCount"
                                    [placeholder]="ls.l('ByDefault', gracePeriodDefaultValue ? gracePeriodDefaultValue : 0)"
