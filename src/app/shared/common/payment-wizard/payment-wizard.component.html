@@ -1,4 +1,4 @@
-<payment-subscriptions *ngIf="data.showSubscriptions; else paymentWizard"></payment-subscriptions>
+<payment-subscriptions *ngIf="data.showSubscriptions; else paymentWizard" (onShowProducts)="showSubscriptionProducts()"></payment-subscriptions>
 <ng-template #paymentWizard>
     <div id="paymentWizardComponent" #wizard>
         <mat-dialog-content>

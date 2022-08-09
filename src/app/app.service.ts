@@ -14,6 +14,7 @@ import { PanelMenu } from '@app/shared/layout/top-bar/panel-menu';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
+    PaymentPeriodType,
     InstanceServiceProxy,
     PersonContactServiceProxy,
     RegisterMemberInput,
@@ -219,8 +220,8 @@ export class AppService extends AppServiceBase {
             }), publishReplay(), refCount());
         this.moduleSubscriptions$.subscribe((res: ModuleSubscriptionInfoDto[]) => {
             this.moduleSubscriptions = res.sort((left: ModuleSubscriptionInfoDto, right: ModuleSubscriptionInfoDto) => {
-                const isLeftSignupGroup = left.productGroup && left.productGroup.toLowerCase() == 'signup',
-                    isRightSignupGroup = right.productGroup && right.productGroup.toLowerCase() == 'signup';
+                const isLeftSignupGroup = left.productGroup && this.checkSignUpOrMainGroups(left.productGroup),
+                    isRightSignupGroup = right.productGroup && this.checkSignUpOrMainGroups(right.productGroup);
                 if (isLeftSignupGroup && isRightSignupGroup ||
                     !isLeftSignupGroup && !isRightSignupGroup
                 ) return left.endDate > right.endDate ? -1 : 1;
@@ -236,13 +237,24 @@ export class AppService extends AppServiceBase {
         );
     }
 
+    checkSignUpOrMainGroups(group: string): Boolean {
+        return this.checkGroupIncluded([
+            AppConsts.PRODUCT_GROUP_SIGNUP, 
+            AppConsts.PRODUCT_GROUP_MAIN
+        ], group);
+    }
+
+    checkGroupIncluded(groups: string[], group: string): Boolean {
+        return groups.includes(group.toLowerCase());
+    }    
+
     getModuleSubscription(
         name: string = this.defaultSubscriptionModule, 
-        productGroup: string = 'signup'
+        productGroups: string[] = [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN]
     ): ModuleSubscriptionInfoDto {
         let module = name.toUpperCase(), 
-            moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions && productGroup ?
-                this.moduleSubscriptions.filter(item => item.productGroup && item.productGroup.toLowerCase() == productGroup) :
+            moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions && productGroups.length ?
+                this.moduleSubscriptions.filter(item => item.productGroup && this.checkGroupIncluded(productGroups, item.productGroup)) :
                 this.moduleSubscriptions,
             subscription;
         if (moduleSubscriptions && moduleSubscriptions.length) {
@@ -291,16 +303,9 @@ export class AppService extends AppServiceBase {
         return subscription && subscription.trackingCode;
     }
 
-    subscriptionStatusBarIsHidden(): boolean {
-        let module = this.getModule();
-        if (!ModuleType[module.toUpperCase()])
-            return true;
-
-        if (!this.subscriptionBarVisible)
-            this.subscriptionBarVisible = !this.showContactInfoPanel.value &&
-                (this.subscriptionIsExpiringSoon() || this.subscriptionInGracePeriod());
-
-        return this.subscriptionBarsClosed[module] || !this.subscriptionBarVisible;
+    isOneTimeExpirationSoon(name: string = this.defaultSubscriptionModule): boolean {
+        let sub = this.getModuleSubscription(name);
+        return sub.paymentPeriodType == PaymentPeriodType.OneTime && this.subscriptionIsExpiringSoon(name);
     }
 
     subscriptionIsExpiringSoon(name: string = this.defaultSubscriptionModule): boolean {
@@ -329,9 +334,9 @@ export class AppService extends AppServiceBase {
 
     subscriptionInGracePeriod(
         name: string = this.defaultSubscriptionModule,
-        productGroup?: string
+        productGroups?: string[]
     ): boolean {
-        let sub = this.getModuleSubscription(name, productGroup);
+        let sub = this.getModuleSubscription(name, productGroups);
         return this.subscriptionInGracePeriodBySubscription(sub);
     }
 
@@ -361,10 +366,10 @@ export class AppService extends AppServiceBase {
 
     hasModuleSubscription(
         name: string = this.defaultSubscriptionModule,
-        productGroup?: string
+        productGroups?: string[]
     ) {
         name = name && name.toUpperCase();
-        let module = this.getModuleSubscription(name, productGroup);
+        let module = this.getModuleSubscription(name, productGroups);
 
         if (module && ['D', 'C'].includes(module.statusId))
             return false;

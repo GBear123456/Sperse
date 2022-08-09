@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -65,18 +66,19 @@ export class AppComponent implements OnInit {
             appService.expiredModuleSubscribe((name) => {
                 let isCustomLayout = appSession.tenant.customLayoutType && appSession.tenant.customLayoutType !== LayoutType.Default,                    
                     moduleName = isCustomLayout ? '' : name.toLowerCase(),
-                    productGroup = isCustomLayout ? '' : 'signup';
+                    productGroups = isCustomLayout ? [] : [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN];
                 if (moduleName != appService.getDefaultModule()) {
                     clearTimeout(paymentDialogTimeout);
                     paymentDialogTimeout = setTimeout(() => {
-                        let hasSubscription = appService.hasModuleSubscription(moduleName, productGroup),
-                            sub = appService.getModuleSubscription(moduleName, productGroup);
-                        if ((sub.statusId != 'A' || !hasSubscription) && !this.dialog.getDialogById('payment-wizard')) {
+                        let hasSubscription = appService.hasModuleSubscription(moduleName, productGroups),
+                            sub = appService.getModuleSubscription(moduleName, productGroups),
+                            isOneTimeExpirationSoon = appService.isOneTimeExpirationSoon(moduleName);
+                        if ((sub.statusId != 'A' || !hasSubscription || isOneTimeExpirationSoon) && !this.dialog.getDialogById('payment-wizard')) {
                             this.dialog.open(PaymentWizardComponent, {
                                 height: '800px',
                                 width: '1200px',                                                              
                                 id: 'payment-wizard',
-                                disableClose: true,
+                                disableClose: !isOneTimeExpirationSoon,
                                 panelClass: ['payment-wizard', 'setup'],
                                 data: {
                                     subscription: sub,
