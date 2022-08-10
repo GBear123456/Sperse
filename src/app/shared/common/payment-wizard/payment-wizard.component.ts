@@ -54,7 +54,7 @@ export class PaymentWizardComponent {
         this.data.subscription.paymentPeriodType != PaymentPeriodType.OneTime;
     productName = this.data.subscription && this.data.subscription.productName;
     cancellationDayCount = this.data.subscription && this.data.subscription.endDate ? 
-        this.data.subscription.endDate.diff(moment(), 'days') + this.appService.getGracePeriod() : 0;
+        this.appService.getGracePeriodDayCountBySubscription(this.data.subscription) : 0;
     isSubscriptionManagementAllowed = this.permissionChecker.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement);
     trackingCode: string;
 
