@@ -60,8 +60,9 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
         return moment(cell.data.endDate).diff(moment(), 'minutes') <= 0;
     }
 
-    isOneTime(cell) {
-        return cell.data.statusId == 'A' && cell.data.paymentPeriodType == PaymentPeriodType.OneTime && !this.isExpired(cell);
+    showOneTimeActivate(cell) {
+        return cell.data.statusId == 'A' && cell.data.paymentPeriodType == PaymentPeriodType.OneTime && 
+            !this.moduleSubscriptions.some(sub => sub.productGroup == AppConsts.PRODUCT_GROUP_MAIN && sub.statusId == 'A');
     }
 
     activateSubscription(data) {
