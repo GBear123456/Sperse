@@ -290,7 +290,6 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
         if (this.isOneTime) {
             options.commissionableSignupFeeAmount = undefined;
-            options.gracePeriodDayCount = undefined;
             options.trialDayCount = undefined;
             options.signupFee = undefined;
         } else
