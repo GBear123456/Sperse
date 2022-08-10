@@ -21,7 +21,7 @@ import { AppService } from '@app/app.service';
 import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
-import { ModuleType, PackageServiceProxy, RecurringPaymentFrequency, 
+import { ModuleType, PackageServiceProxy, RecurringPaymentFrequency, PaymentPeriodType,
     TenantSubscriptionServiceProxy, ProductInfo, ProductServiceProxy } from '@shared/service-proxies/service-proxies';
 import { StatusInfo } from './models/status-info';
 import { AppPermissions } from '@shared/AppPermissions';
@@ -50,7 +50,8 @@ export class PaymentWizardComponent {
     subscriptionIsTrialExpired: boolean = this.data.subscription && this.data.subscription.statusId == 'A' &&
         this.data.subscription.isTrial && !this.appService.hasModuleSubscription();
     subscriptionIsActiveExpired: boolean = this.data.subscription && !this.data.subscription.isTrial &&
-        this.data.subscription.statusId == 'A' && !this.appService.hasModuleSubscription();
+        this.data.subscription.statusId == 'A' && !this.appService.hasModuleSubscription() &&
+        this.data.subscription.paymentPeriodType != PaymentPeriodType.OneTime;
     productName = this.data.subscription && this.data.subscription.productName;
     cancellationDayCount = this.data.subscription && this.data.subscription.endDate ? 
         this.data.subscription.endDate.diff(moment(), 'days') + this.appService.getGracePeriod() : 0;

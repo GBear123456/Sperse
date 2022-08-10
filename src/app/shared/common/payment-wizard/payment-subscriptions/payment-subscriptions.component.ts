@@ -62,7 +62,7 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
 
     showOneTimeActivate(cell) {
         return cell.data.statusId == 'A' && cell.data.paymentPeriodType == PaymentPeriodType.OneTime && 
-            !this.moduleSubscriptions.some(sub => sub.productGroup == AppConsts.PRODUCT_GROUP_MAIN && sub.statusId == 'A');
+            !this.moduleSubscriptions.some(sub => sub.productGroup.toLowerCase() == AppConsts.PRODUCT_GROUP_MAIN && sub.statusId == 'A');
     }
 
     activateSubscription(data) {
