@@ -21,7 +21,8 @@ import {
     CouponServiceProxy,
     CreateCouponInput,
     UpdateCouponInput,
-    CouponDiscountType
+    CouponDiscountType,
+    CouponDiscountDuration
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
@@ -43,6 +44,7 @@ export class AddCouponDialogComponent implements AfterViewInit, OnInit {
     coupon: CreateCouponInput | UpdateCouponInput;
 
     types: string[] = Object.keys(CouponDiscountType);
+    durations: string[] = Object.keys(CouponDiscountDuration);
     typesEnum = CouponDiscountType;
     title: string;
     isReadOnly = true;

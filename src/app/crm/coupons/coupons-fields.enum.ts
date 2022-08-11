@@ -9,6 +9,7 @@ export const CouponFields: KeysEnum<CouponDto> = {
     Value: 'Value',
     ActivationDate: 'ActivationDate',
     DeactivationDate: 'DeactivationDate',
+    Duration: 'Duration',
     IsArchived: 'IsArchived',
     Created: 'Created'
 };

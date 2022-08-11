@@ -57494,6 +57494,11 @@ export interface ICountryStateDto {
     name: string | undefined;
 }
 
+export enum CouponDiscountDuration {
+    Once = "Once",
+    Forever = "Forever",
+}
+
 export enum CouponDiscountType {
     Percentage = "Percentage",
     Fixed = "Fixed",
@@ -57504,6 +57509,7 @@ export class CouponDto implements ICouponDto {
     code!: string | undefined;
     description!: string | undefined;
     type!: CouponDiscountType;
+    duration!: CouponDiscountDuration;
     amountOff!: number | undefined;
     percentOff!: number | undefined;
     activationDate!: moment.Moment;
@@ -57525,6 +57531,7 @@ export class CouponDto implements ICouponDto {
             this.code = _data["code"];
             this.description = _data["description"];
             this.type = _data["type"];
+            this.duration = _data["duration"];
             this.amountOff = _data["amountOff"];
             this.percentOff = _data["percentOff"];
             this.activationDate = _data["activationDate"] ? moment(_data["activationDate"].toString()) : <any>undefined;
@@ -57546,6 +57553,7 @@ export class CouponDto implements ICouponDto {
         data["code"] = this.code;
         data["description"] = this.description;
         data["type"] = this.type;
+        data["duration"] = this.duration;
         data["amountOff"] = this.amountOff;
         data["percentOff"] = this.percentOff;
         data["activationDate"] = this.activationDate ? this.activationDate.toISOString() : <any>undefined;
@@ -57560,6 +57568,7 @@ export interface ICouponDto {
     code: string | undefined;
     description: string | undefined;
     type: CouponDiscountType;
+    duration: CouponDiscountDuration;
     amountOff: number | undefined;
     percentOff: number | undefined;
     activationDate: moment.Moment;
@@ -58924,6 +58933,7 @@ export class CreateCouponInput implements ICreateCouponInput {
     code!: string;
     description!: string;
     type!: CouponDiscountType;
+    duration!: CouponDiscountDuration;
     amountOff!: number | undefined;
     percentOff!: number | undefined;
     activationDate!: moment.Moment;
@@ -58944,6 +58954,7 @@ export class CreateCouponInput implements ICreateCouponInput {
             this.code = _data["code"];
             this.description = _data["description"];
             this.type = _data["type"];
+            this.duration = _data["duration"];
             this.amountOff = _data["amountOff"];
             this.percentOff = _data["percentOff"];
             this.activationDate = _data["activationDate"] ? moment(_data["activationDate"].toString()) : <any>undefined;
@@ -58964,6 +58975,7 @@ export class CreateCouponInput implements ICreateCouponInput {
         data["code"] = this.code;
         data["description"] = this.description;
         data["type"] = this.type;
+        data["duration"] = this.duration;
         data["amountOff"] = this.amountOff;
         data["percentOff"] = this.percentOff;
         data["activationDate"] = this.activationDate ? this.activationDate.toISOString() : <any>undefined;
@@ -58977,6 +58989,7 @@ export interface ICreateCouponInput {
     code: string;
     description: string;
     type: CouponDiscountType;
+    duration: CouponDiscountDuration;
     amountOff: number | undefined;
     percentOff: number | undefined;
     activationDate: moment.Moment;
@@ -97486,6 +97499,7 @@ export class UpdateCouponInput implements IUpdateCouponInput {
     code!: string;
     description!: string;
     type!: CouponDiscountType;
+    duration!: CouponDiscountDuration;
     amountOff!: number | undefined;
     percentOff!: number | undefined;
     activationDate!: moment.Moment;
@@ -97507,6 +97521,7 @@ export class UpdateCouponInput implements IUpdateCouponInput {
             this.code = _data["code"];
             this.description = _data["description"];
             this.type = _data["type"];
+            this.duration = _data["duration"];
             this.amountOff = _data["amountOff"];
             this.percentOff = _data["percentOff"];
             this.activationDate = _data["activationDate"] ? moment(_data["activationDate"].toString()) : <any>undefined;
@@ -97528,6 +97543,7 @@ export class UpdateCouponInput implements IUpdateCouponInput {
         data["code"] = this.code;
         data["description"] = this.description;
         data["type"] = this.type;
+        data["duration"] = this.duration;
         data["amountOff"] = this.amountOff;
         data["percentOff"] = this.percentOff;
         data["activationDate"] = this.activationDate ? this.activationDate.toISOString() : <any>undefined;
@@ -97542,6 +97558,7 @@ export interface IUpdateCouponInput {
     code: string;
     description: string;
     type: CouponDiscountType;
+    duration: CouponDiscountDuration;
     amountOff: number | undefined;
     percentOff: number | undefined;
     activationDate: moment.Moment;

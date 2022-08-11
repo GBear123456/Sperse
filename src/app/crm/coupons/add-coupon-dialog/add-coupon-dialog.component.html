@@ -85,5 +85,14 @@
                          [disabled]="isReadOnly">
             </dx-date-box>
         </div>
+        <div class="field">
+            <label for="duration">{{ls.l('Duration')}}</label>
+            <dx-select-box [dataSource]="durations"
+                           width="300px"
+                           placeholder="Select duration..."
+                           [(value)]="coupon.duration"
+                           [disabled]="isReadOnly">
+            </dx-select-box>
+        </div>
     </dx-validation-group>
 </mat-dialog-content>

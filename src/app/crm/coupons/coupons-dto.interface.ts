@@ -6,6 +6,7 @@ export interface CouponDto {
     Value: number;
     ActivationDate: Date;
     DeactivationDate?: Date;
+    Duration: string;
     IsArchived: boolean;
     Created: Date;
 }

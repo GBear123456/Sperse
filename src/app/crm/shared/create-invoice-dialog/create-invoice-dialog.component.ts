@@ -728,7 +728,6 @@ export class CreateInvoiceDialogComponent implements OnInit {
     calcuateDiscount() {
         let coupon = this.selectedCoupon;
         if (!this.calculateCoupon) {
-            this.calculateCoupon = true;
             return;
         }
 
@@ -788,7 +787,12 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     selectCoupon(event) {
         this.selectedCoupon = event.selectedItem;
-        this.calculateBalance();
+        if (!this.calculateCoupon) {
+            this.calculateCoupon = true;
+        }
+        else {
+            this.calculateBalance();
+        }
     }
 
     selectContact(contact: EntityContactInfo) {

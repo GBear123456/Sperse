@@ -62,11 +62,11 @@
                     <dxi-column [dataField]="couponFields.Description" [caption]="l('Description')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="couponFields.Type" [caption]="l('Type')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="couponFields.Value" [caption]="l('Value')" cellTemplate="valueTemplate"></dxi-column>
+                    <dxi-column [dataField]="couponFields.Duration" [caption]="l('Duration')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="couponFields.ActivationDate" [caption]="l('ActivationDate')" cellTemplate="dateTemplate"></dxi-column>
                     <dxi-column [dataField]="couponFields.DeactivationDate" [caption]="l('DeactivationDate')" cellTemplate="dateTemplate"></dxi-column>
                     <dxi-column [dataField]="couponFields.IsArchived" [caption]="l('Archived')" cellTemplate="dateTemplate" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="couponFields.Created" [caption]="l('Created')" cellTemplate="dateTemplate" [visible]="false"></dxi-column>
-
 
                     <div *dxTemplate="let cell of 'valueTemplate'" class="clipboard-holder">
                         <span *ngIf="cell.data.Type == couponTypes.Fixed; else Percent">
