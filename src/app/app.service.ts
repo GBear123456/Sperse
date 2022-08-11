@@ -343,13 +343,13 @@ export class AppService extends AppServiceBase {
     subscriptionInGracePeriodBySubscription(sub: ModuleSubscriptionInfoDto): boolean {
         if (!this.isHostTenant && sub && !sub.isLocked && sub.endDate) {
             let diff = moment().utc().diff(sub.endDate, 'days', true);
-            return (diff > 0) && (diff <= this.getGracePeriod());
+            return (diff > 0) && (diff <= this.getGracePeriod(sub));
         }
         return false;
     }
 
-    getGracePeriod() {
-        return parseInt(abp.setting.get('App.OrderSubscription.DefaultSubscriptionGracePeriodDayCount')) || 0;
+    getGracePeriod(sub: ModuleSubscriptionInfoDto) {
+        return sub.endDate && sub.finalEndDate ? sub.endDate.diff(sub.finalEndDate, 'days', true) : 0;
     }
 
     getSubscriptionExpiringDayCount(name: string = this.defaultSubscriptionModule): number {
@@ -365,7 +365,7 @@ export class AppService extends AppServiceBase {
 
     getGracePeriodDayCountBySubscription(sub) {
         return sub && !sub.isLocked && sub.endDate && Math.round(moment(sub.endDate)
-            .add(this.getGracePeriod(), 'days').diff(moment().utc(), 'days', true));
+            .add(this.getGracePeriod(sub), 'days').diff(moment().utc(), 'days', true));
     }
 
     hasModuleSubscription(
@@ -389,6 +389,21 @@ export class AppService extends AppServiceBase {
             this.expiredModule.next(name);
 
         return expired;
+    }
+
+    hasUnconventionalSubscription() {
+        let sub = this.getModuleSubscription();
+        if (!sub.productId) {
+            let hasActiveSubscription = this.hasModuleSubscription('', []);
+
+            sub = this.getModuleSubscription('', []);
+            if (sub.productId)
+                return hasActiveSubscription &&
+                    this.feature.isEnabled(AppFeatures.CRM);
+            else 
+                return hasActiveSubscription;
+        }
+        return false;
     }
 
     switchModule(name: string, params = {}) {

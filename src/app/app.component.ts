@@ -67,7 +67,7 @@ export class AppComponent implements OnInit {
                 let isCustomLayout = appSession.tenant.customLayoutType && appSession.tenant.customLayoutType !== LayoutType.Default,                    
                     moduleName = isCustomLayout ? '' : name.toLowerCase(),
                     productGroups = isCustomLayout ? [] : [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN];
-                if (moduleName != appService.getDefaultModule()) {
+                if (moduleName != appService.getDefaultModule() && !appService.hasUnconventionalSubscription()) {
                     clearTimeout(paymentDialogTimeout);
                     paymentDialogTimeout = setTimeout(() => {
                         let hasSubscription = appService.hasModuleSubscription(moduleName, productGroups),
