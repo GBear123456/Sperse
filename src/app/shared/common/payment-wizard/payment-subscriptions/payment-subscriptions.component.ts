@@ -33,7 +33,7 @@ import { AppConsts } from '@shared/AppConsts';
 })
 export class PaymentSubscriptionsComponent extends AppComponentBase {
     formatting = AppConsts.formatting;
-    moduleSubscriptions = this.getDistinctList(this.appService.moduleSubscriptions);
+    moduleSubscriptions = this.getDistinctList(this.appService.moduleSubscriptions).filter(item => item.statusId != 'D');
     @Output() onShowProducts: EventEmitter<any> = new EventEmitter<any>();
 
     constructor(
@@ -57,7 +57,8 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
     }
 
     isExpired(cell) {
-        return moment(cell.data.endDate).diff(moment(), 'minutes') <= 0;
+        return (cell.data.paymentPeriodType != PaymentPeriodType.LifeTime || cell.data.isTrial == 'true') && 
+            cell.data.endDate && moment(cell.data.endDate).diff(moment(), 'minutes') <= 0;
     }
 
     showOneTimeActivate(cell) {
@@ -83,9 +84,10 @@ export class PaymentSubscriptionsComponent extends AppComponentBase {
                         id: data.id,
                         cancellationReason: result.cancellationReason
                     })).pipe(finalize(() => this.finishLoading())).subscribe(() => {
-                        data.statusId = 'C';
+                        data.statusId = 'C';                        
                         abp.notify.success(this.l('Cancelled'));
                         this.changeDetectionRef.detectChanges();
+                        setTimeout(() => location.reload(), 1000);
                     });
             }
         });

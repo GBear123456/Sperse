@@ -8,6 +8,15 @@
     padding: 50px 100px;
     position: relative;
 
+    ::ng-deep dx-data-grid {
+        .dx-datagrid-focus-overlay {
+            display: none;
+        }
+        .dx-header-row td:focus {
+            outline: none!important;
+        }
+    }
+
     .status {
         font-weight: 600;
         &.A {
@@ -17,10 +26,10 @@
             color: gray;
         }
         &.C {
-            color: yellow;
+            color: red;
         }
         &.E {
-            color: red;
+            color: orange;
         }
     }
 }
