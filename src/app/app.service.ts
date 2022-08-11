@@ -391,6 +391,21 @@ export class AppService extends AppServiceBase {
         return expired;
     }
 
+    hasUnconventionalSubscription() {
+        let sub = this.getModuleSubscription();
+        if (!sub.productId) {
+            let hasActiveSubscription = this.hasModuleSubscription('', []);
+
+            sub = this.getModuleSubscription('', []);
+            if (sub.productId)
+                return hasActiveSubscription &&
+                    this.feature.isEnabled(AppFeatures.CRM);
+            else 
+                return hasActiveSubscription;
+        }
+        return false;
+    }
+
     switchModule(name: string, params = {}) {
         this.subscriptionBarVisible = undefined;
         super.switchModule(name, params);

@@ -169,7 +169,8 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement)
+        return !this.appService.hasUnconventionalSubscription()
+            && this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement)
             && (!this.appSession.tenant.customLayoutType || this.appSession.tenant.customLayoutType == LayoutType.Default);
     }
 
