@@ -77435,6 +77435,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
     productImageUrl!: string | undefined;
     paymentPeriodType!: PaymentPeriodType | undefined;
     endDate!: moment.Moment | undefined;
+    finalEndDate!: moment.Moment | undefined;
     editionName!: string | undefined;
     isTrial!: boolean;
     isLocked!: boolean;
@@ -77463,6 +77464,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
             this.productImageUrl = _data["productImageUrl"];
             this.paymentPeriodType = _data["paymentPeriodType"];
             this.endDate = _data["endDate"] ? moment(_data["endDate"].toString()) : <any>undefined;
+            this.finalEndDate = _data["finalEndDate"] ? moment(_data["finalEndDate"].toString()) : <any>undefined;
             this.editionName = _data["editionName"];
             this.isTrial = _data["isTrial"];
             this.isLocked = _data["isLocked"];
@@ -77491,6 +77493,7 @@ export class ModuleSubscriptionInfoDto implements IModuleSubscriptionInfoDto {
         data["productImageUrl"] = this.productImageUrl;
         data["paymentPeriodType"] = this.paymentPeriodType;
         data["endDate"] = this.endDate ? this.endDate.toISOString() : <any>undefined;
+        data["finalEndDate"] = this.finalEndDate ? this.finalEndDate.toISOString() : <any>undefined;
         data["editionName"] = this.editionName;
         data["isTrial"] = this.isTrial;
         data["isLocked"] = this.isLocked;
@@ -77512,6 +77515,7 @@ export interface IModuleSubscriptionInfoDto {
     productImageUrl: string | undefined;
     paymentPeriodType: PaymentPeriodType | undefined;
     endDate: moment.Moment | undefined;
+    finalEndDate: moment.Moment | undefined;
     editionName: string | undefined;
     isTrial: boolean;
     isLocked: boolean;

@@ -230,7 +230,7 @@ export class AppService extends AppServiceBase {
                 else
                     return 1;
             });
-            setTimeout(() => this.checkModuleExpired());
+            setTimeout(() => this.checkModuleExpired(), 1000);
         });
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
             map(subscriptions => this.checkSubscriptionIsFree())
@@ -360,6 +360,10 @@ export class AppService extends AppServiceBase {
 
     getGracePeriodDayCount(name: string = this.defaultSubscriptionModule) {
         let sub = this.getModuleSubscription(name);
+        return this.getGracePeriodDayCountBySubscription(sub);
+    }
+
+    getGracePeriodDayCountBySubscription(sub) {
         return sub && !sub.isLocked && sub.endDate && Math.round(moment(sub.endDate)
             .add(this.getGracePeriod(), 'days').diff(moment().utc(), 'days', true));
     }

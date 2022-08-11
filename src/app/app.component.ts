@@ -91,7 +91,7 @@ export class AppComponent implements OnInit {
                                 }
                             });
                         }
-                    }, 2000);
+                    }, 1000);
                 }
             });
         }
