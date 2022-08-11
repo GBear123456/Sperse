@@ -18,6 +18,7 @@ import { first, finalize } from 'rxjs/operators';
 
 /** Application imports */
 import { AppService } from '@app/app.service';
+import { AppSessionService } from '@shared/common/session/app-session.service';
 import { PaymentOptions } from '@app/shared/common/payment-wizard/models/payment-options.model';
 import { PaymentService } from '@app/shared/common/payment-wizard/payment.service';
 import { PaymentStatusEnum } from '@app/shared/common/payment-wizard/models/payment-status.enum';
@@ -52,6 +53,7 @@ export class PaymentWizardComponent {
     subscriptionIsActiveExpired: boolean = this.data.subscription && !this.data.subscription.isTrial &&
         this.data.subscription.statusId == 'A' && !this.appService.hasModuleSubscription() &&
         this.data.subscription.paymentPeriodType != PaymentPeriodType.OneTime;
+    tenantName = this.appSessionService.tenantName;
     productName = this.data.subscription && this.data.subscription.productName;
     cancellationDayCount = this.data.subscription && this.data.subscription.endDate ? 
         this.appService.getGracePeriodDayCountBySubscription(this.data.subscription) : 0;
@@ -60,6 +62,7 @@ export class PaymentWizardComponent {
 
     constructor(
         private appService: AppService,
+        private appSessionService: AppSessionService,
         private dialogRef: MatDialogRef<PaymentWizardComponent>,
         private paymentService: PaymentService,
         private tenantSubscriptionService: TenantSubscriptionServiceProxy,
