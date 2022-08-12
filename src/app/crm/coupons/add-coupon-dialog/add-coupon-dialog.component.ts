@@ -47,6 +47,7 @@ export class AddCouponDialogComponent implements AfterViewInit, OnInit {
     durations: string[] = Object.keys(CouponDiscountDuration);
     typesEnum = CouponDiscountType;
     title: string;
+    isAlreadyUsed = false;
     isReadOnly = true;
 
     constructor(
@@ -69,6 +70,7 @@ export class AddCouponDialogComponent implements AfterViewInit, OnInit {
         this.isReadOnly = !!data.isReadOnly;
         this.title = ls.l(this.isReadOnly ? 'Coupon' : data.coupon ? 'EditCoupon' : 'AddCoupon');
         if (data.coupon && data.coupon.id) {
+            this.isAlreadyUsed = data.coupon.isAlreadyUsed;
             this.coupon = new UpdateCouponInput(data.coupon);
         } else {
             this.coupon = new CreateCouponInput();

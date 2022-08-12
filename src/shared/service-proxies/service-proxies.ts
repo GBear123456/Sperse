@@ -14338,6 +14338,62 @@ export class CouponServiceProxy {
     }
 
     /**
+     * @param id (optional) 
+     * @return Success
+     */
+    getCouponForEdit(id: number | undefined): Observable<CouponEditDto> {
+        let url_ = this.baseUrl + "/api/services/CRM/Coupon/GetCouponForEdit?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetCouponForEdit(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetCouponForEdit(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<CouponEditDto>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<CouponEditDto>;
+        }));
+    }
+
+    protected processGetCouponForEdit(response: HttpResponseBase): Observable<CouponEditDto> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = CouponEditDto.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<CouponEditDto>(null as any);
+    }
+
+    /**
      * @param body (optional) 
      * @return Success
      */
@@ -14428,6 +14484,58 @@ export class CouponServiceProxy {
     }
 
     protected processUpdateCoupon(response: HttpResponseBase): Observable<void> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return _observableOf<void>(null as any);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<void>(null as any);
+    }
+
+    /**
+     * @param id (optional) 
+     * @return Success
+     */
+    archiveCoupon(id: number | undefined): Observable<void> {
+        let url_ = this.baseUrl + "/api/services/CRM/Coupon/ArchiveCoupon?";
+        if (id === null)
+            throw new Error("The parameter 'id' cannot be null.");
+        else if (id !== undefined)
+            url_ += "id=" + encodeURIComponent("" + id) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+            })
+        };
+
+        return this.http.request("post", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processArchiveCoupon(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processArchiveCoupon(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<void>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<void>;
+        }));
+    }
+
+    protected processArchiveCoupon(response: HttpResponseBase): Observable<void> {
         const status = response.status;
         const responseBlob =
             response instanceof HttpResponse ? response.body :
@@ -57564,6 +57672,82 @@ export class CouponDto implements ICouponDto {
 }
 
 export interface ICouponDto {
+    id: number;
+    code: string | undefined;
+    description: string | undefined;
+    type: CouponDiscountType;
+    duration: CouponDiscountDuration;
+    amountOff: number | undefined;
+    percentOff: number | undefined;
+    activationDate: moment.Moment;
+    deactivationDate: moment.Moment | undefined;
+    isArchived: boolean;
+}
+
+export class CouponEditDto implements ICouponEditDto {
+    isAlreadyUsed!: boolean;
+    id!: number;
+    code!: string | undefined;
+    description!: string | undefined;
+    type!: CouponDiscountType;
+    duration!: CouponDiscountDuration;
+    amountOff!: number | undefined;
+    percentOff!: number | undefined;
+    activationDate!: moment.Moment;
+    deactivationDate!: moment.Moment | undefined;
+    isArchived!: boolean;
+
+    constructor(data?: ICouponEditDto) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isAlreadyUsed = _data["isAlreadyUsed"];
+            this.id = _data["id"];
+            this.code = _data["code"];
+            this.description = _data["description"];
+            this.type = _data["type"];
+            this.duration = _data["duration"];
+            this.amountOff = _data["amountOff"];
+            this.percentOff = _data["percentOff"];
+            this.activationDate = _data["activationDate"] ? moment(_data["activationDate"].toString()) : <any>undefined;
+            this.deactivationDate = _data["deactivationDate"] ? moment(_data["deactivationDate"].toString()) : <any>undefined;
+            this.isArchived = _data["isArchived"];
+        }
+    }
+
+    static fromJS(data: any): CouponEditDto {
+        data = typeof data === 'object' ? data : {};
+        let result = new CouponEditDto();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isAlreadyUsed"] = this.isAlreadyUsed;
+        data["id"] = this.id;
+        data["code"] = this.code;
+        data["description"] = this.description;
+        data["type"] = this.type;
+        data["duration"] = this.duration;
+        data["amountOff"] = this.amountOff;
+        data["percentOff"] = this.percentOff;
+        data["activationDate"] = this.activationDate ? this.activationDate.toISOString() : <any>undefined;
+        data["deactivationDate"] = this.deactivationDate ? this.deactivationDate.toISOString() : <any>undefined;
+        data["isArchived"] = this.isArchived;
+        return data;
+    }
+}
+
+export interface ICouponEditDto {
+    isAlreadyUsed: boolean;
     id: number;
     code: string | undefined;
     description: string | undefined;

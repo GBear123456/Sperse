@@ -25,7 +25,7 @@ import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/
 import { AddCouponDialogComponent } from './add-coupon-dialog/add-coupon-dialog.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { CouponServiceProxy, CouponDiscountType } from '@shared/service-proxies/service-proxies';
+import { CouponServiceProxy, CouponDiscountType, CouponEditDto } from '@shared/service-proxies/service-proxies';
 import { CouponDto as OdataCouponDto } from './coupons-dto.interface';
 import { CouponFields } from './coupons-fields.enum';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
@@ -64,6 +64,14 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
             action: () => {
                 this.editCoupon(this.actionEvent.Id);
             }
+        },
+        {
+            text: this.l('Archive'),
+            class: 'archive',
+            action: () => {
+                this.archiveCoupon(this.actionEvent.Id);
+            },
+            checkVisible: (itemData: OdataCouponDto) => !itemData.IsArchived
         },
         {
             text: this.l('Delete'),
@@ -152,11 +160,27 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
 
     editCoupon(id: number) {
         this.startLoading();
-        this.couponProxy.getCoupon(id).pipe(
+        this.couponProxy.getCouponForEdit(id).pipe(
             finalize(() => this.finishLoading())
         ).subscribe(coupon => {
             this.showCouponDialog(coupon);
         });
+    }
+
+    archiveCoupon(id: number) {
+        this.message.confirm('',
+            this.l('ArchiveConfiramtion'),
+            isConfirmed => {
+                if (isConfirmed) {
+                    this.startLoading();
+                    this.couponProxy.archiveCoupon(id).pipe(
+                        finalize(() => this.finishLoading())
+                    ).subscribe(() => {
+                        this.invalidate();
+                    });
+                }
+            }
+        );
     }
 
     deleteCoupon(id: number) {
@@ -175,7 +199,7 @@ export class CouponsComponent extends AppComponentBase implements OnInit, OnDest
         );
     }
 
-    showCouponDialog(coupon?) {
+    showCouponDialog(coupon?: CouponEditDto) {
         const dialogData = {
             fullHeigth: true,
             coupon: coupon,

@@ -65,7 +65,7 @@
                     <dxi-column [dataField]="couponFields.Duration" [caption]="l('Duration')" cssClass="clipboard-holder"></dxi-column>
                     <dxi-column [dataField]="couponFields.ActivationDate" [caption]="l('ActivationDate')" cellTemplate="dateTemplate"></dxi-column>
                     <dxi-column [dataField]="couponFields.DeactivationDate" [caption]="l('DeactivationDate')" cellTemplate="dateTemplate"></dxi-column>
-                    <dxi-column [dataField]="couponFields.IsArchived" [caption]="l('Archived')" cellTemplate="dateTemplate" [visible]="false"></dxi-column>
+                    <dxi-column [dataField]="couponFields.IsArchived" [caption]="l('Archived')" cssClass="clipboard-holder" [visible]="false"></dxi-column>
                     <dxi-column [dataField]="couponFields.Created" [caption]="l('Created')" cellTemplate="dateTemplate" [visible]="false"></dxi-column>
 
                     <div *dxTemplate="let cell of 'valueTemplate'" class="clipboard-holder">
