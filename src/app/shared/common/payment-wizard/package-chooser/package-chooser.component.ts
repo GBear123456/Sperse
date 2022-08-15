@@ -321,7 +321,9 @@ export class PackageChooserComponent implements OnInit {
                 productId: this.selectedPackageCardComponent.productInfo.id,
                 productName: this.selectedPackageCardComponent.productInfo.name,
                 paymentPeriodType: this.getSubscriptionFrequency(),
-                total: this.selectedPackageCardComponent.pricePerMonth
+                total: this.selectedPackageCardComponent.pricePerMonth * (
+                    this.selectedBillingPeriod === BillingPeriod.Yearly ? 12 : 1
+                )
             };
             return paymentOptions;
         }
