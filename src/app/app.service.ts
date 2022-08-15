@@ -53,7 +53,6 @@ export class AppService extends AppServiceBase {
     public contactInfo: any;
 
     private toolbarSubject: Subject<undefined>;
-    private expiredModule: Subject<string>;
     public moduleSubscriptions$: Observable<ModuleSubscriptionInfoDto[]>;
     public moduleSubscriptions: ModuleSubscriptionInfoDto[];
     public subscriptionIsFree$: Observable<boolean>;
@@ -203,7 +202,6 @@ export class AppService extends AppServiceBase {
 
         this.toolbarSubject = new Subject<undefined>();
         if (!this.isHostTenant && abp.session.userId) {
-            this.expiredModule = new Subject<string>();
             this.loadModuleSubscriptions();
         }
         this.toolbarIsHidden$.subscribe((hidden: boolean) => {
@@ -230,7 +228,6 @@ export class AppService extends AppServiceBase {
                 else
                     return 1;
             });
-            setTimeout(() => this.checkModuleExpired(), 1000);
         });
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
             map(subscriptions => this.checkSubscriptionIsFree())
@@ -310,7 +307,6 @@ export class AppService extends AppServiceBase {
 
     subscriptionIsExpiringSoon(name: string = this.defaultSubscriptionModule): boolean {
         let sub = this.getModuleSubscription(name);
-
         if (!this.isHostTenant && sub && sub.endDate) {
             let diff = sub.endDate.diff(moment().utc(), 'days', true);
             return (diff > 0) && (diff <= AppConsts.subscriptionExpireNootifyDayCount);
@@ -382,15 +378,6 @@ export class AppService extends AppServiceBase {
             || (module.endDate > moment().utc());
     }
 
-    checkModuleExpired(name: string = this.defaultSubscriptionModule) {
-        name = name || this.getModule();
-        let expired = !this.hasModuleSubscription(name);
-        if (expired && this.expiredModule)
-            this.expiredModule.next(name);
-
-        return expired;
-    }
-
     hasUnconventionalSubscription() {
         let sub = this.getModuleSubscription();
         if (!sub.productId) {
@@ -409,11 +396,6 @@ export class AppService extends AppServiceBase {
     switchModule(name: string, params = {}) {
         this.subscriptionBarVisible = undefined;
         super.switchModule(name, params);
-    }
-
-    expiredModuleSubscribe(callback) {
-        if (this.expiredModule)
-            this.expiredModule.asObservable().subscribe(callback);
     }
 
     setContactInfoVisibility(value: boolean) {

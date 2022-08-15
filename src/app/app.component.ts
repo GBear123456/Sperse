@@ -4,6 +4,7 @@ import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { first } from 'rxjs/operators';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
@@ -63,9 +64,9 @@ export class AppComponent implements OnInit {
     ) {
         if (!appService.isHostTenant) {
             let paymentDialogTimeout;
-            appService.expiredModuleSubscribe((name) => {
+            appService.moduleSubscriptions$.pipe(first()).subscribe(() => {
                 let isCustomLayout = appSession.tenant.customLayoutType && appSession.tenant.customLayoutType !== LayoutType.Default,                    
-                    moduleName = isCustomLayout ? '' : name.toLowerCase(),
+                    moduleName = isCustomLayout ? '' : appService.defaultSubscriptionModule.toLowerCase(),
                     productGroups = isCustomLayout ? [] : [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN];
                 if (moduleName != appService.getDefaultModule() && !appService.hasUnconventionalSubscription()) {
                     clearTimeout(paymentDialogTimeout);
