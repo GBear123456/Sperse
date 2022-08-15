@@ -345,7 +345,7 @@ export class AppService extends AppServiceBase {
     }
 
     getGracePeriod(sub: ModuleSubscriptionInfoDto) {
-        return sub.endDate && sub.finalEndDate ? sub.endDate.diff(sub.finalEndDate, 'days', true) : 0;
+        return sub.endDate && sub.finalEndDate ? sub.finalEndDate.diff(sub.endDate, 'days', true) : 0;
     }
 
     getSubscriptionExpiringDayCount(name: string = this.defaultSubscriptionModule): number {
