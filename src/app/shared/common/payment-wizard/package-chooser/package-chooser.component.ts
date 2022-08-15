@@ -244,7 +244,9 @@ export class PackageChooserComponent implements OnInit {
         this.selectedBillingPeriod = e.checked ? BillingPeriod.Yearly : BillingPeriod.Monthly;
 
         setTimeout(() => {
-            this.onPlanChosen.emit(this.getPaymentOptions());
+            let paymentOptions = this.getPaymentOptions();
+            if (paymentOptions)
+                this.onPlanChosen.emit(paymentOptions);
         }, 10);
     }
 
@@ -313,14 +315,16 @@ export class PackageChooserComponent implements OnInit {
         this.moveToNextStep.next();
     }
 
-    getPaymentOptions() {
-        const paymentOptions: PaymentOptions = {
-            productId: this.selectedPackageCardComponent.productInfo.id,
-            productName: this.selectedPackageCardComponent.productInfo.name,
-            paymentPeriodType: this.getSubscriptionFrequency(),
-            total: this.selectedPackageCardComponent.pricePerMonth
-        };
-        return paymentOptions;
+    getPaymentOptions(): PaymentOptions {
+        if (this.selectedPackageCardComponent) {
+            const paymentOptions: PaymentOptions = {
+                productId: this.selectedPackageCardComponent.productInfo.id,
+                productName: this.selectedPackageCardComponent.productInfo.name,
+                paymentPeriodType: this.getSubscriptionFrequency(),
+                total: this.selectedPackageCardComponent.pricePerMonth
+            };
+            return paymentOptions;
+        }
     }
 
     get nextButtonDisabled(): boolean {
