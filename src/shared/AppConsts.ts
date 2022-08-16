@@ -21,8 +21,6 @@ export class AppConsts {
     static recaptchaSiteKey: string;
     static googleSheetClientId: string;
     static subscriptionExpireNootifyDayCount: number;
-    static subscriptionRecurringBillingPeriod = 20; /* Days */
-    static subscriptionGracePeriod = 20; /* Days */
 
     static localeMappings: any = [];
 
@@ -144,7 +142,10 @@ export class AppConsts {
     static readonly maxDocumentSizeMB = 100;
     static readonly maxDocumentSizeBytes = 1024 * 1024 * AppConsts.maxDocumentSizeMB;
 
-    static readonly maxAffiliateCodeLength = 50
+    static readonly maxAffiliateCodeLength = 50;
     static readonly maxAffiliateRateLength = 5;
     static readonly maxAffiliateRateZeroBaseLength = 6;
+
+    static readonly PRODUCT_GROUP_MAIN   = 'main';
+    static readonly PRODUCT_GROUP_SIGNUP = 'signup';
 }

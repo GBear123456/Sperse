@@ -28,14 +28,14 @@
                     <div class="subscription-info">
                         <div class="details">
                             <div class="vertical-align">
-                                <span class="title">{{subscriptionInfoTitle}}</span>
+                                <span class="title" (click)="openPaymentWizardDialog($event, true)">{{subscriptionInfoTitle}}</span>
                                 <br />
                                 <span>{{subscriptionInfoText}}</span>
                             </div>
                         </div>
-                        <div class="upgrade-button" (click)="openPaymentWizardDialog($event)">
-                            <div class="">{{ls.l("Upgrade").toUpperCase()}}</div>
-                            <div class="">{{ls.l("Today")}}</div>
+                        <div *ngIf="prolongButtonVisible()" class="upgrade-button" (click)="openPaymentWizardDialog($event)">
+                            <div class="">{{ls.l(isOneTimeSubscription() ? "Activate" : "Prolong").toUpperCase()}}</div>
+                            <div class="">{{ls.l(isOneTimeSubscription() ? "Now" : "Today")}}</div>
                         </div>
                     </div>
                 </ng-template>

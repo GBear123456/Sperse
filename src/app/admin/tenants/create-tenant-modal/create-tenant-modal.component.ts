@@ -18,12 +18,18 @@ import { finalize } from 'rxjs/operators';
 import { AppConsts } from '@shared/AppConsts';
 import {
     CreateTenantInput,
+    TenantProductInfo,
+    PaymentPeriodType,
     PasswordComplexitySetting,
     ProfileServiceProxy,
     TenantServiceProxy,
     TenantEditEditionDto,
     SubscribableEditionComboboxItemDto,
-    GetPasswordComplexitySettingOutput
+    GetPasswordComplexitySettingOutput,
+    ProductServiceProxy,
+    ProductDto,
+    ProductType,
+    RecurringPaymentFrequency
 } from '@shared/service-proxies/service-proxies';
 import { TenantsService } from '@admin/tenants/tenants.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -40,7 +46,7 @@ import { ModulesEditionsSelectComponent } from '../modules-edtions-select/module
         '../modal.less',
         './create-tenant-modal.component.less'
     ],
-    providers: [ TenantsService ],
+    providers: [ TenantsService, ProductServiceProxy ],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class CreateTenantModalComponent implements OnInit {
@@ -53,6 +59,10 @@ export class CreateTenantModalComponent implements OnInit {
     passwordComplexitySetting: PasswordComplexitySetting = new PasswordComplexitySetting();
     editionsGroups$: Observable<SubscribableEditionComboboxItemDto[][]>;
     editionsModels: { [value: string]: TenantEditEditionDto } = {};
+    productId: number;
+    products: ProductDto[];
+    paymentPeriodType: RecurringPaymentFrequency;
+    paymentPeriodTypes: RecurringPaymentFrequency[];
     nameRegEx = AppConsts.regexPatterns.fullName;
     emailRegEx = AppConsts.regexPatterns.email;
     title = this.ls.l('CreateNewTenant');
@@ -67,6 +77,7 @@ export class CreateTenantModalComponent implements OnInit {
     constructor(
         private tenantService: TenantServiceProxy,
         private profileService: ProfileServiceProxy,
+        private productService: ProductServiceProxy,
         private tenantsService: TenantsService,
         private notifyService: NotifyService,
         private dialogRef: MatDialogRef<CreateTenantModalComponent>,
@@ -85,6 +96,9 @@ export class CreateTenantModalComponent implements OnInit {
             .subscribe((result: GetPasswordComplexitySettingOutput) => {
                 this.passwordComplexitySetting = result.setting;
             });
+        this.productService.getProducts(ProductType.Subscription).subscribe(response => {
+            this.products = response;
+        })
     }
 
     init(): void {
@@ -105,6 +119,13 @@ export class CreateTenantModalComponent implements OnInit {
             this.tenant.adminPassword = null;
         }
         this.tenant.editions = this.tenantsService.getTenantEditions();
+        this.tenant.products = this.productId == undefined 
+            ? undefined 
+            : [ new TenantProductInfo({ 
+                productId: this.productId,
+                paymentPeriodType: this.mapRecurringPaymentFrequencyToPaymentPeriodType(this.paymentPeriodType),
+                quantity: 1
+        }) ];
         this.tenantService.createTenant(this.tenant)
             .pipe(finalize(() => this.modalDialog.finishLoading()))
             .subscribe(() => {
@@ -112,5 +133,31 @@ export class CreateTenantModalComponent implements OnInit {
                 this.dialogRef.close(true);
                 this.modalSave.emit(null);
             });
+    }
+
+    onProductChanged(event) {
+        if (!event.value) {
+            this.paymentPeriodTypes = [];
+            return;
+        }
+
+        let selectedItem: ProductDto = event.component.option('selectedItem');
+        this.productId = selectedItem.id;
+        this.paymentPeriodTypes = selectedItem.paymentPeriodTypes;
+        this.paymentPeriodType = undefined;
+    }
+
+    mapRecurringPaymentFrequencyToPaymentPeriodType(recurringPaymentFrequency: RecurringPaymentFrequency): PaymentPeriodType {
+        switch (recurringPaymentFrequency)
+        {
+            case RecurringPaymentFrequency.Monthly:
+                return PaymentPeriodType.Monthly;
+            case RecurringPaymentFrequency.Annual:
+                return PaymentPeriodType.Annual;
+            case RecurringPaymentFrequency.LifeTime:
+                return PaymentPeriodType.LifeTime;
+            default:
+                return undefined;
+        }
     }
 }

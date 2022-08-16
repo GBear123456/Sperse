@@ -262,18 +262,14 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     openPaymentWizardDialog() {
+        this.dialog.closeAll();
         this.dialog.open(PaymentWizardComponent, {
             height: '800px',
             width: '1200px',
             id: 'payment-wizard',
             panelClass: ['payment-wizard', 'setup'],
             data: {
-                module: this.appService.getModuleSubscription(ModuleType.CRM).module,
-                title: this.ls.ls(
-                    AppConsts.localization.defaultLocalizationSourceName,
-                    'UpgradeYourSubscription',
-                    this.appService.getSubscriptionName(ModuleType.CRM)
-                )
+                showSubscriptions: true
             }
         });
     }

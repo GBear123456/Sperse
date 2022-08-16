@@ -1,40 +1,55 @@
-<div id="paymentWizardComponent" #wizard>
-    <mat-dialog-content>
-        <mat-horizontal-stepper #stepper>
-            <mat-step>
-                <package-chooser
-                    *ngIf="!subscriptionIsLocked"
-                    [widgettitle]="data?.title"
-                    [subtitle]="data?.subtitle"
-                    [module]="module"
-                    [showBackground]="true"
-                    [showDowngradeLink]="!subscriptionIsFree"
-                    (onPlanChosen)="changePlan($event)"
-                    (moveToNextStep)="moveToPaymentOptionsStep()">
-                </package-chooser>
-                <div *ngIf="subscriptionIsLocked" class="rejectSubscriptionBlock">
-                    <h2 class="title">{{ ls.l('ManualBankTransferIsNotConfirmed') }}</h2>
-                    <h3 *ngIf="trackingCode">{{ ls.l('YourTrackingCodeIs') }}: {{ trackingCode }}</h3>
-                    <button (click)="rejectPendingPayment()" class="btn btn-layout">{{ ls.l('ManualSubscriptionReject') }}</button>
-                </div>
-            </mat-step>
-            <mat-step>
-                <ng-container *ngIf="(plan$ | async) as plan">
-                    <payment-options
-                        *ngIf="stepper.selectedIndex != 0"
-                        [plan]="plan"
-                        (onChangeStep)="stepper.selectedIndex = $event"
-                        (onClose)="close()"
-                        (onStatusChange)="changeStatus($event)"
-                        (refreshAfterClose)="setRefreshAfterClose()">
-                    </payment-options>
-                </ng-container>
-            </mat-step>
-            <mat-step>
-                <ng-container *ngIf="paymentStatusData">
-                    <payment-status [paymentStatusData]="paymentStatusData" (onClose)="close()"></payment-status>
-                </ng-container>
-            </mat-step>
-        </mat-horizontal-stepper>
-    </mat-dialog-content>
-</div>
+<payment-subscriptions *ngIf="data.showSubscriptions; else paymentWizard" (onShowProducts)="showSubscriptionProducts()"></payment-subscriptions>
+<ng-template #paymentWizard>
+    <div id="paymentWizardComponent" #wizard>
+        <mat-dialog-content>
+            <mat-horizontal-stepper #stepper>
+                <mat-step>
+                    <package-chooser
+                        *ngIf="isSubscriptionManagementAllowed && !subscriptionIsDraft && !subscriptionIsTrialExpired && !subscriptionIsActiveExpired"
+                        [widgettitle]="data?.title"
+                        [subtitle]="data?.subtitle"
+                        [showBackground]="true"
+                        [subscription]="data.subscription"
+                        [showDowngradeLink]="!subscriptionIsFree"
+                        (onPlanChosen)="changePlan($event)"
+                        (moveToNextStep)="moveToPaymentOptionsStep()">
+                    </package-chooser>
+                    <div *ngIf="subscriptionIsDraft || !isSubscriptionManagementAllowed && !subscriptionIsTrialExpired && !subscriptionIsActiveExpired" class="rejectSubscriptionBlock">
+                        <h2 class="title">{{ ls.l(isSubscriptionManagementAllowed ? 'SubscriptionDraftTitle' : 'UserNoSubscriptiontTitle') }}</h2>
+                        <h3 class="message">{{ ls.l(isSubscriptionManagementAllowed ? 'SubscriptionDraftMessage' : 'UserNoSubscriptionMessage', isSubscriptionManagementAllowed ? productName : tenantName) }}</h3>
+                        <button *ngIf="isSubscriptionManagementAllowed" (click)="processPayment()" class="btn btn-layout">{{ ls.l('Pay Now') }}</button>
+                    </div>
+                    <div *ngIf="subscriptionIsTrialExpired" class="rejectSubscriptionBlock">
+                        <h2 class="title">{{ ls.l('SubscriptionTrialExpiredTitle') }}</h2>
+                        <h3 class="message">{{ ls.l((isSubscriptionManagementAllowed ? '' : 'User') + 'SubscriptionTrialExpiredMessage', productName) }}</h3>
+                        <button *ngIf="isSubscriptionManagementAllowed" (click)="activateSubscription()" class="btn btn-layout">{{ ls.l('Activate') }}</button>
+                        <span class="bottom-message" *ngIf="cancellationDayCount > 0">{{ ls.l('SubscriptionCancellationMessage', cancellationDayCount) }}</span>
+                    </div>
+                    <div *ngIf="subscriptionIsActiveExpired" class="rejectSubscriptionBlock">
+                        <h2 class="title">{{ ls.l('SubscriptionActiveExpiredTitle') }}</h2>
+                        <h3 class="message">{{ ls.l((isSubscriptionManagementAllowed ? '' : 'User') + 'SubscriptionActiveExpiredMessage', productName) }}</h3>
+                        <button (click)="close()" class="btn btn-layout">{{ ls.l('Close') }}</button>
+                        <span class="bottom-message" *ngIf="cancellationDayCount > 0">{{ ls.l('SubscriptionCancellationMessage', cancellationDayCount) }}</span>
+                    </div>
+                </mat-step>
+                <mat-step>
+                    <ng-container *ngIf="(plan$ | async) as plan">
+                        <payment-options
+                            *ngIf="stepper.selectedIndex != 0"
+                            [plan]="plan"
+                            (onChangeStep)="stepper.selectedIndex = $event"
+                            (onClose)="close()"
+                            (onStatusChange)="changeStatus($event)"
+                            (refreshAfterClose)="setRefreshAfterClose()">
+                        </payment-options>
+                    </ng-container>
+                </mat-step>
+                <mat-step>
+                    <ng-container *ngIf="paymentStatusData">
+                        <payment-status [paymentStatusData]="paymentStatusData" (onClose)="close()"></payment-status>
+                    </ng-container>
+                </mat-step>
+            </mat-horizontal-stepper>
+        </mat-dialog-content>
+    </div>
+</ng-template>

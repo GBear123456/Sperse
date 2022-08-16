@@ -256,6 +256,7 @@
                                 width="100px"
                                 height="32px"
                                 (onFocusIn)="onFieldFocusIn($event)"
+                                [readOnly]="cellData.data.isCrmProduct && cellData.data.productId"
                                 [placeholder]="ls.lr('Value')"
                                 [showClearButton]="false"
                                 (onKeyDown)="allowDigitsOnly($event, ['.'])"

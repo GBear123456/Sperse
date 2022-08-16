@@ -1,96 +1,45 @@
 <div class="packageHeader">
     <ng-container *ngIf="packagesConfig$ | async">
-        <ng-container *ngIf="packages && packages.length; else nopackages">
-            <h2 class="title">{{ widgettitle }}</h2>
-            <h3 class="subtitle">{{ subtitle }}</h3>
-            <div class="config-wrap">
-                <div class="slider" *ngIf="usersAmount !== null" [hidden]="configurator != 'slider'">
-                    <span class="totalSeatsLabel">{{ ls.l('TotalSeatsLabel') }}</span>
-                    <i class="minus" name="minus" role="button" [class.hidden]="usersAmountSlider.value <= sliderInitialMinValue" (click)="decreaseUserCount()"></i>
-                    <mat-slider thumbLabel [min]="sliderInitialMinValue" [max]="sliderInitialMaxValue" [step]="sliderInitialStep" [(value)]="usersAmount" (input)="onActiveUsersChange($event)" #usersAmountSlider></mat-slider>
-                    <i class="plus" [class.hidden]="usersAmountSlider.value >= sliderInitialMaxValue" name="plus" role="button" (click)="increaseUserCount()"></i>
+        <h2 class="title">{{ widgettitle }}</h2>
+        <h3 class="subtitle">{{ subtitle }}</h3>
+        <div class="config-wrap">
+            <div class="sperse-toggle" [ngClass]="{'both-active': configurator == 'slider'}">
+                <div class="left" [ngClass]="{ 'active': getActiveStatus('month') }">{{ ls.l('Monthly') }}</div>
+                <mat-slide-toggle
+                    [checked]="selectedBillingPeriod === billingPeriod.Yearly"
+                    (change)="billingPeriodChanged($event)">
+                </mat-slide-toggle>
+                <div class="right" [ngClass]="{ 'active': getActiveStatus('year') }">
+                    <p class="year-discount">{{ 'SAVE ' + yearDiscount + '%'}}<span> {{ ls.l('OrMore') }}</span></p>
+                    {{ ls.l('Annually') }}
                 </div>
-                <div class="sperse-toggle" [ngClass]="{'both-active': configurator == 'slider'}">
-                    <div class="left" [ngClass]="{ 'active': getActiveStatus('month') }">{{ ls.l('Monthly') }}</div>
-                    <mat-slide-toggle
-                        [checked]="selectedBillingPeriod === billingPeriod.Yearly"
-                        (change)="billingPeriodChanged($event)">
-                    </mat-slide-toggle>
-                    <div class="right" [ngClass]="{ 'active': getActiveStatus('year') }">
-                        <p class="year-discount">{{ 'SAVE ' + yearDiscount + '%'}}<span> {{ ls.l('OrMore') }}</span></p>
-                        {{ ls.l('Annually') }}
-                    </div>
-                </div>
-                <button [hidden]="module === modules.CFO || module === 'CFO_CRM' || module === 'CFO_Partner' || configurator == 'slider'"
-                        class="toggle"
-                        (click)="configurator = configurator == 'slider' ? 'billingPeriod' : 'slider'">
-                    {{ configurator === 'slider' ? 'Change plan' : 'Add more seats' }}
-                </button>
             </div>
-        </ng-container>
+        </div>
     </ng-container>
 </div>
 <ng-container *ngIf="packagesConfig$ | async">
-    <ng-container *ngIf="packages && packages.length; else nopackages">
-        <div class="packages">
-            <ng-container *ngFor="let package of packages; let i = index;">
-                <package-card
-                    [name]="package.name"
-                    [bestValue]="package.bestValue"
-                    [billingPeriod]="selectedBillingPeriod"
-                    [usersAmount]="usersAmount"
-                    [editions]="package.editions"
-                    [module]="module"
-                    [ngClass]="{
-                        'selected': selectedPackageIndex === i,
-                        'large': packages.length < 3 || package.bestValue,
-                        'last': i === packages.length - 1,
-                        'heightFitContent' : packages.length > 2
-                    }"
-                    (click)="selectPackage(i)">
-                </package-card>
-            </ng-container>
-        </div>
+    <ng-container *ngIf="packages && packages.length">
+        <dx-scroll-view showScrollbar="onHover" direction="horizontal">
+            <div class="packages">
+                <ng-container *ngFor="let package of packages; let i = index;">
+                    <package-card
+                        [productInfo]="package"
+                        [billingPeriod]="selectedBillingPeriod"
+                        [isActive]="currentProductId == undefined || currentProductId == package.id"
+                        [ngClass]="{
+                            'selected': selectedPackageIndex === i,
+                            'large': packages.length < 3,
+                            'last': i === packages.length - 1,
+                            'heightFitContent' : packages.length > 2
+                        }"
+                        (click)="selectPackage(i)">
+                    </package-card>
+                </ng-container>
+            </div>
+        </dx-scroll-view>
+
         <div class="footer" [ngClass]="'nextButtonPosition-' + nextButtonPosition">
             <button [disabled]="nextButtonDisabled" (click)="goToNextStep()">{{ nextStepButtonText }}</button>
-            <div>
-                <p *ngIf="showDowngradeLink && this.freePackages && this.freePackages.length"
-                   class="downgrade"
-                   (click)="downGradeToFree()">{{ ls.l('DowngradeToFree') }}
-                </p>
-                <div class="free-version-available">
-                    <div class="downgrade-info">
-                        Free version available with limited features.
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div *ngIf="module === modules.CFO" class="footerDescription">
-            <p>Prices are in US Dollars. All packages include:</p>
-            <ul>
-                <li>Cash flow transactions report and calculator</li>
-                <li>Cash flow visual statistics and statements</li>
-                <li>Free online support and product training</li>
-                <li>Transaction logs with export functionality</li>
-                <li>Two-form authentication for highest security</li>
-                <li>Minimum 5-seat user licenses included in price</li>
-            </ul>
-        </div>
-        <div *ngIf="module === modules.CRM" class="footerDescription">
-            <p>Prices are in US Dollars. All packages include</p>
-            <ul>
-                <li>Free online support and product training</li>
-                <li>Two-factor authentication for highest security</li>
-                <li>Intelligent contact management</li>
-                <li>Alerts and notification system</li>
-                <li>Import and Export Functionality</li>
-                <li>Lead Stages, Lists, Tags and Ratings</li>
-                <li>Minimum 5-seat user licenses included in price</li>
-            </ul>
         </div>
     </ng-container>
 </ng-container>
-<ng-template #nopackages>
-    <h2 class="title">{{ localizationService.ls('Platform', 'ModuleIsNotUpgradable', module) }}</h2>
-    <h3 class="subtitle">{{ ls.l('AdditionalFeaturesCanOnlyBeEnabled') }}</h3>
-</ng-template>

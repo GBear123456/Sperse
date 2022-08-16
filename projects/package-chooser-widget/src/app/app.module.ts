@@ -6,6 +6,7 @@ import { BrowserModule, HAMMER_GESTURE_CONFIG } from '@angular/platform-browser'
 /** Third party imports */
 import { MatSlider, MatSliderModule } from '@angular/material/slider';
 import { MatSlideToggle, MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { DxScrollViewModule } from 'devextreme-angular/ui/scroll-view';
 
 /** Application imports */
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -56,7 +57,8 @@ export function initialize(widgetsService: WidgetsService, injector: Injector) {
         MatSliderModule,
         MatSlideToggleModule,
         RootStoreModule,
-        HttpClientModule
+        HttpClientModule,
+        DxScrollViewModule
     ],
     providers: [
         StatesService,

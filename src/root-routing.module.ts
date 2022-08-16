@@ -59,6 +59,12 @@ const routes: Routes = [
         ]
     },
     {
+        path: 'receipt',
+        canActivate: [ LocalizationResolver ],
+        loadChildren: () => import('public/receipt/receipt.module').then(m => m.ReceiptModule),
+        data: { localizationSource: 'Platform' }
+    },
+    {
         path: '**',
         canActivateChild: [ LocalizationResolver ],
         loadChildren: () => import('shared/not-found/not-found.module').then(m => m.NotFoundModule),

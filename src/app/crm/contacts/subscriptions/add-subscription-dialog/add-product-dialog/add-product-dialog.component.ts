@@ -37,7 +37,7 @@ import {
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
 import { DxValidationGroupComponent } from '@root/node_modules/devextreme-angular';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { InvoicesService, } from '@app/crm/contacts/invoices/invoices.service';
 import { AddMemberServiceDialogComponent } from '../add-member-service-dialog/add-member-service-dialog.component';
 import { AppFeatures } from '@shared/AppFeatures';
 import { FeatureCheckerService, SettingService } from 'abp-ng2-module';
@@ -76,6 +76,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     productUnits = Object.keys(ProductMeasurementUnit).map(
         key => this.ls.l('ProductMeasurementUnit_' + key)
     );
+    recurringPaymentFrequency = RecurringPaymentFrequency;
     frequencies = Object.keys(RecurringPaymentFrequency);
     gracePeriodDefaultValue: number;
     customGroup: string;
@@ -84,6 +85,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     isReadOnly = true;
     image: string = null;
     imageChanged: boolean = false;
+    isOneTime = false;   
 
     constructor(
         private elementRef: ElementRef,
@@ -112,6 +114,9 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         if (data.product && data.product.id) {
             this.image = data.product.imageUrl;
             this.product = new UpdateProductInput(data.product);
+            let options = data.product.productSubscriptionOptions;
+            if (options && options[0])
+                this.checkOneTimeOption({value: options[0].frequency});
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
@@ -255,6 +260,10 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     removePaymentPeriod(index) {
         this.product.productSubscriptionOptions.splice(index, 1);
+        if (this.isOneTime && !this.product.productSubscriptionOptions.length) {
+            this.isOneTime = false;
+            this.detectChanges();
+        }
     }
 
     getServiceLevels(serviceId) {
@@ -263,11 +272,30 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     }
 
     getFrequencies(selected) {
-        let options = this.product.productSubscriptionOptions;
-        return options ? this.frequencies.filter(item => {
+        let options = this.product.productSubscriptionOptions,
+            frequencies = options ? this.frequencies.filter(item => {
             return selected.frequency == item ||
                 !options.some(option => option.frequency == item);
         }) : this.frequencies;
+
+        if (options.length > 1)
+            return frequencies.filter(item => item != RecurringPaymentFrequency.OneTime);
+
+        return frequencies;
+    }
+
+    checkOneTimeOption(event) {
+        this.isOneTime = event.value == RecurringPaymentFrequency.OneTime;
+        let options = this.product.productSubscriptionOptions[0];
+
+        if (this.isOneTime) {
+            options.commissionableSignupFeeAmount = undefined;
+            options.trialDayCount = undefined;
+            options.signupFee = undefined;
+        } else
+            options.activeDayCount = undefined;
+        
+        this.detectChanges();
     }
 
     onServiceChanged(event, service) {
@@ -342,9 +370,16 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         };
     }
 
+    validatePeriodDayCount(option) {
+        return (event) => {
+            return !this.isOneTime || event.value && event.value > 0;
+        };
+    }
+
     validateFee(option) {
         return (event) => {
-            return option.frequency == RecurringPaymentFrequency.LifeTime
+            return option.frequency == RecurringPaymentFrequency.OneTime
+                || option.frequency == RecurringPaymentFrequency.LifeTime
                 || event.value && event.value > 0;
         };
     }
@@ -378,6 +413,19 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
                 this.detectChanges();
             }
         });
+    }
+
+    checkShowAmountChangeWarrning() {
+        let product = this.data.product,
+            message = '';
+        if (product && product.stripeXref)
+            message = this.ls.l('StripeRefferenceWarning') + '\n';
+
+        if (product && product.hasIncompletedInvoices)
+            message += '\n' + this.ls.l('IncompletedInvoicesWarning');
+
+        if (message)
+            abp.message.warn(message, this.ls.l('Important'));
     }
 
     detectChanges() {

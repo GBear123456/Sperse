@@ -13,6 +13,7 @@ export enum EmailTags {
     InvoiceGrandTotal    = 'InvoiceGrandTotal',
     InvoiceDueDate       = 'InvoiceDueDate',
     InvoiceLink          = 'InvoiceLink',
+    InvoicePayLink       = 'InvoicePayLink',
     InvoiceAnchor        = 'InvoiceAnchor',
     FirstName            = 'FirstName',
     LastName             = 'LastName',

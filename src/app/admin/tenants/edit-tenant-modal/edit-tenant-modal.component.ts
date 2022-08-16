@@ -83,16 +83,19 @@ export class EditTenantModalComponent implements OnInit {
 
     ngOnInit() {
         this.modalDialog.startLoading();
-        forkJoin(
-            this.tenantsService.getEditionsGroups(),
-            this.tenantService.getTenantForEdit(this.tenantId),
-        ).pipe(
+            this.tenantService.getTenantForEdit(this.tenantId)
+        .pipe(
             finalize(() => this.modalDialog.finishLoading())
-        ).subscribe(([editionsGroups, tenantResult]) => {
-            this.editionsGroups = editionsGroups;
+        ).subscribe((tenantResult) => {
+            if (tenantResult.editions && tenantResult.editions.length) {
+                this.tenantsService.getEditionsGroups().subscribe((editionsGroups) => {
+                    this.editionsGroups = editionsGroups;
+                    this.editionsModels = this.tenantsService.getEditionsModels(editionsGroups, tenantResult);
+                    this.changeDetectorRef.detectChanges();
+                });
+            }
             this.initialTenant = cloneDeep(tenantResult);
             this.tenant = cloneDeep(tenantResult);
-            this.editionsModels = this.tenantsService.getEditionsModels(editionsGroups, tenantResult);
             this.changeDetectorRef.detectChanges();
         });
     }
@@ -122,7 +125,7 @@ export class EditTenantModalComponent implements OnInit {
     }
 
     save(): void {
-        if (!this.editionsSelect.validateModel())
+        if (this.editionsSelect && !this.editionsSelect.validateModel())
             return;
 
         if (this.initialTenant.azureConnectionString != this.tenant.azureConnectionString) {

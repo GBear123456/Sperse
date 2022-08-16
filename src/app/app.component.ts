@@ -4,9 +4,12 @@ import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { first } from 'rxjs/operators';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
+import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { ChatSignalrService } from 'app/shared/layout/chat/chat-signalr.service';
 import { AppSessionService } from '@shared/common/session/app-session.service';
@@ -15,9 +18,6 @@ import { SignalRHelper } from 'shared/helpers/SignalRHelper';
 import { AppService } from './app.service';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FullScreenService } from '@shared/common/fullscreen/fullscreen.service';
-import { CacheService } from '@node_modules/ng2-cache-service';
-import { CacheHelper } from '@shared/common/cache-helper/cache-helper';
-import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { PermissionCheckerService } from 'abp-ng2-module';
 import { AppPermissions } from '@shared/AppPermissions';
 import { AppFeatures } from '@shared/AppFeatures';
@@ -52,13 +52,9 @@ export class AppComponent implements OnInit {
     isChatEnabled = this.appService.feature.isEnabled(AppFeatures.AppChatFeature);
 
     public constructor(
-        private ngZone: NgZone,
         private router: Router,
         private chatSignalrService: ChatSignalrService,
         private fullScreenService: FullScreenService,
-        private cacheService: CacheService,
-        private cacheHelper: CacheHelper,
-        private userManagementService: UserManagementService,
         private permissionCheckerService: PermissionCheckerService,
         public ls: AppLocalizationService,
         public appSession: AppSessionService,
@@ -68,34 +64,35 @@ export class AppComponent implements OnInit {
     ) {
         if (!appService.isHostTenant) {
             let paymentDialogTimeout;
-            appService.expiredModuleSubscribe((name) => {
-                let moduleName = name.toLowerCase();
-                if (moduleName != appService.getDefaultModule()) {
+            appService.moduleSubscriptions$.pipe(first()).subscribe(() => {
+                let isCustomLayout = appSession.tenant.customLayoutType && appSession.tenant.customLayoutType !== LayoutType.Default,                    
+                    moduleName = isCustomLayout ? '' : appService.defaultSubscriptionModule.toLowerCase(),
+                    productGroups = isCustomLayout ? [] : [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN];
+                if (moduleName != appService.getDefaultModule() && !appService.hasUnconventionalSubscription()) {
                     clearTimeout(paymentDialogTimeout);
-                    if (!appService.subscriptionInGracePeriod(moduleName)) {
-                        this.dialog.closeAll();
-                        this.router.navigate(['app/admin/users']);
-                    }
                     paymentDialogTimeout = setTimeout(() => {
-                        if (!this.dialog.getDialogById('payment-wizard')) {
-                            const sub = appService.getModuleSubscription(name);
+                        let hasSubscription = appService.hasModuleSubscription(moduleName, productGroups),
+                            sub = appService.getModuleSubscription(moduleName, productGroups),
+                            isOneTimeExpirationSoon = appService.isOneTimeExpirationSoon(moduleName);
+                        if ((sub.statusId != 'A' || !hasSubscription || isOneTimeExpirationSoon) && !this.dialog.getDialogById('payment-wizard')) {
                             this.dialog.open(PaymentWizardComponent, {
                                 height: '800px',
-                                width: '1200px',
+                                width: '1200px',                                                              
                                 id: 'payment-wizard',
+                                disableClose: !isOneTimeExpirationSoon,
                                 panelClass: ['payment-wizard', 'setup'],
                                 data: {
-                                    module: sub.module,
+                                    subscription: sub,
                                     title: ls.ls(
                                         'Platform',
                                         'ModuleExpired',
-                                        appService.getSubscriptionName(name),
+                                        sub.productName,
                                         appService.getSubscriptionStatusBySubscription(sub)
                                     )
                                 }
                             });
                         }
-                    }, 2000);
+                    }, 1000);
                 }
             });
         }
