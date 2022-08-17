@@ -18,7 +18,8 @@ import { ContditionsModalData } from '../../shared/common/conditions-modal/condi
         '../../shared/common/styles/core.less',
         './receipt.component.less'
     ],
-    encapsulation: ViewEncapsulation.None})
+    encapsulation: ViewEncapsulation.None
+})
 export class ReceiptComponent implements OnInit {
     loading: boolean = true;
     invoiceInfo: GetInvoiceReceiptInfoOutput;
@@ -28,6 +29,7 @@ export class ReceiptComponent implements OnInit {
     static maxRetryCount: number = 10;
     currentRetryCount: number = 0;
     failedToLoad: boolean = false;
+    failMessage: string = '';
 
     constructor(
         private route: ActivatedRoute,
@@ -43,27 +45,39 @@ export class ReceiptComponent implements OnInit {
         this.getInvoiceInfo(tenantId, publicId);
     }
 
-    getInvoiceInfo(tenantId, publicId)
-    {
+    getInvoiceInfo(tenantId, publicId) {
         this.userInvoiceService
             .getInvoiceReceiptInfo(tenantId, publicId)
             .subscribe(result => {
-                if (result.invoiceStatus != InvoiceStatus.Paid)
-                {
-                    this.currentRetryCount++;
-                    if (this.currentRetryCount >= ReceiptComponent.maxRetryCount) {
-                        abp.ui.clearBusy();
-                        this.failedToLoad = true;
-                    }
-                    else {
-                        setTimeout(() => this.getInvoiceInfo(tenantId, publicId), 4000);
-                    }
-
-                    return;
+                switch (result.invoiceStatus) {
+                    case InvoiceStatus.Sent:
+                        {
+                            this.currentRetryCount++;
+                            if (this.currentRetryCount >= ReceiptComponent.maxRetryCount) {
+                                abp.ui.clearBusy();
+                                this.failedToLoad = true;
+                                this.failMessage = 'Failed to load payment information. Please refresh the page or try again later.';
+                            }
+                            else {
+                                setTimeout(() => this.getInvoiceInfo(tenantId, publicId), 4000);
+                            }
+                            return;
+                        }
+                    case InvoiceStatus.Paid:
+                        {
+                            this.invoiceInfo = result;
+                            this.loading = false;
+                            abp.ui.clearBusy();
+                            return;
+                        }
+                    default:
+                        {
+                            abp.ui.clearBusy();
+                            this.failedToLoad = true;
+                            this.failMessage = `Invoice in status ${result.invoiceStatus} could not be paid`;
+                            return;
+                        }
                 }
-                this.invoiceInfo = result;
-                this.loading = false;
-                abp.ui.clearBusy();
             });
     }
 

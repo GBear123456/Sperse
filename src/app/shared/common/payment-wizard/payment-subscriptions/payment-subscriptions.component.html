@@ -39,6 +39,7 @@
     </div>
 
     <div *dxTemplate="let cellData of 'actionCell'">
+        <a *ngIf="showOneTimeActivate(cellData)" href="javascript:void(0)" (click)="activateSubscription(cellData.data)">{{l('Activate')}}</a>&nbsp;
         <a *ngIf="cellData.data.statusId == 'A'" href="javascript:void(0)" (click)="cancelSubscription(cellData.data)">{{l('Cancel')}}</a>
     </div>
 </dx-data-grid>

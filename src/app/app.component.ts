@@ -4,8 +4,10 @@ import { Router } from '@angular/router';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
+import { first } from 'rxjs/operators';
 
 /** Application imports */
+import { AppConsts } from '@shared/AppConsts';
 import { UrlHelper } from '@shared/helpers/UrlHelper';
 import { LayoutType } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -62,21 +64,24 @@ export class AppComponent implements OnInit {
     ) {
         if (!appService.isHostTenant) {
             let paymentDialogTimeout;
-            appService.expiredModuleSubscribe((name) => {
+            appService.moduleSubscriptions$.pipe(first()).subscribe(() => {
                 let isCustomLayout = appSession.tenant.customLayoutType && appSession.tenant.customLayoutType !== LayoutType.Default,                    
-                    moduleName = isCustomLayout ? '' : name.toLowerCase(),
-                    productGroup = isCustomLayout ? '' : 'signup';
-                if (moduleName != appService.getDefaultModule()) {
+                    moduleName = isCustomLayout ? '' : appService.defaultSubscriptionModule.toLowerCase(),
+                    productGroups = isCustomLayout ? [] : [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN];
+                if (moduleName != appService.getDefaultModule() && !appService.hasUnconventionalSubscription()) {
                     clearTimeout(paymentDialogTimeout);
                     paymentDialogTimeout = setTimeout(() => {
-                        let hasSubscription = appService.hasModuleSubscription(moduleName, productGroup),
-                            sub = appService.getModuleSubscription(moduleName, productGroup);
-                        if ((sub.statusId != 'A' || !hasSubscription) && !this.dialog.getDialogById('payment-wizard')) {
+                        let hasSubscription = appService.hasModuleSubscription(moduleName, productGroups),
+                            sub = appService.getModuleSubscription(moduleName, productGroups),
+                            isOneTimeExpirationSoon = appService.isOneTimeExpirationSoon(moduleName);
+                        if ((sub.statusId != 'A' || !hasSubscription || (isOneTimeExpirationSoon && 
+                            this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement))
+                        ) && !this.dialog.getDialogById('payment-wizard')) {
                             this.dialog.open(PaymentWizardComponent, {
                                 height: '800px',
                                 width: '1200px',                                                              
                                 id: 'payment-wizard',
-                                disableClose: true,
+                                disableClose: !isOneTimeExpirationSoon,
                                 panelClass: ['payment-wizard', 'setup'],
                                 data: {
                                     subscription: sub,
@@ -89,7 +94,7 @@ export class AppComponent implements OnInit {
                                 }
                             });
                         }
-                    }, 2000);
+                    }, 1000);
                 }
             });
         }

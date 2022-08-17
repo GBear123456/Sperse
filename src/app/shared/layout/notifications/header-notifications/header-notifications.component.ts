@@ -9,7 +9,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ItemDetailsService } from '@shared/common/item-details-layout/item-details.service';
 import { 
     LayoutType, InstanceServiceProxy, NotificationServiceProxy, 
-    TenantSubscriptionServiceProxy, UserNotificationDto, 
+    TenantSubscriptionServiceProxy, UserNotificationDto, PaymentPeriodType,
     UserNotificationState, GetNotificationsOutput } from '@shared/service-proxies/service-proxies';
 import { IFormattedUserNotification, UserNotificationHelper } from '../UserNotificationHelper';
 import { PaymentWizardComponent } from '../../../common/payment-wizard/payment-wizard.component';
@@ -169,14 +169,20 @@ export class HeaderNotificationsComponent implements OnInit {
     }
 
     subscriptionStatusBarVisible(): boolean {
-        return this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement)
+        return !this.appService.hasUnconventionalSubscription()
+            && this.permission.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement)
             && (!this.appSession.tenant.customLayoutType || this.appSession.tenant.customLayoutType == LayoutType.Default);
     }
 
     prolongButtonVisible(): boolean {
         let subscription = this.appService.getModuleSubscription();
-        return !subscription || subscription.statusId == 'C';
+        return !subscription || subscription.statusId == 'C' || this.isOneTimeSubscription();
     }
+
+    isOneTimeSubscription(): boolean {
+        let subscription = this.appService.getModuleSubscription();
+        return subscription.paymentPeriodType == PaymentPeriodType.OneTime;
+    }    
 
     hideDropDown() {
         let element: any = $('#header_notification_bar');

@@ -14,6 +14,7 @@ import { PanelMenu } from '@app/shared/layout/top-bar/panel-menu';
 import { AppConsts } from '@shared/AppConsts';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import {
+    PaymentPeriodType,
     InstanceServiceProxy,
     PersonContactServiceProxy,
     RegisterMemberInput,
@@ -52,7 +53,6 @@ export class AppService extends AppServiceBase {
     public contactInfo: any;
 
     private toolbarSubject: Subject<undefined>;
-    private expiredModule: Subject<string>;
     public moduleSubscriptions$: Observable<ModuleSubscriptionInfoDto[]>;
     public moduleSubscriptions: ModuleSubscriptionInfoDto[];
     public subscriptionIsFree$: Observable<boolean>;
@@ -202,7 +202,6 @@ export class AppService extends AppServiceBase {
 
         this.toolbarSubject = new Subject<undefined>();
         if (!this.isHostTenant && abp.session.userId) {
-            this.expiredModule = new Subject<string>();
             this.loadModuleSubscriptions();
         }
         this.toolbarIsHidden$.subscribe((hidden: boolean) => {
@@ -219,8 +218,8 @@ export class AppService extends AppServiceBase {
             }), publishReplay(), refCount());
         this.moduleSubscriptions$.subscribe((res: ModuleSubscriptionInfoDto[]) => {
             this.moduleSubscriptions = res.sort((left: ModuleSubscriptionInfoDto, right: ModuleSubscriptionInfoDto) => {
-                const isLeftSignupGroup = left.productGroup && left.productGroup.toLowerCase() == 'signup',
-                    isRightSignupGroup = right.productGroup && right.productGroup.toLowerCase() == 'signup';
+                const isLeftSignupGroup = left.productGroup && this.checkSignUpOrMainGroups(left.productGroup),
+                    isRightSignupGroup = right.productGroup && this.checkSignUpOrMainGroups(right.productGroup);
                 if (isLeftSignupGroup && isRightSignupGroup ||
                     !isLeftSignupGroup && !isRightSignupGroup
                 ) return left.endDate > right.endDate ? -1 : 1;
@@ -229,20 +228,30 @@ export class AppService extends AppServiceBase {
                 else
                     return 1;
             });
-            setTimeout(() => this.checkModuleExpired());
         });
         this.subscriptionIsFree$ = this.moduleSubscriptions$.pipe(
             map(subscriptions => this.checkSubscriptionIsFree())
         );
     }
 
+    checkSignUpOrMainGroups(group: string): Boolean {
+        return this.checkGroupIncluded([
+            AppConsts.PRODUCT_GROUP_SIGNUP, 
+            AppConsts.PRODUCT_GROUP_MAIN
+        ], group);
+    }
+
+    checkGroupIncluded(groups: string[], group: string): Boolean {
+        return groups.includes(group.toLowerCase());
+    }    
+
     getModuleSubscription(
         name: string = this.defaultSubscriptionModule, 
-        productGroup: string = 'signup'
+        productGroups: string[] = [AppConsts.PRODUCT_GROUP_SIGNUP, AppConsts.PRODUCT_GROUP_MAIN]
     ): ModuleSubscriptionInfoDto {
         let module = name.toUpperCase(), 
-            moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions && productGroup ?
-                this.moduleSubscriptions.filter(item => item.productGroup && item.productGroup.toLowerCase() == productGroup) :
+            moduleSubscriptions: ModuleSubscriptionInfoDto[] = this.moduleSubscriptions && productGroups.length ?
+                this.moduleSubscriptions.filter(item => item.productGroup && this.checkGroupIncluded(productGroups, item.productGroup)) :
                 this.moduleSubscriptions,
             subscription;
         if (moduleSubscriptions && moduleSubscriptions.length) {
@@ -291,21 +300,13 @@ export class AppService extends AppServiceBase {
         return subscription && subscription.trackingCode;
     }
 
-    subscriptionStatusBarIsHidden(): boolean {
-        let module = this.getModule();
-        if (!ModuleType[module.toUpperCase()])
-            return true;
-
-        if (!this.subscriptionBarVisible)
-            this.subscriptionBarVisible = !this.showContactInfoPanel.value &&
-                (this.subscriptionIsExpiringSoon() || this.subscriptionInGracePeriod());
-
-        return this.subscriptionBarsClosed[module] || !this.subscriptionBarVisible;
+    isOneTimeExpirationSoon(name: string = this.defaultSubscriptionModule): boolean {
+        let sub = this.getModuleSubscription(name);
+        return sub.paymentPeriodType == PaymentPeriodType.OneTime && this.subscriptionIsExpiringSoon(name);
     }
 
     subscriptionIsExpiringSoon(name: string = this.defaultSubscriptionModule): boolean {
         let sub = this.getModuleSubscription(name);
-
         if (!this.isHostTenant && sub && sub.endDate) {
             let diff = sub.endDate.diff(moment().utc(), 'days', true);
             return (diff > 0) && (diff <= AppConsts.subscriptionExpireNootifyDayCount);
@@ -329,22 +330,22 @@ export class AppService extends AppServiceBase {
 
     subscriptionInGracePeriod(
         name: string = this.defaultSubscriptionModule,
-        productGroup?: string
+        productGroups?: string[]
     ): boolean {
-        let sub = this.getModuleSubscription(name, productGroup);
+        let sub = this.getModuleSubscription(name, productGroups);
         return this.subscriptionInGracePeriodBySubscription(sub);
     }
 
     subscriptionInGracePeriodBySubscription(sub: ModuleSubscriptionInfoDto): boolean {
         if (!this.isHostTenant && sub && !sub.isLocked && sub.endDate) {
             let diff = moment().utc().diff(sub.endDate, 'days', true);
-            return (diff > 0) && (diff <= this.getGracePeriod());
+            return (diff > 0) && (diff <= this.getGracePeriod(sub));
         }
         return false;
     }
 
-    getGracePeriod() {
-        return parseInt(abp.setting.get('App.OrderSubscription.DefaultSubscriptionGracePeriodDayCount')) || 0;
+    getGracePeriod(sub: ModuleSubscriptionInfoDto) {
+        return sub.endDate && sub.finalEndDate ? sub.finalEndDate.diff(sub.endDate, 'days', true) : 0;
     }
 
     getSubscriptionExpiringDayCount(name: string = this.defaultSubscriptionModule): number {
@@ -355,16 +356,20 @@ export class AppService extends AppServiceBase {
 
     getGracePeriodDayCount(name: string = this.defaultSubscriptionModule) {
         let sub = this.getModuleSubscription(name);
+        return this.getGracePeriodDayCountBySubscription(sub);
+    }
+
+    getGracePeriodDayCountBySubscription(sub) {
         return sub && !sub.isLocked && sub.endDate && Math.round(moment(sub.endDate)
-            .add(this.getGracePeriod(), 'days').diff(moment().utc(), 'days', true));
+            .add(this.getGracePeriod(sub), 'days').diff(moment().utc(), 'days', true));
     }
 
     hasModuleSubscription(
         name: string = this.defaultSubscriptionModule,
-        productGroup?: string
+        productGroups?: string[]
     ) {
         name = name && name.toUpperCase();
-        let module = this.getModuleSubscription(name, productGroup);
+        let module = this.getModuleSubscription(name, productGroups);
 
         if (module && ['D', 'C'].includes(module.statusId))
             return false;
@@ -373,23 +378,24 @@ export class AppService extends AppServiceBase {
             || (module.endDate > moment().utc());
     }
 
-    checkModuleExpired(name: string = this.defaultSubscriptionModule) {
-        name = name || this.getModule();
-        let expired = !this.hasModuleSubscription(name);
-        if (expired && this.expiredModule)
-            this.expiredModule.next(name);
+    hasUnconventionalSubscription() {
+        let sub = this.getModuleSubscription();
+        if (!sub.productId) {
+            let hasActiveSubscription = this.hasModuleSubscription('', []);
 
-        return expired;
+            sub = this.getModuleSubscription('', []);
+            if (sub.productId)
+                return hasActiveSubscription &&
+                    this.feature.isEnabled(AppFeatures.CRM);
+            else 
+                return hasActiveSubscription;
+        }
+        return false;
     }
 
     switchModule(name: string, params = {}) {
         this.subscriptionBarVisible = undefined;
         super.switchModule(name, params);
-    }
-
-    expiredModuleSubscribe(callback) {
-        if (this.expiredModule)
-            this.expiredModule.asObservable().subscribe(callback);
     }
 
     setContactInfoVisibility(value: boolean) {

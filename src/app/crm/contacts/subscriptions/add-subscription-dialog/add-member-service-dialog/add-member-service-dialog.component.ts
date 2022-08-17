@@ -26,12 +26,14 @@ import {
     SystemTypeDto
 } from '@shared/service-proxies/service-proxies';
 import { DateHelper } from '@shared/helpers/DateHelper';
+import { FeatureTreeComponent } from '@app/shared/features/feature-tree.component';
 import { FeatureTreeEditModel, FeatureValuesDto } from '@app/shared/features/feature-tree-edit.model';
 import { UserManagementService } from '@shared/common/layout/user-management-list/user-management.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { NotifyService } from 'abp-ng2-module';
 import { DxValidationGroupComponent } from 'devextreme-angular';
 import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
+import { ArrayHelper } from '@shared/helpers/ArrayHelper';
 
 @Component({
     selector: 'add-member-service-dialog',
@@ -46,6 +48,8 @@ import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
 })
 export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
     @ViewChild(DxValidationGroupComponent) validationGroup: DxValidationGroupComponent;
+    @ViewChild(FeatureTreeComponent) featureTree: FeatureTreeComponent;
+
     today = new Date();
     private slider: any;
     memberService: MemberServiceDto;
@@ -151,12 +155,21 @@ export class AddMemberServiceDialogComponent implements AfterViewInit, OnInit {
                     level.deactivationTime = DateHelper.removeTimezoneOffset(new Date(level.deactivationTime), true, 'to');
             });
 
-            this.featuresData.featureValues.forEach((feature, index) => {
-                if (feature.value == this.featuresData.features[index].defaultValue || feature.value == '')
-                    this.memberService.features[feature.name] = undefined;
-                else if (feature.value != null && feature.value != undefined)
-                    this.memberService.features[feature.name] = feature.value;
-            });
+            const featureValues = this.featureTree.getGrantedFeatures();
+            if (ArrayHelper.dataChanged(this.featureTree.initialGrantedFeatures, featureValues)) {
+                if (!this.featureTree.areAllValuesValid()) {
+                    this.notify.warn(this.ls.l('InvalidFeaturesWarning'));
+                    return;
+                }
+
+                featureValues.forEach((feature, index) => {
+                    if (feature.value == this.featuresData.features[index].defaultValue || feature.value == '')
+                        this.memberService.features[feature.name] = undefined;
+                    else if (feature.value != null && feature.value != undefined)
+                        this.memberService.features[feature.name] = feature.value;
+                });
+            }
+
             this.memberServiceProxy.createOrUpdate(this.memberService).subscribe(res => {
                 if (!this.memberService.id)
                     this.memberService.id = res.id;

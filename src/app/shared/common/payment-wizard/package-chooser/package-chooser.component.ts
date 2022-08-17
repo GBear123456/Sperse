@@ -31,7 +31,7 @@ import {
     PackageEditionConfigDto,
     PackageServiceProxy,
     ProductInfo,
-    ProductServiceProxy,
+    ProductServiceProxy
 } from '@shared/service-proxies/service-proxies';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LocalizationResolver } from '@root/shared/common/localization-resolver';
@@ -55,6 +55,8 @@ export class PackageChooserComponent implements OnInit {
     @Input() nextStepButtonText = this.ls.l('Next');
     @Input() nextButtonPosition: 'right' | 'center' = 'right';
     @Input() showDowngradeLink = false;
+    @Input() subscription: any;
+
     private _preselect = true;
     @Input('preselect')
     get preselect(): boolean {
@@ -110,8 +112,10 @@ export class PackageChooserComponent implements OnInit {
         });
 
         if (this.appService.moduleSubscriptions.length) {
-            let moduleSubscriptionExpired = this.appService.moduleSubscriptions[0]
-            if (this.appService.subscriptionInGracePeriodBySubscription(moduleSubscriptionExpired)) {
+            let moduleSubscriptionExpired = this.subscription || this.appService.moduleSubscriptions[0];
+            if (moduleSubscriptionExpired.paymentPeriodType != PaymentPeriodType.OneTime && 
+                this.appService.subscriptionInGracePeriodBySubscription(moduleSubscriptionExpired)
+            ) {
                 this.currentProductId = moduleSubscriptionExpired.productId;
                 this.selectedBillingPeriod = this.getBillingPeriod(moduleSubscriptionExpired.paymentPeriodType)
             }
@@ -240,7 +244,9 @@ export class PackageChooserComponent implements OnInit {
         this.selectedBillingPeriod = e.checked ? BillingPeriod.Yearly : BillingPeriod.Monthly;
 
         setTimeout(() => {
-            this.onPlanChosen.emit(this.getPaymentOptions());
+            let paymentOptions = this.getPaymentOptions();
+            if (paymentOptions)
+                this.onPlanChosen.emit(paymentOptions);
         }, 10);
     }
 
@@ -309,14 +315,18 @@ export class PackageChooserComponent implements OnInit {
         this.moveToNextStep.next();
     }
 
-    getPaymentOptions() {
-        const paymentOptions: PaymentOptions = {
-            productId: this.selectedPackageCardComponent.productInfo.id,
-            productName: this.selectedPackageCardComponent.productInfo.name,
-            paymentPeriodType: this.getSubscriptionFrequency(),
-            total: this.selectedPackageCardComponent.pricePerMonth
-        };
-        return paymentOptions;
+    getPaymentOptions(): PaymentOptions {
+        if (this.selectedPackageCardComponent) {
+            const paymentOptions: PaymentOptions = {
+                productId: this.selectedPackageCardComponent.productInfo.id,
+                productName: this.selectedPackageCardComponent.productInfo.name,
+                paymentPeriodType: this.getSubscriptionFrequency(),
+                total: this.selectedPackageCardComponent.pricePerMonth * (
+                    this.selectedBillingPeriod === BillingPeriod.Yearly ? 12 : 1
+                )
+            };
+            return paymentOptions;
+        }
     }
 
     get nextButtonDisabled(): boolean {

@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 
 /** Third party imports */
 import { Observable, Subject } from 'rxjs';
+import { AppConsts } from '@shared/AppConsts';
 import { publishReplay, refCount } from 'rxjs/operators';
 
 /** Application imports */
@@ -17,7 +18,7 @@ export class PaymentService {
     _plan: Subject<PaymentOptions> = new Subject();
     plan$: Observable<PaymentOptions> = this._plan.asObservable();
     packagesConfig$: Observable<ProductInfo[]> = this.productServiceProxy.getSubscriptionProductsByGroupName(
-        'signup'
+        AppConsts.PRODUCT_GROUP_MAIN
     ).pipe(
         publishReplay(),
         refCount()

@@ -174,7 +174,21 @@
             </div>
             <div class="services" *ngFor="let option of product.productSubscriptionOptions; let i = index">
                 <i *ngIf="!isReadOnly" class="fa fa-close" (click)="removePaymentPeriod(i)"></i>
-                <div class="field" *ngIf="!isOneTime">
+                <div class="field">
+                    <label class="wide" for="name">{{ls.l('PaymentPeriod')}}</label>
+                    <dx-select-box name="name"
+                                   width="270px"
+                                   [dataSource]="getFrequencies(option)"
+                                   [placeholder]="ls.l('Select') + ' ' + ls.l('PaymentPeriod') + '...'"
+                                   [(value)]="option.frequency"
+                                   [disabled]="isReadOnly"
+                                   (onValueChanged)="checkOneTimeOption($event)">
+                        <dx-validator>
+                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('PaymentPeriod'))}}."></dxi-validation-rule>
+                        </dx-validator>
+                    </dx-select-box>
+                </div>
+                <div class="field" *ngIf="option.frequency && !isOneTime">
                     <label class="wide" for="level">{{ls.l('TrialDayCount')}}</label>
                     <dx-number-box name="count"
                                    width="270px"
@@ -191,7 +205,7 @@
                         </dx-validator>
                     </dx-number-box>
                 </div>
-                <div class="field" *ngIf="option.trialDayCount">
+                <div class="field" *ngIf="option.frequency && !isOneTime && option.trialDayCount">
                     <label class="wide">{{ls.l('SignupFee')}}</label>
                     <dx-number-box name="price"
                                    width="270px"
@@ -204,7 +218,7 @@
                         </dx-validator>
                     </dx-number-box>
                 </div>
-                <div *ngIf="isCommissionsEnabled && option.trialDayCount" class="field">
+                <div *ngIf="option.frequency && !isOneTime && isCommissionsEnabled && option.trialDayCount" class="field">
                     <label class="wide">{{ls.l('CommissionableAmount')}}</label>
                     <dx-number-box name="commissionableSignupFeeAmount"
                                    width="270px"
@@ -212,20 +226,6 @@
                                    [(value)]="option.commissionableSignupFeeAmount"
                                    [disabled]="isReadOnly">
                     </dx-number-box>
-                </div>
-                <div class="field">
-                    <label class="wide" for="name">{{ls.l('PaymentPeriod')}}</label>
-                    <dx-select-box name="name"
-                                   width="270px"
-                                   [dataSource]="getFrequencies(option)"
-                                   [placeholder]="ls.l('Select') + ' ' + ls.l('PaymentPeriod') + '...'"
-                                   [(value)]="option.frequency"
-                                   [disabled]="isReadOnly"
-                                   (onValueChanged)="checkOneTimeOption($event)">
-                        <dx-validator>
-                            <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('PaymentPeriod'))}}."></dxi-validation-rule>
-                        </dx-validator>
-                    </dx-select-box>
                 </div>
                 <div class="field" *ngIf="isOneTime">
                     <label class="wide" for="level">{{ls.l('Period')}}</label>

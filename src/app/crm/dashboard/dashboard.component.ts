@@ -262,6 +262,7 @@ export class DashboardComponent implements AfterViewInit, OnInit {
     }
 
     openPaymentWizardDialog() {
+        this.dialog.closeAll();
         this.dialog.open(PaymentWizardComponent, {
             height: '800px',
             width: '1200px',

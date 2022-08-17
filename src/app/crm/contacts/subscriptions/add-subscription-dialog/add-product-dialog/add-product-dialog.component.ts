@@ -76,6 +76,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     productUnits = Object.keys(ProductMeasurementUnit).map(
         key => this.ls.l('ProductMeasurementUnit_' + key)
     );
+    recurringPaymentFrequency = RecurringPaymentFrequency;
     frequencies = Object.keys(RecurringPaymentFrequency);
     gracePeriodDefaultValue: number;
     customGroup: string;
@@ -84,7 +85,7 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     isReadOnly = true;
     image: string = null;
     imageChanged: boolean = false;
-    isOneTime = false;
+    isOneTime = false;   
 
     constructor(
         private elementRef: ElementRef,
@@ -113,6 +114,9 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
         if (data.product && data.product.id) {
             this.image = data.product.imageUrl;
             this.product = new UpdateProductInput(data.product);
+            let options = data.product.productSubscriptionOptions;
+            if (options && options[0])
+                this.checkOneTimeOption({value: options[0].frequency});
         } else {
             this.product = new CreateProductInput(data.product);
             if (!this.product.type) {
@@ -256,6 +260,10 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     removePaymentPeriod(index) {
         this.product.productSubscriptionOptions.splice(index, 1);
+        if (this.isOneTime && !this.product.productSubscriptionOptions.length) {
+            this.isOneTime = false;
+            this.detectChanges();
+        }
     }
 
     getServiceLevels(serviceId) {
@@ -278,7 +286,15 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     checkOneTimeOption(event) {
         this.isOneTime = event.value == RecurringPaymentFrequency.OneTime;
-        this.product.productSubscriptionOptions[0].activeDayCount = undefined;
+        let options = this.product.productSubscriptionOptions[0];
+
+        if (this.isOneTime) {
+            options.commissionableSignupFeeAmount = undefined;
+            options.trialDayCount = undefined;
+            options.signupFee = undefined;
+        } else
+            options.activeDayCount = undefined;
+        
         this.detectChanges();
     }
 
@@ -362,7 +378,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
 
     validateFee(option) {
         return (event) => {
-            return option.frequency == RecurringPaymentFrequency.LifeTime
+            return option.frequency == RecurringPaymentFrequency.OneTime
+                || option.frequency == RecurringPaymentFrequency.LifeTime
                 || event.value && event.value > 0;
         };
     }
