@@ -2,14 +2,29 @@
     position: relative;
     height: 100%;
 
+    ::ng-deep .headline-content {
+        ::ng-deep .dx-selectbox {
+            background: transparent;
+            width: 175px;
+            height: 30px;
+
+            input {
+                border: none;
+                font-size: 24px;
+                font-weight: 600;
+            }
+        }
+    }
+
     ::ng-deep .main-component-view {
         .dx-command-edit + td::before {
-            display: none!important;
+            display: none !important;
         }
 
         .dx-datagrid-rowsview {
             .dx-column-lines {
                 cursor: pointer;
+
                 & > td {
                     span {
                         text-align: center;

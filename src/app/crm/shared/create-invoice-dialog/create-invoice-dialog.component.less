@@ -7,9 +7,11 @@
 
     ::ng-deep .mat-dialog-actions {
         width: 200px;
+
         .mat-dialog-buttons {
-            height: 50px!important;
+            height: 50px !important;
         }
+
         #saveInvoiceOptions {
             width: 190px;
         }
@@ -22,9 +24,11 @@
             font-size: 28px;
             position: relative;
         }
+
         .title-wrapper {
             width: 670px;
             justify-content: space-between;
+
             span {
                 height: 30px;
                 background: #dadee1;
@@ -41,8 +45,10 @@
                 margin-left: auto;
             }
         }
+
         .dx-selectbox {
             margin: 23px 10px;
+
             &, input {
                 background: transparent;
                 font-size: 15px;
@@ -54,23 +60,29 @@
                 color: #424c56;
             }
         }
+
         dx-text-box {
             &[name="invoiceNo"] {
                 margin: 23px 0;
+
                 &.dx-texteditor-empty.dx-state-focused .dx-placeholder {
-                    top: -25px!important;
+                    top: -25px !important;
                 }
             }
+
             &, input {
                 background: transparent !important;
             }
+
             &[name="title"] {
                 width: 140px !important;
+
                 input {
                     border: none;
                     font-weight: 800 !important;
                 }
             }
+
             input {
                 &, &:read-only {
                     font-size: 22px;
@@ -86,6 +98,7 @@
 
     .toolbar-wraper {
         width: 100%;
+
         app-toolbar {
             float: right;
 
@@ -117,6 +130,7 @@
             background: #FFF;
             overflow: hidden;
             position: relative;
+
             img {
                 max-height: 50px;
                 max-width: 160px;
@@ -140,6 +154,7 @@
             text-align: center;
             padding: 13px 0px;
             color: #00aeef;
+
             i {
                 padding-right: 5px;
             }
@@ -150,8 +165,10 @@
             height: 34px;
             overflow: hidden;
             display: inline-block;
+
             ::ng-deep .dx-widget {
                 margin: 0;
+
                 input {
                     font-size: 15px;
                     font-weight: 400;
@@ -160,8 +177,10 @@
                     color: #424c56;
                     padding: 0;
                 }
+
                 .dx-texteditor-buttons-container {
                     left: 97px;
+
                     .dx-dropdowneditor-button {
                         float: left;
                     }
@@ -172,20 +191,24 @@
         ::ng-deep .field-area {
             display: block;
             margin-bottom: 20px;
+
             &.flex-space-between {
                 width: 840px;
                 display: flex;
                 margin-bottom: 10px;
                 justify-content: space-between;
             }
+
             .date-fields-area {
                 width: 440px;
                 display: flex;
                 justify-content: space-between;
             }
+
             &.addr {
                 margin-bottom: 0;
             }
+
             &.notes {
                 margin-top: 20px;
                 margin-bottom: 0;
@@ -203,22 +226,11 @@
                     letter-spacing: 0.3px;
                     color: #00aeef;
                 }
-
-                text-area {
-                    font-size: 15px;
-                    font-weight: 300;
-                    font-style: normal;
-                    font-stretch: normal;
-                    line-height: 1.47;
-                    letter-spacing: 0.3px;
-                    color: #424c56;
-                }
             }
 
             &.lines {
                 margin-bottom: 0;
                 margin-top: 20px;
-
                 /*dx-text-box {
                     input {
                         text-align: right;
@@ -310,14 +322,17 @@
                     i.edit {
                         margin-right: 0px;
                     }
+
                     i.remove {
                         display: block;
                     }
                 }
             }
+
             .ship-to, .bill-to {
                 min-width: 250px;
                 position: relative;
+
                 .selected-contact-info {
                     position: relative;
                     font-size: 15px;
@@ -325,23 +340,28 @@
                     color: #424c56;
                     padding-right: 30px;
                 }
+
                 & > a {
                     display: block;
                     font-size: 10px;
                     color: #58a3dc;
                 }
+
                 dx-select-box[name="customer"] {
                     input {
                         border-bottom: 0;
                     }
                 }
             }
+
             .billed-from {
                 min-width: 300px;
+
                 .credentials {
                     display: flex;
                     justify-content: space-between;
                     max-height: 141px;
+
                     span, pre {
                         font-family: Montserrat;
                         display: block;
@@ -353,22 +373,27 @@
                         letter-spacing: 0.3px;
                         color: #424c56;
                     }
+
                     pre {
                         overflow-y: auto;
                         max-height: 130px;
                     }
+
                     span {
                         font-weight: 500;
                     }
+
                     .address-container {
                         max-width: 222px;
                     }
                 }
             }
+
             label {
                 display: flex;
                 min-width: 100px;
                 justify-content: space-between;
+
                 &.notes-label {
                     display: block;
                     font-size: 14px;
@@ -378,6 +403,7 @@
                     letter-spacing: 0.3px;
                     color: #677380;
                 }
+
                 a {
                     font-size: 14px;
                     font-weight: 300;
@@ -388,6 +414,7 @@
                     text-align: right;
                     padding-right: 10px;
                     color: #00aeef;
+
                     i {
                         color: #00aeef;
                         padding-right: 8px;
@@ -409,28 +436,32 @@
 
             ::ng-deep dx-select-box[name="product"] {
                 padding-left: 10px;
+
                 input {
                     text-overflow: ellipsis;
                     overflow: hidden;
                 }
-                .dx-selectbox-container, 
+
+                .dx-selectbox-container,
                 .dx-texteditor-container {
                     overflow: visible;
                 }
+
                 .dx-icon.dx-icon-clear {
                     z-index: 999;
                     left: 20px;
                     top: 20px;
                 }
+
                 &.dx-state-focused {
                     .dx-placeholder {
-                        display: none!important;
+                        display: none !important;
                     }
                 }
             }
 
             dx-text-box[name="description"],
-            dx-date-box, dx-number-box, 
+            dx-date-box, dx-number-box,
             dx-drop-down-box {
                 height: 34px !important;
 
@@ -440,27 +471,32 @@
 
                 .dx-placeholder.dx-state-invisible,
                 &.dx-state-focused .dx-placeholder {
-                    font-size: 11px!important;
-                    top: -13px!important;
+                    font-size: 11px !important;
+                    top: -13px !important;
                 }
+
                 .dx-placeholder {
                     padding: 0;
+
                     &.dx-state-invisible {
-                        display: block!important;
-                        font-size: 11px!important;
-                        opacity: 1!important;
+                        display: block !important;
+                        font-size: 11px !important;
+                        opacity: 1 !important;
                     }
+
                     &:before {
                         padding: 0;
                     }
                 }
             }
+
             dx-text-box[name="description"] {
                 height: 50px !important;
                 padding-right: 10px;
                 vertical-align: top;
             }
-            dx-text-box, dx-number-box, 
+
+            dx-text-box, dx-number-box,
             dx-text-area, .dx-selectbox {
                 &.dx-state-focused {
                     .dx-placeholder {
@@ -468,19 +504,22 @@
                     }
                 }
             }
-            dx-text-box, dx-number-box, 
+
+            dx-text-box, dx-number-box,
             dx-text-area, dx-select-box,
             dx-drop-down-box, dx-date-box {
                 display: inline-block;
 
                 &.dx-invalid {
                     input {
-                        color: #d9534f!important;
+                        color: #d9534f !important;
                     }
                 }
+
                 input, textarea {
                     color: #424c56;
                 }
+
                 .dx-placeholder, input, textarea {
                     font-size: 15px;
                     font-weight: 400;
@@ -489,63 +528,114 @@
                     padding: 0;
                 }
             }
+
             dx-select-box[name="customer"] {
                 .dx-texteditor-buttons-container {
                     display: none;
                 }
+
                 .dx-placeholder:before {
                     vertical-align: top;
                 }
             }
+
             dx-date-box {
                 .dx-dropdowneditor-icon {
                     background: url(../../../../assets/common/icons/calendar2.svg) no-repeat center;
+
                     &:before {
-                        content: ''!important;
+                        content: '' !important;
                     }
                 }
             }
         }
 
-        .conclusion {
-            margin-top: 20px;
-            & > div {
+        .bottom-container {
+            .bottom-container-text {
+                font-size: 15px;
+                font-weight: 300;
+                font-style: normal;
+                font-stretch: normal;
+                line-height: 1.47;
+                letter-spacing: 0.3px;
+                color: #424c56;
+            }
+
+            .coupon-select-row {
                 display: flex;
-                padding: 0 10px;
                 justify-content: space-between;
-                border-bottom: 1px solid rgba(218, 222, 225, 0.7);
-                height: 43px;
-                span {
-                    font-size: 15px;
-                    font-weight: 300;
-                    font-style: normal;
-                    font-stretch: normal;
-                    line-height: 1.47;
-                    letter-spacing: 0.3px;
-                    color: #424c56;
+                margin-top: 21px;
+
+                label {
                     margin: 10px 0;
                 }
-                &.user-total {
-                    ::ng-deep dx-number-box input {
-                        padding: 0;
+
+                ::ng-deep dx-select-box {
+                    input, .dx-placeholder {
                         font-size: 15px;
-                        text-align: right;
+                        font-weight: 400;
+                        line-height: 1.79;
+                        letter-spacing: 0.3px;
+                    }
+
+                    input {
+                        font-weight: 600;
+                    }
+
+                    &.dx-state-focused {
+                        .dx-placeholder {
+                            top: -30px;
+                        }
                     }
                 }
-                &.balance {
+            }
+
+            .coupon-description {
+                margin: 10px 0;
+                font-style: italic;
+                text-align: right;
+                height: 22px;
+            }
+
+            .conclusion {
+                margin-top: 20px;
+
+                & > div {
+                    display: flex;
+                    padding: 0 10px;
+                    justify-content: space-between;
+                    border-bottom: 1px solid rgba(218, 222, 225, 0.7);
+                    height: 43px;
+
                     span {
-                        font-weight: bold;
+                        margin: 10px 0;
                     }
-                    margin-top: 5px;
-                    background-color: #f3f7fa;
-                    border-bottom: none;
+
+                    &.user-total {
+                        ::ng-deep dx-number-box input {
+                            padding: 0;
+                            font-size: 15px;
+                            text-align: right;
+                        }
+                    }
+
+                    &.balance {
+                        span {
+                            font-weight: bold;
+                        }
+
+                        margin-top: 5px;
+                        background-color: #f3f7fa;
+                        border-bottom: none;
+                    }
                 }
             }
         }
     }
 
     ::ng-deep dx-data-grid {
-        max-width: 810px!important;
+        max-width: 810px !important;
+
         .dx-command-edit {
             .dx-link-delete {
                 width: 16px;
@@ -587,9 +677,11 @@
                 padding: 0;
                 overflow: visible;
             }
+
             tr:nth-child(odd) td {
                 background: rgba(243, 247, 250, 0.7);
-                ::ng-deep dx-text-box, 
+
+                ::ng-deep dx-text-box,
                 ::ng-deep dx-number-box,
                 ::ng-deep .dx-selectbox {
                     &, input {
@@ -597,8 +689,9 @@
                     }
                 }
             }
+
             tr:last-child td {
-                background: initial!important;
+                background: initial !important;
             }
         }
 
@@ -615,6 +708,7 @@
             &, .dx-datagrid-content, td {
                 border: none !important;
             }
+
             .dx-datagrid-text-content {
                 font-size: 13px;
                 font-weight: bold;
@@ -628,7 +722,7 @@
         }
 
         .dx-datagrid-focus-overlay {
-            border: none!important;
+            border: none !important;
         }
 
         .row-actions {
@@ -639,7 +733,7 @@
 
             &.add-new {
                 width: 860px;
-                left: -50px;                
+                left: -50px;
                 margin-top: 9px;
                 position: relative;
                 background: #FFF;
@@ -648,11 +742,13 @@
             span {
                 height: 40px;
                 padding: 0 10px 0 50px;
+
                 &.add-custom-line,
                 &.separator {
                     font-size: 18px;
-                    padding-left: 10px;    
+                    padding-left: 10px;
                 }
+
                 &.add-new {
                     font-size: 14px;
                     font-weight: 500;
@@ -690,6 +786,7 @@
                 justify-content: space-between;
                 width: 80px;
                 margin: 0 10px;
+
                 i {
                     width: 18px;
                     height: 18px;
@@ -699,16 +796,20 @@
                     background-repeat: no-repeat;
                     background-size: 18px 18px;
                     background-position: center;
+
                     &.calendar {
                         background-image: url(../../../../assets/common/icons/calendar2.svg);
                     }
+
                     &.link {
                         background-image: url(../../../../assets/common/icons/link2.svg);
                     }
+
                     &.tag {
                         position: relative;
                         margin-right: 15px;
                         background-image: url(../../../../assets/common/icons/tag.svg);
+
                         &:after {
                             width: 0;
                             height: 0;
@@ -761,6 +862,7 @@
         outline: none;
         color: #424c56;
         cursor: pointer;
+
         &.disabled {
             opacity: .4;
             pointer-events: none;

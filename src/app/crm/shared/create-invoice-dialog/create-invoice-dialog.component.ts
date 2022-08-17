@@ -15,18 +15,16 @@ import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material/dial
 import { DxContextMenuComponent } from 'devextreme-angular/ui/context-menu';
 import { DxTextBoxComponent } from 'devextreme-angular/ui/text-box';
 import { DxDateBoxComponent } from 'devextreme-angular/ui/date-box';
+import DataSource from 'devextreme/data/data_source';
 import { finalize, first, switchMap, filter } from 'rxjs/operators';
-import { CacheService } from 'ng2-cache-service';
 import startCase from 'lodash/startCase';
 import cloneDeep from 'lodash/cloneDeep';
 import * as moment from 'moment';
 
 /** Application imports */
-import { ContactStatus } from '@shared/AppEnums';
 import { CustomReuseStrategy } from '@shared/common/custom-reuse-strategy/custom-reuse-strategy.service';
 import { NameParserService } from '@shared/common/name-parser/name-parser.service';
 import Inputmask from 'inputmask/dist/inputmask/inputmask.date.extensions';
-import { ODataService } from '@shared/common/odata/odata.service';
 import { ContactsService } from '@app/crm/contacts/contacts.service';
 import { AppPermissionService } from '@shared/common/auth/permission.service';
 import { DateHelper } from '@shared/helpers/DateHelper';
@@ -45,7 +43,6 @@ import {
     ProductMeasurementUnit,
     InvoiceSettings,
     GetNewInvoiceInfoOutput,
-    ContactServiceProxy,
     InvoiceAddressInfo,
     ContactAddressDto,
     EntityContactInfo,
@@ -56,7 +53,9 @@ import {
     ProductServiceProxy,
     ProductPaymentOptionsInfo,
     ProductShortInfo,
-    ProductDto
+    CouponServiceProxy,
+    CouponDto,
+    CouponDiscountType
 } from '@shared/service-proxies/service-proxies';
 import { NotifyService } from 'abp-ng2-module';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
@@ -86,7 +85,7 @@ import { InvoiceSettingsDialogComponent } from '../../contacts/invoice-settings-
         '../../contacts/addresses/addresses.styles.less',
         'create-invoice-dialog.component.less'
     ],
-    providers: [ CacheHelper, CustomerServiceProxy, InvoiceServiceProxy, ProductServiceProxy ],
+    providers: [CacheHelper, CustomerServiceProxy, InvoiceServiceProxy, ProductServiceProxy, CouponServiceProxy ],
     host: {
         '(click)': 'closeAddressDialogs()'
     },
@@ -129,7 +128,11 @@ export class CreateInvoiceDialogComponent implements OnInit {
 
     description = '';
     notes = '';
-    lines = [{isCrmProduct: true}];
+    lines = [{ isCrmProduct: true }];
+
+    couponId: number;
+    selectedCoupon: CouponDto;
+    calculateCoupon: boolean = true;
 
     subTotal = 0;
     balance = 0;
@@ -199,16 +202,25 @@ export class CreateInvoiceDialogComponent implements OnInit {
     filterBoolean = Boolean;
     hideAddNew = false;
 
+    couponsDataSource: DataSource = new DataSource({
+        pageSize: 10,
+        byKey: (key) => {
+            return this.couponProxy.getCoupon(key).toPromise();
+        },
+        load: (loadOptions) => {
+            return loadOptions.hasOwnProperty('searchValue') ?
+                this.couponProxy.getCouponsByPhrase(loadOptions.searchValue || '', loadOptions.take).toPromise() :
+                Promise.resolve([]);
+        }
+    });
+
     constructor(
         private reuseService: RouteReuseStrategy,
         private nameParser: NameParserService,
-        private oDataService: ODataService,
-        private contactProxy: ContactServiceProxy,
         private invoiceProxy: InvoiceServiceProxy,
         private invoicesService: InvoicesService,
         private productProxy: ProductServiceProxy,
-        private customerProxy: CustomerServiceProxy,
-        private cacheService: CacheService,
+        private couponProxy: CouponServiceProxy,
         private notifyService: NotifyService,
         private messageService: MessageService,
         private cacheHelper: CacheHelper,
@@ -279,6 +291,8 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     this.discountTotal = invoiceInfo.discountTotal || 0;
                     this.shippingTotal = invoiceInfo.shippingTotal || 0;
                     this.taxTotal = invoiceInfo.taxTotal || 0;
+                    this.calculateCoupon = false;
+                    this.couponId = invoiceInfo.couponId;
                     this.description = invoiceInfo.description;
                     this.notes = invoiceInfo.note;
                     if (!this.data.addNew) {
@@ -412,6 +426,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
             let data = new UpdateInvoiceInput();
             this.setRequestCommonFields(data);
             data.id = this.invoiceId;
+            data.couponCode = this.selectedCoupon ? this.selectedCoupon.code : null;
             data.grandTotal = this.balance;
             data.discountTotal = this.discountTotal;
             data.shippingTotal = this.shippingTotal;
@@ -439,6 +454,7 @@ export class CreateInvoiceDialogComponent implements OnInit {
                 data.leadId = this.data.contactInfo['leadId'];
             }
             data.orderId = this.orderId;
+            data.couponCode = this.selectedCoupon ? this.selectedCoupon.code : null;
             data.grandTotal = this.balance;
             data.discountTotal = this.discountTotal;
             data.shippingTotal = this.shippingTotal;
@@ -698,15 +714,31 @@ export class CreateInvoiceDialogComponent implements OnInit {
     }
 
     calculateBalance() {
-        this.subTotal =
-        this.balance = 0;
+        this.subTotal = this.balance = 0;
         this.lines.forEach(line => {
             let total = line['total'];
             if (total)
                 this.subTotal = this.subTotal + total;
         });
+        this.calcuateDiscount();
         this.balance = this.subTotal - this.discountTotal + this.shippingTotal + this.taxTotal;
         this.changeDetectorRef.detectChanges();
+    }
+
+    calcuateDiscount() {
+        let coupon = this.selectedCoupon;
+        if (!this.calculateCoupon) {
+            return;
+        }
+
+        if (coupon) {
+            this.discountTotal = coupon.type == CouponDiscountType.Fixed ?
+                this.subTotal < coupon.amountOff ? this.subTotal : coupon.amountOff :
+                this.subTotal * (coupon.percentOff / 100);
+        }
+        else {
+            this.discountTotal = 0;
+        }
     }
 
     selectInvoiceProduct(event, cellData) {
@@ -751,6 +783,16 @@ export class CreateInvoiceDialogComponent implements OnInit {
                     return product.disabled = true;
             });
         });
+    }
+
+    selectCoupon(event) {
+        this.selectedCoupon = event.selectedItem;
+        if (!this.calculateCoupon) {
+            this.calculateCoupon = true;
+        }
+        else {
+            this.calculateBalance();
+        }
     }
 
     selectContact(contact: EntityContactInfo) {

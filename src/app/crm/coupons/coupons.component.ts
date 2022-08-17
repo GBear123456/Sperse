@@ -1,12 +1,12 @@
 /** Core imports */
-import { ChangeDetectorRef, Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 
 /** Third party imports */
 import { MatDialog } from '@angular/material/dialog';
 import { DxDataGridComponent } from 'devextreme-angular/ui/data-grid';
 import { filter, finalize } from 'rxjs/operators';
 import DataSource from '@root/node_modules/devextreme/data/data_source';
-import ODataStore from 'devextreme/data/odata/store';
+import ODataStore from 'devextreme/data/odata/store'
 
 /** Application imports */
 import { AppService } from '@app/app.service';
@@ -14,8 +14,6 @@ import { AppConsts } from '@shared/AppConsts';
 import { AppComponentBase } from '@shared/common/app-component-base';
 import { FiltersService } from '@shared/filters/filters.service';
 import { FilterModel } from '@shared/filters/models/filter.model';
-import { FilterItemModel } from '@shared/filters/models/filter-item.model';
-import { FilterInputsComponent } from '@shared/filters/inputs/filter-inputs.component';
 import { DataGridService } from '@app/shared/common/data-grid.service/data-grid.service';
 import { AppPermissions } from '@shared/AppPermissions';
 import { LifecycleSubjectsService } from '@shared/common/lifecycle-subjects/lifecycle-subjects.service';
@@ -24,37 +22,37 @@ import { ToolbarGroupModel } from '@app/shared/common/toolbar/toolbar.model';
 import { ToolBarComponent } from '@app/shared/common/toolbar/toolbar.component';
 import { FilterMultilineInputComponent } from '@root/shared/filters/multiline-input/filter-multiline-input.component';
 import { FilterMultilineInputModel } from '@root/shared/filters/multiline-input/filter-multiline-input.model';
-import { AddProductDialogComponent } from '@app/crm/contacts/subscriptions/add-subscription-dialog/add-product-dialog/add-product-dialog.component';
+import { AddCouponDialogComponent } from './add-coupon-dialog/add-coupon-dialog.component';
 import { ActionMenuItem } from '@app/shared/common/action-menu/action-menu-item.interface';
 import { ActionMenuService } from '@app/shared/common/action-menu/action-menu.service';
-import { ProductServiceProxy, InvoiceSettings } from '@shared/service-proxies/service-proxies';
-import { InvoicesService } from '@app/crm/contacts/invoices/invoices.service';
-import { ProductDto } from '@app/crm/products/products-dto.interface';
+import { CouponServiceProxy, CouponDiscountType, CouponEditDto } from '@shared/service-proxies/service-proxies';
+import { CouponDto as OdataCouponDto } from './coupons-dto.interface';
+import { CouponFields } from './coupons-fields.enum';
 import { KeysEnum } from '@shared/common/keys.enum/keys.enum';
-import { ProductFields } from '@app/crm/products/products-fields.enum';
+import { DateHelper } from '../../../shared/helpers/DateHelper';
 
 @Component({
-    templateUrl: './products.component.html',
+    templateUrl: './coupons.component.html',
     styleUrls: [
         '../shared/styles/grouped-action-menu.less',
-        './products.component.less'
+        './coupons.component.less'
     ],
     providers: [
-        ProductServiceProxy,
+        CouponServiceProxy,
         LifecycleSubjectsService
     ]
 })
-export class ProductsComponent extends AppComponentBase implements OnInit, OnDestroy {
+export class CouponsComponent extends AppComponentBase implements OnInit, OnDestroy {
     @ViewChild(DxDataGridComponent) dataGrid: DxDataGridComponent;
     @ViewChild(ToolBarComponent) toolbar: ToolBarComponent;
 
-    private readonly dataSourceURI = 'Product';
+    private readonly dataSourceURI = 'Coupon';
     private rootComponent: any;
-    private subRouteParams: any;
-    private dependencyChanged = false;
     isReadOnly = true;
     permissions = AppPermissions;
-    headerOptions = [this.l("Products"), this.l("Coupons")];
+    couponTypes = CouponDiscountType;
+    formatting = AppConsts.formatting;
+    headerOptions = [this.l("Coupons"), this.l("Products")];
     activeHeaderOption = this.headerOptions[0];
     public headlineButtons: HeadlineButton[] = [];
 
@@ -64,35 +62,33 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
             text: this.l('Edit'),
             class: 'edit',
             action: () => {
-                this.editProduct(this.actionEvent.Id);
+                this.editCoupon(this.actionEvent.Id);
             }
         },
         {
-            text: this.l('SyncSubscriptionsWithProduct'),
-            class: 'sync',
-            visible: this.permission.isGranted(AppPermissions.CRMOrdersManage),
+            text: this.l('Archive'),
+            class: 'archive',
             action: () => {
-                this.syncSubscriptionsWithProduct(this.actionEvent.Id);
-            }
+                this.archiveCoupon(this.actionEvent.Id);
+            },
+            checkVisible: (itemData: OdataCouponDto) => !itemData.IsArchived
         },
         {
             text: this.l('Delete'),
             class: 'delete',
             action: () => {
-                this.deteleProduct(this.actionEvent.Id);
+                this.deleteCoupon(this.actionEvent.Id);
             }
         }
     ];
 
-    currency: string;
     searchValue: string = this._activatedRoute.snapshot.queryParams.searchValue || '';
-    totalCount: number;
     toolbarConfig: ToolbarGroupModel[];
     private filters: FilterModel[] = this.getFilters();
     rowsViewHeight: number;
-    readonly productFields: KeysEnum<ProductDto> = ProductFields;
+    readonly couponFields: KeysEnum<OdataCouponDto> = CouponFields;
     dataStore = {
-        key: this.productFields.Id,
+        key: this.couponFields.Id,
         deserializeDates: false,
         url: this.getODataUrl(
             this.dataSourceURI
@@ -101,9 +97,18 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         beforeSend: (request) => {
             request.headers['Authorization'] = 'Bearer ' + abp.auth.getToken();
             request.params.$select = DataGridService.getSelectFields(
-                this.dataGrid, [this.productFields.Id]
+                this.dataGrid, [this.couponFields.Id]
             );
             request.timeout = AppConsts.ODataRequestTimeoutMilliseconds;
+        },
+        onLoaded: function (result: OdataCouponDto[]) {
+            if (result && result.length) {
+                result.forEach((v) => {
+                    v.ActivationDate = v.ActivationDate ? DateHelper.removeTimezoneOffset(new Date(v.ActivationDate)) : v.ActivationDate;
+                    v.DeactivationDate = v.DeactivationDate ? DateHelper.removeTimezoneOffset(new Date(v.DeactivationDate)) : v.DeactivationDate;
+                    v.Created = v.Created ? DateHelper.removeTimezoneOffset(new Date(v.Created)) : v.Created;
+                });
+            }
         },
         errorHandler: (error) => {
             setTimeout(() => this.isDataLoaded = true);
@@ -112,9 +117,8 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
     constructor(
         injector: Injector,
-        invoicesService: InvoicesService,
         private filtersService: FiltersService,
-        private productProxy: ProductServiceProxy,
+        private couponProxy: CouponServiceProxy,
         private lifeCycleSubjectsService: LifecycleSubjectsService,
         public appService: AppService,
         public dialog: MatDialog
@@ -123,13 +127,10 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         this.isReadOnly = !this.permission.isGranted(this.permissions.CRMProductsManage);
         this.headlineButtons.push({
             enabled: !this.isReadOnly,
-            action: () => this.showProductDialog(),
-            label: this.l('AddProduct')
+            action: () => this.showCouponDialog(),
+            label: this.l('AddCoupon')
         });
-        this.dataSource = new DataSource({ store: new ODataStore(this.dataStore) });
-        invoicesService.settings$.pipe(filter(Boolean)).subscribe(
-            (res: InvoiceSettings) => this.currency = res.currency
-        );
+        this.dataSource = new DataSource({store: new ODataStore(this.dataStore)});
     }
 
     ngOnInit() {
@@ -154,39 +155,25 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     invalidate() {
-        if (this.dataGrid && this.dataGrid.instance)
-            this.dependencyChanged = false;
         this.processFilterInternal();
     }
 
-    editProduct(id: number) {
+    editCoupon(id: number) {
         this.startLoading();
-        this.productProxy.getProductInfo(id).pipe(
+        this.couponProxy.getCouponForEdit(id).pipe(
             finalize(() => this.finishLoading())
-        ).subscribe(product => {
-            this.showProductDialog({
-                id: id,
-                ...product
-            });
+        ).subscribe(coupon => {
+            this.showCouponDialog(coupon);
         });
     }
 
-    syncSubscriptionsWithProduct(id: number) {
-        this.startLoading();
-        this.productProxy.synchronizeSubscriptions(id).pipe(
-            finalize(() => this.finishLoading())
-        ).subscribe(() => {
-            this.message.success(this.l('SuccessfullyUpdated'));
-        });
-    }
-
-    deteleProduct(id: number) {
+    archiveCoupon(id: number) {
         this.message.confirm('',
-            this.l('DeleteConfiramtion'),
+            this.l('ArchiveConfiramtion'),
             isConfirmed => {
                 if (isConfirmed) {
                     this.startLoading();
-                    this.productProxy.deleteProduct(id).pipe(
+                    this.couponProxy.archiveCoupon(id).pipe(
                         finalize(() => this.finishLoading())
                     ).subscribe(() => {
                         this.invalidate();
@@ -196,29 +183,38 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         );
     }
 
-    showProductDialog(product?) {
+    deleteCoupon(id: number) {
+        this.message.confirm('',
+            this.l('DeleteConfiramtion'),
+            isConfirmed => {
+                if (isConfirmed) {
+                    this.startLoading();
+                    this.couponProxy.deleteCoupon(id).pipe(
+                        finalize(() => this.finishLoading())
+                    ).subscribe(() => {
+                        this.invalidate();
+                    });
+                }
+            }
+        );
+    }
+
+    showCouponDialog(coupon?: CouponEditDto) {
         const dialogData = {
             fullHeigth: true,
-            product: product,
+            coupon: coupon,
             isReadOnly: this.isReadOnly
         };
-        this.dialog.open(AddProductDialogComponent, {
+        this.dialog.open(AddCouponDialogComponent, {
             panelClass: 'slider',
             disableClose: true,
             closeOnNavigation: false,
             data: dialogData
         }).afterClosed().subscribe(
-            () => this.invalidate()
+            (refresh) => {
+                if (refresh) this.invalidate();
+            }
         );
-    }
-
-    navigateToCoupons(event) {
-        if (event.value != this.headerOptions[0]) {
-            setTimeout(() => {
-                this.activeHeaderOption = this.headerOptions[0];
-                this._router.navigate(['app/crm/coupons']);
-            });
-        };
     }
 
     initFilterConfig() {
@@ -240,12 +236,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
     private getFilters() {
         return [
             new FilterModel({
-                component: FilterInputsComponent,
-                operator: 'startswith',
-                caption: 'name',
-                items: { Name: new FilterItemModel() }
-            }),
-            new FilterModel({
                 component: FilterMultilineInputComponent,
                 caption: 'Code',
                 filterMethod: this.filtersService.filterByMultiline,
@@ -258,6 +248,15 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                 }
             })
         ];
+    }
+
+    navigateToProducts(event) {
+        if (event.value != this.headerOptions[0]) {
+            setTimeout(() => {
+                this.activeHeaderOption = this.headerOptions[0];
+                this._router.navigate(['app/crm/products']);
+            });
+        };
     }
 
     initToolbarConfig() {
@@ -297,7 +296,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
                             value: this.searchValue,
                             width: '279',
                             mode: 'search',
-                            placeholder: this.l('Search') + ' ' + this.l('Products').toLowerCase(),
+                            placeholder: this.l('Search') + ' ' + this.l('Coupons').toLowerCase(),
                             onValueChanged: (e) => {
                                 this.searchValueChange(e);
                             }
@@ -396,9 +395,6 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
         this.rootComponent = this.getRootComponent();
         this.rootComponent.overflowHidden(true);
 
-        if (this.dependencyChanged)
-            this.invalidate();
-
         this.showHostElement();
     }
 
@@ -420,7 +416,7 @@ export class ProductsComponent extends AppComponentBase implements OnInit, OnDes
 
     onCellClick(event) {
         if (event.rowType == 'data' && event.data)
-            this.editProduct(event.data.Id);
+            this.editCoupon(event.data.Id);
     }
 
     toggleActionsMenu(event) {
