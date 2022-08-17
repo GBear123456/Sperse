@@ -74,7 +74,9 @@ export class AppComponent implements OnInit {
                         let hasSubscription = appService.hasModuleSubscription(moduleName, productGroups),
                             sub = appService.getModuleSubscription(moduleName, productGroups),
                             isOneTimeExpirationSoon = appService.isOneTimeExpirationSoon(moduleName);
-                        if ((sub.statusId != 'A' || !hasSubscription || isOneTimeExpirationSoon) && !this.dialog.getDialogById('payment-wizard')) {
+                        if ((sub.statusId != 'A' || !hasSubscription || (isOneTimeExpirationSoon && 
+                            this.permissionCheckerService.isGranted(AppPermissions.AdministrationTenantSubscriptionManagement))
+                        ) && !this.dialog.getDialogById('payment-wizard')) {
                             this.dialog.open(PaymentWizardComponent, {
                                 height: '800px',
                                 width: '1200px',                                                              
