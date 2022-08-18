@@ -94,7 +94,7 @@
                            [disabled]="isReadOnly || isAlreadyUsed">
             </dx-select-box>
         </div>
-        <div class="field">
+        <div *ngIf="!isCreate" class="field">
             <label for="duration">{{ls.l('Archived')}}</label>
             <dx-check-box width="300px"
                           [(value)]="coupon.isArchived"
