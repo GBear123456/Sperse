@@ -63,7 +63,7 @@
                             <ng-container *ngSwitchCase="paymentMethodsTypes.ACH">
                                 <div [ngClass]="{'active': paymentMethod.active}" class="achPaymentMethodIcon paymentMethodIcon">{{ ls.l('eCheck') }}</div>
                                 <div>
-                                    <p class="paymentName">{{ paymentMethod.achCustomerInfo.firstName + ' ' + paymentMethod.achCustomerInfo.lastName }}</p>
+                                    <p class="paymentName">{{ paymentMethod.achCustomerInfo.bankName + ' ' + paymentMethod.achCustomerInfo.accountNumber }}</p>
                                 </div>
                             </ng-container>
                         </div>

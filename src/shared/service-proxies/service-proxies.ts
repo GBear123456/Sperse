@@ -14605,6 +14605,62 @@ export class CouponServiceProxy {
         }
         return _observableOf<void>(null as any);
     }
+
+    /**
+     * @param code (optional) 
+     * @return Success
+     */
+    validateCoupon(code: string | undefined): Observable<ValidateCouponOutput> {
+        let url_ = this.baseUrl + "/api/services/CRM/Coupon/ValidateCoupon?";
+        if (code === null)
+            throw new Error("The parameter 'code' cannot be null.");
+        else if (code !== undefined)
+            url_ += "code=" + encodeURIComponent("" + code) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processValidateCoupon(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processValidateCoupon(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<ValidateCouponOutput>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<ValidateCouponOutput>;
+        }));
+    }
+
+    protected processValidateCoupon(response: HttpResponseBase): Observable<ValidateCouponOutput> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+            result200 = ValidateCouponOutput.fromJS(resultData200);
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<ValidateCouponOutput>(null as any);
+    }
 }
 
 @Injectable()
@@ -49493,9 +49549,8 @@ export interface IACHCustomerInfoDto {
 }
 
 export class ACHCustomerShortInfo implements IACHCustomerShortInfo {
-    firstName!: string | undefined;
-    lastName!: string | undefined;
-    customerAcctType!: CustomerAccountingType;
+    bankName!: string | undefined;
+    accountNumber!: string | undefined;
 
     constructor(data?: IACHCustomerShortInfo) {
         if (data) {
@@ -49508,9 +49563,8 @@ export class ACHCustomerShortInfo implements IACHCustomerShortInfo {
 
     init(_data?: any) {
         if (_data) {
-            this.firstName = _data["firstName"];
-            this.lastName = _data["lastName"];
-            this.customerAcctType = _data["customerAcctType"];
+            this.bankName = _data["bankName"];
+            this.accountNumber = _data["accountNumber"];
         }
     }
 
@@ -49523,17 +49577,15 @@ export class ACHCustomerShortInfo implements IACHCustomerShortInfo {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["firstName"] = this.firstName;
-        data["lastName"] = this.lastName;
-        data["customerAcctType"] = this.customerAcctType;
+        data["bankName"] = this.bankName;
+        data["accountNumber"] = this.accountNumber;
         return data;
     }
 }
 
 export interface IACHCustomerShortInfo {
-    firstName: string | undefined;
-    lastName: string | undefined;
-    customerAcctType: CustomerAccountingType;
+    bankName: string | undefined;
+    accountNumber: string | undefined;
 }
 
 export class ACHWorksSettings implements IACHWorksSettings {
@@ -63002,11 +63054,6 @@ export enum CustomCssType {
     Platform = "Platform",
     Login = "Login",
     Portal = "Portal",
-}
-
-export enum CustomerAccountingType {
-    Checking = 0,
-    Saving = 1,
 }
 
 export class CustomFieldsInput implements ICustomFieldsInput {
@@ -92366,6 +92413,7 @@ export interface ISubmitRequestOutput {
 export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
     companyName!: string | undefined;
     products!: TenantProductInfo[] | undefined;
+    couponCode!: string | undefined;
     website!: string | undefined;
     city!: string | undefined;
     state!: string | undefined;
@@ -92400,6 +92448,7 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
                 for (let item of _data["products"])
                     this.products!.push(TenantProductInfo.fromJS(item));
             }
+            this.couponCode = _data["couponCode"];
             this.website = _data["website"];
             this.city = _data["city"];
             this.state = _data["state"];
@@ -92434,6 +92483,7 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
             for (let item of this.products)
                 data["products"].push(item.toJSON());
         }
+        data["couponCode"] = this.couponCode;
         data["website"] = this.website;
         data["city"] = this.city;
         data["state"] = this.state;
@@ -92457,6 +92507,7 @@ export class SubmitTenancyRequestInput implements ISubmitTenancyRequestInput {
 export interface ISubmitTenancyRequestInput {
     companyName: string | undefined;
     products: TenantProductInfo[] | undefined;
+    couponCode: string | undefined;
     website: string | undefined;
     city: string | undefined;
     state: string | undefined;
@@ -102077,6 +102128,58 @@ export interface IUTMParameterInfo {
     keyword: string | undefined;
     adGroup: string | undefined;
     name: string | undefined;
+}
+
+export class ValidateCouponOutput implements IValidateCouponOutput {
+    isValid!: boolean;
+    code!: string | undefined;
+    description!: string | undefined;
+    amountOff!: number | undefined;
+    percentOff!: number | undefined;
+
+    constructor(data?: IValidateCouponOutput) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.isValid = _data["isValid"];
+            this.code = _data["code"];
+            this.description = _data["description"];
+            this.amountOff = _data["amountOff"];
+            this.percentOff = _data["percentOff"];
+        }
+    }
+
+    static fromJS(data: any): ValidateCouponOutput {
+        data = typeof data === 'object' ? data : {};
+        let result = new ValidateCouponOutput();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["isValid"] = this.isValid;
+        data["code"] = this.code;
+        data["description"] = this.description;
+        data["amountOff"] = this.amountOff;
+        data["percentOff"] = this.percentOff;
+        return data;
+    }
+}
+
+export interface IValidateCouponOutput {
+    isValid: boolean;
+    code: string | undefined;
+    description: string | undefined;
+    amountOff: number | undefined;
+    percentOff: number | undefined;
 }
 
 export class VerifySmsCodeInputDto implements IVerifySmsCodeInputDto {
