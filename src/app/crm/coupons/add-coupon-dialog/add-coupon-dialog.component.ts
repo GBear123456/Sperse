@@ -49,6 +49,7 @@ export class AddCouponDialogComponent implements AfterViewInit, OnInit {
     title: string;
     isAlreadyUsed = false;
     isReadOnly = true;
+    isCreate = true;
 
     constructor(
         private elementRef: ElementRef,
@@ -67,15 +68,16 @@ export class AddCouponDialogComponent implements AfterViewInit, OnInit {
             });
         });
 
+        this.isCreate = !(data.coupon && data.coupon.id);
         this.isReadOnly = !!data.isReadOnly;
-        this.title = ls.l(this.isReadOnly ? 'Coupon' : data.coupon ? 'EditCoupon' : 'AddCoupon');
-        if (data.coupon && data.coupon.id) {
-            this.isAlreadyUsed = data.coupon.isAlreadyUsed;
-            this.coupon = new UpdateCouponInput(data.coupon);
-        } else {
+        this.title = ls.l(this.isReadOnly ? 'Coupon' : this.isCreate ? 'AddCoupon' : 'EditCoupon');
+        if (this.isCreate) {
             this.coupon = new CreateCouponInput();
             this.coupon.type = CouponDiscountType.Fixed;
             this.coupon.activationDate = new Date();
+        } else {
+            this.isAlreadyUsed = data.coupon.isAlreadyUsed;
+            this.coupon = new UpdateCouponInput(data.coupon);
         }
     }
 
@@ -99,8 +101,8 @@ export class AddCouponDialogComponent implements AfterViewInit, OnInit {
     }
 
     saveCoupon() {
-        this.isReadOnly = true;
         if (this.validationGroup.instance.validate().isValid) {
+            this.isReadOnly = true;
             let obs: Observable<any> = this.coupon instanceof UpdateCouponInput ?
                 this.couponProxy.updateCoupon(this.coupon) :
                 this.couponProxy.createCoupon(this.coupon);
