@@ -61028,6 +61028,7 @@ export class CreateProductInput implements ICreateProductInput {
     unit!: ProductMeasurementUnit | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: ICreateProductInput) {
         if (data) {
@@ -61060,6 +61061,11 @@ export class CreateProductInput implements ICreateProductInput {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -61094,6 +61100,11 @@ export class CreateProductInput implements ICreateProductInput {
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
         }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -61112,6 +61123,7 @@ export interface ICreateProductInput {
     unit: ProductMeasurementUnit | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export class CreateProductOutput implements ICreateProductOutput {
@@ -69233,6 +69245,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     imageUrl!: string | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IGetProductInfoOutput) {
         if (data) {
@@ -69268,6 +69281,11 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -69305,6 +69323,11 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
         }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -69326,6 +69349,7 @@ export interface IGetProductInfoOutput {
     imageUrl: string | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export class GetProfilePictureOutput implements IGetProfilePictureOutput {
@@ -82729,6 +82753,7 @@ export class ProductInfo implements IProductInfo {
     imageUrl!: string | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IProductInfo) {
         if (data) {
@@ -82762,6 +82787,11 @@ export class ProductInfo implements IProductInfo {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -82797,6 +82827,11 @@ export class ProductInfo implements IProductInfo {
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
         }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -82816,6 +82851,7 @@ export interface IProductInfo {
     imageUrl: string | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export enum ProductMeasurementUnit {
@@ -83092,6 +83128,42 @@ export interface IProductSubscriptionOptionInfo {
 export enum ProductType {
     General = "General",
     Subscription = "Subscription",
+}
+
+export class ProductUpgradeAssignmentInfo implements IProductUpgradeAssignmentInfo {
+    upgradeProductId!: number;
+
+    constructor(data?: IProductUpgradeAssignmentInfo) {
+        if (data) {
+            for (var property in data) {
+                if (data.hasOwnProperty(property))
+                    (<any>this)[property] = (<any>data)[property];
+            }
+        }
+    }
+
+    init(_data?: any) {
+        if (_data) {
+            this.upgradeProductId = _data["upgradeProductId"];
+        }
+    }
+
+    static fromJS(data: any): ProductUpgradeAssignmentInfo {
+        data = typeof data === 'object' ? data : {};
+        let result = new ProductUpgradeAssignmentInfo();
+        result.init(data);
+        return result;
+    }
+
+    toJSON(data?: any) {
+        data = typeof data === 'object' ? data : {};
+        data["upgradeProductId"] = this.upgradeProductId;
+        return data;
+    }
+}
+
+export interface IProductUpgradeAssignmentInfo {
+    upgradeProductId: number;
 }
 
 export class ProfileAddress implements IProfileAddress {
@@ -99485,6 +99557,7 @@ export class UpdateProductInput implements IUpdateProductInput {
     unit!: ProductMeasurementUnit | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
 
     constructor(data?: IUpdateProductInput) {
         if (data) {
@@ -99518,6 +99591,11 @@ export class UpdateProductInput implements IUpdateProductInput {
                 this.productSubscriptionOptions = [] as any;
                 for (let item of _data["productSubscriptionOptions"])
                     this.productSubscriptionOptions!.push(ProductSubscriptionOptionInfo.fromJS(item));
+            }
+            if (Array.isArray(_data["productUpgradeAssignments"])) {
+                this.productUpgradeAssignments = [] as any;
+                for (let item of _data["productUpgradeAssignments"])
+                    this.productUpgradeAssignments!.push(ProductUpgradeAssignmentInfo.fromJS(item));
             }
         }
     }
@@ -99553,6 +99631,11 @@ export class UpdateProductInput implements IUpdateProductInput {
             for (let item of this.productSubscriptionOptions)
                 data["productSubscriptionOptions"].push(item.toJSON());
         }
+        if (Array.isArray(this.productUpgradeAssignments)) {
+            data["productUpgradeAssignments"] = [];
+            for (let item of this.productUpgradeAssignments)
+                data["productUpgradeAssignments"].push(item.toJSON());
+        }
         return data;
     }
 }
@@ -99572,6 +99655,7 @@ export interface IUpdateProductInput {
     unit: ProductMeasurementUnit | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
+    productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
 }
 
 export class UpdateProfilePictureInput implements IUpdateProfilePictureInput {
