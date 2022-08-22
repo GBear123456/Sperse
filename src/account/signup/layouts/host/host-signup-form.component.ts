@@ -1,21 +1,25 @@
 /** Core imports */
-import { Component, OnInit, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
 /** Third party imports */
 import { NotifyService } from 'abp-ng2-module';
 import { MatDialog } from '@angular/material/dialog';
-import { first } from 'rxjs/operators';
+import { first, finalize } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import * as moment from 'moment';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
 import { AbpSessionService } from 'abp-ng2-module';
-import { SessionServiceProxy, LeadServiceProxy, TenantProductInfo, PaymentPeriodType,
-    ProductServiceProxy, SubmitTenancyRequestInput } from '@shared/service-proxies/service-proxies';
+import { SessionServiceProxy, LeadServiceProxy, TenantProductInfo, PaymentPeriodType, 
+    SubmitTenancyRequestOutput, TenantSubscriptionServiceProxy, CompleteTenantRegistrationOutput,
+    ProductServiceProxy, SubmitTenancyRequestInput, ProductInfo, CompleteTenantRegistrationInput } from '@shared/service-proxies/service-proxies';
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
+import { LoadingService } from '@shared/common/loading-service/loading.service';
+
+const psl = require('psl');
 
 @Component({
     templateUrl: './host-signup-form.component.html',
@@ -24,48 +28,62 @@ import { AppLocalizationService } from '@app/shared/common/localization/app-loca
         '../../../../assets/fonts/sperser-extension.css',
         './host-signup-form.component.less',
     ],
-    providers: [LeadServiceProxy, ProductServiceProxy],
+    providers: [LeadServiceProxy, ProductServiceProxy, TenantSubscriptionServiceProxy],
     changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HostSignupFormComponent implements OnInit {
+export class HostSignupFormComponent {
     @ViewChild('firstStepForm') firstStepForm;
+    @ViewChild('secondStepForm') secondStepForm;
     @ViewChild('phoneNumber') phoneNumber;
 
     defaultCountryCode: string;
     selectedCountryCode: string;
 
-    tenancyRequest = new SubmitTenancyRequestInput();
+    tenancyRequestModel = new SubmitTenancyRequestInput();
+    tenantRegistrationModel = new CompleteTenantRegistrationInput();
+    signUpProduct: ProductInfo;
 
     nameRegexp = AppConsts.regexPatterns.name;
     emailRegexp = AppConsts.regexPatterns.email;
+    agreedTermsAndServices: boolean = false;
+    congratulationLink: string;
+    leadRequestXref: string;
 
     constructor(
         private notifyService: NotifyService,
         private sessionService: AbpSessionService,
         private changeDetectorRef: ChangeDetectorRef,
         private sessionAppService: SessionServiceProxy,
+        private tenantProxy: TenantSubscriptionServiceProxy,
         private productProxy: ProductServiceProxy,
+        private loadingService: LoadingService,
         private leadProxy: LeadServiceProxy,
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public ls: AppLocalizationService
     ) {
-        this.tenancyRequest.tag = 'Demo Request';
-        this.tenancyRequest.stage = 'Interested';
+        this.tenancyRequestModel.tag = 'Demo Request';
+        this.tenancyRequestModel.stage = 'Interested';
         this.productProxy.getSubscriptionProductsByGroupName('signup').subscribe(products => {
-            let product = products[0];
-            if (product) {
-                let option = product.productSubscriptionOptions[0];
-                this.tenancyRequest.products = [new TenantProductInfo({
-                    productId: product.id,
+            this.signUpProduct = products[0];
+            if (this.signUpProduct) {
+                let option = this.signUpProduct.productSubscriptionOptions[0];
+                this.tenancyRequestModel.products = [new TenantProductInfo({
+                    productId: this.signUpProduct.id,
                     paymentPeriodType: option && PaymentPeriodType[option.frequency],
                     quantity: 1,
                 })];
             }
+            this.changeDetectorRef.detectChanges();
         });
     }
 
-    ngOnInit(): void {
+    startLoading() {
+        this.loadingService.startLoading();
+    }
+
+    finishLoading() {
+        this.loadingService.finishLoading();
     }
 
     getDefaultCode(event) {
@@ -79,13 +97,51 @@ export class HostSignupFormComponent implements OnInit {
     }
 
     processTenantRegistrationRequest() {
-        //this.changeDetectorRef.detectChanges();
         if (!this.firstStepForm.valid || (this.phoneNumber && !this.phoneNumber.isValid()))
             return;
 
+        this.startLoading();
+        this.leadProxy.submitTenancyRequest(this.tenancyRequestModel).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe((responce: SubmitTenancyRequestOutput) => {
+            this.leadRequestXref = responce.leadRequestXref;
+            this.changeDetectorRef.detectChanges();
+        });
+    }
 
-        this.leadProxy.submitTenancyRequest(this.tenancyRequest).subscribe(() => {
-            //this.notifyService.info(this.ls.l('SavedSuccessfully'));
+    clearUrlPrefix(url) {
+        return url.replace('http://','').replace('https://','').replace('www.','');
+    }
+
+    onBlurSiteUrl() {
+        if (this.tenantRegistrationModel && !this.tenantRegistrationModel.tenancyName) {
+            let suggestedDomain,
+                psl = require('psl'),
+                parsedDomain = psl.parse(this.clearUrlPrefix(this.tenantRegistrationModel.siteUrl));
+            if (parsedDomain) {
+                suggestedDomain = parsedDomain.sld;
+            }
+            if (suggestedDomain) {
+                this.tenantRegistrationModel.tenancyName = 'https://' + suggestedDomain;
+                this.changeDetectorRef.detectChanges();
+            }
+        }
+    }
+
+    completeTenantRegistrationRequest() {
+        if (!this.secondStepForm.valid)
+            return;
+
+        this.tenantRegistrationModel.requestXref = this.leadRequestXref;
+        this.tenantRegistrationModel.companyName = this.tenantRegistrationModel.tenantName;
+        this.tenantRegistrationModel.tenancyName = this.clearUrlPrefix(this.tenantRegistrationModel.tenancyName);
+
+        this.startLoading();
+        this.tenantProxy.completeTenantRegistration(this.tenantRegistrationModel).pipe(
+            finalize(() => this.finishLoading())
+        ).subscribe((res: CompleteTenantRegistrationOutput) => {
+            this.congratulationLink = res.paymentLink || res.loginLink;
+            this.changeDetectorRef.detectChanges();            
         });
     }
 }
