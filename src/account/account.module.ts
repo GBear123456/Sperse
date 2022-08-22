@@ -68,6 +68,7 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { BankCodeLoginVerificationComponent } from './password/layouts/bank-code/bank-code-login-verification.component';
 import { HostLoginVerificationComponent } from './password/layouts/host/host-login-verification.component';
 import { HostCombinedForgotPasswordComponent } from './password/layouts/host/host-combined-forgot-password.component';
+import { SigninComponent } from "@root/account/login/layouts/signin/signin.component";
 
 // import { HoaLoginComponent } from "@root/account/login/layouts/hoa/hoa-login.component";
 // import { HoaAutoLoginComponent } from "@root/account/auto-login/layouts/hoa/hoa-auto-login.component";
@@ -101,6 +102,7 @@ import { HostCombinedForgotPasswordComponent } from './password/layouts/host/hos
         TenantChangeComponent,
         TenantChangeModalComponent,
         LoginComponent,
+        SigninComponent,
         AutoLoginComponent,
         AdvicePeriodLoginComponent,
         BankCodeLoginComponent,
@@ -158,6 +160,7 @@ import { HostCombinedForgotPasswordComponent } from './password/layouts/host/hos
         GHostLoginComponent
     ],
     entryComponents: [
+        SigninComponent,
         HostLayoutComponent,
         HostLoginComponent,
         HostAutoLoginComponent,

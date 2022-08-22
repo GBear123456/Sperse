@@ -1,5 +1,8 @@
+/** Core imports */
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
+
+/** Application imports */
 import { LoginComponent } from './login/login.component';
 import { AutoLoginComponent } from './auto-login/auto-login.component';
 import { ForgotPasswordComponent } from './password/forgot-password.component';
@@ -12,6 +15,7 @@ import { SelectTenantComponent } from './login/select-tenant.component';
 import { AccountComponent } from './account.component';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { CompleteTenantRegistrationComponent } from './register/complete-tenant-registration/complete-tenant-registration.component';
+import { SigninComponent } from '@root/account/login/layouts/signin/signin.component';
 import { SignupComponent } from './signup/signup.component';
 
 @NgModule({
@@ -30,6 +34,7 @@ import { SignupComponent } from './signup/signup.component';
                     { path: 'send-code', component: SendTwoFactorCodeComponent },
                     { path: 'verify-code', component: ValidateTwoFactorCodeComponent },
                     { path: 'select-tenant', component: SelectTenantComponent },
+                    { path: 'signin', component: LoginComponent, data: {wrap: false, layoutComponent: SigninComponent}},
                     { path: 'signup', component: SignupComponent, data: {wrap: false}},
                     { path: 'complete-tenant-registration', component: CompleteTenantRegistrationComponent }
                 ]

@@ -1,0 +1,41 @@
+<div class="box">
+    <form #loginForm="ngForm" method="post" novalidate (ngSubmit)="login()">
+        <div class="box__inner">
+            <div class="box__title">
+                <h1 class="title title--h1">Login To Your Sperse Account</h1>
+            </div>
+            <div class="social_login">
+                <button class="button_global button_global_blue">
+                    <span class="i-s-linkedin">Sign In with LinkedIn</span>
+                </button>
+            </div>
+            <div class="divider">
+                <span>Or</span>
+            </div>
+            <div class="input">
+                <label>Email Address <input type="email" [(ngModel)]="loginService.authenticateModel.userNameOrEmailAddress" autoFocus autocomplete="off" placeholder="{{getLoginPlaceholder()}}" name="userNameOrEmailAddress" required tabindex="1">
+                </label>
+            </div>
+            <div class="input input__pass">
+                <label>Password <input [(ngModel)]="loginService.authenticateModel.password" autocomplete="off" placeholder="{{ls.l('Password')}}" name="password" required maxlength="32" tabindex="2" [type]="showPassword ? 'text' : 'password'">
+                    <span class="pass" (click)="showPassword = !showPassword">{{ls.l(showPassword ? 'hide' : 'show')}}</span>
+                </label>
+            </div>
+            <div class="actions">
+                <label>
+                    <div>
+                        <label class="check_wrap">
+                            <input class="check_wrap__input" type="checkbox" [(ngModel)]="loginService.authenticateModel.rememberClient" name="rememberMe">
+                            <span class="check_wrap__style"></span>Remember Me</label>
+                    </div>
+                </label>
+                <a class="A_link" routerLink="/account/forgot-password" [queryParams]="{'email': loginService.authenticateModel.userNameOrEmailAddress}">I forgot my password</a>
+            </div>
+            <div class="login_btn">
+                <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: loginInProgress || !loginForm.form.valid}">
+                    <span>Login To Your Sperse Account</span>
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
