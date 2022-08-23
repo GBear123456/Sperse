@@ -37,6 +37,7 @@ export class HostLoginVerificationComponent implements OnInit, AfterViewInit {
     @Output() onCodeRefresh: EventEmitter<any> = new EventEmitter();
     @ViewChild('codeInput', { read: CodeInputComponent, static: false }) codeInput !: CodeInputComponent;
 
+    appBaseUrl = AppConsts.appBaseUrl;
     isLoggedIn: boolean = false;
     isExtLogin: boolean = false;
     public readonly CODE_TIME_LIVE = 5 * 60 * 1000;
@@ -117,7 +118,7 @@ export class HostLoginVerificationComponent implements OnInit, AfterViewInit {
                     this.loginService.completeSourceEvent();
             }
             this.loginService.processAuthenticateResult(
-                res, AppConsts.appBaseUrl, this.isExtLogin);
+                res, this.appBaseUrl, this.isExtLogin);
         }, () => {
             this.checkAccessCodeMaxTries();
         });

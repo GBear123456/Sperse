@@ -68,7 +68,9 @@ import { DxButtonModule } from 'devextreme-angular/ui/button';
 import { BankCodeLoginVerificationComponent } from './password/layouts/bank-code/bank-code-login-verification.component';
 import { HostLoginVerificationComponent } from './password/layouts/host/host-login-verification.component';
 import { HostCombinedForgotPasswordComponent } from './password/layouts/host/host-combined-forgot-password.component';
-import { SigninComponent } from "@root/account/login/layouts/signin/signin.component";
+import { SigninForgotPasswordComponent } from '@root/account/password/layouts/signin/signin-forgot-password.component';
+import { SigninLoginVerificationComponent } from './password/layouts/signin/signin-login-verification.component';
+import { SigninComponent } from '@root/account/login/layouts/signin/signin.component';
 
 // import { HoaLoginComponent } from "@root/account/login/layouts/hoa/hoa-login.component";
 // import { HoaAutoLoginComponent } from "@root/account/auto-login/layouts/hoa/hoa-auto-login.component";
@@ -103,6 +105,8 @@ import { SigninComponent } from "@root/account/login/layouts/signin/signin.compo
         TenantChangeModalComponent,
         LoginComponent,
         SigninComponent,
+        SigninForgotPasswordComponent,
+        SigninLoginVerificationComponent,
         AutoLoginComponent,
         AdvicePeriodLoginComponent,
         BankCodeLoginComponent,
@@ -115,7 +119,7 @@ import { SigninComponent } from "@root/account/login/layouts/signin/signin.compo
         AdLoginHostDirective,
         AdAutoLoginHostDirective,
         AdResetPasswordHostDirective,
-        AdForgotPasswordHostDirective,
+        AdForgotPasswordHostDirective,        
         ForgotPasswordComponent,
         ResetPasswordComponent,
         EmailActivationComponent,
@@ -161,6 +165,8 @@ import { SigninComponent } from "@root/account/login/layouts/signin/signin.compo
     ],
     entryComponents: [
         SigninComponent,
+        SigninForgotPasswordComponent,
+        SigninLoginVerificationComponent,
         HostLayoutComponent,
         HostLoginComponent,
         HostAutoLoginComponent,

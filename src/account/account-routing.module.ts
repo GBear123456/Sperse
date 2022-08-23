@@ -15,6 +15,7 @@ import { SelectTenantComponent } from './login/select-tenant.component';
 import { AccountComponent } from './account.component';
 import { AppUiCustomizationService } from '@shared/common/ui/app-ui-customization.service';
 import { CompleteTenantRegistrationComponent } from './register/complete-tenant-registration/complete-tenant-registration.component';
+import { SigninForgotPasswordComponent } from '@root/account/password/layouts/signin/signin-forgot-password.component';
 import { SigninComponent } from '@root/account/login/layouts/signin/signin.component';
 import { SignupComponent } from './signup/signup.component';
 
@@ -36,6 +37,7 @@ import { SignupComponent } from './signup/signup.component';
                     { path: 'select-tenant', component: SelectTenantComponent },
                     { path: 'signin', component: LoginComponent, data: {wrap: false, layoutComponent: SigninComponent}},
                     { path: 'signup', component: SignupComponent, data: {wrap: false}},
+                    { path: 'signin-forgot-password', component: ForgotPasswordComponent, data: {wrap: false, layoutComponent: SigninForgotPasswordComponent} },
                     { path: 'complete-tenant-registration', component: CompleteTenantRegistrationComponent }
                 ]
             }

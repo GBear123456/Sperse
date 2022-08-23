@@ -34,7 +34,7 @@
                                 <span class="check_wrap__style"></span>Remember Me</label>
                         </div>
                     </label>
-                    <a class="A_link" routerLink="/account/forgot-password" [queryParams]="{'email': loginService.authenticateModel.userNameOrEmailAddress}">I forgot my password</a>
+                    <a class="A_link" routerLink="/account/signin-forgot-password" [queryParams]="{extlogin: isExtLogin, 'email': loginService.authenticateModel.userNameOrEmailAddress}">I forgot my password</a>
                 </div>
                 <div class="login_btn">
                     <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: loginInProgress || !loginForm.form.valid}">
