@@ -9,6 +9,7 @@ import { LogService } from 'abp-ng2-module';
 export class AppHttpConfiguration extends AbpHttpConfigurationService {
     avoidErrorHandling = false;
     private readonly avoidErrorHandlingKeys = [
+        'TokenAuth/AuthenticateByCode',
         'CRM/Dashboard/GetContactsByCompanySize',
         'CRM/Dashboard/GetRecentlyCreatedLeads',
         'CRM/Dashboard/GetContactAndLeadStats',
