@@ -280,8 +280,8 @@ export class LoginService {
             // Unexpected result!
 
             this.logService.warn('Unexpected authenticateResult!');
-            this.router.navigate(['account/login']);
-
+            if (!setCookiesOnly)
+                this.router.navigate(['account/login']);
         }
     }
 
