@@ -513,8 +513,10 @@ export class CreateInvoiceDialogComponent implements OnInit {
                   return this.contactsService.showInvoiceEmailDialog(this.invoiceId, data);
               })
         ).subscribe(emailId => {
-            this.updateStatus(InvoiceStatus.Sent, emailId);
-            this.dialog.closeAll();
+            if (!isNaN(emailId)) {
+                this.updateStatus(InvoiceStatus.Sent, emailId);
+                this.dialog.closeAll();
+            }
         });
     }
 
