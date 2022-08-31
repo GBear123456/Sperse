@@ -26,8 +26,7 @@ import {
     ModuleSubscriptionInfo,
     BankTransferSettingsDto,
     RequestPaymentResult,
-    RequestStripePaymentInput,
-    RequestStripePaymentOutput
+    RequestPaymentInput
 } from '@shared/service-proxies/service-proxies';
 import { ECheckDataModel } from '@app/shared/common/payment-wizard/models/e-check-data.model';
 import { BankCardDataModel } from '@app/shared/common/payment-wizard/models/bank-card-data.model';
@@ -78,11 +77,12 @@ export class PaymentOptionsComponent extends AppComponentBase {
         }
     };
 
-    readonly GATEWAY_PAYPAL = 0;
-    readonly GATEWAY_C_CARD = 1;
-    readonly GATEWAY_ECHECK = 2;
+    readonly GATEWAY_STRIPE = 0;
+    readonly GATEWAY_PAYPAL = 1;
+    readonly GATEWAY_C_CARD = 2;
+    readonly GATEWAY_ECHECK = 3;
 
-    selectedGateway: number = this.GATEWAY_PAYPAL;
+    selectedGateway: number = this.GATEWAY_STRIPE;
     paymentMethods = PaymentMethods;
     bankTransferSettings$: Observable<BankTransferSettingsDto>;
     payPalClientId: string;
@@ -90,7 +90,7 @@ export class PaymentOptionsComponent extends AppComponentBase {
     isPayByStripeDisabled = false;
 
     constructor(
-        private injector: Injector,
+        injector: Injector,
         private appHttpConfiguration: AppHttpConfiguration,
         private appService: AppService,
         private tenantSubscriptionServiceProxy: TenantSubscriptionServiceProxy,
@@ -251,7 +251,7 @@ export class PaymentOptionsComponent extends AppComponentBase {
     payByStripe() {
         this.isPayByStripeDisabled = true;
         this.loadingService.startLoading(this.elementRef.nativeElement);
-        this.tenantSubscriptionServiceProxy.requestStripePayment(new RequestStripePaymentInput({
+        this.tenantSubscriptionServiceProxy.requestStripePayment(new RequestPaymentInput({
             productId: this.plan.productId,
             paymentPeriodType: this.plan.paymentPeriodType,
             quantity: 1
