@@ -418,8 +418,8 @@ export class AddProductDialogComponent implements AfterViewInit, OnInit {
     checkShowAmountChangeWarrning() {
         let product = this.data.product,
             message = '';
-        if (product && product.stripeXref)
-            message = this.ls.l('StripeRefferenceWarning') + '\n';
+        if (product && product.hasExternalReference)
+            message = this.ls.l('ExternalRefferenceWarning') + '\n';
 
         if (product && product.hasIncompletedInvoices)
             message += '\n' + this.ls.l('IncompletedInvoicesWarning');

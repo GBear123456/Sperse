@@ -70023,7 +70023,7 @@ export interface IGetPlatformAppUrlOutput {
 }
 
 export class GetProductInfoOutput implements IGetProductInfoOutput {
-    stripeXref!: string | undefined;
+    hasExternalReference!: boolean;
     hasIncompletedInvoices!: boolean;
     id!: number;
     code!: string | undefined;
@@ -70051,7 +70051,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
 
     init(_data?: any) {
         if (_data) {
-            this.stripeXref = _data["stripeXref"];
+            this.hasExternalReference = _data["hasExternalReference"];
             this.hasIncompletedInvoices = _data["hasIncompletedInvoices"];
             this.id = _data["id"];
             this.code = _data["code"];
@@ -70087,7 +70087,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
 
     toJSON(data?: any) {
         data = typeof data === 'object' ? data : {};
-        data["stripeXref"] = this.stripeXref;
+        data["hasExternalReference"] = this.hasExternalReference;
         data["hasIncompletedInvoices"] = this.hasIncompletedInvoices;
         data["id"] = this.id;
         data["code"] = this.code;
@@ -70116,7 +70116,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
 }
 
 export interface IGetProductInfoOutput {
-    stripeXref: string | undefined;
+    hasExternalReference: boolean;
     hasIncompletedInvoices: boolean;
     id: number;
     code: string | undefined;
@@ -74537,6 +74537,7 @@ export class InvoicePaypalInfo implements IInvoicePaypalInfo {
     isApplicable!: boolean;
     isSubscription!: boolean;
     planId!: string | undefined;
+    quantity!: number;
     amount!: number | undefined;
     description!: string | undefined;
 
@@ -74554,6 +74555,7 @@ export class InvoicePaypalInfo implements IInvoicePaypalInfo {
             this.isApplicable = _data["isApplicable"];
             this.isSubscription = _data["isSubscription"];
             this.planId = _data["planId"];
+            this.quantity = _data["quantity"];
             this.amount = _data["amount"];
             this.description = _data["description"];
         }
@@ -74571,6 +74573,7 @@ export class InvoicePaypalInfo implements IInvoicePaypalInfo {
         data["isApplicable"] = this.isApplicable;
         data["isSubscription"] = this.isSubscription;
         data["planId"] = this.planId;
+        data["quantity"] = this.quantity;
         data["amount"] = this.amount;
         data["description"] = this.description;
         return data;
@@ -74581,6 +74584,7 @@ export interface IInvoicePaypalInfo {
     isApplicable: boolean;
     isSubscription: boolean;
     planId: string | undefined;
+    quantity: number;
     amount: number | undefined;
     description: string | undefined;
 }
