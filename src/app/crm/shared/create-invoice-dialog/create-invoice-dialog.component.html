@@ -231,7 +231,7 @@
                                 </div>
                             </dx-select-box>
 
-                            <div class="row-actions add-new" [hidden]="hideAddNew" *ngIf="cellData.rowIndex == lines.length - 1">
+                            <div class="row-actions add-new" [hidden]="hideAddNew" *ngIf="featureMaxProductCount && cellData.rowIndex == lines.length - 1">
                                 <span [class.disabled]="lines.length != getFilteredLines().length && cellData.data.isCrmProduct" class="add-new add-product-line" (click)="addNewLine(productLines, true)">+ {{ls.l('AddProductLine')}}</span>
                                 <span class="separator">|</span>
                                 <span [class.disabled]="lines.length != getFilteredLines().length && !cellData.data.isCrmProduct" class="add-new add-custom-line" (click)="addNewLine(productLines)">+ {{ls.l('AddCustomLine')}}</span>

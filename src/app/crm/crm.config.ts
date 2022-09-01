@@ -39,6 +39,7 @@ export class CrmConfig implements ConfigInterface {
         {
             text: 'Products',
             permission: AppPermissions.CRMProducts,
+            feature: AppFeatures.CRMMaxProductCount,
             route: '/app/crm/products'
         },
         {
