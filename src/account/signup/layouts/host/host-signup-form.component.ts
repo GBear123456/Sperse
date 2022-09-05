@@ -1,6 +1,8 @@
+/// <reference path="../../../login/login.service.ts" />
+/// <reference path="../../../login/login.service.ts" />
 /** Core imports */
 import { Component, ViewChild, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, Router } from '@angular/router';
 
 /** Third party imports */
 import { NotifyService } from 'abp-ng2-module';
@@ -18,6 +20,7 @@ import { SessionServiceProxy, LeadServiceProxy, TenantProductInfo, PaymentPeriod
 import { AppSessionService } from '@shared/common/session/app-session.service';
 import { AppLocalizationService } from '@app/shared/common/localization/app-localization.service';
 import { LoadingService } from '@shared/common/loading-service/loading.service';
+import { ExternalLoginProvider, LoginService } from '../../../login/login.service';
 
 const psl = require('psl');
 
@@ -49,6 +52,8 @@ export class HostSignupFormComponent {
     congratulationLink: string;
     leadRequestXref: string;
 
+    linkedIdLoginProvider: ExternalLoginProvider;
+
     constructor(
         private notifyService: NotifyService,
         private sessionService: AbpSessionService,
@@ -60,7 +65,10 @@ export class HostSignupFormComponent {
         private leadProxy: LeadServiceProxy,
         public appSession: AppSessionService,
         public dialog: MatDialog,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        public loginService: LoginService,
+        public router: Router,
+        private activatedRoute: ActivatedRoute
     ) {
         this.tenancyRequestModel.tag = 'Demo Request';
         this.tenancyRequestModel.stage = 'Interested';
@@ -74,6 +82,22 @@ export class HostSignupFormComponent {
                     quantity: 1,
                 })];
             }
+            this.loginService.linkedIdLoginProvider$.subscribe((provider: ExternalLoginProvider) => {
+                this.linkedIdLoginProvider = provider;
+
+                this.activatedRoute.queryParamMap.pipe(
+                    first()
+                ).subscribe((paramsMap: ParamMap) => {
+                    let exchangeCode = paramsMap.get('code');
+                    let state = paramsMap.get('state');
+                    if (!!exchangeCode && !!state) {
+                        this.loginService.linkedInLogin(provider, exchangeCode, state);
+                    }
+                });
+
+                this.changeDetectorRef.detectChanges();
+            });
+
             this.changeDetectorRef.detectChanges();
         });
     }

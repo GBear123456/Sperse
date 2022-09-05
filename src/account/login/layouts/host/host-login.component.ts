@@ -1,5 +1,5 @@
 /** Core imports */
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute, ParamMap } from '@angular/router';
 
 /** Third party imports */
@@ -36,6 +36,8 @@ export class HostLoginComponent implements OnInit {
     isLoggedIn: boolean = false;
     isExtLogin: boolean = false; 
 
+    linkedIdLoginProvider: ExternalLoginProvider;
+
     constructor(
         private sessionService: AbpSessionService,
         private sessionAppService: SessionServiceProxy,
@@ -44,7 +46,8 @@ export class HostLoginComponent implements OnInit {
         public appSession: AppSessionService,
         public dialog: MatDialog,
         public loginService: LoginService,
-        public ls: AppLocalizationService
+        public ls: AppLocalizationService,
+        private changeDetectorRef: ChangeDetectorRef
     ) {
         this.activatedRoute.queryParamMap.pipe(
             first()
@@ -56,6 +59,19 @@ export class HostLoginComponent implements OnInit {
             let email = paramsMap.get('email');
             if (email)
                 this.loginService.authenticateModel.userNameOrEmailAddress = email;
+
+            this.loginService.linkedIdLoginProvider$.subscribe((provider: ExternalLoginProvider) => {
+                this.linkedIdLoginProvider = provider;
+
+                let exchangeCode = paramsMap.get('code');
+                let state = paramsMap.get('state');
+                if (!!exchangeCode && !!state) {
+                    this.loginService.linkedInLogin(this.linkedIdLoginProvider, exchangeCode, state);
+                }
+
+                this.changeDetectorRef.detectChanges();
+            });
+            
         });
     }
 
