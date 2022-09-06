@@ -125,12 +125,14 @@ export class LoginService {
 
         this.tokenAuthService
             .authenticate(this.authenticateModel)
-            .pipe(finalize(finallyCallback))
-            .subscribe((result: AuthenticateResultModel) => {
+            .pipe(finalize(finallyCallback)).subscribe((result: AuthenticateResultModel) => {
                 onSuccessCallback(result);
                 this.processAuthenticateResult(result, redirectUrl, setCookiesOnly);
                 this.authService.startTokenCheck();
             }, () => {
+                this.messageService.error(
+                    abp.localization.localize('InvalidUserNameOrPassword', 'Platform')
+                );
                 abp.multiTenancy.setTenantIdCookie();
             });
     }

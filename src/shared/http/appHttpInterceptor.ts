@@ -90,8 +90,11 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
             finalize(() => delete this._poolRequests[key]),
             catchError((error: any) => this.handleErrorResponseInternal(error)),
             switchMap((event: HttpEvent<any>) => this.handleSuccessResponse(event))
-        ).subscribe(res => {
-            interceptObservable.next(res);
+        ).subscribe((res: any) => {
+            if (res && res.status == 200)
+                interceptObservable.next(res);
+            else if (res.error)
+                interceptObservable.error(res.error);
         }, error => {
             interceptObservable.error(error);
         });
@@ -133,7 +136,7 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
             error.error = new Blob([JSON.stringify(error.errorDetails || error)]);
         if (error.httpStatus)
             error.status = error.httpStatus;
-            return this.handleErrorResponseInternal(error);
+        return this.handleErrorResponseInternal(error);
     }
 
     protected normalizeRequestHeaders(request: HttpRequest<any>): HttpRequest<any> {
@@ -171,8 +174,11 @@ export class AppHttpInterceptor extends AbpHttpInterceptor {
         if (this.configuration['avoidErrorHandling'] || (response.url &&
             keys && keys.some(key => response.url.toLowerCase().includes(key.toLowerCase()))
         )) {
+            if (!(response.error instanceof Blob))
+                return throwError(response);
+
             return this.configuration.blobToText(response.error).pipe(map(error => {
-                return JSON.parse(error).error;
+                return JSON.parse(error);
             }));
         } else {
             return super.handleErrorResponse(response);
