@@ -61026,6 +61026,7 @@ export class CreateProductInput implements ICreateProductInput {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
@@ -61052,6 +61053,7 @@ export class CreateProductInput implements ICreateProductInput {
             this.maxCommissionRate = _data["maxCommissionRate"];
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -61090,6 +61092,7 @@ export class CreateProductInput implements ICreateProductInput {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -61121,6 +61124,7 @@ export interface ICreateProductInput {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
@@ -69243,6 +69247,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     imageUrl!: string | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
@@ -69272,6 +69277,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
             this.imageUrl = _data["imageUrl"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -69313,6 +69319,7 @@ export class GetProductInfoOutput implements IGetProductInfoOutput {
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
         data["imageUrl"] = this.imageUrl;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -69347,6 +69354,7 @@ export interface IGetProductInfoOutput {
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     imageUrl: string | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
@@ -82751,6 +82759,7 @@ export class ProductInfo implements IProductInfo {
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
     imageUrl!: string | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
@@ -82778,6 +82787,7 @@ export class ProductInfo implements IProductInfo {
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
             this.imageUrl = _data["imageUrl"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -82817,6 +82827,7 @@ export class ProductInfo implements IProductInfo {
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
         data["imageUrl"] = this.imageUrl;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -82849,6 +82860,7 @@ export interface IProductInfo {
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
     imageUrl: string | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
@@ -99555,6 +99567,7 @@ export class UpdateProductInput implements IUpdateProductInput {
     maxCommissionRate!: number | undefined;
     maxCommissionRateTier2!: number | undefined;
     unit!: ProductMeasurementUnit | undefined;
+    downgradeProductId!: number | undefined;
     productServices!: ProductServiceInfo[] | undefined;
     productSubscriptionOptions!: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments!: ProductUpgradeAssignmentInfo[] | undefined;
@@ -99582,6 +99595,7 @@ export class UpdateProductInput implements IUpdateProductInput {
             this.maxCommissionRate = _data["maxCommissionRate"];
             this.maxCommissionRateTier2 = _data["maxCommissionRateTier2"];
             this.unit = _data["unit"];
+            this.downgradeProductId = _data["downgradeProductId"];
             if (Array.isArray(_data["productServices"])) {
                 this.productServices = [] as any;
                 for (let item of _data["productServices"])
@@ -99621,6 +99635,7 @@ export class UpdateProductInput implements IUpdateProductInput {
         data["maxCommissionRate"] = this.maxCommissionRate;
         data["maxCommissionRateTier2"] = this.maxCommissionRateTier2;
         data["unit"] = this.unit;
+        data["downgradeProductId"] = this.downgradeProductId;
         if (Array.isArray(this.productServices)) {
             data["productServices"] = [];
             for (let item of this.productServices)
@@ -99653,6 +99668,7 @@ export interface IUpdateProductInput {
     maxCommissionRate: number | undefined;
     maxCommissionRateTier2: number | undefined;
     unit: ProductMeasurementUnit | undefined;
+    downgradeProductId: number | undefined;
     productServices: ProductServiceInfo[] | undefined;
     productSubscriptionOptions: ProductSubscriptionOptionInfo[] | undefined;
     productUpgradeAssignments: ProductUpgradeAssignmentInfo[] | undefined;
