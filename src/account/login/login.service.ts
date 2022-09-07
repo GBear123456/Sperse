@@ -129,8 +129,9 @@ export class LoginService {
                 onSuccessCallback(result);
                 this.processAuthenticateResult(result, redirectUrl, setCookiesOnly);
                 this.authService.startTokenCheck();
-            }, () => {
+            }, (error: any) => {
                 this.messageService.error(
+                    (error && error.message) ||
                     abp.localization.localize('InvalidUserNameOrPassword', 'Platform')
                 );
                 abp.multiTenancy.setTenantIdCookie();
