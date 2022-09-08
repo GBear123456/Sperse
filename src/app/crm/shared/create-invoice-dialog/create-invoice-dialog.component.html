@@ -310,7 +310,8 @@
                         <label class="bottom-container-text">{{ls.l('Invoice_CouponCode')}}</label>
                         <dx-select-box #couponSelect
                                        height="42px"
-                                       width="170px"
+                                       width="340px"
+                                       [inputAttr]="{readonly: 'readonly'}"
                                        [disabled]="disabledForUpdate"
                                        valueExpr="id"
                                        displayExpr="code"
@@ -322,11 +323,11 @@
                                        [searchTimeout]="500"
                                        (onSelectionChanged)="selectCoupon($event)">
                             <div *dxTemplate="let cell of 'item'">
-                                <span title="{{cell.description}}">{{cell.code + " (" + cell.description + ")"}}</span>
+                                <span [title]="cell.description">{{cell.code + " (" + cell.description + ")"}}</span>
                             </div>
                         </dx-select-box>
                     </div>
-                    <div class="bottom-container-text coupon-description">
+                    <div class="bottom-container-text coupon-description" [title]="couponSelect?.selectedItem?.description">
                         {{couponSelect.selectedItem ? couponSelect.selectedItem.description : ''}}
                     </div>
                 </div>

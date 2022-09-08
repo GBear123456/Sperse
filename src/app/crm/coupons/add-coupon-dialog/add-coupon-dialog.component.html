@@ -12,6 +12,7 @@
             <dx-text-box name="code"
                          width="300px"
                          [(value)]="coupon.code"
+                         [readOnly]="!isCreate"
                          [disabled]="isReadOnly || isAlreadyUsed">
                 <dx-validator>
                     <dxi-validation-rule type="required" message="{{ls.l('RequiredField', ls.l('Code'))}}."></dxi-validation-rule>
@@ -34,6 +35,7 @@
             <dx-select-box [dataSource]="types"
                            width="300px"
                            placeholder="Select type..."
+                           [readOnly]="!isCreate"
                            [(value)]="coupon.type"
                            [disabled]="isReadOnly || isAlreadyUsed">
             </dx-select-box>
@@ -43,6 +45,7 @@
             <dx-number-box width="300px"
                            format="$ #,##0.##"
                            [min]="0.01"
+                           [readOnly]="!isCreate"
                            [(value)]="coupon.amountOff"
                            [disabled]="isReadOnly || isAlreadyUsed">
                 <dx-validator>
@@ -56,6 +59,7 @@
                            format="#.##'%'"
                            [max]="100"
                            [min]="0.01"
+                           [readOnly]="!isCreate"
                            [(value)]="coupon.percentOff"
                            [disabled]="isReadOnly || isAlreadyUsed">
                 <dx-validator>
@@ -67,6 +71,7 @@
             <label>{{ls.l('ActivationDate')}}</label>
             <dx-date-box width="300px"
                          type="datetime"
+                         [readOnly]="!isCreate"
                          [(value)]="coupon.activationDate"
                          [placeholder]="ls.l('Date')"
                          [disabled]="isReadOnly || isAlreadyUsed">
@@ -79,6 +84,7 @@
             <label>{{ls.l('DeactivationDate')}}</label>
             <dx-date-box width="300px"
                          type="datetime"
+                         [readOnly]="!isCreate"
                          [min]="coupon.activationDate"
                          [(value)]="coupon.deactivationDate"
                          [placeholder]="ls.l('Date')"
@@ -90,6 +96,7 @@
             <dx-select-box [dataSource]="durations"
                            width="300px"
                            placeholder="Select duration..."
+                           [readOnly]="!isCreate"
                            [(value)]="coupon.duration"
                            [disabled]="isReadOnly || isAlreadyUsed">
             </dx-select-box>
