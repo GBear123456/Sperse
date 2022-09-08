@@ -8,6 +8,7 @@ import * as ngCommon from '@angular/common';
 import { CommonModule } from '@shared/common/common.module';
 import { InvoicingRoutingModule } from './invoicing-routing.module';
 import { ReceiptComponent } from './receipt/receipt.component';
+import { InvoiceComponent } from './invoice/invoice.component';
 import { UserInvoiceServiceProxy } from '@root/shared/service-proxies/service-proxies';
 
 @NgModule({
@@ -17,7 +18,10 @@ import { UserInvoiceServiceProxy } from '@root/shared/service-proxies/service-pr
         InvoicingRoutingModule
     ],
     exports: [],
-    declarations: [ ReceiptComponent ],
+    declarations: [
+        ReceiptComponent,
+        InvoiceComponent
+    ],
     providers: [
         UserInvoiceServiceProxy
     ]

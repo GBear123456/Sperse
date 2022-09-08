@@ -59,6 +59,12 @@ const routes: Routes = [
         ]
     },
     {
+        path: 'invoicing',
+        canActivate: [LocalizationResolver],
+        loadChildren: () => import('public/invoicing/invoicing.module').then(m => m.InvoicingModule),
+        data: { localizationSource: 'Platform' }
+    },
+    {
         path: 'receipt',
         canActivate: [LocalizationResolver],
         loadChildren: () => import('public/invoicing/invoicing.module').then(m => m.InvoicingModule),
