@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule } from '@angular/router';
-import { ReceiptComponent } from './receipt.component';
+import { ReceiptComponent } from './receipt/receipt.component';
 
 @NgModule({
     imports: [
@@ -16,4 +16,4 @@ import { ReceiptComponent } from './receipt.component';
     exports: [ RouterModule ],
     providers: []
 })
-export class ReceiptRoutingModule {}
+export class InvoicingRoutingModule {}
