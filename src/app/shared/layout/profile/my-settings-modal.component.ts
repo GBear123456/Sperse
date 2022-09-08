@@ -128,7 +128,6 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
         this.modalDialog.startLoading();
         this.profileService.getEmailSettings().subscribe((settings: UserEmailSettings) => {
             this.userEmailSettings = settings;
-            this._initialEmailSettings = cloneDeep(settings);
             if (!this.userEmailSettings.isUserSmtpEnabled) {
                 if (!this.userEmailSettings.from || !this.userEmailSettings.from.emailAddress || this.userEmailSettings.from.emailAddress.length == 0) {
                     this.userEmailSettings.from = new EmailFromSettings({
@@ -147,6 +146,7 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
                     });
                 }
             }
+            this._initialEmailSettings = cloneDeep(this.userEmailSettings);
             this.changeDetectorRef.detectChanges();
         });
         this.profileService.getCurrentUserProfileForEdit()
@@ -154,12 +154,14 @@ export class MySettingsModalComponent implements OnInit, AfterViewInit {
             .subscribe((result) => {
                 this.smsEnabled = this.settingService.getBoolean('App.UserManagement.SmsVerificationEnabled');
                 this.user = result;
-                this._initialUserSettings = cloneDeep(result);
-                this._initialTimezone = result.timezone;
                 this.canChangeUserName = this.user.name !== AppConsts.userManagement.defaultAdminUserName;
                 this.isGoogleAuthenticatorEnabled = result.isGoogleAuthenticatorEnabled;
                 this.isPhoneNumberConfirmed = result.isPhoneNumberConfirmed;
                 this.isPhoneNumberEmpty = result.phoneNumber === '';
+                setTimeout(() => {
+                    this._initialUserSettings = cloneDeep(this.user);
+                    this._initialTimezone = this.user.timezone;
+                }, 600);
                 this.changeDetectorRef.detectChanges();
             });
 
