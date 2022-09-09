@@ -20,6 +20,7 @@ import {
     AuthenticateModel,
     AuthenticateResultModel,
     ExternalAuthenticateModel,
+    LinkedInAuthenticateModel,
     ExternalAuthenticateResultModel,
     ExternalLoginProviderInfoModel,
     TokenAuthServiceProxy,
@@ -41,6 +42,7 @@ export class ExternalLoginProvider extends ExternalLoginProviderInfoModel {
     static readonly FACEBOOK: string = 'Facebook';
     static readonly GOOGLE: string = 'Google';
     static readonly MICROSOFT: string = 'Microsoft';
+    static readonly LINKEDIN: string = 'LinkedIn';
 
     icon: string;
     initialized = false;
@@ -72,7 +74,8 @@ export class LoginService {
     externalLoginModal: ExternalAuthenticateModel;
     resetPasswordModel: SendPasswordResetCodeInput;
     resetPasswordResult: SendPasswordResetCodeOutput;
-    externalLoginProviders$: Observable<ExternalLoginProvider[]>;    
+    externalLoginProviders$: Observable<ExternalLoginProvider[]>;
+    linkedIdLoginProvider$: Observable<ExternalLoginProvider>;
 
     constructor(
         private tokenAuthService: TokenAuthServiceProxy,
@@ -199,6 +202,41 @@ export class LoginService {
             },
             { scope: 'email', return_scopes: true, auth_type: 'rerequest' }
         );
+    }
+
+    linkedInInitLogin(provider: ExternalLoginProvider) {
+        window.location.href = 'https://www.linkedin.com/oauth/v2/authorization?response_type=code&client_id=' + provider.clientId +
+            '&redirect_uri=' + window.location.href +
+            '&state=foobar&scope=r_liteprofile%20r_emailaddress';
+    }
+
+    linkedInLogin(provider: ExternalLoginProvider, exchangeCode: string, state: string) {
+        //todo check state
+        let loginReturnUrl = window.location.href.replace('code=' + exchangeCode + '&state=' + state, '');
+        if (loginReturnUrl.endsWith('&'))
+            loginReturnUrl = loginReturnUrl.replace('&', '');
+        if (loginReturnUrl.endsWith('?'))
+            loginReturnUrl = loginReturnUrl.replace('?', '');
+
+        var search = loginReturnUrl.substring(loginReturnUrl.lastIndexOf('?'));
+        window.history.pushState({}, document.title, window.location.pathname + search);
+
+        const model = new LinkedInAuthenticateModel();
+        model.authProvider = ExternalLoginProvider.LINKEDIN;
+        model.providerAccessCode = '-';
+        model.providerKey = provider.clientId;
+        model.autoRegistration = true;
+        model.singleSignIn = UrlHelper.getSingleSignIn();
+        model.returnUrl = UrlHelper.getReturnUrl();
+
+        model.exchangeCode = exchangeCode;
+        model.loginReturnUrl = loginReturnUrl;
+
+        this.tokenAuthService.linkedInAuthenticate(model)
+            .pipe(finalize(() => abp.ui.clearBusy()))
+            .subscribe((result: ExternalAuthenticateResultModel) => {
+                this.processAuthenticateResult(result, result.returnUrl || AppConsts.appBaseUrl);
+            });
     }
 
     init(): void {
@@ -344,6 +382,11 @@ export class LoginService {
                 publishReplay(),
                 refCount(),
                 map((providers: ExternalLoginProviderInfoModel[]) => providers.map(p => new ExternalLoginProvider(p)))
+        );
+
+        this.linkedIdLoginProvider$ = this.externalLoginProviders$
+            .pipe(
+                map(providers => providers.find(provider => provider.name === ExternalLoginProvider.LINKEDIN))
             );
     }
 
