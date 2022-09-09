@@ -1,9 +1,4 @@
-<div *ngIf="loading; else mainContainer" class="loading-container">
-    <div class="wait-message">
-        Waiting for invoice information
-    </div>
-</div>
-<ng-template #mainContainer>
+<div *ngIf="!loading" #mainContainer>
     <div class="header">
         <div class="content-center header-content">
             <h3>
@@ -110,4 +105,4 @@
             <a (click)="openConditionsDialog(conditions.Policies)">Privacy</a>
         </div>
     </div>
-</ng-template>
+</div>
