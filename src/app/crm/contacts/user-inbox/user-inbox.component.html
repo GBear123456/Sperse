@@ -165,4 +165,11 @@
             [showLink]="false">
         </app-no-data>
     </div>
+    <dx-tooltip 
+        position="bottom" 
+        target="#unsubscribedStatus" 
+        showEvent="dxhoverstart" 
+        hideEvent="dxhoverend">
+        <div>{{ ls.l('ContactIsUnsubscribedFromEmails') }}</div>
+    </dx-tooltip>
 </div>

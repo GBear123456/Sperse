@@ -200,6 +200,12 @@ export class UserInboxComponent implements OnDestroy {
                     }
                 }]
             }, {
+                location: 'before',
+                items: [{
+                    html: '<div id=\'unsubscribedStatus\' class=\'unsubscribed-status\'>Unsubscribed</div>',
+                    visible: !this.contactInfo.isSubscribedToEmails
+                }]
+            }, {
                 location: 'after',
                 items: [{
                     widget: 'dxTextBox',
