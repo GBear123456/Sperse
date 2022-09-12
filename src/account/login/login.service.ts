@@ -207,16 +207,23 @@ export class LoginService {
             '&state=foobar&scope=r_liteprofile%20r_emailaddress';
     }
 
-    linkedInLogin(provider: ExternalLoginProvider, exchangeCode: string, state: string) {
-        //todo check state
+    clearLinkedInParamsAndGetReturnUrl(exchangeCode: string, state: string): string {
         let loginReturnUrl = window.location.href.replace('code=' + exchangeCode + '&state=' + state, '');
         if (loginReturnUrl.endsWith('&'))
             loginReturnUrl = loginReturnUrl.replace('&', '');
         if (loginReturnUrl.endsWith('?'))
             loginReturnUrl = loginReturnUrl.replace('?', '');
 
-        var search = loginReturnUrl.lastIndexOf('?') ? loginReturnUrl.substring(loginReturnUrl.lastIndexOf('?')) : '';
+        var search = loginReturnUrl.includes('?') ? loginReturnUrl.substring(loginReturnUrl.lastIndexOf('?')) : '';
         window.history.pushState({}, document.title, window.location.pathname + search);
+
+        return loginReturnUrl;
+    }
+
+    linkedInLogin(provider: ExternalLoginProvider, exchangeCode: string, state: string) {
+        abp.ui.setBusy();
+        //todo check state
+        let loginReturnUrl = this.clearLinkedInParamsAndGetReturnUrl(exchangeCode, state);
 
         const model = new LinkedInAuthenticateModel();
         model.authProvider = ExternalLoginProvider.LINKEDIN;
