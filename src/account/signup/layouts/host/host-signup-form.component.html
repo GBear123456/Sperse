@@ -45,12 +45,12 @@
         </div>
         <div class="name">
           <div class="input name__input">
-            <label>First Name <input #firstNameInput="ngModel" type="text" placeholder="" name="firstName" [(ngModel)]="tenancyRequestModel.firstName" [pattern]="nameRegexp" required>
+            <label>First Name <input #firstNameInput="ngModel" type="text" placeholder="" name="firstName" [(ngModel)]="tenancyRequestModel.firstName" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="nameRegexp" required>
                 <validation-messages [formCtrl]="firstNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('FirstName'))}]"></validation-messages>
             </label>
           </div>
           <div class="input name__input">
-            <label>Last Name <input #lastNameInput="ngModel" type="text" placeholder="" name="lastName" [(ngModel)]="tenancyRequestModel.lastName" [pattern]="nameRegexp" required>
+            <label>Last Name <input #lastNameInput="ngModel" type="text" placeholder="" name="lastName" [(ngModel)]="tenancyRequestModel.lastName" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="nameRegexp" required>
                 <validation-messages [formCtrl]="lastNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('LastName'))}]"></validation-messages>
             </label>
           </div>
@@ -66,7 +66,7 @@
           </div>
         </div>
         <div class="input">
-          <label>Email Address <input #emailAddressInput="ngModel" type="email" name="email" placeholder="" [(ngModel)]="tenancyRequestModel.email" [pattern]="emailRegexp" required>
+          <label>Email Address <input #emailAddressInput="ngModel" type="email" name="email" placeholder="" [(ngModel)]="tenancyRequestModel.email" [ngModelOptions]="{updateOn: 'blur'}" [pattern]="emailRegexp" required>
             <validation-messages [formCtrl]="emailAddressInput" [errorDefs]="[{pattern: ls.l('InvalidEmailAddress')}]"></validation-messages>
           </label>
         </div>
@@ -75,7 +75,8 @@
             <div>
               <label class="check_wrap">
                 <input class="check_wrap__input" type="checkbox" [(ngModel)]="agreedTermsAndServices" [ngModelOptions]="{standalone: true}">
-                <span class="check_wrap__style"></span>By using this extension, you agree to LinkedIn's Terms of Use and to Sperse Terms of Service and Privacy Policy.</label>
+                <span class="check_wrap__style"></span><div>By using this extension, you agree to <a href="https://www.linkedin.com/legal/user-agreement" target="_blank">LinkedIn's Terms</a> of Use and to <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Terms)">Sperse Terms of Service</a> and <a href="javascript:void(0);" (click)="openConditionsDialog(conditions.Policies)">Privacy Policy</a>.</div>
+              </label>
             </div>
           </label>
         </div>
@@ -88,7 +89,7 @@
       <form *ngIf="leadRequestXref" id="secondStepForm" #secondStepForm="ngForm" novalidate (ngSubmit)="completeTenantRegistrationRequest()">
         <div *ngIf="!congratulationLink; else congratulation">
           <div class="input">
-            <label>Your business name <input #businessNameInput="ngModel" type="text" name="businessName" [(ngModel)]="tenantRegistrationModel.tenantName" autoComplete="off" required>
+            <label>Your business name <input #businessNameInput="ngModel" type="text" name="businessName" [(ngModel)]="tenantRegistrationModel.tenantName" [ngModelOptions]="{updateOn: 'blur'}" autoComplete="off" required>
                 <validation-messages [formCtrl]="businessNameInput" [errorDefs]="[{pattern: ls.l('{0}IsInvalid', ls.l('BusinessName'))}]"></validation-messages>
             </label>
           </div>
@@ -103,12 +104,12 @@
             </label>
           </div>
           <div class="input">
-            <label>Select your handle <p><input #handleInput="ngModel" type="text" name="handle" [(ngModel)]="tenantRegistrationModel.tenancyName" autoComplete="off" required><span class="sperse-domain">.sperse.com</span></p>
+            <label>Select your handle <p><input #handleInput="ngModel" type="text" name="handle" [(ngModel)]="tenantRegistrationModel.tenancyName" autoComplete="off"><span class="sperse-domain">.sperse.com</span></p>
             </label>
           </div>
           <div class="login_btn">
             <button class="button_global button_global_green" type="submit" [ngClass]="{disabled: !tenantRegistrationModel.tenantName || !tenantRegistrationModel.adminPassword}">
-              <span>Complete Tenant Registration</span>
+              <span>Complete Registration</span>
             </button>
           </div>
         </div>

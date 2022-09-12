@@ -13,8 +13,9 @@ import * as moment from 'moment';
 
 /** Application imports */
 import { AppConsts } from '@shared/AppConsts';
+import { ConditionsType } from '@shared/AppEnums';
 import { AbpSessionService } from 'abp-ng2-module';
-import { SessionServiceProxy, LeadServiceProxy, TenantProductInfo, PaymentPeriodType, 
+import { SessionServiceProxy, LeadServiceProxy, TenantProductInfo, PaymentPeriodType, RecurringPaymentFrequency, 
     SubmitTenancyRequestOutput, TenantSubscriptionServiceProxy, CompleteTenantRegistrationOutput,
     ProductServiceProxy, SubmitTenancyRequestInput, ProductInfo, CompleteTenantRegistrationInput,
     LinkedInServiceProxy, LinkedInUserData} from '@shared/service-proxies/service-proxies';
@@ -54,6 +55,7 @@ export class HostSignupFormComponent {
     leadRequestXref: string;
 
     linkedIdLoginProvider: ExternalLoginProvider;
+    conditions = ConditionsType;
 
     constructor(
         private notifyService: NotifyService,
@@ -75,10 +77,12 @@ export class HostSignupFormComponent {
     ) {
         this.tenancyRequestModel.tag = 'Demo Request';
         this.tenancyRequestModel.stage = 'Interested';
-        this.productProxy.getSubscriptionProductsByGroupName('signup').subscribe(products => {
+        this.productProxy.getSubscriptionProductsByGroupName('Extention').subscribe(products => {
             this.signUpProduct = products[0];
             if (this.signUpProduct) {
-                let option = this.signUpProduct.productSubscriptionOptions[0];
+                let option = this.signUpProduct.productSubscriptionOptions
+                    .filter(option => option.frequency == RecurringPaymentFrequency.Monthly)[0];
+                this.signUpProduct.price = option.fee;
                 this.tenancyRequestModel.products = [new TenantProductInfo({
                     productId: this.signUpProduct.id,
                     paymentPeriodType: option && PaymentPeriodType[option.frequency],
@@ -150,7 +154,7 @@ export class HostSignupFormComponent {
     }
 
     clearUrlPrefix(url) {
-        return url.replace('http://','').replace('https://','').replace('www.','');
+        return url ? url.replace('http://','').replace('https://','').replace('www.','') : undefined;
     }
 
     onBlurSiteUrl() {
@@ -183,5 +187,19 @@ export class HostSignupFormComponent {
             this.congratulationLink = res.paymentLink || res.loginLink;
             this.changeDetectorRef.detectChanges();            
         });
+    }
+
+    openConditionsDialog(type: ConditionsType) {
+        window.open(this.getApiLink(type), '_blank');
+    }
+
+    getApiLink(type: ConditionsType) {
+        if (this.appSession.tenant)
+            return AppConsts.remoteServiceBaseUrl + '/api/TenantCustomization/Get' + 
+                (type == ConditionsType.Policies ? 'PrivacyPolicy' : 'TermsOfService') + 
+                'Document?tenantId=' + this.appSession.tenant.id;
+        else
+            return AppConsts.appBaseHref + 'assets/documents/' + 
+                (type == ConditionsType.Terms ? 'SperseTermsOfService.pdf' : 'SpersePrivacyPolicy.pdf');
     }
 }
