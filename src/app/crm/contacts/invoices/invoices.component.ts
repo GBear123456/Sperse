@@ -172,7 +172,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
                             this.invoiceFields.Key,
                             this.invoiceFields.InvoiceId,
                             this.invoiceFields.InvoiceNumber,
-                            this.invoiceFields.InvoiceStatus
+                            this.invoiceFields.InvoiceStatus,
+                            this.invoiceFields.InvoicePublicId
                         ],
                         this.fieldsDependencies
                     );
@@ -389,9 +390,8 @@ export class InvoicesComponent extends AppComponentBase implements OnInit, OnDes
     }
 
     previewInvoice() {
-        this.getPdfLink().subscribe((pdfUrl: string) => {
-            window.open(pdfUrl, '_blank');
-        });
+        let publicId = this.actionRecordData.InvoicePublicId;
+        window.open(`/invoicing/invoice/${this.appSession.tenantId || 0}/${publicId}`, '_blank');
     }
 
     updateOrderStage(event) {
