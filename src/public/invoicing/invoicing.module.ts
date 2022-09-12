@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import * as ngCommon from '@angular/common';
 
 /** Third party imports */
+import { MatMenuModule } from '@angular/material/menu';
 
 /** Application imports */
 import { CommonModule } from '@shared/common/common.module';
@@ -15,6 +16,7 @@ import { UserInvoiceServiceProxy } from '@root/shared/service-proxies/service-pr
     imports: [
         ngCommon.CommonModule,
         CommonModule,
+        MatMenuModule,
         InvoicingRoutingModule
     ],
     exports: [],

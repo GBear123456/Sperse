@@ -25,6 +25,10 @@ public-invoice {
     .content-center {
         width: 890px;
         margin: 0 auto;
+
+        .actions-button i {
+            margin-left: 10px;
+        }
     }
 
     .header {
@@ -55,9 +59,7 @@ public-invoice {
 
         .content-logo {
             margin-bottom: 40px;
-            text-align: right;
             height: 110px;
-            position: relative;
 
             img {
                 max-height: 110px;
@@ -158,5 +160,15 @@ public-invoice {
 
     .gray {
         color: gray;
+    }
+}
+
+.actions-menu {
+    .mat-menu-item i {
+        margin-right: 12px;
+    }
+
+    button:focus {
+        outline: none;
     }
 }

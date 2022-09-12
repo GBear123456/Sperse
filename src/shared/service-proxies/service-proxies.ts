@@ -47602,6 +47602,66 @@ export class UserInvoiceServiceProxy {
         }
         return _observableOf<GetInvoiceReceiptInfoOutput>(null as any);
     }
+
+    /**
+     * @return Success
+     */
+    getInvoicePdfUrl(tenantId: number, publicId: string): Observable<string> {
+        let url_ = this.baseUrl + "/api/services/CRM/UserInvoice/GetInvoicePdfUrl?";
+        if (tenantId === undefined || tenantId === null)
+            throw new Error("The parameter 'tenantId' must be defined and cannot be null.");
+        else
+            url_ += "tenantId=" + encodeURIComponent("" + tenantId) + "&";
+        if (publicId === undefined || publicId === null)
+            throw new Error("The parameter 'publicId' must be defined and cannot be null.");
+        else
+            url_ += "publicId=" + encodeURIComponent("" + publicId) + "&";
+        url_ = url_.replace(/[?&]$/, "");
+
+        let options_ : any = {
+            observe: "response",
+            responseType: "blob",
+            headers: new HttpHeaders({
+                "Accept": "application/json;odata.metadata=minimal;odata.streaming=true"
+            })
+        };
+
+        return this.http.request("get", url_, options_).pipe(_observableMergeMap((response_ : any) => {
+            return this.processGetInvoicePdfUrl(response_);
+        })).pipe(_observableCatch((response_: any) => {
+            if (response_ instanceof HttpResponseBase) {
+                try {
+                    return this.processGetInvoicePdfUrl(response_ as any);
+                } catch (e) {
+                    return _observableThrow(e) as any as Observable<string>;
+                }
+            } else
+                return _observableThrow(response_) as any as Observable<string>;
+        }));
+    }
+
+    protected processGetInvoicePdfUrl(response: HttpResponseBase): Observable<string> {
+        const status = response.status;
+        const responseBlob =
+            response instanceof HttpResponse ? response.body :
+            (response as any).error instanceof Blob ? (response as any).error : undefined;
+
+        let _headers: any = {}; if (response.headers) { for (let key of response.headers.keys()) { _headers[key] = response.headers.get(key); }}
+        if (status === 200) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            let result200: any = null;
+            let resultData200 = _responseText === "" ? null : JSON.parse(_responseText, this.jsonParseReviver);
+                result200 = resultData200 !== undefined ? resultData200 : <any>null;
+    
+            return _observableOf(result200);
+            }));
+        } else if (status !== 200 && status !== 204) {
+            return blobToText(responseBlob).pipe(_observableMergeMap(_responseText => {
+            return throwException("An unexpected server error occurred.", status, _responseText, _headers);
+            }));
+        }
+        return _observableOf<string>(null as any);
+    }
 }
 
 @Injectable()
@@ -73582,6 +73642,7 @@ export interface IInvoiceAddressInput {
 export class InvoiceData implements IInvoiceData {
     date!: moment.Moment;
     number!: string | undefined;
+    status!: InvoiceStatus;
     note!: string | undefined;
     grandTotal!: number;
     subTotal!: number;
@@ -73608,6 +73669,7 @@ export class InvoiceData implements IInvoiceData {
         if (_data) {
             this.date = _data["date"] ? moment(_data["date"].toString()) : <any>undefined;
             this.number = _data["number"];
+            this.status = _data["status"];
             this.note = _data["note"];
             this.grandTotal = _data["grandTotal"];
             this.subTotal = _data["subTotal"];
@@ -73638,6 +73700,7 @@ export class InvoiceData implements IInvoiceData {
         data = typeof data === 'object' ? data : {};
         data["date"] = this.date ? this.date.toISOString() : <any>undefined;
         data["number"] = this.number;
+        data["status"] = this.status;
         data["note"] = this.note;
         data["grandTotal"] = this.grandTotal;
         data["subTotal"] = this.subTotal;
@@ -73661,6 +73724,7 @@ export class InvoiceData implements IInvoiceData {
 export interface IInvoiceData {
     date: moment.Moment;
     number: string | undefined;
+    status: InvoiceStatus;
     note: string | undefined;
     grandTotal: number;
     subTotal: number;
